@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+            version="3.0">
+
+    <description>Find</description>
+    <display-name>Find</display-name>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+    <!--
+        This is needed to force Tomcat to interpret POST bodies as UTF-8 by default, otherwise it'll use ISO-8859-1,
+        since that's apparently what the servlet spec specifies,
+        It's required despite URIEncoding="UTF-8" on the connector since that only works on GET parameters.
+        Jetty doesn't have this problem, it seems to use UTF-8 as the default.
+     -->
+    <filter>
+        <filter-name>characterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>characterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Clears session when accessing the login page -->
+    <filter>
+        <filter-name>configEnvironmentVariableFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>configEnvironmentVariableFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>Standard Login Filter</filter-name>
+        <filter-class>com.autonomy.web.security.filter.LoginFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>Standard Login Filter</filter-name>
+        <url-pattern>/login/*</url-pattern>
+        <url-pattern>/api/login/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Delegate to SSO, Community, or nothing, depending upon configuration -->
+    <filter>
+        <filter-name>loginFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>loginFilter</filter-name>
+        <url-pattern>/login/*</url-pattern>
+        <url-pattern>/api/login/*</url-pattern>
+    </filter-mapping>
+
+    <!--Prevent access based on a variable in the session -->
+    <filter>
+        <filter-name>privateFilterAuth</filter-name>
+        <filter-class>com.autonomy.web.security.filter.RedirectingAuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>attributeName</param-name>
+            <param-value>username</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectUrl</param-name>
+            <param-value>/login/login.html</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>privateFilterAuth</filter-name>
+        <url-pattern>/p/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>privateApiFilterAuth</filter-name>
+        <filter-class>com.autonomy.web.security.filter.AuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>attributeName</param-name>
+            <param-value>username</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectUrl</param-name>
+            <param-value>/login/login.html</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>privateApiFilterAuth</filter-name>
+        <url-pattern>/api/user/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Prevent access based on a variable in the session -->
+    <filter>
+        <filter-name>adminFilterAuth</filter-name>
+        <filter-class>com.autonomy.web.security.filter.RedirectingAuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>attributeName</param-name>
+            <param-value>adminUsername</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectUrl</param-name>
+            <param-value>/p/</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>adminFilterAuth</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>userAdminFilterAuth</filter-name>
+        <filter-class>com.autonomy.web.security.filter.RedirectingAuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>attributeName</param-name>
+            <param-value>userAdminUsername</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectUrl</param-name>
+            <param-value>/p/</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>userAdminFilterAuth</filter-name>
+        <url-pattern>/useradmin/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>adminApiFilterAuth</filter-name>
+        <filter-class>com.autonomy.web.security.filter.AuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>attributeName</param-name>
+            <param-value>adminUsername</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectUrl</param-name>
+            <param-value>/p/</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>adminApiFilterAuth</filter-name>
+        <url-pattern>/api/admin/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>userAdminApiFilterAuth</filter-name>
+        <filter-class>com.autonomy.web.security.filter.AuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>attributeName</param-name>
+            <param-value>userAdminUsername</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectUrl</param-name>
+            <param-value>/p/</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>userAdminApiFilterAuth</filter-name>
+        <url-pattern>/api/useradmin/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>configFilterAuth</filter-name>
+        <filter-class>com.autonomy.web.security.filter.RedirectingAuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>attributeName</param-name>
+            <param-value>configUsername</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectUrl</param-name>
+            <param-value>/login/</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>configFilterAuth</filter-name>
+        <url-pattern>/config/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>configApiFilterAuth</filter-name>
+        <filter-class>com.autonomy.web.security.filter.AuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>attributeName</param-name>
+            <param-value>configUsername</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirectUrl</param-name>
+            <param-value>/login/</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>configApiFilterAuth</filter-name>
+        <url-pattern>/api/config/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>referrerFilter</filter-name>
+        <filter-class>com.autonomy.web.security.filter.ReferrerFilter</filter-class>
+        <init-param>
+            <param-name>methods</param-name>
+            <param-value>POST, DELETE, PATCH</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>referrerFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+        <url-pattern>/p/*</url-pattern>
+        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/useradmin/*</url-pattern>
+        <url-pattern>/config/*</url-pattern>
+    </filter-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+</web-app>

@@ -1,0 +1,23 @@
+.modal {
+    visibility: hidden;
+}
+
+.hide {
+    display: none;
+}
+
+.hidden {
+    opacity: 0;
+}
+
+.fade.in {
+    opacity: 1;
+}
+
+.fade {
+    opacity: 0;
+    -webkit-transition: opacity 0.01s linear;
+    -moz-transition: opacity 0.01s linear;
+    -o-transition: opacity 0.01s linear;
+    transition: opacity 0.01s linear;
+}

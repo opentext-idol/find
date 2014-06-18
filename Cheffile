@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+#^syntax detection
+ 
+site 'http://community.opscode.com/api/v1'
+ 
+cookbook 'apt'
+cookbook 'build-essential'
+cookbook 'vim'
+cookbook 'postgresql'
+cookbook 'tomcat'
+cookbook 'frontend-common-cookbook',
+	:git => "git@cmbg-git.autonomy.com:frontend-common-cookbook.git"

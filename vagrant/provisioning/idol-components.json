@@ -1,0 +1,21 @@
+[
+	{
+		"hostname": "idol-content-example",
+		"ip": "192.168.249.102",
+		"components": [
+			{
+				"name": "example-content",
+				"component": "content",
+				"ports": {
+					"aci": 9000,
+					"index": 9001,
+					"service": 9002
+				},
+				"configFile": "idol/example-content.cfg",
+				"version": "latest",
+				"deployIdolAdmin": false,
+				"priority": 80
+			}
+		]
+	}
+]

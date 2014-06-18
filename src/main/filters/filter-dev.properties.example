@@ -1,0 +1,6 @@
+log.level.autn=debug
+
+hibernate.show_sql=true
+# Set this to 'true' if you want to update the schema, but be careful
+# not to cause problems for people with different data models.
+hibernate.update_schema=false

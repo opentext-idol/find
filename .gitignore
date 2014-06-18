@@ -1,0 +1,18 @@
+# Java
+*.class
+*.log
+*.jar
+*.war
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Maven
+log/
+target/
+
+# Archetype
+filter-dev.properties
+src/main/webapp/lib/

@@ -1,0 +1,24 @@
+{
+    "locale": "en_US",
+    "login": {
+        "method": "default",
+        "cas": {
+            "casServerLoginUrl": "",
+            "casServerUrlPrefix": "",
+            "serverName": ""
+        },
+        "community": {
+            "protocol": "HTTP",
+            "host": "",
+            "port": 9030,
+			"productType": "UASERVER"
+        }
+    },
+    "postgres": {
+        "host": null,
+        "port": 5432,
+        "database": "",
+        "username": "",
+        "password": ""
+    }
+}
