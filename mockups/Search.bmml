@@ -1,0 +1,277 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1882" measuredH="1230" mockupW="1873" mockupH="1170">
+  <controls>
+    <control controlID="9" controlTypeID="com.balsamiq.mockups::Canvas" x="1074" y="136" w="194" h="394" measuredW="100" measuredH="70" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0</backgroundAlpha>
+      </controlProperties>
+    </control>
+    <control controlID="23" controlTypeID="__group__" x="9" y="60" w="971" h="498" measuredW="971" measuredH="498" zOrder="0" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="82" y="0" w="889" h="498" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="23">
+          <controlProperties>
+            <borderStyle>square</borderStyle>
+            <color>3355443</color>
+            <text>Find</text>
+          </controlProperties>
+        </control>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::Title" x="459" y="106" w="-1" h="-1" measuredW="135" measuredH="75" zOrder="1" locked="false" isInGroup="23">
+          <controlProperties>
+            <color>16777215</color>
+            <size>72</size>
+            <text>Find</text>
+          </controlProperties>
+        </control>
+        <control controlID="2" controlTypeID="__group__" x="293" y="206" w="467" h="68" measuredW="467" measuredH="68" zOrder="2" locked="false" isInGroup="23">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::TextArea" x="0" y="0" w="467" h="68" measuredW="200" measuredH="140" zOrder="0" locked="false" isInGroup="2">
+              <controlProperties>
+                <borderColor>0</borderColor>
+                <color>16777215</color>
+                <size>32</size>
+                <text/>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Label" x="13" y="14" w="-1" h="-1" measuredW="382" measuredH="40" zOrder="1" locked="false" isInGroup="2">
+              <controlProperties>
+                <color>14540253</color>
+                <size>32</size>
+                <text>What%20do%20you%20want%20to%20Find%3F</text>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Icon" x="404" y="10" w="-1" h="-1" measuredW="48" measuredH="48" zOrder="2" locked="false" isInGroup="2">
+              <controlProperties>
+                <icon>SearchIcon%7Clarge</icon>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="3" controlTypeID="com.balsamiq.mockups::StickyNote" x="0" y="122" w="145" h="152" measuredW="109" measuredH="123" zOrder="3" locked="false" isInGroup="23">
+          <controlProperties>
+            <text>Search%20box%20is%20in%20focus.%20%20When%20user%20starts%20to%20type%20we%20transition%20to%20results%20screen</text>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="24" controlTypeID="__group__" x="1028" y="60" w="854" h="590" measuredW="854" measuredH="590" zOrder="2" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="17" y="0" w="837" h="497" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="24">
+          <controlProperties>
+            <color>3355443</color>
+            <text>Find</text>
+          </controlProperties>
+        </control>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::TextInput" x="232" y="90" w="595" h="-1" measuredW="215" measuredH="27" zOrder="1" locked="false" isInGroup="24">
+          <controlProperties>
+            <text>Text%20that%20the%20user%20is%20searching%20for</text>
+          </controlProperties>
+        </control>
+        <control controlID="2" controlTypeID="__group__" x="239" y="127" w="266" h="140" measuredW="266" measuredH="140" zOrder="2" locked="false" isInGroup="24">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::Canvas" x="0" y="0" w="266" h="140" measuredW="100" measuredH="70" zOrder="0" locked="false" isInGroup="2">
+              <controlProperties>
+                <borderColor>6710886</borderColor>
+                <borderStyle>roundedSolid</borderStyle>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Link" x="21" y="15" w="-1" h="-1" measuredW="224" measuredH="26" zOrder="1" locked="false" isInGroup="2">
+              <controlProperties>
+                <size>20</size>
+                <text>A%20really%20interesting%20thing</text>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Paragraph" x="15" y="41" w="236" h="64" measuredW="275" measuredH="80" zOrder="2" locked="false" isInGroup="2">
+              <controlProperties>
+                <text>Some%20stuff%20happened%20today%20that%20you%20just%20wouldn%27t%20believe%2C%20you%20should%20really%20click%20the%20link%20I%20can%27t%20believe%20how%20relevant%20this%20is..%21</text>
+              </controlProperties>
+            </control>
+            <control controlID="3" controlTypeID="com.balsamiq.mockups::Label" x="129" y="107" w="122" h="-1" measuredW="117" measuredH="21" zOrder="3" locked="false" isInGroup="2">
+              <controlProperties>
+                <italic>true</italic>
+                <text>FaceBuzzBookFeed</text>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="3" controlTypeID="__group__" x="549" y="127" w="266" h="140" measuredW="266" measuredH="140" zOrder="3" locked="false" isInGroup="24">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::Canvas" x="0" y="0" w="266" h="140" measuredW="100" measuredH="70" zOrder="0" locked="false" isInGroup="3">
+              <controlProperties>
+                <borderColor>6710886</borderColor>
+                <borderStyle>roundedSolid</borderStyle>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Link" x="21" y="15" w="-1" h="-1" measuredW="224" measuredH="26" zOrder="1" locked="false" isInGroup="3">
+              <controlProperties>
+                <size>20</size>
+                <text>A%20really%20interesting%20thing</text>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Paragraph" x="15" y="41" w="236" h="64" measuredW="275" measuredH="80" zOrder="2" locked="false" isInGroup="3">
+              <controlProperties>
+                <text>Some%20stuff%20happened%20today%20that%20you%20just%20wouldn%27t%20believe%2C%20you%20should%20really%20click%20the%20link%20I%20can%27t%20believe%20how%20relevant%20this%20is..%21</text>
+              </controlProperties>
+            </control>
+            <control controlID="3" controlTypeID="com.balsamiq.mockups::Label" x="129" y="107" w="122" h="-1" measuredW="117" measuredH="21" zOrder="3" locked="false" isInGroup="3">
+              <controlProperties>
+                <italic>true</italic>
+                <text>FaceBuzzBookFeed</text>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="4" controlTypeID="__group__" x="239" y="288" w="266" h="140" measuredW="266" measuredH="140" zOrder="4" locked="false" isInGroup="24">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::Canvas" x="0" y="0" w="266" h="140" measuredW="100" measuredH="70" zOrder="0" locked="false" isInGroup="4">
+              <controlProperties>
+                <borderColor>6710886</borderColor>
+                <borderStyle>roundedSolid</borderStyle>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Link" x="21" y="15" w="-1" h="-1" measuredW="224" measuredH="26" zOrder="1" locked="false" isInGroup="4">
+              <controlProperties>
+                <size>20</size>
+                <text>A%20really%20interesting%20thing</text>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Paragraph" x="15" y="41" w="236" h="64" measuredW="275" measuredH="80" zOrder="2" locked="false" isInGroup="4">
+              <controlProperties>
+                <text>Some%20stuff%20happened%20today%20that%20you%20just%20wouldn%27t%20believe%2C%20you%20should%20really%20click%20the%20link%20I%20can%27t%20believe%20how%20relevant%20this%20is..%21</text>
+              </controlProperties>
+            </control>
+            <control controlID="3" controlTypeID="com.balsamiq.mockups::Label" x="129" y="107" w="122" h="-1" measuredW="117" measuredH="21" zOrder="3" locked="false" isInGroup="4">
+              <controlProperties>
+                <italic>true</italic>
+                <text>FaceBuzzBookFeed</text>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="5" controlTypeID="__group__" x="549" y="288" w="266" h="140" measuredW="266" measuredH="140" zOrder="5" locked="false" isInGroup="24">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::Canvas" x="0" y="0" w="266" h="140" measuredW="100" measuredH="70" zOrder="0" locked="false" isInGroup="5">
+              <controlProperties>
+                <borderColor>6710886</borderColor>
+                <borderStyle>roundedSolid</borderStyle>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Link" x="21" y="15" w="-1" h="-1" measuredW="224" measuredH="26" zOrder="1" locked="false" isInGroup="5">
+              <controlProperties>
+                <size>20</size>
+                <text>A%20really%20interesting%20thing</text>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Paragraph" x="15" y="41" w="236" h="64" measuredW="275" measuredH="80" zOrder="2" locked="false" isInGroup="5">
+              <controlProperties>
+                <text>Some%20stuff%20happened%20today%20that%20you%20just%20wouldn%27t%20believe%2C%20you%20should%20really%20click%20the%20link%20I%20can%27t%20believe%20how%20relevant%20this%20is..%21</text>
+              </controlProperties>
+            </control>
+            <control controlID="3" controlTypeID="com.balsamiq.mockups::Label" x="129" y="107" w="122" h="-1" measuredW="117" measuredH="21" zOrder="3" locked="false" isInGroup="5">
+              <controlProperties>
+                <italic>true</italic>
+                <text>FaceBuzzBookFeed</text>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="6" controlTypeID="com.balsamiq.mockups::Tree" x="29" y="127" w="171" h="225" measuredW="300" measuredH="225" zOrder="6" locked="false" isInGroup="24">
+          <controlProperties>
+            <backgroundAlpha>0.25</backgroundAlpha>
+            <selectedIndex>-1</selectedIndex>
+            <text>Stuff%20you%20like%0A%20stuff%0A%20you%0AStuff%20other%20people%20like%0A%20kinda%0A%20relevant%0AStuff%20nobody%20likes%0A%20bad%0A%20example</text>
+          </controlProperties>
+        </control>
+        <control controlID="7" controlTypeID="com.balsamiq.mockups::Title" x="29" y="82" w="-1" h="-1" measuredW="159" measuredH="43" zOrder="7" locked="false" isInGroup="24">
+          <controlProperties>
+            <color>16777215</color>
+            <text>See%20also</text>
+          </controlProperties>
+        </control>
+        <control controlID="8" controlTypeID="com.balsamiq.mockups::StickyNote" x="0" y="367" w="-1" h="-1" measuredW="109" measuredH="123" zOrder="8" locked="false" isInGroup="24">
+          <controlProperties>
+            <text>%22See%20also%22%20links%20change%20the%20search</text>
+          </controlProperties>
+        </control>
+        <control controlID="9" controlTypeID="com.balsamiq.mockups::StickyNote" x="224" y="443" w="172" h="147" measuredW="109" measuredH="123" zOrder="9" locked="false" isInGroup="24">
+          <controlProperties>
+            <text>Results%20are%20in%20bubbles.%20%20%22FaceBuzzBookFeed%22%20is%20the%20source%2C%20which%20could%20be%20db%20name%20or%20from%20a%20custom%20db-%3Ename%20mapping.</text>
+          </controlProperties>
+        </control>
+        <control controlID="10" controlTypeID="com.balsamiq.mockups::StickyNote" x="534" y="443" w="131" h="114" measuredW="109" measuredH="123" zOrder="10" locked="false" isInGroup="24">
+          <controlProperties>
+            <text>Links%20open%20the%20source%20document%20in%20the%20lightbox%20viewer</text>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="26" controlTypeID="__group__" x="93" y="634" w="998" h="596" measuredW="998" measuredH="596" zOrder="3" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="0" y="0" w="887" h="596" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="26">
+          <controlProperties>
+            <color>3355443</color>
+            <text>Find</text>
+          </controlProperties>
+        </control>
+        <control controlID="10" controlTypeID="__group__" x="0" y="251" w="51" h="152" measuredW="51" measuredH="152" zOrder="2" locked="false" isInGroup="26">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::Canvas" x="0" y="0" w="51" h="152" measuredW="100" measuredH="70" zOrder="0" locked="false" isInGroup="10">
+              <controlProperties>
+                <borderColor>0</borderColor>
+                <borderStyle>roundedSolid</borderStyle>
+                <color>16750848</color>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Icon" x="13" y="64" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="1" locked="false" isInGroup="10">
+              <controlProperties>
+                <icon>GtIcon%7Csmall</icon>
+                <rotation>180</rotation>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="11" controlTypeID="__group__" x="836" y="251" w="51" h="152" measuredW="51" measuredH="152" zOrder="3" locked="false" isInGroup="26">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::Canvas" x="0" y="0" w="51" h="152" measuredW="100" measuredH="70" zOrder="0" locked="false" isInGroup="11">
+              <controlProperties>
+                <borderColor>0</borderColor>
+                <borderStyle>roundedSolid</borderStyle>
+                <color>16750848</color>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Icon" x="13" y="64" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="1" locked="false" isInGroup="11">
+              <controlProperties>
+                <icon>GtIcon%7Csmall</icon>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="12" controlTypeID="__group__" x="72" y="82" w="742" h="476" measuredW="742" measuredH="476" zOrder="1" locked="false" isInGroup="26">
+          <groupChildrenDescriptors>
+            <control controlID="0" controlTypeID="com.balsamiq.mockups::Canvas" x="0" y="0" w="742" h="476" measuredW="100" measuredH="70" zOrder="0" locked="false" isInGroup="12">
+              <controlProperties>
+                <borderStyle>roundedSolid</borderStyle>
+              </controlProperties>
+            </control>
+            <control controlID="1" controlTypeID="com.balsamiq.mockups::Paragraph" x="21" y="63" w="709" h="413" measuredW="275" measuredH="80" zOrder="1" locked="false" isInGroup="12">
+              <controlProperties>
+                <text>Lorem%20ipsum%20dolor%20sit%20amet%2C%20usu%20et%20diam%20placerat%20disputando%2C%20delenit%20minimum%20invidunt%20has%20ad.%20Eos%20porro%20imperdiet%20at.%20An%20usu%20viris%20malorum%20vocibus%2C%20his%20ei%20dolor%20moderatius%20constituam%2C%20elitr%20torquatos%20ex%20quo.%20Cu%20ancillae%20assentior%20voluptaria%20eam%2C%20eos%20quaestio%20explicari%20adversarium%20cu.%20Alii%20saperet%20te%20sed%2C%20adolescens%20argumentum%20ad%20vix.%0A%20%0AClita%20phaedrum%20constituto%20id%20vis%2C%20id%20quod%20soleat%20abhorreant%20pri%2C%20postea%20meliore%20ut%20usu.%20Vix%20utinam%20splendide%20prodesset%20et%2C%20sint%20omittam%20sententiae%20vis%20in.%20Ne%20zril%20accommodare%20eum%2C%20id%20sit%20laudem%20nominavi%20explicari%2C%20ex%20has%20case%20nulla.%20Mel%20accumsan%20vituperata%20ei%2C%20no%20qui%20utroque%20dissentias.%0A%20%0AInvenire%20neglegentur%20nam%20ea.%20Est%20bonorum%20corrumpit%20no%2C%20no%20utroque%20patrioque%20moderatius%20vis.%20Volutpat%20similique%20eu%20mel%2C%20ius%20no%20esse%20nostrum.%20Ei%20bonorum%20invenire%20duo%2C%20ubique%20appareat%20corrumpit%20in%20mel.%20Mazim%20periculis%20qui%20ei%2C%20ius%20ex%20brute%20signiferumque%2C%20quodsi%20platonem%20argumentum%20cum%20an.%20Has%20eius%20doctus%20ad.%20Eu%20vix%20posse%20civibus%20argumentum%2C%20eu%20nullam%20detraxit%20indoctum%20qui.%0A%20%0ASea%20ut%20munere%20fastidii%20dissentiet.%20Sed%20nusquam%20officiis%20postulant%20at.%20Delectus%20prodesset%20eos%20et%2C%20ullum%20iudico%20possit%20ei%20mei.%20Pri%20corrumpit%20voluptatum%20at%2C%20in%20unum%20tota%20pertinax%20mei%2C%20nec%20harum%20fierent%20appareat%20id.%20Has%20an%20dicat%20harum%20vitae.%20Et%20zril%20atomorum%20disputando%20sed%2C%20id%20sit%20dicit%20tamquam%20hendrerit.%0A%20%0ABrute%20contentiones%20necessitatibus%20vim%20te%2C%20quo%20in%20oblique%20tacimates%20antiopam.%20Magna%20urbanitas%20usu%20an%2C%20sit%20ipsum%20volumus%20theophrastus%20et%2C%20at%20ius%20adhuc%20mucius.%20Cum%20vitae%20dignissim%20aliquando%20cu%2C%20sit%20ex%20elitr%20ubique%20graecis.%20Ut%20eos%20modo%20nullam%2C%20nam%20mucius%20nusquam%20atomorum%20no.%20Ei%20mel%20mollis%20perpetua%2C%20nam%20ex%20intellegebat%20necessitatibus.</text>
+              </controlProperties>
+            </control>
+            <control controlID="2" controlTypeID="com.balsamiq.mockups::Webcam" x="538" y="72" w="-1" h="-1" measuredW="177" measuredH="146" zOrder="2" locked="false" isInGroup="12"/>
+            <control controlID="3" controlTypeID="com.balsamiq.mockups::Map" x="36" y="239" w="-1" h="-1" measuredW="252" measuredH="222" zOrder="3" locked="false" isInGroup="12"/>
+            <control controlID="4" controlTypeID="com.balsamiq.mockups::Title" x="21" y="26" w="-1" h="-1" measuredW="624" measuredH="31" zOrder="4" locked="false" isInGroup="12">
+              <controlProperties>
+                <size>28</size>
+                <text>10%20things%20you%20won%27t%20believe%20that%20you%20won%27t%20believe%21</text>
+              </controlProperties>
+            </control>
+          </groupChildrenDescriptors>
+        </control>
+        <control controlID="13" controlTypeID="com.balsamiq.mockups::StickyNote" x="836" y="410" w="162" h="131" measuredW="109" measuredH="123" zOrder="4" locked="false" isInGroup="26">
+          <controlProperties>
+            <text>Orange%20tabs%20are%20for%20going%20next%20and%20previous%20through%20your%20search%20results.</text>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+  </controls>
+</mockup>
