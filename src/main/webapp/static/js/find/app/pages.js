@@ -3,12 +3,11 @@ define([
     'find/app/router',
     'find/app/vent',
     'find/app/page/first-page',
-    'find/app/page/second-page',
     'find/app/page/find-settings-page',
     'find/app/page/find-users-page',
     'find/app/page/about-page',
     'i18n!find/nls/bundle'
-], function(AbstractPages, router, vent, FirstPage, SecondPage, SettingsPage, UsersPage, AboutPage, i18n) {
+], function(AbstractPages, router, vent, FirstPage, SettingsPage, UsersPage, AboutPage, i18n) {
 
     return AbstractPages.extend({
 
@@ -28,13 +27,6 @@ define([
                     , label: 'First Page'
                     , icon: 'icon-thumbs-down'
                     , group: false
-                    , classes: ''
-                }, {
-                    constructor: SecondPage
-                    , pageName: 'second-page'
-                    , label: 'Second Page'
-                    , icon: false
-                    , group: 'group'
                     , classes: ''
                 }, {
                     constructor: SettingsPage
