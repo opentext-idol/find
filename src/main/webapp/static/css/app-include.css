@@ -41,7 +41,6 @@ html, body {
     left: 0;
     top: 0;
     right: 0;
-    bottom: 32px;
     overflow: auto;
     -webkit-transition: bottom 0.5s ease;
     transition: bottom 0.5s ease;
@@ -175,4 +174,75 @@ html, body {
     .show-footer .wrapper {
         bottom: 260px;
     }
+}
+
+
+/* find 2.0 */
+body, .main-content {
+    background-color: rgb(116, 130, 143);
+}
+
+.find {
+    margin: 18% auto;
+    text-align: center;
+}
+
+.find-logo {
+    background: url('../img/Find-2.png');
+    margin: 10px auto;
+    height: 200px;
+    width:555px;
+}
+
+.find-logo-small {
+    width: 145px;
+    height: 30px;
+    position: absolute;
+    top: 10px;
+    background: url('../img/Find-2.png');
+    background-size: 96px 35px;
+    background-repeat: no-repeat;
+    /*display: none;*/
+}
+
+input.find-input {
+    padding-right:26px;
+    width:100%;
+}
+
+form.form-search {
+    position: relative;
+    margin: 0 auto;
+    width:35%;
+}
+
+form.form-search:before {
+    content:'';
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-image: url(http://getbootstrap.com/2.3.2/assets/img/glyphicons-halflings.png);
+    background-position: -48px 0;
+    position: absolute;
+    top:8px;
+    right:-30px;
+    opacity: .5;
+    z-index: 1000;
+}
+.main-results-container, .suggested-links-container {
+    background-color: white;
+    border-radius: 5px;
+    width: 35%;
+    padding: 5px 10px;
+    border: 1px solid rgb(113, 112, 112);
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.suggested-links-container.span3{
+    display: none;
+}
+
+.main-results-container:not(:first-child) {
+    margin-left: 0;
 }
