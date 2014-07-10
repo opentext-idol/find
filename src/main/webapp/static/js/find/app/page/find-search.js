@@ -1,11 +1,12 @@
 define([
     'js-utils/js/base-page',
     'find/app/model/entity-collection',
+    'find/app/model/documents-collection',
     'text!find/templates/app/page/find-search.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/suggestions-container.html',
     'colorbox'
-], function(BasePage, EntityCollection, template, resultsTemplate, suggestionsTemplate) {
+], function(BasePage, EntityCollection, DocumentsCollection, template, resultsTemplate, suggestionsTemplate) {
 
     return BasePage.extend({
 
@@ -19,6 +20,7 @@ define([
 
         initialize: function() {
             this.entityCollection = new EntityCollection();
+            this.documentsCollection = new DocumentsCollection();
         },
 
         render: function() {
@@ -39,6 +41,32 @@ define([
                     }))
                 }, this);
             });
+
+            this.listenTo(this.documentsCollection, 'add', function(model) {
+                var reference = model.get('reference');
+
+                var $newResult = $(_.template(resultsTemplate ,{
+                    title: model.get('title'),
+                    reference: reference,
+                    weight: model.get('weight')
+                }));
+
+                this.$('.main-results-content').append($newResult);
+
+                $newResult.find('.result-header').colorbox({
+                    iframe: true,
+                    width:'70%',
+                    height:'70%',
+                    href: reference,
+                    rel: 'results'
+                });
+            });
+
+            this.listenTo(this.documentsCollection, 'remove', function(model) {
+                var reference = model.get('reference');
+
+                this.$('[data-reference="' + reference + '"]').remove();
+            });
         },
 
         keyupAnimation: function() {
@@ -56,34 +84,12 @@ define([
 
         searchRequest: function() {
             var input = this.$('.find-input').val();
-            $.ajax({
-                url: 'https://api.idolondemand.com/1/api/sync/querytextindex/v1',
+
+            this.documentsCollection.fetch({
                 data: {
-                    text: input,
-                    apikey: 'XYZ123ABC'
-                },
-                success: _.bind(function(data, status) {
-                    this.$('.main-results-content').empty();
-
-                    _.each(data.documents, function(doc) {
-                        var $newResult = $(_.template(resultsTemplate ,{
-                            title: doc.title,
-                            reference: doc.reference,
-                            weight: doc.weight
-                        }));
-
-                        $('.main-results-content').append($newResult);
-
-                        $newResult.find('.result-header').colorbox({
-                            iframe: true,
-                            width:'70%',
-                            height:'70%',
-                            href: doc.reference,
-                            rel: 'results'
-                        });
-                    }, this);
-                }, this)
-            });
+                    text: input
+                }
+            }, this);
 
             this.entityCollection.fetch({
                 data: {
