@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/search/find-related-concepts")
+@RequestMapping("/search/find-related-concepts")
 public class RelatedConceptsController {
 
     @Autowired
