@@ -31,7 +31,7 @@ define([
             Backbone.history.start();
 
             if (!window.location.hash || window.location.hash === "#undefined" || window.location.hash === "undefined") {
-                vent.navigate('find/first-page');
+                vent.navigate('find/find-search');
             }
 
             testBrowser();

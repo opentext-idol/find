@@ -2,12 +2,12 @@ define([
     'js-utils/js/abstract-pages',
     'find/app/router',
     'find/app/vent',
-    'find/app/page/first-page',
+    'find/app/page/find-search',
     'find/app/page/find-settings-page',
     'find/app/page/find-users-page',
     'find/app/page/about-page',
     'i18n!find/nls/bundle'
-], function(AbstractPages, router, vent, FirstPage, SettingsPage, UsersPage, AboutPage, i18n) {
+], function(AbstractPages, router, vent, FindSearch, SettingsPage, UsersPage, AboutPage, i18n) {
 
     return AbstractPages.extend({
 
@@ -22,8 +22,8 @@ define([
         initializePages: function() {
             this.pages = [
                 {
-                    constructor: FirstPage
-                    , pageName: 'first-page'
+                    constructor: FindSearch
+                    , pageName: 'find-search'
                     , label: 'First Page'
                     , icon: 'icon-thumbs-down'
                     , group: false

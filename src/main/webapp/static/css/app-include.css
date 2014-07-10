@@ -179,7 +179,8 @@ html, body {
 
 /* find 2.0 */
 body, .main-content {
-    background-color: rgb(116, 130, 143);
+    /*background-color: rgb(116, 130, 143);*/
+    background-color: rgb(59, 66, 72);
 }
 
 .find {
@@ -188,7 +189,9 @@ body, .main-content {
 }
 
 .find-logo {
-    background: url('../img/Find-2.png');
+    background: url('../img/Find-3.png');
+    background-position: center;
+    background-repeat: no-repeat;
     margin: 10px auto;
     height: 200px;
     width:555px;
@@ -199,7 +202,7 @@ body, .main-content {
     height: 30px;
     position: absolute;
     top: 10px;
-    background: url('../img/Find-2.png');
+    background: url('../img/Find-3.png');
     background-size: 96px 35px;
     background-repeat: no-repeat;
     /*display: none;*/
@@ -245,4 +248,17 @@ form.form-search:before {
 
 .main-results-container:not(:first-child) {
     margin-left: 0;
+}
+
+.suggestions-content li {
+    list-style: none;
+}
+
+.suggestion-item {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.suggestion-item:hover {
+    font-size: larger;
 }

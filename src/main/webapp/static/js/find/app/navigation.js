@@ -37,9 +37,9 @@ define([
 
             return {
                 appName: i18n['app.name'],
-                brandRoute: 'find/first-page',
+                brandRoute: 'find/find-search',
                 navLeft: [
-                    _.findWhere(pages, {pageName: 'first-page'}),
+                    _.findWhere(pages, {pageName: 'find-search'}),
                     {
                         icon: 'icon-hand-down',
                         label: 'Placeholder Group',
