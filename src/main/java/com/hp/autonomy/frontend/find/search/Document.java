@@ -1,5 +1,6 @@
 package com.hp.autonomy.frontend.find.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class Document {
 
     @Setter
     @JsonPOJOBuilder(withPrefix = "set")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Builder {
 
         private String reference;
