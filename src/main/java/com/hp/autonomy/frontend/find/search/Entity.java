@@ -32,7 +32,7 @@ public class Entity {
 
     @Setter
     @JsonPOJOBuilder(withPrefix = "set")
-    private static class Builder {
+    public static class Builder {
         private String text;
         private int docsWithPhrase;
         private int occurrences;
