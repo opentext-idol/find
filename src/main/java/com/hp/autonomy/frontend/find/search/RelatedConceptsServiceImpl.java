@@ -1,13 +1,15 @@
 package com.hp.autonomy.frontend.find.search;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SearchServiceImpl implements SearchService {
+@Service
+public class RelatedConceptsServiceImpl implements RelatedConceptsService {
 
     @Autowired
     private RestTemplate restTemplate;
