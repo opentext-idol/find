@@ -2,11 +2,13 @@ define([
     'js-utils/js/base-page',
     'find/app/model/entity-collection',
     'find/app/model/documents-collection',
+    'find/app/router',
+    'find/app/vent',
     'text!find/templates/app/page/find-search.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/suggestions-container.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, template, resultsTemplate, suggestionsTemplate) {
+], function(BasePage, EntityCollection, DocumentsCollection, router, vent, template, resultsTemplate, suggestionsTemplate) {
 
     return BasePage.extend({
 
@@ -21,6 +23,8 @@ define([
         initialize: function() {
             this.entityCollection = new EntityCollection();
             this.documentsCollection = new DocumentsCollection();
+
+            router.on('route:search', this.searchNavigation, this);
         },
 
         render: function() {
@@ -79,12 +83,16 @@ define([
             },1000);
             this.$('.suggested-links-container.span3').show();
 
-            this.searchRequest();
+            this.searchRequest(this.$('.find-input').val());
         },
 
-        searchRequest: function() {
-            var input = this.$('.find-input').val();
+        searchNavigation: function(input) {
+            this.$('.find-input').val(input);
 
+            this.keyupAnimation();
+        },
+
+        searchRequest: function(input) {
             this.documentsCollection.fetch({
                 data: {
                     text: input
@@ -96,6 +104,8 @@ define([
                     text: input
                 }
             });
+
+            vent.navigate('find/find-search/' + encodeURIComponent(input), {trigger: false});
         }
     });
 });
