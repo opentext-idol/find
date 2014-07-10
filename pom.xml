@@ -680,7 +680,7 @@
         <dependency>
             <groupId>com.jacklmoore</groupId>
             <artifactId>colorbox</artifactId>
-            <version>1.3.20.1.CUSTOM</version>
+            <version>1.5.10b</version>
         </dependency>
 
         <dependency>
