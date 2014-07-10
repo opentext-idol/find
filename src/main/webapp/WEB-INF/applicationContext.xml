@@ -150,6 +150,13 @@
         </property>
     </bean>
 
+    <bean class="org.springframework.web.client.RestTemplate">
+        <property name="requestFactory">
+            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory"
+                  p:httpClient-ref="httpClient"/>
+        </property>
+    </bean>
+
     <bean id="jacksonObjectMapperFactoryBean" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
         <property name="featuresToEnable">
             <array>

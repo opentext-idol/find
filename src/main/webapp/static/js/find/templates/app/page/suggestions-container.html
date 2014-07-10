@@ -1,5 +1,10 @@
 <ul>
-    <li><a href='#'><%- title %></a>
-        <ul class="suggestion-cluster"></ul>
+    <li>
+        <a href='#'><%- _.head(entities).get('text') %></a>
+        <ul class="suggestion-cluster">
+            <% _.each(_.tail(entities), function(entity) { %>
+                <li><a href='#'><%- entity.get('text') %></a></li>
+            <% }); %>
+        </ul>
     </li>
 </ul>
