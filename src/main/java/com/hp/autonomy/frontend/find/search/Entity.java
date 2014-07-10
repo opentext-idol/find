@@ -11,15 +11,9 @@ import lombok.Setter;
 public class Entity {
 
     private final String text;
-
-    @JsonProperty("docs_with_phrase")
     private final int docsWithPhrase;
-
     private final int occurrences;
-
-    @JsonProperty("docs_with_all_terms")
     private final int docsWithAllTerms;
-
     private final int cluster;
 
     private Entity(final String text, final int docsWithPhrase, final int occurrences, final int docsWithAllTerms, final int cluster) {
@@ -41,6 +35,16 @@ public class Entity {
 
         public Entity build() {
             return new Entity(text, docsWithPhrase, occurrences, docsWithAllTerms, cluster);
+        }
+
+        @JsonProperty("docs_with_phrase")
+        public void setDocsWithPhrase(final int docsWithPhrase) {
+            this.docsWithPhrase = docsWithPhrase;
+        }
+
+        @JsonProperty("docs_with_all_terms")
+        public void setDocsWithAllTerms(final int docsWithAllTerms) {
+            this.docsWithAllTerms = docsWithAllTerms;
         }
     }
 }
