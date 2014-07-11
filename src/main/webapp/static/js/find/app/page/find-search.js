@@ -25,6 +25,15 @@ define([
             this.documentsCollection = new DocumentsCollection();
 
             router.on('route:search', this.searchNavigation, this);
+
+            router.on('route:find', function(routeName) {
+                if(routeName === 'find-search') {
+                    this.entityCollection.reset();
+                    this.documentsCollection.set([]);
+
+                    this.reverseAnimation();
+                }
+            }, this)
         },
 
         render: function() {
@@ -76,14 +85,21 @@ define([
         keyupAnimation: function() {
             /*fancy animation*/
             this.$('.find-logo').slideUp('slow');
-            this.$('.find').animate({margin:'10px'},1000);
-            this.$('.form-search').animate({
-                width: '63.5%',
-                'margin-left': '26%'
-            },1000);
+            this.$('.find').addClass('animated-container ').removeClass('reverse-animated-container');
+            this.$('.form-search').addClass('animated-form ').removeClass('reverse-animated-form');
+
             this.$('.suggested-links-container.span3').show();
 
             this.searchRequest(this.$('.find-input').val());
+        },
+
+        reverseAnimation: function() {
+            /*fancy reverse animation*/
+            this.$('.find-logo').slideDown('slow');
+            this.$('.find').removeClass('animated-container ').addClass('reverse-animated-container');
+            this.$('.form-search').removeClass('animated-form').addClass('reverse-animated-form');
+
+            this.$('.suggested-links-container.span3').hide();
         },
 
         searchNavigation: function(input) {

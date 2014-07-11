@@ -262,3 +262,30 @@ form.form-search:before {
 .suggestion-item:hover {
     font-size: larger;
 }
+
+/* fancy animation */
+.animated-container {
+    margin:10px;
+    -webkit-transition: margin 1s; /* For Safari 3.1 to 6.0 */
+    transition: margin 1s;
+}
+
+.animated-form {
+    width: 63.5% !important;
+    margin-left: 26% !important;
+    transition: all 1000ms ease;
+    transition-property:width, margin-left;
+}
+/* fancy reverse animation */
+.reverse-animated-container {
+    margin: 18% auto;
+    -webkit-transition: margin 1s; /* For Safari 3.1 to 6.0 */
+    transition: margin 1s;
+}
+
+.reverse-animated-form {
+    width:35%;
+    margin: 0 auto;
+    transition: all 1000ms ease;
+    transition-property:width, margin;
+}
