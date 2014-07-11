@@ -178,9 +178,10 @@ html, body {
 
 
 /* find 2.0 */
-body, .main-content {
+.main-content {
     /*background-color: rgb(116, 130, 143);*/
     background-color: rgb(59, 66, 72);
+    height: 100%;
 }
 
 .find {
