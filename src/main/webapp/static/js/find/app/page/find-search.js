@@ -96,6 +96,7 @@ define([
                 this.searchRequest(this.$('.find-input').val());
             } else {
                 this.reverseAnimation();
+                vent.navigate('find/find-search', {trigger: false});
                 this.$('.main-results-content').empty();
             }
         },
