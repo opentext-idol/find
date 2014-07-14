@@ -178,9 +178,10 @@ html, body {
 
 
 /* find 2.0 */
-body, .main-content {
+.main-content {
     /*background-color: rgb(116, 130, 143);*/
-    background-color: rgb(59, 66, 72);
+    background-color: white;
+    height: 100%;
 }
 
 .find {
@@ -189,7 +190,7 @@ body, .main-content {
 }
 
 .find-logo {
-    background: url('../img/Find-3.png');
+    background: url('../img/Find-5.png');
     background-position: center;
     background-repeat: no-repeat;
     margin: 10px auto;
@@ -202,10 +203,10 @@ body, .main-content {
     height: 30px;
     position: absolute;
     top: 10px;
-    background: url('../img/Find-3.png');
-    background-size: 96px 35px;
+    background: url('../img/Find-5.png');
+    background-size: 96px 30px;
     background-repeat: no-repeat;
-    /*display: none;*/
+    display: none;
 }
 
 input.find-input {
@@ -237,13 +238,21 @@ form.form-search:before {
     border-radius: 5px;
     width: 35%;
     padding: 5px 10px;
-    border: 1px solid rgb(113, 112, 112);
+    border: 1px solid rgb(225, 225, 225);
     margin-bottom: 10px;
-    margin-right: 10px;
 }
 
-.suggested-links-container.span3{
+.suggested-links-container.span2 {
     display: none;
+}
+
+.main-results-content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.main-results-content .span4 {
+    margin-right:10px;
 }
 
 .main-results-container:not(:first-child) {
@@ -261,4 +270,43 @@ form.form-search:before {
 
 .suggestion-item:hover {
     font-size: larger;
+}
+
+/* fancy animation */
+.animated-container {
+    margin:10px;
+    -webkit-transition: margin 1s; /* For Safari 3.1 to 6.0 */
+    transition: margin 1s;
+}
+
+.animated-form {
+    width: 78.5% !important;
+    margin-left: 16.8% !important;
+    transition: all 2000ms ease;
+    transition-property:width, margin-left;
+}
+/* fancy reverse animation */
+.reverse-animated-container {
+    margin: 18% auto;
+    -webkit-transition: margin 1s; /* For Safari 3.1 to 6.0 */
+    transition: margin 1s;
+}
+
+.reverse-animated-form {
+    width:35%;
+    margin: 0 auto;
+    transition: all 1000ms ease;
+    transition-property:width, margin;
+}
+.suggestions-content a {
+    color: #A9C3D2;
+}
+
+.main-content h4 {
+    color:#6C8B9D;
+}
+
+.suggestion-head-text {
+    font-size: 16px;
+    font-weight: 900;
 }

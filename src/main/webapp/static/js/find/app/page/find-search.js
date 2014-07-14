@@ -2,11 +2,13 @@ define([
     'js-utils/js/base-page',
     'find/app/model/entity-collection',
     'find/app/model/documents-collection',
+    'find/app/router',
+    'find/app/vent',
     'text!find/templates/app/page/find-search.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/suggestions-container.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, template, resultsTemplate, suggestionsTemplate) {
+], function(BasePage, EntityCollection, DocumentsCollection, router, vent, template, resultsTemplate, suggestionsTemplate) {
 
     return BasePage.extend({
 
@@ -21,6 +23,20 @@ define([
         initialize: function() {
             this.entityCollection = new EntityCollection();
             this.documentsCollection = new DocumentsCollection();
+
+            this.searchRequest = _.debounce(_.bind(this.searchRequest, this), 500);
+
+            router.on('route:search', function(text) {
+                this.entityCollection.reset();
+                this.documentsCollection.set([]);
+
+                if (text) {
+                    this.$('.find-input').val(text);
+                    this.keyupAnimation();
+                } else {
+                    this.reverseAnimation();
+                }
+            }, this);
         },
 
         render: function() {
@@ -38,7 +54,7 @@ define([
                 _.each(clusters, function(entities) {
                     this.$('.suggestions-content').append(this.suggestionsTemplate({
                         entities: entities
-                    }))
+                    }));
                 }, this);
             });
 
@@ -58,7 +74,8 @@ define([
                     width:'70%',
                     height:'70%',
                     href: reference,
-                    rel: 'results'
+                    rel: 'results',
+                    current: '{current} of {total}'
                 });
             });
 
@@ -71,23 +88,36 @@ define([
 
         keyupAnimation: function() {
             /*fancy animation*/
-            this.$('.find-logo').slideUp('slow');
-            this.$('.find').animate({margin:'10px'},1000);
-            this.$('.form-search').animate({
-                width: '63.5%',
-                'margin-left': '26%'
-            },1000);
-            this.$('.suggested-links-container.span3').show();
+            if($.trim(this.$('.find-input').val()).length) { //checking if input doesn't have any spaces or empty
+                this.$('.find-logo').slideUp('slow');
+                this.$('.find').addClass('animated-container ').removeClass('reverse-animated-container');
+                this.$('.form-search').addClass('animated-form ').removeClass('reverse-animated-form');
 
-            this.searchRequest();
+                this.$('.suggested-links-container.span2, .find-logo-small').show();
+
+                this.searchRequest(this.$('.find-input').val());
+            } else {
+                this.reverseAnimation();
+                vent.navigate('find/find-search', {trigger: false});
+                this.$('.main-results-content').empty();
+            }
         },
 
-        searchRequest: function() {
-            var input = this.$('.find-input').val();
+        reverseAnimation: function() {
+            /*fancy reverse animation*/
+            this.$('.find-logo').slideDown('slow');
+            this.$('.find').removeClass('animated-container ').addClass('reverse-animated-container');
+            this.$('.form-search').removeClass('animated-form').addClass('reverse-animated-form');
 
+            this.$('.suggested-links-container.span2, .find-logo-small').hide();
+            this.$('.find-input').val('');
+        },
+
+        searchRequest: function(input) {
             this.documentsCollection.fetch({
                 data: {
-                    text: input
+                    text: input,
+                    max_results: 30
                 }
             }, this);
 
@@ -96,6 +126,8 @@ define([
                     text: input
                 }
             });
+
+            vent.navigate('find/find-search/' + encodeURIComponent(input), {trigger: false});
         }
     });
 });
