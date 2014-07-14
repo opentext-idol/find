@@ -245,6 +245,12 @@ form.form-search:before {
 .suggested-links-container.span2 {
     display: none;
 }
+
+.main-results-content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .main-results-content .span4 {
     margin-right:10px;
 }

@@ -73,7 +73,8 @@ define([
                     width:'70%',
                     height:'70%',
                     href: reference,
-                    rel: 'results'
+                    rel: 'results',
+                    current: '{current} of {total}'
                 });
             });
 
