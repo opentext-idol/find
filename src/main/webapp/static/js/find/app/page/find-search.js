@@ -24,6 +24,8 @@ define([
             this.entityCollection = new EntityCollection();
             this.documentsCollection = new DocumentsCollection();
 
+            this.searchRequest = _.debounce(_.bind(this.searchRequest, this), 500);
+
             router.on('route:search', this.searchNavigation, this);
 
             router.on('route:find', function(routeName) {
@@ -100,6 +102,7 @@ define([
             this.$('.form-search').removeClass('animated-form').addClass('reverse-animated-form');
 
             this.$('.suggested-links-container.span3').hide();
+            this.$('.find-input').val('');
         },
 
         searchNavigation: function(input) {
