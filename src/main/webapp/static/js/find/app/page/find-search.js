@@ -86,13 +86,18 @@ define([
 
         keyupAnimation: function() {
             /*fancy animation*/
-            this.$('.find-logo').slideUp('slow');
-            this.$('.find').addClass('animated-container ').removeClass('reverse-animated-container');
-            this.$('.form-search').addClass('animated-form ').removeClass('reverse-animated-form');
+            if($.trim(this.$('.find-input').val()).length) { //checking if input doesn't have any spaces or empty
+                this.$('.find-logo').slideUp('slow');
+                this.$('.find').addClass('animated-container ').removeClass('reverse-animated-container');
+                this.$('.form-search').addClass('animated-form ').removeClass('reverse-animated-form');
 
-            this.$('.suggested-links-container.span3').show();
+                this.$('.suggested-links-container.span3').show();
 
-            this.searchRequest(this.$('.find-input').val());
+                this.searchRequest(this.$('.find-input').val());
+            } else {
+                this.reverseAnimation();
+                this.$('.main-results-content').empty();
+            }
         },
 
         reverseAnimation: function() {
