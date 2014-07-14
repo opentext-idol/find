@@ -91,7 +91,7 @@ define([
                 this.$('.find').addClass('animated-container ').removeClass('reverse-animated-container');
                 this.$('.form-search').addClass('animated-form ').removeClass('reverse-animated-form');
 
-                this.$('.suggested-links-container.span3').show();
+                this.$('.suggested-links-container.span2').show();
 
                 this.searchRequest(this.$('.find-input').val());
             } else {
@@ -107,7 +107,7 @@ define([
             this.$('.find').removeClass('animated-container ').addClass('reverse-animated-container');
             this.$('.form-search').removeClass('animated-form').addClass('reverse-animated-form');
 
-            this.$('.suggested-links-container.span3').hide();
+            this.$('.suggested-links-container.span2').hide();
             this.$('.find-input').val('');
         },
 
@@ -120,7 +120,8 @@ define([
         searchRequest: function(input) {
             this.documentsCollection.fetch({
                 data: {
-                    text: input
+                    text: input,
+                    max_results: 30
                 }
             }, this);
 

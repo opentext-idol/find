@@ -19,9 +19,10 @@ public class DocumentsController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<Document> query(
-        @RequestParam("text") final String text
+        @RequestParam("text") final String text,
+        @RequestParam("max_results") final int max_results
     ) {
-        return documentsService.queryTextIndex(text);
+        return documentsService.queryTextIndex(text, max_results);
     }
 
 }

@@ -240,11 +240,13 @@ form.form-search:before {
     padding: 5px 10px;
     border: 1px solid rgb(225, 225, 225);
     margin-bottom: 10px;
-    margin-right: 10px;
 }
 
-.suggested-links-container.span3{
+.suggested-links-container.span2 {
     display: none;
+}
+.main-results-content .span4 {
+    margin-right:10px;
 }
 
 .main-results-container:not(:first-child) {
@@ -272,9 +274,9 @@ form.form-search:before {
 }
 
 .animated-form {
-    width: 63.5% !important;
-    margin-left: 26% !important;
-    transition: all 1000ms ease;
+    width: 78.5% !important;
+    margin-left: 16.8% !important;
+    transition: all 2000ms ease;
     transition-property:width, margin-left;
 }
 /* fancy reverse animation */

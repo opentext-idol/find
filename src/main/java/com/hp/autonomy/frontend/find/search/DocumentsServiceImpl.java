@@ -19,11 +19,12 @@ public class DocumentsServiceImpl implements DocumentsService {
     private ApiKeyService apiKeyService;
 
     @Override
-    public List<Document> queryTextIndex(final String text) {
+    public List<Document> queryTextIndex(final String text, final int max_results) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("text", text);
+        parameters.put("max_results", max_results);
         parameters.put("apikey", apiKeyService.getApiKey());
 
-        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/querytextindex/v1?apikey={apikey}&text={text}", Documents.class, parameters).getDocuments();
+        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/querytextindex/v1?apikey={apikey}&max_results={max_results}&text={text}", Documents.class, parameters).getDocuments();
     }
 }
