@@ -26,16 +26,17 @@ define([
 
             this.searchRequest = _.debounce(_.bind(this.searchRequest, this), 500);
 
-            router.on('route:search', this.searchNavigation, this);
+            router.on('route:search', function(text) {
+                this.entityCollection.reset();
+                this.documentsCollection.set([]);
 
-            router.on('route:find', function(routeName) {
-                if(routeName === 'find-search') {
-                    this.entityCollection.reset();
-                    this.documentsCollection.set([]);
-
+                if (text) {
+                    this.$('.find-input').val(text);
+                    this.keyupAnimation();
+                } else {
                     this.reverseAnimation();
                 }
-            }, this)
+            }, this);
         },
 
         render: function() {
@@ -110,12 +111,6 @@ define([
 
             this.$('.suggested-links-container.span2, .find-logo-small').hide();
             this.$('.find-input').val('');
-        },
-
-        searchNavigation: function(input) {
-            this.$('.find-input').val(input);
-
-            this.keyupAnimation();
         },
 
         searchRequest: function(input) {
