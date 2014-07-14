@@ -206,7 +206,7 @@ html, body {
     background: url('../img/Find-5.png');
     background-size: 96px 30px;
     background-repeat: no-repeat;
-    /*display: none;*/
+    display: none;
 }
 
 input.find-input {

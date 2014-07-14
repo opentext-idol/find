@@ -53,7 +53,7 @@ define([
                 _.each(clusters, function(entities) {
                     this.$('.suggestions-content').append(this.suggestionsTemplate({
                         entities: entities
-                    }))
+                    }));
                 }, this);
             });
 
@@ -92,7 +92,7 @@ define([
                 this.$('.find').addClass('animated-container ').removeClass('reverse-animated-container');
                 this.$('.form-search').addClass('animated-form ').removeClass('reverse-animated-form');
 
-                this.$('.suggested-links-container.span2').show();
+                this.$('.suggested-links-container.span2, .find-logo-small').show();
 
                 this.searchRequest(this.$('.find-input').val());
             } else {
@@ -108,7 +108,7 @@ define([
             this.$('.find').removeClass('animated-container ').addClass('reverse-animated-container');
             this.$('.form-search').removeClass('animated-form').addClass('reverse-animated-form');
 
-            this.$('.suggested-links-container.span2').hide();
+            this.$('.suggested-links-container.span2, .find-logo-small').hide();
             this.$('.find-input').val('');
         },
 
