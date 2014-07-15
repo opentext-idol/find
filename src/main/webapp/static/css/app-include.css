@@ -229,12 +229,15 @@ form.form-search:before {
     width: 24px;
     height: 24px;
     background-image: url(http://getbootstrap.com/2.3.2/assets/img/glyphicons-halflings.png);
-    background-position: -48px 0;
+    background-position: -60px 0;
+    background-size: 600px;
     position: absolute;
-    top:17px;
-    right:-30px;
+    top: 17px;
+    right: -24px;
     opacity: .5;
     z-index: 1000;
+
+
 }
 .main-results-container, .suggested-links-container {
     background-color: white;
