@@ -94,7 +94,6 @@ define([
                     rel: 'results',
                     current: '{current} of {total}'
                 });
-                $('#colorbox').append(_.template(colorboxControlsTemplate));
             });
 
             this.listenTo(this.documentsCollection, 'remove', function(model) {
@@ -102,6 +101,7 @@ define([
 
                 this.$('[data-reference="' + reference + '"]').remove();
             });
+            $('#colorbox').append(_.template(colorboxControlsTemplate));
         },
 
         keyupAnimation: function() {
