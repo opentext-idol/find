@@ -376,3 +376,24 @@ form.form-search:before {
     background-color: #F6950D;
     outline: 0 none;
 }
+/* end of btn-warning override from the bootstrap-custom */
+#cboxLoadedContent {
+    margin-top:28px;
+}
+
+#cboxCurrent {
+    position: absolute;
+    bottom: 4px;
+    color: #949494;
+    border-radius: 5px;
+    height: 24px;
+    left: 50%;
+    line-height: 32px;
+    margin: -16px 0 0 -100px;
+    text-align: center;
+    width: 105px;
+}
+
+#cboxClose {
+    top:0;
+}

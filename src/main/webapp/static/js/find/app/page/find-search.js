@@ -92,7 +92,10 @@ define([
                     height:'70%',
                     href: reference,
                     rel: 'results',
-                    current: '{current} of {total}'
+                    current: '{current} of {total}',
+                    onLoad: function() {
+                       $('#cboxPrevious, #cboxNext').remove();
+                    }
                 });
             });
 
