@@ -310,3 +310,21 @@ form.form-search:before {
     font-size: 16px;
     font-weight: 900;
 }
+
+.main-results-content .loading-spinner {
+    border: 1px solid #A9C3D2;
+    border-radius: 5px;
+    height: 32px;
+    left: 50%;
+    line-height: 32px;
+    margin: -16px 0 0 -100px;
+    padding: 5px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    width: 200px;
+}
+
+.suggestions-content .loading-spinner {
+    text-align: center;
+}

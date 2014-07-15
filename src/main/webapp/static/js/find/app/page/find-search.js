@@ -7,8 +7,9 @@ define([
     'text!find/templates/app/page/find-search.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/suggestions-container.html',
+    'text!find/templates/app/page/loading-spinner.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, router, vent, template, resultsTemplate, suggestionsTemplate) {
+], function(BasePage, EntityCollection, DocumentsCollection, router, vent, template, resultsTemplate, suggestionsTemplate, loadingSpinnerTemplate) {
 
     return BasePage.extend({
 
@@ -42,8 +43,16 @@ define([
         render: function() {
             this.$el.html(this.template());
 
-            this.$('.find-form').submit(function(e){
+            this.$('.find-form').submit(function(e){ //preventing input form submit and page reload
                 e.preventDefault();
+            });
+
+            this.listenTo(this.documentsCollection, 'request', function() {
+                this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
+            });
+
+            this.listenTo(this.entityCollection, 'request', function() {
+                this.$('.suggestions-content').append(_.template(loadingSpinnerTemplate));
             });
 
             this.listenTo(this.entityCollection, 'reset', function() {
@@ -60,6 +69,8 @@ define([
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 var reference = model.get('reference');
+
+                this.$('.main-results-content .loading-spinner').remove();
 
                 var $newResult = $(_.template(resultsTemplate ,{
                     title: model.get('title'),
