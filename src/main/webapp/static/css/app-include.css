@@ -200,11 +200,11 @@ html, body {
 
 .find-logo-small {
     width: 145px;
-    height: 30px;
+    height: 40px;
     position: absolute;
-    top: 10px;
+    top: 18px;
     background: url('../img/Find-5.png');
-    background-size: 96px 30px;
+    background-size: 117px 38px;
     background-repeat: no-repeat;
     display: none;
 }
@@ -212,6 +212,9 @@ html, body {
 input.find-input {
     padding-right:26px;
     width:100%;
+    height: 40px;
+    font-size: 34px;
+    line-height: initial;
 }
 
 form.form-search {
@@ -228,7 +231,7 @@ form.form-search:before {
     background-image: url(http://getbootstrap.com/2.3.2/assets/img/glyphicons-halflings.png);
     background-position: -48px 0;
     position: absolute;
-    top:8px;
+    top:17px;
     right:-30px;
     opacity: .5;
     z-index: 1000;
@@ -312,21 +315,28 @@ form.form-search:before {
 }
 
 .main-results-content .loading-spinner {
-    border: 1px solid #A9C3D2;
     border-radius: 5px;
     height: 32px;
     left: 50%;
     line-height: 32px;
     margin: -16px 0 0 -100px;
-    padding: 5px;
+    padding: 20px;
     position: absolute;
     text-align: center;
     top: 50%;
     width: 200px;
+    font-size: 28px;
+    color: #6C8B9D;
+}
+
+.main-results-content .loading-spinner i, .suggested-links-container .loading-spinner i {
+    color:#A9C3D2;
 }
 
 .suggested-links-container .loading-spinner {
     text-align: center;
+    font-size: 18px;
+    color: #6C8B9D;
 }
 
 #colorbox .prevBtn, #colorbox .nextBtn {
