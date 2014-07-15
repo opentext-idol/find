@@ -8,8 +8,10 @@ define([
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/suggestions-container.html',
     'text!find/templates/app/page/loading-spinner.html',
+    'text!find/templates/app/page/colorbox-controls.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, router, vent, template, resultsTemplate, suggestionsTemplate, loadingSpinnerTemplate) {
+], function(BasePage, EntityCollection, DocumentsCollection, router, vent, template, resultsTemplate,
+            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate) {
 
     return BasePage.extend({
 
@@ -111,6 +113,7 @@ define([
                 this.$('.suggested-links-container.span2, .find-logo-small').show();
 
                 this.searchRequest(this.$('.find-input').val());
+                $('#colorbox').append(_.template(colorboxControlsTemplate));
             } else {
                 this.reverseAnimation();
                 vent.navigate('find/find-search', {trigger: false});
