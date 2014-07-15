@@ -94,6 +94,7 @@ define([
                     rel: 'results',
                     current: '{current} of {total}'
                 });
+                $('#colorbox').append(_.template(colorboxControlsTemplate));
             });
 
             this.listenTo(this.documentsCollection, 'remove', function(model) {
@@ -113,7 +114,6 @@ define([
                 this.$('.suggested-links-container.span2, .find-logo-small').show();
 
                 this.searchRequest(this.$('.find-input').val());
-                $('#colorbox').append(_.template(colorboxControlsTemplate));
             } else {
                 this.reverseAnimation();
                 vent.navigate('find/find-search', {trigger: false});
