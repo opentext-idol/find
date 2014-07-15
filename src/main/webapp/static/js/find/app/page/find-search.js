@@ -102,6 +102,8 @@ define([
                 this.$('[data-reference="' + reference + '"]').remove();
             });
             $('#colorbox').append(_.template(colorboxControlsTemplate));
+            $('.nextBtn').on('click', this.handleNextResult);
+            $('.prevBtn').on('click', this.handlePrevResult);
         },
 
         keyupAnimation: function() {
@@ -120,6 +122,16 @@ define([
                 this.$('.main-results-content').empty();
             }
         },
+
+        handlePrevResult: function() {
+            $.colorbox.prev();
+        },
+
+        handleNextResult: function() {
+            $.colorbox.next();
+        },
+
+
 
         reverseAnimation: function() {
             /*fancy reverse animation*/
