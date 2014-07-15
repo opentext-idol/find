@@ -325,6 +325,6 @@ form.form-search:before {
     width: 200px;
 }
 
-.suggestions-content .loading-spinner {
+.suggested-links-container .loading-spinner {
     text-align: center;
 }

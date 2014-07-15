@@ -48,11 +48,15 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'request', function() {
-                this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
+                if(!this.$('.main-results-container').length) {
+                    this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
+                }
             });
 
             this.listenTo(this.entityCollection, 'request', function() {
-                this.$('.suggestions-content').append(_.template(loadingSpinnerTemplate));
+                if(!this.$('.suggestions-content ul').length) {
+                   this.$('.suggestions-content').append(_.template(loadingSpinnerTemplate));
+                }
             });
 
             this.listenTo(this.entityCollection, 'reset', function() {
