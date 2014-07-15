@@ -31,10 +31,10 @@ define([
                 this.documentsCollection.set([]);
 
                 if (text) {
-                    this.$('.find-input').val(text);
+                    this.$('.find-input').val(text); //when clicking one of the suggested search links
                     this.keyupAnimation();
                 } else {
-                    this.reverseAnimation();
+                    this.reverseAnimation(); //when clicking the small 'find' logo
                 }
             }, this);
         },
