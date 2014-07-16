@@ -75,7 +75,6 @@ define([
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 var reference = model.get('reference');
-                var sourceLink = '<a href=' + '"' + reference + '"' + '>...</a>';
                 var summary = model.get('summary').split('').slice(0, model.get('summary').lastIndexOf(" ",300)).join('');
 
                 this.$('.main-results-content .loading-spinner').remove();
@@ -89,7 +88,7 @@ define([
 
                 this.$('.main-results-content').append($newResult);
 
-                $newResult.find('.result-header').colorbox({
+                $newResult.find('.result-header, .result-summary a').colorbox({
                     iframe: true,
                     width:'70%',
                     height:'70%',
