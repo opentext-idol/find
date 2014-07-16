@@ -410,3 +410,7 @@ form.form-search:before {
 #cboxClose {
     top:0;
 }
+
+.result-summary {
+    text-align: justify;
+}

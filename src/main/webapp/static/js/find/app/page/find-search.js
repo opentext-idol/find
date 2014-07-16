@@ -75,13 +75,16 @@ define([
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 var reference = model.get('reference');
+                var sourceLink = '<a href=' + '"' + reference + '"' + '>...</a>';
+                var summary = model.get('summary').split('').slice(0, model.get('summary').lastIndexOf(" ",300)).join('');
 
                 this.$('.main-results-content .loading-spinner').remove();
 
                 var $newResult = $(_.template(resultsTemplate ,{
                     title: model.get('title'),
                     reference: reference,
-                    index: model.get('index')
+                    index: model.get('index'),
+                    summary: summary
                 }));
 
                 this.$('.main-results-content').append($newResult);
@@ -150,7 +153,8 @@ define([
             this.documentsCollection.fetch({
                 data: {
                     text: input,
-                    max_results: 30
+                    max_results: 30,
+                    summary: 'quick'
                 }
             }, this);
 

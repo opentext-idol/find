@@ -20,9 +20,10 @@ public class DocumentsController {
     @ResponseBody
     public List<Document> query(
         @RequestParam("text") final String text,
-        @RequestParam("max_results") final int max_results
+        @RequestParam("max_results") final int max_results,
+        @RequestParam("summary") final String summary
     ) {
-        return documentsService.queryTextIndex(text, max_results);
+        return documentsService.queryTextIndex(text, max_results, summary);
     }
 
 }
