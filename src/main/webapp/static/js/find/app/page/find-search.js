@@ -81,7 +81,7 @@ define([
                 var $newResult = $(_.template(resultsTemplate ,{
                     title: model.get('title'),
                     reference: reference,
-                    weight: model.get('weight')
+                    index: model.get('index')
                 }));
 
                 this.$('.main-results-content').append($newResult);
@@ -94,7 +94,7 @@ define([
                     rel: 'results',
                     current: '{current} of {total}',
                     onLoad: function() {
-                       $('#cboxPrevious, #cboxNext').remove();
+                       $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
                     }
                 });
             });
