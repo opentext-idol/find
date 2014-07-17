@@ -2,6 +2,7 @@ define([
     'js-utils/js/base-page',
     'find/app/model/entity-collection',
     'find/app/model/documents-collection',
+    'find/app/model/indexes-collection',
     'find/app/router',
     'find/app/vent',
     'text!find/templates/app/page/find-search.html',
@@ -10,7 +11,7 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/colorbox-controls.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, router, vent, template, resultsTemplate,
+], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate) {
 
     return BasePage.extend({
@@ -26,6 +27,9 @@ define([
         initialize: function() {
             this.entityCollection = new EntityCollection();
             this.documentsCollection = new DocumentsCollection();
+            this.indexesCollection = new IndexesCollection();
+
+            this.indexesCollection.fetch();
 
             this.searchRequest = _.debounce(_.bind(this.searchRequest, this), 500);
 
@@ -43,7 +47,9 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template());
+            this.$el.html(this.template({
+                indexes: this.indexesCollection
+            }));
 
             this.$('.find-form').submit(function(e){ //preventing input form submit and page reload
                 e.preventDefault();
@@ -57,7 +63,7 @@ define([
 
             this.listenTo(this.entityCollection, 'request', function() {
                 if(!this.$('.suggestions-content ul').length) {
-                   this.$('.suggestions-content').append(_.template(loadingSpinnerTemplate));
+                    this.$('.suggestions-content').append(_.template(loadingSpinnerTemplate));
                 }
             });
 
@@ -96,7 +102,7 @@ define([
                     rel: 'results',
                     current: '{current} of {total}',
                     onLoad: function() {
-                       $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
                     }
                 });
             });
@@ -115,8 +121,8 @@ define([
             /*fancy animation*/
             if($.trim(this.$('.find-input').val()).length) { //checking if input doesn't have any spaces or empty
                 this.$('.find-logo').slideUp('slow');
-                this.$('.find').addClass('animated-container ').removeClass('reverse-animated-container');
-                this.$('.form-search').addClass('animated-form ').removeClass('reverse-animated-form');
+                this.$('.find').addClass('animated-container').removeClass('reverse-animated-container');
+                this.$('.form-search').addClass('animated-form').removeClass('reverse-animated-form');
 
                 this.$('.suggested-links-container.span2, .find-logo-small').show();
 
@@ -136,8 +142,6 @@ define([
             $.colorbox.next();
         },
 
-
-
         reverseAnimation: function() {
             /*fancy reverse animation*/
             this.$('.find-logo').slideDown('slow');
@@ -153,7 +157,8 @@ define([
                 data: {
                     text: input,
                     max_results: 30,
-                    summary: 'quick'
+                    summary: 'quick',
+                    indexes: ''//'wiki_eng' //specify the index database
                 }
             }, this);
 

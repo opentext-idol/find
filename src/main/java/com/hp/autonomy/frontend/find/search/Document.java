@@ -15,15 +15,15 @@ public class Document {
     private final String reference;
     private final double weight;
     private final List<String> links;
-    private final String index;
+    private final String indexes;
     private final String title;
     private final String summary;
 
-    private Document(final String reference, final double weight, final List<String> links, final String index, final String title, final String summary) {
+    private Document(final String reference, final double weight, final List<String> links, final String indexes, final String title, final String summary) {
         this.reference = reference;
         this.weight = weight;
         this.links = links;
-        this.index = index;
+        this.indexes = indexes;
         this.title = title;
         this.summary = summary;
     }
@@ -36,12 +36,12 @@ public class Document {
         private String reference;
         private double weight;
         private List<String> links;
-        private String index;
+        private String indexes;
         private String title;
         private String summary;
 
         public Document build() {
-            return new Document(reference, weight, links, index, title, summary);
+            return new Document(reference, weight, links, indexes, title, summary);
         }
 
     }

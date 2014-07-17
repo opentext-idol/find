@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface DocumentsService {
 
-    List<Document> queryTextIndex(String text, int max_results, String summary);
+    List<Document> queryTextIndex(String text, int max_results, String summary, String indexes);
 
 }

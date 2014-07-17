@@ -9,5 +9,7 @@
         <% } %>
     </p>
 
-    <em class="pull-right">Database: <%- index %></em>
+    <% if(index) { %>
+        <em class="pull-right">Database: <%- index %></em>
+    <% } %>
 </div>
