@@ -286,7 +286,7 @@ form.form-search:before {
 }
 
 .animated-form {
-    width: 78.5% !important;
+    width: 76.5% !important;
     margin-left: 16.8% !important;
     transition: all 2000ms ease;
     transition-property:width, margin-left;
@@ -413,4 +413,26 @@ form.form-search:before {
 
 .result-summary {
     text-align: justify;
+}
+
+.popover .arrow {
+    display: none;
+}
+
+.list-indexes {
+    position: absolute;
+    top: 14px;
+    right: -65px;
+    opacity: .5;
+    z-index: 1000;
+    font-size: 22px;
+    cursor:pointer;
+}
+
+.popover {
+    width: 150px;
+}
+
+.popover-content h6 {
+    margin:0;
 }

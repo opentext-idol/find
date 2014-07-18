@@ -20,9 +20,10 @@ public class RelatedConceptsController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<Entity> findRelatedConcepts(
-            @RequestParam("text") final String text
+            @RequestParam("text") final String text,
+            @RequestParam("indexes") final String indexes
     ) {
-        return relatedConceptsService.findRelatedConcepts(text);
+        return relatedConceptsService.findRelatedConcepts(text, indexes);
     }
 
 }

@@ -27,6 +27,6 @@ public class DocumentsServiceImpl implements DocumentsService {
         parameters.put("indexes", indexes);
         parameters.put("apikey", apiKeyService.getApiKey());
 
-        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/querytextindex/v1?apikey={apikey}&max_results={max_results}&text={text}&summary={summary}", Documents.class, parameters).getDocuments();
+        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/querytextindex/v1?apikey={apikey}&max_results={max_results}&text={text}&summary={summary}&indexes={indexes}", Documents.class, parameters).getDocuments();
     }
 }
