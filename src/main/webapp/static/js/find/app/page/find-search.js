@@ -37,7 +37,7 @@ define([
             this.documentsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
 
-            this.searchRequest = _.debounce(_.bind(this.searchRequest, this), 500);
+            this.keyupAnimation = _.debounce(_.bind(this.keyupAnimation, this), 200);
 
             router.on('route:search', function(text) {
                 this.entityCollection.reset();
