@@ -25,7 +25,7 @@ define([
         events: {
             'keyup .find-input': 'keyupAnimation',
             'click .list-indexes': function() {
-                this.indexesCollection.fetch();
+               this.indexesCollection.fetch();
             },
             'change [name="indexRadios"]': function(e) {
                 this.indexes = $(e.currentTarget).val();
