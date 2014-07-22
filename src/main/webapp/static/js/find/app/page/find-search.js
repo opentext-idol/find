@@ -10,17 +10,19 @@ define([
     'text!find/templates/app/page/suggestions-container.html',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/colorbox-controls.html',
-    'text!find/templates/app/page/popover-contents.html',
+    'text!find/templates/app/page/index-popover-contents.html',
+    'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
 ], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, template, resultsTemplate,
-            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, popoverContents) {
+            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopoverContents, topResultsPopoverContents) {
 
     return BasePage.extend({
 
         template: _.template(template),
         resultsTemplate: _.template(resultsTemplate),
         suggestionsTemplate: _.template(suggestionsTemplate),
-        popoverContents: _.template(popoverContents),
+        indexPopoverContents: _.template(indexPopoverContents),
+        topResultsPopoverContents: _.template(topResultsPopoverContents),
 
         events: {
             'keyup .find-input': 'keyupAnimation',
@@ -29,15 +31,27 @@ define([
             },
             'change [name="indexRadios"]': function(e) {
                 this.indexes = $(e.currentTarget).val();
+
                 if(this.$('.find-input').val()){
                     this.searchRequest(this.$('.find-input').val());
                 }
+            },
+            'mouseover .suggestions-content a': function(e) {
+                this.topResultsCollection.fetch({
+                    data: {
+                        text: $(e.currentTarget).html(),
+                        max_results: 3,
+                        summary: 'quick',
+                        indexes: this.indexes || 'wiki_eng'
+                    }
+                });
             }
         },
 
         initialize: function() {
             this.entityCollection = new EntityCollection();
             this.documentsCollection = new DocumentsCollection();
+            this.topResultsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
 
             this.keyupAnimation = _.debounce(_.bind(this.keyupAnimation, this), 200);
@@ -68,26 +82,36 @@ define([
                 placement: 'bottom'
             });
 
+            /*indices popover*/
             this.listenTo(this.indexesCollection, 'request', function(){
-                if(!this.$('.popover-content .radio').length) {
-                    this.$('.popover-content').append(_.template(loadingSpinnerTemplate));
+                if(!this.$('.find-form .popover-content').length) {
+                    this.$('.find-form  .popover-content').append(_.template(loadingSpinnerTemplate));
                 }
             });
 
             this.listenTo(this.indexesCollection, 'add', function(model){
-                this.$('.popover-content .loading-spinner').remove();
+                this.$('.find-form  .popover-content .loading-spinner').remove();
 
-                this.$('.popover-content').append(this.popoverContents({
+                this.$('.find-form .popover-content').append(this.indexPopoverContents({
                     index: model.get('index')
                 }));
             });
 
-            this.listenTo(this.documentsCollection, 'request', function() {
-                if(!this.$('.main-results-container').length) {
-                    this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
-                }
+            /*top 3 results popover*/
+            this.listenTo(this.topResultsCollection, 'request', function(){
+                this.$('.suggestion-cluster  .popover-content').append(_.template(loadingSpinnerTemplate));
             });
 
+            this.listenTo(this.topResultsCollection, 'add', function(model){
+                this.$('.suggestion-cluster .popover-content .loading-spinner').remove();
+
+                this.$('.suggestion-cluster .popover-content').append(this.topResultsPopoverContents({
+                    title: model.get('title'),
+                    summary: $.trim(model.get('summary')).substring(0, 100).trim(this) + "..."
+                }));
+            });
+
+            /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
                 if(!this.$('.suggestions-content ul').length) {
                     this.$('.suggestions-content').append(_.template(loadingSpinnerTemplate));
@@ -103,7 +127,22 @@ define([
                     this.$('.suggestions-content').append(this.suggestionsTemplate({
                         entities: entities
                     }));
+
+                    this.$('.suggestion-cluster li a').popover({
+                        html: true,
+                        content: '<h6>Top Results</h6>',
+                        placement: 'right',
+                        trigger: 'hover',
+                        width: '600px'
+                    })
                 }, this);
+            });
+
+            /*main results content*/
+            this.listenTo(this.documentsCollection, 'request', function() {
+                if(!this.$('.main-results-container').length) {
+                    this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
+                }
             });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
@@ -134,7 +173,7 @@ define([
                 });
 
                 $newResult.find('.dots').click(function (e) {
-                    $newResult.find('.result-header').trigger('click')
+                    $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
                     e.preventDefault()
                 })
             });
@@ -144,6 +183,8 @@ define([
 
                 this.$('[data-reference="' + reference + '"]').remove();
             });
+
+            /*colorbox fancy button override*/
             $('#colorbox').append(_.template(colorboxControlsTemplate));
             $('.nextBtn').on('click', this.handleNextResult);
             $('.prevBtn').on('click', this.handlePrevResult);
@@ -182,6 +223,7 @@ define([
 
             this.$('.suggested-links-container.span2, .find-logo-small').hide();
             this.$('.find-input').val('');
+            this.$('.popover').remove();
         },
 
         searchRequest: function(input) {

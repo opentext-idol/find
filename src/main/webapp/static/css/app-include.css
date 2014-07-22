@@ -427,8 +427,12 @@ form.form-search:before {
     text-align: justify;
 }
 
-.popover .arrow {
+.find-form .popover .arrow {
     display: none;
+}
+
+.suggestion-cluster .popover {
+    width: 250px;
 }
 
 .list-indexes {
