@@ -53,6 +53,7 @@ define([
             this.documentsCollection = new DocumentsCollection();
             this.topResultsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
+            this.indexes = 'wiki_eng'; //hardcoding a default value
 
             this.keyupAnimation = _.debounce(_.bind(this.keyupAnimation, this), 200);
 
@@ -95,6 +96,8 @@ define([
                 this.$('.find-form .popover-content').append(this.indexPopoverContents({
                     index: model.get('index')
                 }));
+
+                model.get('index') == this.indexes ? this.$('[name="indexRadios"]').attr('checked', true): false;
             });
 
             /*top 3 results popover*/
