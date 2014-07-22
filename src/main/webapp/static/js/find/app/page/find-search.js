@@ -121,7 +121,7 @@ define([
 
                 this.$('.main-results-content').append($newResult);
 
-                $newResult.find('.result-header, .result-summary a').colorbox({
+                $newResult.find('.result-header').colorbox({
                     iframe: true,
                     width:'70%',
                     height:'70%',
@@ -132,6 +132,11 @@ define([
                         $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
                     }
                 });
+
+                $newResult.find('.dots').click(function (e) {
+                    $newResult.find('.result-header').trigger('click')
+                    e.preventDefault()
+                })
             });
 
             this.listenTo(this.documentsCollection, 'remove', function(model) {
