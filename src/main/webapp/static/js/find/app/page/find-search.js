@@ -29,6 +29,9 @@ define([
             },
             'change [name="indexRadios"]': function(e) {
                 this.indexes = $(e.currentTarget).val();
+                if(this.$('.find-input').val()){
+                    this.searchRequest(this.$('.find-input').val());
+                }
             }
         },
 

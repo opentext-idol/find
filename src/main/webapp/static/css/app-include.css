@@ -266,7 +266,7 @@ form.form-search:before {
     flex-wrap: wrap;
 }
 
-.main-results-content .span4 {
+.main-results-content .span6 {
     margin-right:10px;
 }
 
@@ -295,8 +295,8 @@ form.form-search:before {
 }
 
 .animated-form {
-    width: 76.5% !important;
-    margin-left: 16.8% !important;
+    width: 78.5% !important;
+    margin-left: 16.8% !important;;
     transition: all 2000ms ease;
     transition-property:width, margin-left;
 }
@@ -341,6 +341,11 @@ form.form-search:before {
     color: #6C8B9D;
 }
 
+.main-results-container p {
+    line-height: 31px;
+    font-size: 17px;
+}
+
 .main-results-content .loading-spinner i, .suggested-links-container .loading-spinner i {
     color:#A9C3D2;
 }
@@ -370,7 +375,7 @@ form.form-search:before {
     left: -5px;
 }
 
-/* overriding bootstrap-custom's btn-warnings. */
+/* overriding bootstrap-custom's btn-primary. */
 /* remove the bootstrap-custom eventually? */
 .btn-primary, .btn-primary:focus {
     color: #ffffff;
