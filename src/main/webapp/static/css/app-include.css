@@ -398,7 +398,7 @@ form.form-search:before {
 }
 
 .btn-primary:focus {
-    background-color: #A9C3D2;
+    background-color: #8B9FAA;
     outline: 0 none;
 }
 /* end of btn-warning override from the bootstrap-custom */
