@@ -45,6 +45,13 @@ define([
                         indexes: this.indexes || 'wiki_eng'
                     }
                 });
+            },
+            'mouseover .entity-to-summary': function(e) {
+                var title = $(e.currentTarget).find('a').html();
+                this.$('[data-title="'+ title +'"]').addClass('label label-primary entity-to-summary');
+            },
+            'mouseleave .entity-to-summary': function() {
+                this.$('.suggestions-content li a').removeClass('label label-primary entity-to-summary');
             }
         },
 
@@ -139,6 +146,12 @@ define([
                         width: '600px'
                     })
                 }, this);
+
+                this.documentsCollection.each(function(document) {
+                    var summary = this.addLinksToSummary(document.get('summary'));
+
+                    this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
+                }, this);
             });
 
             /*main results content*/
@@ -150,7 +163,9 @@ define([
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 var reference = model.get('reference');
-                var summary = model.get('summary').split('').slice(0, model.get('summary').lastIndexOf(" ",300)).join('');
+                var summary = model.get('summary');
+
+                summary = this.addLinksToSummary(summary);
 
                 this.$('.main-results-content .loading-spinner').remove();
 
@@ -176,9 +191,9 @@ define([
                 });
 
                 $newResult.find('.dots').click(function (e) {
+                    e.preventDefault();
                     $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
-                    e.preventDefault()
-                })
+                });
             });
 
             this.listenTo(this.documentsCollection, 'remove', function(model) {
@@ -191,6 +206,28 @@ define([
             $('#colorbox').append(_.template(colorboxControlsTemplate));
             $('.nextBtn').on('click', this.handleNextResult);
             $('.prevBtn').on('click', this.handlePrevResult);
+        },
+
+        addLinksToSummary: function(summary) {
+            //creating an array of the entity titles, longest first
+            var entities = this.entityCollection.map(function(entity) {
+                return {
+                    text: entity.get('text'),
+                    id:  _.uniqueId()
+                }
+            }).sort(function(a,b) {
+                return b.text.length - a.text.length;
+            });
+
+            _.each(entities, function(entity) {
+                summary = summary.replace(new RegExp('\\b' + entity.text + '\\b', 'gi'), entity.id)
+            });
+
+            _.each(entities, function(entity) {
+                summary = summary.replace(new RegExp(entity.id, 'g'), '<span class="label label-info entity-to-summary"><a href="#find/find-search/'+entity.text+'">' + entity.text + '</a></span>');
+            });
+
+            return summary;
         },
 
         keyupAnimation: function() {

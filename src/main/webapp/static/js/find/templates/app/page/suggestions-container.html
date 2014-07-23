@@ -1,10 +1,10 @@
 <ul>
     <li>
         <% var headText = _.head(entities).get('text') %>
-        <a href='#find/find-search/<%-headText%>' class="suggestion-head-text"><%- headText %></a>
+        <a href='#find/find-search/<%-headText%>' class="suggestion-head-text" data-title="<%- headText %>"><%- headText %></a>
         <ul class="suggestion-cluster">
             <% _.each(_.tail(entities), function(entity) { %>
-                <li><a href="#find/find-search/<%-entity.get('text')%>"><%- entity.get('text') %></a></li>
+                <li><a href="#find/find-search/<%-entity.get('text')%>" data-title="<%- entity.get('text') %>"><%- entity.get('text') %></a></li>
             <% }); %>
         </ul>
     </li>
