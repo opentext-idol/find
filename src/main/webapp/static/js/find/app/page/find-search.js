@@ -219,7 +219,7 @@ define([
             });
 
             _.each(entities, function(entity) {
-                summary = summary.replace(new RegExp('\\b' + entity.text + '\\b', 'gi'), entity.id)
+                summary = summary.replace(new RegExp(entity.text, 'gi'), entity.id)
             });
 
             _.each(entities, function(entity) {
