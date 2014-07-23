@@ -142,8 +142,7 @@ define([
                         html: true,
                         content: '<h6>Top Results</h6>',
                         placement: 'right',
-                        trigger: 'hover',
-                        width: '600px'
+                        trigger: 'hover'
                     })
                 }, this);
 
