@@ -92,7 +92,7 @@ define([
 
             /*indices popover*/
             this.listenTo(this.indexesCollection, 'request', function(){
-                if(!this.$('.find-form .popover-content').length) {
+                if(this.$('.find-form .popover-content').length==1) {
                     this.$('.find-form  .popover-content').append(_.template(loadingSpinnerTemplate));
                 }
             });
