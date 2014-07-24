@@ -48,10 +48,11 @@ define([
             },
             'mouseover .entity-to-summary': function(e) {
                 var title = $(e.currentTarget).find('a').html();
-                this.$('[data-title="'+ title +'"]').addClass('label label-primary entity-to-summary');
+                this.$('[data-title="'+ title +'"]').addClass('label label-primary entity-to-summary').removeClass('label-info');
             },
             'mouseleave .entity-to-summary': function() {
                 this.$('.suggestions-content li a').removeClass('label label-primary entity-to-summary');
+                this.$('.main-results-content .entity-to-summary').removeClass('label-primary').addClass('label-info');
             }
         },
 
@@ -223,7 +224,7 @@ define([
             });
 
             _.each(entities, function(entity) {
-                summary = summary.replace(new RegExp(entity.id, 'g'), '<span class="label label-info entity-to-summary"><a href="#find/find-search/'+entity.text+'">' + entity.text + '</a></span>');
+                summary = summary.replace(new RegExp(entity.id, 'g'), '<span class="label label-info entity-to-summary" data-title="'+entity.text+'"><a href="#find/find-search/'+entity.text+'">' + entity.text + '</a></span>');
             });
 
             return summary;
