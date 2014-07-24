@@ -474,3 +474,16 @@ a.entity-to-summary {
 .entity-to-summary a:hover {
     text-decoration: none;
 }
+
+@media only screen and (max-width: 1210px) {
+    .find-input {
+        height:25px !important;
+        font-size: 24px !important;
+    }
+    .list-indexes {
+        top: 8px;
+    }
+    form.form-search:before {
+        top:9px;
+    }
+}
