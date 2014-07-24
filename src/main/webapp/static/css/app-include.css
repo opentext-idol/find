@@ -427,7 +427,7 @@ form.form-search:before {
     text-align: justify;
 }
 
-.find-form .popover .arrow {
+.popover .arrow {
     display: none;
 }
 
