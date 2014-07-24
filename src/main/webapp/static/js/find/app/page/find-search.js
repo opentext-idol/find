@@ -26,9 +26,9 @@ define([
 
         events: {
             'keyup .find-input': 'keyupAnimation',
-            'click .list-indexes': function() {
-               this.indexesCollection.fetch();
-            },
+            'click .list-indexes': _.debounce(function(){
+                this.indexesCollection.fetch();
+            }, 500, true),
             'change [name="indexRadios"]': function(e) {
                 this.indexes = $(e.currentTarget).val();
 
@@ -36,7 +36,8 @@ define([
                     this.searchRequest(this.$('.find-input').val());
                 }
             },
-            'mouseover .suggestions-content a': function(e) {
+            'mouseover .suggestions-content a': _.debounce(function(e) {
+                this.$('.suggestion-cluster  .popover-content').append(_.template(loadingSpinnerTemplate));
                 this.topResultsCollection.fetch({
                     data: {
                         text: $(e.currentTarget).html(),
@@ -45,7 +46,7 @@ define([
                         indexes: this.indexes || 'wiki_eng'
                     }
                 });
-            },
+            }, 400),
             'mouseover .entity-to-summary': function(e) {
                 var title = $(e.currentTarget).find('a').html();
                 this.$('[data-title="'+ title +'"]').addClass('label label-primary entity-to-summary').removeClass('label-info');
@@ -109,10 +110,6 @@ define([
             });
 
             /*top 3 results popover*/
-            this.listenTo(this.topResultsCollection, 'request', function(){
-                this.$('.suggestion-cluster  .popover-content').append(_.template(loadingSpinnerTemplate));
-            });
-
             this.listenTo(this.topResultsCollection, 'add', function(model){
                 this.$('.suggestion-cluster .popover-content .loading-spinner').remove();
 
