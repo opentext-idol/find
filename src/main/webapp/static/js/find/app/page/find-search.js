@@ -37,7 +37,7 @@ define([
                 }
             },
             'mouseover .suggestions-content a': _.debounce(function(e) {
-                this.$('.suggestion-cluster  .popover-content').append(_.template(loadingSpinnerTemplate));
+                this.$('.suggestions-content  .popover-content').append(_.template(loadingSpinnerTemplate));
                 this.topResultsCollection.fetch({
                     data: {
                         text: $(e.currentTarget).html(),
@@ -111,9 +111,9 @@ define([
 
             /*top 3 results popover*/
             this.listenTo(this.topResultsCollection, 'add', function(model){
-                this.$('.suggestion-cluster .popover-content .loading-spinner').remove();
+                this.$('.suggestions-content .popover-content .loading-spinner').remove();
 
-                this.$('.suggestion-cluster .popover-content').append(this.topResultsPopoverContents({
+                this.$('.suggestions-content .popover-content').append(this.topResultsPopoverContents({
                     title: model.get('title'),
                     summary: $.trim(model.get('summary')).substring(0, 100).trim(this) + "..."
                 }));
@@ -136,7 +136,7 @@ define([
                         entities: entities
                     }));
 
-                    this.$('.suggestion-cluster li a').popover({
+                    this.$('.suggestions-content li a').popover({
                         html: true,
                         content: '<h6>Top Results</h6>',
                         placement: 'right',
