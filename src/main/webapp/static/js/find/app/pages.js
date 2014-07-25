@@ -3,11 +3,8 @@ define([
     'find/app/router',
     'find/app/vent',
     'find/app/page/find-search',
-    'find/app/page/find-settings-page',
-    'find/app/page/find-users-page',
-    'find/app/page/about-page',
     'i18n!find/nls/bundle'
-], function(AbstractPages, router, vent, FindSearch, SettingsPage, UsersPage, AboutPage, i18n) {
+], function(AbstractPages, router, vent, FindSearch, i18n) {
 
     return AbstractPages.extend({
 
@@ -27,27 +24,6 @@ define([
                     , label: 'First Page'
                     , icon: 'icon-thumbs-down'
                     , group: false
-                    , classes: ''
-                }, {
-                    constructor: SettingsPage
-                    , pageName: 'settings'
-                    , label: i18n['app.settings']
-                    , icon: false
-                    , group: 'settings'
-                    , classes: 'hide-from-non-useradmin'
-                }, {
-                    constructor: UsersPage
-                    , pageName: 'users'
-                    , label: i18n['app.users']
-                    , icon: false
-                    , group: 'settings'
-                    , classes: 'hide-from-non-useradmin'
-                }, {
-                    constructor: AboutPage
-                    , pageName: 'about'
-                    , label: i18n['app.about']
-                    , icon: false
-                    , group: 'settings'
                     , classes: ''
                 }
             ];

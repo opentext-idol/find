@@ -1,11 +1,10 @@
 define([
     'backbone',
     'find/app/pages',
-    'find/app/navigation',
     'find/app/util/test-browser',
     'find/app/vent',
     'text!find/templates/app/app.html'
-], function(Backbone, Pages, Navigation, testBrowser, vent, template) {
+], function(Backbone, Pages, testBrowser, vent, template) {
     return Backbone.View.extend({
 
         el: '.page',
@@ -16,10 +15,6 @@ define([
             jQuery.ajaxSetup({ cache: false });
 
             this.pages = new Pages();
-
-            this.navigation = new Navigation({
-                pages: this.pages
-            });
 
             this.render();
 
@@ -35,10 +30,8 @@ define([
         render: function() {
             this.$el.html(this.template());
 
-            this.navigation.render();
             this.pages.render();
 
-            this.$('.header').append(this.navigation.el);
             this.$('.content').append(this.pages.el);
         }
 
