@@ -217,7 +217,7 @@ define([
             });
 
             _.each(entities, function(entity) {
-                summary = summary.replace(new RegExp(entity.text, 'gi'), entity.id)
+                summary = summary.replace(new RegExp('(^|\\s|[,.-:;?\'"!\\(\\)\\[\\]{}])' + entity.text + '($|\\s|[,.-:;?\'"!\\(\\)\\[\\]{}])', 'gi'), '$1' + entity.id + '$2');
             });
 
             _.each(entities, function(entity) {
