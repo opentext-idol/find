@@ -221,7 +221,7 @@ define([
             });
 
             _.each(entities, function(entity) {
-                summary = summary.replace(new RegExp(entity.id, 'g'), '<span class="label label-info entity-to-summary" data-title="'+entity.text+'"><a href="#find/find-search/'+entity.text+'">' + entity.text + '</a></span>');
+                summary = summary.replace(new RegExp(entity.id, 'g'), '<span class="label label-info entity-to-summary" data-title="'+entity.text+'"><a href="#find/search/'+entity.text+'">' + entity.text + '</a></span>');
             });
 
             return summary;
@@ -238,7 +238,7 @@ define([
                 this.searchRequest(this.$('.find-input').val());
             } else {
                 this.reverseAnimation();
-                vent.navigate('find/find-search', {trigger: false});
+                vent.navigate('find/search', {trigger: false});
                 this.$('.main-results-content').empty();
             }
             this.$('.popover').remove();
@@ -280,7 +280,7 @@ define([
                 }
             });
 
-            vent.navigate('find/find-search/' + encodeURIComponent(input), {trigger: false});
+            vent.navigate('find/search/' + encodeURIComponent(input), {trigger: false});
         }
     });
 });

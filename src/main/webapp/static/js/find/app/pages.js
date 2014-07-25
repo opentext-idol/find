@@ -20,7 +20,7 @@ define([
             this.pages = [
                 {
                     constructor: FindSearch
-                    , pageName: 'find-search'
+                    , pageName: 'search'
                     , label: 'First Page'
                     , icon: 'icon-thumbs-down'
                     , group: false

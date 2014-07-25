@@ -4,7 +4,7 @@ define([
     var Router = Backbone.Router.extend({
 
         routes: {
-            'find/find-search(/:text)': 'search',
+            'find/search(/:text)': 'search',
             'find/:page': 'find'
         },
 
@@ -15,7 +15,7 @@ define([
         },
 
         search: function() {
-            this.trigger('route:find', 'find-search');
+            this.trigger('route:find', 'search');
         }
 
     });
