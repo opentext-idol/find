@@ -183,11 +183,6 @@ define([
                     current: '{current} of {total}',
                     onComplete: _.bind(function() {
                         $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-
-                        /*colorbox fancy button override*/
-                        $('#colorbox').append(_.template(colorboxControlsTemplate));
-                        $('.nextBtn').on('click', this.handleNextResult);
-                        $('.prevBtn').on('click', this.handlePrevResult);
                     }, this)
                 });
 
@@ -202,6 +197,11 @@ define([
 
                 this.$('[data-reference="' + reference + '"]').remove();
             });
+
+            /*colorbox fancy button override*/
+            $('#colorbox').append(_.template(colorboxControlsTemplate));
+            $('.nextBtn').on('click', this.handleNextResult);
+            $('.prevBtn').on('click', this.handlePrevResult);
         },
 
         addLinksToSummary: function(summary) {
