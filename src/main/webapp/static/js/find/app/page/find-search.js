@@ -114,7 +114,7 @@ define([
 
                 this.$('.suggestions-content .popover-content').append(this.topResultsPopoverContents({
                     title: model.get('title'),
-                    summary: $.trim(model.get('summary')).substring(0, 100).trim(this) + "..."
+                    summary: model.get('summary').trim().substring(0, 100) + "..."
                 }));
             });
 
