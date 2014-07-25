@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.AccessLevel;
@@ -15,17 +16,18 @@ import java.util.List;
 @JsonDeserialize(builder = Indexes.Builder.class)
 public class Indexes {
 
-    private final List<Index> public_index;
+    private final List<Index> publicIndex;
 
     @Setter
     @JsonPOJOBuilder(withPrefix = "set")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Builder {
 
-        private List<Index> public_index;
+        @JsonProperty("public_index")
+        private List<Index> publicIndex;
 
         public Indexes build() {
-            return new Indexes(public_index);
+            return new Indexes(publicIndex);
         }
 
     }

@@ -22,6 +22,6 @@ public class IndexesServiceImpl implements IndexesService {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("apikey", apiKeyService.getApiKey());
 
-        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/listindexes/v1?apikey={apikey}", Indexes.class, parameters).getPublic_index();
+        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/listindexes/v1?apikey={apikey}", Indexes.class, parameters).getPublicIndex();
     }
 }
