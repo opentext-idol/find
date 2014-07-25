@@ -377,7 +377,7 @@ form.form-search:before {
 
 /* overriding bootstrap-custom's btn-primary. */
 /* remove the bootstrap-custom eventually? */
-.btn-primary, .btn-primary:focus {
+.btn-colorbox, .btn-colorbox:focus {
     color: #ffffff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #A9C3D2;
@@ -388,7 +388,7 @@ form.form-search:before {
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
 
-.btn-primary:active {
+.btn-colorbox:active {
     background-color: #8B9FAA;
     background-image: none;
     outline: 0;
@@ -397,7 +397,7 @@ form.form-search:before {
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
 }
 
-.btn-primary:focus {
+.btn-colorbox:focus {
     background-color: #8B9FAA;
     outline: 0 none;
 }
@@ -477,8 +477,8 @@ a.entity-to-summary {
 
 @media only screen and (max-width: 1210px) {
     .find-input {
-        height:25px !important;
-        font-size: 24px !important;
+        height:25px;
+        font-size: 24px;
     }
     .list-indexes {
         top: 8px;

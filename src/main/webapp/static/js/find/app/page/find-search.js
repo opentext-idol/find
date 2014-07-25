@@ -38,12 +38,13 @@ define([
             },
             'mouseover .suggestions-content a': _.debounce(function(e) {
                 this.$('.suggestions-content  .popover-content').append(_.template(loadingSpinnerTemplate));
+
                 this.topResultsCollection.fetch({
                     data: {
                         text: $(e.currentTarget).html(),
                         max_results: 3,
                         summary: 'quick',
-                        indexes: this.indexes || 'wiki_eng'
+                        indexes: this.indexes
                     }
                 });
             }, 400),
@@ -63,8 +64,6 @@ define([
             this.topResultsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
             this.indexes = 'wiki_eng'; //hardcoding a default value
-
-            this.keyupAnimation = _.debounce(_.bind(this.keyupAnimation, this), 200);
 
             router.on('route:search', function(text) {
                 this.entityCollection.reset();
@@ -94,7 +93,7 @@ define([
 
             /*indices popover*/
             this.listenTo(this.indexesCollection, 'request', function(){
-                if(this.$('.find-form .popover-content').length==1) {
+                if(this.$('.find-form .popover-content').length === 1) {
                     this.$('.find-form  .popover-content').append(_.template(loadingSpinnerTemplate));
                 }
             });
@@ -106,7 +105,7 @@ define([
                     index: model.get('index')
                 }));
 
-                model.get('index') == this.indexes ? this.$('[name="indexRadios"]').attr('checked', true): false;
+                model.get('index') === this.indexes ? this.$('[name="indexRadios"]').val([this.indexes]): false;
             });
 
             /*top 3 results popover*/
@@ -182,9 +181,14 @@ define([
                     href: reference,
                     rel: 'results',
                     current: '{current} of {total}',
-                    onLoad: function() {
+                    onComplete: _.bind(function() {
                         $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-                    }
+
+                        /*colorbox fancy button override*/
+                        $('#colorbox').append(_.template(colorboxControlsTemplate));
+                        $('.nextBtn').on('click', this.handleNextResult);
+                        $('.prevBtn').on('click', this.handlePrevResult);
+                    }, this)
                 });
 
                 $newResult.find('.dots').click(function (e) {
@@ -198,11 +202,6 @@ define([
 
                 this.$('[data-reference="' + reference + '"]').remove();
             });
-
-            /*colorbox fancy button override*/
-            $('#colorbox').append(_.template(colorboxControlsTemplate));
-            $('.nextBtn').on('click', this.handleNextResult);
-            $('.prevBtn').on('click', this.handlePrevResult);
         },
 
         addLinksToSummary: function(summary) {
@@ -227,7 +226,7 @@ define([
             return summary;
         },
 
-        keyupAnimation: function() {
+        keyupAnimation: _.debounce(function() {
             /*fancy animation*/
             if($.trim(this.$('.find-input').val()).length) { //checking if input doesn't have any spaces or empty
                 this.$('.find-logo').slideUp('slow');
@@ -242,7 +241,7 @@ define([
                 this.$('.main-results-content').empty();
             }
             this.$('.popover').remove();
-        },
+        }, 500),
 
         handlePrevResult: function() {
             $.colorbox.prev();
@@ -269,14 +268,14 @@ define([
                     text: input,
                     max_results: 30,
                     summary: 'quick',
-                    indexes: this.indexes || 'wiki_eng'
+                    indexes: this.indexes
                 }
             }, this);
 
             this.entityCollection.fetch({
                 data: {
                     text: input,
-                    indexes: this.indexes || 'wiki_eng'
+                    indexes: this.indexes
                 }
             });
 
