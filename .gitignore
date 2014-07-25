@@ -16,3 +16,4 @@ target/
 # Archetype
 filter-dev.properties
 src/main/webapp/lib/
+.vagrant/
