@@ -2,11 +2,10 @@ define([
     'backbone',
     'find/app/pages',
     'find/app/navigation',
-    'find/app/footer',
     'find/app/util/test-browser',
     'find/app/vent',
     'text!find/templates/app/app.html'
-], function(Backbone, Pages, Navigation, Footer, testBrowser, vent, template) {
+], function(Backbone, Pages, Navigation, testBrowser, vent, template) {
     return Backbone.View.extend({
 
         el: '.page',
@@ -20,10 +19,6 @@ define([
 
             this.navigation = new Navigation({
                 pages: this.pages
-            });
-
-            this.footer = new Footer({
-                $parent: this.$el
             });
 
             this.render();
@@ -42,11 +37,9 @@ define([
 
             this.navigation.render();
             this.pages.render();
-            this.footer.render();
 
             this.$('.header').append(this.navigation.el);
             this.$('.content').append(this.pages.el);
-            this.$('.footer').append(this.footer.el);
         }
 
     });
