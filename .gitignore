@@ -6,6 +6,7 @@
 
 # IntelliJ
 .idea/
+*.ipr
 *.iml
 *.iws
 
