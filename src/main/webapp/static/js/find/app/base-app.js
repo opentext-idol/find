@@ -1,6 +1,6 @@
 define([
     'backbone',
-    'find/app/find-pages',
+    'find/app/pages',
     'find/app/util/test-browser',
     'find/app/vent',
     'text!find/templates/app/app.html'
