@@ -26,9 +26,9 @@ define([
 
         events: {
             'keyup .find-input': 'keyupAnimation',
-            'click .list-indexes': _.debounce(function(){
-                this.indexesCollection.fetch();
-            }, 500, true),
+            'click .list-indexes': function() {
+                vent.navigate('find/settings');
+            },
             'change [name="indexRadios"]': function(e) {
                 this.indexes = $(e.currentTarget).val();
 
