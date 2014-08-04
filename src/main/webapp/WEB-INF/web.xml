@@ -62,6 +62,8 @@
         <filter-name>Standard Login Filter</filter-name>
         <url-pattern>/login/*</url-pattern>
         <url-pattern>/api/login/*</url-pattern>
+        <!-- If you're going to the public area, you don't need an authenticated session -->
+        <url-pattern>/public/*</url-pattern>
     </filter-mapping>
 
     <!-- Delegate to SSO, Community, or nothing, depending upon configuration -->
