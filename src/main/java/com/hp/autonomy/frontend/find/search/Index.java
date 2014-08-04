@@ -12,7 +12,7 @@ public class Index {
     private final String index;
     private final String type;
 
-    private Index(final String index, String type) {
+    private Index(final String index, final String type) {
         this.index = index;
         this.type = type;
     }

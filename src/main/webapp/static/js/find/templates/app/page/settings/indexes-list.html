@@ -1,0 +1,12 @@
+<div class="control-group indexes-list-group">
+    <% if(indexes) { %>
+        <label class="control-label settings-label">Indexes list: </label>
+        <div class="controls">
+            <% _.each(indexes, function(index) { %>
+                <label class="checkbox">
+                    <input type="checkbox" value="<%- index.index %>"><%- index.index %>
+                </label>
+            <% }) %>
+        </div>
+    <% } %>
+</div>

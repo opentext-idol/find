@@ -487,3 +487,12 @@ a.entity-to-summary {
         top:9px;
     }
 }
+
+.indexes-list-group .controls {
+    margin-left: 100px;
+}
+
+.indexes-list-group .control-label {
+    text-align: left;
+    width: 100px;
+}
