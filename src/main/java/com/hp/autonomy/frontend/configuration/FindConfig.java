@@ -64,16 +64,6 @@ public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfi
     }
 
     @Override
-    public FindConfig withEncryptedPasswords(final TextEncryptor textEncryptor) {
-        return this;
-    }
-
-    @Override
-    public FindConfig withDecryptedPasswords(final TextEncryptor textEncryptor) {
-        return this;
-    }
-
-    @Override
     public void basicValidate() throws ConfigException {
         if(!this.login.getMethod().equalsIgnoreCase("default")){
             this.login.basicValidate();
