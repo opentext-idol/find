@@ -1,9 +1,8 @@
 define([
     'find/app/find-pages',
-    'find/app/page/find-search',
-    'find/app/page/find-settings-page',
+    'find/public/page/find-search',
     'i18n!find/nls/bundle'
-], function(FindPages, FindSearch, SettingsPage, i18n) {
+], function(FindPages, FindSearch) {
 
     return FindPages.extend({
 
@@ -15,12 +14,6 @@ define([
                     , label: 'Search'
                     , group: false
                     , classes: ''
-                }, {
-                    constructor: SettingsPage
-                    , pageName: 'settings'
-                    , label: i18n['app.settings']
-                    , group: 'settings'
-                    , classes: 'hide-from-non-useradmin'
                 }
             ];
         }

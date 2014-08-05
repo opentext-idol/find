@@ -11,6 +11,10 @@
             "host": "",
             "port": 9030,
             "productType": "UASERVER"
+        },
+        "singleUser": {
+            "username": "admin",
+            "hashedPassword": ""
         }
     },
     "iod": {

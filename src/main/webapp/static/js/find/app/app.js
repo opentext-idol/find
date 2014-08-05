@@ -1,39 +1,34 @@
 define([
-    'backbone',
+    'find/app/base-app',
     'find/app/pages',
-    'find/app/util/test-browser',
-    'find/app/vent',
-    'text!find/templates/app/app.html'
-], function(Backbone, Pages, testBrowser, vent, template) {
-    return Backbone.View.extend({
+    'find/app/navigation',
+    'text!find/templates/app/private-app.html'
+], function(BaseApp, Pages, Navigation, template) {
 
-        el: '.page',
+    return BaseApp.extend({
 
         template: _.template(template),
 
-        initialize: function() {
-            jQuery.ajaxSetup({ cache: false });
+        defaultRoute: 'find/settings',
 
+        initialize: function() {
             this.pages = new Pages();
 
-            this.render();
+            this.navigation = new Navigation({
+                pages: this.pages
+            });
 
-            Backbone.history.start();
-
-            if (!window.location.hash || window.location.hash === "#undefined" || window.location.hash === "undefined") {
-                vent.navigate('find/search');
-            }
-
-            testBrowser();
+            BaseApp.prototype.initialize.apply(this, arguments);
         },
 
         render: function() {
-            this.$el.html(this.template());
+            BaseApp.prototype.render.apply(this, arguments);
 
-            this.pages.render();
+            this.navigation.render();
 
-            this.$('.content').append(this.pages.el);
+            this.$('.header').append(this.navigation.el);
         }
 
     });
+
 });

@@ -4,8 +4,9 @@ define([
     'find/app/router',
     'settings/js/settings-page',
     'find/app/model/config',
-    'find/app/page/settings/iod-widget'
-], function(i18n, vent, router, SettingsPage, configModel, IodWidget) {
+    'find/app/page/settings/iod-widget',
+    'settings/js/widgets/single-user-widget'
+], function(i18n, vent, router, SettingsPage, configModel, IodWidget, SingleUserWidget) {
 
     var serverStrings = function() {
         return {
@@ -89,7 +90,24 @@ define([
             ];
 
             this.middleWidgets = [
-                //change admin password widget here
+                new SingleUserWidget({
+                    configItem: 'login',
+                    description: i18n['settings.adminUser.description'],
+                    isOpened: true,
+                    strings: {
+                        confirmPassword: 'Confirm Password',
+                        currentPassword: 'Current Password',
+                        iconClass: 'user',
+                        newPassword: 'New Password',
+                        username: 'Username',
+                        validateConfirmPasswordBlank: 'Confirm password must not be blank!',
+                        validateCurrentPasswordBlank: 'Current password must not be blank!',
+                        validateNewPasswordBlank: 'New password must not be blank!',
+                        validateUsernameBlank: 'Username must not be blank!',
+                        validateFailed: i18n['settings.test.failed']
+                    },
+                    title: i18n['settings.adminUser']
+                })
             ];
         }
     });
