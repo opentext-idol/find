@@ -8,16 +8,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequestMapping("/search/list-indexes")
 public class ListIndexesController {
 
     @Autowired
     private IndexesService indexesService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/search/list-indexes", method = RequestMethod.GET)
     @ResponseBody
-    public List<Index> listIndexes() {
-        return indexesService.listIndexes();
+    public List<Index> listActiveIndexes() {
+        return indexesService.listActiveIndexes();
     }
 
 }

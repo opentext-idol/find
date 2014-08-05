@@ -139,13 +139,9 @@
     <bean id="validationService" class="com.autonomy.frontend.configuration.ValidationServiceImpl">
         <property name="validators">
             <set>
-                <bean class="com.autonomy.frontend.configuration.ServerConfigValidator"
-                      p:aciService-ref="testAciService"
-                      p:indexingService-ref="testIndexingService" />
-                <bean class="com.autonomy.frontend.configuration.database.PostgresValidator"
-                      p:databaseService-ref="postgresService" />
                 <bean class="com.autonomy.frontend.configuration.LoginValidator"
                       p:aciService-ref="testAciService"/>
+                <bean class="com.hp.autonomy.frontend.configuration.IodConfigValidator" />
             </set>
         </property>
     </bean>
@@ -205,15 +201,6 @@
 
     <bean id="testIndexingService" class="com.autonomy.nonaci.indexing.impl.IndexingServiceImpl">
         <constructor-arg ref="testHttpClient"/>
-    </bean>
-
-    <bean id="postgresService" class="com.hp.autonomy.frontend.configuration.PostgresBoneCPDatabaseService">
-        <property name="schemaOption" value="FLYWAY"/>
-        <property name="localSessionFactoryBeanName" value="sessionFactory"/>
-        <property name="dataSource" ref="dynamicDataSourceProxy"/>
-        <property name="connectionProperties" ref="connectionPoolProperties"/>
-        <property name="minimalConnectionProperties" ref="connectionPoolMinimalProperties"/>
-        <property name="configService" ref="configFileService"/>
     </bean>
 
     <bean id="userAdmin" class="com.autonomy.user.admin.UserAdminImpl">
