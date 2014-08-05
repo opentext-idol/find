@@ -1,8 +1,8 @@
 define([
     'find/app/find-pages',
-    'find/app/page/find-search',
+    'find/public/page/find-search',
     'i18n!find/nls/bundle'
-], function(FindPages, FindSearch, i18n) {
+], function(FindPages, FindSearch) {
 
     return FindPages.extend({
 

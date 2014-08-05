@@ -435,14 +435,21 @@ form.form-search:before {
     width: 250px;
 }
 
-.list-indexes {
+.search-button {
+    cursor: pointer;
+    font-size: 22px;
+    opacity: 0.5;
     position: absolute;
     top: 14px;
-    right: -65px;
-    opacity: .5;
     z-index: 1000;
-    font-size: 22px;
-    cursor:pointer;
+}
+
+.search-button.list-indexes {
+    right: -65px;
+}
+
+.search-button.settings {
+    right: -95px;
 }
 
 .popover {

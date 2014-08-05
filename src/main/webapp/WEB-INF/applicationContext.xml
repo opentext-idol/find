@@ -8,7 +8,6 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                          http://www.springframework.org/schema/context
@@ -17,8 +16,7 @@
                          http://www.springframework.org/schema/util/spring-util.xsd
                          http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
                          http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd
-                         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-                         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+                         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd" >
 
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="com.hp.autonomy.frontend">
@@ -145,7 +143,8 @@
                 <bean class="com.autonomy.frontend.configuration.database.PostgresValidator"
                       p:databaseService-ref="postgresService" />
                 <bean class="com.autonomy.frontend.configuration.LoginValidator"
-                      p:aciService-ref="testAciService"/>
+                      p:aciService-ref="testAciService"
+                      p:configService-ref="configFileService"/>
             </set>
         </property>
     </bean>
@@ -171,6 +170,8 @@
                 <value>productType</value>
                 <value>indexErrorMessage</value>
                 <value>enabled</value>
+                <value>plaintextPassword</value>
+                <value>currentPassword</value>
             </set>
         </constructor-arg>
     </bean>

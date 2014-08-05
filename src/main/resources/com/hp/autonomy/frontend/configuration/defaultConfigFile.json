@@ -11,7 +11,11 @@
             "protocol": "HTTP",
             "host": "",
             "port": 9030,
-			"productType": "UASERVER"
+            "productType": "UASERVER"
+        },
+        "singleUser": {
+            "username": "admin",
+            "hashedPassword": ""
         }
     },
     "postgres": {

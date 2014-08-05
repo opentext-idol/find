@@ -38,10 +38,6 @@ public class FindConfigFileService extends AbstractConfigFileService<FindConfig>
     public void postUpdate(final FindConfig config) throws Exception {
         localeResolver.setDefaultLocale(this.getConfig().getLocale());
         databaseService.updateDataSource();
-
-        if (config.getLogin().getCommunity().validate(testAciService, null).isValid()) {
-            this.initialiseCommunity();
-        }
     }
 
     @Override

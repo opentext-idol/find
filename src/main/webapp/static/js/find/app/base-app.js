@@ -1,27 +1,21 @@
 define([
     'backbone',
-    'find/app/pages',
     'find/app/util/test-browser',
-    'find/app/vent',
-    'text!find/templates/app/app.html'
-], function(Backbone, Pages, testBrowser, vent, template) {
+    'find/app/vent'
+], function(Backbone, testBrowser, vent) {
     return Backbone.View.extend({
 
         el: '.page',
 
-        template: _.template(template),
-
         initialize: function() {
             jQuery.ajaxSetup({ cache: false });
-
-            this.pages = new Pages();
 
             this.render();
 
             Backbone.history.start();
 
             if (!window.location.hash || window.location.hash === "#undefined" || window.location.hash === "undefined") {
-                vent.navigate('find/search');
+                vent.navigate(this.defaultRoute);
             }
 
             testBrowser();

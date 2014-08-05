@@ -75,6 +75,15 @@ public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfi
     }
 
     @Override
+    public FindConfig withHashedPasswords() {
+        final Builder builder = new Builder(this);
+
+        builder.login = builder.login.withHashedPasswords();
+
+        return builder.build();
+    }
+
+    @Override
     public FindConfig withEncryptedPasswords(final TextEncryptor textEncryptor) {
         final Builder builder = new Builder(this);
 
@@ -96,7 +105,6 @@ public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfi
     public void basicValidate() throws ConfigException {
         if(!this.login.getMethod().equalsIgnoreCase("default")){
             this.login.basicValidate();
-            this.postgres.basicValidate();
         }
     }
 

@@ -1,0 +1,8 @@
+<ul class="nav nav-pills">
+    <% _.each(pages, function(page) { %>
+        <li data-pagename="<%-page.pageName%>">
+            <a href="#<%-page.pageName%>"><%-page.label%></a>
+        </li>
+    <% }) %>
+    <li><a href="../public"><%- i18n['app.logout'] %></a></li>
+</ul>

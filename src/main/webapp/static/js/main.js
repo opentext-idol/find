@@ -1,5 +1,5 @@
 require(['require-config'], function() {
-    require(['find/app/base-app'], function(App) {
+    require(['find/app/app'], function(App) {
         new App();
     });
 });
