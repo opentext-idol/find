@@ -9,7 +9,6 @@ define([
     indexesTemplate = _.template(indexesTemplate);
 
     return ServerWidget.extend({
-
         render: function() {
             ServerWidget.prototype.render.call(this);
 
@@ -59,7 +58,7 @@ define([
         handleValidation: function(config, response) {
             if (_.isEqual(config.iod, this.lastValidationConfig.iod)) {
                 this.lastValidation = response.valid;
-                this.lastValidation && (this.indexes = response.data ? response.data.indexes : []);
+                this.lastValidation && (this.indexes = response.data ? response.data.indexes ? response.data.indexes:[] : []);
                 this.hideValidationInfo();
 
                 this.toggleIndexes();

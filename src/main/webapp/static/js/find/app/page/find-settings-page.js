@@ -23,14 +23,6 @@ define([
         };
     };
 
-    var passwordStrings = function(){
-        return {
-            passwordDescription: i18n['settings.password.description'],
-            passwordLabel: i18n['settings.password'],
-            passwordRedacted: i18n['settings.password.redacted']
-        };
-    };
-
     var urlRoot = /\bconfig\/[\/]*$/.test(window.location.pathname) ? '../api/config/config/' : '../api/useradmin/config/';
 
     return SettingsPage.extend({
