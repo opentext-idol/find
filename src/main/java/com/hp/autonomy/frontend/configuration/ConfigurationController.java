@@ -34,9 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ConfigurationController {
 
     @Autowired
-    private CommunityService communityService;
-
-    @Autowired
     private ConfigFileService<FindConfig> configService;
 
 	@RequestMapping(value = "/config", method = RequestMethod.GET)
@@ -57,23 +54,5 @@ public class ConfigurationController {
         } catch (ConfigValidationException cve) {
             return new ResponseEntity<>(Collections.singletonMap("validation", cve.getValidationErrors()), HttpStatus.NOT_ACCEPTABLE);
         }
-    }
-
-
-    @RequestMapping(value = "/securitytypes", method = RequestMethod.GET)
-    @ResponseBody
-    public Map<String, ?> getSecurityTypes(@RequestParam final int port, @RequestParam final String host, @RequestParam final AciServerDetails.TransportProtocol protocol) {
-        if (port <= 0 || host == null || protocol == null) {
-            throw new IllegalArgumentException("Host, port and protocol must be supplied.");
-        }
-
-        final List<SecurityType> types = communityService.getSecurityTypes(new AciServerDetails(protocol, host, port));
-        final List<String> typeNames = new ArrayList<>();
-
-        for (final SecurityType type : types) {
-            typeNames.add(type.getName());
-        }
-
-        return Collections.singletonMap("securityTypes", typeNames);
     }
 }
