@@ -99,6 +99,8 @@ define([
                         currentPassword: 'Current Password',
                         iconClass: 'user',
                         newPassword: 'New Password',
+                        passwordMismatch: 'Passwords do not match',
+                        passwordRedacted: '(redacted)',
                         username: 'Username',
                         validateConfirmPasswordBlank: 'Confirm password must not be blank!',
                         validateCurrentPasswordBlank: 'Current password must not be blank!',
