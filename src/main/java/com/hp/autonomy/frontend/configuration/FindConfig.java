@@ -4,15 +4,17 @@ import com.autonomy.frontend.configuration.AbstractConfig;
 import com.autonomy.frontend.configuration.ConfigException;
 import com.autonomy.frontend.configuration.Login;
 import com.autonomy.frontend.configuration.LoginConfig;
+import com.autonomy.frontend.configuration.PasswordsConfig;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jasypt.util.text.TextEncryptor;
 
 @JsonDeserialize(builder = FindConfig.Builder.class)
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfig<FindConfig> {
+public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfig<FindConfig>, PasswordsConfig<FindConfig> {
 
     private final Login login;
     private final IodConfig iod;
@@ -55,6 +57,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfi
         return builder.build();
     }
 
+    @Override
     public FindConfig withHashedPasswords() {
         final Builder builder = new Builder(this);
 
@@ -68,6 +71,25 @@ public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfi
         if(!this.login.getMethod().equalsIgnoreCase("default")){
             this.login.basicValidate();
         }
+    }
+
+    @Override
+    public FindConfig withoutPasswords() {
+        final Builder builder = new Builder(this);
+
+        builder.login = login.withoutPasswords();
+
+        return builder.build();
+    }
+
+    @Override
+    public FindConfig withEncryptedPasswords(final TextEncryptor encryptor) {
+        return this;
+    }
+
+    @Override
+    public FindConfig withDecryptedPasswords(final TextEncryptor encryptor) {
+        return this;
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
