@@ -209,7 +209,7 @@ define([
             var entities = this.entityCollection.map(function(entity) {
                 return {
                     text: entity.get('text'),
-                    id:  _.uniqueId()
+                    id:  _.uniqueId('Find-IOD-Entity-Placeholder')
                 }
             }).sort(function(a,b) {
                 return b.text.length - a.text.length;
@@ -229,11 +229,9 @@ define([
         keyupAnimation: _.debounce(function() {
             /*fancy animation*/
             if($.trim(this.$('.find-input').val()).length) { //checking if input doesn't have any spaces or empty
-                this.$('.find-logo').slideUp('slow');
                 this.$('.find').addClass('animated-container').removeClass('reverse-animated-container');
-                this.$('.form-search').addClass('animated-form').removeClass('reverse-animated-form');
 
-                this.$('.suggested-links-container.span2, .find-logo-small').show();
+                this.$('.suggested-links-container.span2').show();
                 this.searchRequest(this.$('.find-input').val());
             } else {
                 this.reverseAnimation();
@@ -253,11 +251,9 @@ define([
 
         reverseAnimation: function() {
             /*fancy reverse animation*/
-            this.$('.find-logo').slideDown('slow');
             this.$('.find').removeClass('animated-container ').addClass('reverse-animated-container');
-            this.$('.form-search').removeClass('animated-form').addClass('reverse-animated-form');
 
-            this.$('.suggested-links-container.span2, .find-logo-small').hide();
+            this.$('.suggested-links-container.span2').hide();
             this.$('.find-input').val('');
             this.$('.popover').remove();
         },

@@ -1,6 +1,6 @@
 define([
     'find/app/find-pages',
-    'find/public/page/find-search',
+    'find/app/page/find-search',
     'i18n!find/nls/bundle'
 ], function(FindPages, FindSearch) {
 
@@ -11,9 +11,6 @@ define([
                 {
                     constructor: FindSearch
                     , pageName: 'search'
-                    , label: 'Search'
-                    , group: false
-                    , classes: ''
                 }
             ];
         }

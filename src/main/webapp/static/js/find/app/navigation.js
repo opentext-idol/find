@@ -15,8 +15,7 @@ define([
 
         getTemplateParameters: function() {
             return {
-                i18n: i18n,
-                pages: this.pages.pages
+                i18n: i18n
             }
         }
 
