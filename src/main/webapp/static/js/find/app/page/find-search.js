@@ -27,6 +27,8 @@ define([
         events: {
             'keyup .find-input': 'keyupAnimation',
             'click .list-indexes': _.debounce(function(){
+                this.$('.popover-content label').html('');
+
                 this.indexesCollection.fetch();
             }, 500, true),
             'change [name="indexRadios"]': function(e) {
