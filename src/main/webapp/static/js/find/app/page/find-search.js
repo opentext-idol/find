@@ -49,7 +49,7 @@ define([
                         indexes: this.indexes
                     }
                 });
-            }, 400),
+            }, 800),
             'mouseover .entity-to-summary': function(e) {
                 var title = $(e.currentTarget).find('a').html();
                 this.$('[data-title="'+ title +'"]').addClass('label label-primary entity-to-summary').removeClass('label-info');
