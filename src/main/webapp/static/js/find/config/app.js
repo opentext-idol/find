@@ -14,21 +14,34 @@ define([
 
         $page.html(_.template(template));
 
-        this.navigation = new EmptyNavbar({
+        this.settingsPage = new SettingsPage({});
+        this.settingsPage.render();
+
+        var $submitButton = this.settingsPage.$('');
+
+        this.navigation = new (EmptyNavbar.extend({
+            events: {
+                'click a': function(e) {
+                    if(!this.options.settingsPage.hasSavedSettings) {
+                        e.preventDefault();
+
+                        alert('You should save your settings before you can log out.');
+                    }
+                }
+            }
+        }))({
             strings: {
-                appName: 'Find'
+                appName: 'Find',
+                logout: 'Logout from Settings'
             },
-            showLogout: false
+            logoutUri: '../public',
+            settingsPage: this.settingsPage,
+            showLogout: true
         });
 
         this.navigation.render();
         $('.header').append(this.navigation.el);
-
-        this.settingsPage = new SettingsPage({});
-
-        this.settingsPage.render();
         this.settingsPage.show();
-
         $('.content').append(this.settingsPage.el);
 
         testBrowser();
