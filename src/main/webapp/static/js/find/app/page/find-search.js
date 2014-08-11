@@ -63,7 +63,6 @@ define([
             this.documentsCollection = new DocumentsCollection();
             this.topResultsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
-            this.indexes = 'wiki_eng'; //hardcoding a default value
 
             router.on('route:search', function(text) {
                 this.entityCollection.reset();
@@ -76,6 +75,10 @@ define([
                     this.reverseAnimation(); //when clicking the small 'find' logo
                 }
             }, this);
+
+            this.indexesCollection.fetch().then(_.bind(function() {
+                this.indexes = this.indexesCollection.at(0).get('index');
+            }, this));
         },
 
         render: function() {
