@@ -85,10 +85,12 @@ define([
         toggleIndexes: function() {
             this.$('.indexes-list-group').remove();
 
-            if(this.indexes.length && this.lastValidation) {
-                this.$validateButtonParent.after(indexesTemplate({
-                    indexes: this.indexes
-                }));
+            if(this.indexes) {
+                if(this.indexes.length && this.lastValidation) {
+                    this.$validateButtonParent.after(indexesTemplate({
+                        indexes: this.indexes
+                    }));
+                }
             }
         }
     });
