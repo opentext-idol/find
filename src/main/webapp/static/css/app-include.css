@@ -358,7 +358,7 @@ input.find-input {
     height: 200px;
     width: 50px;
     z-index: 6000;
-    color: #4D585E;
+    color: #ccc;
 }
 
 #colorbox .nextBtn {
@@ -389,13 +389,16 @@ input.find-input {
 #cboxClose {
     top:0;
 }
-/* overriding bootstrap-custom's btn-primary. */
-/* remove the bootstrap-custom eventually? */
+
+#colorbox {
+    overflow: initial;
+}
+/* fancy colourbox buttons */
 .btn-colorbox, .btn-colorbox:focus {
     color: #ffffff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    background-color: #A9C3D2;
-    background-image: linear-gradient(to bottom, #A9C3D2, #8B9FAA);
+    background-color: #929292;
+    background-image: linear-gradient(to bottom, #898D90, #707476);
     background-repeat: repeat-x;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff46aeea', endColorstr='#ff2fa4e7', GradientType=0);
@@ -403,7 +406,7 @@ input.find-input {
 }
 
 .btn-colorbox:active {
-    background-color: #8B9FAA;
+    background-color: #707476;
     background-image: none;
     outline: 0;
     -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),0 1px 2px rgba(0,0,0,0.05);
@@ -412,7 +415,7 @@ input.find-input {
 }
 
 .btn-colorbox:focus {
-    background-color: #8B9FAA;
+    background-color: #707476;
     outline: 0 none;
 }
 /* end of btn override from the bootstrap-custom */
@@ -530,9 +533,7 @@ input:-moz-placeholder::before  { font-family: fontAwesome; content:'\f105'; col
     background: none;
 }
 
-#colorbox {
-    overflow: initial;
-}
+
 
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 {
     color: rgba(138, 113, 102, 0.96);
