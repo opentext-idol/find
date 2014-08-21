@@ -1,21 +1,11 @@
 {
     "login": {
         "method": "default",
-        "cas": {
-            "casServerLoginUrl": "",
-            "casServerUrlPrefix": "",
-            "serverName": ""
-        },
-        "community": {
-            "protocol": "HTTP",
-            "host": "",
-            "port": 9030,
-            "productType": "UASERVER"
-        },
         "singleUser": {
             "username": "admin",
             "hashedPassword": ""
-        }
+        },
+        "className": "com.autonomy.frontend.configuration.SingleUserAuthentication"
     },
     "iod": {
         "apiKey": "",

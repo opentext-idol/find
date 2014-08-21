@@ -66,7 +66,7 @@
     <bean id="configFileService" class="com.hp.autonomy.frontend.configuration.FindConfigFileService"
           p:configFileLocation="hp.find.home"
           p:configFileName="config.json"
-          p:defaultConfigFile="classpath:com/hp/autonomy/frontend/configuration/defaultConfigFile.json"
+          p:defaultConfigFile="/com/hp/autonomy/frontend/configuration/defaultConfigFile.json"
           p:mapper-ref="jacksonObjectMapperFactoryBean"
           p:textEncryptor-ref="org.jasypt.util.text.BasicTextEncryptor"
           p:filterProvider-ref="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider"
@@ -75,7 +75,7 @@
     <bean id="validationService" class="com.autonomy.frontend.configuration.ValidationServiceImpl">
         <property name="validators">
             <set>
-                <bean class="com.autonomy.frontend.configuration.LoginValidator"
+                <bean class="com.autonomy.frontend.configuration.SingleUserAuthenticationValidator"
                       p:configService-ref="configFileService"/>
                 <bean class="com.hp.autonomy.frontend.configuration.IodConfigValidator" />
             </set>

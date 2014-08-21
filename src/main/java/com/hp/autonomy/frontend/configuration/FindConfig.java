@@ -1,22 +1,24 @@
 package com.hp.autonomy.frontend.configuration;
 
 import com.autonomy.frontend.configuration.AbstractConfig;
+import com.autonomy.frontend.configuration.Authentication;
+import com.autonomy.frontend.configuration.AuthenticationConfig;
 import com.autonomy.frontend.configuration.ConfigException;
-import com.autonomy.frontend.configuration.Login;
-import com.autonomy.frontend.configuration.LoginConfig;
 import com.autonomy.frontend.configuration.PasswordsConfig;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.jasypt.util.text.TextEncryptor;
 
 @JsonDeserialize(builder = FindConfig.Builder.class)
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfig<FindConfig>, PasswordsConfig<FindConfig> {
+public class FindConfig extends AbstractConfig<FindConfig> implements AuthenticationConfig<FindConfig>, PasswordsConfig<FindConfig> {
 
-    private final Login login;
+    private final Authentication<?> login;
     private final IodConfig iod;
 
     private FindConfig(final Builder builder) {
@@ -92,10 +94,17 @@ public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfi
         return this;
     }
 
+    @Override
+    public Authentication<?> getAuthentication() {
+        return login;
+    }
+
     @JsonPOJOBuilder(withPrefix = "set")
+    @Setter
+    @Accessors(chain = true)
     public static class Builder {
 
-        private Login login;
+        private Authentication<?> login;
         private IodConfig iod;
 
         public Builder() {}
@@ -103,16 +112,6 @@ public class FindConfig extends AbstractConfig<FindConfig> implements LoginConfi
         public Builder(final FindConfig config) {
             this.login = config.login;
             this.iod = config.iod;
-        }
-
-        public Builder setLogin(final Login login) {
-            this.login = login;
-            return this;
-        }
-
-        public Builder setIod(final IodConfig iod) {
-            this.iod = iod;
-            return this;
         }
 
         public FindConfig build() {

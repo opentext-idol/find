@@ -1,8 +1,15 @@
 package com.hp.autonomy.frontend.configuration;
 
-import com.autonomy.frontend.configuration.AbstractConfigFileService;
+import com.autonomy.frontend.configuration.AbstractAuthenticatingConfigFileService;
+import com.autonomy.frontend.configuration.Authentication;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class FindConfigFileService extends AbstractConfigFileService<FindConfig> {
+public class FindConfigFileService extends AbstractAuthenticatingConfigFileService<FindConfig> {
+
+    @Override
+    protected void addPreReadMixins(final ObjectMapper mapper) {
+        mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
+    }
 
     @Override
     public FindConfig preUpdate(final FindConfig config) {
