@@ -48,6 +48,8 @@ define([
         'settings.cancel.title': 'Revert settings?',
         'settings.close': 'Close',
         'settings.unload.confirm': 'You have unsaved settings!',
+        'settings.adminUser': 'Admin User',
+        'settings.adminUser.description': 'Configure the admin username and password for Find.',
         'settings.community.description': "Community handles authentication for Find. We recommend using a dedicated Community server for Find and not using it for any other parts of your IDOL installation.  Your Community server will need an Agentstore server for data storage.",
         'settings.community.login.type': 'Login Type',
         'settings.community.login.fetchTypes': 'Test connection to retrieve available login types.',

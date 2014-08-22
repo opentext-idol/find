@@ -4,10 +4,9 @@ define([
     'find/app/router',
     'settings/js/settings-page',
     'find/app/model/config',
-    'settings/js/widgets/community-widget',
-    'settings/js/widgets/postgres-widget',
-    'settings/js/widgets/locale-widget'
-], function(i18n, vent, router, SettingsPage, configModel, CommunityWidget, PostgresWidget, LocaleWidget) {
+    'find/app/page/settings/iod-widget',
+    'settings/js/widgets/single-user-widget'
+], function(i18n, vent, router, SettingsPage, configModel, IodWidget, SingleUserWidget) {
 
     var serverStrings = function() {
         return {
@@ -21,14 +20,6 @@ define([
             validatePasswordBlank: i18n['settings.test.passwordBlank'],
             validateUsernameBlank: i18n['settings.test.usernameBlank'],
             validateSuccess: i18n['settings.test.ok']
-        };
-    };
-
-    var passwordStrings = function(){
-        return {
-            passwordDescription: i18n['settings.password.description'],
-            passwordLabel: i18n['settings.password'],
-            passwordRedacted: i18n['settings.password.redacted']
         };
     };
 
@@ -77,56 +68,39 @@ define([
 
         initializeWidgets: function() {
             this.leftWidgets = [
-                new CommunityWidget({
-                    configItem: 'login',
-                    description: i18n['settings.community.description'],
+                new IodWidget({
+                    configItem: 'iod',
                     isOpened: true,
-                    securityTypesUrl: /\bconfig\/[\/]*$/.test(window.location.pathname)
-                        ? '../api/config/config/' + 'securitytypes'
-                        : '../api/useradmin/config/' + 'securitytypes',
-                    serverName: i18n['settings.community.serverName'],
-                    title: i18n['settings.community.title'],
+                    title: 'IoD settings',
                     strings: _.extend(serverStrings(), {
-                        fetchSecurityTypes: i18n['settings.community.login.fetchTypes'],
-                        iconClass: 'group',
-                        invalidSecurityType: i18n['settings.community.login.invalidType'],
-                        loginTypeLabel: i18n['settings.community.login.type'],
-                        validateFailed: i18n['settings.test.failed']
+                        iconClass: 'key',
+                        validateFailed: 'Invalid API Key',
+                        validateSuccess: 'API Key OK',
+                        validateButton: 'Test Key'
                     })
                 })
             ];
 
             this.middleWidgets = [
-                new PostgresWidget({
-                    canDisable: false,
-                    configItem: 'postgres',
-                    description: i18n['settings.postgres.description'],
+                new SingleUserWidget({
+                    configItem: 'login',
+                    description: i18n['settings.adminUser.description'],
                     isOpened: true,
-                    title: i18n['settings.postgres.title'],
-                    strings: _.extend(serverStrings(), passwordStrings(), {
-                        databaseCheckbox: i18n['settings.databaseCheckbox'],
-                        flywayMigrationFromEmpty: i18n['settings.postgres.flywayMigrationFromEmpty'],
-                        flywayMigrationUpgrade: i18n['settings.postgres.flywayMigrationUpgrade'],
-                        iconClass: 'hdd',
-                        validateDatabaseBlank: i18n['settings.test.databaseBlank'],
-                        validateFailed: i18n['settings.test.failed.password']
-                    })
-                })
-            ];
-
-            this.rightWidgets = [
-                new LocaleWidget({
-                    configItem: 'locale',
-                    description: null,
-                    title: i18n['settings.locale.title'],
-                    locales: {
-                        'en_GB': 'English (UK)',
-                        'en_US': 'English (US)'
-                    },
                     strings: {
-                        iconClass: 'globe',
-                        prefix: i18n['settings.locale.default']
-                    }
+                        confirmPassword: 'Confirm Password',
+                        currentPassword: 'Current Password',
+                        iconClass: 'user',
+                        newPassword: 'New Password',
+                        passwordMismatch: 'Passwords do not match',
+                        passwordRedacted: '(redacted)',
+                        username: 'Username',
+                        validateConfirmPasswordBlank: 'Confirm password must not be blank!',
+                        validateCurrentPasswordBlank: 'Current password must not be blank!',
+                        validateNewPasswordBlank: 'New password must not be blank!',
+                        validateUsernameBlank: 'Username must not be blank!',
+                        validateFailed: i18n['settings.test.failed']
+                    },
+                    title: i18n['settings.adminUser']
                 })
             ];
         }

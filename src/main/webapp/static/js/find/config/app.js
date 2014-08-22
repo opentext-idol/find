@@ -1,57 +1,48 @@
 define([
-    'config-wizard/js/config-wizard',
-    'config-wizard/js/welcome',
     'find/app/page/find-settings-page',
-    'find/app/page/find-users-page',
+    'js-utils/js/empty-navbar',
     'find/app/util/test-browser',
-    'text!find/templates/config/config.html',
     'i18n!find/nls/bundle',
+    'text!find/templates/config/config.html',
     'underscore'
-], function(ConfigWizard, WelcomePage, SettingsPage, UsersPage, testBrowser, template, i18n, _) {
+], function(SettingsPage, EmptyNavbar, testBrowser, i18n, template, _) {
 
     return function () {
         jQuery.ajaxSetup({ cache: false });
 
-        new ConfigWizard({
-            el: '.page',
-            logoutUri: '../login/login.html',
-            navigationEl: '.header',
-            template: _.template(template),
-            wizardEl: '.content',
-            steps: [
-                {
-                    constructor: WelcomePage,
-                    class: 'welcome-panel',
-                    label: i18n['wizard.step.welcome'],
-                    active: true,
-                    options: {
-                        finish: i18n['wizard.welcome.finish'],
-                        tagLine: i18n['wizard.welcome.helper'],
-                        title: i18n['wizard.welcome'],
-                        steps: [
-                            i18n['wizard.welcome.step1'],
-                            i18n['wizard.welcome.step2']
-                        ]
+        var $page = $('.page');
+
+        $page.html(_.template(template));
+
+        this.settingsPage = new SettingsPage({});
+        this.settingsPage.render();
+
+        var $submitButton = this.settingsPage.$('');
+
+        this.navigation = new (EmptyNavbar.extend({
+            events: {
+                'click a': function(e) {
+                    if(!this.options.settingsPage.hasSavedSettings) {
+                        e.preventDefault();
+
+                        alert('You should save your settings before you can log out.');
                     }
-                },
-                {
-                    constructor: SettingsPage,
-                    class: 'settings-panel',
-                    label: i18n['wizard.step.settings']
-                },
-                {
-                    constructor: UsersPage,
-                    class: 'users-panel',
-                    label: i18n['wizard.step.users']
                 }
-            ],
-            strings: {
-                appName: i18n['app.name'],
-                last: i18n['wizard.last'],
-                next: i18n['wizard.next'],
-                prev: i18n['wizard.prev']
             }
+        }))({
+            strings: {
+                appName: 'Find',
+                logout: 'Logout from Settings'
+            },
+            logoutUri: '../public',
+            settingsPage: this.settingsPage,
+            showLogout: true
         });
+
+        this.navigation.render();
+        $('.header').append(this.navigation.el);
+        this.settingsPage.show();
+        $('.content').append(this.settingsPage.el);
 
         testBrowser();
     }

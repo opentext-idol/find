@@ -1,5 +1,4 @@
 {
-    "locale": "en_US",
     "login": {
         "method": "default",
         "cas": {
@@ -11,14 +10,15 @@
             "protocol": "HTTP",
             "host": "",
             "port": 9030,
-			"productType": "UASERVER"
+            "productType": "UASERVER"
+        },
+        "singleUser": {
+            "username": "admin",
+            "hashedPassword": ""
         }
     },
-    "postgres": {
-        "host": null,
-        "port": 5432,
-        "database": "",
-        "username": "",
-        "password": ""
+    "iod": {
+        "apiKey": "",
+        "activeIndexes": []
     }
 }

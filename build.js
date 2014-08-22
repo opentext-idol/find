@@ -24,6 +24,12 @@
                 'require-config',
                 'find/config/app'
             ]
+        }, {
+            name: "public",
+            include: [
+                'require-config',
+                'find/public/app'
+            ]
         }
     ]
 })

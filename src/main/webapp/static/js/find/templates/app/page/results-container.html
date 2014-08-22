@@ -1,0 +1,11 @@
+<div class="main-results-container span5 drop-shadow" data-rel="results" data-reference="<%-reference %>">
+    <a href="<%-reference %>" class="result-header">
+        <h4><%- title %></h4>
+    </a>
+    <p class="result-summary">
+        <%= summary %>
+        <% if(summary.length > 200) { %>
+            <a href='<%-reference %>' class="dots">&#91;...&#93;</a>
+        <% } %>
+    </p>
+</div>

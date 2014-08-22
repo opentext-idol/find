@@ -12,7 +12,7 @@ public class TextEncryptorPasswordFactory implements FactoryBean<String> {
     @Override
     public String getObject() throws Exception {
         // don't change this or existing config files with encrypted text will stop working
-        return "sdfjnhejsRU£HR£$uwhr843y5432rjsadfjsehR$HWENFU£5y472345792348yJGNEO";
+        return "sdfjnhejsRUHR$uwhr843y5432rjsadfjsehR$HWENFU5y472345792348yJGNEO";
     }
 
     @Override
