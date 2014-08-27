@@ -5,6 +5,7 @@ import com.autonomy.frontend.configuration.Authentication;
 import com.autonomy.frontend.configuration.AuthenticationConfig;
 import com.autonomy.frontend.configuration.ConfigException;
 import com.autonomy.frontend.configuration.PasswordsConfig;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.EqualsAndHashCode;
@@ -95,6 +96,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     }
 
     @Override
+    @JsonIgnore
     public Authentication<?> getAuthentication() {
         return login;
     }

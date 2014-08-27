@@ -31,6 +31,11 @@
        <appender-ref ref="FileAppender"/>
    </logger>
 
+    <logger name="org.springframework.security" level="${log.level.spring}" additivity="false">
+       <appender-ref ref="ConsoleAppender"/>
+       <appender-ref ref="FileAppender"/>
+   </logger>
+
   <root level="${log.level.root}">
     <appender-ref ref="ConsoleAppender" />
     <appender-ref ref="FileAppender" />
