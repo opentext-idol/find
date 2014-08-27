@@ -38,7 +38,6 @@ require.config({
         settings: '../../lib/settings',
         store: '../../lib/store/store',
         text: '../../lib/require/text',
-        'users-page': '../../lib/users-page',
         underscore: '../../lib/underscore/underscore',
         xeditable: '../../lib/x-editable/x-editable'
     },
