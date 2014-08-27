@@ -47,15 +47,6 @@
         <property name="location" value="classpath:com/hp/autonomy/frontend/find.properties"/>
     </bean>
 
-    <bean id="httpClientFactory" class="com.autonomy.aci.client.transport.impl.HttpClientFactory"
-          p:maxConnectionsPerRoute="20"
-          p:maxTotalConnections="120"
-          p:staleCheckingEnabled="true"
-          p:soTimeout="90000"/>
-
-    <bean id="httpClient" factory-bean="httpClientFactory" factory-method="createInstance"/>
-
-
     <bean name="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <set/>
@@ -88,13 +79,6 @@
                       p:configService-ref="configFileService"/>
                 <bean class="com.hp.autonomy.frontend.configuration.IodConfigValidator" />
             </set>
-        </property>
-    </bean>
-
-    <bean class="org.springframework.web.client.RestTemplate">
-        <property name="requestFactory">
-            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory"
-                  p:httpClient-ref="httpClient"/>
         </property>
     </bean>
 
