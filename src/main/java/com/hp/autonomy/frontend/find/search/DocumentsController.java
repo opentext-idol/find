@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequestMapping("/search/query-text-index")
+@RequestMapping("/api/search/query-text-index")
 public class DocumentsController {
 
     @Autowired

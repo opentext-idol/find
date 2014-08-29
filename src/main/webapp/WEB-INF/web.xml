@@ -19,8 +19,7 @@
 
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/api/*</url-pattern>
-        <url-pattern>/index</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
     <!--
@@ -63,11 +62,6 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-        <welcome-file>index</welcome-file>
-    </welcome-file-list>
 
     <session-config>
         <session-timeout>60</session-timeout>

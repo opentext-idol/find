@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 
 @Controller
-@RequestMapping({"/useradmin/config", "/config/config"})
+@RequestMapping({"/api/useradmin/config", "/api/config/config"})
 public class ConfigurationController {
 
     @Autowired

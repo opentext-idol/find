@@ -24,10 +24,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 
         for(final GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             if("ROLE_DEFAULT".equalsIgnoreCase(grantedAuthority.getAuthority())) {
-                return "/config";
+                return "/config/";
             }
         }
 
-        return "/p";
+        return "/p/";
     }
 }

@@ -19,6 +19,7 @@
 
     <properties>
         <org.springframework.version>3.2.8.RELEASE</org.springframework.version>
+        <application.buildNumber>dev</application.buildNumber>
     </properties>
 
     <profiles>
@@ -64,7 +65,7 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <move todir="${basedir}/src/main/webapp/lib" failonerror="false">
+                                        <move todir="${basedir}/src/main/webapp/static/lib" failonerror="false">
                                             <fileset dir="${basedir}/target/web-resources/META-INF/resources/lib"/>
                                         </move>
                                         <move todir="${basedir}/src/test/js" failonerror="false">
@@ -117,7 +118,7 @@
                         </executions>
                         <configuration>
                             <configFile>${basedir}/build.js</configFile>
-                            <optimizerFile>${basedir}/src/main/webapp/lib/require/r.js</optimizerFile>
+                            <optimizerFile>${basedir}/src/main/webapp/static/lib/require/r.js</optimizerFile>
                             <filterConfig>true</filterConfig>
                             <skip>false</skip>
                         </configuration>
@@ -304,6 +305,21 @@
             <filter>src/main/filters/filter-${env}.properties</filter>
         </filters>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/webapp/static/lib</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/test/js/lib</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>

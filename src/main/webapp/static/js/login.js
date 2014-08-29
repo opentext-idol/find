@@ -5,7 +5,7 @@ require(['require-config'], function() {
     ], function(Login, i18n) {
         new Login({
             configURL: '/config/',
-            url: '../authenticate',
+            url: 'authenticate',
             strings: {
                 defaultLogin: i18n['login.defaultLogin'],
                 important: i18n['login.important'],

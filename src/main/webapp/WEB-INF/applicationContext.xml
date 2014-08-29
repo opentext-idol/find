@@ -28,9 +28,7 @@
     <bean id="forbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
     <security:http pattern="/static/**" security="none"/>
-    <security:http pattern="/lib/**" security="none"/>
     <security:http pattern="/public/**" security="none"/>
-    <security:http pattern="/login/**" security="none"/>
 
     <security:http pattern="/api/useradmin/**" entry-point-ref="forbiddenEntryPoint">
         <security:intercept-url pattern="/api/useradmin/**" access="ROLE_ADMIN"/>
@@ -45,14 +43,14 @@
         <security:intercept-url pattern="/p/**" access="ROLE_ADMIN"/>
         <security:intercept-url pattern="/config/**" access="ROLE_DEFAULT"/>
         <security:form-login
-                authentication-failure-url="/api/login/loginPage?error=auth"
+                authentication-failure-url="/loginPage?error=auth"
                 authentication-success-handler-ref="loginSuccessHandler"
                 login-processing-url="/authenticate"
-                login-page="/api/login/loginPage"
+                login-page="/loginPage"
                 password-parameter="password"
                 username-parameter="username"
                 />
-        <security:logout logout-url="/logout" logout-success-url="/public"/>
+        <security:logout logout-url="/logout" logout-success-url="/public/"/>
     </security:http>
 
     <security:authentication-manager>
@@ -69,7 +67,7 @@
     </bean>
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="com.hp.autonomy.frontend.i18n"/>
+        <property name="basename" value="com.hp.autonomy.frontend.find.i18n"/>
     </bean>
 
     <bean id="propertiesLookup" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
@@ -88,7 +86,7 @@
           p:objectMapper-ref="objectMapper"/>
 
     <bean class="com.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter" name="configEnvironmentVariableFilter"
-          p:configPage="/config.html"
+          p:configPage="/configError"
           p:configService-ref="configFileService"/>
 
     <bean id="configFileService" class="com.hp.autonomy.frontend.find.configuration.FindConfigFileService"

@@ -25,7 +25,7 @@ public class FindAccessDeniedHandler implements AccessDeniedHandler {
         }
         else {
             // TODO parameterize this
-            response.sendRedirect(request.getContextPath() + "/login/login.html");
+            response.sendRedirect(request.getContextPath() + "/loginPage");
         }
     }
 }

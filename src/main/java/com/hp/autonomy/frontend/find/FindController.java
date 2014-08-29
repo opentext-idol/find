@@ -23,15 +23,15 @@ public class FindController {
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> configService;
 
-    @RequestMapping("index")
+    @RequestMapping("/")
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final String contextPath = request.getContextPath();
 
         if(LoginTypes.DEFAULT.equals(configService.getConfig().getAuthentication().getMethod())) {
-            response.sendRedirect(contextPath + "/api/login/loginPage");
+            response.sendRedirect(contextPath + "/loginPage");
         }
         else {
-            response.sendRedirect(contextPath + "/public");
+            response.sendRedirect(contextPath + "/public/");
         }
     }
 

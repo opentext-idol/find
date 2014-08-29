@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Last modified by $Author: luca.mandrioli $ on $Date: 2014/01/06 $
  */
 @Controller
-@RequestMapping("/login")
 public class LoginController {
 
     @Autowired
@@ -32,7 +31,7 @@ public class LoginController {
         final HttpServletRequest request,
         final HttpServletResponse response
     ) throws IOException {
-        final String baseUrl = "/login/login.html";
+        final String baseUrl = "/login";
         String queryString = request.getQueryString();
         final Authentication<?> authentication = this.configService.getConfig().getAuthentication();
 
