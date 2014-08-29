@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.authentication;
+package com.hp.autonomy.frontend.find.authentication;
 
 import com.autonomy.frontend.configuration.Authentication;
 import com.autonomy.frontend.configuration.AuthenticationConfig;
@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /*

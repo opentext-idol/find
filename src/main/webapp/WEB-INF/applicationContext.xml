@@ -17,7 +17,7 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <context:property-placeholder location="classpath:com/hp/autonomy/frontend/find.properties"/>
+    <context:property-placeholder location="classpath:com/hp/autonomy/frontend/find/find.properties"/>
 
     <ehcache:annotation-driven create-missing-caches="true"/>
 
@@ -75,7 +75,7 @@
     <bean id="propertiesLookup" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <qualifier value="application"/>
         <property name="singleton" value="true"/>
-        <property name="location" value="classpath:com/hp/autonomy/frontend/find.properties"/>
+        <property name="location" value="classpath:com/hp/autonomy/frontend/find/find.properties"/>
     </bean>
 
     <bean name="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
@@ -91,10 +91,10 @@
           p:configPage="/config.html"
           p:configService-ref="configFileService"/>
 
-    <bean id="configFileService" class="com.hp.autonomy.frontend.configuration.FindConfigFileService"
+    <bean id="configFileService" class="com.hp.autonomy.frontend.find.configuration.FindConfigFileService"
           p:configFileLocation="hp.find.home"
           p:configFileName="config.json"
-          p:defaultConfigFile="/com/hp/autonomy/frontend/configuration/defaultConfigFile.json"
+          p:defaultConfigFile="/com/hp/autonomy/frontend/find/configuration/defaultConfigFile.json"
           p:mapper-ref="objectMapper"
           p:textEncryptor-ref="org.jasypt.util.text.BasicTextEncryptor"
           p:filterProvider-ref="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider"
@@ -105,7 +105,7 @@
             <set>
                 <bean class="com.autonomy.frontend.configuration.SingleUserAuthenticationValidator"
                       p:configService-ref="configFileService"/>
-                <bean class="com.hp.autonomy.frontend.configuration.IodConfigValidator" />
+                <bean class="com.hp.autonomy.frontend.find.configuration.IodConfigValidator" />
             </set>
         </property>
     </bean>
@@ -131,5 +131,5 @@
     </bean>
 
     <bean class="org.jasypt.util.text.BasicTextEncryptor" p:password-ref="passwordFactory"/>
-    <bean id="passwordFactory" class="com.hp.autonomy.frontend.configuration.TextEncryptorPasswordFactory"/>
+    <bean id="passwordFactory" class="com.hp.autonomy.frontend.find.configuration.TextEncryptorPasswordFactory"/>
 </beans>

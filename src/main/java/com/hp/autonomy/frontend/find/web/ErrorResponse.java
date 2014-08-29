@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.web;
+package com.hp.autonomy.frontend.find.web;
 
 import java.util.UUID;
 import lombok.EqualsAndHashCode;

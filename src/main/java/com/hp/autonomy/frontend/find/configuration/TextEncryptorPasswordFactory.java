@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.configuration;
+package com.hp.autonomy.frontend.find.configuration;
 
 import org.springframework.beans.factory.FactoryBean;
 

@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.authentication;
+package com.hp.autonomy.frontend.find.authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

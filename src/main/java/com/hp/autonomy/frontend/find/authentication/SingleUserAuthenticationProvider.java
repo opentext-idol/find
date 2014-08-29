@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.authentication;
+package com.hp.autonomy.frontend.find.authentication;
 
 import com.autonomy.frontend.configuration.AuthenticationConfig;
 import com.autonomy.frontend.configuration.BCryptUsernameAndPassword;

@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.authentication;
+package com.hp.autonomy.frontend.find.authentication;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

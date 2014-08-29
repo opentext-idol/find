@@ -1,16 +1,10 @@
-package com.hp.autonomy.frontend.configuration;
+package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.aci.client.transport.AciServerDetails;
-import com.autonomy.frontend.configuration.CommunityService;
 import com.autonomy.frontend.configuration.ConfigException;
 import com.autonomy.frontend.configuration.ConfigFileService;
 import com.autonomy.frontend.configuration.ConfigResponse;
 import com.autonomy.frontend.configuration.ConfigValidationException;
-import com.autonomy.frontend.configuration.SecurityType;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /*
