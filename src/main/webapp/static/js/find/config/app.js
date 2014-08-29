@@ -34,7 +34,7 @@ define([
                 appName: 'Find',
                 logout: 'Logout from Settings'
             },
-            logoutUri: '../public',
+            logoutUri: '../logout',
             settingsPage: this.settingsPage,
             showLogout: true
         });

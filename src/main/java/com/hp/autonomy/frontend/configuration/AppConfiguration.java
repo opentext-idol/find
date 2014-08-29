@@ -1,5 +1,8 @@
 package com.hp.autonomy.frontend.configuration;
 
+import com.autonomy.frontend.configuration.Authentication;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +39,17 @@ public class AppConfiguration {
         final ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClientBuilder.build());
 
         return new RestTemplate(requestFactory);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
+
+        return mapper;
     }
 
 }
