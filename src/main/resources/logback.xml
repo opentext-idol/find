@@ -21,8 +21,15 @@
         </encoder>
     </appender>
 
-    <appender name="AuditFileAppender">
+    <appender name="AuditFileAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${hp.find.home:-./temp}/logs/${log.file.name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${hp.find.home:-./temp}/logs/${log.file.name}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>104857600</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd}\t%d{HH:mm:ss.SSS}\t%X{username}\t%X{ip}\t%msg%n</pattern>
         </encoder>
