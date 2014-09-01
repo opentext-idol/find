@@ -58,6 +58,8 @@
         <security:authentication-provider ref="singleUserAuthenticationProvider"/>
     </security:authentication-manager>
 
+    <bean class="com.hp.autonomy.frontend.logging.ApplicationStartLogger"/>
+
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="/WEB-INF/ehcache.xml"/>
     </bean>
