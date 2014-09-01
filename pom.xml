@@ -22,6 +22,31 @@
         <application.buildNumber>dev</application.buildNumber>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>cmbg-maven-releases</id>
+            <url>http://cmbg-maven.autonomy.com/nexus/content/repositories/releases</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>cmbg-maven-snapshots</id>
+            <url>http://cmbg-maven.autonomy.com/nexus/content/repositories/snapshots</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <profiles>
         <profile>
             <activation>
@@ -373,6 +398,11 @@
             <groupId>com.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-impl</artifactId>
             <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>logging</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
