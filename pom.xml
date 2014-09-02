@@ -110,7 +110,7 @@
                             <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
                             <customRunnerTemplate>${basedir}/src/test/js/lib/js-testing/spec-runner.html</customRunnerTemplate>
                             <customRunnerConfiguration>${basedir}/src/test/js/test-config.json</customRunnerConfiguration>
-                            <jsSrcDir>${basedir}/src/main/webapp</jsSrcDir>
+                            <jsSrcDir>${basedir}/src/main/webapp/static</jsSrcDir>
                             <jsTestSrcDir>${basedir}/src/test/js</jsTestSrcDir>
                             <specDirectoryName>test</specDirectoryName>
                             <specIncludes>
@@ -253,7 +253,7 @@
                             <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
                             <customRunnerTemplate>${basedir}/src/test/js/lib/js-testing/spec-runner.html</customRunnerTemplate>
                             <customRunnerConfiguration>${basedir}/src/test/js/test-config.json</customRunnerConfiguration>
-                            <jsSrcDir>${basedir}/src/main/webapp</jsSrcDir>
+                            <jsSrcDir>${basedir}/src/main/webapp/static</jsSrcDir>
                             <jsTestSrcDir>${basedir}/src/test/js</jsTestSrcDir>
                             <specDirectoryName>test</specDirectoryName>
                             <specIncludes>
