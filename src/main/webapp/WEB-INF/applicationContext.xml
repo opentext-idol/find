@@ -5,29 +5,60 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-                         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                         http://www.springframework.org/schema/context
-                         http://www.springframework.org/schema/context/spring-context-3.0.xsd
-                         http://www.springframework.org/schema/util
-                         http://www.springframework.org/schema/util/spring-util.xsd
-                         http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
-                         http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd" >
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                         http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd
+                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd" >
 
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="com.hp.autonomy.frontend">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <context:property-placeholder location="classpath:com/hp/autonomy/frontend/find.properties"/>
+    <context:property-placeholder location="classpath:com/hp/autonomy/frontend/find/find.properties"/>
 
     <ehcache:annotation-driven create-missing-caches="true"/>
 
     <ehcache:config cache-manager="cacheManager">
         <ehcache:evict-expired-elements interval="60" />
     </ehcache:config>
+
+    <bean id="forbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
+
+    <security:http pattern="/static/**" security="none"/>
+    <security:http pattern="/public/**" security="none"/>
+
+    <security:http pattern="/api/useradmin/**" entry-point-ref="forbiddenEntryPoint">
+        <security:intercept-url pattern="/api/useradmin/**" access="ROLE_ADMIN"/>
+    </security:http>
+
+    <security:http pattern="/api/config/**" entry-point-ref="forbiddenEntryPoint">
+        <security:intercept-url pattern="/api/config/**" access="ROLE_DEFAULT"/>
+    </security:http>
+
+    <security:http>
+        <security:access-denied-handler ref="findAccessDeniedHandler"/>
+        <security:intercept-url pattern="/p/**" access="ROLE_ADMIN"/>
+        <security:intercept-url pattern="/config/**" access="ROLE_DEFAULT"/>
+        <security:form-login
+                authentication-failure-url="/loginPage?error=auth"
+                authentication-success-handler-ref="loginSuccessHandler"
+                login-processing-url="/authenticate"
+                login-page="/loginPage"
+                password-parameter="password"
+                username-parameter="username"
+                />
+        <security:logout logout-url="/logout" logout-success-url="/public/"/>
+    </security:http>
+
+    <security:authentication-manager>
+        <security:authentication-provider ref="defaultLoginAuthenticationProvider"/>
+        <security:authentication-provider ref="singleUserAuthenticationProvider"/>
+    </security:authentication-manager>
+
+    <bean class="com.hp.autonomy.frontend.logging.ApplicationStartLogger"/>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="/WEB-INF/ehcache.xml"/>
@@ -38,23 +69,14 @@
     </bean>
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="com.hp.autonomy.frontend.i18n"/>
+        <property name="basename" value="com.hp.autonomy.frontend.find.i18n"/>
     </bean>
 
     <bean id="propertiesLookup" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <qualifier value="application"/>
         <property name="singleton" value="true"/>
-        <property name="location" value="classpath:com/hp/autonomy/frontend/find.properties"/>
+        <property name="location" value="classpath:com/hp/autonomy/frontend/find/find.properties"/>
     </bean>
-
-    <bean id="httpClientFactory" class="com.autonomy.aci.client.transport.impl.HttpClientFactory"
-          p:maxConnectionsPerRoute="20"
-          p:maxTotalConnections="120"
-          p:staleCheckingEnabled="true"
-          p:soTimeout="90000"/>
-
-    <bean id="httpClient" factory-bean="httpClientFactory" factory-method="createInstance"/>
-
 
     <bean name="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
@@ -62,21 +84,18 @@
         </property>
     </bean>
 
-    <bean id="loginFilter" class="com.autonomy.login.filter.LoginFilterImpl"
-          p:loginPageUrl="/login/login.html"
-          p:loginUri="/api/login/session"
-          p:authenticatedUrl="/api/login/authenticated/session"
-          p:configService-ref="configFileService"/>
+    <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"
+          p:objectMapper-ref="objectMapper"/>
 
     <bean class="com.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter" name="configEnvironmentVariableFilter"
-          p:configPage="/config.html"
+          p:configPage="/configError"
           p:configService-ref="configFileService"/>
 
-    <bean id="configFileService" class="com.hp.autonomy.frontend.configuration.FindConfigFileService"
+    <bean id="configFileService" class="com.hp.autonomy.frontend.find.configuration.FindConfigFileService"
           p:configFileLocation="hp.find.home"
           p:configFileName="config.json"
-          p:defaultConfigFile="classpath:com/hp/autonomy/frontend/configuration/defaultConfigFile.json"
-          p:mapper-ref="jacksonObjectMapperFactoryBean"
+          p:defaultConfigFile="/com/hp/autonomy/frontend/find/configuration/defaultConfigFile.json"
+          p:mapper-ref="objectMapper"
           p:textEncryptor-ref="org.jasypt.util.text.BasicTextEncryptor"
           p:filterProvider-ref="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider"
           p:validationService-ref="validationService"/>
@@ -84,25 +103,10 @@
     <bean id="validationService" class="com.autonomy.frontend.configuration.ValidationServiceImpl">
         <property name="validators">
             <set>
-                <bean class="com.autonomy.frontend.configuration.LoginValidator"
+                <bean class="com.autonomy.frontend.configuration.SingleUserAuthenticationValidator"
                       p:configService-ref="configFileService"/>
-                <bean class="com.hp.autonomy.frontend.configuration.IodConfigValidator" />
+                <bean class="com.hp.autonomy.frontend.find.configuration.IodConfigValidator" />
             </set>
-        </property>
-    </bean>
-
-    <bean class="org.springframework.web.client.RestTemplate">
-        <property name="requestFactory">
-            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory"
-                  p:httpClient-ref="httpClient"/>
-        </property>
-    </bean>
-
-    <bean id="jacksonObjectMapperFactoryBean" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
-        <property name="featuresToEnable">
-            <array>
-                <util:constant static-field="com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT"/>
-            </array>
         </property>
     </bean>
 
@@ -127,61 +131,5 @@
     </bean>
 
     <bean class="org.jasypt.util.text.BasicTextEncryptor" p:password-ref="passwordFactory"/>
-    <bean id="passwordFactory" class="com.hp.autonomy.frontend.configuration.TextEncryptorPasswordFactory"/>
-
-
-    <bean id="roles" class="com.autonomy.login.role.Roles">
-        <constructor-arg index="0">
-            <bean id="rolesList" class="java.util.ArrayList">
-                <constructor-arg>
-                    <list>
-                        <ref bean="roleAdmin"/>
-                        <ref bean="roleUserAdmin"/>
-                    </list>
-                </constructor-arg>
-            </bean>
-        </constructor-arg>
-    </bean>
-
-    <bean id="roleAdmin" class="com.autonomy.login.role.RoleFactory">
-        <property name="name" value="admin"/>
-        <property name="privileges" ref="roleAdminPrivileges"/>
-        <property name="sessionAttribute" value="adminUsername"/>
-    </bean>
-
-    <bean id="roleUserAdmin" class="com.autonomy.login.role.RoleFactory">
-        <property name="name" value="useradmin"/>
-        <property name="privileges" ref="roleUserAdminPrivileges"/>
-        <property name="parent">
-            <bean id="roleUserAdminParent" class="java.util.Collections" factory-method="unmodifiableSet">
-                <constructor-arg>
-                    <set>
-                        <ref bean="roleAdmin"/>
-                    </set>
-                </constructor-arg>
-            </bean>
-        </property>
-        <property name="sessionAttribute" value="userAdminUsername"/>
-    </bean>
-
-    <bean id="roleAdminPrivileges" class="java.util.Collections" factory-method="unmodifiableSet">
-        <constructor-arg>
-            <set>
-                <value>login</value>
-            </set>
-        </constructor-arg>
-    </bean>
-
-    <bean id="roleUserAdminPrivileges" class="java.util.Collections" factory-method="unmodifiableSet">
-        <constructor-arg>
-            <set>
-                <value>users</value>
-                <value>settings</value>
-            </set>
-        </constructor-arg>
-    </bean>
-
-    <bean id="userService" class="com.autonomy.login.user.UserServiceImpl">
-        <property name="configService" ref="configFileService"/>
-    </bean>
+    <bean id="passwordFactory" class="com.hp.autonomy.frontend.find.configuration.TextEncryptorPasswordFactory"/>
 </beans>

@@ -12,14 +12,40 @@
 
     <inceptionYear>2014</inceptionYear>
 
-    <groupId>com.hp.autonomy.frontend</groupId>
+    <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>find</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
         <org.springframework.version>3.2.8.RELEASE</org.springframework.version>
+        <application.buildNumber>dev</application.buildNumber>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>cmbg-maven-releases</id>
+            <url>http://cmbg-maven.autonomy.com/nexus/content/repositories/releases</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>cmbg-maven-snapshots</id>
+            <url>http://cmbg-maven.autonomy.com/nexus/content/repositories/snapshots</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <profiles>
         <profile>
@@ -64,7 +90,7 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <move todir="${basedir}/src/main/webapp/lib" failonerror="false">
+                                        <move todir="${basedir}/src/main/webapp/static/lib" failonerror="false">
                                             <fileset dir="${basedir}/target/web-resources/META-INF/resources/lib"/>
                                         </move>
                                         <move todir="${basedir}/src/test/js" failonerror="false">
@@ -117,7 +143,7 @@
                         </executions>
                         <configuration>
                             <configFile>${basedir}/build.js</configFile>
-                            <optimizerFile>${basedir}/src/main/webapp/lib/require/r.js</optimizerFile>
+                            <optimizerFile>${basedir}/src/main/webapp/static/lib/require/r.js</optimizerFile>
                             <filterConfig>true</filterConfig>
                             <skip>false</skip>
                         </configuration>
@@ -305,6 +331,21 @@
         </filters>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/webapp/static/lib</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/test/js/lib</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.1.0.v20131115</version>
@@ -354,19 +395,14 @@
             <version>4.3.1</version>
         </dependency>
         <dependency>
-            <groupId>com.autonomy.web</groupId>
-            <artifactId>autonomy-security-filters</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
             <groupId>com.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-impl</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>login</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>logging</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -394,6 +430,28 @@
             <artifactId>spring-context-support</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>3.2.5.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>3.2.5.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>com.googlecode.ehcache-spring-annotations</groupId>
@@ -413,18 +471,6 @@
             <version>2.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.autonomy</groupId>
-            <artifactId>autonomy-testing</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.autonomy.frontend.testing-utils</groupId>
-            <artifactId>frontend-testing-utils</artifactId>
-            <version>1.0.0</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -579,13 +625,6 @@
             <groupId>com.autonomy.frontend.settings-page</groupId>
             <artifactId>settings-page</artifactId>
             <version>1.3.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>users-page</artifactId>
-            <version>1.2.0</version>
             <scope>runtime</scope>
         </dependency>
 

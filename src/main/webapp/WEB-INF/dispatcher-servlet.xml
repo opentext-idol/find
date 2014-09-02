@@ -5,19 +5,31 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
-                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="com.hp.autonomy.frontend">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
     </context:component-scan>
 
-    <mvc:annotation-driven conversion-service="conversionService"/>
+    <util:properties id="dispatcherProperties" location="classpath:com/hp/autonomy/frontend/find/dispatcher.properties"/>
+
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
           p:viewClass="org.springframework.web.servlet.view.JstlView"
           p:prefix="/WEB-INF/jsps/"
           p:suffix=".jsp" />
+
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <mvc:resources mapping="/static-#{dispatcherProperties['application.version']}/**" location="/static/"/>
+
+    <mvc:view-controller path="/p/" view-name="private"/>
+    <mvc:view-controller path="/public/" view-name="public"/>
+    <mvc:view-controller path="/config/" view-name="config"/>
+    <mvc:view-controller path="/login" view-name="login"/>
+    <mvc:view-controller path="/configError" view-name="configError"/>
 
 </beans>

@@ -1,7 +1,7 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.ApiKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +38,13 @@ public class IndexesServiceImpl implements IndexesService {
 
     @Override
     public List<Index> listActiveIndexes() {
-        return configService.getConfig().getIod().getActiveIndexes();
+        final List<Index> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
+
+        if(activeIndexes.isEmpty()) {
+            return listIndexes();
+        }
+        else {
+            return activeIndexes;
+        }
     }
 }

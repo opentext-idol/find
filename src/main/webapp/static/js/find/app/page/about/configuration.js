@@ -3,7 +3,7 @@ define([
 ], function(version){
     return {
         about: {
-            version: 'Find 1.0-SNAPSHOT',
+            version: 'Find 1.0.0',
             build: version
         }
     };
