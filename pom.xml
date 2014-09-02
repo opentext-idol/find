@@ -213,7 +213,7 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <move todir="${basedir}/src/main/webapp" failonerror="false">
+                                        <move todir="${basedir}/src/main/webapp/lib" failonerror="false">
                                             <fileset dir="${basedir}/target/web-resources/META-INF/resources/"/>
                                         </move>
                                         <move todir="${basedir}/src/test/js" failonerror="false">
