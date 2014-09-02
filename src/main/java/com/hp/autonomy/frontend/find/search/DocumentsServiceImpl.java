@@ -19,10 +19,10 @@ public class DocumentsServiceImpl implements DocumentsService {
     private ApiKeyService apiKeyService;
 
     @Override
-    public List<Document> queryTextIndex(final String text, final int max_results, final String summary, final String indexes) {
+    public List<Document> queryTextIndex(final String text, final int maxResults, final String summary, final String indexes) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("text", text);
-        parameters.put("max_results", max_results);
+        parameters.put("max_results", maxResults);
         parameters.put("summary", summary);
         parameters.put("indexes", indexes);
         parameters.put("apikey", apiKeyService.getApiKey());

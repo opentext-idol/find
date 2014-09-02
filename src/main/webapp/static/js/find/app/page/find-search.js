@@ -32,7 +32,7 @@ define([
                 this.indexesCollection.fetch();
             }, 500, true),
             'change [name="indexRadios"]': function(e) {
-                this.indexes = $(e.currentTarget).val();
+                this.index = $(e.currentTarget).val();
 
                 if(this.$('.find-input').val()){
                     this.searchRequest(this.$('.find-input').val());
@@ -46,7 +46,7 @@ define([
                         text: $(e.currentTarget).html(),
                         max_results: 3,
                         summary: 'quick',
-                        indexes: this.indexes
+                        index: this.index
                     }
                 });
             }, 800),
@@ -78,9 +78,11 @@ define([
                 }
             }, this);
 
-            this.indexesCollection.fetch().then(_.bind(function() {
-                this.indexes = this.indexesCollection.at(0).get('index');
-            }, this));
+            this.indexesCollection.once('sync', function() {
+                this.index = this.indexesCollection.at(0).get('index');
+            }, this);
+
+            this.indexesCollection.fetch();
         },
 
         render: function() {
@@ -110,7 +112,9 @@ define([
                     index: model.get('index')
                 }));
 
-                model.get('index') === this.indexes ? this.$('[name="indexRadios"]').val([this.indexes]): false;
+                if (model.get('index') === this.index) {
+                    this.$('[name="indexRadios"]').val([this.index]);
+                }
             });
 
             /*top 3 results popover*/
@@ -264,23 +268,30 @@ define([
         },
 
         searchRequest: function(input) {
-            this.documentsCollection.fetch({
-                data: {
-                    text: input,
-                    max_results: 30,
-                    summary: 'quick',
-                    indexes: this.indexes
-                }
-            }, this);
+            if (this.index) {
+                this.documentsCollection.fetch({
+                    data: {
+                        text: input,
+                        max_results: 30,
+                        summary: 'quick',
+                        index: this.index
+                    }
+                }, this);
 
-            this.entityCollection.fetch({
-                data: {
-                    text: input,
-                    indexes: this.indexes
-                }
-            });
+                this.entityCollection.fetch({
+                    data: {
+                        text: input,
+                        index: this.index
+                    }
+                });
 
-            vent.navigate('find/search/' + encodeURIComponent(input), {trigger: false});
+                vent.navigate('find/search/' + encodeURIComponent(input), {trigger: false});
+            }
+            else {
+                this.indexesCollection.once('sync', function() {
+                    this.searchRequest(input);
+                }, this);
+            }
         }
     });
 });
