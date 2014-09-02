@@ -214,10 +214,10 @@
                                 <configuration>
                                     <target>
                                         <move todir="${basedir}/src/main/webapp/lib" failonerror="false">
-                                            <fileset dir="${basedir}/target/web-resources/META-INF/resources/"/>
+                                            <fileset dir="${basedir}/target/web-resources/META-INF/resources/lib"/>
                                         </move>
                                         <move todir="${basedir}/src/test/js" failonerror="false">
-                                            <fileset dir="${basedir}/target/web-resources/META-INF/test-resources/"/>
+                                            <fileset dir="${basedir}/target/web-resources/META-INF/test-resources"/>
                                         </move>
                                         <delete dir="${basedir}/target/web-resources" failonerror="false"/>
                                     </target>
