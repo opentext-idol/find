@@ -20,7 +20,7 @@ define([
         },
 
         getConfig: function() {
-            var $indexCheckboxes = this.$("input[type='checkbox']:checked");
+            var $indexCheckboxes = this.$('input[type="checkbox"]:checked');
 
             var activeIndexes;
 
@@ -33,8 +33,12 @@ define([
                     return _.contains(selectedIndexes, index.index);
                 });
             }
+            else if(this.$('input[type="checkbox"]').length) {
+                // no checkboxes ticked
+                activeIndexes = [];
+            }
             else {
-                // no checkboxes have rendered yet so we don't have IOD data
+                // checkboxes have not rendered, use previous value
                 activeIndexes = this.indexes;
             }
 
