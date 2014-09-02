@@ -20,13 +20,23 @@ define([
         },
 
         getConfig: function() {
-            var selectedIndexes = _.map(this.$("input[type='checkbox']:checked"), function(input) {
-                return $(input).val();
-            });
+            var $indexCheckboxes = this.$("input[type='checkbox']:checked");
 
-            var activeIndexes = _.filter(this.indexes, function(index) {
-                return _.contains(selectedIndexes, index.index);
-            });
+            var activeIndexes;
+
+            if ($indexCheckboxes.length) {
+                var selectedIndexes = _.map($indexCheckboxes, function (input) {
+                    return $(input).val();
+                });
+
+                activeIndexes = _.filter(this.indexes, function (index) {
+                    return _.contains(selectedIndexes, index.index);
+                });
+            }
+            else {
+                // no checkboxes have rendered yet so we don't have IOD data
+                activeIndexes = this.indexes;
+            }
 
             return {
                 apiKey: this.$apikey.val(),
@@ -38,6 +48,7 @@ define([
             ServerWidget.prototype.updateConfig.apply(this, arguments);
 
             this.$apikey.val(config.apiKey);
+            this.indexes = config.activeIndexes;
         },
 
         validateInputs: function() {
@@ -58,7 +69,14 @@ define([
         handleValidation: function(config, response) {
             if (_.isEqual(config.iod, this.lastValidationConfig.iod)) {
                 this.lastValidation = response.valid;
-                this.lastValidation && (this.indexes = response.data ? response.data.indexes ? response.data.indexes:[] : []);
+
+                if(this.lastValidation && response.data && response.data.indexes) {
+                    this.indexes = response.data.indexes;
+                }
+                else {
+                    this.indexes = [];
+                }
+
                 this.hideValidationInfo();
 
                 this.toggleIndexes();
