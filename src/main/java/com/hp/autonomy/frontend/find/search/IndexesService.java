@@ -8,5 +8,7 @@ public interface IndexesService {
 
     List<Index> listActiveIndexes();
 
+    List<Index> listVisibleIndexes();
+
     List<Index> listIndexes(String apiKey);
 }
