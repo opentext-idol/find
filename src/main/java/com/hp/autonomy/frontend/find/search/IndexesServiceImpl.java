@@ -38,6 +38,11 @@ public class IndexesServiceImpl implements IndexesService {
 
     @Override
     public List<Index> listActiveIndexes() {
+        return configService.getConfig().getIod().getActiveIndexes();
+    }
+
+    @Override
+    public List<Index> listVisibleIndexes() {
         final List<Index> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if(activeIndexes.isEmpty()) {

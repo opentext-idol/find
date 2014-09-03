@@ -16,7 +16,7 @@ public class ListIndexesController {
     @RequestMapping(value = "/api/search/list-indexes", method = RequestMethod.GET)
     @ResponseBody
     public List<Index> listActiveIndexes() {
-        return indexesService.listActiveIndexes();
+        return indexesService.listVisibleIndexes();
     }
 
 }
