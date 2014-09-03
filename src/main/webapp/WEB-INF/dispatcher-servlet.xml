@@ -23,7 +23,13 @@
           p:prefix="/WEB-INF/jsps/"
           p:suffix=".jsp" />
 
-    <mvc:annotation-driven conversion-service="conversionService"/>
+    <mvc:annotation-driven conversion-service="conversionService">
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"
+                          p:objectMapper-ref="objectMapper"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
     <mvc:resources mapping="/static-#{dispatcherProperties['application.version']}/**" location="/static/"/>
 
     <mvc:view-controller path="/p/" view-name="private"/>
