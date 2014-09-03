@@ -84,8 +84,7 @@
         </property>
     </bean>
 
-    <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"
-          p:objectMapper-ref="objectMapper"/>
+
 
     <bean class="com.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter" name="configEnvironmentVariableFilter"
           p:configPage="/configError"
