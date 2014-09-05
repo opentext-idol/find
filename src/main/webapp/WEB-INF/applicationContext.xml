@@ -94,7 +94,7 @@
           p:configFileLocation="hp.find.home"
           p:configFileName="config.json"
           p:defaultConfigFile="/com/hp/autonomy/frontend/find/configuration/defaultConfigFile.json"
-          p:mapper-ref="objectMapper"
+          p:mapper-ref="contextObjectMapper"
           p:textEncryptor-ref="org.jasypt.util.text.BasicTextEncryptor"
           p:filterProvider-ref="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider"
           p:validationService-ref="validationService"/>
