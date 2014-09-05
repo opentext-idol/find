@@ -1,8 +1,8 @@
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.frontend.configuration.Authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.hp.autonomy.frontend.configuration.Authentication;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;

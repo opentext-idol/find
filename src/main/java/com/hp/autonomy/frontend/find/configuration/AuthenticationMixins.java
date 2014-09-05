@@ -1,7 +1,8 @@
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.frontend.configuration.SingleUserAuthentication;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.hp.autonomy.frontend.configuration.SingleUserAuthentication;
 
 /*
  * $Id:$
@@ -10,6 +11,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  *
  * Last modified by $Author:$ on $Date:$
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "className", defaultImpl = SingleUserAuthentication.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "name", defaultImpl = SingleUserAuthentication.class)
 public class AuthenticationMixins {
 }

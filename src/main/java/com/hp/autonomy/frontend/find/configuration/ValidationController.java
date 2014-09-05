@@ -1,7 +1,7 @@
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.frontend.configuration.ValidationResults;
-import com.autonomy.frontend.configuration.ValidationService;
+import com.hp.autonomy.frontend.configuration.ValidationResults;
+import com.hp.autonomy.frontend.configuration.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

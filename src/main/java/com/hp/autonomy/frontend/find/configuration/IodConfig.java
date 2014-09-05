@@ -1,18 +1,17 @@
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.frontend.configuration.ConfigurationComponent;
-import com.autonomy.frontend.configuration.ValidationResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
+import com.hp.autonomy.frontend.configuration.ValidationResult;
 import com.hp.autonomy.frontend.find.search.Index;
 import com.hp.autonomy.frontend.find.search.IndexesService;
+import java.util.List;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.client.RestClientException;
-
-import java.util.List;
 
 @Data
 @JsonDeserialize(builder = IodConfig.Builder.class)

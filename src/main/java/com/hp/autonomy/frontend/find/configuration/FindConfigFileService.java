@@ -1,8 +1,8 @@
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.frontend.configuration.AbstractAuthenticatingConfigFileService;
-import com.autonomy.frontend.configuration.Authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.AbstractAuthenticatingConfigFileService;
+import com.hp.autonomy.frontend.configuration.Authentication;
 
 public class FindConfigFileService extends AbstractAuthenticatingConfigFileService<FindConfig> {
 

@@ -1,9 +1,9 @@
 package com.hp.autonomy.frontend.find.authentication;
 
-import com.autonomy.frontend.configuration.AuthenticationConfig;
-import com.autonomy.frontend.configuration.BCryptUsernameAndPassword;
-import com.autonomy.frontend.configuration.ConfigService;
-import com.autonomy.frontend.configuration.SingleUserAuthentication;
+import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.SingleUserAuthentication;
 import java.util.Arrays;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class SingleUserAuthenticationProvider implements AuthenticationProvider 
 
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
-        final com.autonomy.frontend.configuration.Authentication<?> configAuthentication = configService.getConfig().getAuthentication();
+        final com.hp.autonomy.frontend.configuration.Authentication<?> configAuthentication = configService.getConfig().getAuthentication();
 
         if(!(configAuthentication instanceof SingleUserAuthentication)) {
             return null;
