@@ -1,9 +1,9 @@
 package com.hp.autonomy.frontend.find.authentication;
 
-import com.autonomy.frontend.configuration.Authentication;
-import com.autonomy.frontend.configuration.AuthenticationConfig;
-import com.autonomy.frontend.configuration.ConfigService;
-import com.autonomy.frontend.configuration.LoginTypes;
+import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.LoginTypes;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

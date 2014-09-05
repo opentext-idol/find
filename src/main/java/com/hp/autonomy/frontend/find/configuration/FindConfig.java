@@ -1,13 +1,13 @@
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.frontend.configuration.AbstractConfig;
-import com.autonomy.frontend.configuration.Authentication;
-import com.autonomy.frontend.configuration.AuthenticationConfig;
-import com.autonomy.frontend.configuration.ConfigException;
-import com.autonomy.frontend.configuration.PasswordsConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.configuration.AbstractConfig;
+import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.PasswordsConfig;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

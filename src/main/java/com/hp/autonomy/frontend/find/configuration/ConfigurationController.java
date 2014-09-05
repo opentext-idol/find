@@ -1,9 +1,9 @@
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.frontend.configuration.ConfigException;
-import com.autonomy.frontend.configuration.ConfigFileService;
-import com.autonomy.frontend.configuration.ConfigResponse;
-import com.autonomy.frontend.configuration.ConfigValidationException;
+import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.ConfigResponse;
+import com.hp.autonomy.frontend.configuration.ConfigValidationException;
 import com.hp.autonomy.frontend.logging.Markers;
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;

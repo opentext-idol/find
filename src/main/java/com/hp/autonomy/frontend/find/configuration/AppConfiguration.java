@@ -1,8 +1,10 @@
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.autonomy.frontend.configuration.Authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
+import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -41,13 +43,23 @@ public class AppConfiguration {
         return new RestTemplate(requestFactory);
     }
 
-    @Bean
+    @Bean(name = "dispatcherObjectMapper")
+    public ObjectMapper dispatcherObjectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+
+        mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
+
+        return mapper;
+    }
+
+    @Bean(name = "contextObjectMapper")
     public ObjectMapper objectMapper() {
         final ObjectMapper mapper = new ObjectMapper();
 
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
+        mapper.addMixInAnnotations(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class);
 
         return mapper;
     }

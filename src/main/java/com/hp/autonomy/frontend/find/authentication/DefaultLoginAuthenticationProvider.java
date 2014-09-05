@@ -1,9 +1,9 @@
 package com.hp.autonomy.frontend.find.authentication;
 
-import com.autonomy.frontend.configuration.AuthenticationConfig;
-import com.autonomy.frontend.configuration.ConfigService;
-import com.autonomy.frontend.configuration.LoginTypes;
-import com.autonomy.frontend.configuration.UsernameAndPassword;
+import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.LoginTypes;
+import com.hp.autonomy.frontend.configuration.UsernameAndPassword;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -29,7 +29,7 @@ public class DefaultLoginAuthenticationProvider implements AuthenticationProvide
 
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
-        final com.autonomy.frontend.configuration.Authentication<?> authenticationConfig = configService.getConfig().getAuthentication();
+        final com.hp.autonomy.frontend.configuration.Authentication<?> authenticationConfig = configService.getConfig().getAuthentication();
 
         if(!LoginTypes.DEFAULT.equalsIgnoreCase(authenticationConfig.getMethod())) {
             return null;

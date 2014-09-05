@@ -86,7 +86,7 @@
 
 
 
-    <bean class="com.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter" name="configEnvironmentVariableFilter"
+    <bean class="com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter" name="configEnvironmentVariableFilter"
           p:configPage="/configError"
           p:configService-ref="configFileService"/>
 
@@ -94,15 +94,15 @@
           p:configFileLocation="hp.find.home"
           p:configFileName="config.json"
           p:defaultConfigFile="/com/hp/autonomy/frontend/find/configuration/defaultConfigFile.json"
-          p:mapper-ref="objectMapper"
+          p:mapper-ref="contextObjectMapper"
           p:textEncryptor-ref="org.jasypt.util.text.BasicTextEncryptor"
           p:filterProvider-ref="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider"
           p:validationService-ref="validationService"/>
 
-    <bean id="validationService" class="com.autonomy.frontend.configuration.ValidationServiceImpl">
+    <bean id="validationService" class="com.hp.autonomy.frontend.configuration.ValidationServiceImpl">
         <property name="validators">
             <set>
-                <bean class="com.autonomy.frontend.configuration.SingleUserAuthenticationValidator"
+                <bean class="com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator"
                       p:configService-ref="configFileService"/>
                 <bean class="com.hp.autonomy.frontend.find.configuration.IodConfigValidator" />
             </set>

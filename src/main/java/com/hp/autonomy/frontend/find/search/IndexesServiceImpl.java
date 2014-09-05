@@ -1,15 +1,14 @@
 package com.hp.autonomy.frontend.find.search;
 
-import com.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.configuration.FindConfig;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.ApiKeyService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
+import com.hp.autonomy.frontend.find.configuration.FindConfig;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class IndexesServiceImpl implements IndexesService {

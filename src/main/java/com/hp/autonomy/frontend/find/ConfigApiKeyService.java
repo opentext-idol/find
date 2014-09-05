@@ -1,6 +1,6 @@
 package com.hp.autonomy.frontend.find;
 
-import com.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.configuration.FindConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
