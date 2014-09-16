@@ -1,0 +1,22 @@
+{
+    "name": "hp-find",
+    "version": "1.0.0",
+    "private": true,
+    "authors": [
+        "Alex Scown <alex.scown@hp.com>",
+        "Alyona Ivanova <alyona.ivanova@hp.com>"
+    ],
+    "moduleType": [
+        "amd"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "src/main/webapp/static/lib",
+        "src/main/test"
+    ],
+    "dependencies": {
+        "jquery": "components/jquery#~1.10.2"
+    }
+}
