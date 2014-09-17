@@ -15,8 +15,6 @@
         <![endif]-->
         <link rel="stylesheet" type="text/css" href="../static-${applicationVersion}/css/app.css"/>
 
-        <!--[if IE]>
-        <script type="text/javascript" src="../static-${applicationVersion}/lib/excanvas/excanvas.js"></script><![endif]-->
         <script type="text/javascript" src="../static-${applicationVersion}/lib/require/require.js" data-main="../static-${applicationVersion}/js/main.js"></script>
     </head>
     <body>
