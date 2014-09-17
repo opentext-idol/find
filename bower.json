@@ -17,6 +17,7 @@
         "src/main/test"
     ],
     "dependencies": {
-        "jquery": "components/jquery#~1.10.2"
+        "jquery": "components/jquery#~1.10.2",
+        "underscore": "components/underscore#~1.5.2"
     }
 }
