@@ -549,13 +549,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json.js</artifactId>
-            <version>2012-10-08</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>vitalets.github.com</groupId>
             <artifactId>x-editable</artifactId>
             <version>1.4.5</version>
