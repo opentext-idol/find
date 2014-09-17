@@ -549,13 +549,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.jquery</groupId>
-            <artifactId>jquery-ui-redmond</artifactId>
-            <version>1.10.3b</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.documentcloud</groupId>
             <artifactId>underscore</artifactId>
             <version>1.5.2</version>
@@ -686,12 +679,6 @@
             <groupId>com.autonomy.frontend</groupId>
             <artifactId>scroll-near-end</artifactId>
             <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.trentrichardson</groupId>
-            <artifactId>timepicker</artifactId>
-            <version>1.1.1</version>
         </dependency>
 
         <dependency>
