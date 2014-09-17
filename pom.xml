@@ -549,13 +549,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.googlecode</groupId>
-            <artifactId>html5shiv</artifactId>
-            <version>3.6.2-pre</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json.js</artifactId>
             <version>2012-10-08</version>
