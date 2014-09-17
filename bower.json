@@ -17,8 +17,8 @@
         "src/main/test"
     ],
     "dependencies": {
+        "backbone": "backbone#~1.1.0",
         "jquery": "components/jquery#~1.10.2",
-        "underscore": "components/underscore#~1.5.2",
-        "backbone": "backbone#~1.1.0"
+        "underscore": "components/underscore#~1.5.2"
     }
 }
