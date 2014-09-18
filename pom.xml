@@ -577,12 +577,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.jacklmoore</groupId>
-            <artifactId>colorbox</artifactId>
-            <version>1.5.10b</version>
-        </dependency>
-
-        <dependency>
             <groupId>net.datatables</groupId>
             <artifactId>datatables</artifactId>
             <version>1.9.4</version>

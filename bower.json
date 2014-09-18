@@ -18,6 +18,7 @@
     ],
     "dependencies": {
         "backbone": "backbone#~1.1.0",
+        "colorbox": "colorbox#~1.5.10",
         "fontawesome": "components-font-awesome#~3.2.1",
         "jquery": "components/jquery#~1.10.2",
         "json": "json2#*",
