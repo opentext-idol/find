@@ -570,30 +570,6 @@
         </dependency>
 
         <dependency>
-            <groupId>net.datatables</groupId>
-            <artifactId>datatables</artifactId>
-            <version>1.9.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sh.aaron.brandon</groupId>
-            <artifactId>jquery-mousewheel</artifactId>
-            <version>3.0.6</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.mbraak</groupId>
-            <artifactId>jqtree</artifactId>
-            <version>0.17.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>scroll-near-end</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.autonomy.frontend</groupId>
             <artifactId>bootstrap-theme</artifactId>
             <version>2.3.2</version>
