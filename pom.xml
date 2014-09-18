@@ -549,20 +549,6 @@
         </dependency>
 
         <dependency>
-            <groupId>vitalets.github.com</groupId>
-            <artifactId>x-editable</artifactId>
-            <version>1.4.5</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.momentjs</groupId>
-            <artifactId>moment</artifactId>
-            <version>1.7.2</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.autonomy</groupId>
             <artifactId>polyfill</artifactId>
             <version>1.0</version>

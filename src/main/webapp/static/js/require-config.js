@@ -16,15 +16,13 @@ require.config({
         'js-utils': '../lib/javascript-utils',
         json2: '../lib/json/json2',
         'login-page': '../lib/login-page',
-        moment: '../lib/moment/moment',
         polyfill: '../lib/polyfill/polyfill',
         raphael : '../lib/raphael/raphael',
         scrollNearEnd : '../lib/scroll-near-end/scroll-near-end',
         settings: '../lib/settings',
         store: '../lib/store/store',
         text: '../lib/require/text',
-        underscore: '../lib/underscore/underscore',
-        xeditable: '../lib/x-editable/x-editable'
+        underscore: '../lib/underscore/underscore'
     },
     shim: {
         'backbone-base': {
@@ -38,7 +36,6 @@ require.config({
         scrollNearEnd: ['jquery'],
         underscore: {
             exports: '_'
-        },
-        xeditable: ['jquery', 'bootstrap']
+        }
     }
 });
