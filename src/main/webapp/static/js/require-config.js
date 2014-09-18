@@ -16,8 +16,6 @@ require.config({
         'js-utils': '../lib/javascript-utils',
         json2: '../lib/json/json2',
         'login-page': '../lib/login-page',
-        polyfill: '../lib/polyfill/polyfill',
-        raphael : '../lib/raphael/raphael',
         scrollNearEnd : '../lib/scroll-near-end/scroll-near-end',
         settings: '../lib/settings',
         store: '../lib/store/store',
