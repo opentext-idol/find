@@ -5,7 +5,6 @@ require.config({
         'backbone-base': '../lib/backbone/backbone',
         bootstrap: '../lib/bootstrap/js/bootstrap',
         colorbox: '../lib/colorbox/jquery.colorbox',
-        'config-wizard': '../lib/config-wizard',
         i18n: '../lib/require/i18n',
         jquery: '../lib/jquery/jquery',
         'js-utils': '../lib/javascript-utils',
