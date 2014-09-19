@@ -17,8 +17,6 @@ define([
         this.settingsPage = new SettingsPage({});
         this.settingsPage.render();
 
-        var $submitButton = this.settingsPage.$('');
-
         this.navigation = new (EmptyNavbar.extend({
             events: {
                 'click a': function(e) {
