@@ -580,12 +580,6 @@
             <artifactId>login-page</artifactId>
             <version>1.1.2</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>about-page</artifactId>
-            <version>1.1.0</version>
-        </dependency>
     </dependencies>
 
 </project>

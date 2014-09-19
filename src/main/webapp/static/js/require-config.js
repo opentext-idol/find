@@ -1,6 +1,5 @@
 require.config({
     paths: {
-        'about-page': '../lib/about-page',
         backbone: 'find/lib/backbone/backbone-extensions',
         'backbone-base': '../lib/backbone/backbone',
         bootstrap: '../lib/bootstrap/js/bootstrap',
