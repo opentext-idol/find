@@ -44,6 +44,10 @@ public class AboutPage extends AppElement implements AppPage {
 		return findElement(By.xpath(".//a[text()='" + String.valueOf(pageinateNumber) + "']"));
 	}
 
+	public void searchInSearchBox(String searchTerm) {
+		findElement(By.cssSelector(".ibox-content [type='search']")).clear();
+		findElement(By.cssSelector(".ibox-content [type='search']")).sendKeys(searchTerm);
+	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<AboutPage> {
 

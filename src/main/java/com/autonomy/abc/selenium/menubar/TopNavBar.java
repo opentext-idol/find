@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.menubar;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -34,4 +35,9 @@ public class TopNavBar extends TabBar {
 		return new TopNavBarTab(activeTabs.get(0), getDriver());
 	}
 
+	public void search(final String searchTerm) {
+		findElement(By.cssSelector("[name='top-search']")).clear();
+		findElement(By.cssSelector("[name='top-search']")).sendKeys(searchTerm);
+		findElement(By.cssSelector("[name='top-search']")).sendKeys(Keys.RETURN);
+	}
 }

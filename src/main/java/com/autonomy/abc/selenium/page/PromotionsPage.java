@@ -2,12 +2,11 @@ package com.autonomy.abc.selenium.page;
 
 
 import com.autonomy.abc.selenium.AppElement;
+import com.autonomy.abc.selenium.element.ModalView;
 import com.autonomy.abc.selenium.menubar.MainTabBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
-import com.autonomy.idoladmin.selenium.util.AbstractWebElementPlaceholder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class PromotionsPage extends AppElement implements AppPage {
@@ -17,10 +16,22 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	@Override
-	public void navigateToPage() { getDriver().get("promotions"); }
+	public void navigateToPage() {
+		getDriver().get("promotions");
+	}
 
 	public WebElement newPromotionButton() {
 		return findElement(By.cssSelector("[data-route='promotions/new']"));
+	}
+
+	public void openPromotionWithTitleContaining(final String promotionTitleSubstring) {
+		findElement(By.xpath(".//a[contains(text(), '" + promotionTitleSubstring + "')]")).click();
+	}
+
+	public void deletePromotion() {
+		findElement(By.cssSelector(".promotion-view-delete")).click();
+		final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
+		deleteModal.findElement(By.cssSelector(".btn-danger")).click();
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {

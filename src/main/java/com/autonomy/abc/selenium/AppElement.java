@@ -101,6 +101,10 @@ public class AppElement implements WebElement {
 		return $el().getText();
 	}
 
+	public static WebElement getParent(WebElement child) {
+		return child.findElement(By.xpath(".//.."));
+	}
+
 	public boolean hasClass(final String className) {
 		return hasClass(className, $el());
 	}
