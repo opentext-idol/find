@@ -71,10 +71,10 @@ public abstract class ABCTestBase {
 		ImplicitWaits.setImplicitWait(driver);
 		i18nHandler = new I18nRequestHandler(driver);
 		driver.get(config.getWebappUrl());
+		getDriver().manage().window().maximize();
 		abcLogin("richard", "q");
 		body = new AppBody(driver);
 		tabBar = new MainTabBar(driver);
-		getDriver().manage().window().maximize();
 	}
 
 	@After

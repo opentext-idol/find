@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.page.AboutPage;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 
 import java.net.MalformedURLException;
@@ -64,4 +65,9 @@ public class AboutPageITCase extends ABCTestBase {
 		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 10 of"));
 	}
 
+	@Test
+	public void testSearchTable() {
+		aboutPage.searchInSearchBox("store");
+		assertThat("search has not returned correct result", aboutPage.findElement(By.cssSelector("table a")).getText().contains("store"));
+	}
 }
