@@ -17,6 +17,7 @@ import java.util.List;
 public class Indexes {
 
     private final List<Index> publicIndex;
+    private final List<PrivateIndex> privateIndexes;
 
     @Setter
     @JsonPOJOBuilder(withPrefix = "set")
@@ -26,8 +27,11 @@ public class Indexes {
         @JsonProperty("public_index")
         private List<Index> publicIndex;
 
+        @JsonProperty("index")
+        private List<PrivateIndex> privateIndexes;
+
         public Indexes build() {
-            return new Indexes(publicIndex);
+            return new Indexes(publicIndex, privateIndexes);
         }
 
     }
