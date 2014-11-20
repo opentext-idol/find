@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface IndexesService {
 
-    List<Index> listIndexes();
+    Indexes listIndexes();
+
+    Indexes listIndexes(String apiKey);
 
     List<Index> listActiveIndexes();
 
     List<Index> listVisibleIndexes();
-
-    List<Index> listIndexes(String apiKey);
 }

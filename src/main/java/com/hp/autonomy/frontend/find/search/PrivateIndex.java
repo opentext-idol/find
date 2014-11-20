@@ -38,6 +38,13 @@ public class PrivateIndex {
         this.description = builder.description;
     }
 
+    public Index toIndex() {
+        return new Index.Builder()
+            .setIndex(index)
+            .setType(type)
+            .build();
+    }
+
     @Setter
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")

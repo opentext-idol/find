@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 import com.hp.autonomy.frontend.configuration.ValidationResult;
 import com.hp.autonomy.frontend.find.search.Index;
+import com.hp.autonomy.frontend.find.search.Indexes;
 import com.hp.autonomy.frontend.find.search.IndexesService;
 import java.util.List;
 import lombok.Data;
@@ -37,7 +38,7 @@ public class IodConfig implements ConfigurationComponent {
                 return new ValidationResult<>(false, "API Key is blank");
             }
 
-            final List<Index> indexes = indexesService.listIndexes(apiKey);
+            final Indexes indexes = indexesService.listIndexes(apiKey);
             final List<Index> activeIndexes = indexesService.listActiveIndexes();
 
             return new ValidationResult<>(true, new IndexResponse(indexes, activeIndexes));
@@ -74,10 +75,10 @@ public class IodConfig implements ConfigurationComponent {
 
     @Data
     private static class IndexResponse {
-        private final List<Index> indexes;
+        private final Indexes indexes;
         private final List<Index> activeIndexes;
 
-        private IndexResponse(final List<Index> indexes, final List<Index> activeIndexes) {
+        private IndexResponse(final Indexes indexes, final List<Index> activeIndexes) {
             this.indexes = indexes;
             this.activeIndexes = activeIndexes;
         }

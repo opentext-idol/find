@@ -4,7 +4,7 @@
         <div class="controls">
             <% _.each(indexes, function(index) { %>
                 <label class="checkbox">
-                    <input type="checkbox" value="<%- index.index %>"><%- index.index %>
+                    <input type="checkbox" value="<%- index.index %>"><%- index.index %> <%= index.private ? '(private)' : '' %>
                 </label>
             <% }) %>
         </div>

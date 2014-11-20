@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Data;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Data
 @JsonDeserialize(builder = Index.Builder.class)
@@ -18,6 +19,7 @@ public class Index {
     }
 
     @Setter
+    @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Builder {
