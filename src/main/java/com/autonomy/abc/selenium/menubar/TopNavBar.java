@@ -40,4 +40,8 @@ public class TopNavBar extends TabBar {
 		findElement(By.cssSelector("[name='top-search']")).sendKeys(searchTerm);
 		findElement(By.cssSelector("[name='top-search']")).sendKeys(Keys.RETURN);
 	}
+
+	public void sideBarToggle() {
+		findElement(By.cssSelector(".navbar-minimalize")).click();
+	}
 }

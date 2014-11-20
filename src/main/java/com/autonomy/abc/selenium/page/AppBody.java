@@ -12,6 +12,7 @@ public class AppBody extends AppElement {
 	private final AbstractWebElementPlaceholder<OverviewPage> overviewPage;
 	private final AbstractWebElementPlaceholder<PromotionsPage> promotionsPage;
 	private final AbstractWebElementPlaceholder<AboutPage> aboutPage;
+	private final AbstractWebElementPlaceholder<UsersPage> usersPage;
 	private final SearchPage.Placeholder searchPage;
 	private final CreateNewPromotionsPage.Placeholder createPromotionsPage;
 	private final TopNavBar topNavBar;
@@ -26,6 +27,7 @@ public class AppBody extends AppElement {
 		this.overviewPage = new OverviewPage.Placeholder(this, mainTabBar, topNavBar);
 		this.promotionsPage = new PromotionsPage.Placeholder(this, mainTabBar, topNavBar);
 		this.aboutPage = new AboutPage.Placeholder(this, mainTabBar, topNavBar);
+		this.usersPage = new UsersPage.Placeholder(this, mainTabBar, topNavBar);
 
 		this.searchPage = new SearchPage.Placeholder(topNavBar);
 		this.createPromotionsPage = new CreateNewPromotionsPage.Placeholder(topNavBar);
@@ -44,6 +46,10 @@ public class AppBody extends AppElement {
 		return aboutPage.$topNavBarDropDownPage();
 	}
 
+	public UsersPage getUsersPage() {
+		return usersPage.$topNavBarDropDownPage();
+	}
+
 	public SearchPage getSearchPage() {
 		return searchPage.$searchPage(getDriver().findElement(By.cssSelector(".page-container")));
 	}
@@ -54,5 +60,10 @@ public class AppBody extends AppElement {
 
 	public TopNavBar getTopNavBar() {
 		return topNavBar;
+	}
+
+	public void logout() {
+		topNavBar.findElement(By.cssSelector(".fa-cog")).click();
+		topNavBar.findElement(By.cssSelector("a[href='/abc/login/index.html']")).click();
 	}
 }
