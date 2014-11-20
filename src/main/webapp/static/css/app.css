@@ -1,4 +1,4 @@
-@import '../lib/frontend-bootstrap-theme/css/bootstrap-custom.css';
+@import 'bootstrap-custom.css';
 @import '../lib/bootstrap/css/bootstrap-responsive.css';
 @import '../lib/fontawesome/css/font-awesome.css';
 @import "../lib/colorbox/example1/colorbox.css";
