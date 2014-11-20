@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.PromotionsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -19,17 +20,26 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 	public CreateNewPromotionsITCase(final TestConfig config, final String browser, final Platform platform) {
 		super(config, browser, platform);
 	}
+
 	private SearchPage searchPage;
+	private String promotedDocTitle;
+	private PromotionsPage promotionsPage;
 
 	private CreateNewPromotionsPage createPromotionsPage;
 
 	@Before
 	public void setUp() {
-		final TopNavBar topNavBar = body.getTopNavBar();
+		TopNavBar topNavBar = body.getTopNavBar();
 		topNavBar.search("fox");
 		searchPage = body.getSearchPage();
-		searchPage.createAPromotion();
+		promotedDocTitle = searchPage.createAPromotion();
 		createPromotionsPage = body.getCreateNewPromotionsPage();
+	}
+
+	@After
+	public void cleanUp() {
+		promotionsPage = body.getPromotionsPage();
+		promotionsPage.deleteAllPromotions();
 	}
 
 	@Test
@@ -55,12 +65,10 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
 		assertThat("modified search page not opened", getDriver().getCurrentUrl().contains("search/modified/animal"));
 
-		final PromotionsPage promotionsPage = body.getPromotionsPage();
+		promotionsPage = body.getPromotionsPage();
 		promotionsPage.openPromotionWithTitleContaining("animal");
 		assertThat("page does not have pin to position name", promotionsPage.getText().contains("animal"));
-		assertThat("page does not have correct pin to position number", promotionsPage.getText().contains("Pinned to position: 3"));
-
-		promotionsPage.deletePromotion();
+		assertThat("page does not have correct pin to position number", promotionsPage.getText().contains("Pinned to position: 1"));
 	}
 
 	@Test
@@ -93,7 +101,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testAddRemoveTriggerTerms() {
+	public void testAddRemoveTriggerTermsAndCancel() {
 		createPromotionsPage.navigateToTriggers();
 		assertThat("Wizard has not progressed to Select the position", createPromotionsPage.getText().contains("Select Spotlight Triggers"));
 		assertThat("Trigger add button is not disabled when text box is empty", createPromotionsPage.triggerAddButton().getAttribute("class").contains("disabled"));
@@ -119,6 +127,80 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 		createPromotionsPage.cancelButton("trigger").click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("create"));
+	}
+
+	@Test
+	public void testAddRemoveTriggersAndComplete() {
+		createPromotionsPage.navigateToTriggers();
+		createPromotionsPage.addSearchTrigger("alpha");
+		createPromotionsPage.addSearchTrigger("beta gamma delta");
+		createPromotionsPage.removeSearchTrigger("gamma");
+		createPromotionsPage.removeSearchTrigger("alpha");
+		createPromotionsPage.addSearchTrigger("epsilon");
+		createPromotionsPage.removeSearchTrigger("beta");
+		assertThat("Number of triggers does not equal 2", createPromotionsPage.getSearchTriggersList().size() == 2);
+
+		createPromotionsPage.promoteButton().click();
+		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		final PromotionsPage promotionsPage = body.getPromotionsPage();
+		promotionsPage.openPromotionWithTitleContaining("delta");
+
+		assertThat("page does not have pin to position name", promotionsPage.getText().contains("delta"));
+		assertThat("page does not have correct pin to position number", promotionsPage.getText().contains("Pinned to position: 1"));
+	}
+
+	@Test
+	public void testAddSpotlightSponsored() {
+		addSpotlightPromotion("Sponsored", "apples");
+	}
+
+	@Test
+	public void testAddSpotlightHotwire() {
+		addSpotlightPromotion("Hotwire", "grapes");
+	}
+
+	@Test
+	public void testAddSpotlightTopPromotions() {
+		addSpotlightPromotion("Top Promotions", "oranges");
+	}
+
+	private void addSpotlightPromotion(final String spotlightType, final String searchTrigger) {
+		createPromotionsPage.spotlight().click();
+		assertThat("Continue button not enabled", !createPromotionsPage.continueButton("type").getAttribute("class").contains("disabled"));
+
+		createPromotionsPage.continueButton("type").click();
+		assertThat("Continue button not disabled", createPromotionsPage.continueButton("spotlightType").getAttribute("class").contains("disabled"));
+
+		createPromotionsPage.spotlightType(spotlightType).click();
+		assertThat("Continue button not enabled", !createPromotionsPage.continueButton("spotlightType").getAttribute("class").contains("disabled"));
+
+		createPromotionsPage.continueButton("spotlightType").click();
+		assertThat("Promote button not disabled", createPromotionsPage.promoteButton().getAttribute("class").contains("disabled"));
+
+		createPromotionsPage.addSearchTrigger(searchTrigger);
+		assertThat("Promote button not enabled", !createPromotionsPage.promoteButton().getAttribute("class").contains("disabled"));
+
+		createPromotionsPage.promoteButton().click();
+		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		assertThat("Linked to wrong page", getDriver().getCurrentUrl().contains("modified/" + searchTrigger));
+
+		assertThat("Wrong document spotlighted", createPromotionsPage.getTopPromotedLinkTitle().equals(promotedDocTitle));
+		assertThat("Wrong spotlight button text", createPromotionsPage.getTopPromotedLinkButtonText().equals(spotlightType));
+
+		searchPage.showHideUnmodifiedResults().click();
+		searchPage.modalLoadOrFadeWait();
+		assertThat("Modified results have not been hidden", !searchPage.getText().contains(promotedDocTitle));
+
+		searchPage.showHideUnmodifiedResults().click();
+		searchPage.modalLoadOrFadeWait();
+		assertThat("Modified results have not been shown", searchPage.getText().contains(promotedDocTitle));
+
+		promotionsPage = body.getPromotionsPage();
+		assertThat("Linked to wrong page", getDriver().getCurrentUrl().contains("promotions"));
+		promotionsPage.openPromotionWithTitleContaining(searchTrigger);
+
+		assertThat("page does not have correct spotlight name", promotionsPage.getText().contains("Spotlight for: " + searchTrigger));
+		assertThat("page does not have correct spotlight type", promotionsPage.spotlightButton().getText().contains(spotlightType));
 	}
 
 }

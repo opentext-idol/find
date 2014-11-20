@@ -31,24 +31,27 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testUnmodifiedResultsToggleButton(){
 		assertThat("Button toggle wrong", searchPage.showHideUnmodifiedResults().getText().equals("Show unmodified results"));
+		assertThat("Url incorrect", getDriver().getCurrentUrl().contains("/modified"));
 
 		searchPage.showHideUnmodifiedResults().click();
 		assertThat("Button toggle wrong", searchPage.showHideUnmodifiedResults().getText().equals("Showing unmodified results"));
+		assertThat("Url incorrect", getDriver().getCurrentUrl().contains("/unmodified"));
 
 		searchPage.showHideUnmodifiedResults().click();
 		assertThat("Button toggle wrong", searchPage.showHideUnmodifiedResults().getText().equals("Show unmodified results"));
+		assertThat("Url incorrect", getDriver().getCurrentUrl().contains("/modified"));
 	}
 
 	@Test
 	public void testSearch(){
 		topNavBar.search("dog");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("Results for: \"dog\""));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("\"dog\""));
 
 		topNavBar.search("cat");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("Results for: \"cat\""));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("\"cat\""));
 
 		topNavBar.search("ElEPhanT");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("Results for: \"ElEPhanT\""));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("\"ElEPhanT\""));
 	}
 
 	@Test
@@ -95,11 +98,11 @@ public class SearchPageITCase extends ABCTestBase {
 		topNavBar.search("dog");
 		AppElement.scrollIntoView(searchPage.backToFirstPageButton(), getDriver());
 		assertThat("Back to first page button is not disabled", searchPage.isBackToFirstPageButtonDisabled());
-		assertThat("Back a page button is not disabled", searchPage.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
+		assertThat("Back a page button is not disabled", AppElement.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
 
 		searchPage.forwardPageButton().click();
-		assertThat("Back to first page button is not enabled", !searchPage.getParent(searchPage.backToFirstPageButton()).getAttribute("class").contains("disabled"));
-		assertThat("Back a page button is not enabled", !searchPage.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
+		assertThat("Back to first page button is not enabled", !AppElement.getParent(searchPage.backToFirstPageButton()).getAttribute("class").contains("disabled"));
+		assertThat("Back a page button is not enabled", !AppElement.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
 		assertThat("Page 2 is not active", searchPage.isPageActive(2));
 
 		searchPage.forwardPageButton().click();
@@ -111,19 +114,21 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Page 1 is not active", searchPage.isPageActive(1));
 
 		searchPage.forwardToLastPageButton().click();
-		assertThat("Forward to last page button is not disabled", searchPage.getParent(searchPage.forwardToLastPageButton()).getAttribute("class").contains("disabled"));
-		assertThat("Forward a page button is not disabled", searchPage.getParent(searchPage.forwardPageButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward to last page button is not disabled", AppElement.getParent(searchPage.forwardToLastPageButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward a page button is not disabled", AppElement.getParent(searchPage.forwardPageButton()).getAttribute("class").contains("disabled"));
 
 		final int numberOfPages = searchPage.getCurrentPageNumber();
 
 		for (int i = numberOfPages - 1; i > 0; i--) {
 			searchPage.backPageButton().click();
 			assertThat("Page " + String.valueOf(i) + " is not active", searchPage.isPageActive(i));
+			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
 			searchPage.forwardPageButton().click();
 			assertThat("Page " + String.valueOf(j) + " is not active", searchPage.isPageActive(j));
+			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(j)));
 		}
 	}
 
