@@ -432,12 +432,21 @@ input.find-input {
     width: 250px;
 }
 
-.popover {
-    width: 150px;
-}
-
 .popover-content h6 {
     margin:0;
+}
+
+.find-form .popover label {
+    display: block;
+    margin-bottom: 5px;
+    padding-left: 20px;
+    vertical-align: baseline;
+}
+
+.find-form .popover label input[type="radio"] {
+    margin-left: -20px;
+    margin-right: 0;
+    vertical-align: baseline;
 }
 
 .entity-to-summary:hover {

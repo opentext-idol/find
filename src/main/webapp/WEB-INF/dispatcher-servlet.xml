@@ -26,7 +26,7 @@
     <mvc:annotation-driven conversion-service="conversionService">
         <mvc:message-converters register-defaults="true">
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"
-                          p:objectMapper-ref="objectMapper"/>
+                          p:objectMapper-ref="dispatcherObjectMapper"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
 

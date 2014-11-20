@@ -10,17 +10,19 @@ define([
     'text!find/templates/app/page/suggestions-container.html',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/colorbox-controls.html',
+    'text!find/templates/app/page/index-popover.html',
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
 ], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, template, resultsTemplate,
-            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopoverContents, topResultsPopoverContents) {
+            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
 
     return BasePage.extend({
 
         template: _.template(template),
         resultsTemplate: _.template(resultsTemplate),
         suggestionsTemplate: _.template(suggestionsTemplate),
+        indexPopover: _.template(indexPopover),
         indexPopoverContents: _.template(indexPopoverContents),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
 
@@ -94,7 +96,7 @@ define([
 
             this.$('.list-indexes').popover({
                 html: true,
-                content: '<h6>Public Indexes</h6>',
+                content: this.indexPopover(),
                 placement: 'bottom'
             });
 
@@ -108,7 +110,7 @@ define([
             this.listenTo(this.indexesCollection, 'add', function(model){
                 this.$('.find-form  .popover-content .loading-spinner').remove();
 
-                this.$('.find-form .popover-content').append(this.indexPopoverContents({
+                this.$('.find-form .popover-content ul').append(this.indexPopoverContents({
                     index: model.get('index')
                 }));
 
