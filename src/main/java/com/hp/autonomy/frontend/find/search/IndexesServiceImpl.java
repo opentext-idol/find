@@ -23,16 +23,16 @@ public class IndexesServiceImpl implements IndexesService {
     private ConfigService<FindConfig> configService;
 
     @Override
-    public List<Index> listIndexes() {
+    public Indexes listIndexes() {
         return listIndexes(apiKeyService.getApiKey());
     }
 
     @Override
-    public List<Index> listIndexes(final String apiKey) {
+    public Indexes listIndexes(final String apiKey) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("apikey", apiKey);
 
-        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/listindexes/v1?apikey={apikey}", Indexes.class, parameters).getPublicIndex();
+        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/listindexes/v1?apikey={apikey}", Indexes.class, parameters);
     }
 
     @Override
@@ -45,7 +45,14 @@ public class IndexesServiceImpl implements IndexesService {
         final List<Index> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if(activeIndexes.isEmpty()) {
-            return listIndexes();
+            final Indexes indexes = listIndexes();
+            final List<Index> mergedIndexes = indexes.getPublicIndexes();
+
+            for(final PrivateIndex privateIndex : indexes.getPrivateIndexes()) {
+                mergedIndexes.add(privateIndex.toIndex());
+            }
+
+            return mergedIndexes;
         }
         else {
             return activeIndexes;

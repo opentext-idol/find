@@ -67,41 +67,41 @@ define([
         },
 
         initializeWidgets: function() {
-            this.leftWidgets = [
-                new IodWidget({
-                    configItem: 'iod',
-                    isOpened: true,
-                    title: 'IoD settings',
-                    strings: _.extend(serverStrings(), {
-                        iconClass: 'key',
-                        validateFailed: 'Invalid API Key',
-                        validateSuccess: 'API Key OK',
-                        validateButton: 'Test Key'
+            this.widgetGroups = [
+                [
+                    new IodWidget({
+                        configItem: 'iod',
+                        isOpened: true,
+                        title: 'IoD settings',
+                        strings: _.extend(serverStrings(), {
+                            iconClass: 'key',
+                            validateFailed: 'Invalid API Key',
+                            validateSuccess: 'API Key OK',
+                            validateButton: 'Test Key'
+                        })
                     })
-                })
-            ];
-
-            this.middleWidgets = [
-                new SingleUserWidget({
-                    configItem: 'login',
-                    description: i18n['settings.adminUser.description'],
-                    isOpened: true,
-                    strings: {
-                        confirmPassword: 'Confirm Password',
-                        currentPassword: 'Current Password',
-                        iconClass: 'user',
-                        newPassword: 'New Password',
-                        passwordMismatch: 'Passwords do not match',
-                        passwordRedacted: '(redacted)',
-                        username: 'Username',
-                        validateConfirmPasswordBlank: 'Confirm password must not be blank!',
-                        validateCurrentPasswordBlank: 'Current password must not be blank!',
-                        validateNewPasswordBlank: 'New password must not be blank!',
-                        validateUsernameBlank: 'Username must not be blank!',
-                        validateFailed: i18n['settings.test.failed']
-                    },
-                    title: i18n['settings.adminUser']
-                })
+                ], [
+                    new SingleUserWidget({
+                        configItem: 'login',
+                        description: i18n['settings.adminUser.description'],
+                        isOpened: true,
+                        strings: {
+                            confirmPassword: 'Confirm Password',
+                            currentPassword: 'Current Password',
+                            iconClass: 'user',
+                            newPassword: 'New Password',
+                            passwordMismatch: 'Passwords do not match',
+                            passwordRedacted: '(redacted)',
+                            username: 'Username',
+                            validateConfirmPasswordBlank: 'Confirm password must not be blank!',
+                            validateCurrentPasswordBlank: 'Current password must not be blank!',
+                            validateNewPasswordBlank: 'New password must not be blank!',
+                            validateUsernameBlank: 'Username must not be blank!',
+                            validateFailed: i18n['settings.test.failed']
+                        },
+                        title: i18n['settings.adminUser']
+                    })
+                ]
             ];
         }
     });
