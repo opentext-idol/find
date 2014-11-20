@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.menubar.MainTabBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -25,7 +24,7 @@ public class SearchPage extends AppElement implements AppPage {
 	}
 
 	public WebElement searchTitle() {
-		return findElement(By.cssSelector(".page-title"));
+		return findElement(By.cssSelector(".page-title > span"));
 	}
 
 	public WebElement promoteButton() {
@@ -94,10 +93,12 @@ public class SearchPage extends AppElement implements AppPage {
 		return promotionsBucket().findElement(By.cssSelector(".promotions-bucket-document .tooltip")).getText();
 	}
 
-	public void createAPromotion() {
+	public String createAPromotion() {
 		promoteButton().click();
 		searchResultCheckbox(1).click();
+		final String promotedDocTitle = getSearchResultTitle(1);
 		promoteTheseItemsButton().click();
+		return promotedDocTitle;
 	}
 
 	public static class Placeholder {

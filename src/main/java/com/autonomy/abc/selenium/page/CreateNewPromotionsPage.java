@@ -24,6 +24,10 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 		return findElement(By.cssSelector("[data-promotion-type='PIN_TO_POSITION']"));
 	}
 
+	public WebElement spotlight() {
+		return findElement(By.cssSelector("[data-promotion-type='SPOTLIGHT']"));
+	}
+
 	public WebElement continueButton(final String dataStep) {
 		return findElement(By.cssSelector("[data-step='" + dataStep + "']")).findElement(By.cssSelector(".next-step"));
 	}
@@ -50,15 +54,15 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 		triggerAddButton().click();
 	}
 
-	public void removeSearchTrigger(String searchTrigger) {
-		findElement(By.xpath(".//span[contains(text(), '" + searchTrigger + "')]/../i")).click();
+	public void removeSearchTrigger(final String searchTrigger) {
+		findElement(By.xpath(".//span[contains(text(), '" + searchTrigger + "')]/i")).click();
 	}
 
 	public List<String> getSearchTriggersList() {
 		final List<String> searchTriggerList = new ArrayList<>();
 
-		for (final WebElement trigger : findElements(By.cssSelector(".trigger-word"))) {
-			searchTriggerList.add(trigger.getText());
+		for (final WebElement trigger : findElements(By.cssSelector(".remove-trigger-word"))) {
+			searchTriggerList.add(getParent(trigger).getText());
 		}
 
 		return searchTriggerList;
@@ -84,6 +88,18 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	public void typePositionNumber(final int positionNumber) {
 		findElement(By.cssSelector(".position")).clear();
 		findElement(By.cssSelector(".position")).sendKeys(String.valueOf(positionNumber));
+	}
+
+	public WebElement spotlightType(final String type ) {
+		return findElement(By.cssSelector("[data-spotlight-type='" + type + "']"));
+	}
+
+	public String getTopPromotedLinkTitle() {
+		return findElement(By.cssSelector(".promotions .search-result h3 a")).getText();
+	}
+
+	public String getTopPromotedLinkButtonText() {
+		return findElement(By.cssSelector(".promotions .search-result button")).getText();
 	}
 
 	public static class Placeholder {

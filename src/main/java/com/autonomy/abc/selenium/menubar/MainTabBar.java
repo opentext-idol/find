@@ -46,4 +46,7 @@ public class MainTabBar extends TabBar {
 		return new MainTab(activeTabs.get(0), getDriver());
 	}
 
+	public WebElement promotionsTab() {
+		return findElement(By.cssSelector("[data-pagename='promotions'] a"));
+	}
 }
