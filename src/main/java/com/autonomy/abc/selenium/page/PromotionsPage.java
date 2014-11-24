@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PromotionsPage extends AppElement implements AppPage {
@@ -55,8 +56,44 @@ public class PromotionsPage extends AppElement implements AppPage {
 		for (final WebElement promotion : promotionsList()) {
 			promotion.click();
 			deletePromotion();
-			modalLoadOrFadeWait();
+			loadOrFadeWait();
 		}
+	}
+
+	public List<String> getSearchTriggersList() {
+		final List<String> searchTriggerList = new ArrayList<>();
+		loadOrFadeWait();
+
+		for (final WebElement trigger : findElements(By.cssSelector(".promotion-view-match-terms .clickable-label"))) {
+			searchTriggerList.add(trigger.getAttribute("data-id"));
+		}
+
+		return searchTriggerList;
+	}
+
+	public void addSearchTrigger(final String searchTrigger) {
+		findElement(By.cssSelector(".edit-promotion-match-terms input")).clear();
+		findElement(By.cssSelector(".edit-promotion-match-terms input")).sendKeys(searchTrigger);
+		waitUntilClickableThenClick(triggerAddButton());
+		loadOrFadeWait();
+	}
+
+	public List <String> getPromotedList() {
+		final List <String> docTitles = new ArrayList<>();
+		for (final WebElement docTitle : findElements(By.cssSelector(".promoted-documents-list h3"))) {
+			docTitles.add(docTitle.getText());
+		}
+		return docTitles;
+	}
+
+	public WebElement triggerAddButton() {
+		return findElement(By.cssSelector(".edit-promotion-match-terms [type='submit']"));
+	}
+
+	public void removeSearchTrigger(final String searchTrigger) {
+		loadOrFadeWait();
+		waitUntilClickableThenClick(By.cssSelector("[data-id='" + searchTrigger + "'] .remove-match-term"));
+		loadOrFadeWait();
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {
