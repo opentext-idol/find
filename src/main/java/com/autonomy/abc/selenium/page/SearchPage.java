@@ -6,6 +6,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class SearchPage extends AppElement implements AppPage {
@@ -101,6 +103,68 @@ public class SearchPage extends AppElement implements AppPage {
 		return promotedDocTitle;
 	}
 
+	public List<String> createAMultiDocumentPromotion() {
+		promoteButton().click();
+		final List<String> promotedDocTitles = new ArrayList<>();
+
+		for (int j = 1; j < 4; j++) {
+			loadOrFadeWait();
+
+			for (int i = 1; i < 7; i++) {
+				searchResultCheckbox(i).click();
+				promotedDocTitles.add(getSearchResultTitle(i));
+			}
+
+			forwardPageButton().click();
+			loadOrFadeWait();
+		}
+
+		promoteTheseItemsButton().click();
+		return promotedDocTitles;
+	}
+
+	public void showMoreButton() {
+		findElement(By.cssSelector(".show-more")).click();
+		loadOrFadeWait();
+	}
+
+	public void showLessButton() {
+		findElement(By.cssSelector(".show-less")).click();
+		loadOrFadeWait();
+	}
+
+	public WebElement promotionsLabel() {
+		return findElement(By.cssSelector(".promotions .total-promotions"));
+	}
+
+	public int getPromotionSummarySize() {
+		int summaryItemsTotal = 0;
+
+		for (final WebElement searchResult : findElements(By.cssSelector(".promotions-list li"))) {
+			if (searchResult.isDisplayed()) {
+				summaryItemsTotal++;
+			}
+		}
+
+		return summaryItemsTotal;
+	}
+
+	public WebElement promotionSummaryBackToStartButton() {
+		return getParent(findElement(By.cssSelector(".fa-angle-double-left")));
+	}
+
+	public WebElement promotionSummaryBackButton() {
+		return getParent(findElement(By.cssSelector(".fa-angle-left")));
+	}
+
+	public WebElement promotionSummaryForwardButton() {
+		return getParent(findElement(By.cssSelector(".fa-angle-right")));
+	}
+
+	public WebElement promotionSummaryForwardToEndButton() {
+		return getParent(findElement(By.cssSelector(".fa-angle-double-right")));
+	}
+
 	public static class Placeholder {
 		private final TopNavBar topNavBar;
 
@@ -108,7 +172,7 @@ public class SearchPage extends AppElement implements AppPage {
 			this.topNavBar = topNavBar;
 		}
 
-		public SearchPage $searchPage(WebElement element) {
+		public SearchPage $searchPage(final WebElement element) {
 			return new SearchPage(topNavBar, element);
 		}
 	}
