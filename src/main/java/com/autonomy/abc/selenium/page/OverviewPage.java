@@ -35,7 +35,7 @@ public class OverviewPage extends AppElement implements AppPage {
 
 	public void widgetCollapseExpand(final String widgetHeadingText) {
 		getWidget(widgetHeadingText).findElement(By.cssSelector(".ibox-collapse")).click();
-		modalLoadOrFadeWait();
+		loadOrFadeWait();
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<OverviewPage> {

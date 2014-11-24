@@ -50,20 +50,20 @@ public class UsersPage extends AppElement implements AppPage {
 		addAndConfirmPassword(password, password);
 		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[value='" + userLevel + "']")).click();
 		createButton().click();
-		modalLoadOrFadeWait();
+		loadOrFadeWait();
 	}
 
 	public void closeModal() {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[data-dismiss='modal']")).click();
-		modalLoadOrFadeWait();
+		loadOrFadeWait();
 	}
 
 	public void deleteOtherUsers() {
 		for (final WebElement deleteButton : getTable().findElements(By.cssSelector("button"))) {
 			if (!deleteButton.getAttribute("class").contains("disabled")) {
-				modalLoadOrFadeWait();
+				loadOrFadeWait();
 				deleteButton.click();
-				modalLoadOrFadeWait();
+				loadOrFadeWait();
 				findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
 			}
 		}
@@ -74,9 +74,9 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public void deleteUser(final String userName) {
-		modalLoadOrFadeWait();
+		loadOrFadeWait();
 		getUserRow(userName).findElement(By.cssSelector("button")).click();
-		modalLoadOrFadeWait();
+		loadOrFadeWait();
 		findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
 	}
 
@@ -109,6 +109,10 @@ public class UsersPage extends AppElement implements AppPage {
 		getTableUserPasswordBox(userName).clear();
 		getTableUserPasswordBox(userName).sendKeys(newPassword);
 		getUserRow(userName).findElement(By.cssSelector(".editable-submit")).click();
+	}
+
+	public String getSignedInUserName() {
+		return findElement(By.cssSelector(".profile-element strong")).getText();
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<UsersPage> {

@@ -2,6 +2,8 @@ package com.autonomy.abc.selenium;
 
 import com.autonomy.abc.selenium.util.AbstractWebElementPlaceholder;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -101,7 +103,7 @@ public class AppElement implements WebElement {
 		return $el().getText();
 	}
 
-	public static WebElement getParent(WebElement child) {
+	public static WebElement getParent(final WebElement child) {
 		return child.findElement(By.xpath(".//.."));
 	}
 
@@ -126,11 +128,26 @@ public class AppElement implements WebElement {
 		return output;
 	}
 
-	public void modalLoadOrFadeWait() {
+	public void loadOrFadeWait() {
 		try {
 			Thread.sleep(1000);
-		} catch (InterruptedException e)
-		{/*NOOP*/}
+		} catch (final InterruptedException e) {/*NOOP*/}
+	}
+
+	public void waitUntilClickableThenClick(final By by) {
+		final WebDriverWait waiting = new WebDriverWait(getDriver(),10);
+		waiting.until(ExpectedConditions.visibilityOfElementLocated(by));
+		findElement(by).click();
+	}
+
+	public void waitUntilClickableThenClick(final WebElement element) {
+		final WebDriverWait waiting = new WebDriverWait(getDriver(),10);
+		waiting.until(ExpectedConditions.visibilityOf(element));
+		element.click();
+	}
+
+	public void waitForGritterToClear() throws InterruptedException {
+		Thread.sleep(5000);
 	}
 
 	@Override
