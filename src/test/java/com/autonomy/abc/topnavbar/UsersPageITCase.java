@@ -54,9 +54,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 	@Test
 	public void testWontDeleteSelf() {
-		// TODO: Make username available
-		final String username = "richard";
-		assertThat("Delete button not disabled", usersPage.getUserRow(username).findElements(By.cssSelector("button.disabled")).size() == 1);
+		assertThat("Delete button not disabled", usersPage.getUserRow(usersPage.getSignedInUserName()).findElements(By.cssSelector("button.disabled")).size() == 1);
 	}
 
 	@Test
@@ -177,7 +175,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 		body.logout();
 		abcLogin("James", "b");
-		usersPage.modalLoadOrFadeWait();
+		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 	}
 
@@ -191,7 +189,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 		body.logout();
 		abcLogin("James", "d");
-		usersPage.modalLoadOrFadeWait();
+		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 	}
 }
