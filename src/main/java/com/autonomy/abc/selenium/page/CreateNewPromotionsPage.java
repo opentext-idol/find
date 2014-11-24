@@ -49,19 +49,25 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public void addSearchTrigger(final String searchTrigger) {
-		findElement(By.cssSelector(".promotion-trigger-input")).clear();
-		findElement(By.cssSelector(".promotion-trigger-input")).sendKeys(searchTrigger);
-		triggerAddButton().click();
+		findElement(By.cssSelector("[name='terms']")).clear();
+		findElement(By.cssSelector("[name='terms']")).sendKeys(searchTrigger);
+
+		try {
+			waitUntilClickableThenClick(triggerAddButton());
+		} catch (final Exception e) {
+			System.out.println("could not click trigger button with trigger " + searchTrigger);
+		}
 	}
 
+
 	public void removeSearchTrigger(final String searchTrigger) {
-		findElement(By.xpath(".//span[contains(text(), '" + searchTrigger + "')]/i")).click();
+		waitUntilClickableThenClick(By.xpath(".//span[contains(text(), '" + searchTrigger + "')]/i"));
 	}
 
 	public List<String> getSearchTriggersList() {
 		final List<String> searchTriggerList = new ArrayList<>();
 
-		for (final WebElement trigger : findElements(By.cssSelector(".remove-trigger-word"))) {
+		for (final WebElement trigger : findElements(By.cssSelector(".remove-term"))) {
 			searchTriggerList.add(getParent(trigger).getText());
 		}
 
@@ -69,7 +75,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement triggerAddButton() {
-		return findElement(By.cssSelector(".add-promotion-trigger [type='submit']"));
+		return findElement(By.cssSelector(".term-input-form [type='submit']"));
 	}
 
 	public WebElement promoteButton() {
@@ -79,10 +85,10 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	public void navigateToTriggers() {
 		pinToPosition().click();
 		continueButton("type").click();
-		modalLoadOrFadeWait();
+		loadOrFadeWait();
 		selectPositionPlusButton().click();
 		continueButton("pinToPosition").click();
-		modalLoadOrFadeWait();
+		loadOrFadeWait();
 	}
 
 	public void typePositionNumber(final int positionNumber) {
@@ -102,6 +108,16 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 		return findElement(By.cssSelector(".promotions .search-result button")).getText();
 	}
 
+	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger) {
+		spotlight().click();
+		continueButton("type").click();
+		spotlightType(spotlightType).click();
+		continueButton("spotlightType").click();
+		addSearchTrigger(searchTrigger);
+		promoteButton().click();
+		loadOrFadeWait();
+	}
+
 	public static class Placeholder {
 
 		private final TopNavBar topNavBar;
@@ -110,7 +126,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 			this.topNavBar = topNavBar;
 		}
 
-		public CreateNewPromotionsPage $createNewPromotionsPage(WebElement element) {
+		public CreateNewPromotionsPage $createNewPromotionsPage(final WebElement element) {
 			return new CreateNewPromotionsPage(topNavBar, element);
 		}
 	}
