@@ -4,10 +4,14 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
+import com.autonomy.abc.selenium.page.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.PromotionsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 
@@ -20,6 +24,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	private SearchPage searchPage;
 	private TopNavBar topNavBar;
+	private CreateNewPromotionsPage createPromotionsPage;
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -148,5 +153,92 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.promoteTheseItemsButton().click();
 		assertThat("Create new promotions page not open", getDriver().getCurrentUrl().endsWith("promotions/create"));
+	}
+
+	@Test
+	public void testMultiDocPromotionDrawerExpandAndPagination() {
+		topNavBar.search("sail");
+		searchPage.createAMultiDocumentPromotion();
+		createPromotionsPage = body.getCreateNewPromotionsPage();
+		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+
+		assertThat("Promotions found label is incorrect", searchPage.promotionsLabel().getText().contains("18"));
+		assertThat("Summary size should equal 2", searchPage.getPromotionSummarySize() == 2);
+
+		searchPage.showMoreButton();
+		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize() == 5);
+
+		searchPage.showLessButton();
+		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize() == 2);
+
+		searchPage.showMoreButton();
+		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize() == 5);
+
+		assertThat("Back to start button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class").contains("disabled"));
+		assertThat("Back button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward button should be enabled", !AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward to end button should be enabled", !AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class").contains("disabled"));
+
+		searchPage.promotionSummaryForwardButton().click();
+		searchPage.loadOrFadeWait();
+		assertThat("Back to start button should be enabled", !AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class").contains("disabled"));
+		assertThat("Back button should be enabled", !AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward button should be enabled", !AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward to end button should be enabled", !AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class").contains("disabled"));
+
+		searchPage.promotionSummaryForwardButton().click();
+		searchPage.loadOrFadeWait();
+		searchPage.promotionSummaryForwardButton().click();
+		searchPage.loadOrFadeWait();
+		assertThat("Back to start button should be enabled", !AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class").contains("disabled"));
+		assertThat("Back button should be enabled", !AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward to end button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class").contains("disabled"));
+
+		searchPage.promotionSummaryBackButton().click();
+		searchPage.loadOrFadeWait();
+		searchPage.promotionSummaryBackButton().click();
+		searchPage.loadOrFadeWait();
+		searchPage.promotionSummaryBackButton().click();
+		searchPage.loadOrFadeWait();
+		assertThat("Back to start button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class").contains("disabled"));
+
+		searchPage.promotionSummaryForwardToEndButton().click();
+		searchPage.loadOrFadeWait();
+		assertThat("Forward to end button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class").contains("disabled"));
+
+		searchPage.promotionSummaryBackToStartButton().click();
+		searchPage.loadOrFadeWait();
+		assertThat("Back button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class").contains("disabled"));
+
+		final PromotionsPage promotionsPage = body.getPromotionsPage();
+		promotionsPage.deleteAllPromotions();
+	}
+
+	@Test
+	public void testDocumentsRemainInBucket() {
+		topNavBar.search("cow");
+		searchPage.promoteButton().click();
+		searchPage.searchResultCheckbox(1).click();
+		searchPage.searchResultCheckbox(2).click();
+		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount() == 2);
+
+		topNavBar.search("bull");
+		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount() == 2);
+		searchPage.searchResultCheckbox(1).click();
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount() == 3);
+
+		topNavBar.search("cow");
+		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount() == 3);
+
+		topNavBar.search("bull");
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount() == 3);
+
+		searchPage.searchResultCheckbox(1).click();
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount() == 2);
+
+		topNavBar.search("cow");
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount() == 2);
 	}
 }
