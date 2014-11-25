@@ -3,19 +3,21 @@ package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.ModalView;
-import com.autonomy.abc.selenium.menubar.MainTabBar;
+import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PromotionsPage extends AppElement implements AppPage {
 
-	public PromotionsPage(final MainTabBar mainTabBar, final WebElement $el) {
-		super($el, mainTabBar.getDriver());
+	public PromotionsPage(final SideNavBar sideNavBar, final WebElement $el) {
+		super($el, sideNavBar.getDriver());
 	}
 
 	@Override
@@ -46,12 +48,11 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void deleteAllPromotions() {
-		if (getDriver().getCurrentUrl().contains("promotions/detail")) {
-			findElement(By.cssSelector(".btn[data-route='promotions']")).click();
-		}
+		new SideNavBar(getDriver()).getTab("promotions").click();
 
-		final MainTabBar mainTabBar = new MainTabBar(getDriver());
-		mainTabBar.promotionsTab().click();
+		if (getDriver().getCurrentUrl().contains("promotions/detail")) {
+			backButton().click();
+		}
 
 		for (final WebElement promotion : promotionsList()) {
 			promotion.click();
@@ -96,15 +97,48 @@ public class PromotionsPage extends AppElement implements AppPage {
 		loadOrFadeWait();
 	}
 
+	public WebElement clickableSearchTrigger(final String triggerName) {
+		return findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "'] a"));
+	}
+
+	public WebElement triggerRemoveX(final String triggerName) {
+		return findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "'] .remove-match-term"));
+	}
+
+	public WebElement backButton() {
+		return findElement(By.cssSelector("[data-route='promotions']"));
+	}
+
+	public String getPromotionTitle() {
+		return findElement(By.cssSelector(".promotion-view-title")).getText();
+	}
+
+	public void createNewTitle(final String title) {
+		final WebElement titleElement = findElement(By.cssSelector(".promotion-view-rename-form input"));
+		titleElement.clear();
+		titleElement.sendKeys(title);
+		findElement(By.cssSelector(".promotion-view-rename-form [type='submit']")).click();
+	}
+
+	public String getPromotionType() {
+		return findElement(By.cssSelector(".promotion-view-name")).getText();
+	}
+
+	public void changeSpotlightType(final String promotionType) {
+		findElement(By.cssSelector(".promotion-view-name-dropdown .dropdown-toggle")).click();
+		findElement(By.cssSelector(".promotion-view-name-dropdown [data-spotlight-type='" + promotionType + "']")).click();
+		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotion-view-name-dropdown .fa-pencil")));
+	}
+
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {
 
-		public Placeholder(final AppBody body, final MainTabBar mainTabBar, final TopNavBar topNavBar) {
-			super(body, mainTabBar, topNavBar, "promotions", "promotions", false);
+		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {
+			super(body, sideNavBar, topNavBar, "promotions", "promotions", false);
 		}
 
 		@Override
 		protected PromotionsPage convertToActualType(final WebElement element) {
-			return new PromotionsPage(tabBar, element);
+			return new PromotionsPage(navBar, element);
 		}
 
 	}
