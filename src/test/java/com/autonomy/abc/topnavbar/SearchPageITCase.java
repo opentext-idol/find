@@ -25,6 +25,7 @@ public class SearchPageITCase extends ABCTestBase {
 	private SearchPage searchPage;
 	private TopNavBar topNavBar;
 	private CreateNewPromotionsPage createPromotionsPage;
+	private PromotionsPage promotionsPage;
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -161,7 +162,10 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.createAMultiDocumentPromotion();
 		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
-		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		promotionsPage = body.getPromotionsPage();
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+
+		promotionsPage.clickableSearchTrigger("boat").click();
 
 		assertThat("Promotions found label is incorrect", searchPage.promotionsLabel().getText().contains("18"));
 		assertThat("Summary size should equal 2", searchPage.getPromotionSummarySize() == 2);
@@ -212,7 +216,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		assertThat("Back button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class").contains("disabled"));
 
-		final PromotionsPage promotionsPage = body.getPromotionsPage();
+		body.getSideNavBar().getTab("promotions").click();
 		promotionsPage.deleteAllPromotions();
 	}
 

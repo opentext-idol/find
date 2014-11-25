@@ -3,7 +3,6 @@ package com.autonomy.abc;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.PromotionsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
@@ -52,9 +51,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion("Sponsored", "wheels");
 
-		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
-		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
-		promotionsPage.openPromotionWithTitleContaining("wheels");
+		promotionsPage = body.getPromotionsPage();
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+
 		final List<String> promotedList = promotionsPage.getPromotedList();
 
 		for (final String title : promotedDocTitles) {
@@ -154,6 +153,43 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertThat("Number of triggers does not equal 2", promotionsPage.getSearchTriggersList().size() == 2);
 		assertThat("Trigger 'delta' not present", promotionsPage.getSearchTriggersList().contains("delta"));
 		assertThat("Trigger 'epsilon' not present", promotionsPage.getSearchTriggersList().contains("epsilon"));
+
+		promotionsPage.removeSearchTrigger("epsilon");
+		assertThat("It should not be possible to delete the last trigger", !promotionsPage.triggerRemoveX("delta").isDisplayed());
+	}
+
+	@Test
+	public void testBackButton() {
+		setUpANewPromotion();
+		promotionsPage.backButton().click();
+		assertThat("Back button does not redirect to main promotions page", getDriver().getCurrentUrl().endsWith("promotions"));
+	}
+
+	@Test
+	public void testEditPromotionName() {
+		setUpANewPromotion();
+		assertThat("Incorrect promotion title", promotionsPage.getPromotionTitle().equals("Spotlight for: wheels"));
+
+		promotionsPage.createNewTitle("Fuzz");
+		assertThat("Incorrect promotion title", promotionsPage.getPromotionTitle().equals("Fuzz"));
+
+		promotionsPage.createNewTitle("<script> alert(\"hi\") </script>");
+		assertThat("Incorrect promotion title", promotionsPage.getPromotionTitle().equals("<script> alert(\"hi\") </script>"));
+	}
+
+	@Test
+	public void testEditPromotionType() {
+		setUpANewPromotion();
+		assertThat("Incorrect promotion type", promotionsPage.getPromotionType().equals("Sponsored"));
+
+		promotionsPage.changeSpotlightType("Hotwire");
+		assertThat("Incorrect promotion type", promotionsPage.getPromotionType().equals("Hotwire"));
+
+		promotionsPage.changeSpotlightType("Top Promotions");
+		assertThat("Incorrect promotion type", promotionsPage.getPromotionType().equals("Top Promotions"));
+
+		promotionsPage.changeSpotlightType("Sponsored");
+		assertThat("Incorrect promotion type", promotionsPage.getPromotionType().equals("Sponsored"));
 	}
 
 	private String setUpANewPromotion() {
@@ -164,9 +200,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion("Sponsored", "wheels");
 
-		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
-		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
-		promotionsPage.openPromotionWithTitleContaining("wheels");
+		promotionsPage = body.getPromotionsPage();
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
 		return promotedDocTitle;
 	}
 }
