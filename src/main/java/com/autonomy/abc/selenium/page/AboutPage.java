@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.menubar.MainTabBar;
+import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
@@ -16,7 +16,7 @@ public class AboutPage extends AppElement implements AppPage {
 	@Override
 	public void navigateToPage() { getDriver().get("about"); }
 
-	public void setTableSize(String tableSize) {
+	public void setTableSize(final String tableSize) {
 		findElement(By.cssSelector("[name='DataTables_Table_0_length'] option[value='" + tableSize + "']")).click();
 	}
 
@@ -44,15 +44,15 @@ public class AboutPage extends AppElement implements AppPage {
 		return findElement(By.xpath(".//a[text()='" + String.valueOf(pageinateNumber) + "']"));
 	}
 
-	public void searchInSearchBox(String searchTerm) {
+	public void searchInSearchBox(final String searchTerm) {
 		findElement(By.cssSelector(".ibox-content [type='search']")).clear();
 		findElement(By.cssSelector(".ibox-content [type='search']")).sendKeys(searchTerm);
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<AboutPage> {
 
-		public Placeholder(final AppBody body, final MainTabBar mainTabBar, final TopNavBar topNavBar) {
-			super(body, mainTabBar, topNavBar, "about", "about", false);
+		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {
+			super(body, sideNavBar, topNavBar, "about", "about", false);
 		}
 
 		@Override

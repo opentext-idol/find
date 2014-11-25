@@ -8,7 +8,7 @@ public class MainMenuItem extends AppElement {
 
 	private WebElement link;
 
-	public MainMenuItem(final MainTab parent, final String id) {
+	public MainMenuItem(final SideNavBarTab parent, final String id) {
 		super(parent.findElement(By.cssSelector("[data-pagename='" + id + "']")), parent.getDriver());
 	}
 

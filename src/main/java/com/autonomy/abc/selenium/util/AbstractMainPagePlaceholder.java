@@ -2,14 +2,14 @@ package com.autonomy.abc.selenium.util;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.MainMenuItem;
-import com.autonomy.abc.selenium.menubar.MainTabBar;
+import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import org.openqa.selenium.By;
 
 public abstract class AbstractMainPagePlaceholder<P extends AppElement> extends AbstractWebElementPlaceholder<P> {
 
-	protected final MainTabBar tabBar;
+	protected final SideNavBar navBar;
 	protected final TopNavBar topNavBar;
 	private final String pageId;
 	private final String tabId;
@@ -17,14 +17,14 @@ public abstract class AbstractMainPagePlaceholder<P extends AppElement> extends 
 
 	public AbstractMainPagePlaceholder(
 			final AppBody body
-			, final MainTabBar tabBar
+			, final SideNavBar navBar
 			, final TopNavBar topNavBar
 			, final String pageId
 			, final String tabId
 			, final boolean opensMenu
 	) {
 		super(body, By.cssSelector("[data-pagename='" + pageId + "']"));
-		this.tabBar = tabBar;
+		this.navBar = navBar;
 		this.topNavBar = topNavBar;
 		this.pageId = pageId;
 		this.tabId = tabId;
@@ -34,9 +34,9 @@ public abstract class AbstractMainPagePlaceholder<P extends AppElement> extends 
 	@Override
 	public void navigateToPage() {
 		if (opensMenu) {
-			tabBar.switchPage(tabId, pageId);
+			navBar.switchPage(tabId);
 		} else {
-			tabBar.switchPage(tabId);
+			navBar.switchPage(tabId);
 		}
 	}
 
@@ -48,9 +48,9 @@ public abstract class AbstractMainPagePlaceholder<P extends AppElement> extends 
 	@Override
 	public boolean isDisplayed() {
 		if (opensMenu) {
-			return new MainMenuItem(tabBar.getTab(tabId), pageId).isSelected();
+			return new MainMenuItem(navBar.getTab(tabId), pageId).isSelected();
 		} else {
-			return tabBar.getTab(tabId).isSelected();
+			return navBar.getTab(tabId).isSelected();
 		}
 	}
 }

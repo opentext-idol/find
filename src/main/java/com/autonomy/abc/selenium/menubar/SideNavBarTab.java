@@ -4,21 +4,21 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class MainTab extends Tab {
+public class SideNavBarTab extends Tab {
 
 	private WebElement link;
 
-	public MainTab(final MainTabBar bar, final String pagename) {
+	public SideNavBarTab(final SideNavBar bar, final String pagename) {
 		super(bar, By.cssSelector("ul li[data-pagename='" + pagename + "']"));
 	}
 
-	public MainTab(final WebElement $el, final WebDriver driver) {
+	public SideNavBarTab(final WebElement $el, final WebDriver driver) {
 		super($el, driver);
 	}
 
 	@Override
 	public String getName() {
-		return $el().findElement(By.tagName("a")).getText();
+		return $el().findElement(By.cssSelector(".nav-label")).getText();
 	}
 
 	@Override

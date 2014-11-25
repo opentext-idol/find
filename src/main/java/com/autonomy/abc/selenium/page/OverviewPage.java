@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.page;
 
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.menubar.MainTabBar;
+import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
@@ -10,8 +10,8 @@ import org.openqa.selenium.WebElement;
 
 public class OverviewPage extends AppElement implements AppPage {
 
-	public OverviewPage(final MainTabBar mainTabBar, final WebElement $el) {
-		super($el, mainTabBar.getDriver());
+	public OverviewPage(final SideNavBar sideNavBar, final WebElement $el) {
+		super($el, sideNavBar.getDriver());
 	}
 
 	@Override
@@ -40,13 +40,13 @@ public class OverviewPage extends AppElement implements AppPage {
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<OverviewPage> {
 
-		public Placeholder(final AppBody body, final MainTabBar mainTabBar, final TopNavBar topNavBar) {
-			super(body, mainTabBar, topNavBar, "overview", "overview", false);
+		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {
+			super(body, sideNavBar, topNavBar, "overview", "overview", false);
 		}
 
 		@Override
 		protected OverviewPage convertToActualType(final WebElement element) {
-			return new OverviewPage(tabBar, element);
+			return new OverviewPage(navBar, element);
 		}
 
 	}
