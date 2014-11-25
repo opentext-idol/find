@@ -1,6 +1,7 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.menubar.MainTabBar;
+import com.autonomy.abc.selenium.menubar.SideNavBar;
+import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.util.I18nRequestHandler;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
@@ -31,7 +32,8 @@ public abstract class ABCTestBase {
 	private I18nRequestHandler i18nHandler;
 	private WebDriver driver;
 	public AppBody body;
-	protected MainTabBar tabBar;
+	protected SideNavBar navBar;
+	protected TopNavBar topNavBar;
 
 	public ABCTestBase(final TestConfig config, final String browser, final Platform platform) {
 		this.config = config;
@@ -74,7 +76,8 @@ public abstract class ABCTestBase {
 		getDriver().manage().window().maximize();
 		abcLogin("richard", "q");
 		body = new AppBody(driver);
-		tabBar = new MainTabBar(driver);
+		navBar = new SideNavBar(driver);
+		topNavBar = new TopNavBar(driver);
 	}
 
 	@After

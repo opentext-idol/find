@@ -39,7 +39,7 @@ public class TestConfig {
 				break;
 			case "chrome":
 				capabilities = DesiredCapabilities.chrome();
-				ChromeOptions options = new ChromeOptions();
+				final ChromeOptions options = new ChromeOptions();
 				options.addArguments("--lang=en_GB");
 				options.addArguments("--start-maximized");
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
