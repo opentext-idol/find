@@ -38,6 +38,8 @@ public class Document {
         private List<String> links;
         private String indexes;
         private String title;
+
+        @SuppressWarnings("FieldMayBeFinal")
         private String summary = "";
 
         public Document build() {
