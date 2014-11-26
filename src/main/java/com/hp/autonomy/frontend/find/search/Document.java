@@ -38,7 +38,9 @@ public class Document {
         private List<String> links;
         private String indexes;
         private String title;
-        private String summary;
+
+        @SuppressWarnings("FieldMayBeFinal")
+        private String summary = "";
 
         public Document build() {
             return new Document(reference, weight, links, indexes, title, summary);

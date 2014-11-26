@@ -5,6 +5,7 @@ define([
     'find/app/model/indexes-collection',
     'find/app/router',
     'find/app/vent',
+    'i18n!find/nls/bundle',
     'text!find/templates/app/page/find-search.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/suggestions-container.html',
@@ -14,13 +15,14 @@ define([
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, template, resultsTemplate,
+], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, i18n, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
 
     return BasePage.extend({
 
         template: _.template(template),
         resultsTemplate: _.template(resultsTemplate),
+        noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
         suggestionsTemplate: _.template(suggestionsTemplate),
         indexPopover: _.template(indexPopover),
         indexPopoverContents: _.template(indexPopoverContents),
@@ -134,31 +136,38 @@ define([
                 if(!this.$('.suggestions-content ul').length) {
                     this.$('.suggestions-content').append(_.template(loadingSpinnerTemplate));
                 }
+
+                this.$('.suggested-links-header').removeClass('hide')
             });
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 this.$('.suggestions-content').empty();
 
-                var clusters = this.entityCollection.groupBy('cluster');
+                if (this.entityCollection.isEmpty()) {
+                    this.$('.suggested-links-header').addClass('hide')
+                }
+                else {
+                    var clusters = this.entityCollection.groupBy('cluster');
 
-                _.each(clusters, function(entities) {
-                    this.$('.suggestions-content').append(this.suggestionsTemplate({
-                        entities: entities
-                    }));
+                    _.each(clusters, function(entities) {
+                        this.$('.suggestions-content').append(this.suggestionsTemplate({
+                            entities: entities
+                        }));
 
-                    this.$('.suggestions-content li a').popover({
-                        html: true,
-                        content: '<h6>Top Results</h6>',
-                        placement: 'right',
-                        trigger: 'hover'
-                    })
-                }, this);
+                        this.$('.suggestions-content li a').popover({
+                            html: true,
+                            content: '<h6>Top Results</h6>',
+                            placement: 'right',
+                            trigger: 'hover'
+                        })
+                    }, this);
 
-                this.documentsCollection.each(function(document) {
-                    var summary = this.addLinksToSummary(document.get('summary'));
+                    this.documentsCollection.each(function(document) {
+                        var summary = this.addLinksToSummary(document.get('summary'));
 
-                    this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
-                }, this);
+                        this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
+                    }, this);
+                }
             });
 
             /*main results content*/
@@ -166,6 +175,8 @@ define([
                 if(!this.$('.main-results-container').length) {
                     this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
                 }
+
+                this.$('.main-results-content .no-results').remove();
             });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
@@ -209,6 +220,13 @@ define([
                 this.$('[data-reference="' + reference + '"]').remove();
             });
 
+            this.listenTo(this.documentsCollection, 'sync', function() {
+                if(this.documentsCollection.isEmpty()) {
+                    this.$('.main-results-content .loading-spinner').remove();
+                    this.$('.main-results-content').append(this.noResultsTemplate({i18n: i18n}));
+                }
+            });
+
             /*colorbox fancy button override*/
             $('#colorbox').append(_.template(colorboxControlsTemplate));
             $('.nextBtn').on('click', this.handleNextResult);
@@ -239,7 +257,7 @@ define([
 
         keyupAnimation: _.debounce(function() {
             /*fancy animation*/
-            if($.trim(this.$('.find-input').val()).length) { //checking if input doesn't have any spaces or empty
+            if($.trim(this.$('.find-input').val()).length) { // input has at least one non whitespace character
                 this.$('.find').addClass('animated-container').removeClass('reverse-animated-container');
 
                 this.$('.suggested-links-container.span2').show();
@@ -247,7 +265,6 @@ define([
             } else {
                 this.reverseAnimation();
                 vent.navigate('find/search', {trigger: false});
-                this.$('.main-results-content').empty();
             }
             this.$('.popover').remove();
         }, 500),
@@ -262,8 +279,9 @@ define([
 
         reverseAnimation: function() {
             /*fancy reverse animation*/
-            this.$('.find').removeClass('animated-container ').addClass('reverse-animated-container');
+            this.$('.find').removeClass('animated-container').addClass('reverse-animated-container');
 
+            this.$('.main-results-content').empty();
             this.$('.suggested-links-container.span2').hide();
             this.$('.find-input').val('');
             this.$('.popover').remove();
