@@ -324,7 +324,6 @@ input.find-input {
 }
 
 .main-results-content .loading-spinner {
-    border-radius: 5px;
     height: 32px;
     left: 50%;
     line-height: 32px;
@@ -334,6 +333,11 @@ input.find-input {
     text-align: center;
     top: 50%;
     width: 200px;
+    font-size: 28px;
+    color: rgba(138, 113, 102, 0.96);
+}
+
+.main-results-content .no-results {
     font-size: 28px;
     color: rgba(138, 113, 102, 0.96);
 }

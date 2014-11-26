@@ -43,6 +43,7 @@ define([
         'placeholder.hostname': 'hostname',
         'placeholder.ip': 'IP',
         'placeholder.port': 'port',
+        'search.noResults': 'No results found',
         'settings.cancel': 'Cancel',
         'settings.cancel.message': 'All unsaved changes will be lost.',
         'settings.cancel.title': 'Revert settings?',
