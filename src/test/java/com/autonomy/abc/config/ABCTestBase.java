@@ -13,6 +13,8 @@ import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +101,7 @@ public abstract class ABCTestBase {
 		driver.findElement(By.cssSelector("[name='password']")).clear();
 		driver.findElement(By.cssSelector("[name='password']")).sendKeys(password);
 		driver.findElement(By.cssSelector("[type='submit']")).click();
+		new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top-blue")));
 	}
 }
 

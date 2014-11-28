@@ -3,6 +3,7 @@ package com.autonomy.abc.topnavbar;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.AppElement;
+import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.PromotionsPage;
@@ -159,7 +160,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testMultiDocPromotionDrawerExpandAndPagination() {
 		topNavBar.search("sail");
-		searchPage.createAMultiDocumentPromotion();
+		searchPage.createAMultiDocumentPromotion(18);
 		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
 		promotionsPage = body.getPromotionsPage();
@@ -216,7 +217,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		assertThat("Back button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class").contains("disabled"));
 
-		body.getSideNavBar().getTab("promotions").click();
+		body.getSideNavBar().getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage.deleteAllPromotions();
 	}
 
