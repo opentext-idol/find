@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.util;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.MainMenuItem;
+import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
@@ -12,7 +13,7 @@ public abstract class AbstractMainPagePlaceholder<P extends AppElement> extends 
 	protected final SideNavBar navBar;
 	protected final TopNavBar topNavBar;
 	private final String pageId;
-	private final String tabId;
+	private final NavBarTabId tabId;
 	private final boolean opensMenu;
 
 	public AbstractMainPagePlaceholder(
@@ -20,7 +21,7 @@ public abstract class AbstractMainPagePlaceholder<P extends AppElement> extends 
 			, final SideNavBar navBar
 			, final TopNavBar topNavBar
 			, final String pageId
-			, final String tabId
+			, final NavBarTabId tabId
 			, final boolean opensMenu
 	) {
 		super(body, By.cssSelector("[data-pagename='" + pageId + "']"));

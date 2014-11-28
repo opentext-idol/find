@@ -14,12 +14,12 @@ public class TopNavBar extends TabBar {
 	}
 
 	@Override
-	public TopNavBarTab getTab(final String id) {
-		return new TopNavBarTab(this, id);
+	public TopNavBarTab getTab(final NavBarTabId id) {
+		return new TopNavBarTab(this, id.toString());
 	}
 
 	@Override
-	public void switchPage(final String tabId) {
+	public void switchPage(final NavBarTabId tabId) {
 		findElement(By.cssSelector(".fa-cog")).click();
 		super.switchPage(tabId);
 	}

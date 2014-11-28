@@ -13,12 +13,12 @@ public class SideNavBar extends TabBar {
 	}
 
 	@Override
-	public SideNavBarTab getTab(final String id) {
-		return new SideNavBarTab(this, id);
+	public SideNavBarTab getTab(final NavBarTabId id) {
+		return new SideNavBarTab(this, id.toString());
 	}
 
 	@Override
-	public void switchPage(final String tabId) {
+	public void switchPage(final NavBarTabId tabId) {
 		super.switchPage(tabId);
 	}
 

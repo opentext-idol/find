@@ -10,7 +10,7 @@ public abstract class TabBar extends AppElement {
 		super($el, driver);
 	}
 
-	public abstract Tab getTab(String id);
+	public abstract Tab getTab(NavBarTabId id); //TODO: Take ENUM
 
 	public abstract Tab getSelectedTab();
 
@@ -22,7 +22,7 @@ public abstract class TabBar extends AppElement {
 		return getSelectedTab().getId();
 	}
 
-	public void switchPage(final String id) {
+	public void switchPage(final NavBarTabId id) {
 		final Tab tab = getTab(id);
 		tab.click();
 	}

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.AppElement;
+import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
@@ -52,7 +53,7 @@ public class AboutPage extends AppElement implements AppPage {
 	public static class Placeholder extends AbstractMainPagePlaceholder<AboutPage> {
 
 		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {
-			super(body, sideNavBar, topNavBar, "about", "about", false);
+			super(body, sideNavBar, topNavBar, "about", NavBarTabId.ABOUT_PAGE, false);
 		}
 
 		@Override
