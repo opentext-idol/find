@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.ModalView;
+import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
@@ -29,14 +30,17 @@ public class PromotionsPage extends AppElement implements AppPage {
 		return findElement(By.cssSelector("[data-route='promotions/new']"));
 	}
 
-	public void openPromotionWithTitleContaining(final String promotionTitleSubstring) {
-		findElement(By.xpath(".//h3/a[contains(text(), '" + promotionTitleSubstring + "')]")).click();
+	public WebElement getPromotionLinkWithTitleContaining(final String promotionTitleSubstring) {
+		return findElement(By.xpath(".//h3/a[contains(text(), '" + promotionTitleSubstring + "')]"));
 	}
 
-	public void deletePromotion() {
+	public void deletePromotion() { //TODO: deal with gritter
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".promotion-view-delete"))));;
 		findElement(By.cssSelector(".promotion-view-delete")).click();
 		final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
 		deleteModal.findElement(By.cssSelector(".btn-danger")).click();
+		loadOrFadeWait();
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(newPromotionButton()));
 	}
 
 	public WebElement spotlightButton() {
@@ -48,7 +52,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void deleteAllPromotions() {
-		new SideNavBar(getDriver()).getTab("promotions").click();
+		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
 
 		if (getDriver().getCurrentUrl().contains("promotions/detail")) {
 			backButton().click();
@@ -91,10 +95,10 @@ public class PromotionsPage extends AppElement implements AppPage {
 		return findElement(By.cssSelector(".edit-promotion-match-terms [type='submit']"));
 	}
 
-	public void removeSearchTrigger(final String searchTrigger) {
+	public void removeSearchTrigger(final String searchTrigger) throws InterruptedException {
 		loadOrFadeWait();
 		waitUntilClickableThenClick(By.cssSelector("[data-id='" + searchTrigger + "'] .remove-match-term"));
-		loadOrFadeWait();
+		Thread.sleep(3000);
 	}
 
 	public WebElement clickableSearchTrigger(final String triggerName) {
@@ -106,18 +110,21 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement backButton() {
-		return findElement(By.cssSelector("[data-route='promotions']"));
+		return findElement(By.cssSelector(".btn[data-route='promotions']"));
 	}
 
 	public String getPromotionTitle() {
 		return findElement(By.cssSelector(".promotion-view-title")).getText();
 	}
 
-	public void createNewTitle(final String title) {
+	public void createNewTitle(final String title) throws InterruptedException {
+		final WebElement pencil = findElement(By.cssSelector(".promotion-view-rename .fa-pencil"));
+		pencil.click();
 		final WebElement titleElement = findElement(By.cssSelector(".promotion-view-rename-form input"));
 		titleElement.clear();
 		titleElement.sendKeys(title);
 		findElement(By.cssSelector(".promotion-view-rename-form [type='submit']")).click();
+		Thread.sleep(3000);
 	}
 
 	public String getPromotionType() {
@@ -130,10 +137,23 @@ public class PromotionsPage extends AppElement implements AppPage {
 		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotion-view-name-dropdown .fa-pencil")));
 	}
 
+	public WebElement promotedDocument(final String title) {
+		return getParent(findElement(By.xpath(".//ul[contains(@class, 'promoted-documents-list')]/li/h3[contains(text(), '" + title + "')]")));
+	}
+
+	public String promotedDocumentSummary(final String title) {
+		return promotedDocument(title).findElement(By.cssSelector("p")).getText();
+	}
+
+	public void deleteDocument(final String title) {
+		promotedDocument(title).findElement(By.cssSelector(".remove-document-reference")).click();
+		new WebDriverWait(getDriver(), 3).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".remove-document-reference.fa-spin")));
+	}
+
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {
 
 		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {
-			super(body, sideNavBar, topNavBar, "promotions", "promotions", false);
+			super(body, sideNavBar, topNavBar, "promotions", NavBarTabId.PROMOTIONS, false);
 		}
 
 		@Override

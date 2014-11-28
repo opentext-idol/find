@@ -78,7 +78,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 		return findElement(By.cssSelector(".term-input-form [type='submit']"));
 	}
 
-	public WebElement promoteButton() {
+	public WebElement finishButton() {
 		return findElement(By.cssSelector(".finish-step"));
 	}
 
@@ -114,7 +114,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 		spotlightType(spotlightType).click();
 		continueButton("spotlightType").click();
 		addSearchTrigger(searchTrigger);
-		promoteButton().click();
+		finishButton().click();
 		loadOrFadeWait();
 	}
 

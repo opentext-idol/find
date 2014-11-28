@@ -103,20 +103,21 @@ public class SearchPage extends AppElement implements AppPage {
 		return promotedDocTitle;
 	}
 
-	public List<String> createAMultiDocumentPromotion() {
+	public List<String> createAMultiDocumentPromotion(final int finalNumberOfDocs) {
 		promoteButton().click();
+		final int checkboxesPerPage = 6;
 		final List<String> promotedDocTitles = new ArrayList<>();
 
-		for (int j = 1; j < 4; j++) {
-			loadOrFadeWait();
+		for (int i = 0; i < finalNumberOfDocs; i++) {
+			final int checkboxIndex = i % checkboxesPerPage + 1;
+			searchResultCheckbox(checkboxIndex).click();
+			promotedDocTitles.add(getSearchResultTitle(checkboxIndex));
 
-			for (int i = 1; i < 7; i++) {
-				searchResultCheckbox(i).click();
-				promotedDocTitles.add(getSearchResultTitle(i));
+			// Change page when we have checked all boxes on the current page, if we have more to check
+			if (i < finalNumberOfDocs - 1 && checkboxIndex == checkboxesPerPage) {
+				forwardPageButton().click();
+				loadOrFadeWait();
 			}
-
-			forwardPageButton().click();
-			loadOrFadeWait();
 		}
 
 		promoteTheseItemsButton().click();
@@ -163,6 +164,14 @@ public class SearchPage extends AppElement implements AppPage {
 
 	public WebElement promotionSummaryForwardToEndButton() {
 		return getParent(findElement(By.cssSelector(".fa-angle-double-right")));
+	}
+
+	public List<String> getSearchTermsList() {
+		final List<String> searchTerms = new ArrayList<>();
+		for (final WebElement searchTerm : findElements(By.cssSelector(".search-terms-list span"))) {
+				searchTerms.add(searchTerm.getText());
+		}
+		return searchTerms;
 	}
 
 	public static class Placeholder {
