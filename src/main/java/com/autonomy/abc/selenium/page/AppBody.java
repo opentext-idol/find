@@ -16,6 +16,7 @@ public class AppBody extends AppElement {
 	private final AbstractWebElementPlaceholder<UsersPage> usersPage;
 	private final SearchPage.Placeholder searchPage;
 	private final CreateNewPromotionsPage.Placeholder createPromotionsPage;
+	private final CreateNewKeywordsPage.Placeholder createKeywordsPage;
 	private final TopNavBar topNavBar;
 	private final SideNavBar sideNavBar;
 
@@ -34,6 +35,7 @@ public class AppBody extends AppElement {
 
 		this.searchPage = new SearchPage.Placeholder(topNavBar);
 		this.createPromotionsPage = new CreateNewPromotionsPage.Placeholder(topNavBar);
+		this.createKeywordsPage = new CreateNewKeywordsPage.Placeholder(topNavBar);
 		this.topNavBar = new TopNavBar(driver);
 		this.sideNavBar = new SideNavBar(driver);
 	}
@@ -62,8 +64,12 @@ public class AppBody extends AppElement {
 		return searchPage.$searchPage(getDriver().findElement(By.cssSelector(".page-container")));
 	}
 
-	public CreateNewPromotionsPage getCreateNewPromotionsPage () {
+	public CreateNewPromotionsPage getCreateNewPromotionsPage() {
 		return createPromotionsPage.$createNewPromotionsPage(getDriver().findElement(By.cssSelector(".page-container")));
+	}
+
+	public CreateNewKeywordsPage getCreateKeywordsPage() {
+		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".page-container")));
 	}
 
 	public TopNavBar getTopNavBar() {

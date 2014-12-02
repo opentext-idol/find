@@ -26,7 +26,7 @@ public class SearchPage extends AppElement implements AppPage {
 	}
 
 	public WebElement searchTitle() {
-		return findElement(By.cssSelector(".page-title > span"));
+		return findElement(By.cssSelector(".page-title > strong"));
 	}
 
 	public WebElement promoteButton() {
