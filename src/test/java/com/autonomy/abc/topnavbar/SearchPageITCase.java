@@ -52,13 +52,13 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testSearch(){
 		topNavBar.search("dog");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("\"dog\""));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("dog"));
 
 		topNavBar.search("cat");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("\"cat\""));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("cat"));
 
 		topNavBar.search("ElEPhanT");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("\"ElEPhanT\""));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText().equals("ElEPhanT"));
 	}
 
 	@Test
@@ -163,7 +163,12 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.createAMultiDocumentPromotion(18);
 		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
+
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+
+		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
+		promotionsPage.getPromotionLinkWithTitleContaining("boat").click();
 		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
 
 		promotionsPage.clickableSearchTrigger("boat").click();
@@ -245,5 +250,11 @@ public class SearchPageITCase extends ABCTestBase {
 
 		topNavBar.search("cow");
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount() == 2);
+	}
+
+	@Test
+	public void testWhitespaceSearch() {
+		topNavBar.search(" ");
+		assertThat("Whitespace search should not return a message as if it is a blacklisted term", !searchPage.getText().contains("All search terms are blacklisted"));
 	}
 }

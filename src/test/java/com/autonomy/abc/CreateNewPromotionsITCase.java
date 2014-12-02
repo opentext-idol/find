@@ -14,6 +14,8 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Arrays;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class CreateNewPromotionsITCase extends ABCTestBase {
@@ -287,6 +289,62 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 		assertThat("page does not have correct spotlight name", promotionsPage.getText().contains("Spotlight for: " + searchTrigger));
 		assertThat("page does not have correct spotlight type", promotionsPage.spotlightButton().getText().contains(spotlightType));
+	}
+
+	@Test
+	public void testWizardCancelButtonAfterClickingNavBarToggleButton() {
+		assertThat("Incorrect URL", getDriver().getCurrentUrl().endsWith("promotions/create"));
+
+		topNavBar.sideBarToggle();
+		createPromotionsPage.cancelButton("type");
+		assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
+		assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
+
+		searchPage.promoteTheseItemsButton().click();
+		createPromotionsPage.spotlightType("SPOTLIGHT").click();
+		createPromotionsPage.continueButton("type").click();
+		assertThat("Wrong section of wizard", createPromotionsPage.spotlightType("Sponsored").isDisplayed());
+
+		topNavBar.sideBarToggle();
+		createPromotionsPage.cancelButton("spotlightType").click();
+		assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
+		assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
+
+		for (final String spotlightType : Arrays.asList("Sponsored", "Hotwire", "Top Promotions")) {
+			searchPage.promoteTheseItemsButton().click();
+			createPromotionsPage.spotlightType("SPOTLIGHT").click();
+			createPromotionsPage.continueButton("type").click();
+			assertThat("Wrong section of wizard", createPromotionsPage.spotlightType(spotlightType).isDisplayed());
+
+			createPromotionsPage.spotlightType(spotlightType).click();
+			assertThat("Wizard has not navigated forward", createPromotionsPage.triggerAddButton().isDisplayed());
+			topNavBar.sideBarToggle();
+			createPromotionsPage.cancelButton("spotlightType").click();
+			assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
+			assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
+		}
+
+		searchPage.promoteTheseItemsButton().click();
+		createPromotionsPage.spotlightType("PIN_TO_POSITION").click();
+		createPromotionsPage.continueButton("type").click();
+		assertThat("Wrong section of wizard", createPromotionsPage.selectPositionPlusButton().isDisplayed());
+
+		topNavBar.sideBarToggle();
+		createPromotionsPage.cancelButton("pinToPosition").click();
+		assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
+		assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
+
+		searchPage.promoteTheseItemsButton().click();
+		createPromotionsPage.spotlightType("PIN_TO_POSITION").click();
+		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.selectPositionPlusButton().click();
+		createPromotionsPage.continueButton("pinToPosition").click();
+		assertThat("Wizard has not navigated forward", createPromotionsPage.triggerAddButton().isDisplayed());
+
+		topNavBar.sideBarToggle();
+		createPromotionsPage.cancelButton("trigger").click();
+		assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
+		assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
 	}
 
 }
