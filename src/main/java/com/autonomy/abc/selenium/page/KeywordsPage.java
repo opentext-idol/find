@@ -32,7 +32,8 @@ public class KeywordsPage extends AppElement implements AppPage {
 	}
 
 	public List<String> getSynonymGroupSynonyms(final String leadSynonym) {
-		final List<WebElement> synonyms = synonymGroup(leadSynonym).findElements(By.cssSelector("li button"));
+		loadOrFadeWait();
+		final List<WebElement> synonyms = synonymGroup(leadSynonym).findElements(By.cssSelector("li span"));
 		final List<String> synonymNames = new ArrayList<>();
 
 		for (final WebElement synonym : synonyms){
@@ -55,7 +56,7 @@ public class KeywordsPage extends AppElement implements AppPage {
 	}
 
 	public void deleteSynonym(final String synonym, final String synonymGroupLead) throws InterruptedException {
-		synonymGroup(synonymGroupLead).findElement(By.xpath(".//button[contains(text(), '" + synonym + "')]/i")).click();
+		synonymGroup(synonymGroupLead).findElement(By.xpath(".//span[contains(text(), '" + synonym + "')]/i")).click();
 		Thread.sleep(3000);
 	}
 
@@ -119,6 +120,11 @@ public class KeywordsPage extends AppElement implements AppPage {
 
 	public WebElement searchFilterTextBox() {
 		return findElement(By.cssSelector(".search-filter .form-control"));
+	}
+
+	public void deleteBlacklistedTerm(final String blacklistedTerm) {
+		findElement(By.cssSelector("[data-keyword = '" + blacklistedTerm + "'] .remove-blacklisted-term")).click();
+		loadOrFadeWait();
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<KeywordsPage> {

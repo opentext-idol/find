@@ -31,11 +31,13 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement getPromotionLinkWithTitleContaining(final String promotionTitleSubstring) {
-		return findElement(By.xpath(".//h3/a[contains(text(), '" + promotionTitleSubstring + "')]"));
+		return findElement(By.xpath(".//h3/a[contains(text(), '" + promotionTitleSubstring.split("\\s+")[0] + "')]"));
 	}
 
-	public void deletePromotion() { //TODO: deal with gritter
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(findElement(By.cssSelector(".promotion-view-delete"))));;
+	public void deletePromotion() {
+		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".extra-functions .dropdown-toggle"));
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
+		extraFunctionsDropdown.click();
 		findElement(By.cssSelector(".promotion-view-delete")).click();
 		final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
 		deleteModal.findElement(By.cssSelector(".btn-danger")).click();
@@ -69,7 +71,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 		final List<String> searchTriggerList = new ArrayList<>();
 		loadOrFadeWait();
 
-		for (final WebElement trigger : findElements(By.cssSelector(".promotion-view-match-terms .clickable-label"))) {
+		for (final WebElement trigger : findElements(By.cssSelector(".promotion-view-match-terms .term"))) {
 			searchTriggerList.add(trigger.getAttribute("data-id"));
 		}
 
@@ -79,7 +81,8 @@ public class PromotionsPage extends AppElement implements AppPage {
 	public void addSearchTrigger(final String searchTrigger) {
 		findElement(By.cssSelector(".edit-promotion-match-terms input")).clear();
 		findElement(By.cssSelector(".edit-promotion-match-terms input")).sendKeys(searchTrigger);
-		waitUntilClickableThenClick(triggerAddButton());
+		loadOrFadeWait();
+		tryClickThenTryParentClick(triggerAddButton());
 		loadOrFadeWait();
 	}
 
@@ -134,11 +137,11 @@ public class PromotionsPage extends AppElement implements AppPage {
 	public void changeSpotlightType(final String promotionType) {
 		findElement(By.cssSelector(".promotion-view-name-dropdown .dropdown-toggle")).click();
 		findElement(By.cssSelector(".promotion-view-name-dropdown [data-spotlight-type='" + promotionType + "']")).click();
-		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotion-view-name-dropdown .fa-pencil")));
+		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotion-view-name-dropdown .fa-lightbulb-o")));
 	}
 
 	public WebElement promotedDocument(final String title) {
-		return getParent(findElement(By.xpath(".//ul[contains(@class, 'promoted-documents-list')]/li/h3[contains(text(), '" + title + "')]")));
+		return getParent(findElement(By.xpath(".//ul[contains(@class, 'promoted-documents-list')]")).findElement(By.xpath(".//h3[contains(text(), '" + title + "')]")));
 	}
 
 	public String promotedDocumentSummary(final String title) {
@@ -148,6 +151,11 @@ public class PromotionsPage extends AppElement implements AppPage {
 	public void deleteDocument(final String title) {
 		promotedDocument(title).findElement(By.cssSelector(".remove-document-reference")).click();
 		new WebDriverWait(getDriver(), 3).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".remove-document-reference.fa-spin")));
+	}
+
+	public WebElement addMorePromotedItemsButton() {
+		return findElement(By.xpath(".//a[contains(text(), 'Add More')]"));
+
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {

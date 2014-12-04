@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.AppElement;
+import com.autonomy.abc.selenium.menubar.NotificationsDropDown;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractWebElementPlaceholder;
@@ -19,6 +20,8 @@ public class AppBody extends AppElement {
 	private final CreateNewKeywordsPage.Placeholder createKeywordsPage;
 	private final TopNavBar topNavBar;
 	private final SideNavBar sideNavBar;
+	private final NotificationsDropDown.Placeholder notifications;
+	private final EditDocumentReferencesPage.Placeholder editReferences;
 
 	public AppBody(final WebDriver driver) {
 		this(driver, new SideNavBar(driver), new TopNavBar(driver));
@@ -38,6 +41,8 @@ public class AppBody extends AppElement {
 		this.createKeywordsPage = new CreateNewKeywordsPage.Placeholder(topNavBar);
 		this.topNavBar = new TopNavBar(driver);
 		this.sideNavBar = new SideNavBar(driver);
+		this.notifications = new NotificationsDropDown.Placeholder(topNavBar);
+		this.editReferences = new EditDocumentReferencesPage.Placeholder(topNavBar);
 	}
 
 	public OverviewPage getOverviewPage() {
@@ -78,6 +83,14 @@ public class AppBody extends AppElement {
 
 	public SideNavBar getSideNavBar() {
 		return sideNavBar;
+	}
+
+	public NotificationsDropDown getNotifications() {
+		return notifications.$notificationsDropDown(findElement(By.cssSelector(".notification-list")));
+	}
+
+	public EditDocumentReferencesPage getEditDocumentReferencesPage() {
+		return editReferences.$editReferences(findElement(By.xpath(".//h2[contains(text(), 'Edit Document References')]/../..")));
 	}
 
 	public void logout() {

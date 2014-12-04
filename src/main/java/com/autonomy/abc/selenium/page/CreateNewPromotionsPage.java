@@ -24,10 +24,6 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 		return findElement(By.cssSelector("[data-promotion-type='PIN_TO_POSITION']"));
 	}
 
-	public WebElement spotlight() {
-		return findElement(By.cssSelector("[data-promotion-type='SPOTLIGHT']"));
-	}
-
 	public WebElement continueButton(final String dataStep) {
 		return findElement(By.cssSelector("[data-step='" + dataStep + "']")).findElement(By.cssSelector(".next-step"));
 	}
@@ -49,8 +45,8 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public void addSearchTrigger(final String searchTrigger) {
-		findElement(By.cssSelector("[name='terms']")).clear();
-		findElement(By.cssSelector("[name='terms']")).sendKeys(searchTrigger);
+		findElement(By.cssSelector("input[name='words']")).clear();
+		findElement(By.cssSelector("input[name='words']")).sendKeys(searchTrigger);
 
 		try {
 			waitUntilClickableThenClick(triggerAddButton());
@@ -67,7 +63,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	public List<String> getSearchTriggersList() {
 		final List<String> searchTriggerList = new ArrayList<>();
 
-		for (final WebElement trigger : findElements(By.cssSelector(".remove-term"))) {
+		for (final WebElement trigger : findElements(By.cssSelector(".remove-word"))) {
 			searchTriggerList.add(getParent(trigger).getText());
 		}
 
@@ -101,21 +97,25 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public String getTopPromotedLinkTitle() {
-		return findElement(By.cssSelector(".promotions .search-result h3 a")).getText();
+		return findElement(By.cssSelector(".promotions .search-result h3")).getText();
 	}
 
 	public String getTopPromotedLinkButtonText() {
-		return findElement(By.cssSelector(".promotions .search-result button")).getText();
+		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
 	}
 
 	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger) {
-		spotlight().click();
+		promotionType("SPOTLIGHT").click();
 		continueButton("type").click();
 		spotlightType(spotlightType).click();
 		continueButton("spotlightType").click();
 		addSearchTrigger(searchTrigger);
 		finishButton().click();
 		loadOrFadeWait();
+	}
+
+	public WebElement promotionType(final String promotionType) {
+		return findElement(By.cssSelector("[data-promotion-type='" + promotionType + "']"));
 	}
 
 	public static class Placeholder {

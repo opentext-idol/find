@@ -146,6 +146,15 @@ public class AppElement implements WebElement {
 		element.click();
 	}
 
+	// try catch added because in Chrome a span covers the button when the button is disabled, causing it to be clicked instead which throws WebDriverException
+	public void tryClickThenTryParentClick(final WebElement element) {
+		try {
+			element.click();
+		} catch (final WebDriverException e) {
+			getParent(element).click();
+		}
+	}
+
 	public void waitForGritterToClear() throws InterruptedException {
 		Thread.sleep(5000);
 	}

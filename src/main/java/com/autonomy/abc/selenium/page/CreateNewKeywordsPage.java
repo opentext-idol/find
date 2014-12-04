@@ -4,6 +4,8 @@ import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class CreateNewKeywordsPage extends AppElement implements AppPage{
 
@@ -29,19 +31,19 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement addSynonymsButton() {
-		return findElement(By.cssSelector(".keywords-add-synonyms [type='submit']"));
+		return findElement(By.cssSelector(".synonyms-input-view [type='submit']"));
 	}
 
 	public WebElement addBlacklistTermsButton() {
-		return findElement(By.cssSelector(".keywords-add-blacklist [type='submit']"));
+		return findElement(By.cssSelector("[data-step='blacklisted'] .term-input-form [type='submit']"));
 	}
 
 	public WebElement addSynonymsTextBox() {
-		return findElement(By.cssSelector(".keywords-add-synonyms [type='text']"));
+		return findElement(By.cssSelector(".synonyms-input-view [name='words']"));
 	}
 
 	public WebElement addBlacklistedTextBox() {
-		return findElement(By.cssSelector(".keywords-add-blacklist input"));
+		return findElement(By.cssSelector("[data-step='blacklisted'] .term-input-form [name='words']"));
 	}
 
 	public WebElement finishSynonymWizardButton() {
@@ -56,7 +58,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		final WebElement addSynonymsTextBox = addSynonymsTextBox();
 		addSynonymsTextBox.clear();
 		addSynonymsTextBox.sendKeys(synonyms);
-		addSynonymsButton().click();
+		tryClickThenTryParentClick(addSynonymsButton());
 	}
 
 	public void addBlacklistedTerms(final String blacklistedTerms) {
@@ -67,7 +69,8 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	}
 
 	public int countKeywords() {
-		return findElements(By.cssSelector(".remove-keyword")).size();
+		loadOrFadeWait();
+		return findElements(By.cssSelector(".term")).size();
 	}
 
 	public void createSynonymGroup(final String synonymGroup) {
@@ -75,6 +78,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		continueWizardButton("type").click();
 		addSynonyms(synonymGroup);
 		finishSynonymWizardButton().click();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-bucket-button")));
 	}
 
 	public void createBlacklistedTerm(final String blacklistedTerm) {
@@ -82,12 +86,12 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		continueWizardButton("type").click();
 		addBlacklistedTerm(blacklistedTerm);
 		finishBlacklistWizardButton().click();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-filter .form-control")));
 	}
 
 	private void addBlacklistedTerm(final String blacklistedTerm) {
-		final WebElement blackListTextBox = findElement(By.cssSelector(".keywords-add-blacklist input"));
-		blackListTextBox.clear();
-		blackListTextBox.sendKeys(blacklistedTerm);
+		addBlacklistedTextBox().clear();
+		addBlacklistedTextBox().sendKeys(blacklistedTerm);
 		addBlacklistTermsButton().click();
 	}
 

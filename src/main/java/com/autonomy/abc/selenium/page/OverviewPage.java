@@ -18,25 +18,38 @@ public class OverviewPage extends AppElement implements AppPage {
 	@Override
 	public void navigateToPage() { getDriver().get("overview"); }
 
-	public WebElement getWidget(final String widgetHeadingText) {
-		return findElement(By.xpath("//h5[text()='" + widgetHeadingText + "']/../.."));
+	public enum Widgets {
+		ZERO_HIT_TERMS("Zero Hit Terms"),
+		TOP_SEARCH_TERMS("Top Search Terms"),
+		WEEKLY_SEARCH("Weekly Search Count"),
+		YESTERDAY_SEARCH("Yesterday's Search Count"),
+		TODAY_SEARCH("Today's Search Count");
+
+		private final String tabName;
+
+		Widgets(final String name) {
+			tabName = name;
+		}
+
+		public String toString() {
+			return tabName;
+		}
+	}
+
+	public WebElement getWidget(final Widgets widgetHeadingText) {
+		return findElement(By.xpath(".//h5[text()='" + widgetHeadingText.toString() + "']/../.."));
 	}
 
 	public WebElement zeroHitLastWeekButton() {
-		return getWidget("Zero Hit Queries").findElement(By.xpath(".//*[@value='week']/.."));
+		return getWidget(Widgets.ZERO_HIT_TERMS).findElement(By.xpath(".//*[@value='week']/.."));
 	}
 
 	public WebElement zeroHitLastDayButton() {
-		return getWidget("Zero Hit Queries").findElement(By.xpath(".//*[@value='day']/.."));
+		return getWidget(Widgets.ZERO_HIT_TERMS).findElement(By.xpath(".//*[@value='day']/.."));
 	}
 
 	public WebElement topSearchTermsLastTimePeriodButton(final String timePeriod) {
-		return getWidget("Top Search Terms").findElement(By.xpath(".//*[@value='" + timePeriod + "']/.."));
-	}
-
-	public void widgetCollapseExpand(final String widgetHeadingText) {
-		getWidget(widgetHeadingText).findElement(By.cssSelector(".ibox-collapse")).click();
-		loadOrFadeWait();
+		return getWidget(Widgets.TOP_SEARCH_TERMS).findElement(By.xpath(".//*[@value='" + timePeriod + "']/.."));
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<OverviewPage> {

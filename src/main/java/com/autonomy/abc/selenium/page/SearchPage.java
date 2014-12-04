@@ -43,6 +43,7 @@ public class SearchPage extends AppElement implements AppPage {
 
 	public void promotionsBucketClose() {
 		promotionsBucket().findElement(By.cssSelector(".close-link")).click();
+		loadOrFadeWait();
 	}
 
 	public WebElement searchResultCheckbox(final int resultNumber) {
@@ -78,7 +79,8 @@ public class SearchPage extends AppElement implements AppPage {
 	}
 
 	public int getCurrentPageNumber() {
-		return Integer.parseInt(findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.cssSelector("li.active")).getText());
+		loadOrFadeWait();
+		return Integer.parseInt(findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.cssSelector("li.active span")).getText());
 	}
 
 	public boolean isBackToFirstPageButtonDisabled() {
@@ -86,13 +88,13 @@ public class SearchPage extends AppElement implements AppPage {
 	}
 
 	public String getSearchResultTitle(final int searchResultNumber) {
-		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") a")).getText();
+		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3")).getText();
 	}
 
 	public String bucketDocumentTitle(final int bucketNumber) {
 		final Actions mouseOver = new Actions(getDriver());
 		mouseOver.moveToElement(promotionsBucket().findElement(By.cssSelector(".promotions-bucket-document:nth-child(" + String.valueOf(bucketNumber) + ")"))).perform();
-		return promotionsBucket().findElement(By.cssSelector(".promotions-bucket-document .tooltip")).getText();
+		return promotionsBucket().findElement(By.cssSelector(".promotions-bucket-document")).getText();
 	}
 
 	public String createAPromotion() {
@@ -135,7 +137,7 @@ public class SearchPage extends AppElement implements AppPage {
 	}
 
 	public WebElement promotionsLabel() {
-		return findElement(By.cssSelector(".promotions .total-promotions"));
+		return findElement(By.cssSelector(".promotions .promotion-name"));
 	}
 
 	public int getPromotionSummarySize() {
@@ -172,6 +174,14 @@ public class SearchPage extends AppElement implements AppPage {
 				searchTerms.add(searchTerm.getText());
 		}
 		return searchTerms;
+	}
+
+	public List<String> promotionsBucketList() {
+		final List<String> bucketDocTitles = new ArrayList<>();
+		for (final WebElement bucketDoc : findElements(By.cssSelector(".promotions-bucket-document"))) {
+			bucketDocTitles.add(bucketDoc.getText());
+		}
+		return bucketDocTitles;
 	}
 
 	public static class Placeholder {
