@@ -15,6 +15,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UsersPageITCase extends ABCTestBase {
 
+	private static String STUPIDLY_LONG_USERNAME = "StupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserName";
+
 	public UsersPageITCase(final TestConfig config, final String browser, final Platform platform) {
 		super(config, browser, platform);
 	}
@@ -163,8 +165,15 @@ public class UsersPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAddStupidlyLongUsername() {
-		//TODO: currently abc doesn't handle long usernames well, to add one would make all of the userPage tests fail. Just adding a reminder that this currently fails
-		assertThat("Add test for long username when this is fixed", false);
+		usersPage.createUserButton().click();
+		usersPage.createNewUser(STUPIDLY_LONG_USERNAME, "b", "user");
+		usersPage.closeModal();
+
+		assertThat("Long username not added to the table", usersPage.getTable().getText().contains(STUPIDLY_LONG_USERNAME));
+		assertThat("", usersPage.deleteButton(STUPIDLY_LONG_USERNAME).isDisplayed());
+
+		usersPage.deleteUser(STUPIDLY_LONG_USERNAME);
+		assertThat("Long username not removed from the table", !usersPage.getTable().getText().contains(STUPIDLY_LONG_USERNAME));
  	}
 
 	@Test

@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.PromotionsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -64,6 +65,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testPromoteButton(){
 		searchPage.promoteButton().click();
+		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
 		assertThat("Promote these items button should not be visible", !searchPage.promoteTheseItemsButton().isDisplayed());
 		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount() == 0);
@@ -76,6 +78,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Promoted items bucket has not appeared", !searchPage.getText().contains("Select Items to Promote"));
 
 		searchPage.promoteButton().click();
+		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
 		assertThat("Promote these items button should not be visible", !searchPage.promoteTheseItemsButton().isDisplayed());
 		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount() == 0);
@@ -128,15 +131,33 @@ public class SearchPageITCase extends ABCTestBase {
 
 		for (int i = numberOfPages - 1; i > 0; i--) {
 			searchPage.backPageButton().click();
+			new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fa-file-o")));
 			assertThat("Page " + String.valueOf(i) + " is not active", searchPage.isPageActive(i));
 			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
 			searchPage.forwardPageButton().click();
+			new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fa-file-o")));
 			assertThat("Page " + String.valueOf(j) + " is not active", searchPage.isPageActive(j));
 			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(j)));
 		}
+	}
+
+	// This used to fail because the predict=false parameter was not added to our query actions
+	@Test
+	public void testPaginationAndBackButton() {
+		topNavBar.search("sith");
+		searchPage.forwardToLastPageButton().click();
+		assertThat("Forward to last page button is not disabled", AppElement.getParent(searchPage.forwardToLastPageButton()).getAttribute("class").contains("disabled"));
+		assertThat("Forward a page button is not disabled", AppElement.getParent(searchPage.forwardPageButton()).getAttribute("class").contains("disabled"));
+		final int lastPage = searchPage.getCurrentPageNumber();
+
+		getDriver().navigate().back();
+		assertThat("Back button has not brought the user back to the first page", searchPage.getCurrentPageNumber() == 1);
+
+		getDriver().navigate().forward();
+		assertThat("Forward button has not brought the user back to the last page", searchPage.getCurrentPageNumber() == lastPage);
 	}
 
 	@Test
@@ -172,8 +193,7 @@ public class SearchPageITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
 
 		promotionsPage.clickableSearchTrigger("boat").click();
-
-		assertThat("Promotions found label is incorrect", searchPage.promotionsLabel().getText().contains("18"));
+		promotionsPage.loadOrFadeWait();
 		assertThat("Summary size should equal 2", searchPage.getPromotionSummarySize() == 2);
 
 		searchPage.showMoreButton();
@@ -257,4 +277,59 @@ public class SearchPageITCase extends ABCTestBase {
 		topNavBar.search(" ");
 		assertThat("Whitespace search should not return a message as if it is a blacklisted term", !searchPage.getText().contains("All search terms are blacklisted"));
 	}
+
+	@Test
+	public void testSearchParentheses() {
+		topNavBar.search("(");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("Bracket Mismatch in the query"));
+
+		topNavBar.search(")");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("Bracket Mismatch in the query"));
+
+		topNavBar.search("()");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("No valid query text supplied"));
+
+		topNavBar.search(") (");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("Terminating boolean operator"));
+
+		topNavBar.search(")war");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("Bracket Mismatch in the query"));
+	}
+
+	@Test
+	public void testSearchQuotationMarks() {
+		topNavBar.search("\"");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+
+		topNavBar.search("\"\"");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("No valid query text supplied"));
+
+		topNavBar.search("\" \"");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("No valid query text supplied"));
+
+		topNavBar.search("\" \"");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("No valid query text supplied"));
+
+		topNavBar.search("\"word");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+
+		topNavBar.search("\" word");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+
+		topNavBar.search("\" wo\"rd\"");
+		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+	}
+
 }

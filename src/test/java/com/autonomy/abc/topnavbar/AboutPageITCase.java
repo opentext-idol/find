@@ -68,6 +68,6 @@ public class AboutPageITCase extends ABCTestBase {
 	@Test
 	public void testSearchTable() {
 		aboutPage.searchInSearchBox("store");
-		assertThat("search has not returned correct result", aboutPage.findElement(By.cssSelector("table a")).getText().contains("store"));
+		assertThat("search has not returned correct result", aboutPage.findElement(By.cssSelector(".dataTables_wrapper tbody a")).getText().contains("store"));
 	}
 }

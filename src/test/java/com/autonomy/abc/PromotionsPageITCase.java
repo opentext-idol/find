@@ -2,15 +2,18 @@ package com.autonomy.abc;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.PromotionsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -18,6 +21,7 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 
 public class PromotionsPageITCase extends ABCTestBase {
 
@@ -28,6 +32,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	private TopNavBar topNavBar;
 	private PromotionsPage promotionsPage;
 	private SearchPage searchPage;
+	private EditDocumentReferencesPage editReferences;
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -77,8 +82,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testWhitespaceTrigger() {
 		setUpANewPromotion("cars", "Sponsored", "wheels");
 
-		promotionsPage.triggerAddButton().click();
-		assertThat("Number of triggers does not equal 0", promotionsPage.getSearchTriggersList().size() == 1);
+		promotionsPage.tryClickThenTryParentClick(promotionsPage.triggerAddButton());
+
+		assertThat("Number of triggers does not equal 1", promotionsPage.getSearchTriggersList().size() == 1);
 
 		promotionsPage.addSearchTrigger("trigger");
 		assertThat("Number of triggers does not equal 1", promotionsPage.getSearchTriggersList().size() == 2);
@@ -100,23 +106,17 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertThat("Number of triggers does not equal 1", promotionsPage.getSearchTriggersList().size() == 1);
 
 		promotionsPage.addSearchTrigger("bag");
-		promotionsPage.addSearchTrigger("\"bag");
-		promotionsPage.waitForGritterToClear();
-		promotionsPage.addSearchTrigger("bag\"");
-		promotionsPage.addSearchTrigger("\"bag\"");
-		assertThat("Number of triggers does not equal 5", promotionsPage.getSearchTriggersList().size() == 5);
-
-		promotionsPage.removeSearchTrigger("\"bag\"");
-		assertThat("Number of triggers does not equal 4", promotionsPage.getSearchTriggersList().size() == 4);
-
-		promotionsPage.removeSearchTrigger("\"bag");
-		assertThat("Number of triggers does not equal 3", promotionsPage.getSearchTriggersList().size() == 3);
-
-		promotionsPage.removeSearchTrigger("bag\"");
 		assertThat("Number of triggers does not equal 2", promotionsPage.getSearchTriggersList().size() == 2);
 
-		promotionsPage.removeSearchTrigger("bag");
-		assertThat("Number of triggers does not equal 1", promotionsPage.getSearchTriggersList().size() == 1);
+		promotionsPage.addSearchTrigger("\"bag");
+		assertThat("Number of triggers does not equal 2", promotionsPage.getSearchTriggersList().size() == 2);
+
+		promotionsPage.waitForGritterToClear();
+		promotionsPage.addSearchTrigger("bag\"");
+		assertThat("Number of triggers does not equal 2", promotionsPage.getSearchTriggersList().size() == 2);
+
+		promotionsPage.addSearchTrigger("\"bag\"");
+		assertThat("Number of triggers does not equal 2", promotionsPage.getSearchTriggersList().size() == 2);
 	}
 
 	@Test
@@ -140,7 +140,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testScriptTrigger() {
+	public void testHTMLTrigger() {
 		setUpANewPromotion("vans", "Sponsored", "shoes");
 		final String trigger = "<h1>Hi</h1>";
 		promotionsPage.addSearchTrigger(trigger);
@@ -168,7 +168,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertThat("Trigger 'epsilon' not present", promotionsPage.getSearchTriggersList().contains("epsilon"));
 
 		promotionsPage.removeSearchTrigger("epsilon");
-		assertThat("It should not be possible to delete the last trigger", !promotionsPage.triggerRemoveX("delta").isDisplayed());
+		assertThat("It should not be possible to delete the last trigger", promotionsPage.triggerRemoveX("delta").getAttribute("class").contains("hide"));
 	}
 
 	@Test
@@ -237,6 +237,103 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.deletePromotion();
 
 		assertThat("promotion 'pony' not deleted", promotionsPage.promotionsList().size() == 0);
+	}
+
+	@Test
+	public void testNoMixUpBetweenSearchBucketAndEditPromotionsBucket() {
+		final List<String> originalPromotedDocs = setUpANewMultiDocPromotion("luke", "Hotwire", "jedi goodGuy", 8);
+		final List<String> promotedDocs = promotionsPage.getPromotedList();
+		promotionsPage.addMorePromotedItemsButton().click();
+		promotionsPage.loadOrFadeWait();
+		final List<String> promotionsBucketList = searchPage.promotionsBucketList();
+
+		assertEquals(originalPromotedDocs.size(), promotedDocs.size());
+		assertEquals(promotionsBucketList.size(), promotedDocs.size());
+
+		for (final String docTitle : promotionsBucketList) {
+			assertTrue(promotedDocs.contains(docTitle));
+		}
+
+		navBar.switchPage(NavBarTabId.OVERVIEW);
+		topNavBar.search("edit");
+
+		searchPage.promoteButton().click();
+		searchPage.searchResultCheckbox(1).click();
+		searchPage.searchResultCheckbox(2).click();
+		searchPage.searchResultCheckbox(3).click();
+		searchPage.loadOrFadeWait();
+		final List<String> searchBucketDocs = searchPage.promotionsBucketList();
+
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+		promotionsPage.getPromotionLinkWithTitleContaining("jedi").click();
+		promotionsPage.addMorePromotedItemsButton().click();
+		promotionsPage.loadOrFadeWait();
+
+		final List<String> secondPromotionsBucketList = searchPage.promotionsBucketList();
+		assertEquals(promotionsBucketList.size(), secondPromotionsBucketList.size());
+
+		for (final String searchBucketDoc : searchBucketDocs) {
+			assertFalse(secondPromotionsBucketList.contains(searchBucketDoc));
+		}
+
+		topNavBar.search("wall");
+		searchPage.searchResultCheckbox(1);
+		searchPage.searchResultCheckbox(2);
+
+		final List<String> finalPromotionsBucketList = searchPage.promotionsBucketList();
+
+		navBar.switchPage(NavBarTabId.OVERVIEW);
+		topNavBar.search("fast");
+		searchPage.promoteButton().click();
+
+		final List<String> searchPageBucketDocs = searchPage.promotionsBucketList();
+
+		for (final String bucketDoc : finalPromotionsBucketList) {
+			assertFalse(searchPageBucketDocs.contains(bucketDoc));
+		}
+	}
+
+	@Test
+	public void testAddRemoveDocsToEditBucket() {
+		setUpANewMultiDocPromotion("yoda", "Hotwire", "green dude", 4);
+		promotionsPage.addMorePromotedItemsButton().click();
+
+		assertEquals(4, searchPage.promotedItemsCount());
+
+		topNavBar.search("star");
+
+		for (int i = 1; i < 7; i++) {
+			AppElement.scrollIntoView(searchPage.searchResultCheckbox(i), getDriver());
+			searchPage.searchResultCheckbox(i).click();
+			assertThat("Promoted items count should equal " + String.valueOf(i), searchPage.promotedItemsCount() == i + 4);
+		}
+
+		for (int j = 6; j > 0; j--) {
+			AppElement.scrollIntoView(searchPage.searchResultCheckbox(j), getDriver());
+			searchPage.searchResultCheckbox(j).click();
+			assertThat("Promoted items count should equal " + String.valueOf(j), searchPage.promotedItemsCount() == j - 1 + 4);
+		}
+	}
+
+	@Test
+	public void testRefreshEditPromotionPage() {
+		setUpANewPromotion("Luke", "Hotwire", "Jedi Master");
+		promotionsPage.addMorePromotedItemsButton().click();
+		getDriver().navigate().refresh();
+
+		try {
+			assertThat("After refresh page elements not visible", body.getText().contains("Edit Document References"));
+		} catch (final StaleElementReferenceException e) {
+			assertThat("After refresh page elements not visible", false);
+		}
+	}
+
+	@Test
+	public void testErrorMessageOnStartUpEditReferencesPage() {
+		setUpANewPromotion("Luke", "Hotwire", "Jedi Master");
+		promotionsPage.addMorePromotedItemsButton().click();
+		assertThat("Page opens with an error message", !searchPage.getText().contains("An unknown error occurred executing the search action"));
+		assertThat("Search items do not load", searchPage.searchResultCheckbox(1).isDisplayed());
 	}
 
 	private String setUpANewPromotion(final String navBarSearchTerm, final String spotlightType, final String searchTriggers) {

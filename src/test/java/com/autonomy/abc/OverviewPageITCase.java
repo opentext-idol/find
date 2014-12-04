@@ -25,7 +25,7 @@ public class OverviewPageITCase extends ABCTestBase{
 	}
 
 	@Test
-	public void testZeroHitQueriesGraphToggleButtons() {
+	public void testZeroHitTermsGraphToggleButtons() {
 		overviewPage.zeroHitLastWeekButton().click();
 		assertThat("last week button is not active after click", overviewPage.zeroHitLastWeekButton().getAttribute("class").contains("active"));
 		assertThat("last day button is active after last week click", !overviewPage.zeroHitLastDayButton().getAttribute("class").contains("active"));
@@ -36,44 +36,23 @@ public class OverviewPageITCase extends ABCTestBase{
 	}
 
 	@Test
-	public void testZeroHitQueriesWidgetCollapse() {
-		assertThat("zero hit queries widget is collapsed on page load", overviewPage.zeroHitLastDayButton().isDisplayed());
-
-		overviewPage.widgetCollapseExpand("Zero Hit Queries");
-		assertThat("zero hit queries widget has not collapsed", !overviewPage.zeroHitLastDayButton().isDisplayed());
-
-		overviewPage.widgetCollapseExpand("Zero Hit Queries");
-		assertThat("zero hit queries widget has not expanded", overviewPage.zeroHitLastDayButton().isDisplayed());
-	}
-
-	@Test
-	public void testTopSearchTermsWidgetCollapse() {
-		assertThat("zero hit queries widget is collapsed on page load", overviewPage.topSearchTermsLastTimePeriodButton("hour").isDisplayed());
-
-		overviewPage.widgetCollapseExpand("Top Search Terms");
-		assertThat("zero hit queries widget has not collapsed", !overviewPage.topSearchTermsLastTimePeriodButton("hour").isDisplayed());
-
-		overviewPage.widgetCollapseExpand("Top Search Terms");
-		assertThat("zero hit queries widget has not expanded", overviewPage.topSearchTermsLastTimePeriodButton("hour").isDisplayed());}
-
-	@Test
 	public void testTopSearchTermsToggleButtons() {
 		overviewPage.topSearchTermsLastTimePeriodButton("week").click();
 		assertThat("last week button is not active after click", overviewPage.topSearchTermsLastTimePeriodButton("week").getAttribute("class").contains("active"));
 		assertThat("last day button is active after last week click", !overviewPage.topSearchTermsLastTimePeriodButton("day").getAttribute("class").contains("active"));
 		assertThat("last hour button is active after last week click", !overviewPage.topSearchTermsLastTimePeriodButton("hour").getAttribute("class").contains("active"));
-		assertThat("Widget text not changed", overviewPage.getWidget("Top Search Terms").getText().contains("Top terms searched for last week"));
+		assertThat("Widget text not changed", overviewPage.getWidget(OverviewPage.Widgets.TOP_SEARCH_TERMS).getText().contains("Top terms searched for last week"));
 
 		overviewPage.topSearchTermsLastTimePeriodButton("day").click();
 		assertThat("last week button is active after last day click", !overviewPage.topSearchTermsLastTimePeriodButton("week").getAttribute("class").contains("active"));
 		assertThat("last day button is not active after click", overviewPage.topSearchTermsLastTimePeriodButton("day").getAttribute("class").contains("active"));
 		assertThat("last hour button is active after last day click", !overviewPage.topSearchTermsLastTimePeriodButton("hour").getAttribute("class").contains("active"));
-		assertThat("Widget text not changed", overviewPage.getWidget("Top Search Terms").getText().contains("Top terms searched for yesterday"));
+		assertThat("Widget text not changed", overviewPage.getWidget(OverviewPage.Widgets.TOP_SEARCH_TERMS).getText().contains("Top terms searched for yesterday"));
 
 		overviewPage.topSearchTermsLastTimePeriodButton("hour").click();
 		assertThat("last week button is active after last hour click", !overviewPage.topSearchTermsLastTimePeriodButton("week").getAttribute("class").contains("active"));
 		assertThat("last day button is active after last hour click", !overviewPage.topSearchTermsLastTimePeriodButton("day").getAttribute("class").contains("active"));
 		assertThat("last hour button is not active after click", overviewPage.topSearchTermsLastTimePeriodButton("hour").getAttribute("class").contains("active"));
-		assertThat("Widget text not changed", overviewPage.getWidget("Top Search Terms").getText().contains("Top terms searched for in the last hour"));
+		assertThat("Widget text not changed", overviewPage.getWidget(OverviewPage.Widgets.TOP_SEARCH_TERMS).getText().contains("Top terms searched for in the last hour"));
 	}
 }

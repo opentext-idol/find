@@ -3,6 +3,7 @@ package com.autonomy.abc;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
+import com.autonomy.abc.selenium.menubar.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.KeywordsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
@@ -30,11 +31,13 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	private KeywordsPage keywordsPage;
 	private CreateNewKeywordsPage createKeywordsPage;
 	private SearchPage searchPage;
+	private NotificationsDropDown notifications;
 
 	@Before
 	public void setUp() throws MalformedURLException {
 		keywordsPage = body.getKeywordsPage();
 		createKeywordsPage = body.getCreateKeywordsPage();
+		notifications = body.getNotifications();
 	}
 
 	@Test
@@ -100,7 +103,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl().contains("keywords/create"));
 
 		topNavBar.sideBarToggle();
-		createKeywordsPage.cancelWizardButton("type");
+		createKeywordsPage.cancelWizardButton("type").click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
@@ -109,14 +112,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.keywordsType("SYNONYMS").click();
 		createKeywordsPage.continueWizardButton("type").click();
 		topNavBar.sideBarToggle();
-		createKeywordsPage.cancelWizardButton("synonyms");
+		createKeywordsPage.cancelWizardButton("synonyms").click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.keywordsType("BLACKLISTED").click();
 		createKeywordsPage.continueWizardButton("type").click();
 		topNavBar.sideBarToggle();
-		createKeywordsPage.cancelWizardButton("blacklisted");
+		createKeywordsPage.cancelWizardButton("blacklisted").click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 	}
 
@@ -304,13 +307,13 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.addBlacklistedTextBox().sendKeys("fish");
 		createKeywordsPage.addBlacklistTermsButton().click();
-		assertThat("Duplicate blacklist warning message not present", createKeywordsPage.getText().contains("The following keywords were not added since they already exist in the blacklist: fish"));
+		assertThat("Duplicate blacklist warning message not present", createKeywordsPage.getText().contains("The word \"fish\" is already blacklisted"));
 		assertThat("Duplicate blacklist term should not be added", createKeywordsPage.countKeywords() == 0);
 		assertThat("Finish button should be disabled", createKeywordsPage.finishBlacklistWizardButton().getAttribute("class").contains("disabled"));
 
 		createKeywordsPage.addBlacklistedTextBox().sendKeys("chips");
 		createKeywordsPage.addBlacklistTermsButton().click();
-		assertThat("Duplicate blacklist warning message has not disappeared", !createKeywordsPage.getText().contains("The following keywords were not added since they already exist in the blacklist: fish"));
+		assertThat("Duplicate blacklist warning message has not disappeared", !createKeywordsPage.getText().contains("The word \"fish\" is already blacklisted"));
 		assertThat("New blacklist term should be added", createKeywordsPage.countKeywords() == 1);
 		assertThat("Finish button should be enabled", !createKeywordsPage.finishBlacklistWizardButton().getAttribute("class").contains("disabled"));
 
@@ -374,7 +377,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testQuotesAndBracketsInSynonymsWizard() throws InterruptedException {
+	public void testQuotesInSynonymsWizard() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.keywordsType("SYNONYMS").click();
@@ -382,38 +385,32 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.addSynonyms("\"");
 		assertEquals(0, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addSynonyms("\"\"");
 		assertEquals(0, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addSynonyms("\" \"");
 		assertEquals(0, createKeywordsPage.countKeywords());
-
-		createKeywordsPage.addSynonyms("(");
-		assertEquals(0, createKeywordsPage.countKeywords());
-
-		createKeywordsPage.addSynonyms(")");
-		assertEquals(0, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addSynonyms("test");
 		createKeywordsPage.addSynonyms("\"");
 		assertEquals(1, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addSynonyms("\"\"");
 		assertEquals(1, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addSynonyms("\" \"");
 		assertEquals(1, createKeywordsPage.countKeywords());
-
-		createKeywordsPage.addSynonyms("(");
-		assertEquals(1, createKeywordsPage.countKeywords());
-
-		createKeywordsPage.addSynonyms(")");
-		assertEquals(1, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 	}
 
 	@Test
-	public void testQuotesAndBracketsInBlacklistWizard() {
+	public void testQuotesInBlacklistWizard() {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.keywordsType("BLACKLISTED").click();
@@ -421,44 +418,40 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.addBlacklistedTerms("\"");
 		assertEquals(0, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addBlacklistedTerms("\"\"");
 		assertEquals(0, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addBlacklistedTerms("\" \"");
 		assertEquals(0, createKeywordsPage.countKeywords());
-
-		createKeywordsPage.addBlacklistedTerms("(");
-		assertEquals(0, createKeywordsPage.countKeywords());
-
-		createKeywordsPage.addBlacklistedTerms(")");
-		assertEquals(0, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addBlacklistedTerms("test");
 		createKeywordsPage.addBlacklistedTerms("\"");
 		assertEquals(1, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addBlacklistedTerms("\"\"");
 		assertEquals(1, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 
 		createKeywordsPage.addBlacklistedTerms("\" \"");
 		assertEquals(1, createKeywordsPage.countKeywords());
-
-		createKeywordsPage.addBlacklistedTerms("(");
-		assertEquals(1, createKeywordsPage.countKeywords());
-
-		createKeywordsPage.addBlacklistedTerms(")");
-		assertEquals(1, createKeywordsPage.countKeywords());
+		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 	}
 
 	@Test
-	public void testAddingWhitespaceQuotesAndBracketsOnKeywordsPage() throws InterruptedException {
+	public void testAddingWhitespaceAndQuotesOnKeywordsPage() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
+		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.createSynonymGroup("one two three");
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
 		navBar.switchPage(NavBarTabId.KEYWORDS);
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.addSynonymToGroup("four", "one");
 		assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("two").contains("four"));
 		assertEquals(4, keywordsPage.countSynonymLists());
@@ -472,7 +465,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("two").contains("four"));
 		assertEquals(4, keywordsPage.countSynonymLists());
 
-		for (final String badSynonym : Arrays.asList("", " ", "\t", "\"", "\" \"", "(", ")")) {
+		for (final String badSynonym : Arrays.asList("", " ", "\t", "\"", "\" \"")) {
 			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".fa-plus")).click();
 			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).clear();
 			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).sendKeys(badSynonym);
@@ -480,9 +473,60 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			assertThat("add synonym box should still be displayed", keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).isDisplayed());
 
 			keywordsPage.searchFilterTextBox().click();
-			assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("two").contains("four"));
+			assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("one").size() == 4);
 			assertEquals(4, keywordsPage.countSynonymLists());
 		}
 	}
 
+	@Test
+	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
+		keywordsPage.deleteAllBlacklistedTerms();
+		keywordsPage.deleteAllSynonyms();
+		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage.createBlacklistedTerm("orange");
+		body.waitForGritterToClear();
+		navBar.switchPage(NavBarTabId.OVERVIEW);
+
+		topNavBar.notificationsDropdown();
+		assertThat("Notification text incorrect", notifications.notificationNumber(1).getText().contains("Added \"orange\" to the blacklist"));
+
+		notifications.notificationNumber(1).click();
+		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl().contains("keyword"));
+
+		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage.createSynonymGroup("piano keyboard pianoforte");
+		body.waitForGritterToClear();
+
+		topNavBar.notificationsDropdown();
+		assertThat("Notification text incorrect", notifications.notificationNumber(1).getText().contains("Created a new synonym group containing: keyboard, piano, pianoforte"));
+		assertThat("Notification text incorrect", notifications.notificationNumber(2).getText().contains("Added \"orange\" to the blacklist"));
+
+		notifications.notificationNumber(1).click();
+		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl().contains("keyword"));
+
+		keywordsPage.deleteSynonym("keyboard", "piano");
+		body.waitForGritterToClear();
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+
+		topNavBar.notificationsDropdown();
+		assertThat("Notification text incorrect", notifications.notificationNumber(1).getText().contains("Updated a synonym group containing: piano, pianoforte"));
+		assertThat("Notification text incorrect", notifications.notificationNumber(2).getText().contains("Created a new synonym group containing: keyboard, piano, pianoforte"));
+		assertThat("Notification text incorrect", notifications.notificationNumber(3).getText().contains("Added \"orange\" to the blacklist"));
+
+		notifications.notificationNumber(1).click();
+		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl().contains("keyword"));
+
+		keywordsPage.deleteBlacklistedTerm("orange");
+		body.waitForGritterToClear();
+		navBar.switchPage(NavBarTabId.OVERVIEW);
+
+		topNavBar.notificationsDropdown();
+		assertThat("Notification text incorrect", notifications.notificationNumber(1).getText().contains("Removed \"orange\" from the blacklist"));
+		assertThat("Notification text incorrect", notifications.notificationNumber(2).getText().contains("Updated a synonym group containing: piano, pianoforte"));
+		assertThat("Notification text incorrect", notifications.notificationNumber(3).getText().contains("Created a new synonym group containing: keyboard, piano, pianoforte"));
+		assertThat("Notification text incorrect", notifications.notificationNumber(4).getText().contains("Added \"orange\" to the blacklist"));
+
+		notifications.notificationNumber(1).click();
+		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl().contains("keyword"));
+	}
 }
