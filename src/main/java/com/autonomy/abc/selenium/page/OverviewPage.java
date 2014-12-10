@@ -18,6 +18,16 @@ public class OverviewPage extends AppElement implements AppPage {
 	@Override
 	public void navigateToPage() { getDriver().get("overview"); }
 
+	public int searchTermSearchCount(final String searchTerm) {
+		return Integer.parseInt(getWidget(Widgets.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[3]")).getText());
+	}
+
+	public int searchTermRow(final String searchTerm) {
+		return Integer.parseInt(getWidget(Widgets.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[1]")).getText());
+	}
+
+	public final static String ACTIVE_TABLE_SELECTOR = ":not([style='display: none;']) > table";
+
 	public enum Widgets {
 		ZERO_HIT_TERMS("Zero Hit Terms"),
 		TOP_SEARCH_TERMS("Top Search Terms"),

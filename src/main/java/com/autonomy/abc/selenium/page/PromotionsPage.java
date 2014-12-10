@@ -79,8 +79,8 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void addSearchTrigger(final String searchTrigger) {
-		findElement(By.cssSelector(".edit-promotion-match-terms input")).clear();
-		findElement(By.cssSelector(".edit-promotion-match-terms input")).sendKeys(searchTrigger);
+		triggerTextBox().clear();
+		triggerTextBox().sendKeys(searchTrigger);
 		loadOrFadeWait();
 		tryClickThenTryParentClick(triggerAddButton());
 		loadOrFadeWait();
@@ -94,22 +94,26 @@ public class PromotionsPage extends AppElement implements AppPage {
 		return docTitles;
 	}
 
+	public WebElement triggerTextBox() {
+		return findElement(By.cssSelector(".promotion-detail-view-control-column [name='words']"));
+	}
+
 	public WebElement triggerAddButton() {
-		return findElement(By.cssSelector(".edit-promotion-match-terms [type='submit']"));
+		return findElement(By.cssSelector(".promotion-detail-view-control-column")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
 	public void removeSearchTrigger(final String searchTrigger) throws InterruptedException {
 		loadOrFadeWait();
-		waitUntilClickableThenClick(By.cssSelector("[data-id='" + searchTrigger + "'] .remove-match-term"));
+		waitUntilClickableThenClick(triggerRemoveButton(searchTrigger));
 		Thread.sleep(3000);
 	}
 
 	public WebElement clickableSearchTrigger(final String triggerName) {
-		return findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "'] a"));
+		return findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "']"));
 	}
 
-	public WebElement triggerRemoveX(final String triggerName) {
-		return findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "'] .remove-match-term"));
+	public WebElement triggerRemoveButton(final String triggerName) {
+		return findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "'] .remove-word"));
 	}
 
 	public WebElement backButton() {

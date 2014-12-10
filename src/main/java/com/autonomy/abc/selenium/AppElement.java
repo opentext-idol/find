@@ -5,10 +5,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 public class AppElement implements WebElement {
 
@@ -155,6 +153,21 @@ public class AppElement implements WebElement {
 		}
 	}
 
+	public List<String> loadTextFileLineByLineIntoList(final String filePath) throws IOException {
+		final FileInputStream fis = new FileInputStream(filePath);
+
+		try (final BufferedReader br = new BufferedReader(new InputStreamReader(fis))) {
+			String line;
+			final List<String> fiveWords = new ArrayList<>();
+
+			while ((line = br.readLine()) != null) {
+				fiveWords.add(line);
+			}
+
+			return fiveWords;
+		}
+	}
+
 	public void waitForGritterToClear() throws InterruptedException {
 		Thread.sleep(5000);
 	}
@@ -178,6 +191,10 @@ public class AppElement implements WebElement {
 	@Override
 	public int hashCode() {
 		return this.$el().hashCode();
+	}
+
+	public String title() {
+		return findElement(By.cssSelector(".page-title")).getText();
 	}
 
 	public static class Placeholder extends AbstractWebElementPlaceholder<AppElement> {

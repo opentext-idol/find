@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.page;
 
-import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class SearchPage extends AppElement implements AppPage {
+public class SearchPage extends SearchBase implements AppPage {
 
 	public SearchPage(final TopNavBar topNavBar, final WebElement $el) {
 		super($el, topNavBar.getDriver());
@@ -44,14 +43,6 @@ public class SearchPage extends AppElement implements AppPage {
 	public void promotionsBucketClose() {
 		promotionsBucket().findElement(By.cssSelector(".close-link")).click();
 		loadOrFadeWait();
-	}
-
-	public WebElement searchResultCheckbox(final int resultNumber) {
-		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(resultNumber) + ") .icheckbox_square-blue"));
-	}
-
-	public int promotedItemsCount() {
-		return findElements(By.cssSelector(".promoted-items .fa")).size();
 	}
 
 	public WebElement backToFirstPageButton() {
@@ -176,12 +167,8 @@ public class SearchPage extends AppElement implements AppPage {
 		return searchTerms;
 	}
 
-	public List<String> promotionsBucketList() {
-		final List<String> bucketDocTitles = new ArrayList<>();
-		for (final WebElement bucketDoc : findElements(By.cssSelector(".promotions-bucket-document"))) {
-			bucketDocTitles.add(bucketDoc.getText());
-		}
-		return bucketDocTitles;
+	public WebElement docLogo() {
+		return findElement(By.cssSelector(".fa-file-o"));
 	}
 
 	public static class Placeholder {

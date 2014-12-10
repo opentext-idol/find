@@ -6,7 +6,8 @@ public enum NavBarTabId {
 	OVERVIEW("overview"),
 	KEYWORDS("keywords"),
 	ABOUT_PAGE("about"),
-	USERS_PAGE("users");
+	USERS_PAGE("users"),
+	SETTINGS("settings");
 
 	private final String tabName;
 

@@ -1,11 +1,10 @@
 package com.autonomy.abc.selenium.page;
 
-import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class EditDocumentReferencesPage extends AppElement implements AppPage {
+public class EditDocumentReferencesPage extends SearchBase implements AppPage {
 
 	public EditDocumentReferencesPage(final TopNavBar topNavBar, final WebElement element) {
 		super(element, topNavBar.getDriver());
@@ -17,7 +16,7 @@ public class EditDocumentReferencesPage extends AppElement implements AppPage {
 	}
 
 	public WebElement saveButton() {
-		return findElement(By.cssSelector(".edit-document-references ")).findElement(By.xpath(".//*[text() = 'Save']"));
+		return findElement(By.cssSelector(".edit-document-references")).findElement(By.xpath(".//*[text() = 'Save']"));
 	}
 
 	public static class Placeholder {

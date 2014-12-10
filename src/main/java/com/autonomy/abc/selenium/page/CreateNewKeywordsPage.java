@@ -35,7 +35,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement addBlacklistTermsButton() {
-		return findElement(By.cssSelector("[data-step='blacklisted'] .term-input-form [type='submit']"));
+		return findElement(By.cssSelector("[data-step='blacklisted']")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
 	public WebElement addSynonymsTextBox() {
@@ -43,7 +43,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement addBlacklistedTextBox() {
-		return findElement(By.cssSelector("[data-step='blacklisted'] .term-input-form [name='words']"));
+		return findElement(By.cssSelector("[data-step='blacklisted'] .form-group [name='words']"));
 	}
 
 	public WebElement finishSynonymWizardButton() {
@@ -70,7 +70,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 
 	public int countKeywords() {
 		loadOrFadeWait();
-		return findElements(By.cssSelector(".term")).size();
+		return findElements(By.cssSelector(".remove-word")).size();
 	}
 
 	public void createSynonymGroup(final String synonymGroup) {

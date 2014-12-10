@@ -71,7 +71,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement triggerAddButton() {
-		return findElement(By.cssSelector(".term-input-form [type='submit']"));
+		return findElement(By.cssSelector(".trigger-words-form")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
 	public WebElement finishButton() {
@@ -93,7 +93,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement spotlightType(final String type ) {
-		return findElement(By.cssSelector("[data-spotlight-type='" + type + "']"));
+		return getParent(findElement(By.cssSelector("[data-spotlight-type='" + type + "']")));
 	}
 
 	public String getTopPromotedLinkTitle() {
@@ -106,8 +106,10 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 
 	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger) {
 		promotionType("SPOTLIGHT").click();
+		loadOrFadeWait();
 		continueButton("type").click();
 		spotlightType(spotlightType).click();
+		loadOrFadeWait();
 		continueButton("spotlightType").click();
 		addSearchTrigger(searchTrigger);
 		finishButton().click();
@@ -116,6 +118,10 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 
 	public WebElement promotionType(final String promotionType) {
 		return findElement(By.cssSelector("[data-promotion-type='" + promotionType + "']"));
+	}
+
+	public WebElement pinToPositionInput() {
+		return findElement(By.cssSelector("input.position"));
 	}
 
 	public static class Placeholder {

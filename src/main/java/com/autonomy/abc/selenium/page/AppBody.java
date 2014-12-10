@@ -15,6 +15,7 @@ public class AppBody extends AppElement {
 	private final AbstractWebElementPlaceholder<KeywordsPage> keywordsPage;
 	private final AbstractWebElementPlaceholder<AboutPage> aboutPage;
 	private final AbstractWebElementPlaceholder<UsersPage> usersPage;
+	private final AbstractWebElementPlaceholder<SettingsPage> settingsPage;
 	private final SearchPage.Placeholder searchPage;
 	private final CreateNewPromotionsPage.Placeholder createPromotionsPage;
 	private final CreateNewKeywordsPage.Placeholder createKeywordsPage;
@@ -35,6 +36,7 @@ public class AppBody extends AppElement {
 		this.keywordsPage = new KeywordsPage.Placeholder(this, navBar, topNavBar);
 		this.aboutPage = new AboutPage.Placeholder(this, navBar, topNavBar);
 		this.usersPage = new UsersPage.Placeholder(this, navBar, topNavBar);
+		this.settingsPage = new SettingsPage.Placeholder(this, navBar, topNavBar);
 
 		this.searchPage = new SearchPage.Placeholder(topNavBar);
 		this.createPromotionsPage = new CreateNewPromotionsPage.Placeholder(topNavBar);
@@ -65,8 +67,12 @@ public class AppBody extends AppElement {
 		return usersPage.$topNavBarDropDownPage();
 	}
 
+	public SettingsPage getSettingsPage() {
+		return settingsPage.$topNavBarDropDownPage();
+	}
+
 	public SearchPage getSearchPage() {
-		return searchPage.$searchPage(getDriver().findElement(By.cssSelector(".page-container")));
+		return searchPage.$searchPage(getDriver().findElement(By.cssSelector("[data-pagename='search']")));
 	}
 
 	public CreateNewPromotionsPage getCreateNewPromotionsPage() {
@@ -90,11 +96,11 @@ public class AppBody extends AppElement {
 	}
 
 	public EditDocumentReferencesPage getEditDocumentReferencesPage() {
-		return editReferences.$editReferences(findElement(By.xpath(".//h2[contains(text(), 'Edit Document References')]/../..")));
+		return editReferences.$editReferences(findElement(By.xpath(".//h2[contains(text(), 'Edit Document References')]/../../../../..")));
 	}
 
 	public void logout() {
 		topNavBar.findElement(By.cssSelector(".fa-cog")).click();
-		topNavBar.findElement(By.cssSelector("a[href='/abc/login/index.html']")).click();
+		topNavBar.findElement(By.cssSelector("a[href='/searchoptimizer/login/index.html']")).click();
 	}
 }
