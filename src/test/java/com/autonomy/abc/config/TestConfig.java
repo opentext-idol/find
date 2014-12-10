@@ -20,7 +20,7 @@ public class TestConfig {
 	}
 
 	public String getWebappUrl() {
-		return "http://localhost:8080/abc/p/";
+		return "http://localhost:8080/searchoptimizer/p/";
 	}
 
 	public int getIndex() {

@@ -59,7 +59,7 @@ public class AboutPageITCase extends ABCTestBase {
 		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 10 of"));
 
 		aboutPage.setTableSize("25");
-		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 25 of"));
+		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 21 of"));
 
 		aboutPage.setTableSize("10");
 		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 10 of"));

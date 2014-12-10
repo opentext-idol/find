@@ -10,8 +10,8 @@ import com.autonomy.abc.selenium.page.PromotionsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -131,14 +131,22 @@ public class SearchPageITCase extends ABCTestBase {
 
 		for (int i = numberOfPages - 1; i > 0; i--) {
 			searchPage.backPageButton().click();
-			new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fa-file-o")));
+			try {
+				new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+			} catch (final StaleElementReferenceException e) {
+				searchPage.loadOrFadeWait();
+			}
 			assertThat("Page " + String.valueOf(i) + " is not active", searchPage.isPageActive(i));
 			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
 			searchPage.forwardPageButton().click();
-			new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fa-file-o")));
+			try {
+				new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+			} catch (final StaleElementReferenceException e) {
+				searchPage.loadOrFadeWait();
+			}
 			assertThat("Page " + String.valueOf(j) + " is not active", searchPage.isPageActive(j));
 			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(j)));
 		}

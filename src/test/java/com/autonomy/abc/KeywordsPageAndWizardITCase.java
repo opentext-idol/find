@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.page.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.KeywordsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -15,6 +16,7 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +81,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Finish button should be disabled until more than one synonym is added", createKeywordsPage.finishSynonymWizardButton().getAttribute("class").contains("disabled"));
 		assertEquals(1, createKeywordsPage.countKeywords());
 
-		createKeywordsPage.addSynonyms("stuff more things");
+		createKeywordsPage.addSynonyms("stuff pony things");
 		assertThat("Finish button should be enabled", !createKeywordsPage.finishSynonymWizardButton().getAttribute("class").contains("disabled"));
 		assertEquals(4, createKeywordsPage.countKeywords());
 
@@ -87,14 +89,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
 		final List<String> searchTerms = searchPage.getSearchTermsList();
-		assertThat("Synonym group does not contain 'stuff', 'horse', 'more' and 'things'", searchTerms.containsAll(Arrays.asList("stuff", "horse", "more", "things")));
+		assertThat("Synonym group does not contain 'stuff', 'horse', 'pony' and 'things'", searchTerms.containsAll(Arrays.asList("stuff", "horse", "pony", "things")));
 
 		navBar.getTab(NavBarTabId.KEYWORDS).click();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		assertThat("synonym horse is not displayed", keywordsPage.leadSynonym("horse").isDisplayed());
 
 		final List<String> synonymGroup = keywordsPage.getSynonymGroupSynonyms("horse");
-		assertThat("Synonym group does not contain 'stuff', 'horse', 'more' and 'things'", synonymGroup.containsAll(Arrays.asList("stuff", "horse", "more", "things")));
+		assertThat("Synonym group does not contain 'stuff', 'horse', 'pony' and 'things'", synonymGroup.containsAll(Arrays.asList("stuff", "horse", "pony", "things")));
 	}
 
 	@Test
@@ -442,6 +444,22 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Incorrect/No error message displayed", createKeywordsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
 	}
 
+	@Ignore // This takes a long time
+	@Test
+	public void testAddLotsOfSynonymGroups() throws IOException, InterruptedException {
+		keywordsPage.deleteAllSynonyms();
+		keywordsPage.deleteAllBlacklistedTerms();
+		final List<String> groupsOfFiveSynonyms = keywordsPage.loadTextFileLineByLineIntoList("C://dev//res//100SynonymGroups.txt");
+		
+		for (final String synonymGroup : groupsOfFiveSynonyms) {
+			keywordsPage.createNewKeywordsButton().click();
+			createKeywordsPage.createSynonymGroup(synonymGroup);
+
+			navBar.switchPage(NavBarTabId.KEYWORDS);
+			assertThat("Wrong number of synonym lists", keywordsPage.countSynonymLists() == groupsOfFiveSynonyms.indexOf(synonymGroup) + 1);
+		}
+	}
+
 	@Test
 	public void testAddingWhitespaceAndQuotesOnKeywordsPage() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
@@ -465,7 +483,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("two").contains("four"));
 		assertEquals(4, keywordsPage.countSynonymLists());
 
-		for (final String badSynonym : Arrays.asList("", " ", "\t", "\"", "\" \"")) {
+		for (final String badSynonym : Arrays.asList(" ", "\t", "\"", "\" \"")) {
 			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".fa-plus")).click();
 			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).clear();
 			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).sendKeys(badSynonym);

@@ -53,12 +53,12 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 	public void testAddPinToPosition() {
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
 		createPromotionsPage.continueButton("type").click();
-		assertThat("Wizard has not progressed to Select the position", createPromotionsPage.getText().contains("Select the position"));
-		assertThat("Continue button is not disabled when position equals 0", createPromotionsPage.continueButton("pinToPosition").getAttribute("class").contains("disabled"));
-		assertThat("Minus button is not disabled when position equals 0", createPromotionsPage.selectPositionMinusButton().getAttribute("class").contains("disabled"));
+		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+		assertThat("Minus button is not disabled when position equals 1", createPromotionsPage.selectPositionMinusButton().getAttribute("class").contains("disabled"));
 
 		createPromotionsPage.selectPositionPlusButton().click();
-		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+		assertThat("Pin to position value not set to 2", createPromotionsPage.positionInputValue() == 2);
+		assertThat("Minus button is not enabled when position equals 2", !createPromotionsPage.selectPositionMinusButton().getAttribute("class").contains("disabled"));
 
 		createPromotionsPage.continueButton("pinToPosition").click();
 		assertThat("Wizard has not progressed to Select the position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
@@ -77,7 +77,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
 
 		assertThat("page does not have pin to position name", promotionsPage.getText().contains("animal"));
-		assertThat("page does not have correct pin to position number", promotionsPage.getText().contains("Position: 1"));
+		assertThat("page does not have correct pin to position number", promotionsPage.getText().contains("Position: 2"));
 	}
 
 	@Test
@@ -87,20 +87,20 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		createPromotionsPage.loadOrFadeWait();
 
 		createPromotionsPage.selectPositionPlusButton().click();
-		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
-		assertThat("Minus button is not enabled when position equals 1", !createPromotionsPage.continueButton("pinToPosition").getAttribute("class").contains("disabled"));
-		assertThat("Continue button is not enabled when position equals 1", !createPromotionsPage.selectPositionMinusButton().getAttribute("class").contains("disabled"));
+		assertThat("Pin to position value not set to 2", createPromotionsPage.positionInputValue() == 2);
+		assertThat("Minus button is not enabled when position equals 2", !createPromotionsPage.continueButton("pinToPosition").getAttribute("class").contains("disabled"));
+		assertThat("Continue button is not enabled when position equals 2", !createPromotionsPage.selectPositionMinusButton().getAttribute("class").contains("disabled"));
 
 		createPromotionsPage.selectPositionPlusButton().click();
 		createPromotionsPage.selectPositionPlusButton().click();
 		createPromotionsPage.selectPositionPlusButton().click();
 		createPromotionsPage.selectPositionPlusButton().click();
-		assertThat("Pin to position value not set to 5", createPromotionsPage.positionInputValue() == 5);
+		assertThat("Pin to position value not set to 6", createPromotionsPage.positionInputValue() == 6);
 
 		createPromotionsPage.selectPositionMinusButton().click();
 		createPromotionsPage.selectPositionMinusButton().click();
 		createPromotionsPage.selectPositionMinusButton().click();
-		assertThat("Pin to position value not set to 5", createPromotionsPage.positionInputValue() == 2);
+		assertThat("Pin to position value not set to 3", createPromotionsPage.positionInputValue() == 3);
 
 		createPromotionsPage.typePositionNumber(16);
 		assertThat("Pin to position value not set to 16", createPromotionsPage.positionInputValue() == 16);
@@ -218,8 +218,39 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		final String searchTrigger = "<h1>Hey</h1>";
 		createPromotionsPage.addSearchTrigger(searchTrigger);
 
-		final WebElement span = createPromotionsPage.findElement(By.cssSelector(".term"));
+		final WebElement span = createPromotionsPage.findElement(By.cssSelector(".trigger-words-form .term"));
 		assertThat("HTML was not escaped", span.getText().equals(searchTrigger));
+	}
+
+	@Test
+	public void testNonNumericEntryInPinToPosition() {
+		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
+		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.loadOrFadeWait();
+
+		createPromotionsPage.pinToPositionInput().clear();
+		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+
+		createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton("pinToPosition"));
+		assertThat("Wizard has progressed with a blank pin to position", !createPromotionsPage.getText().contains("Select Promotion Triggers"));
+
+		createPromotionsPage.pinToPositionInput().sendKeys("bad");
+		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+
+		createPromotionsPage.pinToPositionInput().clear();
+		createPromotionsPage.pinToPositionInput().sendKeys("1bad");
+		topNavBar.sideBarToggle();
+		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+
+		createPromotionsPage.pinToPositionInput().clear();
+		createPromotionsPage.pinToPositionInput().sendKeys("1");
+		createPromotionsPage.selectPositionPlusButton().click();
+		createPromotionsPage.pinToPositionInput().clear();
+		createPromotionsPage.pinToPositionInput().sendKeys("bad");
+		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+
+		createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton("pinToPosition"));
+		assertThat("Wizard has not progressed with a legitimate position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
 	}
 
 	@Test
@@ -243,7 +274,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
 
 		assertThat("page does not have pin to position name", promotionsPage.getText().contains("delta"));
-		assertThat("page does not have correct pin to position number", promotionsPage.getText().contains("Position: 1"));
+		assertThat("page does not have correct pin to position number", promotionsPage.getText().contains("Position: 2"));
 	}
 
 	@Test
@@ -275,7 +306,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		assertThat("Promote button not disabled", createPromotionsPage.finishButton().getAttribute("class").contains("disabled"));
 
 		createPromotionsPage.addSearchTrigger(searchTrigger);
-		assertThat("Promote button not enabled", !createPromotionsPage.finishButton().getAttribute("class").contains("disabled"));
+		assertThat("Finish button not enabled", !createPromotionsPage.finishButton().getAttribute("class").contains("disabled"));
 
 		createPromotionsPage.finishButton().click();
 
@@ -284,7 +315,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		promotionsPage = body.getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
 
-		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOf(promotionsPage.addMorePromotedItemsButton()));
 		assertThat("Linked to wrong page", getDriver().getCurrentUrl().contains("promotions/detail/spotlight"));
 		assertThat("Linked to wrong page", promotionsPage.getText().contains("Spotlight for: " + searchTrigger));
 
