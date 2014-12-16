@@ -109,7 +109,7 @@ public class OverviewPageITCase extends ABCTestBase{
 			overviewPage.loadOrFadeWait();
 
 			if (!overviewPage.getWidget(OverviewPage.Widgets.TOP_SEARCH_TERMS).getText().contains("No data")) {
-				final List<WebElement> tableRowLinks = overviewPage.getWidget(OverviewPage.Widgets.TOP_SEARCH_TERMS).findElements(By.cssSelector(".table a"));
+				final List<WebElement> tableRowLinks = overviewPage.getWidget(OverviewPage.Widgets.TOP_SEARCH_TERMS).findElements(By.cssSelector(OverviewPage.ACTIVE_TABLE_SELECTOR + " a"));
 				final List<Integer> searchCounts = new ArrayList<>(Collections.nCopies(10, 0));
 
 				for (final WebElement tableRowLink : tableRowLinks) {
@@ -120,8 +120,8 @@ public class OverviewPageITCase extends ABCTestBase{
 					}
 				}
 
-				for (int i = 0; i < 10; i++) {
-					assertThat("Row " + Integer.toString(i) + " is out of place", searchCounts.get(i) >= searchCounts.get(i + 1));
+				for (int i = 0; i < 9; i++) {
+					assertThat("Row " + Integer.toString(i + 1) + " is out of place", searchCounts.get(i) >= searchCounts.get(i + 1));
 				}
 			}
 		}

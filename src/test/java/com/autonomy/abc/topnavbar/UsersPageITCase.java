@@ -47,7 +47,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.createButton().click();
 		assertThat("Correct error message not shown", newUserModal.getText().contains("Error! Password confirmation failed"));
 
-		usersPage.createNewUser("Andrew", "qwerty", "admin");
+		usersPage.createNewUser("Andrew", "qwerty", "Admin");
 		assertThat("Completion message not shown", newUserModal.getText().contains("Done! User Andrew successfully created"));
 
 		usersPage.closeModal();
@@ -63,8 +63,8 @@ public class UsersPageITCase extends ABCTestBase {
 	public void testDeleteAllUsers() {
 		final int initialNumberOfUsers = usersPage.countNumberOfUsers();
 		usersPage.createUserButton().click();
-		usersPage.createNewUser("Paul", "w", "user");
-		usersPage.createNewUser("Stephen", "w", "admin");
+		usersPage.createNewUser("Paul", "w", "User");
+		usersPage.createNewUser("Stephen", "w", "Admin");
 		assertThat("Not all users are added", usersPage.countNumberOfUsers() == initialNumberOfUsers + 2);
 
 		usersPage.closeModal();
@@ -77,8 +77,8 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat("Stephen was not deleted", usersPage.getText().contains("User Stephen successfully deleted"));
 
 		usersPage.createUserButton().click();
-		usersPage.createNewUser("Paul", "w", "user");
-		usersPage.createNewUser("Stephen", "w", "admin");
+		usersPage.createNewUser("Paul", "w", "User");
+		usersPage.createNewUser("Stephen", "w", "Admin");
 		usersPage.closeModal();
 
 		usersPage.deleteOtherUsers();
@@ -106,11 +106,11 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testUserDetails() {
 		usersPage.createUserButton().click();
-		usersPage.createNewUser("William", "poiuy", "admin");
+		usersPage.createNewUser("William", "poiuy", "Admin");
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		assertThat("Completion message not shown", newUserModal.getText().contains("Done! User William successfully created"));
 
-		usersPage.createNewUser("Henri", "lkjh", "user");
+		usersPage.createNewUser("Henri", "lkjh", "User");
 		assertThat("Completion message not shown", newUserModal.getText().contains("Done! User Henri successfully created"));
 
 		usersPage.closeModal();
@@ -124,7 +124,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testEditUserPassword() {
 		usersPage.createUserButton().click();
-		usersPage.createNewUser("alan", "q", "admin");
+		usersPage.createNewUser("alan", "q", "Admin");
 		usersPage.closeModal();
 
 		usersPage.getTableUserPasswordLink("alan").click();
@@ -141,23 +141,23 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testEditUserType() {
 		usersPage.createUserButton().click();
-		usersPage.createNewUser("Bella", "a", "admin");
+		usersPage.createNewUser("Bella", "a", "Admin");
 		usersPage.closeModal();
 
 		usersPage.getTableUserTypeLink("Bella").click();
-		usersPage.selectTableUserType("Bella", "user");
+		usersPage.selectTableUserType("Bella", "User");
 		usersPage.getUserRow("Bella").findElement(By.cssSelector(".editable-cancel")).click();
 		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Bella").isDisplayed());
 		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Bella").getText().equals("Admin"));
 
 		usersPage.getTableUserTypeLink("Bella").click();
-		usersPage.selectTableUserType("Bella", "user");
+		usersPage.selectTableUserType("Bella", "User");
 		usersPage.getUserRow("Bella").findElement(By.cssSelector(".editable-submit")).click();
 		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Bella").isDisplayed());
 		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Bella").getText().equals("User"));
 
 		usersPage.getTableUserTypeLink("Bella").click();
-		usersPage.selectTableUserType("Bella", "admin");
+		usersPage.selectTableUserType("Bella", "Admin");
 		usersPage.getUserRow("Bella").findElement(By.cssSelector(".editable-submit")).click();
 		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Bella").isDisplayed());
 		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Bella").getText().equals("Admin"));
@@ -166,7 +166,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testAddStupidlyLongUsername() {
 		usersPage.createUserButton().click();
-		usersPage.createNewUser(STUPIDLY_LONG_USERNAME, "b", "user");
+		usersPage.createNewUser(STUPIDLY_LONG_USERNAME, "b", "User");
 		usersPage.closeModal();
 
 		assertThat("Long username not added to the table", usersPage.getTable().getText().contains(STUPIDLY_LONG_USERNAME));
@@ -179,7 +179,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testLogOutAndLogInWithNewUser() {
 		usersPage.createUserButton().click();
-		usersPage.createNewUser("James", "b", "user");
+		usersPage.createNewUser("James", "b", "User");
 		usersPage.closeModal();
 
 		body.logout();
@@ -191,7 +191,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testChangeOfPasswordWorksOnLogin() {
 		usersPage.createUserButton().click();
-		usersPage.createNewUser("James", "b", "user");
+		usersPage.createNewUser("James", "b", "User");
 		usersPage.closeModal();
 
 		usersPage.changePassword("James", "d");

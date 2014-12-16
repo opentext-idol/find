@@ -11,11 +11,12 @@ import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -111,19 +112,25 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Back a page button is not disabled", AppElement.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
 
 		searchPage.forwardPageButton().click();
+		searchPage.paginateWait();
 		assertThat("Back to first page button is not enabled", !AppElement.getParent(searchPage.backToFirstPageButton()).getAttribute("class").contains("disabled"));
 		assertThat("Back a page button is not enabled", !AppElement.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
 		assertThat("Page 2 is not active", searchPage.isPageActive(2));
 
 		searchPage.forwardPageButton().click();
+		searchPage.paginateWait();
 		searchPage.forwardPageButton().click();
+		searchPage.paginateWait();
 		searchPage.backPageButton().click();
+		searchPage.paginateWait();
 		assertThat("Page 3 is not active", searchPage.isPageActive(3));
 
 		searchPage.backToFirstPageButton().click();
+		searchPage.paginateWait();
 		assertThat("Page 1 is not active", searchPage.isPageActive(1));
 
 		searchPage.forwardToLastPageButton().click();
+		searchPage.paginateWait();
 		assertThat("Forward to last page button is not disabled", AppElement.getParent(searchPage.forwardToLastPageButton()).getAttribute("class").contains("disabled"));
 		assertThat("Forward a page button is not disabled", AppElement.getParent(searchPage.forwardPageButton()).getAttribute("class").contains("disabled"));
 
@@ -131,22 +138,14 @@ public class SearchPageITCase extends ABCTestBase {
 
 		for (int i = numberOfPages - 1; i > 0; i--) {
 			searchPage.backPageButton().click();
-			try {
-				new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
-			} catch (final StaleElementReferenceException e) {
-				searchPage.loadOrFadeWait();
-			}
+			searchPage.paginateWait();
 			assertThat("Page " + String.valueOf(i) + " is not active", searchPage.isPageActive(i));
 			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
 			searchPage.forwardPageButton().click();
-			try {
-				new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
-			} catch (final StaleElementReferenceException e) {
-				searchPage.loadOrFadeWait();
-			}
+			searchPage.paginateWait();
 			assertThat("Page " + String.valueOf(j) + " is not active", searchPage.isPageActive(j));
 			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(j)));
 		}
@@ -338,6 +337,56 @@ public class SearchPageITCase extends ABCTestBase {
 		topNavBar.search("\" wo\"rd\"");
 		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
 		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+	}
+
+	@Test
+	public void testDeleteDocsFromWithinBucket() {
+		topNavBar.search("sabre");
+		searchPage.promoteButton().click();
+		searchPage.searchResultCheckbox(1).click();
+		searchPage.searchResultCheckbox(2).click();
+		searchPage.searchResultCheckbox(3).click();
+		searchPage.searchResultCheckbox(4).click();
+
+		final List<String> bucketList = searchPage.promotionsBucketList();
+		assertThat("There should be four documents in the bucket", bucketList.size() == 4);
+		assertThat("promote button not displayed when bucket has documents", searchPage.promoteButton().isDisplayed());
+
+		for (final String bucketDocTitle : bucketList) {
+			final int docIndex = bucketList.indexOf(bucketDocTitle);
+			searchPage.deleteDocFromWithinBucket(bucketDocTitle);
+			assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(docIndex + 1).isSelected());
+			assertThat("Document not removed from bucket", !searchPage.promotionsBucketList().contains("bucketDocTitle"));
+			assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size() == 3 - docIndex);
+		}
+
+		assertThat("promote button should not be displayed when bucket has no documents", !searchPage.promoteTheseItemsButton().isDisplayed());
+
+		topNavBar.search("tooth");
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size() == 0);
+
+		searchPage.searchResultCheckbox(5).click();
+		final List<String> docTitles = new ArrayList<>();
+		docTitles.add(searchPage.getSearchResultTitle(5));
+		searchPage.forwardPageButton().click();
+		searchPage.loadOrFadeWait();
+		searchPage.searchResultCheckbox(3).click();
+		docTitles.add(searchPage.getSearchResultTitle(3));
+
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size() == 2);
+		assertThat("", searchPage.promotionsBucketList().containsAll(docTitles));
+
+		searchPage.deleteDocFromWithinBucket(docTitles.get(1));
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size() == 1);
+		assertThat("Document should still be in the bucket", searchPage.promotionsBucketList().contains(docTitles.get(0)));
+		assertThat("Document should no longer be in the bucket", !searchPage.promotionsBucketList().contains(docTitles.get(1)));
+		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(3).isSelected());
+
+		searchPage.backPageButton().click();
+		searchPage.deleteDocFromWithinBucket(docTitles.get(0));
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size() == 0);
+		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(5).isSelected());
+		assertThat("promote button should not be displayed when bucket has no documents", !searchPage.promoteTheseItemsButton().isDisplayed());
 	}
 
 }

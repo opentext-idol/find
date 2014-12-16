@@ -32,7 +32,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 	private TopNavBar topNavBar;
 	private PromotionsPage promotionsPage;
 	private SearchPage searchPage;
-	private EditDocumentReferencesPage editReferences;
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -248,106 +247,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testNoMixUpBetweenSearchBucketAndEditPromotionsBucket() {
-		final List<String> originalPromotedDocs = setUpANewMultiDocPromotion("luke", "Hotwire", "jedi goodGuy", 8);
-		final List<String> promotedDocs = promotionsPage.getPromotedList();
-		promotionsPage.addMorePromotedItemsButton().click();
-		promotionsPage.loadOrFadeWait();
-		editReferences = body.getEditDocumentReferencesPage();
-		final List<String> promotionsBucketList = editReferences.promotionsBucketList();
-
-		assertEquals(originalPromotedDocs.size(), promotedDocs.size());
-		assertEquals(promotionsBucketList.size(), promotedDocs.size());
-
-		for (final String docTitle : promotionsBucketList) {
-			assertTrue(promotedDocs.contains(docTitle));
-		}
-
-		navBar.switchPage(NavBarTabId.OVERVIEW);
-		topNavBar.search("edit");
-
-		searchPage.promoteButton().click();
-		searchPage.searchResultCheckbox(1).click();
-		searchPage.searchResultCheckbox(2).click();
-		searchPage.searchResultCheckbox(3).click();
-		searchPage.loadOrFadeWait();
-		final List<String> searchBucketDocs = searchPage.promotionsBucketList();
-
-		navBar.switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage.getPromotionLinkWithTitleContaining("jedi").click();
-		promotionsPage.addMorePromotedItemsButton().click();
-		promotionsPage.loadOrFadeWait();
-
-		final List<String> secondPromotionsBucketList = editReferences.promotionsBucketList();
-		assertEquals(promotionsBucketList.size(), secondPromotionsBucketList.size());
-
-		for (final String searchBucketDoc : searchBucketDocs) {
-			assertFalse(secondPromotionsBucketList.contains(searchBucketDoc));
-		}
-
-		topNavBar.search("wall");
-		editReferences.searchResultCheckbox(1);
-		editReferences.searchResultCheckbox(2);
-
-		final List<String> finalPromotionsBucketList = editReferences.promotionsBucketList();
-
-		navBar.switchPage(NavBarTabId.OVERVIEW);
-		topNavBar.search("fast");
-		searchPage.promoteButton().click();
-
-		final List<String> searchPageBucketDocs = searchPage.promotionsBucketList();
-
-		for (final String bucketDoc : finalPromotionsBucketList) {
-			assertFalse(searchPageBucketDocs.contains(bucketDoc));
-		}
-	}
-
-	@Test
-	public void testAddRemoveDocsToEditBucket() {
-		setUpANewMultiDocPromotion("yoda", "Hotwire", "green dude", 4);
-		promotionsPage.addMorePromotedItemsButton().click();
-		editReferences = body.getEditDocumentReferencesPage();
-
-		assertEquals(4, editReferences.promotedItemsCount());
-
-		topNavBar.search("star");
-
-		for (int i = 1; i < 7; i++) {
-			AppElement.scrollIntoView(editReferences.searchResultCheckbox(i), getDriver());
-			editReferences.searchResultCheckbox(i).click();
-			assertThat("Promoted items count should equal " + String.valueOf(i), editReferences.promotedItemsCount() == i + 4);
-		}
-
-		for (int j = 6; j > 0; j--) {
-			AppElement.scrollIntoView(editReferences.searchResultCheckbox(j), getDriver());
-			editReferences.searchResultCheckbox(j).click();
-			assertThat("Promoted items count should equal " + String.valueOf(j), editReferences.promotedItemsCount() == j - 1 + 4);
-		}
-	}
-
-	@Test
-	public void testRefreshEditPromotionPage() throws InterruptedException {
-		setUpANewPromotion("Luke", "Hotwire", "Jedi Master");
-		promotionsPage.addMorePromotedItemsButton().click();
-		getDriver().navigate().refresh();
-		Thread.sleep(3000);
-
-		try {
-			assertThat("After refresh page elements not visible", getDriver().findElement(By.cssSelector(".page-container")).getText().contains("Edit Document References"));
-		} catch (final StaleElementReferenceException e) {
-			assertThat("After refresh page elements not visible", false);
-		}
-	}
-
-	@Test
-	public void testErrorMessageOnStartUpEditReferencesPage() {
-		setUpANewPromotion("Luke", "Hotwire", "Jedi Master");
-		promotionsPage.addMorePromotedItemsButton().click();
-		editReferences = body.getEditDocumentReferencesPage();
-
-		assertThat("Page opens with an error message", !editReferences.getText().contains("An unknown error occurred executing the search action"));
-		assertThat("Page opens with the wrong message", editReferences.getText().contains("Search for something to continue"));
-		assertThat("Search items do not load", editReferences.saveButton().isDisplayed());
+	public void testAddingLotsOfDocsToAPromotion() {
+		setUpANewMultiDocPromotion("sith", "Hotwire", "darth sith", 100);
+		assertEquals(promotionsPage.getPromotedList().size(), 100);
 	}
 
 	private String setUpANewPromotion(final String navBarSearchTerm, final String spotlightType, final String searchTriggers) {
@@ -373,6 +275,26 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final List<String> promotedDocTitles = searchPage.createAMultiDocumentPromotion(numberOfDocs);
 		final CreateNewPromotionsPage createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers);
+
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		navBar.getTab(NavBarTabId.PROMOTIONS).click();
+		promotionsPage = body.getPromotionsPage();
+		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
+
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+		return promotedDocTitles;
+	}
+
+	private List <String> setUpANewMultiDocPinToPositionPromotion(final String navBarSearchTerm, final String searchTriggers, final int numberOfDocs) {
+		topNavBar.search(navBarSearchTerm);
+		searchPage = body.getSearchPage();
+		final List<String> promotedDocTitles = searchPage.createAMultiDocumentPromotion(numberOfDocs);
+		final CreateNewPromotionsPage createPromotionsPage = body.getCreateNewPromotionsPage();
+		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
+		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.continueButton("pinToPosition").click();
+		createPromotionsPage.addSearchTrigger(searchTriggers);
+		createPromotionsPage.finishButton().click();
 
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
