@@ -1,11 +1,15 @@
 package com.autonomy.abc.selenium;
 
 import com.autonomy.abc.selenium.util.AbstractWebElementPlaceholder;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class AppElement implements WebElement {
@@ -168,8 +172,30 @@ public class AppElement implements WebElement {
 		}
 	}
 
+	// TODO: Escape double quotes
+	public String cleanXpathString(final String dirtyString) {
+		final String cleanString;
+		if (dirtyString.contains("'")) {
+			cleanString = "concat(\"" + dirtyString.replace("'", "\", \"'\", \"") + "\")";
+		} else {
+			cleanString = "'" + dirtyString + "'";
+		}
+		return cleanString;
+	}
+
+	public boolean isAttributePresent(final WebElement element, final String attribute) {
+		boolean result = false;
+		try {
+			if (element.getAttribute(attribute) != null) {
+				result = true;
+			}
+		} catch (final Exception e) {}
+
+		return result;
+	}
+
 	public void waitForGritterToClear() throws InterruptedException {
-		Thread.sleep(5000);
+		Thread.sleep(3008);
 	}
 
 	@Override

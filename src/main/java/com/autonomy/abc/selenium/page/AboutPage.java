@@ -38,7 +38,7 @@ public class AboutPage extends AppElement implements AppPage {
 	}
 
 	public boolean isPageinateNumberActive(final int pageinateNumber) {
-		return findElement(By.xpath(".//a[text()='" + String.valueOf(pageinateNumber) + "']/..")).getAttribute("class").contains("active");
+		return findElement(By.xpath(".//li[contains(@class, 'paginate_button active')]/a")).getText().equals(String.valueOf(pageinateNumber));
 	}
 
 	public WebElement pageinateNumber(final int pageinateNumber) {

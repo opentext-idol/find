@@ -49,7 +49,7 @@ public class UsersPage extends AppElement implements AppPage {
 	public void createNewUser(final String userName, final String password, final String userLevel) {
 		addUsername(userName);
 		addAndConfirmPassword(password, password);
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[value='" + userLevel + "']")).click();
+		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + userLevel + "']")).click();
 		createButton().click();
 		loadOrFadeWait();
 	}
@@ -94,7 +94,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public void selectTableUserType(final String userName, final String type) {
-		getUserRow(userName).findElement(By.cssSelector(".input-admin [value='" + type + "']")).click();
+		getUserRow(userName).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
 	}
 
 	public WebElement getTableUserPasswordLink(final String userName) {

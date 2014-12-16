@@ -17,6 +17,7 @@ public class AppBody extends AppElement {
 	private final AbstractWebElementPlaceholder<UsersPage> usersPage;
 	private final AbstractWebElementPlaceholder<SettingsPage> settingsPage;
 	private final SearchPage.Placeholder searchPage;
+	private final LoginPage.Placeholder loginPage;
 	private final CreateNewPromotionsPage.Placeholder createPromotionsPage;
 	private final CreateNewKeywordsPage.Placeholder createKeywordsPage;
 	private final TopNavBar topNavBar;
@@ -39,6 +40,7 @@ public class AppBody extends AppElement {
 		this.settingsPage = new SettingsPage.Placeholder(this, navBar, topNavBar);
 
 		this.searchPage = new SearchPage.Placeholder(topNavBar);
+		this.loginPage = new LoginPage.Placeholder(topNavBar);
 		this.createPromotionsPage = new CreateNewPromotionsPage.Placeholder(topNavBar);
 		this.createKeywordsPage = new CreateNewKeywordsPage.Placeholder(topNavBar);
 		this.topNavBar = new TopNavBar(driver);
@@ -83,6 +85,10 @@ public class AppBody extends AppElement {
 		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".page-container")));
 	}
 
+	public LoginPage getLoginPage() {
+		return loginPage.$loginPage(getDriver().findElement(By.cssSelector(".loginscreen")));
+	}
+
 	public TopNavBar getTopNavBar() {
 		return topNavBar;
 	}
@@ -96,7 +102,7 @@ public class AppBody extends AppElement {
 	}
 
 	public EditDocumentReferencesPage getEditDocumentReferencesPage() {
-		return editReferences.$editReferences(findElement(By.xpath(".//h2[contains(text(), 'Edit Document References')]/../../../../..")));
+		return editReferences.$editReferences(findElement(By.xpath(".//h2[contains(text(), 'Edit Document References')]/../../..")));
 	}
 
 	public void logout() {

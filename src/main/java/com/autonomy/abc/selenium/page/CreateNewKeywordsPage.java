@@ -7,6 +7,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CreateNewKeywordsPage extends AppElement implements AppPage{
 
 	public CreateNewKeywordsPage(final TopNavBar topNavBar, final WebElement $el) {
@@ -77,6 +80,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		keywordsType("SYNONYMS").click();
 		continueWizardButton("type").click();
 		addSynonyms(synonymGroup);
+		loadOrFadeWait();
 		finishSynonymWizardButton().click();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-bucket-button")));
 	}
@@ -85,6 +89,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		keywordsType("BLACKLISTED").click();
 		continueWizardButton("type").click();
 		addBlacklistedTerm(blacklistedTerm);
+		loadOrFadeWait();
 		finishBlacklistWizardButton().click();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-filter .form-control")));
 	}
@@ -98,6 +103,16 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	public void deleteKeyword(final String keyword) {
 		findElement(By.xpath(".//span[contains(text(), '" + keyword + "')]/i")).click();
 		loadOrFadeWait();
+	}
+
+	public List<String> getProspectiveKeywordsList() {
+		final List<String> keywordsList = new ArrayList<>();
+
+		for (final WebElement word : findElements(By.xpath(".//i[contains(@class, 'remove-word')]/.."))) {
+			keywordsList.add(word.getText());
+		}
+
+		return keywordsList;
 	}
 
 	public static class Placeholder {
