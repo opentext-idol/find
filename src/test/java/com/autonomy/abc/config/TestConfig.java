@@ -16,7 +16,7 @@ public class TestConfig {
 
 	public TestConfig(final int index) throws MalformedURLException {
 		this.index = index;
-		this.url = new URL("http://localhost:4444/wd/hub");
+		this.url = new URL("http://10.2.112.233:4444/wd/hub");
 	}
 
 	public String getWebappUrl() {
