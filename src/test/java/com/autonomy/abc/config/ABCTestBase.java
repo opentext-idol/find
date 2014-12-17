@@ -3,7 +3,6 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
-import com.autonomy.abc.selenium.util.I18nRequestHandler;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +30,6 @@ public abstract class ABCTestBase {
 	public final TestConfig config;
 	private final String browser;
 	private final Platform platform;
-	private I18nRequestHandler i18nHandler;
 	private WebDriver driver;
 	public AppBody body;
 	protected SideNavBar navBar;
@@ -73,7 +71,6 @@ public abstract class ABCTestBase {
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform);
 		driver = config.createWebDriver(browser, platform);
 		ImplicitWaits.setImplicitWait(driver);
-		i18nHandler = new I18nRequestHandler(driver);
 		driver.get(config.getWebappUrl());
 		getDriver().manage().window().maximize();
 		abcLogin("richard", "q");
