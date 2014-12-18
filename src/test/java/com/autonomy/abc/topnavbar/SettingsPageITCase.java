@@ -181,6 +181,20 @@ public class SettingsPageITCase extends ABCTestBase{
 		settingsPage.testConnection("Content");
 	}
 
+	@Test
+	public void testBlankPortsAndHosts() {
+		for (final SettingsPage.Panel settingsPanel : SERVER_PANELS) {
+			settingsPage.changeHost("", settingsPanel.getTitle());
+			settingsPage.testConnection(settingsPanel.getTitle());
+			assertThat("", settingsPage.getPanelWithName(settingsPanel.getTitle()).getText().contains("Host name must not be blank!"));
+
+			settingsPage.changeHost("a", settingsPanel.getTitle());
+			settingsPage.portBox(settingsPanel.getTitle()).clear();
+			settingsPage.testConnection(settingsPanel.getTitle());
+			assertThat("", settingsPage.getPanelWithName(settingsPanel.getTitle()).getText().contains("One or more of the required field is missing"));
+		}
+	}
+
 	@After
 	public void setDefaultSettings() {
 		settingsPage.returnToDefaults();

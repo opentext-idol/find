@@ -145,6 +145,32 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	public void testEditDocumentReferencesCancel() {
+		final String originalDoc = setUpANewPromotion("House", "Sponsored", "home");
+		promotionsPage.addMorePromotedItemsButton().click();
+		editReferences = body.getEditDocumentReferencesPage();
+
+		editReferences.deleteDocFromWithinBucket(originalDoc);
+		topNavBar.search("abode");
+		editReferences.searchResultCheckbox(1).click();
+		editReferences.searchResultCheckbox(2).click();
+		editReferences.forwardPageButton().click();
+		editReferences.searchResultCheckbox(3).click();
+		editReferences.searchResultCheckbox(4).click();
+		topNavBar.search("cottage");
+		editReferences.searchResultCheckbox(5).click();
+		editReferences.searchResultCheckbox(6).click();
+		editReferences.cancelButton().click();
+
+		assertEquals(1, promotionsPage.getPromotedList().size());
+		assertThat("Original document is not attached to the promotion anymore", promotionsPage.getPromotedList().contains(originalDoc));
+
+		promotionsPage.addMorePromotedItemsButton().click();
+		assertThat("Promotions bucket has kept unsaved changes", editReferences.promotionsBucketList().contains(originalDoc));
+		assertEquals(1, editReferences.promotedItemsCount());
+	}
+
+	@Test
 	public void testDeleteItemsFromWithinTheBucket() {
 		setUpANewMultiDocPromotion("yoda", "Hotwire", "green dude", 4);
 		promotionsPage.addMorePromotedItemsButton().click();
