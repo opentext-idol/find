@@ -19,6 +19,10 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".edit-document-references")).findElement(By.xpath(".//*[text() = 'Save']"));
 	}
 
+	public WebElement cancelButton() {
+		return findElement(By.xpath(".//a[contains(text(), 'Cancel')]"));
+	}
+
 	public static class Placeholder {
 
 		private final TopNavBar topNavBar;

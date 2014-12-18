@@ -67,7 +67,14 @@ public abstract class KeywordsBase extends AppElement implements AppPage{
 	}
 
 	public int countSynonymLists() {
-		return findElements(By.cssSelector(".keywords-list-container .synonyms-list")).size();
+		final List<String> synonymLists = new ArrayList<>();
+
+		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list-container .synonyms-list"))) {
+			if (!synonymGroup.getText().equals("")) {
+				synonymLists.add(synonymGroup.getText());
+			}
+		}
+		return synonymLists.size();
 	}
 
 	public void deleteBlacklistedTerm(final String blacklistedTerm) {
