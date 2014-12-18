@@ -20,7 +20,7 @@ public class TestConfig {
 	}
 
 	public String getWebappUrl() {
-		return "http://localhost:8080/searchoptimizer/p/";
+		return System.getProperty("com.autonomy.abcUrl");
 	}
 
 	public int getIndex() {
