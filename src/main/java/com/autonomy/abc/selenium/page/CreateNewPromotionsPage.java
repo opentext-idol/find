@@ -49,6 +49,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 		findElement(By.cssSelector("input[name='words']")).sendKeys(searchTrigger);
 
 		try {
+			loadOrFadeWait();
 			waitUntilClickableThenClick(triggerAddButton());
 		} catch (final Exception e) {
 			System.out.println("could not click trigger button with trigger " + searchTrigger);

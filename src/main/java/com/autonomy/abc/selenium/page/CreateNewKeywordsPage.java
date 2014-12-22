@@ -88,6 +88,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	public void createBlacklistedTerm(final String blacklistedTerm) {
 		keywordsType("BLACKLISTED").click();
 		continueWizardButton("type").click();
+		loadOrFadeWait();
 		addBlacklistedTerm(blacklistedTerm);
 		loadOrFadeWait();
 		finishBlacklistWizardButton().click();
@@ -97,7 +98,9 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	private void addBlacklistedTerm(final String blacklistedTerm) {
 		addBlacklistedTextBox().clear();
 		addBlacklistedTextBox().sendKeys(blacklistedTerm);
+		loadOrFadeWait();
 		addBlacklistTermsButton().click();
+		loadOrFadeWait();
 	}
 
 	public void deleteKeyword(final String keyword) {
