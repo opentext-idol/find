@@ -125,12 +125,12 @@ public class SettingsPage extends AppElement implements AppPage {
 	}
 
 	public enum Panel {
-		COMMUNITY("Community", "backend", 9030),
-		CONTENT("Content", "idol", 9000),
-		QMS("QMS", "idol", 16000),
+		COMMUNITY("Community", "localhost", 9030),
+		CONTENT("Content", "localhost", 9000),
+		QMS("QMS", "localhost", 16000),
 		LOCALE("Locale", null, null),
-		QMS_AGENTSTORE("QMS Agentstore", "idol", 9050),
-		STATSSERVER("IDOL StatsServer", "idol", 19870);
+		QMS_AGENTSTORE("QMS Agentstore", "localhost", 9050),
+		STATSSERVER("IDOL StatsServer", "localhost", 19870);
 
 		private final String title;
 		private final String defaultHost;
