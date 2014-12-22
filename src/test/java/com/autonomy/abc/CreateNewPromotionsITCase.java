@@ -55,6 +55,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		assertThat("Minus button is not disabled when position equals 1", createPromotionsPage.isAttributePresent(createPromotionsPage.selectPositionMinusButton(), "disabled"));
 
 		createPromotionsPage.selectPositionPlusButton().click();
+		createPromotionsPage.loadOrFadeWait();
 		assertThat("Pin to position value not set to 2", createPromotionsPage.positionInputValue() == 2);
 		assertThat("Minus button is not enabled when position equals 2", !createPromotionsPage.isAttributePresent(createPromotionsPage.selectPositionMinusButton(), "disabled"));
 
