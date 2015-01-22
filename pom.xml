@@ -78,6 +78,27 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>bower</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bower</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>install</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>1.7</version>
@@ -151,23 +172,38 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2.1</version>
+                        <version>1.3.1</version>
                         <executions>
                             <execution>
+                                <id>bower</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bower</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>install</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>bless</id>
                                 <phase>process-classes</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <executable>/usr/local/bin/blessc</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>-f</argument>
+                                        <argument>target/${project.artifactId}/static/css/app.css</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <executable>/usr/local/bin/blessc</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>-f</argument>
-                                <argument>target/${project.artifactId}/static/css/app.css</argument>
-                            </arguments>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -510,183 +546,6 @@
             <artifactId>lombok</artifactId>
             <version>1.12.2</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jquery</groupId>
-            <artifactId>jquery</artifactId>
-            <version>1.10.2</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jquery</groupId>
-            <artifactId>jquery-ui-redmond</artifactId>
-            <version>1.10.3b</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.documentcloud</groupId>
-            <artifactId>underscore</artifactId>
-            <version>1.5.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.documentcloud</groupId>
-            <artifactId>backbone</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.davegandy</groupId>
-            <artifactId>fontawesome</artifactId>
-            <version>3.2.1</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.exacttarget</groupId>
-            <artifactId>fuelux</artifactId>
-            <version>2.5.1b</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.d3js</groupId>
-            <artifactId>d3</artifactId>
-            <version>3.3.8</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.googlecode</groupId>
-            <artifactId>excanvas</artifactId>
-            <version>r73</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.flotcharts</groupId>
-            <artifactId>flot</artifactId>
-            <version>0.8.2</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.googlecode</groupId>
-            <artifactId>html5shiv</artifactId>
-            <version>3.6.2-pre</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json.js</artifactId>
-            <version>2012-10-08</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>vitalets.github.com</groupId>
-            <artifactId>x-editable</artifactId>
-            <version>1.4.5</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.momentjs</groupId>
-            <artifactId>moment</artifactId>
-            <version>1.7.2</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy</groupId>
-            <artifactId>polyfill</artifactId>
-            <version>1.0</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>js-testing</artifactId>
-            <version>1.2.0</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend.frontend-lib</groupId>
-            <artifactId>javascript-utils</artifactId>
-            <version>1.3.1</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend.settings-page</groupId>
-            <artifactId>settings-page</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jacklmoore</groupId>
-            <artifactId>colorbox</artifactId>
-            <version>1.5.10b</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.datatables</groupId>
-            <artifactId>datatables</artifactId>
-            <version>1.9.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sh.aaron.brandon</groupId>
-            <artifactId>jquery-mousewheel</artifactId>
-            <version>3.0.6</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.mbraak</groupId>
-            <artifactId>jqtree</artifactId>
-            <version>0.17.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>scroll-near-end</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.trentrichardson</groupId>
-            <artifactId>timepicker</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>bootstrap-theme</artifactId>
-            <version>2.3.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>login-page</artifactId>
-            <version>1.1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>about-page</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>config-wizard</artifactId>
-            <version>1.1.1</version>
         </dependency>
     </dependencies>
 

@@ -1,5 +1,5 @@
 define([
-    'js-utils/js/navigation',
+    'js-whatever/js/navigation',
     'find/app/router',
     'i18n!find/nls/bundle',
     'text!find/templates/app/navigation.html'

@@ -4,18 +4,9 @@
  * Root i18n bundle.  Treat as en-us.  Default values go here
  */
 define([
-    'js-utils/js/substitution'
+    'js-whatever/js/substitution'
 ], function(substitution) {
     return substitution({
-        'about.app.build': 'build',
-        'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014 Hewlett-Packard Development Company, L.P.",
-        'about.foss': 'FOSS Acknowledgements',
-        'about.lib.name': 'Library Name',
-        'about.lib.version': 'Version',
-        'about.lib.licence': 'License',
-        'about.tagline': 'Handcrafted in Cambridge.',
-        'app.about': 'About',
         'app.cancel': 'Cancel',
         'app.logout': 'Logout',
         'app.name': "Find",

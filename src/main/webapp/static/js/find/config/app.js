@@ -1,6 +1,6 @@
 define([
     'find/app/page/find-settings-page',
-    'js-utils/js/empty-navbar',
+    'js-whatever/js/empty-navbar',
     'find/app/util/test-browser',
     'i18n!find/nls/bundle',
     'text!find/templates/config/config.html',
@@ -16,8 +16,6 @@ define([
 
         this.settingsPage = new SettingsPage({});
         this.settingsPage.render();
-
-        var $submitButton = this.settingsPage.$('');
 
         this.navigation = new (EmptyNavbar.extend({
             events: {

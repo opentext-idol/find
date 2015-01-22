@@ -1,5 +1,5 @@
 define([
-    'js-utils/js/autoload'
+    'js-whatever/js/autoload'
 ], function(Autoload) {
     var Config = Autoload.extend({
 
