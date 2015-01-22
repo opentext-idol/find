@@ -51,63 +51,8 @@ html, body {
     transition: bottom 0.5s ease;
 }
 
-.nav.banner {
-    height: 35px;
-    width: 101px;
-    background: url('../img/hp_autn.png') no-repeat;
-    margin: 8px 0 7px;
-}
-
-.nav-user-dropdown a {
-    cursor: default;
-}
-
-.user-dropdown li.nav-user-dropdown a:hover {
-    background-color: transparent;
-    background-image: none;
-    color: rgb(51, 51, 51);
-}
-
-.hide-from-non-useradmin,
-.hide-from-non-admin {
-    display: none;
-}
-
 .centre {
     text-align: center;
-}
-
-/* jQuery UI overrides so the font is more consistent with bootstrap */
-.page .ui-widget  {
-    color: #555555;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-}
-
-.page .ui-widget input, .page .ui-widget select, .page .ui-widget textarea, .page .ui-widget button {
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-}
-
-.page .ui-widget-content {
-    color: #555555;
-}
-
-/* Override for jQuery UI's '.ui-widget-content a' selector turning links black */
-.page a {
-    color: #A01F0C;
-}
-
-.page a.btn {
-    color: #333333;
-}
-
-.page a.btn.btn-success,
-.page a.btn.btn-danger,
-.page a.btn.btn-warning,
-.page a.btn.btn-primary {
-    color: white;
 }
 
 @media (max-width: 767px) {
