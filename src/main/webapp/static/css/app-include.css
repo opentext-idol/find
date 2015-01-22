@@ -253,50 +253,7 @@ input.find-input {
     color: rgba(138, 113, 102, 0.96);
 }
 
-/*colourbox buttons style*/
-#colorbox .prevBtn, #colorbox .nextBtn {
-    position: fixed;
-    margin: auto;
-    top: 0;
-    bottom: 0;
-    height: 200px;
-    width: 50px;
-    z-index: 6000;
-    color: #ccc;
-}
 
-#colorbox .nextBtn {
-    right: -5px;
-}
-
-#colorbox .prevBtn {
-    left: -5px;
-}
-
-#cboxLoadedContent {
-    margin-top:28px;
-}
-
-#cboxCurrent {
-    position: absolute;
-    bottom: 4px;
-    color: #949494;
-    border-radius: 5px;
-    height: 24px;
-    left: 50%;
-    line-height: 32px;
-    margin: -16px 0 0 -100px;
-    text-align: center;
-    width: 105px;
-}
-
-#cboxClose {
-    top:0;
-}
-
-#colorbox {
-    overflow: initial;
-}
 /* fancy colourbox buttons */
 .btn-colorbox, .btn-colorbox:focus {
     color: #ffffff;
