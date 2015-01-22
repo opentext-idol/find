@@ -51,43 +51,6 @@ html, body {
     transition: bottom 0.5s ease;
 }
 
-.page.show-footer .body {
-    bottom: 260px;
-}
-
-.show-footer .page-footer {
-    height: 260px;
-}
-
-.page:not(.show-footer) .shown-footer-only-fade {
-    opacity: 0;
-}
-
-.show-footer .shown-footer-only-fade {
-    opacity: 1;
-}
-
-.shown-footer-only-fade {
-    -webkit-transition: opacity .2s linear;
-    transition: opacity .2s linear;
-}
-
-.page .hidden-footer-only {
-    display: inline-block;
-}
-
-.page .shown-footer-only {
-    display: none;
-}
-
-.show-footer .hidden-footer-only {
-    display: none;
-}
-
-.show-footer .shown-footer-only {
-    display: inline-block;
-}
-
 .nav.banner {
     height: 35px;
     width: 101px;
@@ -168,19 +131,6 @@ html, body {
         transition: bottom 0.5s ease;
     }
 }
-
-@media (max-height: 539px) {
-    .show-footer .page-footer {
-        height: 100%;
-    }
-}
-
-@media (max-width: 979px) {
-    .show-footer .wrapper {
-        bottom: 260px;
-    }
-}
-
 
 /* find 2.0 */
 .main-content {
