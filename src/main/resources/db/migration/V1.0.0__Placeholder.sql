@@ -1,2 +1,0 @@
--- Placeholder script to stop flyway complaining
--- Replace with a real migration
