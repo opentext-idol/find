@@ -1,3 +1,8 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.authentication;
 
 import com.hp.autonomy.frontend.configuration.Authentication;
@@ -12,13 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-/*
- * $Id: //depot/products/frontend/site-admin/trunk/webapp/src/main/java/com/autonomy/controlcentre/authentication/LoginController.java#11 $
- *
- * Copyright (c) 2013, Autonomy Systems Ltd.
- *
- * Last modified by $Author: luca.mandrioli $ on $Date: 2014/01/06 $
- */
 @Controller
 public class LoginController {
 

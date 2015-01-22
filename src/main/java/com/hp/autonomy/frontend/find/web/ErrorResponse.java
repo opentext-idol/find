@@ -1,16 +1,14 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.web;
 
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-/*
- * $Id: $
- *
- * Copyright (c) 2014, Autonomy Systems Ltd.
- *
- * Last modified by $Author: $ on $Date: $
- */
 @Getter
 @EqualsAndHashCode
 class ErrorResponse {
