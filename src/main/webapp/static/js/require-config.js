@@ -2,16 +2,15 @@ require.config({
     paths: {
         backbone: 'find/lib/backbone/backbone-extensions',
         'backbone-base': '../lib/backbone/backbone',
-        bootstrap: '../lib/bootstrap/js/bootstrap',
+        bootstrap: '../lib/hp-autonomy-bootstrap-2/bootstrap/js/bootstrap',
         colorbox: '../lib/colorbox/jquery.colorbox',
-        i18n: '../lib/require/i18n',
+        i18n: '../lib/requirejs-i18n/i18n',
         jquery: '../lib/jquery/jquery',
-        'js-utils': '../lib/javascript-utils',
+        'js-whatever': '../lib/hp-autonomy-js-whatever/src',
         json2: '../lib/json/json2',
-        'login-page': '../lib/login-page',
-        settings: '../lib/settings',
-        store: '../lib/store/store',
-        text: '../lib/require/text',
+        'login-page': '../lib/hp-autonomy-login-page/src',
+        settings: '../lib/hp-autonomy-settings-page/src',
+        text: '../lib/requirejs-text/text',
         underscore: '../lib/underscore/underscore'
     },
     shim: {

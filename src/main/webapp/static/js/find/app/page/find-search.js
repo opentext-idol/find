@@ -1,5 +1,5 @@
 define([
-    'js-utils/js/base-page',
+    'js-whatever/js/base-page',
     'find/app/model/entity-collection',
     'find/app/model/documents-collection',
     'find/app/model/indexes-collection',

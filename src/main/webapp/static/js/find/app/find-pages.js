@@ -1,5 +1,5 @@
 define([
-    'js-utils/js/abstract-pages',
+    'js-whatever/js/abstract-pages',
     'find/app/router',
     'find/app/vent'
 ], function(AbstractPages, router, vent) {

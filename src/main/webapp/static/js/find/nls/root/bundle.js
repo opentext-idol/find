@@ -4,7 +4,7 @@
  * Root i18n bundle.  Treat as en-us.  Default values go here
  */
 define([
-    'js-utils/js/substitution'
+    'js-whatever/js/substitution'
 ], function(substitution) {
     return substitution({
         'app.cancel': 'Cancel',
