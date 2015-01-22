@@ -418,11 +418,7 @@ input.find-input[type="text"], input.find-input[type="text"]:focus {
     border-radius: 0;
 }
 
-input::-webkit-input-placeholder {
-    color: indianred;
-    opacity: 0.5;
-}
-
+input::-webkit-input-placeholder,
 input::-moz-placeholder {
     color: indianred;
     opacity: 0.5;
