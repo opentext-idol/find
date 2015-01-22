@@ -55,28 +55,6 @@ html, body {
     text-align: center;
 }
 
-@media (max-width: 767px) {
-    .page-wrap {
-        padding: 0 20px;
-    }
-}
-
-@media (min-width: 980px) {
-    .page .body {
-        left: 0;
-        position: fixed;
-        right: 0;
-    }
-
-    .page .body {
-        bottom: 32px;
-        top: 50px;
-        overflow: auto;
-        -webkit-transition: bottom 0.5s ease;
-        transition: bottom 0.5s ease;
-    }
-}
-
 /* find 2.0 */
 .main-content {
     background-color: white;
@@ -403,8 +381,28 @@ input:-moz-placeholder::before {
     background: none;
 }
 
-
-
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 {
     color: rgba(138, 113, 102, 0.96);
+}
+
+@media (max-width: 767px) {
+    .page-wrap {
+        padding: 0 20px;
+    }
+}
+
+@media (min-width: 980px) {
+    .page .body {
+        left: 0;
+        position: fixed;
+        right: 0;
+    }
+
+    .page .body {
+        bottom: 32px;
+        top: 50px;
+        overflow: auto;
+        -webkit-transition: bottom 0.5s ease;
+        transition: bottom 0.5s ease;
+    }
 }
