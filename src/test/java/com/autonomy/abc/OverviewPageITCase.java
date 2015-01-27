@@ -3,6 +3,8 @@ package com.autonomy.abc;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
+import com.autonomy.abc.selenium.page.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.page.KeywordsPage;
 import com.autonomy.abc.selenium.page.OverviewPage;
 import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
@@ -15,12 +17,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.thoughtworks.selenium.SeleneseTestBase.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class OverviewPageITCase extends ABCTestBase{
@@ -69,7 +71,7 @@ public class OverviewPageITCase extends ABCTestBase{
 	}
 
 	@Test
-	public void testTopSearchTermsLinks() throws UnsupportedEncodingException {
+	public void testTopSearchTermsLinks() {
 		for (final String timeUnit : Arrays.asList("hour", "day", "week")) {
 			overviewPage.topSearchTermsLastTimePeriodButton(timeUnit).click();
 
@@ -78,20 +80,12 @@ public class OverviewPageITCase extends ABCTestBase{
 
 				for (final WebElement tableRowLink : tableRowLinks) {
 					if (tableRowLink.isDisplayed()) {
-						String searchTerm = tableRowLink.getText();
+						final String searchTerm = tableRowLink.getText();
 						tableRowLink.click();
 						final SearchPage searchPage = body.getSearchPage();
 						new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
-
-						if (getDriver().getCurrentUrl().contains(searchTerm)) {
-							assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl().contains("search/modified/" + searchTerm));
-							searchTerm = URLDecoder.decode(searchTerm, "UTF-8");
-							assertThat(searchTerm + " Title incorrect", searchPage.title().contains("Results for " + searchTerm));
-						} else {
-							searchTerm = URLDecoder.decode(searchTerm, "UTF-8");
-							assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl().contains("search/modified/" + searchTerm));
-							assertThat(searchTerm + " Title incorrect", searchPage.title().contains("Results for " + searchTerm));
-						}
+						assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl().contains("search/modified/" + searchTerm));
+						assertThat(searchTerm + " Title incorrect", searchPage.title().contains("Results for " + searchTerm));
 
 						navBar.switchPage(NavBarTabId.OVERVIEW);
 					}
@@ -124,6 +118,65 @@ public class OverviewPageITCase extends ABCTestBase{
 					assertThat("Row " + Integer.toString(i + 1) + " is out of place", searchCounts.get(i) >= searchCounts.get(i + 1));
 				}
 			}
+		}
+	}
+
+	@Test
+	public void testZeroHitTermsLinks() throws UnsupportedEncodingException, InterruptedException {
+		final CreateNewKeywordsPage createNewKeywordsPage = body.getCreateKeywordsPage();
+		final KeywordsPage keywordsPage = body.getKeywordsPage();
+		navBar.switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage.deleteAllSynonyms();
+		keywordsPage.deleteAllBlacklistedTerms();
+		navBar.switchPage(NavBarTabId.OVERVIEW);
+		String extraSynonym = "apple";
+
+		final List<WebElement> tableLinks = overviewPage.getWidget(OverviewPage.Widgets.ZERO_HIT_TERMS).findElements(By.cssSelector(".table a"));
+
+		for (final WebElement tableLink : tableLinks) {
+			final String linkText = tableLink.getText();
+			tableLink.click();
+
+			assertThat("Have not linked to synonyms wizard", createNewKeywordsPage.getText().contains("Select synonyms"));
+			assertEquals(1, createNewKeywordsPage.countKeywords());
+			assertThat("incorrect synonym in prospective keywords list", createNewKeywordsPage.getProspectiveKeywordsList().contains(linkText));
+			assertThat("finish button should be disabled", createNewKeywordsPage.isAttributePresent(createNewKeywordsPage.finishSynonymWizardButton(), "disabled"));
+
+			extraSynonym += "z";
+			createNewKeywordsPage.addSynonyms(extraSynonym);
+			assertEquals(2, createNewKeywordsPage.countKeywords());
+			assertThat("incorrect synonym in prospective keywords list", createNewKeywordsPage.getProspectiveKeywordsList().containsAll(Arrays.asList(linkText, extraSynonym)));
+			assertThat("finish button should be enabled", !createNewKeywordsPage.isAttributePresent(createNewKeywordsPage.finishSynonymWizardButton(), "disabled"));
+
+			createNewKeywordsPage.finishSynonymWizardButton().click();
+
+			final SearchPage searchPage = body.getSearchPage();
+			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+
+			if (!searchPage.getText().contains("An error occurred executing the search action")) {
+				assertThat("page title incorrect", searchPage.title().contains(linkText));
+				assertThat("page title incorrect", searchPage.title().contains(extraSynonym));
+				assertThat("no search results displayed", searchPage.docLogo().isDisplayed());
+				assertThat("you searched for section incorrect", searchPage.youSearchedFor().containsAll(Arrays.asList(linkText, extraSynonym)));
+				assertEquals(2, searchPage.countSynonymLists());
+				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText).contains(extraSynonym));
+				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(extraSynonym).contains(linkText));
+
+				final String searchResultTitle = searchPage.getSearchResultTitle(1);
+				topNavBar.search(linkText);
+				assertThat("page title incorrect", searchPage.title().contains(linkText));
+				assertThat("no search results displayed", searchPage.docLogo().isDisplayed());
+				assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
+				assertEquals(1, searchPage.countSynonymLists());
+				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText).contains(extraSynonym));
+				assertThat("you searched for section incorrect", searchPage.youSearchedFor().contains(linkText));
+				assertThat("you searched for section incorrect", !searchPage.youSearchedFor().contains(extraSynonym));
+			}
+			else {
+				System.out.println(linkText + " returns a search error as part of a synonym group");
+			}
+
+			navBar.switchPage(NavBarTabId.OVERVIEW);
 		}
 	}
 

@@ -51,6 +51,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 	public void testAddPinToPosition() {
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
 		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.loadOrFadeWait();
 		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
 		assertThat("Minus button is not disabled when position equals 1", createPromotionsPage.isAttributePresent(createPromotionsPage.selectPositionMinusButton(), "disabled"));
 
@@ -60,6 +61,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		assertThat("Minus button is not enabled when position equals 2", !createPromotionsPage.isAttributePresent(createPromotionsPage.selectPositionMinusButton(), "disabled"));
 
 		createPromotionsPage.continueButton("pinToPosition").click();
+		createPromotionsPage.loadOrFadeWait();
 		assertThat("Wizard has not progressed to Select the position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
 		assertThat("Promote button is not disabled when no triggers are added", createPromotionsPage.isAttributePresent(createPromotionsPage.finishButton(), "disabled"));
 
@@ -196,23 +198,23 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 		createPromotionsPage.addSearchTrigger(",Germany");
 		assertThat("Commas should not be included in triggers", createPromotionsPage.getSearchTriggersList().size() == 1);
-		assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 
 		createPromotionsPage.addSearchTrigger("Ita,ly Spain");
 		assertThat("Commas should not be included in triggers", createPromotionsPage.getSearchTriggersList().size() == 1);
-		assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 
 		createPromotionsPage.addSearchTrigger("Ireland, Belgium");
 		assertThat("Commas should not be included in triggers", createPromotionsPage.getSearchTriggersList().size() == 1);
-		assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 
 		createPromotionsPage.addSearchTrigger("UK , Luxembourg");
 		assertThat("Commas should not be included in triggers", createPromotionsPage.getSearchTriggersList().size() == 1);
-		assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 
 		createPromotionsPage.addSearchTrigger("Andorra");
-		assertThat("Legitimate rigger not added", createPromotionsPage.getSearchTriggersList().size() == 2);
-		assertThat("Error message displayed with legitimate term", !createPromotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("Legitimate trigger not added", createPromotionsPage.getSearchTriggersList().size() == 2);
+		assertThat("Error message displayed with legitimate term", !createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 	}
 
 	@Test
@@ -229,6 +231,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 	public void testNonNumericEntryInPinToPosition() {
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
 		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.loadOrFadeWait();
 		createPromotionsPage.loadOrFadeWait();
 		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
 
@@ -250,6 +253,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 			assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 2);
 
 			createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton("pinToPosition"));
+			createPromotionsPage.loadOrFadeWait();
 			assertThat("Wizard has not progressed with a legitimate position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
 		} catch (final WebDriverException e) {
 			//try catch because Chrome struggles to focus on pinToPositionInput
@@ -297,15 +301,18 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 	private void addSpotlightPromotion(final String spotlightType, final String searchTrigger) {
 		createPromotionsPage.promotionType("SPOTLIGHT").click();
+		createPromotionsPage.loadOrFadeWait();
 		assertThat("Continue button not enabled", !createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton("type"), "disabled"));
 
 		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.loadOrFadeWait();
 		assertThat("Continue button not disabled", createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton("spotlightType"), "disabled"));
 
 		createPromotionsPage.spotlightType(spotlightType).click();
 		assertThat("Continue button not enabled", !createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton("spotlightType"), "disabled"));
 
 		createPromotionsPage.continueButton("spotlightType").click();
+		createPromotionsPage.loadOrFadeWait();
 		assertThat("Promote button not disabled", createPromotionsPage.isAttributePresent(createPromotionsPage.finishButton(), "disabled"));
 
 		createPromotionsPage.addSearchTrigger(searchTrigger);
@@ -356,6 +363,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		searchPage.promoteTheseItemsButton().click();
 		createPromotionsPage.promotionType("SPOTLIGHT").click();
 		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong section of wizard", createPromotionsPage.spotlightType("Sponsored").isDisplayed());
 
 		topNavBar.sideBarToggle();
@@ -367,10 +375,12 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 			searchPage.promoteTheseItemsButton().click();
 			createPromotionsPage.promotionType("SPOTLIGHT").click();
 			createPromotionsPage.continueButton("type").click();
+			createPromotionsPage.loadOrFadeWait();
 			assertThat("Wrong section of wizard", createPromotionsPage.spotlightType(spotlightType).isDisplayed());
 
 			createPromotionsPage.spotlightType(spotlightType).click();
 			createPromotionsPage.continueButton("spotlightType").click();
+			createPromotionsPage.loadOrFadeWait();
 			assertThat("Wizard has not navigated forward", createPromotionsPage.triggerAddButton().isDisplayed());
 			topNavBar.sideBarToggle();
 			createPromotionsPage.cancelButton("trigger").click();
@@ -381,6 +391,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		searchPage.promoteTheseItemsButton().click();
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
 		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong section of wizard", createPromotionsPage.selectPositionPlusButton().isDisplayed());
 
 		topNavBar.sideBarToggle();
@@ -392,6 +403,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		searchPage.promoteTheseItemsButton().click();
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
 		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.loadOrFadeWait();
 		createPromotionsPage.selectPositionPlusButton().click();
 		createPromotionsPage.continueButton("pinToPosition").click();
 		createPromotionsPage.loadOrFadeWait();

@@ -161,6 +161,12 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.getUserRow("Bella").findElement(By.cssSelector(".editable-submit")).click();
 		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Bella").isDisplayed());
 		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Bella").getText().equals("Admin"));
+
+		usersPage.getTableUserTypeLink("Bella").click();
+		usersPage.selectTableUserType("Bella", "None");
+		usersPage.getUserRow("Bella").findElement(By.cssSelector(".editable-submit")).click();
+		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Bella").isDisplayed());
+		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Bella").getText().equals("None"));
 	}
 
 	@Test

@@ -217,7 +217,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		final String newPromotedDoc = editReferences.getSearchResultTitle(6);
 
 		editReferences.tryClickThenTryParentClick(editReferences.saveButton());
-		editReferences.loadOrFadeWait();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(promotionsPage.addMorePromotedItemsButton()));
 		assertThat("Save button not enabled when document in the bucket", getDriver().getCurrentUrl().contains("promotions/detail"));
 
 		assertThat("newly promoted document does not appear in the list", promotionsPage.getPromotedList().contains(newPromotedDoc));
