@@ -8,6 +8,8 @@ import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SettingsPage extends AppElement implements AppPage {
 
@@ -28,6 +30,7 @@ public class SettingsPage extends AppElement implements AppPage {
 		saveChangesClick();
 		modalSaveChanges().click();
 		loadOrFadeWait();
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//*[contains(text(), 'Close')]"))));
 		modalClose();
 	}
 
@@ -62,15 +65,15 @@ public class SettingsPage extends AppElement implements AppPage {
 		return findElement(By.xpath(".//h3[contains(text(), '" + panelName + "')]/../.."));
 	}
 
-	public void changePort(final int portNumber, final String panelName) {
+	public void changePort(final int portNumber, final Panel panel) {
 		loadOrFadeWait();
-		portBox(panelName).clear();
+		portBox(panel).clear();
 		loadOrFadeWait();
-		portBox(panelName).sendKeys(Integer.toString(portNumber));
+		portBox(panel).sendKeys(Integer.toString(portNumber));
 	}
 
-	public WebElement portBox(final String panelName) {
-		return getPanelWithName(panelName).findElement(By.cssSelector("[placeholder='port']"));
+	public WebElement portBox(final Panel panel) {
+		return getPanelWithName(panel.getTitle()).findElement(By.cssSelector("[placeholder='port']"));
 	}
 
 	public void modalClose() {
@@ -80,11 +83,11 @@ public class SettingsPage extends AppElement implements AppPage {
 		loadOrFadeWait();
 	}
 
-	public WebElement hostBox(final String panelName) {
-		return getPanelWithName(panelName).findElement(By.cssSelector("[placeholder='hostname']"));
+	public WebElement hostBox(final Panel panelName) {
+		return getPanelWithName(panelName.getTitle()).findElement(By.cssSelector("[placeholder='hostname']"));
 	}
 
-	public void changeHost(final String hostname, final String panelName) {
+	public void changeHost(final String hostname, final Panel panelName) {
 		loadOrFadeWait();
 		hostBox(panelName).clear();
 		loadOrFadeWait();
@@ -95,8 +98,8 @@ public class SettingsPage extends AppElement implements AppPage {
 		return getPanelWithName(panelName).findElement(By.cssSelector("[name='protocol']"));
 	}
 
-	public void selectProtocol(final String protocol, final String panelName) {
-		protocolBox(panelName).findElement(By.cssSelector("[value='" + protocol + "']")).click();
+	public void selectProtocol(final String protocol, final Panel panelName) {
+		protocolBox(panelName.getTitle()).findElement(By.cssSelector("[value='" + protocol + "']")).click();
 	}
 
 	public WebElement defaultLocale() {
@@ -111,35 +114,18 @@ public class SettingsPage extends AppElement implements AppPage {
 		getPanelWithName(panelName).findElement(By.xpath(".//*[contains(text(), 'Test Connection')]")).click();
 	}
 
-	public void returnToDefaults() {
-		for (final Panel panel : Panel.values()) {
-			if (panel.defaultHost != null) {
-				changePort(panel.defaultPort, panel.title);
-				changeHost(panel.defaultHost, panel.title);
-				selectProtocol("HTTP", panel.title);
-			}
-		}
-
-		selectLocale("English (UK)");
-		saveChanges();
-	}
-
 	public enum Panel {
-		COMMUNITY("Community", "localhost", 9030),
-		CONTENT("Content", "localhost", 9000),
-		QMS("QMS", "localhost", 16000),
-		LOCALE("Locale", null, null),
-		QMS_AGENTSTORE("QMS Agentstore", "localhost", 9050),
-		STATSSERVER("IDOL StatsServer", "localhost", 19870);
+		COMMUNITY("Community"),
+		CONTENT("Content"),
+		QMS("QMS"),
+		LOCALE("Locale"),
+		QMS_AGENTSTORE("QMS Agentstore"),
+		STATSSERVER("IDOL StatsServer");
 
 		private final String title;
-		private final String defaultHost;
-		private final Integer defaultPort;
 
-		Panel(final String title, final String defaultHost, final Integer defaultPort) {
+		Panel(final String title) {
 			this.title = title;
-			this.defaultHost = defaultHost;
-			this.defaultPort = defaultPort;
 		}
 
 		public String getTitle() {
