@@ -76,7 +76,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement finishButton() {
-		return findElement(By.cssSelector(".finish-step"));
+		return findElement(By.xpath(".//h3[contains(text(), 'Select Promotion Triggers')]/../../button[contains(text(), 'Finish')]"));
 	}
 
 	public void navigateToTriggers() {
@@ -94,7 +94,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement spotlightType(final String type ) {
-		return getParent(findElement(By.cssSelector("[data-spotlight-type='" + type + "']")));
+		return getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
 	}
 
 	public String getTopPromotedLinkTitle() {
@@ -109,9 +109,11 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 		promotionType("SPOTLIGHT").click();
 		loadOrFadeWait();
 		continueButton("type").click();
+		loadOrFadeWait();
 		spotlightType(spotlightType).click();
 		loadOrFadeWait();
 		continueButton("spotlightType").click();
+		loadOrFadeWait();
 		addSearchTrigger(searchTrigger);
 		loadOrFadeWait();
 		finishButton().click();
@@ -119,7 +121,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement promotionType(final String promotionType) {
-		return getParent(findElement(By.cssSelector("[data-promotion-type='" + promotionType + "']")));
+		return getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));
 	}
 
 	public WebElement pinToPositionInput() {
