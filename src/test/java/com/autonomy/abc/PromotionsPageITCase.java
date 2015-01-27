@@ -2,26 +2,27 @@ package com.autonomy.abc;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.PromotionsPage;
+import com.autonomy.abc.selenium.page.SchedulePage;
 import com.autonomy.abc.selenium.page.SearchPage;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class PromotionsPageITCase extends ABCTestBase {
 
@@ -32,6 +33,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	private TopNavBar topNavBar;
 	private PromotionsPage promotionsPage;
 	private SearchPage searchPage;
+	private SchedulePage schedulePage;
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -303,5 +305,81 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
 		return promotedDocTitles;
+	}
+
+	@Test
+	public void testSchedulePromotionForTomorrow() {
+		final Date date = new Date();
+		final SimpleDateFormat day = new SimpleDateFormat("dd");
+		final SimpleDateFormat month = new SimpleDateFormat("MMMMMMMMM");
+		final SimpleDateFormat today = new SimpleDateFormat("dd/MM/YYYY");
+		final String stringDay = day.format(date);
+
+		setUpANewMultiDocPromotion("wizard", "Sponsored", "wand magic spells", 4);
+		promotionsPage.schedulePromotion();
+
+		schedulePage = body.getSchedulePage();
+		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("schedule"));
+		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
+		assertThat("Finish button not visible", schedulePage.finishButton("enableSchedule").isDisplayed()); //TODO: Enum of datasteps
+		assertThat("Finish button should be disabled", schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+
+		schedulePage.alwaysActive().click();
+		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+
+		schedulePage.schedule().click();
+		assertThat("Continue button should be present", schedulePage.continueButton("enableSchedule").isDisplayed());
+
+		schedulePage.continueButton("enableSchedule").click();
+		schedulePage.loadOrFadeWait();
+		assertThat("Wrong wizard text", schedulePage.getText().contains("When should this promotion start and end?"));
+
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), today.format(date));
+		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), today.format(DateUtils.addDays(date, 1)));
+
+		schedulePage.startDateTextBox().click();
+		assertEquals(schedulePage.getSelectedDayOfMonth(), Integer.parseInt(stringDay));
+		assertEquals(schedulePage.getSelectedMonth(), month.format(date));
+
+		schedulePage.calendarDateSelect(DateUtils.addDays(date, 1));
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), today.format(DateUtils.addDays(date, 1)));
+		final String startDate = schedulePage.startDateTextBox().getAttribute("value");
+
+		schedulePage.endDateTextBox().click();
+		schedulePage.calendarDateSelect(DateUtils.addDays(date, 5));
+		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), today.format(DateUtils.addDays(date, 5)));
+		final String endDate = schedulePage.endDateTextBox().getAttribute("value");
+
+		schedulePage.continueButton("scheduleTimes").click();
+		schedulePage.loadOrFadeWait();
+		assertThat("Wrong wizard text", schedulePage.getText().contains("How often should this promotion run?"));
+
+		schedulePage.selectFrequency("Monthly");
+		assertEquals(schedulePage.readFrequency(), "Monthly");
+
+		schedulePage.finishButton("scheduleFrequency").click();
+		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
+		assert(promotionsPage.getText().contains("The promotion is scheduled to run monthly, starting from " + startDate + " and ending on " + endDate));
+
+		topNavBar.search("magic");
+		topNavBar.loadOrFadeWait();
+		searchPage = body.getSearchPage();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+		assertThat("promotions aren't scheduled to be shown now", !searchPage.isPromotionsBoxVisible());
+
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+		promotionsPage.getPromotionLinkWithTitleContaining("magic").click();
+		promotionsPage.schedulePromotion();
+		schedulePage.alwaysActive().click();
+		schedulePage.finishButton("enableSchedule").click();
+		schedulePage.loadOrFadeWait();
+		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
+		assert(promotionsPage.getText().contains("The promotion is always active"));
+
+		topNavBar.search("magic");
+		topNavBar.loadOrFadeWait();
+		searchPage = body.getSearchPage();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+		assertThat("promotions are scheduled to be shown now", searchPage.isPromotionsBoxVisible());
 	}
 }
