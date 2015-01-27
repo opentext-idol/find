@@ -133,6 +133,10 @@ public class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".fa-file-o"));
 	}
 
+	public boolean isPromotionsBoxVisible() {
+		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
+	}
+
 	public static class Placeholder {
 		private final TopNavBar topNavBar;
 

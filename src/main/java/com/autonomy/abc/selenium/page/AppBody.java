@@ -19,6 +19,7 @@ public class AppBody extends AppElement {
 	private final SearchPage.Placeholder searchPage;
 	private final LoginPage.Placeholder loginPage;
 	private final CreateNewPromotionsPage.Placeholder createPromotionsPage;
+	private final SchedulePage.Placeholder schedulePage;
 	private final CreateNewKeywordsPage.Placeholder createKeywordsPage;
 	private final TopNavBar topNavBar;
 	private final SideNavBar sideNavBar;
@@ -42,6 +43,7 @@ public class AppBody extends AppElement {
 		this.searchPage = new SearchPage.Placeholder(topNavBar);
 		this.loginPage = new LoginPage.Placeholder(topNavBar);
 		this.createPromotionsPage = new CreateNewPromotionsPage.Placeholder(topNavBar);
+		this.schedulePage = new SchedulePage.Placeholder(topNavBar);
 		this.createKeywordsPage = new CreateNewKeywordsPage.Placeholder(topNavBar);
 		this.topNavBar = new TopNavBar(driver);
 		this.sideNavBar = new SideNavBar(driver);
@@ -81,6 +83,10 @@ public class AppBody extends AppElement {
 		return createPromotionsPage.$createNewPromotionsPage(getDriver().findElement(By.cssSelector(".page-container")));
 	}
 
+	public SchedulePage getSchedulePage() {
+		return schedulePage.$schedulePage(getDriver().findElement(By.xpath(".//h2[contains(text(), 'Schedule')]/../../..")));
+	}
+
 	public CreateNewKeywordsPage getCreateKeywordsPage() {
 		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".page-container")));
 	}
@@ -107,6 +113,6 @@ public class AppBody extends AppElement {
 
 	public void logout() {
 		topNavBar.findElement(By.cssSelector(".fa-cog")).click();
-		topNavBar.findElement(By.cssSelector("a[href='/searchoptimizer/login/index.html']")).click();
+		topNavBar.findElement(By.xpath(".//span[text()='Logout']")).click();
 	}
 }

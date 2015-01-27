@@ -45,6 +45,16 @@ public class PromotionsPage extends AppElement implements AppPage {
 		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(newPromotionButton()));
 	}
 
+	public void schedulePromotion() {
+		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".extra-functions .dropdown-toggle"));
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
+		extraFunctionsDropdown.click();
+
+		final WebElement scheduleButton = findElement(By.xpath(".//a[contains(text(), 'Schedule')]"));
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(scheduleButton));
+		scheduleButton.click();
+	}
+
 	public WebElement spotlightButton() {
 		return findElement(By.cssSelector(".promotion-view-name-dropdown button"));
 	}

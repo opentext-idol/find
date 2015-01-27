@@ -31,7 +31,7 @@ public abstract class AbstractWebElementPlaceholder<T extends WebElement> extend
 			navigateToPage();  // possibly should always do this. will navigate to page if it hasn't been seen yet - do we want it to do the same if it has?
 			try {
 				value = convertToActualType((WebElement) ancestor);
-			} catch (ClassCastException ex) {
+			} catch (final ClassCastException ex) {
 				throw new IllegalArgumentException("attempting to apply a no-op placeholder to a SearchContext which is not a WebElement.", ex);
 			}
 		}
@@ -43,7 +43,7 @@ public abstract class AbstractWebElementPlaceholder<T extends WebElement> extend
 			navigateToDropDownPage();  // possibly should always do this. will navigate to page if it hasn't been seen yet - do we want it to do the same if it has?
 			try {
 				value = convertToActualType((WebElement) ancestor);
-			} catch (ClassCastException ex) {
+			} catch (final ClassCastException ex) {
 				throw new IllegalArgumentException("attempting to apply a no-op placeholder to a SearchContext which is not a WebElement.", ex);
 			}
 		}
@@ -61,7 +61,7 @@ public abstract class AbstractWebElementPlaceholder<T extends WebElement> extend
 				} else {
 					value = convertToActualType(ancestor.findElement(by));
 				}
-			} catch (ClassCastException ex) {
+			} catch (final ClassCastException ex) {
 				throw new IllegalArgumentException("attempting to apply a no-op placeholder to a SearchContext which is not a WebElement.", ex);
 			}
 		}
@@ -96,7 +96,7 @@ public abstract class AbstractWebElementPlaceholder<T extends WebElement> extend
 		} else {
 			try {
 				return $el().getTagName() + " : " + $el().toString();
-			} catch (StaleElementReferenceException e) {
+			} catch (final StaleElementReferenceException e) {
 				return "element is stale, but is not marked as stale";
 			}
 		}
