@@ -31,7 +31,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement getPromotionLinkWithTitleContaining(final String promotionTitleSubstring) {
-		return findElement(By.xpath(".//h3/a[contains(text(), '" + promotionTitleSubstring.split("\\s+")[0] + "')]"));
+		return findElement(By.xpath(".//h3/a[contains(text(), '" + promotionTitleSubstring.replace("\"", "").split("\\s+")[0] + "')]"));
 	}
 
 	public void deletePromotion() {
