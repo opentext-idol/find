@@ -29,8 +29,8 @@ public class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".page-title > strong"));
 	}
 
-	public WebElement promoteButton() {
-		return findElement(By.xpath(".//button[contains(text(), 'Promote')]"));
+	public WebElement promoteTheseDocumentsButton() {
+		return findElement(By.xpath(".//button[contains(text(), 'Promote these documents')]"));
 	}
 
 	public WebElement promoteTheseItemsButton() {
@@ -43,7 +43,7 @@ public class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public String createAPromotion() {
-		promoteButton().click();
+		promoteTheseDocumentsButton().click();
 		searchResultCheckbox(1).click();
 		final String promotedDocTitle = getSearchResultTitle(1);
 		promoteTheseItemsButton().click();
@@ -51,7 +51,7 @@ public class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> createAMultiDocumentPromotion(final int finalNumberOfDocs) {
-		promoteButton().click();
+		promoteTheseDocumentsButton().click();
 		final int checkboxesPerPage = 6;
 		final List<String> promotedDocTitles = new ArrayList<>();
 
@@ -134,7 +134,17 @@ public class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public boolean isPromotionsBoxVisible() {
-		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
+		return findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
+	}
+
+	public void selectLanguage(final String language) {
+		findElement(By.cssSelector(".current-language-selection")).click();
+		findElement(By.xpath(".//a[text()='" + language + "']")).click();
+		loadOrFadeWait();
+	}
+
+	public String getSelectedLanguage() {
+		return findElement(By.cssSelector(".current-language-selection")).getText();
 	}
 
 	public static class Placeholder {

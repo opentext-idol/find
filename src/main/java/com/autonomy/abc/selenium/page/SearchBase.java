@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.page;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,11 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public String getSearchResultTitle(final int searchResultNumber) {
-		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3")).getText();
+		return getSearchResult(searchResultNumber).getText();
+	}
+
+	public WebElement getSearchResult(final int searchResultNumber) {
+		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3"));
 	}
 
 	public int promotedItemsCount() {
