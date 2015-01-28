@@ -15,7 +15,7 @@ Building HP Find requires the following to be installed
 * [NodeJS](http://nodejs.org)
 * [bower](http://bower.io)
 * [r.js](http://requirejs.org/docs/optimization.html)
-* [blessc](http://blesscss.com/)
+* [bless](http://blesscss.com/)
 
 The jetty:run goal will stand up a local web server for development. The package goal will build a war file. Running with
 the production profile will minify the Javascript and CSS, and bless the CSS for older versions of Internet Explorer.

@@ -7,7 +7,7 @@ branches:
   - develop
 before_install:
 - npm install -g bower
-- npm install -g blessc
+- npm install -g bless
 - npm install -g requirejs
 script: mvn package -Pproduction
 
