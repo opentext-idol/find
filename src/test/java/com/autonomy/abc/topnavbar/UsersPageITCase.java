@@ -3,6 +3,7 @@ package com.autonomy.abc.topnavbar;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.ModalView;
+import com.autonomy.abc.selenium.page.LoginPage;
 import com.autonomy.abc.selenium.page.UsersPage;
 import org.junit.Before;
 import org.junit.Test;
@@ -206,5 +207,28 @@ public class UsersPageITCase extends ABCTestBase {
 		abcLogin("James", "d");
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
+	}
+
+	@Test
+	public void testCreateUserPermissionNoneAndTestLogin() {
+		usersPage.createUserButton().click();
+		usersPage.createNewUser("Norman", "n", "User");
+		usersPage.closeModal();
+		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Norman").isDisplayed());
+		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Norman").getText().equals("User"));
+
+		usersPage.getTableUserTypeLink("Norman").click();
+		usersPage.selectTableUserType("Norman", "None");
+		usersPage.getUserRow("Norman").findElement(By.cssSelector(".editable-submit")).click();
+		usersPage.loadOrFadeWait();
+		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Norman").isDisplayed());
+		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Norman").getText().equals("None"));
+
+		body.logout();
+		LoginPage loginPage = body.getLoginPage();
+		loginPage.login("Norman", "n");
+		loginPage = body.getLoginPage();
+		assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your username and password."));
+		assertThat("URL wrong", getDriver().getCurrentUrl().contains("login/index"));
 	}
 }
