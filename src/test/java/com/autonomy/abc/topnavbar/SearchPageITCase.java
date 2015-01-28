@@ -10,15 +10,19 @@ import com.autonomy.abc.selenium.page.PromotionsPage;
 import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class SearchPageITCase extends ABCTestBase {
 	public SearchPageITCase(final TestConfig config, final String browser, final Platform platform) {
@@ -65,7 +69,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testPromoteButton(){
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
 		assertThat("Promote these items button should not be visible", !searchPage.promoteTheseItemsButton().isDisplayed());
@@ -78,7 +82,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promotionsBucketClose();
 		assertThat("Promoted items bucket has not appeared", !searchPage.getText().contains("Select Items to Promote"));
 
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
 		assertThat("Promote these items button should not be visible", !searchPage.promoteTheseItemsButton().isDisplayed());
@@ -87,7 +91,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAddFilesToPromoteBucket() {
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 
 		for (int i = 1; i < 7; i++) {
 			AppElement.scrollIntoView(searchPage.searchResultCheckbox(i), getDriver());
@@ -170,7 +174,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testAddDocumentToPromotionsBucket() {
 		topNavBar.search("horse");
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount() == 1);
 		assertThat("File in bucket description does not match file added", searchPage.getSearchResultTitle(1).equals(searchPage.bucketDocumentTitle(1)));
@@ -179,7 +183,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testPromoteTheseItemsButtonLink() {
 		topNavBar.search("fox");
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.promoteTheseItemsButton().click();
 		assertThat("Create new promotions page not open", getDriver().getCurrentUrl().endsWith("promotions/create"));
@@ -192,7 +196,7 @@ public class SearchPageITCase extends ABCTestBase {
 		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
 
-		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
@@ -256,7 +260,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testDocumentsRemainInBucket() {
 		topNavBar.search("cow");
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.searchResultCheckbox(2).click();
 		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount() == 2);
@@ -342,7 +346,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testDeleteDocsFromWithinBucket() {
 		topNavBar.search("sabre");
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.searchResultCheckbox(2).click();
 		searchPage.searchResultCheckbox(3).click();
@@ -350,7 +354,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		final List<String> bucketList = searchPage.promotionsBucketList();
 		assertThat("There should be four documents in the bucket", bucketList.size() == 4);
-		assertThat("promote button not displayed when bucket has documents", searchPage.promoteButton().isDisplayed());
+		assertThat("promote button not displayed when bucket has documents", searchPage.promoteTheseDocumentsButton().isDisplayed());
 
 		for (final String bucketDocTitle : bucketList) {
 			final int docIndex = bucketList.indexOf(bucketDocTitle);
@@ -389,4 +393,45 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("promote button should not be displayed when bucket has no documents", !searchPage.promoteTheseItemsButton().isDisplayed());
 	}
 
+	@Test
+	public void testViewFrame() throws InterruptedException {
+		topNavBar.search("army");
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+
+		for (int j = 1; j <= 2; j++) {
+			for (int i = 1; i <= 6; i++) {
+				final String handle = getDriver().getWindowHandle();
+				final String searchResultTitle = searchPage.getSearchResultTitle(i);
+				searchPage.getSearchResult(i).click();
+
+				Thread.sleep(7000);
+
+				getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+				assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText().contains(searchResultTitle));
+
+				getDriver().switchTo().window(handle);
+				getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
+				searchPage.loadOrFadeWait();
+			}
+
+			searchPage.forwardPageButton().click();
+			searchPage.loadOrFadeWait();
+		}
+	}
+
+	@Test
+	public void testChangeLanguage() {
+		String docTitle = searchPage.getSearchResultTitle(1);
+		topNavBar.search("1");
+
+		for (final String language : Arrays.asList("English", "Afrikaans", "French", "Arabic", "Urdu", "Hindi", "Chinese", "Swahili")) {
+			searchPage.selectLanguage(language);
+			assertEquals(language, searchPage.getSelectedLanguage());
+
+			new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+			assertNotEquals(docTitle, searchPage.getSearchResultTitle(1));
+
+			docTitle = searchPage.getSearchResultTitle(1);
+		}
+	}
 }
