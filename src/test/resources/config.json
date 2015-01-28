@@ -29,6 +29,11 @@
             "name": "IDOL StatsServer",
             "host": "localhost",
             "port": 19870
+        },
+        "VIEW": {
+            "name": "View",
+            "host": "localhost",
+            "port": 9080
         }
     }
 }

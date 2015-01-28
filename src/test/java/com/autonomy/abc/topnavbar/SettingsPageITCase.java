@@ -30,7 +30,7 @@ public class SettingsPageITCase extends ABCTestBase {
 
 	private SettingsPage settingsPage;
 
-	private final static EnumSet<SettingsPage.Panel> SERVER_PANELS = EnumSet.of(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.CONTENT, SettingsPage.Panel.QMS, SettingsPage.Panel.QMS_AGENTSTORE, SettingsPage.Panel.STATSSERVER);
+	private final static EnumSet<SettingsPage.Panel> SERVER_PANELS = EnumSet.of(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.CONTENT, SettingsPage.Panel.QMS, SettingsPage.Panel.QMS_AGENTSTORE, SettingsPage.Panel.STATSSERVER, SettingsPage.Panel.VIEW);
 
 	@Before
 	public void setUp() {
