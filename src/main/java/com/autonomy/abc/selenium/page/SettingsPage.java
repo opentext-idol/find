@@ -120,7 +120,8 @@ public class SettingsPage extends AppElement implements AppPage {
 		QMS("QMS"),
 		LOCALE("Locale"),
 		QMS_AGENTSTORE("QMS Agentstore"),
-		STATSSERVER("IDOL StatsServer");
+		STATSSERVER("IDOL StatsServer"),
+		VIEW("View");
 
 		private final String title;
 
