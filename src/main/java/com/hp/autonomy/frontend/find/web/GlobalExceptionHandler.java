@@ -1,3 +1,8 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.web;
 
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-/*
- * $Id: $
- *
- * Copyright (c) 2014, Autonomy Systems Ltd.
- *
- * Last modified by $Author: $ on $Date: $
- */
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {

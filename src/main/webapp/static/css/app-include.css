@@ -1,3 +1,8 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 html, body {
     min-width: 0;
     min-height: 0;
@@ -46,136 +51,9 @@ html, body {
     transition: bottom 0.5s ease;
 }
 
-.page.show-footer .body {
-    bottom: 260px;
-}
-
-.show-footer .page-footer {
-    height: 260px;
-}
-
-.page:not(.show-footer) .shown-footer-only-fade {
-    opacity: 0;
-}
-
-.show-footer .shown-footer-only-fade {
-    opacity: 1;
-}
-
-.shown-footer-only-fade {
-    -webkit-transition: opacity .2s linear;
-    transition: opacity .2s linear;
-}
-
-.page .hidden-footer-only {
-    display: inline-block;
-}
-
-.page .shown-footer-only {
-    display: none;
-}
-
-.show-footer .hidden-footer-only {
-    display: none;
-}
-
-.show-footer .shown-footer-only {
-    display: inline-block;
-}
-
-.nav.banner {
-    height: 35px;
-    width: 101px;
-    background: url('../img/hp_autn.png') no-repeat;
-    margin: 8px 0 7px;
-}
-
-.nav-user-dropdown a {
-    cursor: default;
-}
-
-.user-dropdown li.nav-user-dropdown a:hover {
-    background-color: transparent;
-    background-image: none;
-    color: rgb(51, 51, 51);
-}
-
-.hide-from-non-useradmin,
-.hide-from-non-admin {
-    display: none;
-}
-
 .centre {
     text-align: center;
 }
-
-/* jQuery UI overrides so the font is more consistent with bootstrap */
-.page .ui-widget  {
-    color: #555555;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-}
-
-.page .ui-widget input, .page .ui-widget select, .page .ui-widget textarea, .page .ui-widget button {
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-}
-
-.page .ui-widget-content {
-    color: #555555;
-}
-
-/* Override for jQuery UI's '.ui-widget-content a' selector turning links black */
-.page a {
-    color: #A01F0C;
-}
-
-.page a.btn {
-    color: #333333;
-}
-
-.page a.btn.btn-success,
-.page a.btn.btn-danger,
-.page a.btn.btn-warning,
-.page a.btn.btn-primary {
-    color: white;
-}
-
-@media (max-width: 767px) {
-    .page-wrap {
-        padding: 0 20px;
-    }
-}
-
-@media (min-width: 980px) {
-    .page .body {
-        left: 0;
-        position: fixed;
-        right: 0;
-    }
-
-    .page .body {
-        bottom: 32px;
-        top: 50px;
-        overflow: auto;
-        -webkit-transition: bottom 0.5s ease;
-        transition: bottom 0.5s ease;
-    }
-}
-
-@media (max-height: 539px) {
-    .show-footer .page-footer {
-        height: 100%;
-    }
-}
-
-@media (max-width: 979px) {
-    .show-footer .wrapper {
-        bottom: 260px;
-    }
-}
-
 
 /* find 2.0 */
 .main-content {
@@ -353,50 +231,7 @@ input.find-input {
     color: rgba(138, 113, 102, 0.96);
 }
 
-/*colourbox buttons style*/
-#colorbox .prevBtn, #colorbox .nextBtn {
-    position: fixed;
-    margin: auto;
-    top: 0;
-    bottom: 0;
-    height: 200px;
-    width: 50px;
-    z-index: 6000;
-    color: #ccc;
-}
 
-#colorbox .nextBtn {
-    right: -5px;
-}
-
-#colorbox .prevBtn {
-    left: -5px;
-}
-
-#cboxLoadedContent {
-    margin-top:28px;
-}
-
-#cboxCurrent {
-    position: absolute;
-    bottom: 4px;
-    color: #949494;
-    border-radius: 5px;
-    height: 24px;
-    left: 50%;
-    line-height: 32px;
-    margin: -16px 0 0 -100px;
-    text-align: center;
-    width: 105px;
-}
-
-#cboxClose {
-    top:0;
-}
-
-#colorbox {
-    overflow: initial;
-}
 /* fancy colourbox buttons */
 .btn-colorbox, .btn-colorbox:focus {
     color: #ffffff;
@@ -518,20 +353,20 @@ input.find-input[type="text"], input.find-input[type="text"]:focus {
     border-radius: 0;
 }
 
-input::-webkit-input-placeholder {
-    color: indianred;
-    opacity: 0.5;
-}
-
+input::-webkit-input-placeholder,
 input::-moz-placeholder {
     color: indianred;
     opacity: 0.5;
 }
 
-.find-input::-webkit-input-placeholder::before { font-family: fontAwesome; content:'\f105'; color: indianred }
-.find-input::-moz-placeholder::before  { font-family: fontAwesome; content:'\f105'; color: indianred } /* firefox 19+ */
-.find-input:-ms-input-placeholder::before  { font-family: fontAwesome; content:'\f105'; color: indianred } /* ie */
-input:-moz-placeholder::before  { font-family: fontAwesome; content:'\f105'; color: indianred }
+.find-input::-webkit-input-placeholder::before,
+.find-input::-moz-placeholder::before,
+.find-input:-ms-input-placeholder::before,
+input:-moz-placeholder::before {
+    font-family: fontAwesome;
+    content: '\f105';
+    color: indianred
+}
 
 .page .header {
     margin-bottom: 20px;
@@ -546,8 +381,28 @@ input:-moz-placeholder::before  { font-family: fontAwesome; content:'\f105'; col
     background: none;
 }
 
-
-
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 {
     color: rgba(138, 113, 102, 0.96);
+}
+
+@media (max-width: 767px) {
+    .page-wrap {
+        padding: 0 20px;
+    }
+}
+
+@media (min-width: 980px) {
+    .page .body {
+        left: 0;
+        position: fixed;
+        right: 0;
+    }
+
+    .page .body {
+        bottom: 32px;
+        top: 50px;
+        overflow: auto;
+        -webkit-transition: bottom 0.5s ease;
+        transition: bottom 0.5s ease;
+    }
 }

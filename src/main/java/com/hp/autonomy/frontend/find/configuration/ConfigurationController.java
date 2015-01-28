@@ -1,3 +1,8 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.configuration;
 
 import com.hp.autonomy.frontend.configuration.ConfigException;
@@ -15,14 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-/*
- * $Id: //depot/products/frontend/site-admin/trunk/webapp/src/main/java/com/autonomy/controlcentre/configuration/ConfigurationController.java#19 $
- *
- * Copyright (c) 2013, Autonomy Systems Ltd.
- *
- * Last modified by $Author: matthew.gordon2 $ on $Date: 2013/11/22 $
- */
 
 @Controller
 @RequestMapping({"/api/useradmin/config", "/api/config/config"})

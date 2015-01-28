@@ -1,6 +1,6 @@
-log.level.autn=debug
+#
+# Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+# Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+#
 
-hibernate.show_sql=true
-# Set this to 'true' if you want to update the schema, but be careful
-# not to cause problems for people with different data models.
-hibernate.update_schema=false
+log.level.autn=debug
