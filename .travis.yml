@@ -9,5 +9,6 @@ before_install:
 - npm install -g bower
 - npm install -g bless
 - npm install -g requirejs
-script: mvn package -Pproduction
+before_script: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -P production
+script: mvn package -P production
 
