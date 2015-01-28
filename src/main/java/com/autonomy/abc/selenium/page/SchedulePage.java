@@ -77,15 +77,18 @@ public class SchedulePage extends AppElement implements AppPage{
 
 	public void datepickerYearSelect(final String year) {
 		getDriver().findElement(By.xpath(".//span[contains(@class, 'year')][text()='" + year + "']")).click();
+		loadOrFadeWait();
 	}
 
 	public void datepickerMonthSelect(final String month) {
 		getDriver().findElement(By.xpath(".//span[contains(@class, 'month')][text()='" + month + "']")).click();
+		loadOrFadeWait();
 	}
 
 	public void datepickerDaySelect(final String day) {
 		final String strippedDay = StringUtils.stripStart(day, "0");
-		getDriver().findElement(By.xpath(".//td[@class='day'][text()='" + strippedDay + "']")).click();
+		getDriver().findElement(By.xpath(".//td[@class='day' or @class='day active' or @class='day active today'][text()='" + strippedDay + "']")).click();
+		loadOrFadeWait();
 	}
 
 	// frequency can contain values 'Daily', 'Weekly', 'Monthly' or 'Yearly'
@@ -97,6 +100,22 @@ public class SchedulePage extends AppElement implements AppPage{
 
 	public String readFrequency() {
 		return findElement(By.cssSelector(".current-frequency")).getText();
+	}
+
+	public Date getTodayDate() {
+		return new Date();
+	}
+
+	public int getDay() {
+		return Integer.parseInt((new SimpleDateFormat("dd")).format(getTodayDate()));
+	}
+
+	public String getMonth() {
+		return (new SimpleDateFormat("MMMMMMMMM")).format(getTodayDate());
+	}
+
+	public String dateAsString(final Date date) {
+		return (new SimpleDateFormat("dd/MM/YYYY")).format(date);
 	}
 
 	public static class Placeholder {
