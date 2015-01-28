@@ -61,7 +61,7 @@ public class UsersPage extends AppElement implements AppPage {
 
 	public void deleteOtherUsers() {
 		for (final WebElement deleteButton : getTable().findElements(By.cssSelector("button"))) {
-			if (!deleteButton.getAttribute("class").contains("disabled")) {
+			if (!isAttributePresent(deleteButton, "disabled")) {
 				loadOrFadeWait();
 				deleteButton.click();
 				loadOrFadeWait();
