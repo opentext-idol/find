@@ -60,7 +60,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		navBar.switchPage(NavBarTabId.OVERVIEW);
 		topNavBar.search("edit");
 
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.searchResultCheckbox(2).click();
 		searchPage.searchResultCheckbox(3).click();
@@ -87,7 +87,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
 		navBar.switchPage(NavBarTabId.OVERVIEW);
 		topNavBar.search("fast");
-		searchPage.promoteButton().click();
+		searchPage.promoteTheseDocumentsButton().click();
 
 		final List<String> searchPageBucketDocs = searchPage.promotionsBucketList();
 
@@ -255,7 +255,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		final CreateNewPromotionsPage createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers);
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
 
@@ -272,7 +272,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		final CreateNewPromotionsPage createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers);
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();

@@ -88,7 +88,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.finishSynonymWizardButton().click();
 		searchPage = body.getSearchPage();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		final List<String> searchTerms = searchPage.getSearchTermsList();
 		assertThat("Synonym group does not contain 'stuff', 'horse', 'pony' and 'things'", searchTerms.containsAll(Arrays.asList("stuff", "horse", "pony", "things")));
 
@@ -172,7 +172,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.createSynonymGroup("dog hound canine");
 
 		searchPage = body.getSearchPage();
-		wait.until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		wait.until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		assertThat("New keyword not searched for", searchPage.searchTitle().getText().contains("dog"));
 		assertThat("New keyword not searched for", searchPage.searchTitle().getText().contains("hound"));
 		assertThat("New keyword not searched for", searchPage.searchTitle().getText().contains("canine"));
@@ -213,7 +213,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.createSynonymGroup("frog toad amphibian tadpole");
 		searchPage = body.getSearchPage();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
@@ -246,14 +246,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.createSynonymGroup("wine merlot shiraz bordeaux");
 		searchPage = body.getSearchPage();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.createSynonymGroup("wine red scarlet burgundy");
 		searchPage = body.getSearchPage();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
@@ -469,7 +469,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.createSynonymGroup("one two three");
 		searchPage = body.getSearchPage();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.addSynonymToGroup("four", "one");
@@ -611,7 +611,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishSynonymWizardButton(), "disabled"));
 
 		createKeywordsPage.finishSynonymWizardButton().click();
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		assertThat("Synonym, group not added", keywordsPage.getSynonymGroupSynonyms("rouge").contains("red"));
 		assertThat("Synonym, group not added", keywordsPage.getSynonymGroupSynonyms("red").contains("rouge"));
@@ -638,7 +638,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishSynonymWizardButton(), "disabled"));
 
 		createKeywordsPage.finishSynonymWizardButton().click();
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("lodge").containsAll(Arrays.asList("lodge", "dodge", "podge")));
 		assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("podge").containsAll(Arrays.asList("lodge", "dodge", "podge")));
@@ -797,7 +797,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Blacklisted term not created", keywordsPage.getBlacklistedTerms().contains("wizard"));
 
 		topNavBar.search("wizard");
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
 		assertThat("you searched for incorrect", searchPage.youSearchedFor().contains("wizard"));
 		assertThat("Keywords incorrect", searchPage.getBlacklistedTerms().contains("wizard"));

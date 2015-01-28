@@ -70,7 +70,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 		createPromotionsPage.finishButton().click();
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining("animal").click();
@@ -273,7 +273,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 		createPromotionsPage.finishButton().click();
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining("delta").click();
@@ -320,7 +320,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 		createPromotionsPage.finishButton().click();
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
