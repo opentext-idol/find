@@ -14,7 +14,8 @@
     "**/.*",
     "node_modules",
     "src/main/webapp/static/lib",
-    "src/main/test"
+    "src/main/test",
+    "mockups"
   ],
   "dependencies": {
     "backbone": "backbone#~1.1.0",
