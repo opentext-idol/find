@@ -17,8 +17,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -261,7 +259,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final CreateNewPromotionsPage createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers);
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
 
@@ -273,12 +271,13 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	private List <String> setUpANewMultiDocPromotion(final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs) {
 		topNavBar.search(navBarSearchTerm);
+		topNavBar.loadOrFadeWait();
 		searchPage = body.getSearchPage();
 		final List<String> promotedDocTitles = searchPage.createAMultiDocumentPromotion(numberOfDocs);
 		final CreateNewPromotionsPage createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers);
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
@@ -298,7 +297,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		createPromotionsPage.addSearchTrigger(searchTriggers);
 		createPromotionsPage.finishButton().click();
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteButton()));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		navBar.getTab(NavBarTabId.PROMOTIONS).click();
 		promotionsPage = body.getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
@@ -309,12 +308,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testSchedulePromotionForTomorrow() {
-		final Date date = new Date();
-		final SimpleDateFormat day = new SimpleDateFormat("dd");
-		final SimpleDateFormat month = new SimpleDateFormat("MMMMMMMMM");
-		final SimpleDateFormat today = new SimpleDateFormat("dd/MM/YYYY");
-		final String stringDay = day.format(date);
-
 		setUpANewMultiDocPromotion("wizard", "Sponsored", "wand magic spells", 4);
 		promotionsPage.schedulePromotion();
 
@@ -334,20 +327,20 @@ public class PromotionsPageITCase extends ABCTestBase {
 		schedulePage.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText().contains("When should this promotion start and end?"));
 
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), today.format(date));
-		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), today.format(DateUtils.addDays(date, 1)));
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(schedulePage.getTodayDate()));
+		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
 
 		schedulePage.startDateTextBox().click();
-		assertEquals(schedulePage.getSelectedDayOfMonth(), Integer.parseInt(stringDay));
-		assertEquals(schedulePage.getSelectedMonth(), month.format(date));
+		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay());
+		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth());
 
-		schedulePage.calendarDateSelect(DateUtils.addDays(date, 1));
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), today.format(DateUtils.addDays(date, 1)));
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 1));
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
 		final String startDate = schedulePage.startDateTextBox().getAttribute("value");
 
 		schedulePage.endDateTextBox().click();
-		schedulePage.calendarDateSelect(DateUtils.addDays(date, 5));
-		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), today.format(DateUtils.addDays(date, 5)));
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 5));
+		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 5)));
 		final String endDate = schedulePage.endDateTextBox().getAttribute("value");
 
 		schedulePage.continueButton("scheduleTimes").click();
@@ -375,6 +368,122 @@ public class PromotionsPageITCase extends ABCTestBase {
 		schedulePage.loadOrFadeWait();
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
 		assert(promotionsPage.getText().contains("The promotion is always active"));
+
+		topNavBar.search("magic");
+		topNavBar.loadOrFadeWait();
+		searchPage = body.getSearchPage();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+		assertThat("promotions are scheduled to be shown now", searchPage.isPromotionsBoxVisible());
+	}
+
+	@Test
+	public void testScheduleStartBeforeEnd() {
+		setUpANewMultiDocPromotion("cone", "Hotwire", "\"ice cream\" chips", 4);
+		promotionsPage.schedulePromotion();
+
+		schedulePage = body.getSchedulePage();
+		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("schedule"));
+		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
+		assertThat("Finish button not visible", schedulePage.finishButton("enableSchedule").isDisplayed());
+		assertThat("Finish button should be disabled", schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+
+		schedulePage.alwaysActive().click();
+		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+
+		schedulePage.schedule().click();
+		assertThat("Continue button should be present", schedulePage.continueButton("enableSchedule").isDisplayed());
+
+		schedulePage.alwaysActive().click();
+		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+
+		schedulePage.schedule().click();
+		assertThat("Continue button should be present", schedulePage.continueButton("enableSchedule").isDisplayed());
+
+		schedulePage.continueButton("enableSchedule").click();
+		schedulePage.loadOrFadeWait();
+		assertThat("Wrong wizard text", schedulePage.getText().contains("When should this promotion start and end?"));
+
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(schedulePage.getTodayDate()));
+		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
+
+		schedulePage.startDateTextBox().click();
+		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay());
+		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth());
+
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 3));
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 3)));
+
+		schedulePage.endDateTextBox().click();
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 2));
+		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2)));
+
+		assert(getDriver().findElement(By.cssSelector(".wizard")).getText().contains("End date cannot be before the start date"));
+		assertThat("Continue button should be disabled", schedulePage.isAttributePresent(schedulePage.continueButton("scheduleTimes"), "disabled"));
+
+		schedulePage.endDateTextBox().click();
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 4));
+		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 4)));
+		String endDate = schedulePage.endDateTextBox().getAttribute("value");
+
+		assert(!getDriver().findElement(By.cssSelector(".wizard")).getText().contains("End date cannot be before the start date"));
+		assertThat("Continue button should be enabled", !schedulePage.isAttributePresent(schedulePage.continueButton("scheduleTimes"), "disabled"));
+
+		schedulePage.startDateTextBox().click();
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 9));
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 9)));
+
+		assert(getDriver().findElement(By.cssSelector(".wizard")).getText().contains("End date cannot be before the start date"));
+		assertThat("Continue button should be disabled", schedulePage.isAttributePresent(schedulePage.continueButton("scheduleTimes"), "disabled"));
+
+		schedulePage.startDateTextBox().click();
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 2));
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2)));
+
+		assert(!getDriver().findElement(By.cssSelector(".wizard")).getText().contains("End date cannot be before the start date"));
+		assertThat("Continue button should be enabled", !schedulePage.isAttributePresent(schedulePage.continueButton("scheduleTimes"), "disabled"));
+
+		String startDate = schedulePage.startDateTextBox().getAttribute("value");
+		schedulePage.continueButton("scheduleTimes").click();
+		schedulePage.loadOrFadeWait();
+		assertThat("Wrong wizard text", schedulePage.getText().contains("How often should this promotion run?"));
+
+		schedulePage.selectFrequency("Daily");
+		assertEquals(schedulePage.readFrequency(), "Daily");
+
+		schedulePage.finishButton("scheduleFrequency").click();
+		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
+		assert(promotionsPage.getText().contains("The promotion is scheduled to run daily, starting from " + startDate + " and ending on " + endDate));
+
+		topNavBar.search("chips");
+		topNavBar.loadOrFadeWait();
+		searchPage = body.getSearchPage();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+		assertThat("promotions aren't scheduled to be shown now", !searchPage.isPromotionsBoxVisible());
+
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+		promotionsPage.getPromotionLinkWithTitleContaining("chips").click();
+		promotionsPage.schedulePromotion();
+		schedulePage.schedule().click();
+		schedulePage.continueButton("enableSchedule").click();
+		schedulePage.loadOrFadeWait();
+
+		schedulePage.startDateTextBox().click();
+		schedulePage.calendarDateSelect(schedulePage.getTodayDate());
+		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(schedulePage.getTodayDate()));
+
+		startDate = schedulePage.startDateTextBox().getAttribute("value");
+		endDate = schedulePage.endDateTextBox().getAttribute("value");
+
+		schedulePage.continueButton("scheduleTimes").click();
+		schedulePage.loadOrFadeWait();
+		assertThat("Wrong wizard text", schedulePage.getText().contains("How often should this promotion run?"));
+
+		schedulePage.selectFrequency("Daily");
+		assertEquals(schedulePage.readFrequency(), "Daily");
+
+		schedulePage.finishButton("scheduleFrequency").click();
+		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
+		assert(promotionsPage.getText().contains("The promotion is scheduled to run daily, starting from " + startDate + " and ending on " + endDate));
 
 		topNavBar.search("magic");
 		topNavBar.loadOrFadeWait();
