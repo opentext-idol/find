@@ -1,0 +1,10 @@
+language: java
+jdk:
+- oraclejdk7
+branches:
+  only:
+  - master
+  - develop
+install: true
+script: mvn test -P production
+

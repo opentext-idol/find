@@ -5,16 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.autonomy.frontend</groupId>
-        <artifactId>master</artifactId>
-        <version>1.0.1</version>
+        <groupId>com.hp.autonomy.frontend</groupId>
+        <artifactId>foss-master-pom</artifactId>
+        <version>1.0.0</version>
     </parent>
 
     <inceptionYear>2014</inceptionYear>
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>find</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>war</packaging>
 
     <properties>
@@ -78,6 +78,42 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>npm-install</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>npm</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>install</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>bower</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>node</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/node_modules/bower/bin/bower</argument>
+                                        <argument>install</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>1.7</version>
@@ -101,23 +137,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.searls</groupId>
-                        <artifactId>jasmine-maven-plugin</artifactId>
-                        <version>1.3.1.3</version>
-                        <configuration>
-                            <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
-                            <customRunnerTemplate>${basedir}/src/test/js/lib/js-testing/spec-runner.html</customRunnerTemplate>
-                            <customRunnerConfiguration>${basedir}/src/test/js/test-config.json</customRunnerConfiguration>
-                            <jsSrcDir>${basedir}/src/main/webapp/static</jsSrcDir>
-                            <jsTestSrcDir>${basedir}/src/test/js</jsTestSrcDir>
-                            <specDirectoryName>test</specDirectoryName>
-                            <specIncludes>
-                                <include>spec/**/*</include>
-                            </specIncludes>
-                            <webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -143,7 +162,7 @@
                         </executions>
                         <configuration>
                             <configFile>${basedir}/build.js</configFile>
-                            <optimizerFile>${basedir}/src/main/webapp/static/lib/require/r.js</optimizerFile>
+                            <optimizerFile>${basedir}/node_modules/requirejs/bin/r.js</optimizerFile>
                             <filterConfig>true</filterConfig>
                             <skip>false</skip>
                         </configuration>
@@ -151,23 +170,54 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2.1</version>
+                        <version>1.3.1</version>
                         <executions>
                             <execution>
+                                <id>npm-install</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>npm</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>install</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>bower</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>node</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/node_modules/bower/bin/bower</argument>
+                                        <argument>install</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>bless</id>
                                 <phase>process-classes</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <executable>node</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/node_modules/bless/bin/blessc</argument>
+                                        <argument>-f</argument>
+                                        <argument>target/${project.artifactId}/static/css/app.css</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <executable>/usr/local/bin/blessc</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>-f</argument>
-                                <argument>target/${project.artifactId}/static/css/app.css</argument>
-                            </arguments>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -236,31 +286,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.searls</groupId>
-                        <artifactId>jasmine-maven-plugin</artifactId>
-                        <version>1.3.1.3</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <keepServerAlive>true</keepServerAlive>
-                            <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
-                            <customRunnerTemplate>${basedir}/src/test/js/lib/js-testing/spec-runner.html</customRunnerTemplate>
-                            <customRunnerConfiguration>${basedir}/src/test/js/test-config.json</customRunnerConfiguration>
-                            <jsSrcDir>${basedir}/src/main/webapp/static</jsSrcDir>
-                            <jsTestSrcDir>${basedir}/src/test/js</jsTestSrcDir>
-                            <specDirectoryName>test</specDirectoryName>
-                            <specIncludes>
-                                <include>spec/**/*</include>
-                            </specIncludes>
-                            <webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>com.github.timurstrekalov</groupId>
@@ -342,6 +367,9 @@
                         <fileset>
                             <directory>src/test/js/lib</directory>
                         </fileset>
+                        <fileset>
+                            <directory>node_modules</directory>
+                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
@@ -365,7 +393,6 @@
                 <version>2.4</version>
                 <configuration>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                    <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
             <plugin>
@@ -513,180 +540,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.jquery</groupId>
-            <artifactId>jquery</artifactId>
-            <version>1.10.2</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jquery</groupId>
-            <artifactId>jquery-ui-redmond</artifactId>
-            <version>1.10.3b</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.documentcloud</groupId>
-            <artifactId>underscore</artifactId>
-            <version>1.5.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.documentcloud</groupId>
-            <artifactId>backbone</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.davegandy</groupId>
-            <artifactId>fontawesome</artifactId>
-            <version>3.2.1</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.exacttarget</groupId>
-            <artifactId>fuelux</artifactId>
-            <version>2.5.1b</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.d3js</groupId>
-            <artifactId>d3</artifactId>
-            <version>3.3.8</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.googlecode</groupId>
-            <artifactId>excanvas</artifactId>
-            <version>r73</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.flotcharts</groupId>
-            <artifactId>flot</artifactId>
-            <version>0.8.2</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.googlecode</groupId>
-            <artifactId>html5shiv</artifactId>
-            <version>3.6.2-pre</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json.js</artifactId>
-            <version>2012-10-08</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>vitalets.github.com</groupId>
-            <artifactId>x-editable</artifactId>
-            <version>1.4.5</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.momentjs</groupId>
-            <artifactId>moment</artifactId>
-            <version>1.7.2</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy</groupId>
-            <artifactId>polyfill</artifactId>
-            <version>1.0</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>js-testing</artifactId>
-            <version>1.2.0</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend.frontend-lib</groupId>
-            <artifactId>javascript-utils</artifactId>
-            <version>1.3.1</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend.settings-page</groupId>
-            <artifactId>settings-page</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jacklmoore</groupId>
-            <artifactId>colorbox</artifactId>
-            <version>1.5.10b</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.datatables</groupId>
-            <artifactId>datatables</artifactId>
-            <version>1.9.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sh.aaron.brandon</groupId>
-            <artifactId>jquery-mousewheel</artifactId>
-            <version>3.0.6</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.mbraak</groupId>
-            <artifactId>jqtree</artifactId>
-            <version>0.17.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>scroll-near-end</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.trentrichardson</groupId>
-            <artifactId>timepicker</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>bootstrap-theme</artifactId>
-            <version>2.3.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>login-page</artifactId>
-            <version>1.1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>about-page</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.autonomy.frontend</groupId>
-            <artifactId>config-wizard</artifactId>
-            <version>1.1.1</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
         </dependency>
     </dependencies>
 

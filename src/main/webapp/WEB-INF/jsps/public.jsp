@@ -1,5 +1,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%--
+  ~ Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+  ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+  --%>
+
 <spring:eval expression="@dispatcherProperties['application.version']" var="applicationVersion"/>
 
 <!DOCTYPE html>
@@ -15,9 +20,7 @@
         <![endif]-->
         <link rel="stylesheet" type="text/css" href="../static-${applicationVersion}/css/app.css"/>
 
-        <!--[if IE]>
-        <script type="text/javascript" src="../static-${applicationVersion}/lib/excanvas/excanvas.js"></script><![endif]-->
-        <script type="text/javascript" src="../static-${applicationVersion}/lib/require/require.js" data-main="../static-${applicationVersion}/js/public.js"></script>
+        <script type="text/javascript" src="../static-${applicationVersion}/lib/requirejs/require.js" data-main="../static-${applicationVersion}/js/public.js"></script>
     </head>
     <body>
         <div class="page">

@@ -1,14 +1,13 @@
-@import '../lib/frontend-bootstrap-theme/css/bootstrap-custom.css';
-@import '../lib/bootstrap/css/bootstrap-responsive.css';
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+@import 'bootstrap-custom.css';
+@import '../lib/hp-autonomy-bootstrap-2/bootstrap/css/bootstrap-responsive.css';
 @import '../lib/fontawesome/css/font-awesome.css';
-@import '../lib/jquery-ui/css/jquery.ui.all.css';
-@import "../lib/colorbox/css/colorbox.css";
-@import "../lib/timepicker/css/jquery-ui-timepicker-addon.css";
-@import "../lib/x-editable/css/bootstrap-editable.css";
-@import "../lib/datatables/css/DT_bootstrap.css";
-@import "../lib/fuelux/css/fuelux-nobootstrap.css";
-@import "../lib/jqtree/css/jqtree.css";
-@import "../lib/settings/css/settings.css";
-@import "../lib/javascript-utils/css/javascript-utils.css";
-@import "../lib/about-page/css/about-page.css";
+@import "../lib/colorbox/example1/colorbox.css";
+@import "../lib/hp-autonomy-settings-page/src/css/settings.css";
+@import "../lib/hp-autonomy-js-whatever/src/css/javascript-utils.css";
 @import 'app-include.css';
+@import 'colorbox.css';

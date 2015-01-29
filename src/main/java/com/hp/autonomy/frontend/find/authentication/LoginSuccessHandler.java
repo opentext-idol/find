@@ -1,3 +1,8 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.authentication;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,13 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Service;
 
-/*
- * $Id: //depot/products/frontend/site-admin/trunk/webapp/src/main/java/com/autonomy/controlcentre/authentication/LoginController.java#11 $
- *
- * Copyright (c) 2013, Autonomy Systems Ltd.
- *
- * Last modified by $Author: luca.mandrioli $ on $Date: 2014/01/06 $
- */
 @Service
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 

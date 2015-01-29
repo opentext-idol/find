@@ -1,0 +1,49 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+/*colourbox buttons style*/
+#colorbox .prevBtn, #colorbox .nextBtn {
+    position: fixed;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    height: 200px;
+    width: 50px;
+    z-index: 6000;
+    color: #ccc;
+}
+
+#colorbox .nextBtn {
+    right: -5px;
+}
+
+#colorbox .prevBtn {
+    left: -5px;
+}
+
+#cboxLoadedContent {
+    margin-top:28px;
+}
+
+#cboxCurrent {
+    position: absolute;
+    bottom: 4px;
+    color: #949494;
+    border-radius: 5px;
+    height: 24px;
+    left: 50%;
+    line-height: 32px;
+    margin: -16px 0 0 -100px;
+    text-align: center;
+    width: 105px;
+}
+
+#cboxClose {
+    top:0;
+}
+
+#colorbox {
+    overflow: initial;
+}
