@@ -393,7 +393,6 @@
                 <version>2.4</version>
                 <configuration>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                    <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>
             <plugin>
