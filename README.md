@@ -1,4 +1,6 @@
 # HP Find
+[![Build Status](https://travis-ci.org/hpautonomy/find.svg?branch=master)](https://travis-ci.org/hpautonomy/find)
+
 HP Find is a web application backed by [IDOL OnDemand](https://www.idolondemand.com)
 
 A live preview of HP Find can be found at [find.idolondemand.com](http://find.idolondemand.com).
