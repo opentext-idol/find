@@ -18,6 +18,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class CreateNewPromotionsITCase extends ABCTestBase {
 
@@ -437,5 +438,18 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 			notifications.notificationNumber(1).click();
 			assertThat("notification link has not directed back to the promotions page", getDriver().getCurrentUrl().contains("promotions/detail/spotlight"));
 		}
+	}
+
+	@Test
+	public void testPromoteButtonInactiveWithEmptyBucketAfterPromotion() {
+		createPromotionsPage.navigateToTriggers();
+		createPromotionsPage.addSearchTrigger("fox luke");
+		createPromotionsPage.finishButton().click();
+		createPromotionsPage.loadOrFadeWait();
+
+		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		searchPage.promoteTheseDocumentsButton().click();
+		assertEquals(0, searchPage.promotionsBucketWebElements().size());
+		assertThat("promote these items button should be hidden", !searchPage.promoteTheseItemsButton().isDisplayed());
 	}
 }

@@ -30,7 +30,7 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		keywordsPage = body.getKeywordsPage();
 		keywordsPage.createNewKeywordsButton().click();
 		createNewKeywordsPage = body.getCreateKeywordsPage();
-		createNewKeywordsPage.createSynonymGroup("John Juan JO");
+		createNewKeywordsPage.createSynonymGroup("John Juan JO", "English");
 		body.getNotifications();
 		final int number = notifications.countNotifications();
 		System.out.println(number);
