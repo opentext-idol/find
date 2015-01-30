@@ -21,7 +21,7 @@ public class CreateNewPromotionsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement pinToPosition() {
-		return findElement(By.cssSelector("[data-promotion-type='PIN_TO_POSITION']"));
+		return findElement(By.cssSelector("[data-option='PIN_TO_POSITION']"));
 	}
 
 	public WebElement continueButton(final String dataStep) {

@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -138,8 +139,13 @@ public class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public void selectLanguage(final String language) {
-		findElement(By.cssSelector(".current-language-selection")).click();
-		findElement(By.xpath(".//a[text()='" + language + "']")).click();
+		findElement(By.cssSelector(".search-page-controls .current-language-selection")).click();
+
+		final WebElement element = findElement(By.cssSelector(".search-page-controls")).findElement(By.xpath(".//a[text()='" + language + "']"));
+		// IE doesn't like clicking dropdown elements
+		final JavascriptExecutor executor = (JavascriptExecutor)getDriver();
+		executor.executeScript("arguments[0].click();", element);
+
 		loadOrFadeWait();
 	}
 

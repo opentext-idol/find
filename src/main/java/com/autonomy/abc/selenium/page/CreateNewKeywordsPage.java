@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page;
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -22,7 +23,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	}
 
 	public WebElement keywordsType(final String type) {
-		return findElement(By.cssSelector("[data-keywords-type='" + type + "']"));
+		return findElement(By.cssSelector("[data-option='" + type + "']"));
 	}
 
 	public WebElement cancelWizardButton(final String dataType) {
@@ -76,23 +77,30 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		return findElements(By.cssSelector(".remove-word")).size();
 	}
 
-	public void createSynonymGroup(final String synonymGroup) {
+	public void createSynonymGroup(final String synonymGroup, final String language) {
 		keywordsType("SYNONYMS").click();
 		continueWizardButton("type").click();
+		loadOrFadeWait();
+		selectLanguage(language);
+		continueWizardButton("language").click();
+		loadOrFadeWait();
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
 		finishSynonymWizardButton().click();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-bucket-button")));
 	}
 
-	public void createBlacklistedTerm(final String blacklistedTerm) {
+	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
 		keywordsType("BLACKLISTED").click();
 		continueWizardButton("type").click();
+		loadOrFadeWait();
+		selectLanguage(language);
+		continueWizardButton("language").click();
 		loadOrFadeWait();
 		addBlacklistedTerm(blacklistedTerm);
 		loadOrFadeWait();
 		finishBlacklistWizardButton().click();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-filter .form-control")));
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle")));
 	}
 
 	private void addBlacklistedTerm(final String blacklistedTerm) {
@@ -116,6 +124,20 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		}
 
 		return keywordsList;
+	}
+
+	public WebElement languagesSelectBox() {
+		return findElement(By.cssSelector("[data-step='language'] .dropdown-toggle"));
+	}
+
+	public void selectLanguage(final String language) {
+		languagesSelectBox().click();
+		loadOrFadeWait();
+		final WebElement element = findElement(By.cssSelector("[data-step='language'] .dropdown-menu")).findElement(By.xpath(".//a[contains(text(), '" + language + "')]"));
+		// IE doesn't want to click the dropdown elements
+		final JavascriptExecutor executor = (JavascriptExecutor)getDriver();
+		executor.executeScript("arguments[0].click();", element);
+		loadOrFadeWait();
 	}
 
 	public static class Placeholder {
