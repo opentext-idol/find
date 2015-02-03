@@ -207,13 +207,13 @@ public class SearchPageITCase extends ABCTestBase {
 		promotionsPage.loadOrFadeWait();
 		assertThat("Summary size should equal 2", searchPage.getPromotionSummarySize() == 2);
 
-		searchPage.showMoreButton();
+		searchPage.showMore();
 		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize() == 5);
 
 		searchPage.showLessButton();
 		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize() == 2);
 
-		searchPage.showMoreButton();
+		searchPage.showMore();
 		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize() == 5);
 
 		assertThat("Back to start button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class").contains("disabled"));
@@ -433,5 +433,26 @@ public class SearchPageITCase extends ABCTestBase {
 
 			docTitle = searchPage.getSearchResultTitle(1);
 		}
+	}
+
+	@Test
+	public void testLanguageDisabledWhenBucketOpened() {
+		searchPage.selectLanguage("Hindi");
+		topNavBar.search("पपीहा");
+		searchPage.loadOrFadeWait();
+		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+
+		searchPage.promoteTheseDocumentsButton().click();
+		assertThat("Languages should be disabled", searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+
+		searchPage.promotionsBucketClose();
+		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+
+		searchPage.selectLanguage("Arabic");
+		searchPage.promoteTheseDocumentsButton().click();
+		assertThat("Languages should be disabled", searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+
+		searchPage.promotionsBucketClose();
+		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
 	}
 }
