@@ -97,4 +97,11 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return  getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
 	}
 
+	public WebElement languageButton() {
+		return findElement(By.cssSelector(".search-page-controls .dropdown-toggle"));
+	}
+
+	public int countSearchResults() {
+		return Integer.parseInt(findElement(By.cssSelector(".results-count")).getText());
+	}
 }

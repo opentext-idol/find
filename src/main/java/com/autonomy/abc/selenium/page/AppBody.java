@@ -19,6 +19,7 @@ public class AppBody extends AppElement {
 	private final SearchPage.Placeholder searchPage;
 	private final LoginPage.Placeholder loginPage;
 	private final CreateNewPromotionsPage.Placeholder createPromotionsPage;
+	private final CreateNewDynamicPromotionsPage.Placeholder dynamicPromotionsPage;
 	private final SchedulePage.Placeholder schedulePage;
 	private final CreateNewKeywordsPage.Placeholder createKeywordsPage;
 	private final TopNavBar topNavBar;
@@ -43,6 +44,7 @@ public class AppBody extends AppElement {
 		this.searchPage = new SearchPage.Placeholder(topNavBar);
 		this.loginPage = new LoginPage.Placeholder(topNavBar);
 		this.createPromotionsPage = new CreateNewPromotionsPage.Placeholder(topNavBar);
+		this.dynamicPromotionsPage = new CreateNewDynamicPromotionsPage.Placeholder(topNavBar);
 		this.schedulePage = new SchedulePage.Placeholder(topNavBar);
 		this.createKeywordsPage = new CreateNewKeywordsPage.Placeholder(topNavBar);
 		this.topNavBar = new TopNavBar(driver);
@@ -83,8 +85,12 @@ public class AppBody extends AppElement {
 		return createPromotionsPage.$createNewPromotionsPage(getDriver().findElement(By.cssSelector(".page-container")));
 	}
 
+	public CreateNewDynamicPromotionsPage getCreateNewDynamicPromotionsPage() {
+		return dynamicPromotionsPage.$createNewDynamicPromotionsPage(getDriver().findElement(By.xpath(".//h2[text()='Promotions']/../../..")));
+	}
+
 	public SchedulePage getSchedulePage() {
-		return schedulePage.$schedulePage(getDriver().findElement(By.xpath(".//h2[contains(text(), 'Schedule')]/../../..")));
+		return schedulePage.$schedulePage(getDriver().findElement(By.xpath(".//h2[contains(text(), 'Schedule')]/../../..")).findElement(By.cssSelector(".wizard")));
 	}
 
 	public CreateNewKeywordsPage getCreateKeywordsPage() {

@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PromotionsPage extends AppElement implements AppPage {
@@ -170,6 +171,71 @@ public class PromotionsPage extends AppElement implements AppPage {
 	public WebElement addMorePromotedItemsButton() {
 		return findElement(By.xpath(".//a[contains(text(), 'Add More')]"));
 
+	}
+
+		public List<String> getDynamicPromotedList(final boolean fullList) {
+			loadOrFadeWait();
+			final List<String> promotionsList = new ArrayList<>();
+
+			if (!fullList) {
+				promotionsList.addAll(getVisiblePromotionItems());
+			} else {
+				promotionsList.addAll(getVisiblePromotionItems());
+
+				if (promotionSummaryForwardButton().isDisplayed()) {
+					promotionSummaryForwardToEndButton().click();
+					loadOrFadeWait();
+					promotionsList.addAll(getVisiblePromotionItems());
+					final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
+
+					//starting at 1 because I add the results for the first page above
+					for (int i = 1; i < numberOfPages; i++) {
+						promotionSummaryBackButton().click();
+						new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(docLogo()));
+
+						promotionsList.addAll(getVisiblePromotionItems());
+					}
+				}
+			}
+
+			return promotionsList;
+	}
+
+	public WebElement promotionSummaryBackToStartButton() {
+		return getParent(findElement(By.cssSelector(".fa-angle-double-left")));
+	}
+
+	public WebElement promotionSummaryBackButton() {
+		return getParent(findElement(By.cssSelector(".fa-angle-left")));
+	}
+
+	public WebElement promotionSummaryForwardButton() {
+		return getParent(findElement(By.cssSelector(".fa-angle-right")));
+	}
+
+	public WebElement promotionSummaryForwardToEndButton() {
+		return getParent(findElement(By.cssSelector(".fa-angle-double-right")));
+	}
+	private List<String> getVisiblePromotionItems() {
+		final List<String> promotionsList = new LinkedList<>();
+
+		for (final WebElement promotionTitle : getPromotionsPage().findElements(By.cssSelector(".search-results h3 a"))) {
+			promotionsList.add(promotionTitle.getText());
+		}
+
+		return promotionsList;
+	}
+
+	public WebElement getPromotionsPage() {
+		return findElement(By.xpath(".//h2[text()='Promotions']/../../.."));
+	}
+
+	public WebElement docLogo() {
+		return findElement(By.cssSelector(".fa-file-o"));
+	}
+
+	public String getLanguage() {
+		return findElement(By.cssSelector(".promotion-language")).getText();
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {
