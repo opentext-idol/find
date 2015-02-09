@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -236,6 +237,43 @@ public class PromotionsPage extends AppElement implements AppPage {
 
 	public String getLanguage() {
 		return findElement(By.cssSelector(".promotion-language")).getText();
+	}
+
+	public WebElement promotionsSearchFilter() {
+		return findElement(By.cssSelector(".search-filter")).findElement(By.xpath(".//input[contains(@placeholder, 'Search for promotions...')]"));
+	}
+
+	public WebElement promotionsCategoryFilterButton() {
+		return findElement(By.cssSelector(".category-filter .dropdown-toggle"));
+	}
+
+	public String promotionsCategoryFilterValue() {
+		return promotionsCategoryFilterButton().findElement(By.cssSelector(".filter-type-name")).getText();
+	}
+
+	public void selectPromotionsCategoryFilter(final String filterBy) {
+		promotionsCategoryFilterButton().click();
+		findElement(By.cssSelector(".type-filter")).findElement(By.xpath(".//a[contains(text(), '" + filterBy + "')]")).click();
+		loadOrFadeWait();
+	}
+
+	public void clearPromotionsSearchFilter() {
+		promotionsSearchFilter().clear();
+		promotionsSearchFilter().sendKeys("a");
+		promotionsSearchFilter().sendKeys(Keys.BACK_SPACE);
+	}
+
+	public String getQueryText() {
+		return findElement(By.cssSelector(".query-to-promote")).getText();
+	}
+
+	public void editQueryText(final String newQueryText) {
+		findElement(By.cssSelector(".query-edit-link")).click();
+		findElement(By.cssSelector("[name='new-query']")).clear();
+		findElement(By.cssSelector("[name='new-query']")).sendKeys(newQueryText);
+		findElement(By.cssSelector(".query-edit-form [type='submit']")).click();
+		loadOrFadeWait();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".query-edit-link .fa-pencil")));
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {

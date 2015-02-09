@@ -66,15 +66,16 @@ public abstract class KeywordsBase extends AppElement implements AppPage{
 		return findElement(By.xpath(".//ul[contains(@class, 'synonyms-list')]/li[1][@data-keyword='" + synonym + "']"));
 	}
 
-	public int countSynonymLists() {
+	public int countSynonymLists(final String language) {
 		final List<String> synonymLists = new ArrayList<>();
 
-		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list-container .synonyms-list"))) {
+		for (final WebElement synonymGroup : findElements(By.xpath(".//li[contains(@data-language, '" + language.toLowerCase() + "')]/../../ul[contains(@class, 'synonyms-list')]"))) {
 			if (!synonymGroup.getText().equals("")) {
 				synonymLists.add(synonymGroup.getText());
 			}
 		}
-		return synonymLists.size();
+
+		return synonymLists.size() - getBlacklistedTerms().size();
 	}
 
 	public void deleteBlacklistedTerm(final String blacklistedTerm) {

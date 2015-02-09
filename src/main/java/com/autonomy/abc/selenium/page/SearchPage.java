@@ -206,6 +206,68 @@ public class SearchPage extends SearchBase implements AppPage {
 		return promotionsList;
 	}
 
+	private List<String> getVisiblePromotionLabels() {
+		final List<String> labelList = new LinkedList<>();
+
+		for (final WebElement labelTitle : findElements(By.cssSelector(".promotions-list .promotion-name"))) {
+			labelList.add(labelTitle.getText());
+		}
+
+		return labelList;
+	}
+
+	public List<String> getPromotionSummaryLabels() {
+		loadOrFadeWait();
+		final List<String> labelList = new ArrayList<>();
+
+		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
+			labelList.addAll(getVisiblePromotionLabels());
+		} else {
+			showMore();
+			labelList.addAll(getVisiblePromotionLabels());
+
+			if (promotionSummaryForwardButton().isDisplayed()) {
+				promotionSummaryForwardToEndButton().click();
+				loadOrFadeWait();
+				labelList.addAll(getVisiblePromotionLabels());
+				final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
+
+				//starting at 1 because I add the results for the first page above
+				for (int i = 1; i < numberOfPages; i++) {
+					promotionSummaryBackButton().click();
+					new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(promotionsLabel()));
+
+					labelList.addAll(getVisiblePromotionLabels());
+				}
+			}
+		}
+
+		return labelList;
+	}
+
+	public List<String> getLanguageList() {
+		languageButton().click();
+		final List<String> languageList = new ArrayList<>();
+
+		for (final WebElement language : findElements(By.cssSelector(".search-page-controls [role='menuitem']"))) {
+			languageList.add(language.getText());
+		}
+
+		return languageList;
+	}
+
+	public void viewFrameClick(final boolean clickLogo, final int resultIndex) {
+		if (clickLogo) {
+			getDocLogo(resultIndex).click();
+		} else {
+			getSearchResult(resultIndex).click();
+		}
+	}
+
+	public WebElement getDocLogo(final int searchResultNumber) {
+		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
+	}
+
 	public static class Placeholder {
 		private final TopNavBar topNavBar;
 

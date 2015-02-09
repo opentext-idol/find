@@ -104,4 +104,49 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	public int countSearchResults() {
 		return Integer.parseInt(findElement(By.cssSelector(".results-count")).getText());
 	}
+
+	public void emptyBucket() {
+		for (final WebElement bucketItem : promotionsBucketWebElements()) {
+			bucketItem.findElement(By.cssSelector(".remove-bucket-item")).click();
+		}
+	}
+
+	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
+		return findElement(By.cssSelector(".promoted-items")).findElement(By.xpath(".//*[contains(text(), '" + docTitle + "')]"));
+	}
+
+	public WebElement getDatabasesTable() {
+		return findElement(By.cssSelector(".search-databases-table"));
+	}
+
+	public void selectDatabase(final String databaseName) {
+		if (!getSelectedDatabases().contains(databaseName) ) {
+			getDatabasesTable().findElement(By.xpath(".//td[contains(text(), '" + databaseName + "')]/..")).click();
+			loadOrFadeWait();
+		}
+	}
+
+	public void deselectDatabase(final String databaseName) {
+		final List<String> selectedDatabases = getSelectedDatabases();
+
+		if (selectedDatabases.contains(databaseName)) {
+			if (selectedDatabases.size() > 1) {
+				getDatabasesTable().findElement(By.xpath(".//td[contains(text(), '" + databaseName + "')]/..")).click();
+			} else {
+				getDatabasesTable().findElement(By.xpath(".//td[contains(text(), 'All')]/..")).click();
+			}
+
+			loadOrFadeWait();
+		}
+	}
+
+	public List<String> getSelectedDatabases() {
+		final List<String> selected = new ArrayList<>();
+
+		for (final WebElement tick : getDatabasesTable().findElements(By.xpath(".//i[@class='fa fa-check']/../.."))) {
+			selected.add(tick.findElement(By.cssSelector("td:first-child")).getText());
+		}
+
+		return selected;
+	}
 }
