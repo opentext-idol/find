@@ -16,6 +16,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -368,6 +369,36 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		list = searchPage.promotionsSummaryList(true).size();
 		searchPage.loadOrFadeWait();
 		assertEquals(promotionResultsCount, list);
+	}
+
+	@Test
+	public void testDuplicateQueryAndTriggerDifferentSpotlightType() {
+		topNavBar.search("berlin");
+		searchPage.selectLanguage("English");
+		int promotionResultsCount = searchPage.countSearchResults();
+		searchPage.promoteThisQueryButton().click();
+		searchPage.loadOrFadeWait();
+
+		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage.createDynamicPromotion("Sponsored", "Ida");
+
+		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		assertThat("promotions aren't labelled as Sponsored", searchPage.promotionsLabel().getText().equals("Sponsored"));
+
+		topNavBar.search("berlin");
+		searchPage.selectLanguage("English");
+		promotionResultsCount = promotionResultsCount + searchPage.countSearchResults();
+		searchPage.promoteThisQueryButton().click();
+		searchPage.loadOrFadeWait();
+
+		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage.createDynamicPromotion("Hotwire", "Ida");
+
+		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		final List<String> promotionLabels = searchPage.getPromotionSummaryLabels();
+		assertThat("No Hotwire labels in promotions summary", promotionLabels.contains("Hotwire"));
+		assertThat("No Sponsored labels in promotions summary", promotionLabels.contains("Sponsored"));
+		assertEquals(promotionResultsCount, searchPage.promotionsSummaryList(true).size());
 	}
 
 	@Test

@@ -111,7 +111,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testSearchResultsPagination() {
 		topNavBar.search("dog");
-		AppElement.scrollIntoView(searchPage.backToFirstPageButton(), getDriver());
+		searchPage.loadOrFadeWait();
 		assertThat("Back to first page button is not disabled", searchPage.isBackToFirstPageButtonDisabled());
 		assertThat("Back a page button is not disabled", AppElement.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
 
@@ -398,16 +398,48 @@ public class SearchPageITCase extends ABCTestBase {
 		topNavBar.search("army");
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
 
-		for (int j = 1; j <= 2; j++) {
-			for (int i = 1; i <= 6; i++) {
-				final String handle = getDriver().getWindowHandle();
-				final String searchResultTitle = searchPage.getSearchResultTitle(i);
-				searchPage.getSearchResult(i).click();
+		for (final boolean clickLogo : Arrays.asList(true, false)) {
+			for (int j = 1; j <= 2; j++) {
+				for (int i = 1; i <= 6; i++) {
+					final String handle = getDriver().getWindowHandle();
+					final String searchResultTitle = searchPage.getSearchResultTitle(i);
+					searchPage.loadOrFadeWait();
+					searchPage.viewFrameClick(clickLogo, i);
 
-				Thread.sleep(7000);
+					Thread.sleep(5000);
+
+					getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+					assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText().contains(searchResultTitle));
+
+					getDriver().switchTo().window(handle);
+					getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
+					searchPage.loadOrFadeWait();
+				}
+
+				searchPage.forwardPageButton().click();
+				searchPage.loadOrFadeWait();
+			}
+		}
+	}
+
+	@Test
+	public void testViewFromBucketLabel() throws InterruptedException {
+		topNavBar.search("جيمس");
+		searchPage.selectLanguage("Arabic");
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+		searchPage.promoteTheseDocumentsButton().click();
+
+		for (int j = 1; j <=2; j++) {
+			for (int i = 1; i <= 3; i++) {
+				final String handle = getDriver().getWindowHandle();
+				searchPage.searchResultCheckbox(i).click();
+				final String docTitle = searchPage.getSearchResultTitle(i);
+				searchPage.getPromotionBucketElementByTitle(docTitle).click();
+
+				Thread.sleep(5000);
 
 				getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
-				assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText().contains(searchResultTitle));
+				assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText().contains(docTitle));
 
 				getDriver().switchTo().window(handle);
 				getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
@@ -436,6 +468,27 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	public void testBucketEmptiesWhenLanguageChangedInURL() {
+		topNavBar.search("arc");
+		searchPage.selectLanguage("French");
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+		searchPage.promoteTheseDocumentsButton().click();
+
+		for (int i = 1; i <=4; i++) {
+			searchPage.searchResultCheckbox(i).click();
+		}
+
+		assertEquals(4, searchPage.promotionsBucketWebElements().size());
+
+		final String url = getDriver().getCurrentUrl().replace("french", "arabic");
+		getDriver().get(url);
+		searchPage = body.getSearchPage();
+		searchPage.loadOrFadeWait();
+		assertThat("Have not navigated back to search page with modified url " + url, searchPage.promoteThisQueryButton().isDisplayed());
+		assertEquals(0, searchPage.promotionsBucketWebElements().size());
+	}
+
+	@Test
 	public void testLanguageDisabledWhenBucketOpened() {
 		searchPage.selectLanguage("Hindi");
 		topNavBar.search("पपीहा");
@@ -454,5 +507,40 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.promotionsBucketClose();
 		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+	}
+
+	@Test
+	public void testSearchAlternateScriptToSelectedLanguage() {
+		for (final String language : Arrays.asList("French", "English", "Arabic", "Urdu", "Hindi", "Chinese")) {
+			searchPage.selectLanguage(language);
+
+			for (final String script : Arrays.asList("निर्वाण", "العربية", "עברית", "сценарий", "latin", "ελληνικά", "ქართული", "བོད་ཡིག")) {
+				topNavBar.search(script);
+				searchPage.loadOrFadeWait();
+				assertThat("Undesired error message", !searchPage.findElement(By.cssSelector(".search-results-view")).getText().contains("error"));
+			}
+		}
+	}
+
+	@Test
+	public void testDatabaseSelection() {
+		topNavBar.search("car");
+		searchPage.selectLanguage("English");
+		searchPage.selectDatabase("All");
+		assertThat("All databases not showing", searchPage.getSelectedDatabases().contains("All"));
+
+		searchPage.selectDatabase("WikiEnglish");
+		assertThat("Database not showing", searchPage.getSelectedDatabases().contains("WikiEnglish"));
+		final String wikiEnglishResult = searchPage.getSearchResult(1).getText();
+		searchPage.deselectDatabase("WikiEnglish");
+
+		searchPage.selectDatabase("Wookiepedia");
+		assertThat("Database not showing", searchPage.getSelectedDatabases().contains("Wookiepedia"));
+		final String wookiepediaResult = searchPage.getSearchResult(1).getText();
+		assertNotEquals(wookiepediaResult, wikiEnglishResult);
+
+		searchPage.selectDatabase("WikiEnglish");
+		assertThat("Databases not showing", searchPage.getSelectedDatabases().containsAll(Arrays.asList("Wookiepedia", "WikiEnglish")));
+		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText().equals(wookiepediaResult) || searchPage.getSearchResult(1).getText().equals(wikiEnglishResult));
 	}
 }

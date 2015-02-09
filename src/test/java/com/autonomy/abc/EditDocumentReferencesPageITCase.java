@@ -43,7 +43,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
 	@Test
 	public void testNoMixUpBetweenSearchBucketAndEditPromotionsBucket() {
-		final List<String> originalPromotedDocs = setUpANewMultiDocPromotion("luke", "Hotwire", "jedi goodGuy", 8);
+		final List<String> originalPromotedDocs = setUpANewMultiDocPromotion("English", "luke", "Hotwire", "jedi goodGuy", 8);
 		final List<String> promotedDocs = promotionsPage.getPromotedList();
 		promotionsPage.addMorePromotedItemsButton().click();
 		promotionsPage.loadOrFadeWait();
@@ -98,7 +98,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAddRemoveDocsToEditBucket() {
-		setUpANewMultiDocPromotion("yoda", "Hotwire", "green dude", 4);
+		setUpANewMultiDocPromotion("English", "yoda", "Hotwire", "green dude", 4);
 		promotionsPage.addMorePromotedItemsButton().click();
 		editReferences = body.getEditDocumentReferencesPage();
 
@@ -121,7 +121,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
 	@Test
 	public void testRefreshEditPromotionPage() throws InterruptedException {
-		setUpANewPromotion("Luke", "Hotwire", "Jedi Master");
+		setUpANewPromotion("English", "Luke", "Hotwire", "Jedi Master");
 		promotionsPage.addMorePromotedItemsButton().click();
 		getDriver().navigate().refresh();
 		Thread.sleep(3000);
@@ -135,7 +135,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
 	@Test
 	public void testErrorMessageOnStartUpEditReferencesPage() {
-		setUpANewPromotion("Luke", "Hotwire", "Jedi Master");
+		setUpANewPromotion("English", "Luke", "Hotwire", "Jedi Master");
 		promotionsPage.addMorePromotedItemsButton().click();
 		editReferences = body.getEditDocumentReferencesPage();
 
@@ -146,7 +146,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
 	@Test
 	public void testEditDocumentReferencesCancel() {
-		final String originalDoc = setUpANewPromotion("House", "Sponsored", "home");
+		final String originalDoc = setUpANewPromotion("English", "House", "Sponsored", "home");
 		promotionsPage.addMorePromotedItemsButton().click();
 		editReferences = body.getEditDocumentReferencesPage();
 
@@ -172,7 +172,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
 	@Test
 	public void testDeleteItemsFromWithinTheBucket() {
-		setUpANewMultiDocPromotion("yoda", "Hotwire", "green dude", 4);
+		setUpANewMultiDocPromotion("English", "yoda", "Hotwire", "green dude", 4);
 		promotionsPage.addMorePromotedItemsButton().click();
 		editReferences = body.getEditDocumentReferencesPage();
 		editReferences.loadOrFadeWait();
@@ -193,8 +193,73 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	public void testViewFromBucketAndFromSearchResults() throws InterruptedException {
+		setUpANewMultiDocPromotion("French", "pomme", "Top Promotions", "potato", 35);
+		promotionsPage.addMorePromotedItemsButton().click();
+		promotionsPage.loadOrFadeWait();
+		editReferences = body.getEditDocumentReferencesPage();
+
+		for (int i = 0; i < 5; i++){
+			final String handle = getDriver().getWindowHandle();
+			final String docTitle = editReferences.promotionsBucketWebElements().get(i).getText();
+			editReferences.getPromotionBucketElementByTitle(docTitle).click();
+
+			Thread.sleep(5000);
+
+			getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+			assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText().contains(docTitle));
+
+			getDriver().switchTo().window(handle);
+			getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
+			editReferences.loadOrFadeWait();
+		}
+
+		topNavBar.search("ketchup");
+		editReferences.loadOrFadeWait();
+
+		for (int j = 1; j <= 2; j++) {
+			for (int i = 1; i <= 5; i++) {
+				final String handle = getDriver().getWindowHandle();
+				final String searchResultTitle = editReferences.getSearchResultTitle(i);
+				editReferences.getSearchResult(i).click();
+
+				Thread.sleep(5000);
+
+				getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+				assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText().contains(searchResultTitle));
+
+				getDriver().switchTo().window(handle);
+				getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
+				editReferences.loadOrFadeWait();
+			}
+
+			editReferences.forwardPageButton().click();
+			editReferences.loadOrFadeWait();
+		}
+
+		editReferences.emptyBucket();
+		topNavBar.search("frites");
+
+		for (int i = 1; i < 5; i++) {
+			editReferences.searchResultCheckbox(i).click();
+			final String docTitle = editReferences.getSearchResultTitle(i);
+			final String handle = getDriver().getWindowHandle();
+			editReferences.getPromotionBucketElementByTitle(docTitle).click();
+
+			Thread.sleep(5000);
+
+			getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+			assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText().contains(docTitle));
+
+			getDriver().switchTo().window(handle);
+			getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
+			editReferences.loadOrFadeWait();
+		}
+	}
+
+	@Test
 	public void testCheckboxUpdatesWithBucketDelete() {
-		setUpANewMultiDocPromotion("yoda", "Hotwire", "green dude", 4);
+		setUpANewMultiDocPromotion("English", "yoda", "Hotwire", "green dude", 4);
 		promotionsPage.addMorePromotedItemsButton().click();
 		editReferences = body.getEditDocumentReferencesPage();
 		topNavBar.search("yoda");
@@ -226,7 +291,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
 	@Test
 	public void testDeletedDocumentsRemainDeleted() {
-		setUpANewMultiDocPromotion("sith", "Top Promotions", "naughty evil", 8);
+		setUpANewMultiDocPromotion("English", "sith", "Top Promotions", "naughty evil", 8);
 		promotionsPage.addMorePromotedItemsButton().click();
 		editReferences = body.getEditDocumentReferencesPage();
 		editReferences.loadOrFadeWait();
@@ -248,9 +313,10 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		}
 	}
 
-	private String setUpANewPromotion(final String navBarSearchTerm, final String spotlightType, final String searchTriggers) {
+	private String setUpANewPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers) {
 		topNavBar.search(navBarSearchTerm);
 		searchPage = body.getSearchPage();
+		searchPage.selectLanguage(language);
 		final String promotedDocTitle = searchPage.createAPromotion();
 		final CreateNewPromotionsPage createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers);
@@ -265,9 +331,10 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		return promotedDocTitle;
 	}
 
-	private List <String> setUpANewMultiDocPromotion(final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs) {
+	private List <String> setUpANewMultiDocPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs) {
 		topNavBar.search(navBarSearchTerm);
 		searchPage = body.getSearchPage();
+		searchPage.selectLanguage(language);
 		final List<String> promotedDocTitles = searchPage.createAMultiDocumentPromotion(numberOfDocs);
 		final CreateNewPromotionsPage createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers);
