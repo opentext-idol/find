@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.page.SearchPage;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -542,5 +543,55 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.selectDatabase("WikiEnglish");
 		assertThat("Databases not showing", searchPage.getSelectedDatabases().containsAll(Arrays.asList("Wookiepedia", "WikiEnglish")));
 		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText().equals(wookiepediaResult) || searchPage.getSearchResult(1).getText().equals(wikiEnglishResult));
+	}
+
+	@Test
+	public void testFieldTextFilter() {
+		topNavBar.search("war");
+		searchPage.selectLanguage("English");
+		searchPage.selectDatabase("All");
+		final String searchResultTitle = searchPage.getSearchResultTitle(1);
+		final String lastWordInTitle = searchPage.getLastWord(searchResultTitle);
+		int comparisonIndex = 0;
+		String comparisonString = null;
+
+		for (int i = 2; i <=6; i++) {
+			if (!searchPage.getLastWord(searchPage.getSearchResultTitle(i)).equals(lastWordInTitle)) {
+				comparisonIndex = i;
+				comparisonString = searchPage.getSearchResultTitle(i);
+				break;
+			}
+		}
+
+		if (comparisonIndex == 0) {
+			throw new IllegalStateException("This query is not suitable for this field text filter test");
+		}
+
+		searchPage.fieldTextAddButton().click();
+		searchPage.loadOrFadeWait();
+		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
+		assertThat("Field text confirm/tick not visible", searchPage.fieldTextTickConfirm().isDisplayed());
+
+		searchPage.fieldTextInput().clear();
+		searchPage.fieldTextInput().sendKeys("WILD{*" + lastWordInTitle + "}:DRETITLE");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+		new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+
+		assertThat("Field text edit button not visible", searchPage.fieldTextEditButton().isDisplayed());
+		assertThat("Field text remove button not visible", searchPage.fieldTextRemoveButton().isDisplayed());
+		assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
+
+		try {
+			assertNotEquals(searchPage.getSearchResultTitle(comparisonIndex), comparisonString);
+		} catch (final NoSuchElementException e) {
+			// The comparison document is not present
+		}
+
+		searchPage.fieldTextRemoveButton().click();
+		searchPage.loadOrFadeWait();
+		assertEquals(searchPage.getSearchResultTitle(comparisonIndex), comparisonString);
+		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
+		assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
 	}
 }

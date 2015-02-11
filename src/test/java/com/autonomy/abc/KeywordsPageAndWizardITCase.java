@@ -948,7 +948,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testAddTwoSynonymsToSynonymGroupFromSearchPage() throws InterruptedException {
+		 public void testAddTwoSynonymsToSynonymGroupFromSearchPage() throws InterruptedException {
 		try {
 			keywordsPage.deleteAllSynonyms();
 			keywordsPage.createNewKeywordsButton().click();
@@ -967,6 +967,48 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			searchPage.addSynonymToGroup("residence", "house");
 			searchPage.loadOrFadeWait();
 			assertThat("New synonym has not been added to the group", searchPage.getSynonymGroupSynonyms("house").containsAll(Arrays.asList("home", "dwelling", "abode", "lodging", "residence")));
+
+			navBar.switchPage(NavBarTabId.KEYWORDS);
+			keywordsPage.loadOrFadeWait();
+			assertThat("New synonym has not been added to the group", keywordsPage.getSynonymGroupSynonyms("house").containsAll(Arrays.asList("home", "dwelling", "abode", "lodging", "residence")));
+
+			keywordsPage.deleteAllSynonyms();
+			assertEquals(0, keywordsPage.countSynonymLists("English"));
+		} finally {
+			getDriver().navigate().refresh();
+		}
+	}
+
+	@Test
+	public void testRemoveTwoSynonymsFromSynonymGroupFromSearchPage() throws InterruptedException {
+		try {
+			keywordsPage.deleteAllSynonyms();
+			keywordsPage.createNewKeywordsButton().click();
+			createKeywordsPage.createSynonymGroup("house home dwelling abode residence", "English");
+
+			searchPage = body.getSearchPage();
+			topNavBar.search("house");
+			searchPage.selectLanguage("English");
+			assertEquals(1, searchPage.countSynonymLists("English"));
+			assertThat("Synonym group does not contain all its members", searchPage.getSynonymGroupSynonyms("house").containsAll(Arrays.asList("home", "dwelling", "abode", "residence")));
+
+			searchPage.deleteSynonym("residence", "house");
+			searchPage.loadOrFadeWait();
+			assertThat("Synonym has not been deleted", !searchPage.getSynonymGroupSynonyms("house").contains("residence"));
+			assertThat("Synonym has not been deleted", !searchPage.getSynonymGroupSynonyms("house").contains("abode"));
+			assertThat("More than one synonym deleted", searchPage.getSynonymGroupSynonyms("house").containsAll(Arrays.asList("home", "dwelling", "abode")));
+
+			searchPage.deleteSynonym("abode", "house");
+			searchPage.loadOrFadeWait();
+			assertThat("Synonym has not been deleted", !searchPage.getSynonymGroupSynonyms("house").contains("abode"));
+			assertThat("More than one synonym deleted", searchPage.getSynonymGroupSynonyms("house").containsAll(Arrays.asList("home", "dwelling")));
+
+			searchPage.deleteSynonym("dwelling", "house");
+			searchPage.loadOrFadeWait();
+			assertThat("Synonym has not been deleted", !searchPage.getSynonymGroupSynonyms("house").contains("dwelling"));
+			assertThat("Synonym has not been deleted", !searchPage.getSynonymGroupSynonyms("house").contains("abode"));
+			assertThat("Synonym has not been deleted", !searchPage.getSynonymGroupSynonyms("house").contains("residence"));
+			assertThat("More than one synonym deleted", searchPage.getSynonymGroupSynonyms("house").containsAll(Arrays.asList("home")));
 
 			navBar.switchPage(NavBarTabId.KEYWORDS);
 			keywordsPage.loadOrFadeWait();
@@ -1055,6 +1097,44 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.selectLanguage("Chinese");
 		assertEquals(2, keywordsPage.countSynonymLists("Chinese"));
 		assertThat("synonym not assigned to correct language", keywordsPage.getText().contains("한국"));
+	}
+
+	@Test
+	public void testKeywordsCreationAndDeletionOnSecondWindow() throws InterruptedException {
+		keywordsPage.deleteAllSynonyms();
+		keywordsPage.deleteAllBlacklistedTerms();
+		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage.createSynonymGroup("double duo two pair couple", "Urdu");
+		navBar.switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage.filterView("Synonyms");
+		keywordsPage.selectLanguage("Urdu");
+		keywordsPage.loadOrFadeWait();
+
+		final String url = getDriver().getCurrentUrl();
+		final List<String> browserHandles = keywordsPage.createAndListWindowHandles();
+
+		getDriver().switchTo().window(browserHandles.get(1));
+		getDriver().get(url);
+		int synonymListCount = getDriver().findElements(By.cssSelector(".keywords-list ul")).size();
+		assertEquals(5, synonymListCount);
+
+		getDriver().switchTo().window(browserHandles.get(0));
+		keywordsPage = body.getKeywordsPage();
+		keywordsPage.loadOrFadeWait();
+		keywordsPage.deleteSynonym("couple", "two");
+
+		getDriver().switchTo().window(browserHandles.get(1));
+		synonymListCount = getDriver().findElements(By.cssSelector(".keywords-list ul")).size();
+		assertEquals(4, synonymListCount);
+
+		getDriver().switchTo().window(browserHandles.get(0));
+		keywordsPage = body.getKeywordsPage();
+		keywordsPage.loadOrFadeWait();
+		keywordsPage.deleteSynonym("pair", "duo");
+
+		getDriver().switchTo().window(browserHandles.get(1));
+		synonymListCount = getDriver().findElements(By.cssSelector(".keywords-list ul")).size();
+		assertEquals(3, synonymListCount);
 	}
 
 }

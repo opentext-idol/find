@@ -166,6 +166,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		assertThat("Original document is not attached to the promotion anymore", promotionsPage.getPromotedList().contains(originalDoc));
 
 		promotionsPage.addMorePromotedItemsButton().click();
+		promotionsPage.loadOrFadeWait();
 		assertThat("Promotions bucket has kept unsaved changes", editReferences.promotionsBucketList().contains(originalDoc));
 		assertEquals(1, editReferences.promotedItemsCount());
 	}

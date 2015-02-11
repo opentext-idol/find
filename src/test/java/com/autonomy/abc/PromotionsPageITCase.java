@@ -126,23 +126,23 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionsPage.addSearchTrigger(",Germany");
 		assertThat("Commas should not be included in triggers", promotionsPage.getSearchTriggersList().size() == 2);
-		assertThat("No/incorrect error message", promotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("No/incorrect error message", promotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 
 		promotionsPage.addSearchTrigger("Ita,ly Spain");
 		assertThat("Commas should not be included in triggers", promotionsPage.getSearchTriggersList().size() == 2);
-		assertThat("No/incorrect error message", promotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("No/incorrect error message", promotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 
 		promotionsPage.addSearchTrigger("Ireland, Belgium");
 		assertThat("Commas should not be included in triggers", promotionsPage.getSearchTriggersList().size() == 2);
-		assertThat("No/incorrect error message", promotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("No/incorrect error message", promotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 
 		promotionsPage.addSearchTrigger("UK , Luxembourg");
 		assertThat("Commas should not be included in triggers", promotionsPage.getSearchTriggersList().size() == 2);
-		assertThat("No/incorrect error message", promotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("No/incorrect error message", promotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 
 		promotionsPage.addSearchTrigger("Greece Romania");
 		assertThat("New triggers not added", promotionsPage.getSearchTriggersList().size() == 4);
-		assertThat("Error message still showing", !promotionsPage.getText().contains("Terms may not contain commas or double quotes. Separate words with whitespace."));
+		assertThat("Error message still showing", !promotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
 	}
 
 	@Test
@@ -315,7 +315,14 @@ public class PromotionsPageITCase extends ABCTestBase {
 		topNavBar.search(navBarSearchTerm);
 		searchPage = body.getSearchPage();
 		searchPage.selectLanguage(language);
-		final String searchResultTitle = searchPage.getSearchResult(1).getText();
+		final String searchResultTitle;
+
+		if (searchPage.getText().contains("No results found")) {
+			searchResultTitle = null;
+		} else {
+			searchResultTitle = searchPage.getSearchResult(1).getText();
+		}
+
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
@@ -632,7 +639,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertEquals("French", promotionsPage.getLanguage());
 
 		promotionsPage.backButton().click();
-		setUpANewMultiDocPinToPositionPromotion("Swahili", "mbwa", "woof swahili", 3);
+		setUpANewMultiDocPinToPositionPromotion("Swahili", "mbwa", "swahili woof", 3);
 		assertEquals("Swahili", promotionsPage.getLanguage());
 
 		promotionsPage.backButton().click();
@@ -672,5 +679,33 @@ public class PromotionsPageITCase extends ABCTestBase {
 		searchPage = body.getSearchPage();
 		searchPage.loadOrFadeWait();
 		assertEquals(firstSearchResult, searchPage.promotionsSummaryList(false).get(0));
+	}
+
+	@Test
+	public void testPromotionCreationAndDeletionOnSecondWindow() {
+		setUpANewPromotion("French", "chien", "Hotwire", "woof bark");
+
+		final String url = getDriver().getCurrentUrl();
+		final List<String> browserHandles = promotionsPage.createAndListWindowHandles();
+
+		getDriver().switchTo().window(browserHandles.get(1));
+		getDriver().get(url);
+		getDriver().findElement(By.cssSelector(".btn[data-route='promotions']")).click();
+
+		getDriver().switchTo().window(browserHandles.get(0));
+		promotionsPage = body.getPromotionsPage();
+		promotionsPage.loadOrFadeWait();
+		setUpANewDynamicPromotion("Swahili", "rafiki", "friend", "Sponsored");
+
+		getDriver().switchTo().window(browserHandles.get(1));
+		int promotionsTotal = getDriver().findElements(By.cssSelector(".promotion-list-container .result-icon")).size();
+		assertEquals(2, promotionsTotal);
+
+		getDriver().switchTo().window(browserHandles.get(0));
+		promotionsPage.deletePromotion();
+
+		getDriver().switchTo().window(browserHandles.get(1));
+		promotionsTotal = getDriver().findElements(By.cssSelector(".promotion-list-container .result-icon")).size();
+		assertEquals(1, promotionsTotal);
 	}
 }
