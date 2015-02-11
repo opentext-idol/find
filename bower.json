@@ -1,6 +1,5 @@
 {
   "name": "hp-find",
-  "version": "1.0.0",
   "private": true,
   "authors": [
     "Alex Scown <alex.scown@hp.com>",
