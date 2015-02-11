@@ -18,14 +18,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Ignore
 @RunWith(Parameterized.class)
 public abstract class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
+	private final static Set<String> USER_BROWSERS;
 
 	public final TestConfig config;
 	private final String browser;
@@ -34,6 +34,23 @@ public abstract class ABCTestBase {
 	public AppBody body;
 	protected SideNavBar navBar;
 	protected TopNavBar topNavBar;
+
+	static {
+		final String[] allBrowsers = {"firefox", "internet explorer", "chrome"};
+		final String browserProperty = System.getProperty("com.autonomy.browsers");
+
+		if (browserProperty == null) {
+			USER_BROWSERS = new HashSet<>(Arrays.asList(allBrowsers));
+		} else {
+			USER_BROWSERS = new HashSet<>();
+
+			for (final String browser : allBrowsers) {
+				if (browserProperty.contains(browser)) {
+					USER_BROWSERS.add(browser);
+				}
+			}
+		}
+	}
 
 	public ABCTestBase(final TestConfig config, final String browser, final Platform platform) {
 		this.config = config;
@@ -45,23 +62,14 @@ public abstract class ABCTestBase {
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
 		final List<Object[]> parameters = new ArrayList<>();
 
-		parameters.add(new Object[] {
-				new TestConfig(parameters.size()),
-				"firefox",
-				Platform.WINDOWS
-		});
 
-		parameters.add(new Object[]{
-				new TestConfig(parameters.size()),
-				"internet explorer",
-				Platform.WINDOWS
-		});
-
-		parameters.add(new Object[]{
-				new TestConfig(parameters.size()),
-				"chrome",
-				Platform.WINDOWS
-		});
+		for (final String browser : USER_BROWSERS) {
+			parameters.add(new Object[]{
+					new TestConfig(parameters.size()),
+					browser,
+					Platform.WINDOWS
+			});
+		}
 
 		return parameters;
 	}
