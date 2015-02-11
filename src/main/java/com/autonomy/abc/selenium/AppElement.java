@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium;
 
 import com.autonomy.abc.selenium.util.AbstractWebElementPlaceholder;
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -221,6 +220,27 @@ public class AppElement implements WebElement {
 
 	public String title() {
 		return findElement(By.cssSelector(".page-title")).getText();
+	}
+
+	public String getLastWord(final String string) {
+		return string.substring(string.lastIndexOf(" ") + 1);
+	}
+
+	/**
+	 * Create a new browser window. Returns both the current window handle and the handle for the newly created window.
+	 * @return Window handles. The first item is the old handle, and the second is the new one.
+	 */
+	public List<String> createAndListWindowHandles() {
+		final Set<String> windows = getDriver().getWindowHandles();
+		final String handle = getDriver().getWindowHandle();
+		final JavascriptExecutor executor = (JavascriptExecutor) getDriver();
+		executor.executeScript("window.open('hello', '', 'width=1000');");
+
+		final Set<String> moreWindows = getDriver().getWindowHandles();
+		moreWindows.removeAll(windows);
+		final String secondHandle = ((String)moreWindows.toArray()[0]);
+
+		return Arrays.asList(handle, secondHandle);
 	}
 
 	public static class Placeholder extends AbstractWebElementPlaceholder<AppElement> {

@@ -19,7 +19,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement getResultsBoxByTitle(final String docTitle) {
-		return findElement(By.xpath(".//h3[contains(text(), '" + docTitle + "')]/../../div/div/label/div"));
+		return findElement(By.xpath(".//a[contains(text(), '" + docTitle + "')]/../../../div/div/label/div"));
 	}
 
 	public WebElement searchResultCheckbox(final String docTitle) {
@@ -148,5 +148,25 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		}
 
 		return selected;
+	}
+
+	public WebElement fieldTextAddButton() {
+		return findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
+	}
+
+	public WebElement fieldTextInput() {
+		return findElement(By.xpath(".//input[@placeholder='FieldText']"));
+	}
+
+	public WebElement fieldTextTickConfirm() {
+		return findElement(By.cssSelector(".field-text-form")).findElement(By.xpath(".//i[contains(@class, 'fa-check')]/.."));
+	}
+
+	public WebElement fieldTextEditButton() {
+		return findElement(By.cssSelector(".current-field-text-container")).findElement(By.xpath(".//button[contains(text(), 'Edit')]"));
+	}
+
+	public WebElement fieldTextRemoveButton() {
+		return findElement(By.cssSelector(".current-field-text-container")).findElement(By.xpath(".//button[contains(text(), 'Remove')]"));
 	}
 }

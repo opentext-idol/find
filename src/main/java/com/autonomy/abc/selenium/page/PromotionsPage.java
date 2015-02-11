@@ -40,7 +40,9 @@ public class PromotionsPage extends AppElement implements AppPage {
 		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".extra-functions .dropdown-toggle"));
 		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
 		extraFunctionsDropdown.click();
+		loadOrFadeWait();
 		findElement(By.cssSelector(".promotion-view-delete")).click();
+		loadOrFadeWait();
 		final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
 		deleteModal.findElement(By.cssSelector(".btn-danger")).click();
 		loadOrFadeWait();
@@ -157,7 +159,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement promotedDocument(final String title) {
-		return getParent(findElement(By.xpath(".//ul[contains(@class, 'promoted-documents-list')]")).findElement(By.xpath(".//h3[contains(text(), '" + title + "')]")));
+		return findElement(By.xpath(".//ul[contains(@class, 'promoted-documents-list')]")).findElement(By.xpath(".//a[contains(text(), '" + title + "')]/../.."));
 	}
 
 	public String promotedDocumentSummary(final String title) {
