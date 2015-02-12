@@ -57,7 +57,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 	@Test
 	public void testWontDeleteSelf() {
-		assertThat("Delete button not disabled", usersPage.getUserRow(usersPage.getSignedInUserName()).findElements(By.cssSelector("button.disabled")).size() == 1);
+		assertThat("Delete button not disabled", usersPage.isAttributePresent((usersPage.getUserRow(usersPage.getSignedInUserName()).findElement(By.cssSelector("button"))), "disabled"));
 	}
 
 	@Test
@@ -66,9 +66,9 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.createUserButton().click();
 		usersPage.createNewUser("Paul", "w", "User");
 		usersPage.createNewUser("Stephen", "w", "Admin");
+		usersPage.closeModal();
 		assertThat("Not all users are added", usersPage.countNumberOfUsers() == initialNumberOfUsers + 2);
 
-		usersPage.closeModal();
 		usersPage.deleteUser("Paul");
 		assertThat("User not deleted", usersPage.countNumberOfUsers() == initialNumberOfUsers + 1);
 		assertThat("Paul was not deleted", usersPage.getText().contains("User Paul successfully deleted"));

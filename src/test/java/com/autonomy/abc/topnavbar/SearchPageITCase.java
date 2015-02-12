@@ -594,4 +594,49 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 		assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
 	}
+
+	@Test
+	public void testEditFieldTest() {
+		topNavBar.search("boer");
+		searchPage.selectLanguage("Afrikaans");
+		searchPage.selectDatabase("All");
+		searchPage.clearFieldText();
+
+		final String firstSearchResult = searchPage.getSearchResultTitle(1);
+		final String secondSearchResult = searchPage.getSearchResultTitle(2);
+
+		searchPage.fieldTextAddButton().click();
+		searchPage.loadOrFadeWait();
+		searchPage.fieldTextInput().clear();
+		searchPage.fieldTextInput().sendKeys("MATCH{" + firstSearchResult + "}:DRETITLE");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+		new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+		assertEquals(firstSearchResult, searchPage.getSearchResultTitle(1));
+
+		searchPage.fieldTextEditButton().click();
+		searchPage.fieldTextInput().clear();
+		searchPage.fieldTextInput().sendKeys("MATCH{" + secondSearchResult + "}:DRETITLE");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+		new WebDriverWait(getDriver(), 15).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
+		assertEquals(secondSearchResult, searchPage.getSearchResultTitle(1));
+	}
+
+	@Test
+	public void testFieldTextInputDisappearsOnOutsideClick() {
+		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
+
+		searchPage.fieldTextAddButton().click();
+		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
+		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
+
+		searchPage.fieldTextInput().click();
+		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
+		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
+
+		searchPage.getDatabasesTable().click();
+		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
+		assertThat("Field text input visible", !searchPage.fieldTextInput().isDisplayed());
+	}
 }

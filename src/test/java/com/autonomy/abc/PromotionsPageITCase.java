@@ -690,7 +690,10 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		getDriver().get(url);
-		getDriver().findElement(By.cssSelector(".btn[data-route='promotions']")).click();
+		final AppBody secondBody = new AppBody(getDriver());
+		final PromotionsPage secondPromotionsPage = secondBody.getPromotionsPage();
+		secondPromotionsPage.loadOrFadeWait();
+		assertThat("Haven't navigated to promotions menu", secondPromotionsPage.newPromotionButton().isDisplayed());
 
 		getDriver().switchTo().window(browserHandles.get(0));
 		promotionsPage = body.getPromotionsPage();
@@ -698,14 +701,18 @@ public class PromotionsPageITCase extends ABCTestBase {
 		setUpANewDynamicPromotion("Swahili", "rafiki", "friend", "Sponsored");
 
 		getDriver().switchTo().window(browserHandles.get(1));
-		int promotionsTotal = getDriver().findElements(By.cssSelector(".promotion-list-container .result-icon")).size();
-		assertEquals(2, promotionsTotal);
+		assertEquals(2, secondPromotionsPage.promotionsList().size());
 
 		getDriver().switchTo().window(browserHandles.get(0));
 		promotionsPage.deletePromotion();
 
 		getDriver().switchTo().window(browserHandles.get(1));
-		promotionsTotal = getDriver().findElements(By.cssSelector(".promotion-list-container .result-icon")).size();
-		assertEquals(1, promotionsTotal);
+		assertEquals(1, secondPromotionsPage.promotionsList().size());
+
+		secondPromotionsPage.getPromotionLinkWithTitleContaining("woof").click();
+		secondPromotionsPage.deletePromotion();
+
+		getDriver().switchTo().window(browserHandles.get(0));
+		assertThat("Promotion not deleted", promotionsPage.getText().contains("There are no promotions..."));
 	}
 }
