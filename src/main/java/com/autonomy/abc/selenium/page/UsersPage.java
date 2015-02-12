@@ -79,10 +79,11 @@ public class UsersPage extends AppElement implements AppPage {
 		deleteButton(userName).click();
 		loadOrFadeWait();
 		findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
+		loadOrFadeWait();
 	}
 
 	public WebElement deleteButton(final String userName) {
-		return getUserRow(userName).findElement(By.cssSelector("button"));
+		return getUserRow(userName).findElement(By.cssSelector(".users-deleteUser"));
 	}
 
 	public WebElement getTable() {
@@ -106,7 +107,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public WebElement getUserRow(final String userName) {
-		return findElement(By.xpath(".//span[contains(text(), '" + userName + "')]/../../.."));
+		return findElement(By.xpath(".//span[contains(text(), '" + userName + "')]/../.."));
 	}
 
 	public void changePassword(final String userName, final String newPassword) {

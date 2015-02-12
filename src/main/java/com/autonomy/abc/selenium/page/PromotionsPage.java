@@ -109,11 +109,11 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement triggerTextBox() {
-		return findElement(By.cssSelector(".promotion-detail-view-control-column [name='words']"));
+		return findElement(By.cssSelector(".promotion-match-terms [name='words']"));
 	}
 
 	public WebElement triggerAddButton() {
-		return findElement(By.cssSelector(".promotion-detail-view-control-column")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
+		return findElement(By.cssSelector(".promotion-match-terms")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
 	public void removeSearchTrigger(final String searchTrigger) throws InterruptedException {

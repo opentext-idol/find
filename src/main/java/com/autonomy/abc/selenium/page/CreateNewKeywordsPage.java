@@ -22,10 +22,14 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		getDriver().get("keywords/create");
 	}
 
+	// TODO: Enum me
+	// takes 'SYNONYMS' or 'BLACKLISTED'
 	public WebElement keywordsType(final String type) {
 		return findElement(By.cssSelector("[data-option='" + type + "']"));
 	}
 
+	// TODO: Enum me
+	// takes 'type', 'language' or 'finish-step'
 	public WebElement cancelWizardButton(final String dataType) {
 		return findElement(By.cssSelector("[data-step='" + dataType + "'] .cancel-wizard"));
 	}
@@ -69,7 +73,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		final WebElement addBlacklistedTextBox = addBlacklistedTextBox();
 		addBlacklistedTextBox.clear();
 		addBlacklistedTextBox.sendKeys(blacklistedTerms);
-		addBlacklistTermsButton().click();
+		tryClickThenTryParentClick(addBlacklistTermsButton());
 	}
 
 	public int countKeywords() {
@@ -87,6 +91,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
 		finishSynonymWizardButton().click();
+		loadOrFadeWait();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-bucket-button")));
 	}
 
