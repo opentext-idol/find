@@ -71,6 +71,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public int countNumberOfUsers() {
+		loadOrFadeWait();
 		return getTable().findElements(By.cssSelector("tbody tr")).size();
 	}
 

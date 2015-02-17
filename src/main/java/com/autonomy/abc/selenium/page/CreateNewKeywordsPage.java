@@ -22,20 +22,49 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		getDriver().get("keywords/create");
 	}
 
-	// TODO: Enum me
-	// takes 'SYNONYMS' or 'BLACKLISTED'
-	public WebElement keywordsType(final String type) {
-		return findElement(By.cssSelector("[data-option='" + type + "']"));
+	public WebElement keywordsType(final KeywordType type) {
+		return findElement(By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../.."));
 	}
 
-	// TODO: Enum me
-	// takes 'type', 'language' or 'finish-step'
-	public WebElement cancelWizardButton(final String dataType) {
-		return findElement(By.cssSelector("[data-step='" + dataType + "'] .cancel-wizard"));
+	public enum KeywordType {
+		SYNONYM("Synonyms"),
+		BLACKLIST("Blacklisted Terms");
+
+		private final String title;
+
+		KeywordType(final String title) {
+			this.title = title;
+		}
+
+		public String getTitle() {
+			return title;
+		}
 	}
 
-	public WebElement continueWizardButton(final String dataType) {
-		return findElement(By.cssSelector("[data-step='" + dataType + "'] .next-step"));
+	public WebElement cancelWizardButton(final CreateNewKeywordsPage.WizardStep dataType) {
+		return findElement(By.cssSelector("[data-step='" + dataType.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Cancel')]"));
+	}
+
+	public enum WizardStep {
+		TYPE("type"),
+		LANGUAGE("langauge"),
+		BLACKLISTED("blacklisted"),
+		SYNONYMS("synonyms"),
+		FINISH("finish-step");
+
+		private final String title;
+
+		WizardStep(final String title) {
+			this.title = title;
+		}
+
+		public String getTitle() {
+			return title;
+		}
+	}
+
+	public WebElement continueWizardButton(final WizardStep dataType) {
+		return findElement(By.cssSelector("[data-step='" + dataType.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Continue')]"));
 	}
 
 	public WebElement addSynonymsButton() {
@@ -82,25 +111,25 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 	}
 
 	public void createSynonymGroup(final String synonymGroup, final String language) {
-		keywordsType("SYNONYMS").click();
-		continueWizardButton("type").click();
+		keywordsType(KeywordType.SYNONYM).click();
+		continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		selectLanguage(language);
-		continueWizardButton("language").click();
+		continueWizardButton(WizardStep.LANGUAGE).click();
 		loadOrFadeWait();
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
 		finishSynonymWizardButton().click();
 		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-bucket-button")));
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-bucket-button")));
 	}
 
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
-		keywordsType("BLACKLISTED").click();
-		continueWizardButton("type").click();
+		keywordsType(KeywordType.BLACKLIST).click();
+		continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		selectLanguage(language);
-		continueWizardButton("language").click();
+		continueWizardButton(WizardStep.LANGUAGE).click();
 		loadOrFadeWait();
 		addBlacklistedTerm(blacklistedTerm);
 		loadOrFadeWait();

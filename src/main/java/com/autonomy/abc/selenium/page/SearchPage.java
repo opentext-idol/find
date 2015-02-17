@@ -140,7 +140,7 @@ public class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public boolean isPromotionsBoxVisible() {
-		return findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
+		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
 	}
 
 	public void selectLanguage(final String language) {

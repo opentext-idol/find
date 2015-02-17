@@ -243,6 +243,10 @@ public class AppElement implements WebElement {
 		return Arrays.asList(handle, secondHandle);
 	}
 
+	public WebElement getFirstChild(final WebElement parent) {
+		return parent.findElement(By.xpath(".//*"));
+	}
+
 	public static class Placeholder extends AbstractWebElementPlaceholder<AppElement> {
 
 		public Placeholder(final AppElement ancestor, final By by) {

@@ -135,16 +135,16 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public String getPromotionTitle() {
-		return findElement(By.cssSelector(".promotion-view-title")).getText();
+		return findElement(By.cssSelector(".promotion-title-edit span")).getText();
 	}
 
 	public void createNewTitle(final String title) throws InterruptedException {
-		final WebElement pencil = findElement(By.cssSelector(".promotion-view-rename .fa-pencil"));
-		pencil.click();
-		final WebElement titleElement = findElement(By.cssSelector(".promotion-view-rename-form input"));
+		final WebElement pencil = findElement(By.cssSelector(".promotion-title-edit .fa-pencil"));
+		getParent(pencil).click();
+		final WebElement titleElement = findElement(By.cssSelector(".promotion-title-edit input"));
 		titleElement.clear();
 		titleElement.sendKeys(title);
-		findElement(By.cssSelector(".promotion-view-rename-form [type='submit']")).click();
+		findElement(By.cssSelector(".promotion-title-edit [type='submit']")).click();
 		Thread.sleep(3000);
 	}
 
@@ -266,7 +266,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public String getQueryText() {
-		return findElement(By.cssSelector(".query-to-promote")).getText();
+		return findElement(By.cssSelector(".promotion-query-edit span")).getText();
 	}
 
 	public void editQueryText(final String newQueryText) {

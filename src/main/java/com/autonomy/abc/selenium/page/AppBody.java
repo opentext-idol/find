@@ -90,7 +90,7 @@ public class AppBody extends AppElement {
 	}
 
 	public SchedulePage getSchedulePage() {
-		return schedulePage.$schedulePage(getDriver().findElement(By.xpath(".//h2[contains(text(), 'Schedule')]/../../..")).findElement(By.cssSelector(".wizard")));
+		return schedulePage.$schedulePage(getDriver().findElement(By.xpath(".//h2[contains(text(), 'Schedule')]/../../..")).findElement(By.cssSelector(".pd-wizard")));
 	}
 
 	public CreateNewKeywordsPage getCreateKeywordsPage() {

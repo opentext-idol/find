@@ -44,9 +44,46 @@ public abstract class KeywordsBase extends AppElement implements AppPage{
 		return blacklistedTerms;
 	}
 
+	public abstract WebElement leadSynonym(final String synonym);
+
+	public WebElement synonymGroup(final String synonymGroupLead) {
+		return getParent(leadSynonym(synonymGroupLead));
+	}
+
+	public void addSynonymToGroup(final String synonym, final String synonymGroupLead) {
+		final WebElement synonymGroup = synonymGroup(synonymGroupLead);
+		synonymGroup.findElement(By.cssSelector(".fa-plus")).click();
+		synonymGroup.findElement(By.cssSelector(".add-synonym-input")).clear();
+		synonymGroup.findElement(By.cssSelector(".add-synonym-input")).sendKeys(synonym);
+		synonymGroup.findElement(By.cssSelector(".fa-check")).click();
+		loadOrFadeWait();
+	}
+
+	public void deleteSynonym(final String synonym, final String synonymGroupLead) throws InterruptedException {
+		getSynonymIcon(synonym, synonymGroupLead).click();
+		Thread.sleep(3000);
+	}
+
+	public List<String> getSynonymGroupSynonyms(final String leadSynonym) {
+		loadOrFadeWait();
+		final List<WebElement> synonyms = synonymGroup(leadSynonym).findElements(By.cssSelector("li span span"));
+		final List<String> synonymNames = new ArrayList<>();
+
+		for (final WebElement synonym : synonyms){
+			if (!synonym.getText().equals("")) {
+				synonymNames.add(synonym.getText());
+			}
+		}
+
+		return synonymNames;
+	}
+
 	public void deleteBlacklistedTerm(final String blacklistedTerm) {
 		findElement(By.cssSelector("[data-keyword = '" + blacklistedTerm + "'] .remove-blacklisted-term")).click();
 		loadOrFadeWait();
 	}
 
+	public WebElement getSynonymIcon(final String synonym, final String synonymLead) {
+		return synonymGroup(synonymLead).findElement(By.xpath(".//span[contains(text(), '" + synonym + "')]/../i"));
+	}
 }
