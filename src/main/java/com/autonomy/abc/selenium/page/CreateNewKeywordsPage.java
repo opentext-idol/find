@@ -47,7 +47,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 
 	public enum WizardStep {
 		TYPE("type"),
-		LANGUAGE("langauge"),
+		LANGUAGE("language"),
 		BLACKLISTED("blacklisted"),
 		SYNONYMS("synonyms"),
 		FINISH("finish-step");
