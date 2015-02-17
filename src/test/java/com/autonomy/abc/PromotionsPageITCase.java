@@ -9,6 +9,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -363,7 +364,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 		schedulePage.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText().contains("How long should this promotion run?"));
 
-		// TODO use Pattern.split here
 		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(schedulePage.getTodayDate()));
 		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
 		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[1], "00:00");
@@ -391,7 +391,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Do you want to repeat this promotion schedule?"));
 
 		schedulePage.repeatWithFrequencyBelow().click();
-		schedulePage.selectFrequency("Monthly");
+		schedulePage.selectFrequency(SchedulePage.Frequency.MONTHLY);
 		assertEquals(schedulePage.readFrequency(), "Monthly");
 
 		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
@@ -410,11 +410,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 502)));
 		schedulePage.togglePicker();
 		schedulePage.loadOrFadeWait();
-		schedulePage.timpickerHour().click();
+		schedulePage.timepickerHour().click();
 		schedulePage.selectTimepickerHour(3);
 		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "03:00");
 
-		schedulePage.timpickerMinute().click();
+		schedulePage.timepickerMinute().click();
 		schedulePage.selectTimepickerMinute(42);
 		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "03:40");
 
@@ -531,7 +531,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Do you want to repeat this promotion schedule?"));
 
 		schedulePage.repeatWithFrequencyBelow().click();
-		schedulePage.selectFrequency("Yearly");
+		schedulePage.selectFrequency(SchedulePage.Frequency.YEARLY);
 		assertEquals(schedulePage.readFrequency(), "Yearly");
 
 		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
@@ -539,7 +539,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		schedulePage.never().click();
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
-		assertThat("Correct promotion summary text not present", promotionsPage.getText().contains("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 2 days, ending on " + schedulePage.parseDateForPromotionsPage(endDate)));
+		assertThat("Correct promotion summary text not present", promotionsPage.getText().contains("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 2 days, ending on " + SchedulePage.parseDateForPromotionsPage(endDate)));
 		assertThat("Correct promotion summary text not present", promotionsPage.getText().contains("This promotion schedule will run yearly forever."));
 
 		topNavBar.search("chips");
@@ -573,7 +573,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		schedulePage.loadOrFadeWait();
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Do you want to repeat this promotion schedule?"));
 
-		schedulePage.selectFrequency("Yearly");
+		schedulePage.selectFrequency(SchedulePage.Frequency.YEARLY);
 		assertEquals(schedulePage.readFrequency(), "Yearly");
 
 		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
@@ -598,6 +598,119 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	public void testResetTimeAndDate() {
+		setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4);
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.schedule().click();
+		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.startDateTextBoxButton().click();
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 9));
+		assertEquals(schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 9)), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.resetDateToToday();
+		assertEquals(schedulePage.dateAndTimeAsString(schedulePage.getTodayDate()), schedulePage.startDateTextBox().getAttribute("value"));
+	}
+
+	@Test
+	public void testTextInputToCalendar() {
+		setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4);
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.schedule().click();
+		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.startDateTextBox().clear();
+		topNavBar.sideBarToggle();
+		assertThat("continue button should be disabled", schedulePage.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"));
+
+		schedulePage.startDateTextBoxButton().click();
+		schedulePage.calendarDateSelect(schedulePage.getTodayDate());
+		schedulePage.startDateTextBoxButton().click();
+		schedulePage.startDateTextBox().sendKeys("Hello!!");
+		topNavBar.sideBarToggle();
+		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.startDateTextBox().sendKeys(Keys.BACK_SPACE);
+		topNavBar.sideBarToggle();
+		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.startDateTextBox().clear();
+		schedulePage.startDateTextBox().sendKeys("30/02/2019 11:20");
+		topNavBar.sideBarToggle();
+		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.startDateTextBox().clear();
+		schedulePage.startDateTextBox().sendKeys("10/13/2019 11:20");
+		topNavBar.sideBarToggle();
+		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.startDateTextBox().clear();
+		schedulePage.startDateTextBox().sendKeys("02/02/2019 24:20");
+		topNavBar.sideBarToggle();
+		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
+		assertEquals("11:20", pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[1]);
+
+		schedulePage.startDateTextBox().clear();
+		schedulePage.startDateTextBox().sendKeys("02/02/2019 22:61");
+		topNavBar.sideBarToggle();
+		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
+		assertEquals("11:20", pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[1]);
+	}
+
+	@Test
+	public void testIncrementDecrementTimeOnCalendar() {
+		setUpANewMultiDocPromotion("Kazakh", "Қазақстан", "Sponsored", "Kaz", 5);
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.loadOrFadeWait();
+		schedulePage.schedule().click();
+		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.endDateTextBoxButton().click();
+		schedulePage.togglePicker();
+		schedulePage.loadOrFadeWait();
+		schedulePage.timepickerHour().click();
+		schedulePage.selectTimepickerHour(5);
+		schedulePage.loadOrFadeWait();
+		assertEquals("05", schedulePage.timepickerHour().getText());
+
+		schedulePage.incrementHours();
+		schedulePage.incrementHours();
+		assertEquals("07", schedulePage.timepickerHour().getText());
+
+		for (int i = 1; i <= 10; i++) {
+			schedulePage.decrementHours();
+		}
+		assertEquals("21", schedulePage.timepickerHour().getText());
+
+		for (int i = 1; i <= 4; i++) {
+			schedulePage.incrementHours();
+		}
+		assertEquals("01", schedulePage.timepickerHour().getText());
+
+		schedulePage.timepickerMinute().click();
+		schedulePage.selectTimepickerMinute(50);
+		schedulePage.loadOrFadeWait();
+		assertEquals("50", schedulePage.timepickerMinute().getText());
+
+		schedulePage.incrementMinutes();
+		schedulePage.incrementMinutes();
+		assertEquals("52", schedulePage.timepickerMinute().getText());
+
+		for (int i = 1; i <= 10; i++) {
+			schedulePage.incrementMinutes();
+		}
+		assertEquals("02", schedulePage.timepickerMinute().getText());
+
+		for (int i = 1; i <= 5; i++) {
+			schedulePage.decrementMinutes();
+		}
+		assertEquals("57", schedulePage.timepickerMinute().getText());
+	}
+
+	@Test
 	public void testPromotionIsPrepopulated() {
 		setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4);
 		promotionsPage.schedulePromotion();
@@ -606,7 +719,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final Date startDate = DateUtils.addDays(schedulePage.getTodayDate(), 4);
 		final Date endDate = DateUtils.addDays(schedulePage.getTodayDate(), 8);
 		final Date finalDate = DateUtils.addMonths(schedulePage.getTodayDate(), 6);
-		schedulePage.schedulePromotion(startDate, endDate, "Monthly",  finalDate);
+		schedulePage.schedulePromotion(startDate, endDate, SchedulePage.Frequency.MONTHLY,  finalDate);
 
 		promotionsPage.schedulePromotion();
 		promotionsPage.loadOrFadeWait();
@@ -912,4 +1025,87 @@ public class PromotionsPageITCase extends ABCTestBase {
 		getDriver().switchTo().window(browserHandles.get(0));
 		assertThat("Promotion not deleted", promotionsPage.getText().contains("There are no promotions..."));
 	}
+
+	@Test
+	public void testPromotionFieldTextRestriction() {
+		setUpANewPromotion("English","hot", "Hotwire", "hot");
+
+		promotionsPage.addFieldText("MATCH{hot}:DRECONTENT");
+
+		topNavBar.search("hot");
+		searchPage.selectLanguage("English");
+		assertThat("Promoted Document should be visible", searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("hot pot");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("hots");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+		promotionsPage.getPromotionLinkWithTitleContaining("hot").click();
+		promotionsPage.loadOrFadeWait();
+
+		promotionsPage.fieldTextRemoveButton().click();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(promotionsPage.fieldTextAddButton()));
+
+		topNavBar.search("hot");
+		searchPage.loadOrFadeWait();
+		assertThat("Promoted Document should be visible", searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("hot chocolate");
+		assertThat("Promoted Document should be visible", searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("hots");
+		assertThat("Promoted Document should be visible", searchPage.promotionsSummary().isDisplayed());
+
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+		promotionsPage.getPromotionLinkWithTitleContaining("hot").click();
+		promotionsPage.loadOrFadeWait();
+
+		promotionsPage.fieldTextAddButton().click();
+		promotionsPage.fieldTextInputBox().sendKeys("<h1>hi</h1>");
+		promotionsPage.fieldTextTickConfirmButton().click();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(promotionsPage.fieldTextRemoveButton()));
+		assertEquals("<h1>hi</h1>", promotionsPage.fieldTextValue());
+
+		promotionsPage.fieldTextEditButton().click();
+		promotionsPage.fieldTextInputBox().clear();
+		promotionsPage.fieldTextInputBox().sendKeys("MATCH{hot dog}:DRECONTENT");
+		promotionsPage.fieldTextTickConfirmButton().click();
+		promotionsPage.loadOrFadeWait();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(promotionsPage.fieldTextRemoveButton()));
+
+		topNavBar.search("hot dog");
+		searchPage.loadOrFadeWait();
+		assertThat("Promoted Document should be visible", searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("hot chocolate");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("hot");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("dog");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("hot dogs");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+	}
+
+	@Test
+	public void testCreateFieldTextField() {
+		setUpANewPromotion("Telugu","మింగ్ వంశము", "Top Promotions", "Ming");
+
+		promotionsPage.addFieldText("MATCH{Richard}:NAME");
+		topNavBar.search("Ming");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		searchPage.fieldTextAddButton().click();
+		searchPage.fieldTextInput().sendKeys("MATCH{Richard}:NAME");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+		assertThat("Promoted Document should be visible", searchPage.promotionsSummary().isDisplayed());
+	}
+
 }

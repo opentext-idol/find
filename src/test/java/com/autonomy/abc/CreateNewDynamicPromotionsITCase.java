@@ -86,9 +86,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		assertEquals(searchPage.getSelectedLanguage(), "French");
-		// TODO: Check that nothing other than bunny and rabbit was searched for
-		assertThat("Wrong search performed", searchPage.searchTitle().getText().contains("bunny"));
-		assertThat("Wrong search performed", searchPage.searchTitle().getText().contains("rabbit"));
+		assertThat("Wrong search performed", searchPage.searchTitle().getText().equals("bunny rabbit"));
 		assertEquals(searchPage.promotionsSummaryList(false).get(0), firstDocTitle);
 		assertEquals(searchPage.promotionsLabel().getText(), "Top Promotions");
 	}
@@ -183,15 +181,17 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.addSearchTrigger("bag");
 		assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList().size() == 1);
 
-		// TODO: Test quotes error message
 		dynamicPromotionsPage.addSearchTrigger("\"bag");
 		assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList().size() == 1);
+		assertThat("Correct error message not showing", dynamicPromotionsPage.getText().contains("Terms have an odd number of quotes, suggesting an unclosed phrase."));
 
 		dynamicPromotionsPage.addSearchTrigger("bag\"");
 		assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList().size() == 1);
+		assertThat("Correct error message not showing", dynamicPromotionsPage.getText().contains("Terms have an odd number of quotes, suggesting an unclosed phrase."));
 
 		dynamicPromotionsPage.addSearchTrigger("\"bag\"");
 		assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList().size() == 1);
+		assertThat("Error message should not show", !dynamicPromotionsPage.getText().contains("Terms have an odd number of quotes, suggesting an unclosed phrase."));
 
 		dynamicPromotionsPage.removeSearchTrigger("bag");
 		assertThat("Number of triggers does not equal 0", dynamicPromotionsPage.getSearchTriggersList().size() == 0);
