@@ -10,7 +10,7 @@ public abstract class TabBar extends AppElement {
 		super($el, driver);
 	}
 
-	public abstract Tab getTab(NavBarTabId id); //TODO: Take ENUM
+	public abstract Tab getTab(NavBarTabId id);
 
 	public abstract Tab getSelectedTab();
 

@@ -278,6 +278,38 @@ public class PromotionsPage extends AppElement implements AppPage {
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".query-edit-link .fa-pencil")));
 	}
 
+	public WebElement fieldTextAddButton() {
+		return findElement(By.cssSelector(".promotion-field-text")).findElement(By.xpath(".//button[contains(text(), 'Field Text')]"));
+	}
+
+	public WebElement fieldTextInputBox() {
+		return findElement(By.cssSelector(".promotion-field-text [placeholder='Field text']"));
+	}
+
+	public WebElement fieldTextTickConfirmButton() {
+		return getParent(findElement(By.cssSelector(".promotion-field-text .fa-check")));
+	}
+
+	public WebElement fieldTextRemoveButton() {
+		return getParent(findElement(By.cssSelector(".promotion-field-text .fa-remove")));
+	}
+
+	public WebElement fieldTextEditButton() {
+		return getParent(findElement(By.cssSelector(".promotion-field-text .fa-pencil")));
+	}
+
+	public String fieldTextValue() {
+		return findElement(By.cssSelector(".promotion-field-text .inline-edit-current-value")).getText();
+	}
+
+	public void addFieldText(final String fieldText) {
+		fieldTextAddButton().click();
+		loadOrFadeWait();
+		fieldTextInputBox().sendKeys(fieldText);
+		fieldTextTickConfirmButton().click();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(fieldTextRemoveButton()));
+	}
+
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {
 
 		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {

@@ -66,10 +66,24 @@ public class SchedulePage extends AppElement implements AppPage{
 		return getDriver().findElement(By.cssSelector(".picker-switch")).getText().split("\\s+")[0];
 	}
 
-	// currentCalendarView can take the values 'days', 'months' or 'years'
-	// TODO: Enum
-	public WebElement getDatepickerSwitch(final String currentCalendarView) {
-		return getDriver().findElement(By.cssSelector(".datepicker-" + currentCalendarView + " .picker-switch"));
+	public WebElement getDatepickerSwitch(final CalendarView currentCalendarView) {
+		return getDriver().findElement(By.cssSelector(".datepicker-" + currentCalendarView.getTitle() + " .picker-switch"));
+	}
+
+	public enum CalendarView {
+		DAYS("days"),
+		MONTHS("months"),
+		YEARS("years");
+
+		private final String title;
+
+		CalendarView(final String title) {
+			this.title = title;
+		}
+
+		public String getTitle() {
+			return title;
+		}
 	}
 
 	public void calendarDateSelect(final Date date) {
@@ -79,16 +93,16 @@ public class SchedulePage extends AppElement implements AppPage{
 		final SimpleDateFormat hour = new SimpleDateFormat("hh");
 		final SimpleDateFormat minute = new SimpleDateFormat("mm");
 
-		getDatepickerSwitch("days").click();
-		getDatepickerSwitch("months").click();
+		getDatepickerSwitch(CalendarView.DAYS).click();
+		getDatepickerSwitch(CalendarView.MONTHS).click();
 		datepickerYearSelect(year.format(date));
 		datepickerMonthSelect(month.format(date));
 		datepickerDaySelect(day.format(date));
 		togglePicker();
 		loadOrFadeWait();
-		timpickerHour().click();
+		timepickerHour().click();
 		selectTimepickerHour(Integer.parseInt(hour.format(date)));
-		timpickerMinute().click();
+		timepickerMinute().click();
 		selectTimepickerMinute(Integer.parseInt(minute.format(date)));
 		setMinuteUsingIncrementDecrement(Integer.parseInt(minute.format(date)));
 	}
@@ -109,11 +123,26 @@ public class SchedulePage extends AppElement implements AppPage{
 		loadOrFadeWait();
 	}
 
-	// frequency can contain values 'Daily', 'Weekly', 'Monthly' or 'Yearly'
-	// TODO: Enum?
-	public void selectFrequency(final String frequency) {
+	public void selectFrequency(final Frequency frequency) {
 		findElement(By.cssSelector(".promotion-schedule-frequency .dropdown-toggle")).click();
-		findElement(By.xpath(".//a[text()='" + frequency + "']")).click();
+		findElement(By.xpath(".//a[text()='" + frequency.getTitle() + "']")).click();
+	}
+
+	public enum Frequency {
+		DAILY("Daily"),
+		WEEKLY("Weekly"),
+		MONTHLY("Monthly"),
+		YEARLY("Yearly");
+
+		private final String title;
+
+		Frequency(final String title) {
+			this.title = title;
+		}
+
+		public String getTitle() {
+			return title;
+		}
 	}
 
 	public String readFrequency() {
@@ -141,7 +170,7 @@ public class SchedulePage extends AppElement implements AppPage{
 	}
 
 	public void incrementHours() {
-		findElement(By.cssSelector(".picker-switch [data-action='incrementHours']")).click();
+		findElement(By.cssSelector("[data-action='incrementHours']")).click();
 	}
 
 	public void incrementMinutes() {
@@ -164,11 +193,11 @@ public class SchedulePage extends AppElement implements AppPage{
 		return (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(date);
 	}
 
-	public WebElement timpickerHour() {
+	public WebElement timepickerHour() {
 		return findElement(By.cssSelector(".timepicker-hour"));
 	}
 
-	public WebElement timpickerMinute() {
+	public WebElement timepickerMinute() {
 		return findElement(By.cssSelector(".timepicker-minute"));
 	}
 
@@ -197,7 +226,7 @@ public class SchedulePage extends AppElement implements AppPage{
 	}
 
 	public void setMinuteUsingIncrementDecrement(final int minute) {
-		final int difference = minute - Integer.parseInt(timpickerMinute().getText());
+		final int difference = minute - Integer.parseInt(timepickerMinute().getText());
 		if (difference > 0) {
 			for (int i = 1; i <= difference; i++) {
 				incrementMinutes();
@@ -211,7 +240,7 @@ public class SchedulePage extends AppElement implements AppPage{
 	}
 
 	public void setHourUsingIncrementDecrement(final int hour) {
-		final int difference = hour - Integer.parseInt(timpickerHour().getText());
+		final int difference = hour - Integer.parseInt(timepickerHour().getText());
 		if (difference > 0) {
 			for (int i = 1; i <= difference; i++) {
 				incrementHours();
@@ -259,7 +288,7 @@ public class SchedulePage extends AppElement implements AppPage{
 		return monthWord.format(numberDate.parse(date)).replaceFirst("^0", "");
 	}
 
-	public void schedulePromotion(final Date startDate, final Date endDate, final String frequency, final Date finalDate) {
+	public void schedulePromotion(final Date startDate, final Date endDate, final Frequency frequency, final Date finalDate) {
 		loadOrFadeWait();
 		schedule().click();
 		continueButton(WizardStep.ENABLE_SCHEDULE).click();
