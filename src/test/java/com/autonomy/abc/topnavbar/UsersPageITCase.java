@@ -92,6 +92,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.addUsername("Felix");
 		usersPage.addAndConfirmPassword("password", "password");
 		usersPage.createButton().click();
+		usersPage.loadOrFadeWait();
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		assertThat("Completion message not shown", newUserModal.getText().contains("Done! User Felix successfully created"));
 
@@ -160,6 +161,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.getTableUserTypeLink("Bella").click();
 		usersPage.selectTableUserType("Bella", "Admin");
 		usersPage.getUserRow("Bella").findElement(By.cssSelector(".editable-submit")).click();
+		usersPage.loadOrFadeWait();
 		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Bella").isDisplayed());
 		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Bella").getText().equals("Admin"));
 

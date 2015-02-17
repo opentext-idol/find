@@ -14,8 +14,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -31,6 +34,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	private SearchPage searchPage;
 	private SchedulePage schedulePage;
 	private CreateNewDynamicPromotionsPage dynamicPromotionsPage;
+	private final Pattern pattern = Pattern.compile("\\s+");
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -337,52 +341,94 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testSchedulePromotionForTomorrow() {
+	public void testSchedulePromotionForTomorrow() throws ParseException {
 		setUpANewMultiDocPromotion("English", "wizard", "Sponsored", "wand magic spells", 4);
 		promotionsPage.schedulePromotion();
 
 		schedulePage = body.getSchedulePage();
 		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
-		assertThat("Finish button not visible", schedulePage.finishButton("enableSchedule").isDisplayed()); //TODO: Enum of datasteps
-		assertThat("Finish button should be disabled", schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+		assertThat("Finish button not visible", schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed());
+		assertThat("Always active isn't selected", schedulePage.alwaysActive().getAttribute("class").contains("progressive-disclosure-selection"));
+		assertThat("Schedule shouldn't be selected", !schedulePage.schedule().getAttribute("class").contains("progressive-disclosure-selection"));
+		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"));
 
 		schedulePage.alwaysActive().click();
-		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"));
 
 		schedulePage.schedule().click();
-		assertThat("Continue button should be present", schedulePage.continueButton("enableSchedule").isDisplayed());
+		assertThat("Continue button should be present", schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed());
 
-		schedulePage.continueButton("enableSchedule").click();
+		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		schedulePage.loadOrFadeWait();
-		assertThat("Wrong wizard text", schedulePage.getText().contains("When should this promotion start and end?"));
+		assertThat("Wrong wizard text", schedulePage.getText().contains("How long should this promotion run?"));
 
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(schedulePage.getTodayDate()));
-		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
+		// TODO use Pattern.split here
+		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(schedulePage.getTodayDate()));
+		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
+		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[1], "00:00");
+		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[1], "00:00");
 
-		schedulePage.startDateTextBox().click();
+		schedulePage.startDateTextBoxButton().click();
 		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay());
 		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth());
 
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 1));
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
-		final String startDate = schedulePage.startDateTextBox().getAttribute("value");
-
-		schedulePage.endDateTextBox().click();
-		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 5));
-		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 5)));
-		final String endDate = schedulePage.endDateTextBox().getAttribute("value");
-
-		schedulePage.continueButton("scheduleTimes").click();
+		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
+		final String startDate = SchedulePage.parseDateForPromotionsPage(schedulePage.startDateTextBox().getAttribute("value"));
+		schedulePage.startDateTextBoxButton().click();
 		schedulePage.loadOrFadeWait();
-		assertThat("Wrong wizard text", schedulePage.getText().contains("How often should this promotion run?"));
 
+		schedulePage.endDateTextBoxButton().click();
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 5));
+		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 5)));
+		final String endDate = SchedulePage.parseDateForPromotionsPage(schedulePage.endDateTextBox().getAttribute("value"));
+		schedulePage.endDateTextBoxButton().click();
+		schedulePage.loadOrFadeWait();
+
+		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
+		schedulePage.loadOrFadeWait();
+		assertThat("Wrong wizard text", schedulePage.getText().contains("Do you want to repeat this promotion schedule?"));
+
+		schedulePage.repeatWithFrequencyBelow().click();
 		schedulePage.selectFrequency("Monthly");
 		assertEquals(schedulePage.readFrequency(), "Monthly");
 
-		schedulePage.finishButton("scheduleFrequency").click();
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		assertThat("Wrong wizard text", schedulePage.getText().contains("When should this promotion schedule finish?"));
+
+		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
+		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 5)));
+		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "00:00");
+
+		schedulePage.finalDateTextBoxButton().click();
+		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay() + 5);
+		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth());
+
+		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 502));
+		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 502)));
+		schedulePage.togglePicker();
+		schedulePage.loadOrFadeWait();
+		schedulePage.timpickerHour().click();
+		schedulePage.selectTimepickerHour(3);
+		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "03:00");
+
+		schedulePage.timpickerMinute().click();
+		schedulePage.selectTimepickerMinute(42);
+		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "03:40");
+
+		schedulePage.setMinuteUsingIncrementDecrement(42);
+		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "03:42");
+
+		final String finalDate = SchedulePage.parseDateForPromotionsPage(schedulePage.finalDateTextBox().getAttribute("value"));
+		schedulePage.finalDateTextBoxButton().click();
+		schedulePage.loadOrFadeWait();
+
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
-		assert(promotionsPage.getText().contains("The promotion is scheduled to run monthly, starting from " + startDate + " and ending on " + endDate));
+		assertThat("Correct Scheduling text not visible", promotionsPage.getText().contains("The promotion is scheduled to run starting on " + startDate + " for the duration of 4 days, ending on " + endDate));
+		assertThat("Correct Scheduling text not visible", promotionsPage.getText().contains("This promotion schedule will run monthly until " + finalDate));
 
 		topNavBar.search("magic");
 		topNavBar.loadOrFadeWait();
@@ -393,8 +439,10 @@ public class PromotionsPageITCase extends ABCTestBase {
 		navBar.switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage.getPromotionLinkWithTitleContaining("magic").click();
 		promotionsPage.schedulePromotion();
+		promotionsPage.loadOrFadeWait();
+		schedulePage = body.getSchedulePage();
 		schedulePage.alwaysActive().click();
-		schedulePage.finishButton("enableSchedule").click();
+		schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		schedulePage.loadOrFadeWait();
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
 		assert(promotionsPage.getText().contains("The promotion is always active"));
@@ -407,82 +455,92 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testScheduleStartBeforeEnd() {
+	public void testScheduleStartBeforeEnd() throws ParseException {
 		setUpANewMultiDocPromotion("English", "cone", "Hotwire", "\"ice cream\" chips", 4);
 		promotionsPage.schedulePromotion();
 
 		schedulePage = body.getSchedulePage();
 		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
-		assertThat("Finish button not visible", schedulePage.finishButton("enableSchedule").isDisplayed());
-		assertThat("Finish button should be disabled", schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+		assertThat("Finish button not visible", schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed());
+		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"));
 
 		schedulePage.alwaysActive().click();
-		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"));
 
 		schedulePage.schedule().click();
-		assertThat("Continue button should be present", schedulePage.continueButton("enableSchedule").isDisplayed());
+		assertThat("Continue button should be present", schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed());
 
 		schedulePage.alwaysActive().click();
-		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton("enableSchedule"), "disabled"));
+		assertThat("Finish button should be enabled", !schedulePage.isAttributePresent(schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE), "disabled"));
 
 		schedulePage.schedule().click();
-		assertThat("Continue button should be present", schedulePage.continueButton("enableSchedule").isDisplayed());
+		assertThat("Continue button should be present", schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed());
 
-		schedulePage.continueButton("enableSchedule").click();
+		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		schedulePage.loadOrFadeWait();
-		assertThat("Wrong wizard text", schedulePage.getText().contains("When should this promotion start and end?"));
+		assertThat("Wrong wizard text", schedulePage.getText().contains("How long should this promotion run?"));
 
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(schedulePage.getTodayDate()));
-		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
+		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(schedulePage.getTodayDate()));
+		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
 
-		schedulePage.startDateTextBox().click();
+		schedulePage.startDateTextBoxButton().click();
 		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay());
 		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth());
 
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 3));
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 3)));
+		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 3)));
+		schedulePage.startDateTextBoxButton().click();
 
-		schedulePage.endDateTextBox().click();
+		schedulePage.endDateTextBoxButton().click();
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 2));
-		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2)));
+		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2)));
+		schedulePage.endDateTextBoxButton().click();
 
-		assert(getDriver().findElement(By.cssSelector(".wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be disabled", schedulePage.isAttributePresent(schedulePage.continueButton("scheduleTimes"), "disabled"));
+		assert(getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
+		assertThat("Continue button should be disabled", schedulePage.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"));
 
-		schedulePage.endDateTextBox().click();
+		schedulePage.endDateTextBoxButton().click();
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 4));
-		assertEquals(schedulePage.endDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 4)));
+		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 4)));
 		String endDate = schedulePage.endDateTextBox().getAttribute("value");
+		schedulePage.endDateTextBoxButton().click();
 
-		assert(!getDriver().findElement(By.cssSelector(".wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be enabled", !schedulePage.isAttributePresent(schedulePage.continueButton("scheduleTimes"), "disabled"));
+		assert(!getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
+		assertThat("Continue button should be enabled", !schedulePage.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"));
 
-		schedulePage.startDateTextBox().click();
+		schedulePage.startDateTextBoxButton().click();
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 9));
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 9)));
+		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 9)));
+		schedulePage.startDateTextBoxButton().click();
 
-		assert(getDriver().findElement(By.cssSelector(".wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be disabled", schedulePage.isAttributePresent(schedulePage.continueButton("scheduleTimes"), "disabled"));
+		assert(getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
+		assertThat("Continue button should be disabled", schedulePage.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"));
 
-		schedulePage.startDateTextBox().click();
+		schedulePage.startDateTextBoxButton().click();
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 2));
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2)));
+		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 2)));
+		schedulePage.startDateTextBoxButton().click();
 
-		assert(!getDriver().findElement(By.cssSelector(".wizard")).getText().contains("End date cannot be before the start date"));
-		assertThat("Continue button should be enabled", !schedulePage.isAttributePresent(schedulePage.continueButton("scheduleTimes"), "disabled"));
+		assert(!getDriver().findElement(By.cssSelector(".pd-wizard")).getText().contains("End date cannot be before the start date"));
+		assertThat("Continue button should be enabled", !schedulePage.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"));
 
 		String startDate = schedulePage.startDateTextBox().getAttribute("value");
-		schedulePage.continueButton("scheduleTimes").click();
+		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
 		schedulePage.loadOrFadeWait();
-		assertThat("Wrong wizard text", schedulePage.getText().contains("How often should this promotion run?"));
+		assertThat("Wrong wizard text", schedulePage.getText().contains("Do you want to repeat this promotion schedule?"));
 
-		schedulePage.selectFrequency("Daily");
-		assertEquals(schedulePage.readFrequency(), "Daily");
+		schedulePage.repeatWithFrequencyBelow().click();
+		schedulePage.selectFrequency("Yearly");
+		assertEquals(schedulePage.readFrequency(), "Yearly");
 
-		schedulePage.finishButton("scheduleFrequency").click();
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.never().click();
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
-		assert(promotionsPage.getText().contains("The promotion is scheduled to run daily, starting from " + startDate + " and ending on " + endDate));
+		assertThat("Correct promotion summary text not present", promotionsPage.getText().contains("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 2 days, ending on " + schedulePage.parseDateForPromotionsPage(endDate)));
+		assertThat("Correct promotion summary text not present", promotionsPage.getText().contains("This promotion schedule will run yearly forever."));
 
 		topNavBar.search("chips");
 		topNavBar.loadOrFadeWait();
@@ -493,33 +551,172 @@ public class PromotionsPageITCase extends ABCTestBase {
 		navBar.switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage.getPromotionLinkWithTitleContaining("chips").click();
 		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.loadOrFadeWait();
+		assertThat("Schedule should be selected due to prepopulated schedule", schedulePage.schedule().getAttribute("class").contains("progressive-disclosure-selection"));
+
 		schedulePage.schedule().click();
-		schedulePage.continueButton("enableSchedule").click();
+		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		schedulePage.loadOrFadeWait();
 
-		schedulePage.startDateTextBox().click();
+		assertEquals(startDate, schedulePage.startDateTextBox().getAttribute("value"));
+		assertEquals(endDate, schedulePage.endDateTextBox().getAttribute("value"));
+		schedulePage.startDateTextBoxButton().click();
 		schedulePage.calendarDateSelect(schedulePage.getTodayDate());
-		assertEquals(schedulePage.startDateTextBox().getAttribute("value"), schedulePage.dateAsString(schedulePage.getTodayDate()));
+		schedulePage.startDateTextBoxButton().click();
+		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(schedulePage.getTodayDate()));
 
 		startDate = schedulePage.startDateTextBox().getAttribute("value");
 		endDate = schedulePage.endDateTextBox().getAttribute("value");
 
-		schedulePage.continueButton("scheduleTimes").click();
+		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
 		schedulePage.loadOrFadeWait();
-		assertThat("Wrong wizard text", schedulePage.getText().contains("How often should this promotion run?"));
+		assertThat("Wrong wizard text", schedulePage.getText().contains("Do you want to repeat this promotion schedule?"));
 
-		schedulePage.selectFrequency("Daily");
-		assertEquals(schedulePage.readFrequency(), "Daily");
+		schedulePage.selectFrequency("Yearly");
+		assertEquals(schedulePage.readFrequency(), "Yearly");
 
-		schedulePage.finishButton("scheduleFrequency").click();
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
+		schedulePage.finalDateTextBoxButton().click();
+		schedulePage.calendarDateSelect(DateUtils.addYears(schedulePage.getTodayDate(), 2));
+		schedulePage.finalDateTextBoxButton().click();
+		final String finalDate = schedulePage.finalDateTextBox().getAttribute("value");
+
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.loadOrFadeWait();
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
-		assert(promotionsPage.getText().contains("The promotion is scheduled to run daily, starting from " + startDate + " and ending on " + endDate));
+		assertThat("Correct schedule summary text not visible", promotionsPage.getText().contains("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 4 days, ending on " + schedulePage.parseDateForPromotionsPage(endDate)));
+		assertThat("Correct schedule summary text not visible", promotionsPage.getText().contains("This promotion schedule will run yearly until " + SchedulePage.parseDateForPromotionsPage(finalDate)));
 
-		topNavBar.search("magic");
+		topNavBar.search("chips");
 		topNavBar.loadOrFadeWait();
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
 		assertThat("promotions are scheduled to be shown now", searchPage.isPromotionsBoxVisible());
+	}
+
+	@Test
+	public void testPromotionIsPrepopulated() {
+		setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4);
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+
+		final Date startDate = DateUtils.addDays(schedulePage.getTodayDate(), 4);
+		final Date endDate = DateUtils.addDays(schedulePage.getTodayDate(), 8);
+		final Date finalDate = DateUtils.addMonths(schedulePage.getTodayDate(), 6);
+		schedulePage.schedulePromotion(startDate, endDate, "Monthly",  finalDate);
+
+		promotionsPage.schedulePromotion();
+		promotionsPage.loadOrFadeWait();
+		schedulePage = body.getSchedulePage();
+		assertThat("Due to pre-population 'schedule' should be pre-selected", schedulePage.schedule().getAttribute("class").contains("progressive-disclosure-selection"));
+
+		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.loadOrFadeWait();
+		assertEquals(schedulePage.dateAsString(startDate), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
+		assertEquals(schedulePage.dateAsString(endDate), pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.continueButton(SchedulePage.WizardStep.START_END).click();
+		schedulePage.loadOrFadeWait();
+		assertEquals("Monthly", schedulePage.readFrequency());
+		assertThat("Due to pre-population 'repeat with frequency below' should be pre-selected", schedulePage.getFirstChild(schedulePage.repeatWithFrequencyBelow()).getAttribute("class").contains("progressive-disclosure-selection"));
+
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		assertThat("Due to pre-population 'run this promotion schedule until the date below' should be pre-selected", schedulePage.runThisPromotionScheduleUntilTheDateBelow().getAttribute("class").contains("progressive-disclosure-selection"));
+		assertEquals(schedulePage.dateAsString( finalDate), pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		promotionsPage.loadOrFadeWait();
+	}
+
+	@Test
+	public void testFrequencyPeriodNotLessThanPromotionLengthAndFinalDateNotLessThanEndDate() {
+		setUpANewPromotion("Georgian", "საქართველო", "Hotwire", "Georgia");
+
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.navigateWizardAndSetEndDate(schedulePage.getTodayDate());
+
+		List<String> availableFrequencies = schedulePage.getAvailableFrequencies();
+		assertThat("All frequencies should be available", availableFrequencies.containsAll(Arrays.asList("Yearly", "Daily", "Monthly", "Weekly")));
+
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
+		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(schedulePage.getTodayDate()))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		promotionsPage.loadOrFadeWait();
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.navigateWizardAndSetEndDate(DateUtils.addDays(schedulePage.getTodayDate(), 4));
+
+		availableFrequencies = schedulePage.getAvailableFrequencies();
+		assertThat("Yearly should be an available option", availableFrequencies.contains("Yearly"));
+		assertThat("Daily should not be an option for this schedule", !availableFrequencies.contains("Daily"));
+		assertThat("Weekly should be an option for this schedule", availableFrequencies.contains("Weekly"));
+		assertThat("Monthly should be an option for this schedule", availableFrequencies.contains("Monthly"));
+
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
+		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(DateUtils.addDays(schedulePage.getTodayDate(), 4)))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		promotionsPage.loadOrFadeWait();
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.navigateWizardAndSetEndDate(DateUtils.addWeeks(schedulePage.getTodayDate(), 2));
+
+		availableFrequencies = schedulePage.getAvailableFrequencies();
+		assertThat("Yearly should be an available option", availableFrequencies.contains("Yearly"));
+		assertThat("Daily should not be an option for this schedule", !availableFrequencies.contains("Daily"));
+		assertThat("Weekly should not be an option for this schedule", !availableFrequencies.contains("Weekly"));
+		assertThat("Monthly should be an option for this schedule", availableFrequencies.contains("Monthly"));
+
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
+		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(DateUtils.addWeeks(schedulePage.getTodayDate(), 2)))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		promotionsPage.loadOrFadeWait();
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.navigateWizardAndSetEndDate(DateUtils.addMonths(schedulePage.getTodayDate(), 1));
+
+		availableFrequencies = schedulePage.getAvailableFrequencies();
+		assertThat("Yearly should be an available option", availableFrequencies.contains("Yearly"));
+		assertThat("Daily should not be an option for this schedule", !availableFrequencies.contains("Daily"));
+		assertThat("Weekly should not be an option for this schedule", !availableFrequencies.contains("Weekly"));
+		assertThat("Monthly should not be an option for this schedule", !availableFrequencies.contains("Monthly"));
+
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
+		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(DateUtils.addMonths(schedulePage.getTodayDate(), 1)))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		promotionsPage.loadOrFadeWait();
+		promotionsPage.schedulePromotion();
+		schedulePage = body.getSchedulePage();
+		schedulePage.navigateWizardAndSetEndDate(DateUtils.addYears(schedulePage.getTodayDate(), 3));
+
+		availableFrequencies = schedulePage.getAvailableFrequencies();
+		assertThat("Yearly should not be an available option", !availableFrequencies.contains("Yearly"));
+		assertThat("Daily should not be an option for this schedule", !availableFrequencies.contains("Daily"));
+		assertThat("Weekly should not be an option for this schedule", !availableFrequencies.contains("Weekly"));
+		assertThat("Monthly should not be an option for this schedule", !availableFrequencies.contains("Monthly"));
+
+		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
+		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(DateUtils.addYears(schedulePage.getTodayDate(), 3)))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
+
+		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 	}
 
 	@Test

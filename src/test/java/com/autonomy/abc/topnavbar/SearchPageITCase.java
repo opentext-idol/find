@@ -427,6 +427,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testViewFromBucketLabel() throws InterruptedException {
 		topNavBar.search("جيمس");
 		searchPage.selectLanguage("Arabic");
+		//Testing in Arabic because in some instances not latin urls have been encoded incorrectly
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
 		searchPage.promoteTheseDocumentsButton().click();
 
