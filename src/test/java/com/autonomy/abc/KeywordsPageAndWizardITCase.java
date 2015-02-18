@@ -1184,6 +1184,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertEquals(1, createKeywordsPage.countKeywords());
 		assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList().contains("bear"));
 		assertThat("correct error message not showing", createKeywordsPage.getText().contains("Bear is a case variant of bear, an existing keyword."));
+
+		//jam and jaM are case variants so none should be added
+		createKeywordsPage.addSynonyms("jam jaM");
+		assertEquals(1, createKeywordsPage.countKeywords());
 	}
 
 	@Test
