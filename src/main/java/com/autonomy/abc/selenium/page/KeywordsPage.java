@@ -32,16 +32,16 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 
 		for (final String language : getLanguageList()) {
 			selectLanguage(language);
-			final int numberOfSynonymGroups = findElements(By.cssSelector(".keywords-list li:first-child .remove-search-synonym")).size();
+			final int numberOfSynonymGroups = findElements(By.cssSelector(".keywords-list li:first-child .remove-synonym")).size();
 
 			if (numberOfSynonymGroups >= 2) {
 				for (int i = 0; i <= numberOfSynonymGroups; i++) {
-					if (findElements(By.cssSelector(".keywords-list li:first-child .remove-search-synonym")).size() > 2) {
-						findElement(By.cssSelector(".keywords-list li:first-child .remove-search-synonym")).click();
+					if (findElements(By.cssSelector(".keywords-list li:first-child .remove-synonym")).size() > 2) {
+						findElement(By.cssSelector(".keywords-list li:first-child .remove-synonym")).click();
 						Thread.sleep(3000);
 					} else {
-						if (findElements(By.cssSelector(".keywords-list li:first-child .remove-search-synonym")).size() == 2) {
-							findElement(By.cssSelector(".keywords-list li:first-child .remove-search-synonym")).click();
+						if (findElements(By.cssSelector(".keywords-list li:first-child .remove-synonym")).size() == 2) {
+							findElement(By.cssSelector(".keywords-list li:first-child .remove-synonym")).click();
 						}
 
 						loadOrFadeWait();
