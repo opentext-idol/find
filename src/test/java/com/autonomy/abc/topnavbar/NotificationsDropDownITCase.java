@@ -25,7 +25,7 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 	}
 
 	@Test
-	public void testCountNotifications() {
+	public void testCountNotifications() throws InterruptedException {
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage = body.getKeywordsPage();
 		keywordsPage.createNewKeywordsButton().click();

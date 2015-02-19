@@ -26,6 +26,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class KeywordsPageAndWizardITCase extends ABCTestBase {
@@ -578,7 +579,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testAddingWhitespaceAndQuotesOnKeywordsPage() throws InterruptedException {
+	public void testAddingWhitespaceQuotesBooleansProximityOperatorsOnKeywordsPage() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
@@ -593,26 +594,49 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("two").contains("four"));
 		assertEquals(4, keywordsPage.countSynonymLists("English"));
 
-		keywordsPage.synonymGroup("three").findElement(By.cssSelector(".fa-plus")).click();
-		keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).clear();
-		keywordsPage.synonymGroup("three").findElement(By.cssSelector(".fa-check")).click();
+		keywordsPage.synonymGroupPlusButton("three").click();
+		keywordsPage.synonymGroupTextBox("three").clear();
+		keywordsPage.synonymGroupTickButton("three").click();
 		assertThat("add synonym box should still be displayed", keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).isDisplayed());
 
 		keywordsPage.searchFilterTextBox().click();
 		assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("two").contains("four"));
 		assertEquals(4, keywordsPage.countSynonymLists("English"));
 
-		for (final String badSynonym : Arrays.asList(" ", "\t", "\"", "\" \"")) {
-			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".fa-plus")).click();
-			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).clear();
-			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).sendKeys(badSynonym);
-			keywordsPage.synonymGroup("three").findElement(By.cssSelector(".fa-check")).click();
-			assertThat("add synonym box should still be displayed", keywordsPage.synonymGroup("three").findElement(By.cssSelector(".add-synonym-input")).isDisplayed());
+		for (final String badSynonym : Arrays.asList(" ", "\t", "\"", "NOT", "NEAR", "DNEAR", "XNEAR", "YNEAR", "AND", "BEFORE", "AFTER", "WHEN", "SENTENCE", "PARAGRAPH", "OR", "WNEAR", "EOR", "NOTWHEN")) {
+			keywordsPage.synonymGroupPlusButton("three").click();
+			keywordsPage.synonymGroupTextBox("three").clear();
+			keywordsPage.synonymGroupTextBox("three").sendKeys(badSynonym);
+			keywordsPage.synonymGroupTickButton("three").click();
+			assertThat("add synonym box should still be displayed. Offending term is " + badSynonym, keywordsPage.synonymGroupTextBox("three").isDisplayed());
 
+			keywordsPage.loadOrFadeWait();
 			keywordsPage.searchFilterTextBox().click();
-			assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("one").size() == 4);
+			assertThat("there should be four synonyms in a group. Offending term is " + badSynonym, keywordsPage.getSynonymGroupSynonyms("one").size() == 4);
 			assertEquals(4, keywordsPage.countSynonymLists("English"));
 		}
+	}
+
+	@Test
+	public void testPhrasesCanBeAddedAsSynonymsOnKeywordsPage() throws InterruptedException {
+		keywordsPage.deleteAllSynonyms();
+		keywordsPage.deleteAllBlacklistedTerms();
+		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage.createSynonymGroup("one two three", "English");
+		searchPage = body.getSearchPage();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		navBar.switchPage(NavBarTabId.KEYWORDS);
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
+		keywordsPage.filterView("Synonyms");
+		keywordsPage.selectLanguage("English");
+		keywordsPage.synonymGroupPlusButton("three").click();
+		keywordsPage.synonymGroupTextBox("three").clear();
+		keywordsPage.synonymGroupTextBox("three").sendKeys("\"four and five\"");
+		keywordsPage.synonymGroupTickButton("three").click();
+		Thread.sleep(5000);
+		assertFalse(keywordsPage.synonymGroupTextBox("three").isDisplayed());
+		assertEquals(4, keywordsPage.countSynonymLists("English"));
+		assertTrue(keywordsPage.getSynonymGroupSynonyms("three").contains("four and five"));
 	}
 
 	@Test
@@ -1237,5 +1261,37 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.BLACKLISTED).click();
 		createKeywordsPage.loadOrFadeWait();
+	}
+
+	@Test
+	public void testAddKeywordsBoxOpenClickDelete() throws InterruptedException {
+		keywordsPage.deleteAllSynonyms();
+		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage.createSynonymGroup("бір екі үш төрт бес", "Kazakh");
+
+		navBar.switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage.loadOrFadeWait();
+		keywordsPage.filterView("Synonyms");
+		keywordsPage.selectLanguage("Kazakh");
+		keywordsPage.synonymGroupPlusButton("бір").click();
+		assertTrue(keywordsPage.synonymGroupTextBox("бір").isDisplayed());
+
+		keywordsPage.deleteSynonym("екі", "үш");
+		assertTrue(keywordsPage.synonymGroupTextBox("бір").isDisplayed());
+	}
+
+	@Test
+	public void testQuickSynonymDelete() throws InterruptedException {
+		keywordsPage.deleteAllSynonyms();
+		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage.createSynonymGroup("string strong strang streng strung", "German");
+		navBar.switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage.loadOrFadeWait();
+		keywordsPage.filterView("Synonyms");
+		keywordsPage.selectLanguage("German");
+		keywordsPage.getSynonymIcon("strong", "strung").click();
+		keywordsPage.getSynonymIcon("string", "strung").click();
+		Thread.sleep(5000);
+		assertEquals(3, keywordsPage.countSynonymLists("German"));
 	}
 }

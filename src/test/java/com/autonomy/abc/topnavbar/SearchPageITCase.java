@@ -693,6 +693,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		assertEquals(2, searchPage.getPromotionSummarySize());
+		assertEquals(2, searchPage.getPromotionSummaryLabels().size());
 
 		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
 		searchPage.fieldTextAddButton().click();
@@ -701,6 +702,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 
 		assertEquals(1, searchPage.getPromotionSummarySize());
+		assertEquals(1, searchPage.getPromotionSummaryLabels().size());
 		assertEquals(initialPromotionsSummary.get(0), searchPage.promotionsSummaryList(false).get(0));
 
 		searchPage.fieldTextEditButton().click();
@@ -710,6 +712,55 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 
 		assertEquals(1, searchPage.getPromotionSummarySize());
+		assertEquals(1, searchPage.getPromotionSummaryLabels().size());
 		assertEquals(initialPromotionsSummary.get(1), searchPage.promotionsSummaryList(false).get(0));
+	}
+
+	@Test
+	public void testFieldTextRestrictionOnPinToPositionPromotions(){
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+		promotionsPage = body.getPromotionsPage();
+		promotionsPage.deleteAllPromotions();
+
+		topNavBar.search("horse");
+		searchPage.selectLanguage("English");
+		final List<String> promotedDocs = searchPage.createAMultiDocumentPromotion(2);
+		createPromotionsPage = body.getCreateNewPromotionsPage();
+		createPromotionsPage.navigateToTriggers();
+		createPromotionsPage.addSearchTrigger("duck");
+		createPromotionsPage.finishButton().click();
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		assertTrue(searchPage.getText().contains(promotedDocs.get(0)));
+		assertTrue(searchPage.getText().contains(promotedDocs.get(1)));
+
+		searchPage.fieldTextAddButton().click();
+		searchPage.fieldTextInput().sendKeys("WILD{*horse*}:DRETITLE");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+
+		assertTrue(searchPage.getText().contains(promotedDocs.get(0)));
+		assertTrue(searchPage.getText().contains(promotedDocs.get(1)));
+		assertEquals(2, searchPage.countSearchResults());
+		assertEquals(2, searchPage.countPinToPositionLabels());
+
+		searchPage.fieldTextEditButton().click();
+		searchPage.fieldTextInput().clear();
+		searchPage.fieldTextInput().sendKeys("MATCH{" + promotedDocs.get(0) + "}:DRETITLE");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+
+		assertEquals(promotedDocs.get(0), searchPage.getSearchResultTitle(1));
+		assertEquals(1, searchPage.countSearchResults());
+		assertEquals(1, searchPage.countPinToPositionLabels());
+
+		searchPage.fieldTextEditButton().click();
+		searchPage.fieldTextInput().clear();
+		searchPage.fieldTextInput().sendKeys("MATCH{" + promotedDocs.get(1) + "}:DRETITLE");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+
+		assertEquals(promotedDocs.get(1), searchPage.getSearchResultTitle(1));
+		assertEquals(1, searchPage.countSearchResults());
+		assertEquals(1, searchPage.countPinToPositionLabels());
 	}
 }
