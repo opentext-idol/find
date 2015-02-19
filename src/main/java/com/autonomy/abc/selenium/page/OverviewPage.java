@@ -19,16 +19,28 @@ public class OverviewPage extends AppElement implements AppPage {
 	public void navigateToPage() { getDriver().get("overview"); }
 
 	public int searchTermSearchCount(final String searchTerm) {
-		return Integer.parseInt(getWidget(Widgets.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[3]")).getText());
+		return Integer.parseInt(getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[3]")).getText());
 	}
 
 	public int searchTermRow(final String searchTerm) {
-		return Integer.parseInt(getWidget(Widgets.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[1]")).getText());
+		return Integer.parseInt(getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[1]")).getText());
 	}
 
 	public final static String ACTIVE_TABLE_SELECTOR = ":not([style='display: none;']) > table";
 
-	public enum Widgets {
+	public int getTotalSearches(final Widget widget) {
+		return Integer.parseInt(getWidget(widget).findElement(By.xpath(".//*[contains(text(), 'Total searches')]/..")).findElement(By.cssSelector(".query-count")).getText().replace(",", ""));
+	}
+
+	public int getZeroHitQueries(final Widget widget) {
+		return Integer.parseInt(getWidget(widget).findElement(By.xpath(".//*[contains(text(), 'Zero hit queries')]/..")).findElement(By.cssSelector(".query-count")).getText().replace(",", ""));
+	}
+
+	public int getZeroHitPercentage(final Widget widget) {
+		return Integer.parseInt(getWidget(widget).findElement(By.xpath(".//*[contains(text(), 'Percentage of queries with zero hits')]/..")).findElement(By.cssSelector(".query-count")).getText().split("\\s+")[0]);
+	}
+
+	public enum Widget {
 		ZERO_HIT_TERMS("Zero Hit Terms"),
 		TOP_SEARCH_TERMS("Top Search Terms"),
 		WEEKLY_SEARCH("Weekly Search Count"),
@@ -37,7 +49,7 @@ public class OverviewPage extends AppElement implements AppPage {
 
 		private final String tabName;
 
-		Widgets(final String name) {
+		Widget(final String name) {
 			tabName = name;
 		}
 
@@ -46,20 +58,20 @@ public class OverviewPage extends AppElement implements AppPage {
 		}
 	}
 
-	public WebElement getWidget(final Widgets widgetHeadingText) {
-		return findElement(By.xpath(".//h5[text()='" + widgetHeadingText.toString() + "']/../.."));
+	public WebElement getWidget(final Widget widgetHeadingText) {
+		return findElement(By.xpath(".//h5[contains(text(), \"" + widgetHeadingText.toString() + "\")]/../.."));
 	}
 
 	public WebElement zeroHitLastWeekButton() {
-		return getWidget(Widgets.ZERO_HIT_TERMS).findElement(By.xpath(".//*[@value='week']/.."));
+		return getWidget(Widget.ZERO_HIT_TERMS).findElement(By.xpath(".//*[@value='week']/.."));
 	}
 
 	public WebElement zeroHitLastDayButton() {
-		return getWidget(Widgets.ZERO_HIT_TERMS).findElement(By.xpath(".//*[@value='day']/.."));
+		return getWidget(Widget.ZERO_HIT_TERMS).findElement(By.xpath(".//*[@value='day']/.."));
 	}
 
 	public WebElement topSearchTermsLastTimePeriodButton(final String timePeriod) {
-		return getWidget(Widgets.TOP_SEARCH_TERMS).findElement(By.xpath(".//*[@value='" + timePeriod + "']/.."));
+		return getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.xpath(".//*[@value='" + timePeriod + "']/.."));
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<OverviewPage> {

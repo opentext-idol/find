@@ -96,6 +96,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		addSynonymsTextBox.clear();
 		addSynonymsTextBox.sendKeys(synonyms);
 		tryClickThenTryParentClick(addSynonymsButton());
+		loadOrFadeWait();
 	}
 
 	public void addBlacklistedTerms(final String blacklistedTerms) {
@@ -121,7 +122,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		loadOrFadeWait();
 		finishSynonymWizardButton().click();
 		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-bucket-button")));
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle")));
 	}
 
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
