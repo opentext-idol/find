@@ -122,7 +122,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		loadOrFadeWait();
 		finishSynonymWizardButton().click();
 		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle")));
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".dynamic-promotions-button")));
 	}
 
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
