@@ -268,6 +268,10 @@ public class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
 	}
 
+	public int countPinToPositionLabels() {
+		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
+	}
+
 	public static class Placeholder {
 		private final TopNavBar topNavBar;
 

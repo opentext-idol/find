@@ -111,7 +111,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		return findElements(By.cssSelector(".remove-word")).size();
 	}
 
-	public void createSynonymGroup(final String synonymGroup, final String language) {
+	public void createSynonymGroup(final String synonymGroup, final String language) throws InterruptedException {
 		keywordsType(KeywordType.SYNONYM).click();
 		continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
@@ -121,8 +121,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage{
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
 		finishSynonymWizardButton().click();
-		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".dynamic-promotions-button")));
+		Thread.sleep(5000);
 	}
 
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {

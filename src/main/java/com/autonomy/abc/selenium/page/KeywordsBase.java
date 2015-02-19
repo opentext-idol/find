@@ -51,12 +51,23 @@ public abstract class KeywordsBase extends AppElement implements AppPage{
 	}
 
 	public void addSynonymToGroup(final String synonym, final String synonymGroupLead) {
-		final WebElement synonymGroup = synonymGroup(synonymGroupLead);
-		synonymGroup.findElement(By.cssSelector(".fa-plus")).click();
-		synonymGroup.findElement(By.cssSelector(".add-synonym-input")).clear();
-		synonymGroup.findElement(By.cssSelector(".add-synonym-input")).sendKeys(synonym);
-		synonymGroup.findElement(By.cssSelector(".fa-check")).click();
+		synonymGroupPlusButton(synonymGroupLead).click();
+		synonymGroupTextBox(synonymGroupLead).clear();
+		synonymGroupTextBox(synonymGroupLead).sendKeys(synonym);
+		synonymGroupTickButton(synonymGroupLead).click();
 		loadOrFadeWait();
+	}
+
+	public WebElement synonymGroupPlusButton(final String synonymGroupLead) {
+		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".fa-plus"));
+	}
+
+	public WebElement synonymGroupTickButton(final String synonymGroupLead) {
+		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".fa-check"));
+	}
+
+	public WebElement synonymGroupTextBox(final String synonymGroupLead) {
+		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".add-synonym-input"));
 	}
 
 	public void deleteSynonym(final String synonym, final String synonymGroupLead) throws InterruptedException {
