@@ -25,6 +25,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 
 public class KeywordsPageAndWizardITCase extends ABCTestBase {
@@ -67,7 +68,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			assertThat("Continue button should be disabled until a keywords type is selected", keywordsPage.isAttributePresent(createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE), "disabled"));
 
 			createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
-			assertThat("Synonym type not set active", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).getAttribute("class").contains("progressive-disclosure-selection"));
+			assertThat("Synonym type not set active", createKeywordsPage.getFirstChild(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM)).getAttribute("class").contains("progressive-disclosure-selection"));
 			assertThat("Continue button should be enabled", !createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).getAttribute("class").contains("disabled"));
 
 			createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
@@ -114,12 +115,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			final List<String> synonymGroup = keywordsPage.getSynonymGroupSynonyms("horse");
 			assertThat("Synonym group does not contain 'stuff', 'horse', 'pony' and 'things'", synonymGroup.containsAll(Arrays.asList("stuff", "horse", "pony", "things")));
 		} finally {
-			navBar.getTab(NavBarTabId.KEYWORDS).click();
-			new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-
-			if (!(keywordsPage.getSelectedLanguage().equals("Select Language") && keywordsPage.isAttributePresent(keywordsPage.selectLanguageButton(), "disabled"))) {
-				keywordsPage.selectLanguage("French");
-			}
+			navBar.switchPage(NavBarTabId.KEYWORDS);
 			keywordsPage.deleteAllSynonyms();
 		}
 	}
@@ -181,7 +177,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Continue button should be disabled until a keywords type is selected", createKeywordsPage.isAttributePresent(createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE), "disabled"));
 
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-		assertThat("Blacklisted type not set active", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).getAttribute("class").contains("progressive-disclosure-selection"));
+		assertThat("Blacklisted type not set active", createKeywordsPage.getFirstChild(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST)).getAttribute("class").contains("progressive-disclosure-selection"));
 		assertThat("Continue button should be enabled", !createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).getAttribute("class").contains("disabled"));
 
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
@@ -1045,22 +1041,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testRemoveAllKeywordsAndPromotionsFromNoDocumentsLanguage() {
+	public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.createBlacklistedTerm("Baku", "Azeri");
 
 		topNavBar.search("Baku");
 		searchPage = body.getSearchPage();
-		searchPage.selectLanguage("Azeri");
-		searchPage.loadOrFadeWait();
-		assertThat("url does not contain language", getDriver().getCurrentUrl().contains("azeri"));
-		assertThat("Azeri should be included in the language dropdown", searchPage.getLanguageList().contains("Azeri"));
-
-		searchPage.deleteBlacklistedTerm("Baku");
-		searchPage.loadOrFadeWait();
-		assertThat("url should not contain Azeri", !getDriver().getCurrentUrl().contains("azeri"));
-		assertThat("Azeri is no longer a valid language", !searchPage.getLanguageList().contains("Azeri"));
+		assertFalse(searchPage.getLanguageList().contains("Azeri"));
 	}
 
 	@Test
@@ -1202,8 +1190,52 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertEquals(2, keywordsPage.countSynonymLists("Korean"));
 
 		keywordsPage.getSynonymIcon("ying", "yang").click();
-		while (keywordsPage.getSynonymIcon("ying", "yang").getAttribute("class").contains("fa-spin")) {
+		if (keywordsPage.getSynonymIcon("ying", "yang").getAttribute("class").contains("fa-spin")) {
 			assertThat("Spinner not present on last synonym", keywordsPage.getSynonymIcon("yang", "yang").getAttribute("class").contains("fa-spin"));
 		}
+	}
+
+	@Test
+	public void testBooleanTermsNotValidKeyword() {
+		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
+		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.loadOrFadeWait();
+		createKeywordsPage.selectLanguage("English");
+		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.LANGUAGE).click();
+		createKeywordsPage.loadOrFadeWait();
+		createKeywordsPage.addSynonyms("holder");
+		assertEquals(1, createKeywordsPage.countKeywords());
+		final List<String> booleanProximityOperators = Arrays.asList("NOT", "NEAR", "DNEAR", "XNEAR", "YNEAR", "AND", "BEFORE", "AFTER", "WHEN", "SENTENCE", "PARAGRAPH", "OR", "WNEAR", "EOR", "NOTWHEN");
+
+		for (final String operator : booleanProximityOperators) {
+			createKeywordsPage.addSynonyms(operator);
+			assertThat("boolean operator \"" + operator + "\" should not be added as a synonym", !createKeywordsPage.getProspectiveKeywordsList().contains(operator));
+			assertThat("Correct error message not showing", createKeywordsPage.getText().contains(operator + " is a boolean or proximity operator. These are invalid"));
+			assertEquals(1, createKeywordsPage.countKeywords());
+		}
+
+		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.SYNONYMS).click();
+		createKeywordsPage.loadOrFadeWait();
+
+		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
+		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.loadOrFadeWait();
+		createKeywordsPage.selectLanguage("English");
+		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.LANGUAGE).click();
+		createKeywordsPage.loadOrFadeWait();
+		createKeywordsPage.addBlacklistedTerms("holder");
+		assertEquals(1, createKeywordsPage.countKeywords());
+
+		for (final String operator : booleanProximityOperators) {
+			createKeywordsPage.addBlacklistedTerms(operator);
+			assertThat("boolean operator \"" + operator + "\" should not be added as a synonym", !createKeywordsPage.getProspectiveKeywordsList().contains(operator));
+			assertThat("Correct error message not showing", createKeywordsPage.getText().contains(operator + " is a boolean or proximity operator. These are invalid"));
+			assertEquals(1, createKeywordsPage.countKeywords());
+		}
+
+		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.BLACKLISTED).click();
+		createKeywordsPage.loadOrFadeWait();
 	}
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SearchPageITCase extends ABCTestBase {
 	public SearchPageITCase(final TestConfig config, final String browser, final Platform platform) {
@@ -597,7 +598,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testEditFieldTest() {
+	public void testEditFieldText() {
 		topNavBar.search("boer");
 		searchPage.selectLanguage("Afrikaans");
 		searchPage.selectDatabase("All");
@@ -639,5 +640,76 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.getDatabasesTable().click();
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 		assertThat("Field text input visible", !searchPage.fieldTextInput().isDisplayed());
+	}
+
+	@Test
+	public void testIdolSearchTypes() {
+		topNavBar.search("leg");
+		searchPage.selectLanguage("English");
+		int initialSearchCount = searchPage.countSearchResults();
+		topNavBar.search("leg[2:2]");
+		searchPage.loadOrFadeWait();
+		assertTrue(initialSearchCount > searchPage.countSearchResults());
+
+		topNavBar.search("red");
+		searchPage.loadOrFadeWait();
+		initialSearchCount = searchPage.countSearchResults();
+		topNavBar.search("red star");
+		searchPage.loadOrFadeWait();
+		final int secondSearchCount = searchPage.countSearchResults();
+		assertTrue(initialSearchCount < secondSearchCount);
+
+		topNavBar.search("\"red star\"");
+		searchPage.loadOrFadeWait();
+		final int thirdSearchCount = searchPage.countSearchResults();
+		assertTrue(secondSearchCount > thirdSearchCount);
+
+		topNavBar.search("red NOT star");
+		searchPage.loadOrFadeWait();
+		assertTrue(initialSearchCount > searchPage.countSearchResults());
+
+		topNavBar.search("red OR star");
+		searchPage.loadOrFadeWait();
+		assertEquals(secondSearchCount, searchPage.countSearchResults());
+
+		topNavBar.search("red AND star");
+		searchPage.loadOrFadeWait();
+		final int fourthSearchCount = searchPage.countSearchResults();
+		assertTrue(secondSearchCount > fourthSearchCount);
+		assertTrue(thirdSearchCount < fourthSearchCount);
+	}
+
+	@Test
+	public void testFieldTextRestrictionOnPromotions(){
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+		promotionsPage = body.getPromotionsPage();
+		promotionsPage.deleteAllPromotions();
+
+		topNavBar.search("darth");
+		searchPage.selectLanguage("English");
+		searchPage.createAMultiDocumentPromotion(2);
+	 	createPromotionsPage = body.getCreateNewPromotionsPage();
+		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
+
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		assertEquals(2, searchPage.getPromotionSummarySize());
+
+		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
+		searchPage.fieldTextAddButton().click();
+		searchPage.fieldTextInput().sendKeys("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+
+		assertEquals(1, searchPage.getPromotionSummarySize());
+		assertEquals(initialPromotionsSummary.get(0), searchPage.promotionsSummaryList(false).get(0));
+
+		searchPage.fieldTextEditButton().click();
+		searchPage.fieldTextInput().clear();
+		searchPage.fieldTextInput().sendKeys("MATCH{" + initialPromotionsSummary.get(1) + "}:DRETITLE");
+		searchPage.fieldTextTickConfirm().click();
+		searchPage.loadOrFadeWait();
+
+		assertEquals(1, searchPage.getPromotionSummarySize());
+		assertEquals(initialPromotionsSummary.get(1), searchPage.promotionsSummaryList(false).get(0));
 	}
 }
