@@ -159,7 +159,7 @@ public class OverviewPageITCase extends ABCTestBase{
 				assertThat("page title incorrect", searchPage.title().contains(extraSynonym));
 				assertThat("no search results displayed", searchPage.docLogo().isDisplayed());
 				assertThat("you searched for section incorrect", searchPage.youSearchedFor().containsAll(Arrays.asList(linkText, extraSynonym)));
-				assertEquals(2, searchPage.countSynonymLists("English"));
+				assertEquals(2, searchPage.countSynonymLists());
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText).contains(extraSynonym));
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(extraSynonym).contains(linkText));
 
@@ -168,7 +168,7 @@ public class OverviewPageITCase extends ABCTestBase{
 				assertThat("page title incorrect", searchPage.title().contains(linkText));
 				assertThat("no search results displayed", searchPage.docLogo().isDisplayed());
 				assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
-				assertEquals(1, searchPage.countSynonymLists("English"));
+				assertEquals(1, searchPage.countSynonymLists());
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText).contains(extraSynonym));
 				assertThat("you searched for section incorrect", searchPage.youSearchedFor().contains(linkText));
 				assertThat("you searched for section incorrect", !searchPage.youSearchedFor().contains(extraSynonym));

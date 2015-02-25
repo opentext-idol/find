@@ -22,9 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SearchPageITCase extends ABCTestBase {
 	public SearchPageITCase(final TestConfig config, final String browser, final Platform platform) {
@@ -763,4 +761,46 @@ public class SearchPageITCase extends ABCTestBase {
 		assertEquals(1, searchPage.countSearchResults());
 		assertEquals(1, searchPage.countPinToPositionLabels());
 	}
+
+	@Test
+	public void testSearchResultsCount() {
+		searchPage.selectLanguage("English");
+		for (final String query : Arrays.asList("fish", "chips", "dinosaur", "melon", "art")) {
+			topNavBar.search(query);
+			searchPage.loadOrFadeWait();
+			searchPage.forwardToLastPageButton().click();
+			searchPage.loadOrFadeWait();
+			final int numberOfPages = searchPage.getCurrentPageNumber();
+			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
+			assertEquals((numberOfPages - 1) * 6 + lastPageDocumentsCount, searchPage.countSearchResults());
+		}
+	}
+
+	@Test
+	public void testInvalidQueryTextNoKeywordsLinksDisplayed() {
+		searchPage.selectLanguage("English");
+		for (final String searchTerm : Arrays.asList("OR", "WHEN", "SENTENCE", "SOUNDEX", "DNEAR")) {
+			topNavBar.search(searchTerm);
+			assertTrue(searchPage.getText().contains("An error occurred executing the search action"));
+			assertTrue(searchPage.getText().contains("An error occurred fetching the query analysis."));
+			assertTrue(searchPage.getText().contains("Opening boolean operator"));
+		}
+		for (final String searchTerm : Arrays.asList("a", "the", "of")) {
+			topNavBar.search(searchTerm);
+			assertTrue(searchPage.getText().contains("An error occurred executing the search action"));
+			assertTrue(searchPage.getText().contains("An error occurred fetching the query analysis."));
+			assertTrue(searchPage.getText().contains("No valid query text supplied"));
+		}
+	}
+
+	@Test
+	public void testAllowSearchOfKeywordStringsThatContainBooleansWithinThem() {
+		final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
+		for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
+			topNavBar.search(hiddenBooleansProximity);
+			searchPage.loadOrFadeWait();
+			assertFalse(searchPage.getText().contains("Terminating boolean operator"));
+		}
+	}
+
 }

@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PromotionsPageITCase extends ABCTestBase {
 
@@ -400,7 +402,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
 		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 5)));
-		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "00:00");
 
 		schedulePage.finalDateTextBoxButton().click();
 		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay() + 5);
@@ -587,7 +588,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		schedulePage.loadOrFadeWait();
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
-		assertThat("Correct schedule summary text not visible", promotionsPage.getText().contains("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 4 days, ending on " + schedulePage.parseDateForPromotionsPage(endDate)));
+		assertThat("Correct schedule summary text not visible", promotionsPage.getText().contains("The promotion is scheduled to run starting on " + SchedulePage.parseDateForPromotionsPage(startDate) + " for the duration of 4 days, ending on " + SchedulePage.parseDateForPromotionsPage(endDate)));
 		assertThat("Correct schedule summary text not visible", promotionsPage.getText().contains("This promotion schedule will run yearly until " + SchedulePage.parseDateForPromotionsPage(finalDate)));
 
 		topNavBar.search("chips");
@@ -738,7 +739,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
 		schedulePage.loadOrFadeWait();
-		assertThat("Due to pre-population 'run this promotion schedule until the date below' should be pre-selected", schedulePage.runThisPromotionScheduleUntilTheDateBelow().getAttribute("class").contains("progressive-disclosure-selection"));
+		assertThat("Due to pre-population 'run this promotion schedule until the date below' should be pre-selected", schedulePage.getFirstChild(schedulePage.runThisPromotionScheduleUntilTheDateBelow()).getAttribute("class").contains("progressive-disclosure-selection"));
 		assertEquals(schedulePage.dateAsString( finalDate), pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
 
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
@@ -851,6 +852,28 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.loadOrFadeWait();
 		assertEquals(7, promotionsPage.promotionsList().size());
 
+		List<WebElement> promotions = promotionsPage.promotionsList();
+		for (int i = 0; i < promotions.size() - 1; i++) {
+			assertTrue(promotions.get(i).getText().compareTo(promotions.get(i + 1).getText()) <= 0);
+		}
+
+		promotionsPage.getPromotionLinkWithTitleContaining(promotions.get(3).getText()).click();
+		promotionsPage.createNewTitle("aaa");
+		promotionsPage.loadOrFadeWait();
+		promotionsPage.backButton().click();
+		promotionsPage.loadOrFadeWait();
+
+		final List<WebElement> promotionsAgain = promotionsPage.promotionsList();
+		for (int i = 0; i < promotionsAgain.size() - 1; i++) {
+			assertTrue(promotionsAgain.get(i).getText().toLowerCase().compareTo(promotionsAgain.get(i + 1).getText().toLowerCase()) <= 0);
+		}
+
+		promotionsPage.getPromotionLinkWithTitleContaining(promotions.get(3).getText()).click();
+		promotionsPage.createNewTitle(promotions.get(3).getText());
+		promotionsPage.loadOrFadeWait();
+		promotionsPage.backButton().click();
+		promotionsPage.loadOrFadeWait();
+
 		promotionsPage.promotionsSearchFilter().sendKeys("dog");
 		assertEquals(1, promotionsPage.promotionsList().size());
 
@@ -861,6 +884,10 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
 		assertEquals(4, promotionsPage.promotionsList().size());
+		promotions = promotionsPage.promotionsList();
+		for (int i = 0; i < promotions.size() - 1; i++) {
+			assertTrue(promotions.get(i).getText().toLowerCase().compareTo(promotions.get(i + 1).getText().toLowerCase()) <= 0);
+		}
 
 		promotionsPage.getPromotionLinkWithTitleContaining("hound").click();
 		promotionsPage.loadOrFadeWait();
@@ -1108,4 +1135,19 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertThat("Promoted Document should be visible", searchPage.promotionsSummary().isDisplayed());
 	}
 
+	@Test
+	public void testCountSearchResultsWithPinToPositionInjected() {
+		setUpANewMultiDocPinToPositionPromotion("French", "Lyon", "boeuf frites orange", 13);
+		for (final String query : Arrays.asList("boeuf", "frites", "orange")) {
+			topNavBar.search(query);
+			searchPage.selectLanguage("French");
+			final int initialStatedNumberOfResults = searchPage.countSearchResults();
+			searchPage.forwardToLastPageButton().click();
+			searchPage.loadOrFadeWait();
+			final int numberOfPages = searchPage.getCurrentPageNumber();
+			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
+			assertEquals((numberOfPages - 1) * 6 + lastPageDocumentsCount, searchPage.countSearchResults());
+			assertEquals(initialStatedNumberOfResults, searchPage.countSearchResults());
+		}
+	}
 }
