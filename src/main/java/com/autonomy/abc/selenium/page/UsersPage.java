@@ -47,6 +47,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public void createNewUser(final String userName, final String password, final String userLevel) {
+		loadOrFadeWait();
 		addUsername(userName);
 		addAndConfirmPassword(password, password);
 		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + userLevel + "']")).click();

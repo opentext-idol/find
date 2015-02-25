@@ -270,12 +270,12 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void editQueryText(final String newQueryText) {
-		findElement(By.cssSelector(".query-edit-link")).click();
-		findElement(By.cssSelector("[name='new-query']")).clear();
-		findElement(By.cssSelector("[name='new-query']")).sendKeys(newQueryText);
-		findElement(By.cssSelector(".query-edit-form [type='submit']")).click();
+		getParent(findElement(By.cssSelector(".promotion-query-edit .fa-pencil"))).click();
+		findElement(By.cssSelector("[placeholder='New query']")).clear();
+		findElement(By.cssSelector("[placeholder='New query']")).sendKeys(newQueryText);
+		findElement(By.cssSelector(".promotion-query-edit [type='submit']")).click();
 		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".query-edit-link .fa-pencil")));
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotion-query-edit .fa-pencil")));
 	}
 
 	public WebElement fieldTextAddButton() {

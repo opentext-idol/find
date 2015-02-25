@@ -32,16 +32,16 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 
 		for (final String language : getLanguageList()) {
 			selectLanguage(language);
-			final int numberOfSynonymGroups = findElements(By.cssSelector(".keywords-list li:first-child .remove-synonym")).size();
+			final int numberOfSynonymGroups = findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size();
 
 			if (numberOfSynonymGroups >= 2) {
 				for (int i = 0; i <= numberOfSynonymGroups; i++) {
-					if (findElements(By.cssSelector(".keywords-list li:first-child .remove-synonym")).size() > 2) {
-						findElement(By.cssSelector(".keywords-list li:first-child .remove-synonym")).click();
+					if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() > 2) {
+						findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
 						Thread.sleep(3000);
 					} else {
-						if (findElements(By.cssSelector(".keywords-list li:first-child .remove-synonym")).size() == 2) {
-							findElement(By.cssSelector(".keywords-list li:first-child .remove-synonym")).click();
+						if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() == 2) {
+							findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
 						}
 
 						loadOrFadeWait();
@@ -52,20 +52,12 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 		}
 	}
 
-	public int countSynonymLists(final String language) {
-		final List<String> synonymLists = new ArrayList<>();
-
-		for (final WebElement synonymGroup : findElement(By.cssSelector(".keywords-list")).findElements(By.xpath(".//li[contains(@data-language, '" + language.toLowerCase() + "')]/../../ul[contains(@class, 'synonyms-list')]"))) {
-			if (!synonymGroup.getText().equals("")) {
-				synonymLists.add(synonymGroup.getText());
-			}
-		}
-
-		return synonymLists.size() - getBlacklistedTerms().size();
+	public int countSynonymLists() {
+		return findElements(By.cssSelector(".keywords-list .keywords-sub-list .btn-default")).size();
 	}
 
 	public WebElement leadSynonym(final String synonym) {
-		return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]/ul/li/ul[contains(@class, 'synonyms-list')]/li[1][@data-keyword='" + synonym + "']"));
+		return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]/ul/li/ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']"));
 	}
 
 	private int getNumberOfLanguages() {
@@ -76,9 +68,11 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 		filterView("Blacklist");
 
 		for (final String language : getLanguageList()) {
+			loadOrFadeWait();
 			selectLanguage(language);
-			for (final WebElement blacklisted : findElements(By.cssSelector(".remove-blacklisted-term"))) {
+			for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
 				blacklisted.click();
+				loadOrFadeWait();
 			}
 		}
 	}
@@ -90,7 +84,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 	}
 
 	public int countSynonymGroupsWithLeadSynonym(final String synonym) {
-		return findElement(By.cssSelector(".keywords-list")).findElements(By.xpath(".//ul[contains(@class, 'synonyms-list')]/li[1][@data-keyword='" + synonym + "']")).size();
+		return findElement(By.cssSelector(".keywords-list")).findElements(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']")).size();
 	}
 
 	public WebElement searchFilterTextBox() {
@@ -99,6 +93,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 
 	public void selectLanguage(final String language) {
 		if (!getSelectedLanguage().equals(language)) {
+			loadOrFadeWait();
 			getParent(selectLanguageButton()).click();
 			loadOrFadeWait();
 			final WebElement element = findElement(By.cssSelector(".keywords-filters")).findElement(By.xpath(".//a[text()='" + language + "']"));
@@ -134,6 +129,14 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 			selectLanguageButton().click();
 			return languages;
 		}
+	}
+
+	public List<String> getLeadSynonymsList() {
+		final List<String> leadSynonyms = new ArrayList<>();
+		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {
+			leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());
+		}
+		return leadSynonyms;
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<KeywordsPage> {

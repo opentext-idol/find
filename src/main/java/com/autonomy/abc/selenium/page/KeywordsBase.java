@@ -31,13 +31,13 @@ public abstract class KeywordsBase extends AppElement implements AppPage{
 	}
 
 	public WebElement synonymList(final int index) {
-		return findElements(By.cssSelector(".synonyms-list")).get(index);
+		return findElements(By.cssSelector(".keywords-sub-list")).get(index);
 	}
 
 	public List<String> getBlacklistedTerms() {
 		final List<String> blacklistedTerms = new ArrayList<>();
 
-		for (final WebElement blacklistTerm : findElements(By.cssSelector(".blacklisted-word"))) {
+		for (final WebElement blacklistTerm : findElements(By.cssSelector(".blacklisted-word .keyword-label-text"))) {
 			blacklistedTerms.add(blacklistTerm.getText());
 		}
 
@@ -47,7 +47,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage{
 	public abstract WebElement leadSynonym(final String synonym);
 
 	public WebElement synonymGroup(final String synonymGroupLead) {
-		return getParent(leadSynonym(synonymGroupLead));
+		return getParent(getParent(leadSynonym(synonymGroupLead)));
 	}
 
 	public void addSynonymToGroup(final String synonym, final String synonymGroupLead) {
@@ -67,7 +67,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage{
 	}
 
 	public WebElement synonymGroupTextBox(final String synonymGroupLead) {
-		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".add-synonym-input"));
+		return synonymGroup(synonymGroupLead).findElement(By.cssSelector("[name='new-synonym']"));
 	}
 
 	public void deleteSynonym(final String synonym, final String synonymGroupLead) throws InterruptedException {
@@ -90,7 +90,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage{
 	}
 
 	public void deleteBlacklistedTerm(final String blacklistedTerm) {
-		findElement(By.cssSelector("[data-keyword = '" + blacklistedTerm + "'] .remove-blacklisted-term")).click();
+		findElement(By.cssSelector("[data-term = '" + blacklistedTerm + "'] .blacklisted-word .remove-keyword")).click();
 		loadOrFadeWait();
 	}
 

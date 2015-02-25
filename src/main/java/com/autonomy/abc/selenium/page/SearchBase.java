@@ -151,19 +151,11 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement leadSynonym(final String synonym) {
-		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'synonyms-list')]/li[1][@data-keyword='" + synonym + "']"));
+		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']"));
 	}
 
-	public int countSynonymLists(final String language) {
-		final List<String> synonymLists = new ArrayList<>();
-
-		for (final WebElement synonymGroup : findElement(By.cssSelector(".search-synonyms-keywords")).findElements(By.xpath(".//li[contains(@data-language, '" + language.toLowerCase() + "')]/../../ul[contains(@class, 'synonyms-list')]"))) {
-			if (!synonymGroup.getText().equals("")) {
-				synonymLists.add(synonymGroup.getText());
-			}
-		}
-
-		return synonymLists.size() - getBlacklistedTerms().size();
+	public int countSynonymLists() {
+		return findElements(By.cssSelector(".search-synonyms-keywords .keywords-sub-list .btn-default")).size();
 	}
 
 	public WebElement fieldTextAddButton() {
@@ -191,5 +183,9 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 			getDatabasesTable().click();
 			fieldTextRemoveButton().click();
 		}
+	}
+
+	public int visibleDocumentsCount() {
+		return findElements(By.cssSelector(".fa-file-o")).size();
 	}
 }
