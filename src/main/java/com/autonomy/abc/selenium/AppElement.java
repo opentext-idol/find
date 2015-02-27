@@ -247,6 +247,12 @@ public class AppElement implements WebElement {
 		return parent.findElement(By.xpath(".//*"));
 	}
 
+	public void sendBackspaceToWebElement(final WebElement element, final int numberOfBackspaces) {
+		for (int i = 0; i < numberOfBackspaces; i++) {
+			element.sendKeys(Keys.BACK_SPACE);
+		}
+	}
+
 	public static class Placeholder extends AbstractWebElementPlaceholder<AppElement> {
 
 		public Placeholder(final AppElement ancestor, final By by) {

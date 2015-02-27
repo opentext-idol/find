@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page;
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -153,12 +154,12 @@ public class SchedulePage extends AppElement implements AppPage{
 		return new Date();
 	}
 
-	public int getDay() {
-		return Integer.parseInt((new SimpleDateFormat("dd")).format(getTodayDate()));
+	public int getDay(final int plusDays) {
+		return Integer.parseInt((new SimpleDateFormat("dd")).format(DateUtils.addDays(getTodayDate(), plusDays)));
 	}
 
-	public String getMonth() {
-		return (new SimpleDateFormat("MMMMMMMMM")).format(getTodayDate());
+	public String getMonth(final int plusDays) {
+		return (new SimpleDateFormat("MMMMMMMMM")).format(DateUtils.addDays(getTodayDate(), plusDays));
 	}
 
 	public String dateAsString(final Date date) {
