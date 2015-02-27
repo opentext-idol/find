@@ -224,7 +224,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.backButton().click();
 		setUpANewPromotion("English", "horse", "Sponsored", "pony");
 		promotionsPage.backButton().click();
-		setUpANewPromotion("English", "dog", "Sponsored", "<script> alert('hi') </script>");
+		setUpANewPromotion("English", "dog", "Sponsored", "<script> document.body.innerHTML = '' </script>");
 		promotionsPage.backButton().click();
 
 		assertThat("promotion 'bunny' not created", promotionsPage.getPromotionLinkWithTitleContaining("bunny").isDisplayed());
@@ -372,8 +372,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[1], "00:00");
 
 		schedulePage.startDateTextBoxButton().click();
-		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay());
-		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth());
+		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay(0));
+		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth(0));
 
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 1));
 		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
@@ -404,17 +404,14 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 5)));
 
 		schedulePage.finalDateTextBoxButton().click();
-		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay() + 5);
-		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth());
+		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay(5));
+		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth(5));
 
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 502));
 		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 502)));
-		schedulePage.togglePicker();
 		schedulePage.loadOrFadeWait();
 		schedulePage.timepickerHour().click();
 		schedulePage.selectTimepickerHour(3);
-		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "03:00");
-
 		schedulePage.timepickerMinute().click();
 		schedulePage.selectTimepickerMinute(42);
 		assertEquals(pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[1], "03:40");
@@ -486,8 +483,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertEquals(pattern.split(schedulePage.endDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 1)));
 
 		schedulePage.startDateTextBoxButton().click();
-		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay());
-		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth());
+		assertEquals(schedulePage.getSelectedDayOfMonth(), schedulePage.getDay(0));
+		assertEquals(schedulePage.getSelectedMonth(), schedulePage.getMonth(0));
 
 		schedulePage.calendarDateSelect(DateUtils.addDays(schedulePage.getTodayDate(), 3));
 		assertEquals(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0], schedulePage.dateAsString(DateUtils.addDays(schedulePage.getTodayDate(), 3)));
@@ -637,27 +634,25 @@ public class PromotionsPageITCase extends ABCTestBase {
 		topNavBar.sideBarToggle();
 		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
 
-		schedulePage.startDateTextBox().clear();
+		schedulePage.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
 		schedulePage.startDateTextBox().sendKeys("30/02/2019 11:20");
 		topNavBar.sideBarToggle();
 		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
 
-		schedulePage.startDateTextBox().clear();
+		schedulePage.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
 		schedulePage.startDateTextBox().sendKeys("10/13/2019 11:20");
 		topNavBar.sideBarToggle();
 		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
 
-		schedulePage.startDateTextBox().clear();
+		schedulePage.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
 		schedulePage.startDateTextBox().sendKeys("02/02/2019 24:20");
 		topNavBar.sideBarToggle();
 		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
-		assertEquals("11:20", pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[1]);
 
-		schedulePage.startDateTextBox().clear();
+		schedulePage.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
 		schedulePage.startDateTextBox().sendKeys("02/02/2019 22:61");
 		topNavBar.sideBarToggle();
 		assertEquals(schedulePage.dateAsString(schedulePage.getTodayDate()), pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]);
-		assertEquals("11:20", pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[1]);
 	}
 
 	@Test
