@@ -14,7 +14,7 @@
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>find</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>war</packaging>
 
     <properties>
@@ -425,6 +425,11 @@
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-impl</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.configuration</groupId>
+            <artifactId>configuration-authentication</artifactId>
+            <version>0.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
