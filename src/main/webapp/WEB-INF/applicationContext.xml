@@ -43,6 +43,26 @@
         <security:intercept-url pattern="/api/config/**" access="ROLE_DEFAULT"/>
     </security:http>
 
+    <bean id="defaultLoginAuthenticationProvider" class="com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider">
+        <constructor-arg ref="configFileService"/>
+        <constructor-arg value="ROLE_DEFAULT"/>
+    </bean>
+
+    <bean id="singleUserAuthenticationProvider" class="com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider">
+        <constructor-arg ref="configFileService"/>
+        <constructor-arg value="ROLE_ADMIN"/>
+    </bean>
+
+    <bean id="loginSuccessHandler" class="com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler">
+        <constructor-arg value="ROLE_DEFAULT"/>
+        <constructor-arg value="/config/"/>
+        <constructor-arg value="/p/"/>
+    </bean>
+
+    <bean id="findAccessDeniedHandler" class="com.hp.autonomy.frontend.configuration.authentication.FindAccessDeniedHandler">
+        <constructor-arg value="loginPage"/>
+    </bean>
+
     <security:http>
         <security:access-denied-handler ref="findAccessDeniedHandler"/>
         <security:intercept-url pattern="/p/**" access="ROLE_ADMIN"/>
