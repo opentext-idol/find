@@ -9,7 +9,9 @@ import com.hp.autonomy.frontend.find.ApiKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import com.damnhandy.uri.template.UriTemplate;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     private ApiKeyService apiKeyService;
 
     @Override
-    public List<Document> queryTextIndex(final String text, final int maxResults, final String summary, final String indexes) {
+    public List<Document> queryTextIndex(final String text, final int maxResults, final String summary, final List<String> indexes) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("text", text);
         parameters.put("max_results", maxResults);
@@ -32,6 +34,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         parameters.put("indexes", indexes);
         parameters.put("apikey", apiKeyService.getApiKey());
 
-        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/querytextindex/v1?apikey={apikey}&max_results={max_results}&text={text}&summary={summary}&indexes={indexes}", Documents.class, parameters).getDocuments();
+        final String url = UriTemplate.fromTemplate("https://api.idolondemand.com/1/api/sync/querytextindex/v1{?apikey}{&max_results}{&text}{&summary}{&indexes*}").expand(parameters);
+        return restTemplate.getForObject(URI.create(url), Documents.class).getDocuments();
     }
 }
