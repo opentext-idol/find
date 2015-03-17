@@ -16,6 +16,8 @@ target/
 
 # Archetype
 filter-dev.properties
-src/main/webapp/lib/
 src/test/js/lib/
 .vagrant/
+
+src/main/webapp/static/lib/
+node_modules/
