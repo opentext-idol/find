@@ -25,7 +25,7 @@ public class RelatedConceptsController {
     @ResponseBody
     public List<Entity> findRelatedConcepts(
             @RequestParam("text") final String text,
-            @RequestParam(value = "index") final String index
+            @RequestParam("index") final List<String> index
     ) {
         return relatedConceptsService.findRelatedConcepts(text, index);
     }
