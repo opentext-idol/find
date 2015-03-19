@@ -187,11 +187,8 @@ define([
 
             /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function() {
-                if(!this.$('.main-results-container').length) {
-                    this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
-                }
-
-                this.$('.main-results-content .no-results').remove();
+	            this.$('.main-results-content').empty();
+	            this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
             });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
@@ -227,12 +224,6 @@ define([
                     e.preventDefault();
                     $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
                 });
-            });
-
-            this.listenTo(this.documentsCollection, 'remove', function(model) {
-                var reference = model.get('reference');
-
-                this.$('[data-reference="' + reference + '"]').remove();
             });
 
             this.listenTo(this.documentsCollection, 'sync', function() {
