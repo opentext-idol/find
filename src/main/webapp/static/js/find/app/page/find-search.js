@@ -11,6 +11,8 @@ define([
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
+    'jquery',
+    'underscore',
     'text!find/templates/app/page/find-search.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/suggestions-container.html',
@@ -20,7 +22,7 @@ define([
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, i18n, template, resultsTemplate,
+], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, i18n, $, _, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
 
     return BasePage.extend({
