@@ -42,8 +42,11 @@ define([
 
                 this.indexesCollection.fetch();
             }, 500, true),
-            'change [name="indexRadios"]': function(e) {
-                this.index = $(e.currentTarget).val();
+            'change .indexCheckbox': function(e) {
+                var toggledIndex = $(e.currentTarget).val();
+                var checked = $(e.currentTarget).is(':checked');
+
+                this.indexes[toggledIndex] = checked;
 
                 if(this.$('.find-input').val()){
                     this.searchRequest(this.$('.find-input').val());
@@ -90,9 +93,13 @@ define([
             }, this);
 
             this.indexesCollection.once('sync', function() {
-                this.index = this.indexesCollection.at(0).get('index');
+                // Default to searching against all indexes
+                this.indexesCollection.forEach(_.bind(function(indexModel) {
+                    this.indexes[indexModel.get('index')] = true;
+                }, this))
             }, this);
 
+            this.indexes = {};
             this.indexesCollection.fetch();
         },
 
@@ -123,8 +130,9 @@ define([
                     index: model.get('index')
                 }));
 
-                if (model.get('index') === this.index) {
-                    this.$('[name="indexRadios"]').val([this.index]);
+                var newlyAddedIndex = model.get('index');
+                if (this.indexes[newlyAddedIndex]) { // If index is selected, set the checkbox to checked
+                    this.$('[name="' + newlyAddedIndex + '"]').prop('checked', true);
                 }
             });
 
@@ -295,20 +303,26 @@ define([
         },
 
         searchRequest: function(input) {
-            if (this.index) {
+            if (this.indexes) { // Do we have the list of indexes yet?
+                var selectedIndexes = _.chain(this.indexes).map(function(value, key) {
+                    return (value ? key : undefined) // Return names of selected indexes and undefined for unselected ones
+                }).filter(function(val) {
+                    return val // Remove undefined
+                }).value();
+
                 this.documentsCollection.fetch({
                     data: {
                         text: input,
                         max_results: 30,
                         summary: 'quick',
-                        index: this.index
+                        index: selectedIndexes
                     }
                 }, this);
 
                 this.entityCollection.fetch({
                     data: {
                         text: input,
-                        index: this.index
+                        index: selectedIndexes
                     }
                 });
 
