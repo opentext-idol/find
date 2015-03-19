@@ -28,7 +28,7 @@ public abstract class ABCTestBase {
 	private final static Set<String> USER_BROWSERS;
 
 	public final TestConfig config;
-	private final String browser;
+	public final String browser;
 	private final Platform platform;
 	private WebDriver driver;
 	public AppBody body;

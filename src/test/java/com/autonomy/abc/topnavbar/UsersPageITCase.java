@@ -3,20 +3,25 @@ package com.autonomy.abc.topnavbar;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.ModalView;
+import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.LoginPage;
 import com.autonomy.abc.selenium.page.UsersPage;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.UnhandledAlertException;
 
 import java.net.MalformedURLException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UsersPageITCase extends ABCTestBase {
 
-	private static String STUPIDLY_LONG_USERNAME = "StupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserName";
+	private static final String STUPIDLY_LONG_USERNAME = "StupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserNameStupidlyLongUserName";
 
 	public UsersPageITCase(final TestConfig config, final String browser, final Platform platform) {
 		super(config, browser, platform);
@@ -232,5 +237,65 @@ public class UsersPageITCase extends ABCTestBase {
 		loginPage = body.getLoginPage();
 		assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your username and password."));
 		assertThat("URL wrong", getDriver().getCurrentUrl().contains("login/index"));
+	}
+
+	@Test
+	public void testAnyUserCanNotAccessConfigPage() {
+		String baseUrl = config.getWebappUrl();
+		baseUrl = baseUrl.substring(0, baseUrl.length() - 2);
+		getDriver().get(baseUrl + "config");
+		body.loadOrFadeWait();
+		assertFalse(getDriver().getCurrentUrl().contains("config"));
+		assertTrue(getDriver().getCurrentUrl().contains("overview"));
+	}
+
+	@Test
+	public void testUserCannotAccessUsersPageOrSettingsPage() {
+		usersPage.createUserButton().click();
+		usersPage.createNewUser("James", "b", "User");
+		usersPage.closeModal();
+
+		body.logout();
+		abcLogin("James", "b");
+		usersPage.loadOrFadeWait();
+		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
+
+		getDriver().get(config.getWebappUrl() + "settings");
+		body.loadOrFadeWait();
+		assertFalse(getDriver().getCurrentUrl().contains("settings"));
+		assertTrue(getDriver().getCurrentUrl().contains("overview"));
+
+		getDriver().get(config.getWebappUrl() + "users");
+		body.loadOrFadeWait();
+		assertFalse(getDriver().getCurrentUrl().contains("users"));
+		assertTrue(getDriver().getCurrentUrl().contains("overview"));
+	}
+
+	@Test
+	public void testXmlHttpRequestToUserConfigBlockedForInadequatePermissions() throws UnhandledAlertException {
+		usersPage.createUserButton().click();
+		usersPage.createNewUser("James", "b", "User");
+		usersPage.closeModal();
+		body.logout();
+
+		abcLogin("James", "b");
+		usersPage.loadOrFadeWait();
+		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
+
+		final JavascriptExecutor executor = (JavascriptExecutor) getDriver();
+		executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function(xhr) {$('body').attr('data-status', xhr.status);});");
+		usersPage.loadOrFadeWait();
+		assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
+
+		body = new AppBody(getDriver());
+		body.logout();
+
+		abcLogin("richard", "q");
+		usersPage.loadOrFadeWait();
+		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
+
+		executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
+		usersPage.loadOrFadeWait();
+		assertFalse(usersPage.isAlertPresent());
 	}
 }
