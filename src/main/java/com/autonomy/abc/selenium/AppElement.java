@@ -243,6 +243,16 @@ public class AppElement implements WebElement {
 		return Arrays.asList(handle, secondHandle);
 	}
 
+	public boolean isAlertPresent()
+	{
+		try {
+			getDriver().switchTo().alert();
+			return true;
+		} catch (NoAlertPresentException Ex) {
+			return false;
+		}
+	}
+
 	public WebElement getFirstChild(final WebElement parent) {
 		return parent.findElement(By.xpath(".//*"));
 	}
