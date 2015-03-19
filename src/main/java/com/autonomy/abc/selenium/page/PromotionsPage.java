@@ -64,7 +64,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public List<WebElement> promotionsList() {
-		return findElements(By.cssSelector(".promotion-list-container .ibox-content a"));
+		return findElements(By.cssSelector(".promotion-list-container .hpebox-content a"));
 	}
 
 	public void deleteAllPromotions() {

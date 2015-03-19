@@ -28,7 +28,7 @@ public class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public WebElement searchTitle() {
-		return findElement(By.cssSelector(".page-title > strong"));
+		return getDriver().findElement(By.cssSelector(".heading > strong"));
 	}
 
 	public WebElement promoteTheseDocumentsButton() {

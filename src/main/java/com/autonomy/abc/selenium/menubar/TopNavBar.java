@@ -10,7 +10,7 @@ import java.util.List;
 public class TopNavBar extends TabBar {
 
 	public TopNavBar(final WebDriver driver) {
-		super(driver.findElement(By.cssSelector(".abc-top-navbar")), driver);
+		super(driver.findElement(By.cssSelector(".navbar-static-top")), driver);
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class TopNavBar extends TabBar {
 	}
 
 	public void sideBarToggle() {
-		findElement(By.cssSelector(".navbar-minimalize")).click();
+		findElement(By.cssSelector(".navbar-minimize")).click();
 	}
 
 	public void notificationsDropdown() {

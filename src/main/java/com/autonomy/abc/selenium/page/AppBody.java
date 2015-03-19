@@ -78,15 +78,15 @@ public class AppBody extends AppElement {
 	}
 
 	public SearchPage getSearchPage() {
-		return searchPage.$searchPage(getDriver().findElement(By.cssSelector("[data-pagename='search']")));
+		return searchPage.$searchPage(getParent(getParent(getDriver().findElement(By.cssSelector(".search-page-controls")))));
 	}
 
 	public CreateNewPromotionsPage getCreateNewPromotionsPage() {
-		return createPromotionsPage.$createNewPromotionsPage(getDriver().findElement(By.cssSelector(".page-container")));
+		return createPromotionsPage.$createNewPromotionsPage(getDriver().findElement(By.cssSelector(".page-content-pages")));
 	}
 
 	public CreateNewDynamicPromotionsPage getCreateNewDynamicPromotionsPage() {
-		return dynamicPromotionsPage.$createNewDynamicPromotionsPage(getDriver().findElement(By.xpath(".//h2[text()='Promotions']/../../..")));
+		return dynamicPromotionsPage.$createNewDynamicPromotionsPage(getDriver().findElement(By.cssSelector(".page-content-pages")));
 	}
 
 	public SchedulePage getSchedulePage() {
@@ -94,7 +94,7 @@ public class AppBody extends AppElement {
 	}
 
 	public CreateNewKeywordsPage getCreateKeywordsPage() {
-		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".page-container")));
+		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".page-content-pages")));
 	}
 
 	public LoginPage getLoginPage() {
@@ -114,7 +114,7 @@ public class AppBody extends AppElement {
 	}
 
 	public EditDocumentReferencesPage getEditDocumentReferencesPage() {
-		return editReferences.$editReferences(findElement(By.xpath(".//h2[contains(text(), 'Edit Document References')]/../../..")));
+		return editReferences.$editReferences(findElement(By.xpath(".//*[contains(@class, 'edit-document-references')]/../..")));
 	}
 
 	public void logout() {
