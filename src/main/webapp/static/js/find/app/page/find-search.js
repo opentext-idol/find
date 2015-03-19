@@ -305,9 +305,9 @@ define([
         searchRequest: function(input) {
             if (this.indexes) { // Do we have the list of indexes yet?
                 var selectedIndexes = _.chain(this.indexes).map(function(value, key) {
-                    return (value ? key : undefined) // Return names of selected indexes and undefined for unselected ones
+                    return (value ? key : undefined); // Return names of selected indexes and undefined for unselected ones
                 }).filter(function(val) {
-                    return val // Remove undefined
+                    return val; // Remove undefined
                 }).value();
 
                 this.documentsCollection.fetch({
