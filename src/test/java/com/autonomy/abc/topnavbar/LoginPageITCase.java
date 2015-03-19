@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class LoginPageITCase extends ABCTestBase {
 
@@ -93,5 +95,27 @@ public class LoginPageITCase extends ABCTestBase {
 			loginPage = body.getLoginPage();
 			assertThat("Correct error message not showing", loginPage.getText().contains("Please check your username and password"));
 		}
+	}
+
+	@Test
+	public void testLogoutNoAccessViaUrl() {
+		getDriver().get(config.getWebappUrl() + "overview");
+		body.loadOrFadeWait();
+		assertFalse(getDriver().getCurrentUrl().contains("overview"));
+		assertTrue(getDriver().getCurrentUrl().contains("login"));
+
+		getDriver().get(config.getWebappUrl() + "keywords");
+		body.loadOrFadeWait();
+		assertFalse(getDriver().getCurrentUrl().contains("keywords"));
+		assertTrue(getDriver().getCurrentUrl().contains("login"));
+	}
+
+	@Test
+	public void testDefaultLoginDisabled() {
+		getDriver().get(config.getWebappUrl().substring(0, config.getWebappUrl().length() - 2) + "login?defaultLogin=admin");
+		body.loadOrFadeWait();
+		loginPage = body.getLoginPage();
+		assertFalse(loginPage.isAttributePresent(loginPage.usernameInput(), "readonly"));
+		assertFalse(getDriver().getCurrentUrl().contains("defaultLogin"));
 	}
 }

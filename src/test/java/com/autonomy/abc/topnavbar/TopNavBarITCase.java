@@ -27,22 +27,23 @@ public class TopNavBarITCase extends ABCTestBase {
 	@Test
 	public void testSideNavBarMinimize() {
 		topNavBar.sideBarToggle();
-		assertThat("side bar not minimised", body.getAttribute("class").contains("mini-navbar"));
+		final String hiddenClass = "hide-navbar";
+		assertThat("side bar not minimised", body.getAttribute("class").contains(hiddenClass));
 
 		topNavBar.sideBarToggle();
-		assertThat("side bar not maximised", !body.getAttribute("class").contains("mini-navbar"));
+		assertThat("side bar not maximised", !body.getAttribute("class").contains(hiddenClass));
 
 		topNavBar.sideBarToggle();
-		assertThat("side bar not minimised", body.getAttribute("class").contains("mini-navbar"));
+		assertThat("side bar not minimised", body.getAttribute("class").contains(hiddenClass));
 
 		getDriver().manage().window().setSize(new Dimension(500, 600));
 		topNavBar.sideBarToggle();
-		assertThat("side bar not maximised", !body.getAttribute("class").contains("mini-navbar"));
+		assertThat("side bar not maximised", !body.getAttribute("class").contains(hiddenClass));
 
 		topNavBar.sideBarToggle();
-		assertThat("side bar not minimised", body.getAttribute("class").contains("mini-navbar"));
+		assertThat("side bar not minimised", body.getAttribute("class").contains(hiddenClass));
 
 		topNavBar.sideBarToggle();
-		assertThat("side bar not maximised", !body.getAttribute("class").contains("mini-navbar"));
+		assertThat("side bar not maximised", !body.getAttribute("class").contains(hiddenClass));
 	}
 }
