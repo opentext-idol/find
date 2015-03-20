@@ -126,13 +126,14 @@ define([
             this.listenTo(this.indexesCollection, 'add', function(model){
                 this.$('.find-form  .popover-content .loading-spinner').remove();
 
-                this.$('.find-form .popover-content ul').append(this.indexPopoverContents({
+                var htmlTemplateOutput = $(this.indexPopoverContents({
                     index: model.get('index')
                 }));
 
-                var newlyAddedIndex = model.get('index');
-                if (this.indexes[newlyAddedIndex]) { // If index is selected, set the checkbox to checked
-                    this.$('[name="' + newlyAddedIndex + '"]').prop('checked', true);
+                this.$('.find-form .popover-content ul').append(htmlTemplateOutput);
+
+                if (this.indexes[model.get('index')]) { // If index is selected, set the checkbox to checked
+                    htmlTemplateOutput.find('input').prop('checked', true);
                 }
             });
 
