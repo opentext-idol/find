@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface RelatedConceptsService {
 
-    public List<Entity> findRelatedConcepts(String text, String indexes);
+    public List<Entity> findRelatedConcepts(String text, List<String> indexes);
 
 }

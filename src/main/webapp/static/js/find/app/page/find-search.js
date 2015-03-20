@@ -11,6 +11,8 @@ define([
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
+    'jquery',
+    'underscore',
     'text!find/templates/app/page/find-search.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/suggestions-container.html',
@@ -20,7 +22,7 @@ define([
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, i18n, template, resultsTemplate,
+], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, i18n, $, _, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
 
     return BasePage.extend({
@@ -40,8 +42,11 @@ define([
 
                 this.indexesCollection.fetch();
             }, 500, true),
-            'change [name="indexRadios"]': function(e) {
-                this.index = $(e.currentTarget).val();
+            'change .indexCheckbox': function(e) {
+                var toggledIndex = $(e.currentTarget).val();
+                var checked = $(e.currentTarget).is(':checked');
+
+                this.indexes[toggledIndex] = checked;
 
                 if(this.$('.find-input').val()){
                     this.searchRequest(this.$('.find-input').val());
@@ -88,9 +93,13 @@ define([
             }, this);
 
             this.indexesCollection.once('sync', function() {
-                this.index = this.indexesCollection.at(0).get('index');
+                // Default to searching against all indexes
+                this.indexesCollection.forEach(_.bind(function(indexModel) {
+                    this.indexes[indexModel.get('index')] = true;
+                }, this))
             }, this);
 
+            this.indexes = {};
             this.indexesCollection.fetch();
         },
 
@@ -117,12 +126,14 @@ define([
             this.listenTo(this.indexesCollection, 'add', function(model){
                 this.$('.find-form  .popover-content .loading-spinner').remove();
 
-                this.$('.find-form .popover-content ul').append(this.indexPopoverContents({
+                var htmlTemplateOutput = $(this.indexPopoverContents({
                     index: model.get('index')
                 }));
 
-                if (model.get('index') === this.index) {
-                    this.$('[name="indexRadios"]').val([this.index]);
+                this.$('.find-form .popover-content ul').append(htmlTemplateOutput);
+
+                if (this.indexes[model.get('index')]) { // If index is selected, set the checkbox to checked
+                    htmlTemplateOutput.find('input').prop('checked', true);
                 }
             });
 
@@ -177,11 +188,8 @@ define([
 
             /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function() {
-                if(!this.$('.main-results-container').length) {
-                    this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
-                }
-
-                this.$('.main-results-content .no-results').remove();
+                this.$('.main-results-content').empty();
+                this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
             });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
@@ -217,12 +225,6 @@ define([
                     e.preventDefault();
                     $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
                 });
-            });
-
-            this.listenTo(this.documentsCollection, 'remove', function(model) {
-                var reference = model.get('reference');
-
-                this.$('[data-reference="' + reference + '"]').remove();
             });
 
             this.listenTo(this.documentsCollection, 'sync', function() {
@@ -293,20 +295,24 @@ define([
         },
 
         searchRequest: function(input) {
-            if (this.index) {
+            if (this.indexes) { // Do we have the list of indexes yet?
+                var selectedIndexes = _.chain(this.indexes).map(function(value, key) {
+                    return (value ? key : undefined); // Return names of selected indexes and undefined for unselected ones
+                }).compact().value();
+
                 this.documentsCollection.fetch({
                     data: {
                         text: input,
                         max_results: 30,
                         summary: 'quick',
-                        index: this.index
+                        index: selectedIndexes
                     }
                 }, this);
 
                 this.entityCollection.fetch({
                     data: {
                         text: input,
-                        index: this.index
+                        index: selectedIndexes
                     }
                 });
 

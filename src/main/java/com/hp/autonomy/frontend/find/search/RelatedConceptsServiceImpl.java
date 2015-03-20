@@ -5,11 +5,13 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.damnhandy.uri.template.UriTemplate;
 import com.hp.autonomy.frontend.find.ApiKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +26,13 @@ public class RelatedConceptsServiceImpl implements RelatedConceptsService {
     private ApiKeyService apiKeyService;
 
     @Override
-    public List<Entity> findRelatedConcepts(final String text, final String indexes) {
+    public List<Entity> findRelatedConcepts(final String text, final List<String> indexes) {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("text", text);
         parameters.put("indexes", indexes);
         parameters.put("apikey", apiKeyService.getApiKey());
 
-        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/findrelatedconcepts/v1?apikey={apikey}&text={text}&indexes={indexes}", Entities.class, parameters).getEntities();
+        final String url = UriTemplate.fromTemplate("https://api.idolondemand.com/1/api/sync/findrelatedconcepts/v1{?apikey}{&text}{&indexes*}").expand(parameters);
+        return restTemplate.getForObject(URI.create(url), Entities.class).getEntities();
     }
 }

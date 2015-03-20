@@ -282,7 +282,7 @@ input.find-input {
     vertical-align: baseline;
 }
 
-.find-form .popover label input[type="radio"] {
+.find-form .popover label input[type="radio"], .find-form .popover label input[type="checkbox"] {
     margin-left: -20px;
     margin-right: 0;
     vertical-align: baseline;
