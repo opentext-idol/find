@@ -187,8 +187,8 @@ define([
 
             /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function() {
-	            this.$('.main-results-content').empty();
-	            this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
+                this.$('.main-results-content').empty();
+                this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
             });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
