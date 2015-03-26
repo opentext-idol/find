@@ -22,9 +22,7 @@ define([
         search: function() {
             this.trigger('route:find', 'search');
         }
-
     });
 
     return new Router();
-
 });

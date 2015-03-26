@@ -65,6 +65,5 @@ public class PrivateIndex {
         public PrivateIndex build() {
             return new PrivateIndex(this);
         }
-
     }
 }

@@ -33,5 +33,4 @@ public class FindConfigFileService extends AbstractAuthenticatingConfigFileServi
     public FindConfig getEmptyConfig() {
         return new FindConfig.Builder().build();
     }
-
 }

@@ -26,5 +26,4 @@ public class ValidationController {
     public ValidationResults validConfig(@RequestBody final FindConfig config){
         return validationService.validateConfig(config);
     }
-
 }

@@ -23,5 +23,4 @@ public class ListIndexesController {
     public List<Index> listActiveIndexes() {
         return indexesService.listVisibleIndexes();
     }
-
 }

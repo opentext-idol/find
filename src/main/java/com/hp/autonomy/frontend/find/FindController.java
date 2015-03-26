@@ -32,5 +32,4 @@ public class FindController {
             response.sendRedirect(contextPath + "/public/");
         }
     }
-
 }

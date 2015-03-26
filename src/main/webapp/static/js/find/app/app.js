@@ -9,7 +9,6 @@ define([
     'find/app/navigation',
     'text!find/templates/app/private-app.html'
 ], function(BaseApp, Pages, Navigation, template) {
-
     return BaseApp.extend({
 
         template: _.template(template),
@@ -33,7 +32,5 @@ define([
 
             this.$('.header').append(this.navigation.el);
         }
-
     });
-
 });

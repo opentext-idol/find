@@ -125,5 +125,4 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
             return new FindConfig(this);
         }
     }
-
 }

@@ -48,6 +48,5 @@ public class Indexes {
         public Indexes build() {
             return new Indexes(publicIndex, privateIndexes);
         }
-
     }
 }

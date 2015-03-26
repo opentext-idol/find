@@ -7,4 +7,3 @@ branches:
   - develop
 install: true
 script: mvn test -P production
-

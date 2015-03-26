@@ -50,6 +50,5 @@ public class Document {
         public Document build() {
             return new Document(reference, weight, links, indexes, title, summary);
         }
-
     }
 }

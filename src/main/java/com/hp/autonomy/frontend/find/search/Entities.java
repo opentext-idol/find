@@ -30,7 +30,5 @@ public class Entities {
         public Entities build() {
             return new Entities(entities);
         }
-
     }
-
 }

@@ -33,6 +33,5 @@ define([
 
             this.$('.content').append(this.pages.el);
         }
-
     });
 });

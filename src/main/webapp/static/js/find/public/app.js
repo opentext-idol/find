@@ -8,7 +8,6 @@ define([
     'find/public/pages',
     'text!find/templates/app/app.html'
 ], function(BaseApp, Pages, template) {
-
     return BaseApp.extend({
 
         template: _.template(template),
@@ -20,7 +19,5 @@ define([
 
             BaseApp.prototype.initialize.apply(this, arguments);
         }
-
     });
-
 });

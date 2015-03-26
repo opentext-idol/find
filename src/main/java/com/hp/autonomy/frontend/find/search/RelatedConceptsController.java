@@ -29,5 +29,4 @@ public class RelatedConceptsController {
     ) {
         return relatedConceptsService.findRelatedConcepts(text, index);
     }
-
 }

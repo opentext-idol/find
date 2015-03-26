@@ -35,6 +35,5 @@ public class Index {
         public Index build() {
             return new Index(index, type);
         }
-
     }
 }
