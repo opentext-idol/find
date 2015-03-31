@@ -87,4 +87,9 @@ public class AppConfiguration {
                 .setErrorHandler(new IodErrorHandler())
                 .build();
     }
+
+    @Bean
+    public ListIndexesService listIndexesService() {
+        return iodRestAdapter().create(ListIndexesService.class);
+    }
 }

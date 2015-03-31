@@ -10,10 +10,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 import com.hp.autonomy.frontend.configuration.ValidationResult;
-import com.hp.autonomy.frontend.find.search.Index;
-import com.hp.autonomy.frontend.find.search.Indexes;
+import com.hp.autonomy.iod.client.api.textindexing.Index;
+import com.hp.autonomy.iod.client.api.textindexing.Indexes;
 import com.hp.autonomy.frontend.find.search.IndexesService;
 import java.util.List;
+
+import com.hp.autonomy.iod.client.error.IodErrorException;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
@@ -47,9 +49,8 @@ public class IodConfig implements ConfigurationComponent {
             final List<Index> activeIndexes = indexesService.listActiveIndexes();
 
             return new ValidationResult<>(true, new IndexResponse(indexes, activeIndexes));
-        } catch (RestClientException e) {
-            // TODO better handling of IOD errors
-           return new ValidationResult<>(false, "Invalid API Key");
+        } catch (IodErrorException e) {
+            return new ValidationResult<>(false, "Unable to list indexes");
         }
     }
 
