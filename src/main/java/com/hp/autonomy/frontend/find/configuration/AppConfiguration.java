@@ -10,6 +10,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
+import com.hp.autonomy.iod.client.api.search.QueryTextIndexService;
+import com.hp.autonomy.iod.client.api.textindexing.ListIndexesService;
+import com.hp.autonomy.iod.client.converter.IodConverter;
+import com.hp.autonomy.iod.client.error.IodErrorHandler;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +21,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import retrofit.RestAdapter;
+import retrofit.client.ApacheClient;
+import retrofit.converter.JacksonConverter;
 
 @Configuration
 public class AppConfiguration {
@@ -62,4 +69,22 @@ public class AppConfiguration {
         return mapper;
     }
 
+    @Bean
+    public RestAdapter iodRestAdapter() {
+        final HttpClientBuilder builder = HttpClientBuilder.create();
+
+        final String proxyHost = System.getProperty("find.https.proxyHost");
+
+        if(proxyHost != null) {
+            final Integer proxyPort = Integer.valueOf(System.getProperty("find.https.proxyPort", "8080"));
+            builder.setProxy(new HttpHost(proxyHost, proxyPort));
+        }
+
+        return new RestAdapter.Builder()
+                .setClient(new ApacheClient(builder.build()))
+                .setEndpoint(System.getProperty("find.iod.api", "https://api.idolondemand.com/1"))
+                .setConverter(new IodConverter(new JacksonConverter()))
+                .setErrorHandler(new IodErrorHandler())
+                .build();
+    }
 }
