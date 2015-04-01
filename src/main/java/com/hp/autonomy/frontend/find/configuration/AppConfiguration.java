@@ -92,4 +92,9 @@ public class AppConfiguration {
     public ListIndexesService listIndexesService() {
         return iodRestAdapter().create(ListIndexesService.class);
     }
+
+    @Bean
+    public QueryTextIndexService queryTextIndexService() {
+        return iodRestAdapter().create(QueryTextIndexService.class);
+    }
 }
