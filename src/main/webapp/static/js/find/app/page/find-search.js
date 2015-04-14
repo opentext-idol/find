@@ -60,7 +60,7 @@ define([
                         text: $(e.currentTarget).html(),
                         max_results: 3,
                         summary: 'quick',
-                        index: this.index
+                        index: this.selectedIndexes()
                     }
                 });
             }, 800),
@@ -296,9 +296,7 @@ define([
 
         searchRequest: function(input) {
             if (this.indexes) { // Do we have the list of indexes yet?
-                var selectedIndexes = _.chain(this.indexes).map(function(value, key) {
-                    return (value ? key : undefined); // Return names of selected indexes and undefined for unselected ones
-                }).compact().value();
+                var selectedIndexes = this.selectedIndexes();
 
                 this.documentsCollection.fetch({
                     data: {
@@ -323,6 +321,12 @@ define([
                     this.searchRequest(input);
                 }, this);
             }
+        },
+
+        selectedIndexes: function() {
+            return _.chain(this.indexes).map(function(value, key) {
+                return (value ? key : undefined); // Return names of selected indexes and undefined for unselected ones
+            }).compact().value();
         }
     });
 });
