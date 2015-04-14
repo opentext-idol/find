@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
+import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsService;
 import com.hp.autonomy.iod.client.api.search.QueryTextIndexService;
 import com.hp.autonomy.iod.client.api.textindexing.ListIndexesService;
 import com.hp.autonomy.iod.client.converter.IodConverter;
@@ -96,5 +97,10 @@ public class AppConfiguration {
     @Bean
     public QueryTextIndexService queryTextIndexService() {
         return iodRestAdapter().create(QueryTextIndexService.class);
+    }
+
+    @Bean
+    public FindRelatedConceptsService relatedConceptsService() {
+        return iodRestAdapter().create(FindRelatedConceptsService.class);
     }
 }

@@ -5,14 +5,14 @@
 
 package com.hp.autonomy.frontend.find.search;
 
-import com.damnhandy.uri.template.UriTemplate;
 import com.hp.autonomy.frontend.find.ApiKeyService;
+import com.hp.autonomy.iod.client.api.search.Entities;
+import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsRequestBuilder;
+import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsService;
+import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,19 +20,18 @@ import java.util.Map;
 public class RelatedConceptsServiceImpl implements RelatedConceptsService {
 
     @Autowired
-    private RestTemplate restTemplate;
+    private FindRelatedConceptsService findRelatedConceptsService;
 
     @Autowired
     private ApiKeyService apiKeyService;
 
     @Override
-    public List<Entity> findRelatedConcepts(final String text, final List<String> indexes) {
-        final Map<String, Object> parameters = new HashMap<>();
-        parameters.put("text", text);
-        parameters.put("indexes", indexes);
-        parameters.put("apikey", apiKeyService.getApiKey());
+    public Entities findRelatedConcepts(final String text, final List<String> indexes) throws IodErrorException {
 
-        final String url = UriTemplate.fromTemplate("https://api.idolondemand.com/1/api/sync/findrelatedconcepts/v1{?apikey}{&text}{&indexes*}").expand(parameters);
-        return restTemplate.getForObject(URI.create(url), Entities.class).getEntities();
+        final Map<String, Object> params = new FindRelatedConceptsRequestBuilder()
+                .setIndexes(indexes)
+                .build();
+
+        return findRelatedConceptsService.findRelatedConceptsWithText(apiKeyService.getApiKey(), text, params);
     }
 }
