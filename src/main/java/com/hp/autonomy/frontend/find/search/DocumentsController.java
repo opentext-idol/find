@@ -5,6 +5,9 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.iod.client.api.search.Documents;
+import com.hp.autonomy.iod.client.api.search.Summary;
+import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +26,12 @@ public class DocumentsController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Document> query(
+    public Documents query(
         @RequestParam("text") final String text,
         @RequestParam("max_results") final int maxResults,
-        @RequestParam("summary") final String summary,
+        @RequestParam("summary") final Summary summary,
         @RequestParam("index") final List<String> index
-    ) {
+    ) throws IodErrorException {
         return documentsService.queryTextIndex(text, maxResults, summary, index);
     }
 }

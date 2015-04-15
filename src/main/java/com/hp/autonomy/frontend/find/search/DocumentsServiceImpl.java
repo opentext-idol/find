@@ -6,13 +6,11 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.frontend.find.ApiKeyService;
+import com.hp.autonomy.iod.client.api.search.*;
+import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import com.damnhandy.uri.template.UriTemplate;
 
-import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,21 +18,20 @@ import java.util.Map;
 public class DocumentsServiceImpl implements DocumentsService {
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
     private ApiKeyService apiKeyService;
 
-    @Override
-    public List<Document> queryTextIndex(final String text, final int maxResults, final String summary, final List<String> indexes) {
-        final Map<String, Object> parameters = new HashMap<>();
-        parameters.put("text", text);
-        parameters.put("max_results", maxResults);
-        parameters.put("summary", summary);
-        parameters.put("indexes", indexes);
-        parameters.put("apikey", apiKeyService.getApiKey());
+    @Autowired
+    private QueryTextIndexService queryTextIndexService;
 
-        final String url = UriTemplate.fromTemplate("https://api.idolondemand.com/1/api/sync/querytextindex/v1{?apikey}{&max_results}{&text}{&summary}{&indexes*}").expand(parameters);
-        return restTemplate.getForObject(URI.create(url), Documents.class).getDocuments();
+    @Override
+    public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes) throws IodErrorException {
+
+        final Map<String, Object> params = new QueryRequestBuilder()
+                .setAbsoluteMaxResults(maxResults)
+                .setSummary(summary)
+                .setIndexes(indexes)
+                .build();
+
+        return queryTextIndexService.queryTextIndexWithText(apiKeyService.getApiKey(), text, params);
     }
 }

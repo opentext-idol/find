@@ -5,12 +5,14 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import com.hp.autonomy.iod.client.api.search.Entities;
 
 import java.util.List;
 
@@ -23,10 +25,10 @@ public class RelatedConceptsController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Entity> findRelatedConcepts(
+    public Entities findRelatedConcepts(
             @RequestParam("text") final String text,
             @RequestParam("index") final List<String> index
-    ) {
+    ) throws IodErrorException {
         return relatedConceptsService.findRelatedConcepts(text, index);
     }
 }

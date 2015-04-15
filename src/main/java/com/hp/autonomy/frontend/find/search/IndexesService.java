@@ -5,15 +5,19 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.iod.client.api.textindexing.Index;
+import com.hp.autonomy.iod.client.api.textindexing.Indexes;
+import com.hp.autonomy.iod.client.error.IodErrorException;
+
 import java.util.List;
 
 public interface IndexesService {
 
-    Indexes listIndexes();
+    Indexes listIndexes() throws IodErrorException;
 
-    Indexes listIndexes(String apiKey);
+    Indexes listIndexes(String apiKey) throws IodErrorException;
 
     List<Index> listActiveIndexes();
 
-    List<Index> listVisibleIndexes();
+    List<Index> listVisibleIndexes() throws IodErrorException;
 }

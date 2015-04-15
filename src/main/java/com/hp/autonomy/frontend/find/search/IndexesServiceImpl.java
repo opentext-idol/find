@@ -8,18 +8,16 @@ package com.hp.autonomy.frontend.find.search;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.ApiKeyService;
 import com.hp.autonomy.frontend.find.configuration.FindConfig;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.List;
+
+import com.hp.autonomy.iod.client.api.textindexing.*;
+import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class IndexesServiceImpl implements IndexesService {
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Autowired
     private ApiKeyService apiKeyService;
@@ -27,17 +25,17 @@ public class IndexesServiceImpl implements IndexesService {
     @Autowired
     private ConfigService<FindConfig> configService;
 
+    @Autowired
+    private ListIndexesService listIndexesService;
+
     @Override
-    public Indexes listIndexes() {
+    public Indexes listIndexes() throws IodErrorException {
         return listIndexes(apiKeyService.getApiKey());
     }
 
     @Override
-    public Indexes listIndexes(final String apiKey) {
-        final Map<String, Object> parameters = new HashMap<>();
-        parameters.put("apikey", apiKey);
-
-        return restTemplate.getForObject("https://api.idolondemand.com/1/api/sync/listindexes/v1?apikey={apikey}", Indexes.class, parameters);
+    public Indexes listIndexes(final String apiKey) throws IodErrorException {
+        return listIndexesService.listIndexes(apiKey, null);
     }
 
     @Override
@@ -46,16 +44,14 @@ public class IndexesServiceImpl implements IndexesService {
     }
 
     @Override
-    public List<Index> listVisibleIndexes() {
+    public List<Index> listVisibleIndexes() throws IodErrorException {
         final List<Index> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if(activeIndexes.isEmpty()) {
             final Indexes indexes = listIndexes();
-            final List<Index> mergedIndexes = indexes.getPublicIndexes();
 
-            for(final PrivateIndex privateIndex : indexes.getPrivateIndexes()) {
-                mergedIndexes.add(privateIndex.toIndex());
-            }
+            final List<Index> mergedIndexes = indexes.getPublicIndexes();
+            mergedIndexes.addAll(indexes.getIndexes());
 
             return mergedIndexes;
         }

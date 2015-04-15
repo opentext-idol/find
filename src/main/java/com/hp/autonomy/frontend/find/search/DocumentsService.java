@@ -5,10 +5,13 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.iod.client.api.search.*;
+import com.hp.autonomy.iod.client.error.IodErrorException;
+
 import java.util.List;
 
 public interface DocumentsService {
 
-    List<Document> queryTextIndex(String text, int maxResults, String summary, List<String> indexes);
+    Documents queryTextIndex(String text, int maxResults, Summary summary, List<String> indexes) throws IodErrorException;
 
 }

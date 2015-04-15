@@ -16,6 +16,10 @@ define([
 		    options.traditional = true; // Force "traditional" serialization of query parameters, e.g. index=foo&index=bar, for IOD multi-index support.
 
 		    return Backbone.Collection.prototype.sync.call(this, method, model, options);
-	    }
+	    },
+
+		parse: function(response) {
+			return response.documents;
+		}
     })
 });
