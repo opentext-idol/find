@@ -34,10 +34,8 @@ public class IndexesServiceImpl implements IndexesService {
     }
 
     @Override
-    public com.hp.autonomy.iod.client.api.textindexing.Indexes listIndexes(final String apiKey) throws IodErrorException {
-        final Map<String, Object> params = new ListIndexesRequestBuilder().build();
-
-        return listIndexesService.listIndexes(apiKey, params);
+    public Indexes listIndexes(final String apiKey) throws IodErrorException {
+        return listIndexesService.listIndexes(apiKey, null);
     }
 
     @Override

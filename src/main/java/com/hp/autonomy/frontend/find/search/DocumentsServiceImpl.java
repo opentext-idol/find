@@ -27,7 +27,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes) throws IodErrorException {
 
         final Map<String, Object> params = new QueryRequestBuilder()
-                .setMaxPageResults(maxResults)
+                .setAbsoluteMaxResults(maxResults)
                 .setSummary(summary)
                 .setIndexes(indexes)
                 .build();
