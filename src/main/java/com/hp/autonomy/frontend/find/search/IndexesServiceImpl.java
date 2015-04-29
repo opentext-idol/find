@@ -8,8 +8,8 @@ package com.hp.autonomy.frontend.find.search;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.ApiKeyService;
 import com.hp.autonomy.frontend.find.configuration.FindConfig;
-import java.util.Map;
-import java.util.List;
+
+import java.util.*;
 
 import com.hp.autonomy.iod.client.api.textindexing.*;
 import com.hp.autonomy.iod.client.error.IodErrorException;
@@ -35,7 +35,25 @@ public class IndexesServiceImpl implements IndexesService {
 
     @Override
     public Indexes listIndexes(final String apiKey) throws IodErrorException {
-        return listIndexesService.listIndexes(apiKey, null);
+        final Set<IndexType> types = new HashSet<>();
+        types.add(IndexType.content);
+
+        final Map<String, Object> params = new ListIndexesRequestBuilder()
+                .setIndexTypes(types)
+                .build();
+
+        final Indexes indexes = listIndexesService.listIndexes(apiKey, params);
+
+        final Iterator<Index> iterator = indexes.getIndexes().iterator();
+        while (iterator.hasNext()) {
+            final Index i = iterator.next();
+
+            if (i.getFlavor() == IndexFlavor.querymanipulation || i.getFlavor() == IndexFlavor.categorization) {
+                iterator.remove();
+            }
+        }
+
+        return indexes;
     }
 
     @Override
