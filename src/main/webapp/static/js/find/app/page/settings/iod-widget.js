@@ -80,7 +80,7 @@ define([
                 this.lastValidation = response.valid;
 
                 if(this.lastValidation && response.data && response.data.indexes) {
-                    var privateIndexes = response.data.indexes.privateIndexes;
+                    var privateIndexes = response.data.indexes.indexes;
 
                     _.each(privateIndexes, function(privateIndex) {
                         privateIndex.private = true;
