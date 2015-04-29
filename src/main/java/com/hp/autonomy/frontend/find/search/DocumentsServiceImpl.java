@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.frontend.find.ApiKeyService;
+import com.hp.autonomy.frontend.find.QueryProfileService;
 import com.hp.autonomy.iod.client.api.search.*;
 import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class DocumentsServiceImpl implements DocumentsService {
     private ApiKeyService apiKeyService;
 
     @Autowired
+    private QueryProfileService queryProfileService;
+
+    @Autowired
     private QueryTextIndexService queryTextIndexService;
 
     @Override
@@ -31,6 +35,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .setSummary(summary)
                 .setIndexes(indexes)
                 .setFieldText(fieldText)
+                .setQueryProfile(queryProfileService.getQueryProfile())
                 .build();
 
         return queryTextIndexService.queryTextIndexWithText(apiKeyService.getApiKey(), text, params);
