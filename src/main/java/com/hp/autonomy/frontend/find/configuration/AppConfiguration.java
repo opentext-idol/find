@@ -11,7 +11,9 @@ import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsService;
+import com.hp.autonomy.iod.client.api.search.GetParametricValuesService;
 import com.hp.autonomy.iod.client.api.search.QueryTextIndexService;
+import com.hp.autonomy.iod.client.api.search.RetrieveIndexFieldsService;
 import com.hp.autonomy.iod.client.api.textindexing.ListIndexesService;
 import com.hp.autonomy.iod.client.converter.IodConverter;
 import com.hp.autonomy.iod.client.error.IodErrorHandler;
@@ -19,8 +21,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import retrofit.RestAdapter;
 import retrofit.client.ApacheClient;
 import retrofit.converter.JacksonConverter;
@@ -82,4 +82,15 @@ public class AppConfiguration {
     public FindRelatedConceptsService relatedConceptsService() {
         return iodRestAdapter().create(FindRelatedConceptsService.class);
     }
+
+    @Bean
+    public RetrieveIndexFieldsService retrieveIndexFieldsService() {
+        return iodRestAdapter().create(RetrieveIndexFieldsService.class);
+    }
+
+    @Bean
+    public GetParametricValuesService getParametricValuesService() {
+        return iodRestAdapter().create(GetParametricValuesService.class);
+    }
+
 }

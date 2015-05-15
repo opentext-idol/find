@@ -10,6 +10,9 @@ require.config({
         bootstrap: '../lib/hp-autonomy-bootstrap-2/bootstrap/js/bootstrap',
         colorbox: '../lib/colorbox/jquery.colorbox',
         i18n: '../lib/requirejs-i18n/i18n',
+        iCheck: '../lib/icheck/icheck',
+        'peg': '../lib/pegjs/peg-0.8.0',
+        'fieldtext': '../lib/hp-autonomy-fieldtext-js/src',
         jquery: '../lib/jquery/jquery',
         'js-whatever': '../lib/hp-autonomy-js-whatever/src',
         json2: '../lib/json/json2',
@@ -25,6 +28,10 @@ require.config({
         },
         bootstrap: ['jquery'],
         colorbox: ['jquery'],
+        iCheck: ['jquery'],
+        peg: {
+            exports: 'PEG'
+        },
         underscore: {
             exports: '_'
         }

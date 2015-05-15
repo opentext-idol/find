@@ -9,5 +9,6 @@
 @import "../lib/colorbox/example1/colorbox.css";
 @import "../lib/hp-autonomy-settings-page/src/css/settings.css";
 @import "../lib/hp-autonomy-js-whatever/src/css/javascript-utils.css";
+@import "../lib/icheck/skins/all.css";
 @import 'app-include.css';
 @import 'colorbox.css';

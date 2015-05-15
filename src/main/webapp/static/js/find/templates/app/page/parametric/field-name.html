@@ -1,0 +1,12 @@
+<h5><%-data.name%></h5>
+<ul class="unstyled">
+    <% _.each(data.values, function(item) { %>
+        <li class="parametric-value-element" data-value="<%- item.value %>">
+            <div class="checkbox filter">
+                <label>
+                    <input type="checkbox" class="checkbox-input"> <%-item.value%> (<%-item.count%>)
+                </label>
+            </div>
+        </li>
+    <% }); %>
+</ul>

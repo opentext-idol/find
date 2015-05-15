@@ -30,8 +30,9 @@ public class DocumentsController {
         @RequestParam("text") final String text,
         @RequestParam("max_results") final int maxResults,
         @RequestParam("summary") final Summary summary,
-        @RequestParam("index") final List<String> index
+        @RequestParam("index") final List<String> index,
+        @RequestParam("field_text") final String fieldText
     ) throws IodErrorException {
-        return documentsService.queryTextIndex(text, maxResults, summary, index);
+        return documentsService.queryTextIndex(text, maxResults, summary, index, fieldText);
     }
 }

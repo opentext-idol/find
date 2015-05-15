@@ -132,7 +132,11 @@ input.find-input {
 }
 /* end of main results bubble styling*/
 
-.suggested-links-container.span2 {
+.suggested-links-container{
+    display: none;
+}
+
+.parametric-container {
     display: none;
 }
 
@@ -192,7 +196,8 @@ input.find-input {
     color: rgba(138, 113, 102, 0.96)
 }
 
-.main-content h4 {
+.main-content h4,
+.main-content h5 {
     color: rgba(138, 113, 102, 0.96);
 }
 
@@ -221,11 +226,12 @@ input.find-input {
 }
 
 
-.main-results-content .loading-spinner i, .suggested-links-container .loading-spinner i {
+.main-results-content .loading-spinner i, .suggested-links-container .loading-spinner i, .parametric-container .loading-spinner i {
     color:rgb(177, 85, 85);
 }
 
-.suggested-links-container .loading-spinner {
+.suggested-links-container .loading-spinner,
+.parametric-container .loading-spinner {
     text-align: center;
     font-size: 18px;
     color: rgba(138, 113, 102, 0.96);
@@ -319,7 +325,7 @@ a.entity-to-summary {
         height:25px;
         font-size: 24px;
     }
-    .list-indexes {
+    .drop-lists {
         top: 8px;
     }
     form.form-search:before {
@@ -327,14 +333,17 @@ a.entity-to-summary {
     }
 }
 
-.list-indexes {
+.drop-list {
     position: absolute;
     top: 5px;
-    right: -65px;
     z-index: 1000;
     font-size: 22px;
     cursor:pointer;
     color:lightgrey;
+}
+
+.list-indexes {
+    right: -65px;
 }
 
 .indexes-list-group .controls {

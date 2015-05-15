@@ -26,10 +26,11 @@ public class RelatedConceptsServiceImpl implements RelatedConceptsService {
     private ApiKeyService apiKeyService;
 
     @Override
-    public Entities findRelatedConcepts(final String text, final List<String> indexes) throws IodErrorException {
+    public Entities findRelatedConcepts(final String text, final List<String> indexes, final String fieldText) throws IodErrorException {
 
         final Map<String, Object> params = new FindRelatedConceptsRequestBuilder()
                 .setIndexes(indexes)
+                .setFieldText(fieldText)
                 .build();
 
         return findRelatedConceptsService.findRelatedConceptsWithText(apiKeyService.getApiKey(), text, params);

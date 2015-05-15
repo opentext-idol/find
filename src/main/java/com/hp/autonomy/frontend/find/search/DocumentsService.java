@@ -12,6 +12,6 @@ import java.util.List;
 
 public interface DocumentsService {
 
-    Documents queryTextIndex(String text, int maxResults, Summary summary, List<String> indexes) throws IodErrorException;
+    Documents queryTextIndex(String text, int maxResults, Summary summary, List<String> indexes, String fieldText) throws IodErrorException;
 
 }

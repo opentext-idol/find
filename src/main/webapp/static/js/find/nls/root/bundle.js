@@ -116,6 +116,8 @@ define([
         'users.admin.role.add': 'Create role',
         'users.admin.role.add.title': 'Admin Role required',
         'users.admin.role.add.description': 'This community server does not have an admin role; would you like to create one?',
+        'parametric.title': 'Parametric Values',
+        'parametric.noFieldNames': 'There are no parametric fields associated with the currently selected indexes',
         'wizard.last': 'Logout',
         'wizard.next': 'Next',
         'wizard.prev': 'Prev',

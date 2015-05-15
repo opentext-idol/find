@@ -11,5 +11,5 @@ import com.hp.autonomy.iod.client.error.IodErrorException;
 
 public interface RelatedConceptsService {
 
-    public Entities findRelatedConcepts(String text, List<String> indexes) throws IodErrorException;
+    public Entities findRelatedConcepts(String text, List<String> indexes, String fieldText) throws IodErrorException;
 }

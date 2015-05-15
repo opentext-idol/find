@@ -8,6 +8,8 @@ define([
     'find/app/model/entity-collection',
     'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
+    'find/app/model/parametric-collection',
+    'find/app/page/parametric/parametric-view',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
@@ -22,8 +24,10 @@ define([
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, router, vent, i18n, $, _, template, resultsTemplate,
+], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, ParametricCollection, ParametricView, router, vent, i18n, $, _, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
+
+    var DEBOUNCE_WAIT_MILLISECONDS = 500;
 
     return BasePage.extend({
 
@@ -38,10 +42,11 @@ define([
         events: {
             'keyup .find-input': 'keyupAnimation',
             'click .list-indexes': _.debounce(function(){
+                // TODO better fix needed
                 this.$('.popover-content label').html('');
 
                 this.indexesCollection.fetch();
-            }, 500, true),
+            }, DEBOUNCE_WAIT_MILLISECONDS, true),
             'change .indexCheckbox': function(e) {
                 var toggledIndex = $(e.currentTarget).val();
                 var checked = $(e.currentTarget).is(':checked');
@@ -79,6 +84,11 @@ define([
             this.documentsCollection = new DocumentsCollection();
             this.topResultsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
+            this.parametricCollection = new ParametricCollection();
+
+            this.parametricView = new ParametricView({
+                parametricCollection: this.parametricCollection
+            });
 
             router.on('route:search', function(text) {
                 this.entityCollection.reset();
@@ -101,6 +111,20 @@ define([
 
             this.indexes = {};
             this.indexesCollection.fetch();
+
+            this.listenTo(this.parametricView, 'change', function(fieldText) {
+                var newFieldText = fieldText;
+
+                if(newFieldText) {
+                    this.fieldText = newFieldText.toString();
+                } else {
+                    this.fieldText = null;
+                }
+
+                this.parametricView.setRequestFieldText(newFieldText);
+
+                this.searchRequest();
+            });
         },
 
         render: function() {
@@ -136,6 +160,8 @@ define([
                     htmlTemplateOutput.find('input').prop('checked', true);
                 }
             });
+
+            this.parametricView.setElement(this.$('.parametric-container')).render();
 
             /*top 3 results popover*/
             this.listenTo(this.topResultsCollection, 'add', function(model){
@@ -267,8 +293,11 @@ define([
             if($.trim(this.$('.find-input').val()).length) { // input has at least one non whitespace character
                 this.$('.find').addClass('animated-container').removeClass('reverse-animated-container');
 
-                this.$('.suggested-links-container.span2').show();
-                this.searchRequest(this.$('.find-input').val());
+                this.$('.main-results-content').show();
+                this.$('.suggested-links-container').show();
+                this.$('.parametric-container').show();
+                this.changeQueryText(this.$('.find-input').val());
+                this.searchRequest();
             } else {
                 this.reverseAnimation();
                 vent.navigate('find/search', {trigger: false});
@@ -288,37 +317,48 @@ define([
             /*fancy reverse animation*/
             this.$('.find').removeClass('animated-container').addClass('reverse-animated-container');
 
-            this.$('.main-results-content').empty();
-            this.$('.suggested-links-container.span2').hide();
+            this.$('.main-results-content').hide();
+            this.$('.suggested-links-container').hide();
+            //this.$('.parametric-container').hide();
             this.$('.find-input').val('');
             this.$('.popover').remove();
         },
 
-        searchRequest: function(input) {
+        changeQueryText: function(queryText) {
+            this.queryText = queryText;
+            this.parametricView.clearFieldText();
+        },
+
+        searchRequest: function() {
             if (this.indexes) { // Do we have the list of indexes yet?
                 var selectedIndexes = this.selectedIndexes();
 
+                this.parametricView.setQueryText(this.queryText);
+                this.parametricView.setDatabases(selectedIndexes);
+
                 this.documentsCollection.fetch({
                     data: {
-                        text: input,
+                        text: this.queryText,
                         max_results: 30,
                         summary: 'quick',
-                        index: selectedIndexes
+                        index: selectedIndexes,
+                        field_text: this.fieldText || null
                     }
                 }, this);
 
                 this.entityCollection.fetch({
                     data: {
-                        text: input,
-                        index: selectedIndexes
+                        text: this.queryText,
+                        index: selectedIndexes,
+                        field_text: this.fieldText || null
                     }
                 });
 
-                vent.navigate('find/search/' + encodeURIComponent(input), {trigger: false});
+                vent.navigate('find/search/' + encodeURIComponent(this.queryText), {trigger: false});
             }
             else {
                 this.indexesCollection.once('sync', function() {
-                    this.searchRequest(input);
+                    this.searchRequest();
                 }, this);
             }
         },

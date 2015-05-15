@@ -24,12 +24,13 @@ public class DocumentsServiceImpl implements DocumentsService {
     private QueryTextIndexService queryTextIndexService;
 
     @Override
-    public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes) throws IodErrorException {
+    public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText) throws IodErrorException {
 
         final Map<String, Object> params = new QueryRequestBuilder()
                 .setAbsoluteMaxResults(maxResults)
                 .setSummary(summary)
                 .setIndexes(indexes)
+                .setFieldText(fieldText)
                 .build();
 
         return queryTextIndexService.queryTextIndexWithText(apiKeyService.getApiKey(), text, params);

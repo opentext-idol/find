@@ -27,8 +27,9 @@ public class RelatedConceptsController {
     @ResponseBody
     public Entities findRelatedConcepts(
             @RequestParam("text") final String text,
-            @RequestParam("index") final List<String> index
+            @RequestParam("index") final List<String> index,
+            @RequestParam("field_text") final String fieldText
     ) throws IodErrorException {
-        return relatedConceptsService.findRelatedConcepts(text, index);
+        return relatedConceptsService.findRelatedConcepts(text, index, fieldText);
     }
 }
