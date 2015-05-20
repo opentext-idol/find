@@ -51,6 +51,8 @@ define([
                 var toggledIndex = $(e.currentTarget).val();
                 var checked = $(e.currentTarget).is(':checked');
 
+                this.parametricView.clearFieldText();
+
                 this.indexes[toggledIndex] = checked;
 
                 if(this.$('.find-input').val()){
