@@ -321,7 +321,7 @@ define([
 
             this.$('.main-results-content').hide();
             this.$('.suggested-links-container').hide();
-            //this.$('.parametric-container').hide();
+            this.$('.parametric-container').hide();
             this.$('.find-input').val('');
             this.$('.popover').remove();
         },
