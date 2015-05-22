@@ -9,7 +9,7 @@ define([
     'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/parametric-collection',
-    'find/app/page/parametric/parametric-view',
+    'find/app/page/parametric/parametric-controller',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
@@ -24,7 +24,7 @@ define([
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, ParametricCollection, ParametricView, router, vent, i18n, $, _, template, resultsTemplate,
+], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, $, _, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
 
     var DEBOUNCE_WAIT_MILLISECONDS = 500;
@@ -51,7 +51,7 @@ define([
                 var toggledIndex = $(e.currentTarget).val();
                 var checked = $(e.currentTarget).is(':checked');
 
-                this.parametricView.clearFieldText();
+                this.parametricController.view.clearFieldText();
 
                 this.indexes[toggledIndex] = checked;
 
@@ -86,9 +86,9 @@ define([
             this.documentsCollection = new DocumentsCollection();
             this.topResultsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
-            this.parametricCollection = new ParametricCollection();
+            this.parametricCollection = new ParametricCollection([], {singleRequest: true});
 
-            this.parametricView = new ParametricView({
+            this.parametricController = new ParametricController({
                 parametricCollection: this.parametricCollection
             });
 
@@ -114,7 +114,7 @@ define([
             this.indexes = {};
             this.indexesCollection.fetch();
 
-            this.listenTo(this.parametricView, 'change', function(fieldText) {
+            this.listenTo(this.parametricController.logic, 'change', function(fieldText) {
                 var newFieldText = fieldText;
 
                 if(newFieldText) {
@@ -122,8 +122,6 @@ define([
                 } else {
                     this.fieldText = null;
                 }
-
-                this.parametricView.setRequestFieldText(newFieldText);
 
                 this.searchRequest();
             });
@@ -163,7 +161,7 @@ define([
                 }
             });
 
-            this.parametricView.setElement(this.$('.parametric-container')).render();
+            this.parametricController.view.setElement(this.$('.parametric-container')).render();
 
             /*top 3 results popover*/
             this.listenTo(this.topResultsCollection, 'add', function(model){
@@ -328,15 +326,15 @@ define([
 
         changeQueryText: function(queryText) {
             this.queryText = queryText;
-            this.parametricView.clearFieldText();
+            this.parametricController.view.clearFieldText();
         },
 
         searchRequest: function() {
             if (this.indexes) { // Do we have the list of indexes yet?
                 var selectedIndexes = this.selectedIndexes();
 
-                this.parametricView.setQueryText(this.queryText);
-                this.parametricView.setDatabases(selectedIndexes);
+                this.parametricController.logic.setQueryText(this.queryText);
+                this.parametricController.logic.setIndexes(selectedIndexes);
 
                 this.documentsCollection.fetch({
                     data: {

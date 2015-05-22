@@ -16,7 +16,7 @@ define([
         template: _.template(template),
 
         initialize: function(options) {
-            this.collection = options.parametricCollection; //new ParametricCollection([], {singleRequest: true});
+            this.collection = options.parametricCollection;
 
             this.fieldNamesListView = new ListView({
                 className: 'unstyled',
@@ -55,6 +55,7 @@ define([
             return this;
         },
 
+        // The one function that runs whenever there is a change in the selection
         changeFieldText: function() {
             this.setProcessing();
             var fieldTextArray = _.chain(this.fieldNamesListView.views)
@@ -66,23 +67,12 @@ define([
                 })
                 .reject(function(data) {
                     return _.isEmpty(data.values)
-                })
-                .map(function(data) {
-                    return new parser.ExpressionNode("MATCH", [data.field], data.values);
-                }, this)
-                .value();
+                });
 
-            if(!_.isEmpty(fieldTextArray)) {
-                this.fieldText = _.reduce(fieldTextArray, function(memo, expression) {
-                    return memo.AND(expression);
-                })
-            }
-            else {
-                this.fielText = null;
-            }
-
-            this.trigger('change', this.fieldText);
+            this.trigger('change', fieldTextArray);
         },
+
+        // External proxied changes, ultimately triggering a call to changeFieldText
 
         uncheckField: function(field) {
             var view = _.find(this.fieldNamesListView.views, function(view) {
@@ -92,57 +82,11 @@ define([
             view.clear();
         },
 
-        setDatabases: function(databases) {
-            this.databases = databases;
-            this.fetch();
-        },
-
-        setQueryText: function(queryText) {
-            this.queryText = queryText;
-            this.fetch();
-        },
-
-        setRequestFieldText: function(fieldText) {
-            this.requestFieldText = fieldText;
-            this.fetch();
-        },
-
         clearFieldText: function() {
-            this.fieldText = null;
-            this.requestFieldText = null;
-            this.trigger('change', null);
-
-            _.each(this.fieldNamesListView.views, function(view) {
-                view.clear();
-            });
+            _.invoke(this.fieldNamesListView.views, 'clear')
         },
 
-        getFieldText: function() {
-            return this.fieldText;
-        },
-
-        fetch: function() {
-            this.setProcessing();
-
-            if(!_.isEmpty(this.databases) && this.queryText) {
-                var fieldTextString;
-
-                if(this.requestFieldText) {
-                    fieldTextString = this.requestFieldText.toString();
-                }
-
-                this.collection.fetch({
-                    data: {
-                        databases: this.databases,
-                        queryText: this.queryText,
-                        fieldText: fieldTextString || null
-                    },
-                    error: _.bind(function(model, err) {
-                        this.setDone();
-                    },this)
-                })
-            }
-        },
+        // UI State changes
 
         setProcessing: function() {
             if(this.$processing) {
