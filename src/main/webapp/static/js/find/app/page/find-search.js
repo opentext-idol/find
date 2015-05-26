@@ -27,8 +27,6 @@ define([
 ], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, $, _, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
 
-    var DEBOUNCE_WAIT_MILLISECONDS = 500;
-
     return BasePage.extend({
 
         template: _.template(template),
@@ -41,12 +39,6 @@ define([
 
         events: {
             'keyup .find-input': 'keyupAnimation',
-            'click .list-indexes': _.debounce(function(){
-                // TODO better fix needed
-                this.$('.popover-content label').html('');
-
-                this.indexesCollection.fetch();
-            }, DEBOUNCE_WAIT_MILLISECONDS, true),
             'change .indexCheckbox': function(e) {
                 var toggledIndex = $(e.currentTarget).val();
                 var checked = $(e.currentTarget).is(':checked');
@@ -104,15 +96,35 @@ define([
                 }
             }, this);
 
-            this.indexesCollection.once('sync', function() {
+            this.indexes = {};
+            this.indexesCollection.fetch();
+
+            this.listenTo(this.indexesCollection, 'sync', function(thing) {
                 // Default to searching against all indexes
                 this.indexesCollection.forEach(_.bind(function(indexModel) {
                     this.indexes[indexModel.get('index')] = true;
-                }, this))
-            }, this);
+                }, this));
 
-            this.indexes = {};
-            this.indexesCollection.fetch();
+                this.$indexesDisplay = $(this.indexPopover());
+
+                this.indexesCollection.each(function(model) {
+                    var htmlTemplateOutput = $(this.indexPopoverContents({
+                        index: model.get('index')
+                    }));
+
+                    this.$indexesDisplay.find('.indexes-list').append(htmlTemplateOutput);
+
+                    if (this.indexes[model.get('index')]) { // If index is selected, set the checkbox to checked
+                        htmlTemplateOutput.find('input').prop('checked', true);
+                    }
+                }, this);
+
+                this.$('.list-indexes').popover({
+                    html: true,
+                    content: this.$indexesDisplay,
+                    placement: 'bottom'
+                });
+            }, this);
 
             this.listenTo(this.parametricController.logic, 'change', function(fieldText) {
                 var newFieldText = fieldText;
@@ -132,33 +144,6 @@ define([
 
             this.$('.find-form').submit(function(e){ //preventing input form submit and page reload
                 e.preventDefault();
-            });
-
-            this.$('.list-indexes').popover({
-                html: true,
-                content: this.indexPopover(),
-                placement: 'bottom'
-            });
-
-            /*indices popover*/
-            this.listenTo(this.indexesCollection, 'request', function(){
-                if(this.$('.find-form .popover-content').length === 1) {
-                    this.$('.find-form  .popover-content').append(_.template(loadingSpinnerTemplate));
-                }
-            });
-
-            this.listenTo(this.indexesCollection, 'add', function(model){
-                this.$('.find-form  .popover-content .loading-spinner').remove();
-
-                var htmlTemplateOutput = $(this.indexPopoverContents({
-                    index: model.get('index')
-                }));
-
-                this.$('.find-form .popover-content ul').append(htmlTemplateOutput);
-
-                if (this.indexes[model.get('index')]) { // If index is selected, set the checkbox to checked
-                    htmlTemplateOutput.find('input').prop('checked', true);
-                }
             });
 
             this.parametricController.view.setElement(this.$('.parametric-container')).render();
@@ -330,7 +315,7 @@ define([
         },
 
         searchRequest: function() {
-            if (this.indexes) { // Do we have the list of indexes yet?
+            if (!_.isEmpty(this.indexes)) { // Do we have the list of indexes yet?
                 var selectedIndexes = this.selectedIndexes();
 
                 this.parametricController.logic.setQueryText(this.queryText);
