@@ -29,13 +29,22 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText) throws IodErrorException {
+        return queryTextIndex(text, maxResults, summary, indexes, fieldText, false);
+    }
 
+    @Override
+    public Documents queryTextIndexForPromotions(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText) throws IodErrorException {
+        return queryTextIndex(text, maxResults, summary, indexes, fieldText, true);
+    }
+
+    private Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final boolean doPromotions) throws IodErrorException {
         final Map<String, Object> params = new QueryRequestBuilder()
                 .setAbsoluteMaxResults(maxResults)
                 .setSummary(summary)
                 .setIndexes(indexes)
                 .setFieldText(fieldText)
                 .setQueryProfile(queryProfileService.getQueryProfile())
+                .setPromotions(doPromotions)
                 .build();
 
         return queryTextIndexService.queryTextIndexWithText(apiKeyService.getApiKey(), text, params);

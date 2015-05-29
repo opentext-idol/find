@@ -9,7 +9,7 @@ define([
 
     return Backbone.Collection.extend({
 
-        url: '../api/search/query-text-index',
+        url: '../api/search/query-text-index/results',
 
 	    sync: function(method, model, options) {
 		    options = options || {};
