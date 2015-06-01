@@ -22,7 +22,7 @@
     <link rel="stylesheet" type="text/css" href="static-${applicationVersion}/css/app.css"/>
 </head>
 <body>
-    <div>
+    <div class="error-body">
         <h1>${pageContext.response.status}</h1>
         <h3>${mainMessage}</h3>
         <div>
