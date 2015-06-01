@@ -10,7 +10,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
+import com.hp.autonomy.iod.client.api.formatconversion.ViewDocumentService;
 import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsService;
+import com.hp.autonomy.iod.client.api.search.GetContentService;
 import com.hp.autonomy.iod.client.api.search.GetParametricValuesService;
 import com.hp.autonomy.iod.client.api.search.QueryTextIndexService;
 import com.hp.autonomy.iod.client.api.search.RetrieveIndexFieldsService;
@@ -93,4 +95,13 @@ public class AppConfiguration {
         return iodRestAdapter().create(GetParametricValuesService.class);
     }
 
+    @Bean
+    public GetContentService getContentService() {
+        return iodRestAdapter().create(GetContentService.class);
+    }
+
+    @Bean
+    public ViewDocumentService viewDocumentService() {
+        return iodRestAdapter().create(ViewDocumentService.class);
+    }
 }
