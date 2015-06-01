@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.frontend.find.ApiKeyService;
+import com.hp.autonomy.frontend.find.QueryProfileService;
 import com.hp.autonomy.iod.client.api.search.*;
 import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,29 @@ public class DocumentsServiceImpl implements DocumentsService {
     private ApiKeyService apiKeyService;
 
     @Autowired
+    private QueryProfileService queryProfileService;
+
+    @Autowired
     private QueryTextIndexService queryTextIndexService;
 
     @Override
     public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText) throws IodErrorException {
+        return queryTextIndex(text, maxResults, summary, indexes, fieldText, false);
+    }
 
+    @Override
+    public Documents queryTextIndexForPromotions(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText) throws IodErrorException {
+        return queryTextIndex(text, maxResults, summary, indexes, fieldText, true);
+    }
+
+    private Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final boolean doPromotions) throws IodErrorException {
         final Map<String, Object> params = new QueryRequestBuilder()
                 .setAbsoluteMaxResults(maxResults)
                 .setSummary(summary)
                 .setIndexes(indexes)
                 .setFieldText(fieldText)
+                .setQueryProfile(queryProfileService.getQueryProfile())
+                .setPromotions(doPromotions)
                 .build();
 
         return queryTextIndexService.queryTextIndexWithText(apiKeyService.getApiKey(), text, params);

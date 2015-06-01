@@ -24,7 +24,7 @@ public class DocumentsController {
     @Autowired
     private DocumentsService documentsService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "results", method = RequestMethod.GET)
     @ResponseBody
     public Documents query(
         @RequestParam("text") final String text,
@@ -34,5 +34,17 @@ public class DocumentsController {
         @RequestParam("field_text") final String fieldText
     ) throws IodErrorException {
         return documentsService.queryTextIndex(text, maxResults, summary, index, fieldText);
+    }
+
+    @RequestMapping(value="promotions", method = RequestMethod.GET)
+    @ResponseBody
+    public Documents queryForPromotions(
+            @RequestParam("text") final String text,
+            @RequestParam("max_results") final int maxResults,
+            @RequestParam("summary") final Summary summary,
+            @RequestParam("index") final List<String> index,
+            @RequestParam("field_text") final String fieldText
+    ) throws IodErrorException {
+        return documentsService.queryTextIndexForPromotions(text, maxResults, summary, index, fieldText);
     }
 }

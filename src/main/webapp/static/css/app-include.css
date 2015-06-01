@@ -415,3 +415,7 @@ input:-moz-placeholder::before {
         transition: bottom 0.5s ease;
     }
 }
+
+.no-bottom-margin {
+    margin-bottom: 0;
+}

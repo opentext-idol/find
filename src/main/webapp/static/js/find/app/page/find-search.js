@@ -7,6 +7,7 @@ define([
     'js-whatever/js/base-page',
     'find/app/model/entity-collection',
     'find/app/model/documents-collection',
+    'find/app/model/promotions-collection',
     'find/app/model/indexes-collection',
     'find/app/model/parametric-collection',
     'find/app/page/parametric/parametric-controller',
@@ -24,7 +25,7 @@ define([
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, $, _, template, resultsTemplate,
+], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, $, _, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
 
     return BasePage.extend({
@@ -76,6 +77,7 @@ define([
         initialize: function() {
             this.entityCollection = new EntityCollection();
             this.documentsCollection = new DocumentsCollection();
+            this.promotionsCollection = new PromotionsCollection();
             this.topResultsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
             this.parametricCollection = new ParametricCollection([], {singleRequest: true});
@@ -87,6 +89,7 @@ define([
             router.on('route:search', function(text) {
                 this.entityCollection.reset();
                 this.documentsCollection.set([]);
+                this.promotionsCollection.set([]);
 
                 if (text) {
                     this.$('.find-input').val(text); //when clicking one of the suggested search links
@@ -194,6 +197,12 @@ define([
 
                         this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
                     }, this);
+
+                    this.promotionsCollection.each(function(document) {
+                        var summary = this.addLinksToSummary(document.get('summary'));
+
+                        this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
+                    }, this);
                 }
             });
 
@@ -201,6 +210,47 @@ define([
             this.listenTo(this.documentsCollection, 'request', function() {
                 this.$('.main-results-content').empty();
                 this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
+            });
+
+            this.listenTo(this.promotionsCollection, 'add', function(model) {
+                var reference = model.get('reference');
+                var summary = model.get('summary');
+
+                // Remove existing document with this reference
+                this.$("[data-reference='" + reference + "']").remove();
+
+                summary = this.addLinksToSummary(summary);
+
+                this.$('.main-results-content .loading-spinner').remove();
+
+                var $newResult = $(_.template(resultsTemplate ,{
+                    title: model.get('title'),
+                    reference: reference,
+                    index: model.get('index'),
+                    summary: summary,
+                    promotion: true
+                }));
+
+                $newResult.addClass("promotion-result");
+
+                this.$('.main-results-content').prepend($newResult);
+
+                $newResult.find('.result-header').colorbox({
+                    iframe: true,
+                    width:'70%',
+                    height:'70%',
+                    href: reference,
+                    rel: 'results',
+                    current: '{current} of {total}',
+                    onComplete: _.bind(function() {
+                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+                    }, this)
+                });
+
+                $newResult.find('.dots').click(function (e) {
+                    e.preventDefault();
+                    $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
+                });
             });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
@@ -215,7 +265,8 @@ define([
                     title: model.get('title'),
                     reference: reference,
                     index: model.get('index'),
-                    summary: summary
+                    summary: summary,
+                    promotion: false
                 }));
 
                 this.$('.main-results-content').append($newResult);
@@ -325,6 +376,16 @@ define([
                     data: {
                         text: this.queryText,
                         max_results: 30,
+                        summary: 'quick',
+                        index: selectedIndexes,
+                        field_text: this.fieldText || null
+                    }
+                }, this);
+
+                this.promotionsCollection.fetch({
+                    data: {
+                        text: this.queryText,
+                        max_results: 30, // TODO maybe less?
                         summary: 'quick',
                         index: selectedIndexes,
                         field_text: this.fieldText || null
