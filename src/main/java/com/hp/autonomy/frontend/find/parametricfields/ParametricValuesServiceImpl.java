@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class ParametricValuesServiceImpl implements ParametricValuesService {
                 .setSort(ParametricSort.document_count)
                 .setText(parametricRequest.getQueryText())
                 .setFieldText(parametricRequest.getFieldText())
+                .setIndexes(new ArrayList<>(parametricRequest.getDatabases()))
                 .setMaxValues(5)
                 .build();
 
