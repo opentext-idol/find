@@ -14,4 +14,6 @@ public interface DocumentsService {
 
     Documents queryTextIndex(String text, int maxResults, Summary summary, List<String> indexes, String fieldText) throws IodErrorException;
 
+    Documents queryTextIndexForPromotions(String text, int maxResults, Summary summary, List<String> indexes, String fieldText) throws IodErrorException;
+
 }
