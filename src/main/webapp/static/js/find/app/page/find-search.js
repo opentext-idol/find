@@ -210,16 +210,9 @@ define([
             this.listenTo(this.documentsCollection, 'request', function() {
                 this.$('.main-results-content').empty();
                 this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
-                console.log(Date.now(), "documentsCollection:request")
-            });
-
-            this.listenTo(this.promotionsCollection, 'request', function() {
-                //this.$('.promotion-result').remove();
-                console.log(Date.now(), "promotionsCollection:request")
             });
 
             this.listenTo(this.promotionsCollection, 'add', function(model) {
-                console.log(Date.now(), "promotionsCollection:add")
                 var reference = model.get('reference');
                 var summary = model.get('summary');
 
@@ -261,7 +254,6 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
-                console.log(Date.now(), "documentsCollection:add")
                 var reference = model.get('reference');
                 var summary = model.get('summary');
 
@@ -301,14 +293,8 @@ define([
                 if(this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .loading-spinner').remove();
                     this.$('.main-results-content').append(this.noResultsTemplate({i18n: i18n}));
-                    console.log(Date.now(), "documentsCollection:sync")
                 }
             });
-
-            this.listenTo(this.promotionsCollection, 'sync', function() {
-                //this.$('.promotion-result').remove();
-                console.log(Date.now(), "promotionsCollection:sync")
-            })
 
             /*colorbox fancy button override*/
             $('#colorbox').append(_.template(colorboxControlsTemplate));
