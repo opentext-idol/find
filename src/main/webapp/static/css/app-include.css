@@ -197,8 +197,15 @@ input.find-input {
 }
 
 .main-content h4,
-.main-content h5 {
+.main-content h5,
+.error-body h1,
+.error-body h3 {
     color: rgba(138, 113, 102, 0.96);
+}
+
+.error-body {
+    margin-top: 250px;
+    text-align: center;
 }
 
 .suggestion-head-text {

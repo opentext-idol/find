@@ -14,6 +14,7 @@ define([
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
+    'find/app/util/view-server-client',
     'jquery',
     'underscore',
     'text!find/templates/app/page/find-search.html',
@@ -25,7 +26,7 @@ define([
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, $, _, template, resultsTemplate,
+], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, viewClient, $, _, template, resultsTemplate,
             suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
 
     return BasePage.extend({
@@ -102,7 +103,7 @@ define([
             this.indexes = {};
             this.indexesCollection.fetch();
 
-            this.listenTo(this.indexesCollection, 'sync', function(thing) {
+            this.listenTo(this.indexesCollection, 'sync', function() {
                 // Default to searching against all indexes
                 this.indexesCollection.forEach(_.bind(function(indexModel) {
                     this.indexes[indexModel.get('index')] = true;
@@ -271,11 +272,13 @@ define([
 
                 this.$('.main-results-content').append($newResult);
 
+                var href = viewClient.getHref(reference, model.get('index'));
+
                 $newResult.find('.result-header').colorbox({
                     iframe: true,
                     width:'70%',
                     height:'70%',
-                    href: reference,
+                    href: href,
                     rel: 'results',
                     current: '{current} of {total}',
                     onComplete: _.bind(function() {
