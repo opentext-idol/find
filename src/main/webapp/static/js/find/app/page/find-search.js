@@ -214,7 +214,7 @@ define([
             });
 
             this.listenTo(this.promotionsCollection, 'request', function() {
-                this.$('.promotion-result').remove();
+                //this.$('.promotion-result').remove();
                 console.log(Date.now(), "promotionsCollection:request")
             });
 
@@ -222,6 +222,9 @@ define([
                 console.log(Date.now(), "promotionsCollection:add")
                 var reference = model.get('reference');
                 var summary = model.get('summary');
+
+                // Remove existing document with this reference
+                this.$("[data-reference='" + reference + "']").remove();
 
                 summary = this.addLinksToSummary(summary);
 
@@ -303,7 +306,7 @@ define([
             });
 
             this.listenTo(this.promotionsCollection, 'sync', function() {
-                this.$('.promotion-result').remove();
+                //this.$('.promotion-result').remove();
                 console.log(Date.now(), "promotionsCollection:sync")
             })
 
