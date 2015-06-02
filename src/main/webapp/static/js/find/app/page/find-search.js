@@ -15,6 +15,7 @@ define([
     'find/app/vent',
     'i18n!find/nls/bundle',
     'find/app/util/view-server-client',
+    'moment',
     'jquery',
     'underscore',
     'text!find/templates/app/page/find-search.html',
@@ -27,8 +28,8 @@ define([
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/view/audio-player.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, viewClient, $, _, template, resultsTemplate,
-            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents, audioPlayer) {
+], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, viewClient, moment,
+            $, _, template, resultsTemplate, suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents, audioPlayer) {
 
     return BasePage.extend({
 
@@ -312,7 +313,9 @@ define([
                         max_results: 30,
                         summary: 'quick',
                         index: selectedIndexes,
-                        field_text: this.fieldText || null
+                        field_text: this.fieldText || null,
+                        min_date: this.min_date || moment().toISOString(),
+                        max_date: this.max_date || moment().toISOString()
                     }
                 }, this);
 
@@ -322,7 +325,9 @@ define([
                         max_results: 30, // TODO maybe less?
                         summary: 'quick',
                         index: selectedIndexes,
-                        field_text: this.fieldText || null
+                        field_text: this.fieldText || null,
+                        min_date: this.min_date || moment().toISOString,
+                        max_date: this.max_date || moment().toISOString
                     }
                 }, this);
 

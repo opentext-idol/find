@@ -8,7 +8,9 @@ package com.hp.autonomy.frontend.find.search;
 import com.hp.autonomy.iod.client.api.search.Documents;
 import com.hp.autonomy.iod.client.api.search.Summary;
 import com.hp.autonomy.iod.client.error.IodErrorException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,9 +33,11 @@ public class DocumentsController {
         @RequestParam("max_results") final int maxResults,
         @RequestParam("summary") final Summary summary,
         @RequestParam("index") final List<String> index,
-        @RequestParam("field_text") final String fieldText
+        @RequestParam("field_text") final String fieldText,
+        @RequestParam(value = "min_date", required = false) @DateTimeFormat final DateTime minDate,
+        @RequestParam(value = "max_date", required = false) @DateTimeFormat final DateTime maxDate
     ) throws IodErrorException {
-        return documentsService.queryTextIndex(text, maxResults, summary, index, fieldText);
+        return documentsService.queryTextIndex(text, maxResults, summary, index, fieldText, minDate, maxDate);
     }
 
     @RequestMapping(value="promotions", method = RequestMethod.GET)
@@ -43,8 +47,10 @@ public class DocumentsController {
             @RequestParam("max_results") final int maxResults,
             @RequestParam("summary") final Summary summary,
             @RequestParam("index") final List<String> index,
-            @RequestParam("field_text") final String fieldText
+            @RequestParam("field_text") final String fieldText,
+            @RequestParam(value = "min_date", required = false) @DateTimeFormat final DateTime minDate,
+            @RequestParam(value = "max_date", required = false) @DateTimeFormat final DateTime maxDate
     ) throws IodErrorException {
-        return documentsService.queryTextIndexForPromotions(text, maxResults, summary, index, fieldText);
+        return documentsService.queryTextIndexForPromotions(text, maxResults, summary, index, fieldText, minDate, maxDate);
     }
 }

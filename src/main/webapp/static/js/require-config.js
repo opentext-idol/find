@@ -17,6 +17,7 @@ require.config({
         'js-whatever': '../lib/hp-autonomy-js-whatever/src',
         json2: '../lib/json/json2',
         'login-page': '../lib/hp-autonomy-login-page/src',
+        moment: '../lib/moment/moment',
         settings: '../lib/hp-autonomy-settings-page/src',
         text: '../lib/requirejs-text/text',
         underscore: '../lib/underscore/underscore'
