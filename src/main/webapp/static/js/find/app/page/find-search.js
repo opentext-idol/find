@@ -296,7 +296,8 @@ define([
                             $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
                         }, this),
                         html: this.audioPlayerTemplate({
-                            url: url
+                            url: url,
+                            offset: offset
                         })
                     })
 
