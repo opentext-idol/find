@@ -25,9 +25,10 @@ define([
     'text!find/templates/app/page/index-popover.html',
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
+    'text!find/templates/app/page/view/audio-player.html',
     'colorbox'
 ], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, viewClient, $, _, template, resultsTemplate,
-            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
+            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents, audioPlayer) {
 
     return BasePage.extend({
 
@@ -38,6 +39,7 @@ define([
         indexPopover: _.template(indexPopover),
         indexPopoverContents: _.template(indexPopoverContents),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
+        audioPlayerTemplate: _.template(audioPlayer),
 
         events: {
             'keyup .find-input': 'keyupAnimation',
@@ -214,84 +216,11 @@ define([
             });
 
             this.listenTo(this.promotionsCollection, 'add', function(model) {
-                var reference = model.get('reference');
-                var summary = model.get('summary');
-
-                // Remove existing document with this reference
-                this.$("[data-reference='" + reference + "']").remove();
-
-                summary = this.addLinksToSummary(summary);
-
-                this.$('.main-results-content .loading-spinner').remove();
-
-                var href = viewClient.getHref(reference, model.get('index'));
-
-                var $newResult = $(_.template(resultsTemplate ,{
-                    title: model.get('title'),
-                    reference: reference,
-                    href: href,
-                    index: model.get('index'),
-                    summary: summary,
-                    promotion: true
-                }));
-
-                $newResult.addClass("promotion-result");
-
-                this.$('.main-results-content').prepend($newResult);
-
-                $newResult.find('.result-header').colorbox({
-                    iframe: true,
-                    width:'70%',
-                    height:'70%',
-                    rel: 'results',
-                    current: '{current} of {total}',
-                    onComplete: _.bind(function() {
-                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-                    }, this)
-                });
-
-                $newResult.find('.dots').click(function (e) {
-                    e.preventDefault();
-                    $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
-                });
+                this.formatResult(model, true)
             });
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
-                var reference = model.get('reference');
-                var summary = model.get('summary');
-
-                summary = this.addLinksToSummary(summary);
-
-                this.$('.main-results-content .loading-spinner').remove();
-
-                var href = viewClient.getHref(reference, model.get('index'));
-
-                var $newResult = $(_.template(resultsTemplate ,{
-                    title: model.get('title'),
-                    reference: reference,
-                    href: href,
-                    index: model.get('index'),
-                    summary: summary,
-                    promotion: false
-                }));
-
-                this.$('.main-results-content').append($newResult);
-
-                $newResult.find('.result-header').colorbox({
-                    iframe: true,
-                    width:'70%',
-                    height:'70%',
-                    rel: 'results',
-                    current: '{current} of {total}',
-                    onComplete: _.bind(function() {
-                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-                    }, this)
-                });
-
-                $newResult.find('.dots').click(function (e) {
-                    e.preventDefault();
-                    $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
-                });
+                this.formatResult(model, false);
             });
 
             this.listenTo(this.documentsCollection, 'sync', function() {
@@ -418,6 +347,77 @@ define([
             return _.chain(this.indexes).map(function(value, key) {
                 return (value ? key : undefined); // Return names of selected indexes and undefined for unselected ones
             }).compact().value();
+        },
+
+        formatResult: function(model, isPromotion) {
+            var reference = model.get('reference');
+            var summary = model.get('summary');
+
+            // Remove existing document with this reference
+            this.$("[data-reference='" + reference + "']").remove();
+
+            summary = this.addLinksToSummary(summary);
+
+            this.$('.main-results-content .loading-spinner').remove();
+
+            var href = viewClient.getHref(reference, model.get('index'));
+
+            var $newResult = $(_.template(resultsTemplate ,{
+                title: model.get('title'),
+                reference: reference,
+                href: href,
+                index: model.get('index'),
+                summary: summary,
+                promotion: isPromotion
+            }));
+
+            if (isPromotion) {
+                this.$('.main-results-content').prepend($newResult);
+            } else {
+                this.$('.main-results-content').append($newResult);
+            }
+
+            var fields = model.get('fields');
+            if (fields.content_type && fields.url && fields.content_type[0].indexOf('audio') == 0) {
+                // This is an audio file with a URL, use the audio player template
+
+                var url = fields.url[0];
+                var offset = fields.offset ? fields.offset[0] : 0;
+
+                $newResult.find('.result-header').colorbox({
+                    iframe: false,
+                    width:'70%',
+                    height:'70%',
+                    rel: 'results',
+                    current: '{current} of {total}',
+                    onComplete: _.bind(function() {
+                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+                    }, this),
+                    html: this.audioPlayerTemplate({
+                        url: url,
+                        offset: offset
+                    })
+                })
+
+            } else {
+                // Use the standard Viewserver display
+
+                $newResult.find('.result-header').colorbox({
+                    iframe: true,
+                    width:'70%',
+                    height:'70%',
+                    rel: 'results',
+                    current: '{current} of {total}',
+                    onComplete: _.bind(function() {
+                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+                    }, this)
+                });
+            }
+
+            $newResult.find('.dots').click(function (e) {
+                e.preventDefault();
+                $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
+            });
         }
     });
 });
