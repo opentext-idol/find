@@ -15,6 +15,7 @@ import com.hp.autonomy.iod.client.api.search.Documents;
 import com.hp.autonomy.iod.client.api.search.GetContentRequestBuilder;
 import com.hp.autonomy.iod.client.api.search.GetContentService;
 import com.hp.autonomy.iod.client.api.search.Print;
+import com.hp.autonomy.iod.client.error.IodErrorCode;
 import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -30,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -59,16 +61,20 @@ public class IodViewServiceImpl implements IodViewService {
         final Document document = documents.getDocuments().get(0);
 
         final Map<String, Object> fields = document.getFields();
-        String documentUrl = (String) fields.get("url");
+        final Object urlField = fields.get("url");
 
-        final Response response;
-        InputStream inputStream;
+        final String documentUrl;
 
-        if (documentUrl == null) {
+        if(urlField instanceof List) {
+            documentUrl = ((List<?>) urlField).get(0).toString();
+        }
+        else {
             documentUrl = document.getReference();
         }
 
         final UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_2_SLASHES);
+
+        InputStream inputStream;
 
         try {
             final URL url = new URL(documentUrl);
@@ -76,13 +82,22 @@ public class IodViewServiceImpl implements IodViewService {
             final String encodedUrl = uri.toASCIIString();
 
             if (urlValidator.isValid(encodedUrl)) {
-                response = viewDocumentService.viewUrl(apiKeyService.getApiKey(), encodedUrl, null);
+                final Response response = viewDocumentService.viewUrl(encodedUrl, null);
                 inputStream = response.getBody().in();
             } else {
                 throw new URISyntaxException(encodedUrl, "Invalid URL");
             }
         } catch (URISyntaxException | MalformedURLException e) {
+            // url was not valid, use content
             inputStream = IOUtils.toInputStream(document.getContent(), "UTF-8");
+        } catch (final IodErrorException e) {
+            if(e.getErrorCode() == IodErrorCode.BACKEND_REQUEST_FAILED) {
+                // IOD failed to read the url, use the content
+                inputStream = IOUtils.toInputStream(document.getContent(), "UTF-8");
+            }
+            else {
+                throw e;
+            }
         }
 
         IOUtils.copy(inputStream, outputStream);
