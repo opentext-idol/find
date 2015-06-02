@@ -25,9 +25,10 @@ define([
     'text!find/templates/app/page/index-popover.html',
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
+    'text!find/templates/app/page/view/audio-player.html',
     'colorbox'
 ], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, viewClient, $, _, template, resultsTemplate,
-            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents) {
+            suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents, audioPlayer) {
 
     return BasePage.extend({
 
@@ -38,6 +39,7 @@ define([
         indexPopover: _.template(indexPopover),
         indexPopoverContents: _.template(indexPopoverContents),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
+        audioPlayerTemplate: _.template(audioPlayer),
 
         events: {
             'keyup .find-input': 'keyupAnimation',
@@ -277,16 +279,41 @@ define([
 
                 this.$('.main-results-content').append($newResult);
 
-                $newResult.find('.result-header').colorbox({
-                    iframe: true,
-                    width:'70%',
-                    height:'70%',
-                    rel: 'results',
-                    current: '{current} of {total}',
-                    onComplete: _.bind(function() {
-                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-                    }, this)
-                });
+                var fields = model.get('fields');
+                if (fields.content_type && fields.url && fields.content_type[0].indexOf('audio') == 0) {
+                    // This is an audio file with a URL, use the audio player template
+
+                    var url = fields.url[0];
+                    var offset = fields.offset ? fields.offset[0] : 0;
+
+                    $newResult.find('.result-header').colorbox({
+                        iframe: false,
+                        width:'70%',
+                        height:'70%',
+                        rel: 'results',
+                        current: '{current} of {total}',
+                        onComplete: _.bind(function() {
+                            $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+                        }, this),
+                        html: this.audioPlayerTemplate({
+                            url: url
+                        })
+                    })
+
+                } else {
+                    // Use the standard Viewserver display
+
+                    $newResult.find('.result-header').colorbox({
+                        iframe: true,
+                        width:'70%',
+                        height:'70%',
+                        rel: 'results',
+                        current: '{current} of {total}',
+                        onComplete: _.bind(function() {
+                            $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+                        }, this)
+                    });
+                }
 
                 $newResult.find('.dots').click(function (e) {
                     e.preventDefault();
