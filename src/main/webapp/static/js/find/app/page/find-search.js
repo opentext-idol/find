@@ -224,9 +224,12 @@ define([
 
                 this.$('.main-results-content .loading-spinner').remove();
 
+                var href = viewClient.getHref(reference, model.get('index'));
+
                 var $newResult = $(_.template(resultsTemplate ,{
                     title: model.get('title'),
                     reference: reference,
+                    href: href,
                     index: model.get('index'),
                     summary: summary,
                     promotion: true
@@ -240,7 +243,6 @@ define([
                     iframe: true,
                     width:'70%',
                     height:'70%',
-                    href: reference,
                     rel: 'results',
                     current: '{current} of {total}',
                     onComplete: _.bind(function() {
@@ -262,9 +264,12 @@ define([
 
                 this.$('.main-results-content .loading-spinner').remove();
 
+                var href = viewClient.getHref(reference, model.get('index'));
+
                 var $newResult = $(_.template(resultsTemplate ,{
                     title: model.get('title'),
                     reference: reference,
+                    href: href,
                     index: model.get('index'),
                     summary: summary,
                     promotion: false
@@ -272,13 +277,10 @@ define([
 
                 this.$('.main-results-content').append($newResult);
 
-                var href = viewClient.getHref(reference, model.get('index'));
-
                 $newResult.find('.result-header').colorbox({
                     iframe: true,
                     width:'70%',
                     height:'70%',
-                    href: href,
                     rel: 'results',
                     current: '{current} of {total}',
                     onComplete: _.bind(function() {
