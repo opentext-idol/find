@@ -34,8 +34,8 @@ public class DocumentsController {
         @RequestParam("summary") final Summary summary,
         @RequestParam("index") final List<String> index,
         @RequestParam("field_text") final String fieldText,
-        @RequestParam(value = "min_date", required = false) @DateTimeFormat final DateTime minDate,
-        @RequestParam(value = "max_date", required = false) @DateTimeFormat final DateTime maxDate
+        @RequestParam(value = "min_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+        @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate
     ) throws IodErrorException {
         return documentsService.queryTextIndex(text, maxResults, summary, index, fieldText, minDate, maxDate);
     }
@@ -48,8 +48,8 @@ public class DocumentsController {
             @RequestParam("summary") final Summary summary,
             @RequestParam("index") final List<String> index,
             @RequestParam("field_text") final String fieldText,
-            @RequestParam(value = "min_date", required = false) @DateTimeFormat final DateTime minDate,
-            @RequestParam(value = "max_date", required = false) @DateTimeFormat final DateTime maxDate
+            @RequestParam(value = "min_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate
     ) throws IodErrorException {
         return documentsService.queryTextIndexForPromotions(text, maxResults, summary, index, fieldText, minDate, maxDate);
     }
