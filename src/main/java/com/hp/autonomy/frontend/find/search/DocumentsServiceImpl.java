@@ -45,6 +45,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .setFieldText(fieldText)
                 .setQueryProfile(queryProfileService.getQueryProfile())
                 .setPromotions(doPromotions)
+                .setPrint(Print.all)
                 .build();
 
         return queryTextIndexService.queryTextIndexWithText(apiKeyService.getApiKey(), text, params);
