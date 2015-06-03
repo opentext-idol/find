@@ -87,17 +87,9 @@ public class IodViewServiceImpl implements IodViewService {
             } else {
                 throw new URISyntaxException(encodedUrl, "Invalid URL");
             }
-        } catch (URISyntaxException | MalformedURLException e) {
-            // url was not valid, use content
+        } catch (final URISyntaxException | MalformedURLException | IodErrorException e) {
+            // url was not valid or IOD failed, use content instead
             inputStream = IOUtils.toInputStream(document.getContent(), "UTF-8");
-        } catch (final IodErrorException e) {
-            if(e.getErrorCode() == IodErrorCode.BACKEND_REQUEST_FAILED) {
-                // IOD failed to read the url, use the content
-                inputStream = IOUtils.toInputStream(document.getContent(), "UTF-8");
-            }
-            else {
-                throw e;
-            }
         }
 
         IOUtils.copy(inputStream, outputStream);
