@@ -46,36 +46,43 @@ public class IodViewServiceImpl implements IodViewService {
     @Autowired
     private ViewDocumentService viewDocumentService;
 
+    /**
+     * Uses IOD GetContent and ViewDocument to return the content of a document.
+     * @param outputStream  Stream to write the document to
+     * @param documentReference  Document reference to load
+     * @param indexes  IOD Indexes to search for the document reference in
+     * @throws IOException
+     * @throws IodErrorException  Thrown if document reference is invalid/not found in the indexes supplied
+     */
     @Override
     public void viewDocument(final OutputStream outputStream, final String documentReference, final String indexes) throws IOException, IodErrorException {
-        // call get content with document reference
-        // if no document will throw IodErrorException
-        // if document has a url, view it
-        // if document has object store reference, view it
-        // else show the text content
+
+        // Call GetContent with the document reference as we need details from the full document (e.g. URL)
         final Map<String, Object> getContentParams = new GetContentRequestBuilder()
                 .setPrint(Print.all)
                 .build();
 
+        // An IodErrorException can be thrown here if the document isn't found.
         final Documents documents = getContentService.getContent(apiKeyService.getApiKey(), Collections.singletonList(documentReference), indexes, getContentParams);
         final Document document = documents.getDocuments().get(0);
 
+        // Check for a URL field on the document
         final Map<String, Object> fields = document.getFields();
         final Object urlField = fields.get("url");
-
         final String documentUrl;
 
         if(urlField instanceof List) {
             documentUrl = ((List<?>) urlField).get(0).toString();
         }
         else {
+            // If there isn't a URL field, use the document reference - this is often actually a URL
             documentUrl = document.getReference();
         }
 
         final UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_2_SLASHES);
 
+        // Attempt to load the URL
         InputStream inputStream;
-
         try {
             final URL url = new URL(documentUrl);
             final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
@@ -88,12 +95,11 @@ public class IodViewServiceImpl implements IodViewService {
                 throw new URISyntaxException(encodedUrl, "Invalid URL");
             }
         } catch (final URISyntaxException | MalformedURLException | IodErrorException e) {
-            // url was not valid or IOD failed, use content instead
+            // Fallback - URL was not valid or IOD failed, use raw document content from IOD instead
             inputStream = IOUtils.toInputStream(document.getContent(), "UTF-8");
         }
 
         IOUtils.copy(inputStream, outputStream);
-
         inputStream.close();
     }
 }
