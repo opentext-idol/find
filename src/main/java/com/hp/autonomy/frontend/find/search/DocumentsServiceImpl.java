@@ -12,6 +12,8 @@ import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +40,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     private Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final boolean doPromotions) throws IodErrorException {
+
         final Map<String, Object> params = new QueryRequestBuilder()
                 .setAbsoluteMaxResults(maxResults)
                 .setSummary(summary)
@@ -45,7 +48,8 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .setFieldText(fieldText)
                 .setQueryProfile(queryProfileService.getQueryProfile())
                 .setPromotions(doPromotions)
-                .setPrint(Print.all)
+                .setPrint(Print.fields)
+                .setPrintFields(new ArrayList<>(Arrays.asList("url", "offset", "content_type"))) // Need these fields for audio playback
                 .build();
 
         return queryTextIndexService.queryTextIndexWithText(apiKeyService.getApiKey(), text, params);
