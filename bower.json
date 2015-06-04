@@ -33,7 +33,8 @@
     "requirejs-i18n": "~2.0.4",
     "icheck": "~1.0.2",
     "moment": "~2.10.3",
-    "smalot-bootstrap-datetimepicker": "~2.3.4"
+    "smalot-bootstrap-datetimepicker": "~2.3.4",
+    "bootstrap-timepicker": "tarruda/bootstrap-datetimepicker"
   },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "~1.0.2"

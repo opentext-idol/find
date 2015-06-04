@@ -18,13 +18,13 @@ define([
             this.$maxDate = this.$('.results-filter-max-date');
 
             this.$minDate.datetimepicker({
-                format: 'yyyy-mm-dd hh:ii'
+                format: 'yyyy/MM/dd hh:mm'
             }).on('changeDate', _.bind(function(ev) {
                 this.trigger('change', {type: 'min', date: moment((ev.date)).toISOString()});
             }, this));
 
             this.$maxDate.datetimepicker({
-                format: 'yyyy-mm-dd hh:ii'
+                format: 'yyyy/MM/dd hh:mm'
             }).on('changeDate', _.bind(function(ev) {
                 this.trigger('change', {type: 'max', date: moment((ev.date)).toISOString()});
             }, this));

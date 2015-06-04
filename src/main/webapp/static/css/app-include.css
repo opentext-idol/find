@@ -17,6 +17,31 @@ html, body {
     width: 140px
 }
 
+.bootstrap-datetimepicker-widget td.day.active {
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #2f92e7;
+    *background-color: #2f76e7;
+    background-image: -moz-linear-gradient(top, #2fa4e7, #2f76e7);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#2fa4e7), to(#2f76e7));
+    background-image: -webkit-linear-gradient(top, #2fa4e7, #2f76e7);
+    background-image: -o-linear-gradient(top, #2fa4e7, #2f76e7);
+    background-image: linear-gradient(to bottom, #2fa4e7, #2f76e7);
+    background-repeat: repeat-x;
+    border-color: #2f76e7 #2f76e7 #1553b5;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff2fa4e7', endColorstr='#ff2f76e7', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.input-append.date .add-on i {
+    display: inline;
+}
+
+.input-append.date .add-on {
+    cursor: pointer;
+}
+
 .initial-loading-indicator-container {
     position: relative;
     height: 100%;
