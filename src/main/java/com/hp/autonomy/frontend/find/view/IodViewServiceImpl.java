@@ -15,7 +15,6 @@ import com.hp.autonomy.iod.client.api.search.Documents;
 import com.hp.autonomy.iod.client.api.search.GetContentRequestBuilder;
 import com.hp.autonomy.iod.client.api.search.GetContentService;
 import com.hp.autonomy.iod.client.api.search.Print;
-import com.hp.autonomy.iod.client.error.IodErrorCode;
 import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -89,7 +88,7 @@ public class IodViewServiceImpl implements IodViewService {
             final String encodedUrl = uri.toASCIIString();
 
             if (urlValidator.isValid(encodedUrl)) {
-                final Response response = viewDocumentService.viewUrl(encodedUrl, null);
+                final Response response = viewDocumentService.viewUrl(apiKeyService.getApiKey(), encodedUrl, null);
                 inputStream = response.getBody().in();
             } else {
                 throw new URISyntaxException(encodedUrl, "Invalid URL");
