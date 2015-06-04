@@ -11,6 +11,7 @@ define([
     'find/app/model/indexes-collection',
     'find/app/model/parametric-collection',
     'find/app/page/parametric/parametric-controller',
+    'find/app/page/date/dates-filter-view',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
@@ -28,7 +29,7 @@ define([
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/view/audio-player.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, router, vent, i18n, viewClient, moment,
+], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, DateView, router, vent, i18n, viewClient, moment,
             $, _, template, resultsTemplate, suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents, audioPlayer) {
 
     return BasePage.extend({
@@ -88,6 +89,13 @@ define([
 
             this.parametricController = new ParametricController({
                 parametricCollection: this.parametricCollection
+            });
+
+            this.dateView = new DateView();
+
+            this.listenTo(this.dateView, 'change', function(a) {
+                this[a.type + "_date"] = a.date;
+                this.searchRequest();
             });
 
             router.on('route:search', function(text) {
@@ -154,6 +162,7 @@ define([
             });
 
             this.parametricController.view.setElement(this.$('.parametric-container')).render();
+            this.dateView.setElement(this.$('.date-container')).render();
 
             /*top 3 results popover*/
             this.listenTo(this.topResultsCollection, 'add', function(model){
@@ -314,8 +323,8 @@ define([
                         summary: 'quick',
                         index: selectedIndexes,
                         field_text: this.fieldText || null,
-                        min_date: this.min_date || moment().toISOString(),
-                        max_date: this.max_date || moment().toISOString()
+                        min_date: this.min_date || null,
+                        max_date: this.max_date || null
                     }
                 }, this);
 
@@ -326,8 +335,8 @@ define([
                         summary: 'quick',
                         index: selectedIndexes,
                         field_text: this.fieldText || null,
-                        min_date: this.min_date || moment().toISOString,
-                        max_date: this.max_date || moment().toISOString
+                        min_date: this.min_date || null,
+                        max_date: this.max_date || null
                     }
                 }, this);
 

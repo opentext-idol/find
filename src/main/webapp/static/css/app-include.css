@@ -13,6 +13,10 @@ html, body {
     min-width: 640px;
 }
 
+.date input {
+    width: 140px
+}
+
 .initial-loading-indicator-container {
     position: relative;
     height: 100%;
@@ -30,6 +34,11 @@ html, body {
     text-align: center;
     top: 50%;
     width: 200px;
+}
+
+.input-append,
+.input-prepend .date {
+    font-size: 100%;
 }
 
 .page .header {
