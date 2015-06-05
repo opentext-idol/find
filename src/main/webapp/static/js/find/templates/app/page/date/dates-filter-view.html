@@ -8,15 +8,17 @@
     <div class="control-group">
         <div>
             <h5><%-i18n['app.from']%></h5>
+            <button class="clear-min-date btn btn-default"><i class="icon-remove"></i></button>
             <div class="input-append date results-filter-min-date">
-                <input type="text" value="" readonly><span class="add-on"><i data-date-icon="icon-calendar"></i></span>
+                <input type="text" value="" readonly><span class="add-on date-select"><i data-date-icon="icon-calendar"></i></span>
             </div>
         </div>
 
         <div>
             <h5><%-i18n['app.until']%></h5>
+            <button class="clear-max-date btn btn-default"><div class="icon-remove"></div></button>
             <div class="input-append date results-filter-max-date">
-                <input type="text" value="" readonly><span class="add-on date-select"><div class="icon-calendar"></div></span>
+                <input type="text" value="" readonly><span class="add-on date-select"><i data-date-icon="icon-calendar"></i></span>
             </div>
         </div>
     </div>

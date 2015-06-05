@@ -14,7 +14,11 @@ html, body {
 }
 
 .date input {
-    width: 140px
+    width: 115px
+}
+
+.input-append.date {
+    margin-bottom: 0;
 }
 
 .bootstrap-datetimepicker-widget td.day.active {
