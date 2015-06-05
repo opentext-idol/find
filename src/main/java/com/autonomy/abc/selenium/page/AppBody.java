@@ -1,9 +1,24 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.AppElement;
+import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.menubar.NotificationsDropDown;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
+import com.autonomy.abc.selenium.page.admin.AboutPage;
+import com.autonomy.abc.selenium.page.admin.SettingsPage;
+import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.page.login.LoginHostedPage;
+import com.autonomy.abc.selenium.page.login.LoginOnPremisePage;
+import com.autonomy.abc.selenium.page.overview.OverviewPage;
+import com.autonomy.abc.selenium.page.promotions.CreateNewDynamicPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.SchedulePage;
+import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
+import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.util.AbstractWebElementPlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -17,7 +32,7 @@ public class AppBody extends AppElement {
 	private final AbstractWebElementPlaceholder<UsersPage> usersPage;
 	private final AbstractWebElementPlaceholder<SettingsPage> settingsPage;
 	private final SearchPage.Placeholder searchPage;
-	private final LoginPage.Placeholder loginPage;
+	private final LoginOnPremisePage.Placeholder loginOnPremPage;
 	private final CreateNewPromotionsPage.Placeholder createPromotionsPage;
 	private final CreateNewDynamicPromotionsPage.Placeholder dynamicPromotionsPage;
 	private final SchedulePage.Placeholder schedulePage;
@@ -42,7 +57,7 @@ public class AppBody extends AppElement {
 		this.settingsPage = new SettingsPage.Placeholder(this, navBar, topNavBar);
 
 		this.searchPage = new SearchPage.Placeholder(topNavBar);
-		this.loginPage = new LoginPage.Placeholder(topNavBar);
+		this.loginOnPremPage = new LoginOnPremisePage.Placeholder(topNavBar);
 		this.createPromotionsPage = new CreateNewPromotionsPage.Placeholder(topNavBar);
 		this.dynamicPromotionsPage = new CreateNewDynamicPromotionsPage.Placeholder(topNavBar);
 		this.schedulePage = new SchedulePage.Placeholder(topNavBar);
@@ -78,7 +93,7 @@ public class AppBody extends AppElement {
 	}
 
 	public SearchPage getSearchPage() {
-		return searchPage.$searchPage(getParent(getParent(getDriver().findElement(By.cssSelector(".search-page-controls")))));
+		return searchPage.$searchPage(getParent(getParent(getParent(getDriver().findElement(By.cssSelector(".search-control-button"))))));
 	}
 
 	public CreateNewPromotionsPage getCreateNewPromotionsPage() {
@@ -97,8 +112,12 @@ public class AppBody extends AppElement {
 		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".page-content-pages")));
 	}
 
-	public LoginPage getLoginPage() {
-		return loginPage.$loginPage(getDriver().findElement(By.cssSelector(".loginscreen")));
+	public LoginOnPremisePage getLoginOnPremisePage() {
+		return loginOnPremPage.$loginPage(getDriver().findElement(By.cssSelector(".loginscreen")));
+	}
+
+	public LoginHostedPage getLoginHostedPage() {
+		return new LoginHostedPage(this, getDriver());
 	}
 
 	public TopNavBar getTopNavBar() {
@@ -120,5 +139,9 @@ public class AppBody extends AppElement {
 	public void logout() {
 		topNavBar.findElement(By.cssSelector(".fa-cog")).click();
 		topNavBar.findElement(By.xpath(".//span[text()='Logout']")).click();
+	}
+
+	public DatePicker getDatePicker() {
+		return new DatePicker(this, getDriver());
 	}
 }

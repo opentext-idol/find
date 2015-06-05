@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.menubar;
 
+import com.autonomy.abc.selenium.page.AppBody;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -40,6 +41,7 @@ public class TopNavBar extends TabBar {
 		findElement(By.cssSelector("[name='top-search']")).sendKeys(searchTerm);
 		findElement(By.cssSelector("[name='top-search']")).sendKeys(Keys.RETURN);
 		loadOrFadeWait();
+		new AppBody(getDriver()).getSearchPage().waitForSearchLoadIndicatorToDisappear();
 	}
 
 	public void sideBarToggle() {
