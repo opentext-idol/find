@@ -1,6 +1,7 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
@@ -34,8 +35,8 @@ import static org.junit.Assert.assertTrue;
 
 public class PromotionsPageITCase extends ABCTestBase {
 
-	public PromotionsPageITCase(final TestConfig config, final String browser, final Platform platform) {
-		super(config, browser, platform);
+	public PromotionsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
 	}
 
 	private TopNavBar topNavBar;

@@ -1,6 +1,7 @@
 package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.NotificationsDropDown;
@@ -11,8 +12,8 @@ import org.junit.Test;
 import org.openqa.selenium.Platform;
 
 public class NotificationsDropDownITCase extends ABCTestBase{
-	public NotificationsDropDownITCase(final TestConfig config, final String browser, final Platform platform) {
-		super(config, browser, platform);
+	public NotificationsDropDownITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
 	}
 
 	private NotificationsDropDown notifications;

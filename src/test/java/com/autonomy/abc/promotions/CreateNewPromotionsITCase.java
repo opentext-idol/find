@@ -1,6 +1,7 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.NotificationsDropDown;
@@ -22,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 
 public class CreateNewPromotionsITCase extends ABCTestBase {
 
-	public CreateNewPromotionsITCase(final TestConfig config, final String browser, final Platform platform) {
-		super(config, browser, platform);
+	public CreateNewPromotionsITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
 	}
 
 	private SearchPage searchPage;

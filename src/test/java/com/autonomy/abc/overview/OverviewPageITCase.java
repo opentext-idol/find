@@ -1,6 +1,7 @@
 package com.autonomy.abc.overview;
 
 import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
@@ -26,15 +27,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class OverviewPageITCase extends ABCTestBase{
 
-	public OverviewPageITCase(final TestConfig config, final String browser, final Platform platform) {
-		super(config, browser, platform);
+	public OverviewPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
 	}
 
 	private OverviewPage overviewPage;
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final Collection<TestConfig.ApplicationType> applicationTypes = Collections.singletonList(TestConfig.ApplicationType.ON_PREM);
+		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
 	}
 

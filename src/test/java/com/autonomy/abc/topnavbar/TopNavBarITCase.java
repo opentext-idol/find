@@ -1,6 +1,7 @@
 package com.autonomy.abc.topnavbar;
 
 import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.junit.Before;
@@ -16,8 +17,8 @@ import java.util.Collection;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TopNavBarITCase extends ABCTestBase {
-	public TopNavBarITCase(final TestConfig config, final String browser, final Platform platform) {
-		super(config, browser, platform);
+	public TopNavBarITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
 	}
 
 	private TopNavBar topNavBar;
@@ -29,7 +30,7 @@ public class TopNavBarITCase extends ABCTestBase {
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final Collection<TestConfig.ApplicationType> applicationTypes = Arrays.asList(TestConfig.ApplicationType.HOSTED, TestConfig.ApplicationType.ON_PREM);
+		final Collection<ApplicationType> applicationTypes = Arrays.asList(ApplicationType.HOSTED, ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
 	}
 

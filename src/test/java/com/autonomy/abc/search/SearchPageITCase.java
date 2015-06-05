@@ -1,6 +1,7 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.DatePicker;
@@ -27,8 +28,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 public class SearchPageITCase extends ABCTestBase {
-	public SearchPageITCase(final TestConfig config, final String browser, final Platform platform) {
-		super(config, browser, platform);
+	public SearchPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
 	}
 
 	private SearchPage searchPage;

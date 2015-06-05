@@ -1,10 +1,9 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +19,8 @@ import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class SearchPageOnPremiseITCase extends ABCTestBase {
-	public SearchPageOnPremiseITCase(final TestConfig config, final String browser, final Platform platform) {
-		super(config, browser, platform);
+	public SearchPageOnPremiseITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
 	}
 
 	private SearchPage searchPage;
@@ -29,7 +28,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase {
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final Collection<TestConfig.ApplicationType> applicationTypes = Collections.singletonList(TestConfig.ApplicationType.ON_PREM);
+		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
 	}
 

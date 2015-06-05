@@ -29,10 +29,12 @@ import java.util.*;
 public abstract class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
 	private final static Set<String> USER_BROWSERS;
+	private final static Set<ApplicationType> APPLICATION_TYPES;
 
 	public final TestConfig config;
 	public final String browser;
 	private final Platform platform;
+	private final ApplicationType type;
 	private WebDriver driver;
 	public AppBody body;
 	protected SideNavBar navBar;
@@ -41,6 +43,7 @@ public abstract class ABCTestBase {
 	static {
 		final String[] allBrowsers = {"firefox", "internet explorer", "chrome"};
 		final String browserProperty = System.getProperty("com.autonomy.browsers");
+		final String applicationTypeProperty = System.getProperty("com.autonomy.applicationType");
 
 		if (browserProperty == null) {
 			USER_BROWSERS = new HashSet<>(Arrays.asList(allBrowsers));
@@ -53,31 +56,46 @@ public abstract class ABCTestBase {
 				}
 			}
 		}
+
+		if (applicationTypeProperty == null) {
+			APPLICATION_TYPES = EnumSet.allOf(ApplicationType.class);
+		} else {
+			APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
+
+			for (final ApplicationType applicationType : ApplicationType.values()) {
+				if (applicationTypeProperty.contains(applicationType.getName())) {
+					APPLICATION_TYPES.add(applicationType);
+				}
+			}
+		}
 	}
 
-	public ABCTestBase(final TestConfig config, final String browser, final Platform platform) {
+	public ABCTestBase(final TestConfig config, final String browser, final ApplicationType type, final Platform platform) {
 		this.config = config;
 		this.browser = browser;
 		this.platform = platform;
+		this.type = type;
 	}
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final Collection<TestConfig.ApplicationType> applicationType = Arrays.asList(TestConfig.ApplicationType.HOSTED, TestConfig.ApplicationType.ON_PREM);
+		final Collection<ApplicationType> applicationType = Arrays.asList(ApplicationType.HOSTED, ApplicationType.ON_PREM);
 		return parameters(applicationType);
 	}
 
-	protected static List<Object[]> parameters(final Iterable<TestConfig.ApplicationType> applicationTypes) throws MalformedURLException {
+	protected static List<Object[]> parameters(final Iterable<ApplicationType> applicationTypes) throws MalformedURLException {
 		final List<Object[]> output = new ArrayList<>();
 
-		for (final TestConfig.ApplicationType type : applicationTypes) {
-			for (final String browser : USER_BROWSERS) {
-				// TODO: Make type an element of the Object[]
-				output.add(new Object[]{
-						new TestConfig(output.size(), type),
-						browser,
-						Platform.WINDOWS
-				});
+		for (final ApplicationType type : applicationTypes) {
+			if (APPLICATION_TYPES.contains(type)) {
+				for (final String browser : USER_BROWSERS) {
+					output.add(new Object[]{
+							new TestConfig(output.size(), type),
+							browser,
+							type,
+							Platform.WINDOWS
+					});
+				}
 			}
 		}
 		return output;
@@ -85,13 +103,13 @@ public abstract class ABCTestBase {
 
 	@Before
 	public void baseSetUp() throws MalformedURLException {
-		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform);
+		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
 		driver = config.createWebDriver(browser, platform);
 		ImplicitWaits.setImplicitWait(driver);
 		driver.get(config.getWebappUrl());
 		getDriver().manage().window().maximize();
 
-		if (config.getType() == TestConfig.ApplicationType.ON_PREM) {
+		if (config.getType() == ApplicationType.ON_PREM) {
 			abcOnPremiseLogin("richard", "q");
 		} else {
 			abcHostedLogin(System.getProperty("com.autonomy.apiKey"));
