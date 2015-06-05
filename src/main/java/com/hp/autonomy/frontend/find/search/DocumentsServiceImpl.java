@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.find.ApiKeyService;
 import com.hp.autonomy.frontend.find.QueryProfileService;
 import com.hp.autonomy.iod.client.api.search.*;
 import com.hp.autonomy.iod.client.error.IodErrorException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,23 +31,24 @@ public class DocumentsServiceImpl implements DocumentsService {
     private QueryTextIndexService queryTextIndexService;
 
     @Override
-    public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText) throws IodErrorException {
-        return queryTextIndex(text, maxResults, summary, indexes, fieldText, false);
+    public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final DateTime minDate, final DateTime maxDate) throws IodErrorException {
+        return queryTextIndex(text, maxResults, summary, indexes, fieldText, minDate, maxDate, false);
     }
 
     @Override
-    public Documents queryTextIndexForPromotions(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText) throws IodErrorException {
-        return queryTextIndex(text, maxResults, summary, indexes, fieldText, true);
+    public Documents queryTextIndexForPromotions(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final DateTime minDate, final DateTime maxDate) throws IodErrorException {
+        return queryTextIndex(text, maxResults, summary, indexes, fieldText, minDate, maxDate, true);
     }
 
-    private Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final boolean doPromotions) throws IodErrorException {
-
+    private Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final DateTime minDate, final DateTime maxDate, final boolean doPromotions) throws IodErrorException {
         final Map<String, Object> params = new QueryRequestBuilder()
                 .setAbsoluteMaxResults(maxResults)
                 .setSummary(summary)
                 .setIndexes(indexes)
                 .setFieldText(fieldText)
                 .setQueryProfile(queryProfileService.getQueryProfile())
+                .setMinDate(minDate)
+                .setMaxDate(maxDate)
                 .setPromotions(doPromotions)
                 .setPrint(Print.fields)
                 .setPrintFields(new ArrayList<>(Arrays.asList("url", "offset", "content_type"))) // Need these fields for audio playback

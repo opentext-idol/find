@@ -6,6 +6,7 @@
 @import 'bootstrap-custom.css';
 @import '../lib/hp-autonomy-bootstrap-2/bootstrap/css/bootstrap-responsive.css';
 @import '../lib/fontawesome/css/font-awesome.css';
+@import '../lib/bootstrap-timepicker/build/css/bootstrap-datetimepicker.min.css';
 @import "../lib/colorbox/example1/colorbox.css";
 @import "../lib/hp-autonomy-settings-page/src/css/settings.css";
 @import "../lib/hp-autonomy-js-whatever/src/css/javascript-utils.css";

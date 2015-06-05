@@ -28,7 +28,7 @@
           p:prefix="/WEB-INF/jsps/"
           p:suffix=".jsp" />
 
-    <mvc:annotation-driven conversion-service="conversionService">
+    <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"
                           p:objectMapper-ref="dispatcherObjectMapper"/>
