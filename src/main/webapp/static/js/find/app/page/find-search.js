@@ -367,6 +367,19 @@ define([
             var reference = model.get('reference');
             var summary = model.get('summary');
 
+            var date = null;
+            var dateStamp = null;
+
+            var dateArray = model.get('fields').date;
+
+            if(dateArray) {
+                dateStamp = dateArray[0];
+
+                if(_.isFinite(dateStamp) && Math.floor(dateStamp) === dateStamp) {
+                    date = moment(dateStamp * 1000).format("YYYY/MM/DD HH:mm:ss");
+                }
+            }
+
             // Remove existing document with this reference
             this.$("[data-reference='" + reference + "']").remove();
 
@@ -382,7 +395,8 @@ define([
                 href: href,
                 index: model.get('index'),
                 summary: summary,
-                promotion: isPromotion
+                promotion: isPromotion,
+                date: date
             }));
 
             if (isPromotion) {

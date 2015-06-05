@@ -13,7 +13,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .setMaxDate(maxDate)
                 .setPromotions(doPromotions)
                 .setPrint(Print.fields)
-                .setPrintFields(new ArrayList<>(Arrays.asList("url", "offset", "content_type"))) // Need these fields for audio playback
+                .setPrintFields(Arrays.asList("url", "offset", "content_type", "date")) // Need these fields for audio playback
                 .build();
 
         return queryTextIndexService.queryTextIndexWithText(apiKeyService.getApiKey(), text, params);

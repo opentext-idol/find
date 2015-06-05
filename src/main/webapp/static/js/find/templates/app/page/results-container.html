@@ -8,9 +8,16 @@
             <a href='<%-href %>' class="dots">&#91;...&#93;</a>
         <% } %>
     </p>
-    <% if (promotion) { %>
-    <p class="pull-right no-bottom-margin">
-        <small><i class="icon-star"></i> Promoted</small>
+    <p>
+        <% if (date) { %>
+            <span class="pull-left no-bottom-margin">
+                <%- date %>
+            </span>
+        <% } %>
+        <% if (promotion) { %>
+            <span class="pull-right no-bottom-margin">
+                <small><i class="icon-star"></i> Promoted</small>
+            </span>
+        <% } %>
     </p>
-    <% } %>
 </div>
