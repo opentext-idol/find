@@ -5,10 +5,13 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -22,6 +25,12 @@ public class TopNavBarITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws MalformedURLException {
 		topNavBar = new TopNavBar(getDriver());
+	}
+
+	@Parameterized.Parameters
+	public static Iterable<Object[]> parameters() throws MalformedURLException {
+		final Collection<TestConfig.ApplicationType> applicationTypes = Arrays.asList(TestConfig.ApplicationType.HOSTED, TestConfig.ApplicationType.ON_PREM);
+		return parameters(applicationTypes);
 	}
 
 	@Test

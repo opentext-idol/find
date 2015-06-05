@@ -16,20 +16,28 @@ import java.util.logging.Level;
 public class TestConfig {
 
 	private final int index;
+	private final ApplicationType type;
 	private final URL url;
 
-	public TestConfig(final int index) throws MalformedURLException {
+	public TestConfig(final int index, final ApplicationType type) throws MalformedURLException {
 		this.index = index;
+		this.type = type;
 		this.url = new URL(System.getProperty("com.autonomy.hubUrl"));
 	}
 
 	public String getWebappUrl() {
-		return System.getProperty("com.autonomy.abcUrl");
+		if (this.getType() == ApplicationType.ON_PREM) {
+			return System.getProperty("com.autonomy.abcOnPremiseUrl");
+		} else {
+			return System.getProperty("com.autonomy.abcHostedUrl");
+		}
 	}
 
 	public int getIndex() {
 		return index;
 	}
+
+	public ApplicationType getType() {return type; }
 
 	public WebDriver createWebDriver(final String browser, final Platform platform) {
 		final DesiredCapabilities capabilities;
@@ -63,4 +71,19 @@ public class TestConfig {
 		return new RemoteWebDriver(this.url, capabilities);
 	}
 
+	public enum ApplicationType {
+		ON_PREM("On Premise"),
+		HOSTED("Hosted");
+
+		private final String name;
+		ApplicationType(final String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
 }
+
+

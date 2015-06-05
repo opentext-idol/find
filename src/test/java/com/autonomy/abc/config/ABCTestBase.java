@@ -1,8 +1,11 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.AppElement;
+import com.autonomy.abc.selenium.element.ModalView;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.page.login.LoginHostedPage;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
 import org.junit.Before;
@@ -60,18 +63,24 @@ public abstract class ABCTestBase {
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final List<Object[]> parameters = new ArrayList<>();
+		final Collection<TestConfig.ApplicationType> applicationType = Arrays.asList(TestConfig.ApplicationType.HOSTED, TestConfig.ApplicationType.ON_PREM);
+		return parameters(applicationType);
+	}
 
+	protected static List<Object[]> parameters(final Iterable<TestConfig.ApplicationType> applicationTypes) throws MalformedURLException {
+		final List<Object[]> output = new ArrayList<>();
 
-		for (final String browser : USER_BROWSERS) {
-			parameters.add(new Object[]{
-					new TestConfig(parameters.size()),
-					browser,
-					Platform.WINDOWS
-			});
+		for (final TestConfig.ApplicationType type : applicationTypes) {
+			for (final String browser : USER_BROWSERS) {
+				// TODO: Make type an element of the Object[]
+				output.add(new Object[]{
+						new TestConfig(output.size(), type),
+						browser,
+						Platform.WINDOWS
+				});
+			}
 		}
-
-		return parameters;
+		return output;
 	}
 
 	@Before
@@ -81,7 +90,13 @@ public abstract class ABCTestBase {
 		ImplicitWaits.setImplicitWait(driver);
 		driver.get(config.getWebappUrl());
 		getDriver().manage().window().maximize();
-		abcLogin("richard", "q");
+
+		if (config.getType() == TestConfig.ApplicationType.ON_PREM) {
+			abcOnPremiseLogin("richard", "q");
+		} else {
+			abcHostedLogin(System.getProperty("com.autonomy.apiKey"));
+		}
+
 		body = new AppBody(driver);
 		navBar = new SideNavBar(driver);
 		topNavBar = new TopNavBar(driver);
@@ -100,13 +115,33 @@ public abstract class ABCTestBase {
 		return config;
 	}
 
-	public void abcLogin(final String userName, final String password) {
+	public void abcOnPremiseLogin(final String userName, final String password) {
 		driver.findElement(By.cssSelector("[name='username']")).clear();
 		driver.findElement(By.cssSelector("[name='username']")).sendKeys(userName);
 		driver.findElement(By.cssSelector("[name='password']")).clear();
 		driver.findElement(By.cssSelector("[name='password']")).sendKeys(password);
 		driver.findElement(By.cssSelector("[type='submit']")).click();
 		new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top-blue")));
+	}
+
+	public void abcHostedLogin(final String apiKey) {
+		final AppElement appElement = new AppElement(body, driver);
+		appElement.loadOrFadeWait();
+		final WebDriverWait wait = new WebDriverWait(driver, 40);
+		new LoginHostedPage(body, driver).loginWith(LoginHostedPage.LoginProviders.API_KEY);
+		appElement.loadOrFadeWait();
+
+		/* Clicking APIKey Button doesn't always open the modal first time. The if below will retry the button if the modal doesn't open */
+		if (getDriver().findElements(By.cssSelector(".modal[aria-hidden='false']")).size() == 0) {
+			new LoginHostedPage(body, driver).loginWith(LoginHostedPage.LoginProviders.API_KEY);
+		}
+
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.cssSelector(".modal[aria-hidden='false']"))));
+		wait.until(ExpectedConditions.visibilityOf(ModalView.getVisibleModalView(driver).findElement(By.cssSelector(".js-apikey-input"))));
+		ModalView.getVisibleModalView(driver).findElement(By.cssSelector(".js-apikey-input")).sendKeys(apiKey);
+		wait.until(ExpectedConditions.visibilityOf(ModalView.getVisibleModalView(driver).findElement(By.id("apikey_submit"))));
+		ModalView.getVisibleModalView(driver).findElement(By.id("apikey_submit")).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top-blue")));
 	}
 }
 
