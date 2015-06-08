@@ -12,6 +12,7 @@ define([
     'find/app/model/parametric-collection',
     'find/app/page/parametric/parametric-controller',
     'find/app/page/date/dates-filter-view',
+    'find/app/util/collapsible',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
@@ -28,9 +29,10 @@ define([
     'text!find/templates/app/page/index-popover-contents.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/view/audio-player.html',
+    'text!find/templates/app/util/filter-header.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, DateView, router, vent, i18n, viewClient, moment,
-            $, _, template, resultsTemplate, suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents, audioPlayer) {
+], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, DateView, Collapsible, router, vent, i18n, viewClient, moment,
+            $, _, template, resultsTemplate, suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents, audioPlayer, filterHeader) {
 
     return BasePage.extend({
 
@@ -42,6 +44,7 @@ define([
         indexPopoverContents: _.template(indexPopoverContents),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
         audioPlayerTemplate: _.template(audioPlayer),
+        filterHeaderTemplate: _.template(filterHeader),
 
         events: {
             'keyup .find-input': 'keyupAnimation',
@@ -91,7 +94,23 @@ define([
                 parametricCollection: this.parametricCollection
             });
 
+            this.parametricViewWrapper = new Collapsible({
+                header: this.filterHeaderTemplate({
+                    title: i18n['parametric.title']
+                }),
+                name: 'parametric-filter',
+                view: this.parametricController.view
+            });
+
             this.dateView = new DateView();
+
+            this.dateViewWrapper = new Collapsible({
+                header: this.filterHeaderTemplate({
+                    title: i18n['search.dates']
+                }),
+                name: 'dates-filter',
+                view: this.dateView
+            });
 
             this.listenTo(this.dateView, 'change', function(a) {
                 this[a.type + "_date"] = a.date;
@@ -161,8 +180,8 @@ define([
                 e.preventDefault();
             });
 
-            this.parametricController.view.setElement(this.$('.parametric-container')).render();
-            this.dateView.setElement(this.$('.date-container')).render();
+            this.parametricViewWrapper.setElement(this.$('.parametric-container')).render();
+            this.dateViewWrapper.setElement(this.$('.date-container')).render();
 
             /*top 3 results popover*/
             this.listenTo(this.topResultsCollection, 'add', function(model){
@@ -276,6 +295,7 @@ define([
                 this.$('.main-results-content').show();
                 this.$('.suggested-links-container').show();
                 this.$('.parametric-container').show();
+                this.$('.date-container').show();
                 this.changeQueryText(this.$('.find-input').val());
                 this.searchRequest();
             } else {
@@ -300,6 +320,7 @@ define([
             this.$('.main-results-content').hide();
             this.$('.suggested-links-container').hide();
             this.$('.parametric-container').hide();
+            this.$('.date-container').hide();
             this.$('.find-input').val('');
             this.$('.popover').remove();
         },
