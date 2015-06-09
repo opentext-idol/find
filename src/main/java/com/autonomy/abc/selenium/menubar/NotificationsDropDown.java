@@ -17,7 +17,7 @@ public class NotificationsDropDown extends AppElement implements AppPage {
 	}
 
 	public int countNotifications() {
-		return findElements(By.cssSelector("li")).size() / 2;
+		return getDriver().findElements(By.cssSelector(".notification-message")).size();
 	}
 
 	public WebElement notificationNumber(final int index) {

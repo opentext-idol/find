@@ -7,7 +7,11 @@ public enum NavBarTabId {
 	KEYWORDS("keywords"),
 	ABOUT_PAGE("about"),
 	USERS_PAGE("users"),
-	SETTINGS("settings");
+	SETTINGS("settings"),
+	ANALYTICS("analytics"),
+	CONNECTIONS("connections"),
+	INDEXES("indexes"),
+	GETTING_STARTED("gettingStarted");
 
 	private final String tabName;
 

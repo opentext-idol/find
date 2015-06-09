@@ -30,7 +30,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 
 	public void deleteAllSynonyms() throws InterruptedException {
 		loadOrFadeWait();
-		filterView("Synonyms");
+		filterView(KeywordsFilter.SYNONYMS);
 
 		for (final String language : getLanguageList()) {
 			selectLanguage(language);
@@ -66,23 +66,40 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 		return findElements(By.cssSelector(".scrollable-menu li")).size();
 	}
 
-	public void deleteAllBlacklistedTerms() {
-		filterView("Blacklist");
+	public void deleteAllBlacklistedTerms() throws InterruptedException {
+		filterView(KeywordsFilter.BLACKLIST);
 
 		for (final String language : getLanguageList()) {
 			loadOrFadeWait();
 			selectLanguage(language);
 			for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
 				blacklisted.click();
-				loadOrFadeWait();
+				Thread.sleep(3000);
 			}
 		}
 	}
 
-	public void filterView(final String filter) {
+	public void filterView(final KeywordsFilter filter) {
 		findElement(By.cssSelector(".keywords-filters .dropdown-toggle")).click();
 		loadOrFadeWait();
-		findElement(By.xpath(".//a[text()='" + filter + "']")).click();
+		findElement(By.xpath(".//a[text()='" + filter.toString() + "']")).click();
+	}
+
+	public enum KeywordsFilter {
+		ALL_TYPES("All Types"),
+		BLACKLIST("Blacklist"),
+		SYNONYMS("Synonyms");
+
+		private final String filterName;
+
+		KeywordsFilter(final String name) {
+			filterName = name;
+		}
+
+		public String toString() {
+			return filterName;
+		}
+
 	}
 
 	public int countSynonymGroupsWithLeadSynonym(final String synonym) {

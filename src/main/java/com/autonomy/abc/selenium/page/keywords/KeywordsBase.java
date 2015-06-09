@@ -98,4 +98,12 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	public WebElement getSynonymIcon(final String synonym, final String synonymLead) {
 		return synonymGroup(synonymLead).findElement(By.xpath(".//span[contains(text(), '" + synonym + "')]/../i"));
 	}
+
+	public boolean areAnyKeywordsDisabled() {
+		return countDisabledKeywords() > 0;
+	}
+
+	public int countDisabledKeywords() {
+		return findElements(By.cssSelector(".keywords-list-container .disabled")).size();
+	}
 }

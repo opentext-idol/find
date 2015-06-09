@@ -109,7 +109,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement languageButton() {
-		return findElement(By.cssSelector(".search-page-controls .dropdown-toggle"));
+		return findElement(By.cssSelector(".search-language .dropdown-toggle"));
 	}
 
 	public int countSearchResults() {

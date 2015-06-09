@@ -51,4 +51,8 @@ public class TopNavBar extends TabBar {
 	public void notificationsDropdown() {
 		findElement(By.cssSelector(".fa-bell")).click();
 	}
+
+	public String getSearchBarText() {
+		return findElement(By.cssSelector("[name='top-search']")).getAttribute("value");
+	}
 }

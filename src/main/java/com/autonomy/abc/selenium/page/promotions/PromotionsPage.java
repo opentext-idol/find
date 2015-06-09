@@ -174,7 +174,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement addMorePromotedItemsButton() {
-		return findElement(By.xpath(".//a[contains(text(), 'Add More')]"));
+		return findElement(By.xpath(".//a[text()[contains(., 'Add More')]]"));
 
 	}
 

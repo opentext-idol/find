@@ -67,6 +67,7 @@ public class SearchPage extends SearchBase implements AppPage {
 			if (i < finalNumberOfDocs - 1 && checkboxIndex == checkboxesPerPage) {
 				forwardPageButton().click();
 				loadOrFadeWait();
+				waitForSearchLoadIndicatorToDisappear();
 			}
 		}
 

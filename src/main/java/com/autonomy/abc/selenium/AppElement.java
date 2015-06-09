@@ -219,7 +219,7 @@ public class AppElement implements WebElement {
 	}
 
 	public String title() {
-		return findElement(By.cssSelector(".page-title")).getText();
+		return getDriver().findElement(By.cssSelector(".page-heading .heading")).getText();
 	}
 
 	public String getLastWord(final String string) {
