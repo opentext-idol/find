@@ -6,7 +6,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.*;
+import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.promotions.CreateNewDynamicPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -30,8 +30,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class PromotionsPageITCase extends ABCTestBase {
 
@@ -85,7 +84,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 				assertThat("A document with title '" + title + "' has not been deleted", promotionsPage.getPromotedList().size() == numberOfDocuments);
 				assertThat("A document with title '" + title + "' has not been deleted", !promotionsPage.getPromotedList().contains(documentSummary));
 			} else {
-				assertThat("delete icon should be hidden when only one document remaining", !promotionsPage.findElement(By.cssSelector(".remove-document-reference")).isDisplayed());
+				assertThat("delete icon should be hidden when only one document remaining", promotionsPage.findElements(By.cssSelector(".remove-document-reference")).size() == 0);
 				break;
 			}
 		}
@@ -610,7 +609,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		topNavBar.loadOrFadeWait();
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
-		assertThat("promotions are scheduled to be shown now", searchPage.isPromotionsBoxVisible());
+		assertThat("promotions are scheduled to be shown now but are not visible", searchPage.isPromotionsBoxVisible());
 	}
 
 	@Test
@@ -736,7 +735,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final Date startDate = DateUtils.addDays(schedulePage.getTodayDate(), 4);
 		final Date endDate = DateUtils.addDays(schedulePage.getTodayDate(), 8);
 		final Date finalDate = DateUtils.addMonths(schedulePage.getTodayDate(), 6);
-		schedulePage.schedulePromotion(startDate, endDate, SchedulePage.Frequency.MONTHLY,  finalDate);
+		schedulePage.schedulePromotion(startDate, endDate, SchedulePage.Frequency.MONTHLY, finalDate);
 
 		promotionsPage.schedulePromotion();
 		promotionsPage.loadOrFadeWait();
@@ -833,20 +832,16 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.schedulePromotion();
 		schedulePage = body.getSchedulePage();
-		schedulePage.navigateWizardAndSetEndDate(DateUtils.addYears(schedulePage.getTodayDate(), 3));
-
-		availableFrequencies = schedulePage.getAvailableFrequencies();
-		assertThat("Yearly should not be an available option", !availableFrequencies.contains("Yearly"));
-		assertThat("Daily should not be an option for this schedule", !availableFrequencies.contains("Daily"));
-		assertThat("Weekly should not be an option for this schedule", !availableFrequencies.contains("Weekly"));
-		assertThat("Monthly should not be an option for this schedule", !availableFrequencies.contains("Monthly"));
-
-		schedulePage.continueButton(SchedulePage.WizardStep.FREQUENCY).click();
 		schedulePage.loadOrFadeWait();
-		schedulePage.runThisPromotionScheduleUntilTheDateBelow().click();
-		assertEquals(pattern.split(schedulePage.dateAndTimeAsString(DateUtils.addYears(schedulePage.getTodayDate(), 3)))[0], pattern.split(schedulePage.finalDateTextBox().getAttribute("value"))[0]);
-
-		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
+		schedulePage.schedule().click();
+		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
+		schedulePage.loadOrFadeWait();
+		schedulePage.endDateTextBoxButton().click();
+		final DatePicker datePicker = new DatePicker(schedulePage.$el(), getDriver());
+		datePicker.calendarDateSelect(DateUtils.addYears(schedulePage.getTodayDate(), 3));
+		schedulePage.endDateTextBoxButton().click();
+		assertThat("Finish button should be displayed when schedule period greater than one year", schedulePage.finishButton(SchedulePage.WizardStep.START_END).isDisplayed());
+		schedulePage.finishButton(SchedulePage.WizardStep.START_END).click();
 	}
 
 	@Test
@@ -1008,6 +1003,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final String firstSearchResult = searchPage.getSearchResult(1).getText();
 		final String secondSearchResult = setUpANewDynamicPromotion("French", "chat", "Meow", "Top Promotions");
 		promotionsPage.addSearchTrigger("purrr");
+		assertFalse("Inconsistent changing of case by create promotions wizard", promotionsPage.getSearchTriggersList().contains("meow"));
 		promotionsPage.removeSearchTrigger("Meow");
 		topNavBar.search("purrr");
 		searchPage.selectLanguage("French", getConfig().getType().getName());
@@ -1134,6 +1130,56 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		topNavBar.search("hot dogs");
 		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+	}
+
+	@Test
+	public void testPromotionFieldTextOrRestriction() {
+		setUpANewPromotion("English","road", "Hotwire", "highway street");
+
+		promotionsPage.addFieldText("MATCH{highway}:DRECONTENT OR MATCH{street}:DRECONTENT");
+
+		topNavBar.search("highway street");
+		searchPage.selectLanguage("English", getConfig().getType().getName());
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("road");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("ROAD");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("highway");
+		assertThat("Promoted documents are not visible", searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("street");
+		assertThat("Promoted documents are not visible", searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("highway street");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("street highway");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("street street");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("highwaystreet");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+
+		topNavBar.search("highway AND street");
+		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
+	}
+
+	@Test
+	public void testFieldTextSubmitTextOnEnter() {
+		setUpANewPromotion("English","road", "Hotwire", "highway street");
+
+		promotionsPage.fieldTextAddButton().click();
+		promotionsPage.loadOrFadeWait();
+		promotionsPage.fieldTextInputBox().sendKeys("TEST");
+		promotionsPage.fieldTextInputBox().sendKeys(Keys.RETURN);
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(promotionsPage.fieldTextRemoveButton()));
+		assertTrue("Field text cannot be submitted with an enter key", promotionsPage.fieldTextRemoveButton().isDisplayed());
 	}
 
 	@Test

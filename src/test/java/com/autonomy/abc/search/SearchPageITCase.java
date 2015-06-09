@@ -22,7 +22,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -819,5 +822,18 @@ public class SearchPageITCase extends ABCTestBase {
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
 		searchPage.closeFromDatePicker();
 		assertTrue("Document should be visible. Date filter not working", firstResult.equals(searchPage.getSearchResultTitle(1)));
+	}
+
+	@Test
+	public void testSearchBarTextPersistsOnRefresh() {
+		final String searchText = "Stay";
+		topNavBar.search(searchText);
+
+		// Change to promotions page since the search page will persist the query in the URL
+		navBar.switchPage(NavBarTabId.PROMOTIONS);
+
+		getDriver().navigate().refresh();
+		final String newSearchText = new TopNavBar(getDriver()).getSearchBarText();
+		assertTrue("search bar should be blank on refresh of a page that isn't the search page", newSearchText.equals(searchText));
 	}
 }

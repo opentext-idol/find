@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -20,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
@@ -85,7 +86,12 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.finishButton().click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		try {
+			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		} catch (final TimeoutException t) {
+			fail("Promotions summery has not appeared");
+		}
+
 		assertEquals(searchPage.getSelectedLanguage(), "French");
 		assertThat("Wrong search performed", searchPage.searchTitle().getText().equals("bunny rabbit"));
 		assertEquals(searchPage.promotionsSummaryList(false).get(0), firstDocTitle);
@@ -265,6 +271,8 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.cancelButton("spotlightType").click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
 
+		searchPage.loadOrFadeWait();
+		assertFalse("\"undefined\" returned as query text when wizard cancelled", searchPage.searchTitle().getText().contains("undefined"));
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
@@ -318,7 +326,12 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.finishButton().click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		try {
+			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		} catch (final TimeoutException t) {
+			fail("Promotions summery has not appeared");
+		}
+
 		assertEquals(searchPage.getSelectedLanguage(), language);
 		assertThat("Wrong search performed", searchPage.searchTitle().getText().contains(trigger));
 		assertEquals(searchPage.promotionsSummaryList(false).get(0), firstDocTitle);
@@ -347,7 +360,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		int list = searchPage.promotionsSummaryList(true).size();
 		searchPage.loadOrFadeWait();
-		assertEquals(list, promotionResultsCount);
+		assertEquals("Wrong number of promoted documents displayed", promotionResultsCount, list);
 
 		topNavBar.search("rome");
 		searchPage.selectLanguage("English", getConfig().getType().getName());
