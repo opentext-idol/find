@@ -284,62 +284,6 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>com.github.timurstrekalov</groupId>
-                        <artifactId>saga-maven-plugin</artifactId>
-                        <version>1.5.2</version>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>coverage</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <baseDir>http://localhost:${jasmine.serverPort}</baseDir>
-                            <outputDir>${project.build.directory}/coverage</outputDir>
-                            <noInstrumentPatterns>
-                                <pattern>.*/spec/.*</pattern>
-                                <pattern>.*/mock/.*</pattern>
-                                <pattern>.*/lib/.*</pattern>
-                            </noInstrumentPatterns>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.goldin</groupId>
-                        <artifactId>copy-maven-plugin</artifactId>
-                        <version>0.2.5</version>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>copy</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <failIfNotFound>false</failIfNotFound>
-                            <resources>
-                                <resource>
-                                    <targetPath>${project.build.directory}/coverage</targetPath>
-                                    <file>${project.build.directory}/coverage/total-coverage.dat</file>
-                                    <destFileName>jsTestDriver.conf-coverage.dat</destFileName>
-                                    <replaces>
-                                        <replace>
-                                            <from>src/</from>
-                                            <to>src/main/webapp/</to>
-                                        </replace>
-                                    </replaces>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>sonar-maven-plugin</artifactId>
-                        <version>2.2</version>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.tomcat.maven</groupId>
                         <artifactId>tomcat7-maven-plugin</artifactId>
                         <version>2.3-SNAPSHOT</version>
