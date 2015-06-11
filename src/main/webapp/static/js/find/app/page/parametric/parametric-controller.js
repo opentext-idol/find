@@ -7,10 +7,18 @@ define([
 
     return Backbone.Model.extend({
         initialize: function (options) {
-            this.collection = options.parametricCollection;
+            this.queryModel = options.queryModel;
 
-            this.logic = new ParametricLogic(options);
-            this.view = new ParametricDisplay(options);
+            this.collection = new ParametricCollection();
+
+            this.logic = new ParametricLogic({
+                queryModel: this.queryModel,
+                parametricCollection: this.collection
+            });
+
+            this.view = new ParametricDisplay({
+                parametricCollection: this.collection
+            });
 
             this.listenTo(this.view, 'change', function(parametricValues) {
                 this.logic.setRequestParametricValues(parametricValues);

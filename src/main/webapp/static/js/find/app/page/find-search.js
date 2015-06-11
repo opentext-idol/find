@@ -5,10 +5,12 @@
 
 define([
     'js-whatever/js/base-page',
+    'find/app/model/query-model',
     'find/app/model/entity-collection',
     'find/app/model/documents-collection',
     'find/app/model/promotions-collection',
     'find/app/model/indexes-collection',
+    'find/app/page/indexes/indexes-view',
     'find/app/model/parametric-collection',
     'find/app/page/parametric/parametric-controller',
     'find/app/page/date/dates-filter-view',
@@ -31,7 +33,7 @@ define([
     'text!find/templates/app/page/view/audio-player.html',
     'text!find/templates/app/util/filter-header.html',
     'colorbox'
-], function(BasePage, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, ParametricCollection, ParametricController, DateView, Collapsible, router, vent, i18n, viewClient, moment,
+], function(BasePage, QueryModel, EntityCollection, DocumentsCollection, PromotionsCollection, IndexesCollection, IndexesView, ParametricCollection, ParametricController, DateView, Collapsible, router, vent, i18n, viewClient, moment,
             $, _, template, resultsTemplate, suggestionsTemplate, loadingSpinnerTemplate, colorboxControlsTemplate, indexPopover, indexPopoverContents, topResultsPopoverContents, audioPlayer, filterHeader) {
 
     return BasePage.extend({
@@ -40,26 +42,12 @@ define([
         resultsTemplate: _.template(resultsTemplate),
         noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
         suggestionsTemplate: _.template(suggestionsTemplate),
-        indexPopover: _.template(indexPopover),
-        indexPopoverContents: _.template(indexPopoverContents),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
         audioPlayerTemplate: _.template(audioPlayer),
         filterHeaderTemplate: _.template(filterHeader),
 
         events: {
             'keyup .find-input': 'keyupAnimation',
-            'change .indexCheckbox': function(e) {
-                var toggledIndex = $(e.currentTarget).val();
-                var checked = $(e.currentTarget).is(':checked');
-
-                this.parametricController.view.clearFieldText();
-
-                this.indexes[toggledIndex] = checked;
-
-                if(this.$('.find-input').val()){
-                    this.searchRequest(this.$('.find-input').val());
-                }
-            },
             'mouseover .suggestions-content a': _.debounce(function(e) {
                 this.$('.suggestions-content  .popover-content').append(_.template(loadingSpinnerTemplate));
 
@@ -68,7 +56,7 @@ define([
                         text: $(e.currentTarget).html(),
                         max_results: 3,
                         summary: 'quick',
-                        index: this.selectedIndexes()
+                        index: this.queryModel.get('indexes')
                     }
                 });
             }, 800),
@@ -83,15 +71,29 @@ define([
         },
 
         initialize: function() {
+            this.queryModel = new QueryModel({
+                queryText: '',
+                indexes: [],
+                fieldText: null,
+                minDate: null,
+                maxDate: null
+            });
+
+            this.listenTo(this.queryModel, 'change', function() {
+                this.searchRequest();
+            });
+
             this.entityCollection = new EntityCollection();
             this.documentsCollection = new DocumentsCollection();
             this.promotionsCollection = new PromotionsCollection();
             this.topResultsCollection = new DocumentsCollection();
-            this.indexesCollection = new IndexesCollection();
-            this.parametricCollection = new ParametricCollection([], {singleRequest: true});
+
+            this.indexesView = new IndexesView({
+                queryModel: this.queryModel
+            });
 
             this.parametricController = new ParametricController({
-                parametricCollection: this.parametricCollection
+                queryModel: this.queryModel
             });
 
             this.parametricViewWrapper = new Collapsible({
@@ -102,7 +104,9 @@ define([
                 view: this.parametricController.view
             });
 
-            this.dateView = new DateView();
+            this.dateView = new DateView({
+                queryModel: this.queryModel
+            });
 
             this.dateViewWrapper = new Collapsible({
                 header: this.filterHeaderTemplate({
@@ -110,11 +114,6 @@ define([
                 }),
                 name: 'dates-filter',
                 view: this.dateView
-            });
-
-            this.listenTo(this.dateView, 'change', function(a) {
-                this[a.type + "_date"] = a.date;
-                this.searchRequest();
             });
 
             router.on('route:search', function(text) {
@@ -129,48 +128,6 @@ define([
                     this.reverseAnimation(); //when clicking the small 'find' logo
                 }
             }, this);
-
-            this.indexes = {};
-            this.indexesCollection.fetch();
-
-            this.listenTo(this.indexesCollection, 'sync', function() {
-                // Default to searching against all indexes
-                this.indexesCollection.forEach(_.bind(function(indexModel) {
-                    this.indexes[indexModel.get('index')] = true;
-                }, this));
-
-                this.$indexesDisplay = $(this.indexPopover());
-
-                this.indexesCollection.each(function(model) {
-                    var htmlTemplateOutput = $(this.indexPopoverContents({
-                        index: model.get('index')
-                    }));
-
-                    this.$indexesDisplay.find('.indexes-list').append(htmlTemplateOutput);
-
-                    if (this.indexes[model.get('index')]) { // If index is selected, set the checkbox to checked
-                        htmlTemplateOutput.find('input').prop('checked', true);
-                    }
-                }, this);
-
-                this.$('.list-indexes').popover({
-                    html: true,
-                    content: this.$indexesDisplay,
-                    placement: 'bottom'
-                });
-            }, this);
-
-            this.listenTo(this.parametricController.logic, 'change', function(fieldText) {
-                var newFieldText = fieldText;
-
-                if(newFieldText) {
-                    this.fieldText = newFieldText.toString();
-                } else {
-                    this.fieldText = null;
-                }
-
-                this.searchRequest();
-            });
         },
 
         render: function() {
@@ -263,6 +220,8 @@ define([
             $('#colorbox').append(_.template(colorboxControlsTemplate));
             $('.nextBtn').on('click', this.handleNextResult);
             $('.prevBtn').on('click', this.handlePrevResult);
+
+            this.indexesView.setElement(this.$('.indexes-container')).render();
         },
 
         addLinksToSummary: function(summary) {
@@ -281,7 +240,9 @@ define([
             });
 
             _.each(entities, function(entity) {
-                summary = summary.replace(new RegExp(entity.id, 'g'), '<span class="label label-info entity-to-summary" data-title="'+entity.text+'"><a href="#find/search/'+entity.text+'">' + entity.text + '</a></span>');
+                summary = summary.replace(new RegExp(entity.id, 'g'),
+                    '<span class="label label-info entity-to-summary" data-title="'+entity.text+'"><a href="#find/search/'+entity.text+'">'
+                    + entity.text + '</a></span>');
             });
 
             return summary;
@@ -297,7 +258,6 @@ define([
                 this.$('.parametric-container').show();
                 this.$('.date-container').show();
                 this.changeQueryText(this.$('.find-input').val());
-                this.searchRequest();
             } else {
                 this.reverseAnimation();
                 vent.navigate('find/search', {trigger: false});
@@ -326,55 +286,45 @@ define([
         },
 
         changeQueryText: function(queryText) {
-            this.queryText = queryText;
+            this.queryModel.set('queryText', queryText);
             this.parametricController.view.clearFieldText();
         },
 
         searchRequest: function() {
-            if (!_.isEmpty(this.indexes)) { // Do we have the list of indexes yet?
-                var selectedIndexes = this.selectedIndexes();
-
-                this.parametricController.logic.setQueryText(this.queryText);
-                this.parametricController.logic.setIndexes(selectedIndexes);
-
+            if (!_.isEmpty(this.queryModel.get('indexes'))) { // Do we have the list of indexes yet?
                 this.documentsCollection.fetch({
                     data: {
-                        text: this.queryText,
+                        text: this.queryModel.get('queryText'),
                         max_results: 30,
                         summary: 'quick',
-                        index: selectedIndexes,
-                        field_text: this.fieldText || null,
-                        min_date: this.min_date || null,
-                        max_date: this.max_date || null
+                        index: this.queryModel.get('indexes'),
+                        field_text: this.queryModel.getFieldTextString(),
+                        min_date: this.queryModel.get('minDate'),
+                        max_date: this.queryModel.get('maxDate')
                     }
                 }, this);
 
                 this.promotionsCollection.fetch({
                     data: {
-                        text: this.queryText,
+                        text: this.queryModel.get('queryText'),
                         max_results: 30, // TODO maybe less?
                         summary: 'quick',
-                        index: selectedIndexes,
-                        field_text: this.fieldText || null,
-                        min_date: this.min_date || null,
-                        max_date: this.max_date || null
+                        index: this.queryModel.get('indexes'),
+                        field_text: this.queryModel.getFieldTextString(),
+                        min_date: this.queryModel.get('minDate'),
+                        max_date: this.queryModel.get('maxDate')
                     }
                 }, this);
 
                 this.entityCollection.fetch({
                     data: {
-                        text: this.queryText,
-                        index: selectedIndexes,
-                        field_text: this.fieldText || null
+                        text: this.queryModel.get('queryText'),
+                        index: this.queryModel.get('indexes'),
+                        field_text: this.queryModel.getFieldTextString()
                     }
                 });
 
-                vent.navigate('find/search/' + encodeURIComponent(this.queryText), {trigger: false});
-            }
-            else {
-                this.indexesCollection.once('sync', function() {
-                    this.searchRequest();
-                }, this);
+                vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
             }
         },
 
