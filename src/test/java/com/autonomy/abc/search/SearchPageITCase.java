@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
+import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchBase;
@@ -22,10 +23,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -729,10 +727,10 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 
-		assertTrue(searchPage.getText().contains(promotedDocs.get(0)));
-		assertTrue(searchPage.getText().contains(promotedDocs.get(1)));
-		assertEquals(2, searchPage.countSearchResults());
-		assertEquals(2, searchPage.countPinToPositionLabels());
+		assertTrue(promotedDocs.get(0) + " should be visible", searchPage.getText().contains(promotedDocs.get(0)));
+		assertTrue(promotedDocs.get(1) + " should be visible", searchPage.getText().contains(promotedDocs.get(1)));
+		assertEquals("Wrong number of results displayed", 2, searchPage.countSearchResults());
+		assertEquals("Wrong number of pin to position labels displayed", 2, searchPage.countPinToPositionLabels());
 
 		searchPage.fieldTextEditButton().click();
 		searchPage.fieldTextInput().clear();
@@ -750,9 +748,9 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 
-		assertEquals(promotedDocs.get(1), searchPage.getSearchResultTitle(1));
-		assertEquals(1, searchPage.countSearchResults());
-		assertEquals(1, searchPage.countPinToPositionLabels());
+		assertEquals(promotedDocs.get(1) + " not visible in the search title", promotedDocs.get(1), searchPage.getSearchResultTitle(1));
+		assertEquals("Wrong number of search results", 1, searchPage.countSearchResults());
+		assertEquals("Wrong nu,ber of pin to position labels", 1, searchPage.countPinToPositionLabels());
 	}
 
 	@Test
@@ -835,5 +833,85 @@ public class SearchPageITCase extends ABCTestBase {
 		getDriver().navigate().refresh();
 		final String newSearchText = new TopNavBar(getDriver()).getSearchBarText();
 		assertTrue("search bar should be blank on refresh of a page that isn't the search page", newSearchText.equals(searchText));
+	}
+
+	@Test
+	public void testRelatedConceptsLinks() {
+		String queryText = "frog";
+		topNavBar.search(queryText);
+		assertTrue("The search bar has not retained the query text", topNavBar.getSearchBarText().equals(queryText));
+		assertTrue("'You searched for' section does not include query text", searchPage.youSearchedFor().contains(queryText));
+		assertTrue("'Results for' heading text does not contain the query text", searchPage.getResultsForText().contains(queryText));
+
+		for (int i = 0; i < 5; i++) {
+			searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+			searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
+			final int conceptsCount = searchPage.countRelatedConcepts();
+			assertTrue("Number of related concepts exceeds 50", conceptsCount <= 50);
+			final int index = new Random().nextInt(conceptsCount);
+			queryText = searchPage.getRelatedConcepts().get(index).getText();
+			searchPage.relatedConcept(queryText).click();
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+
+			assertTrue("The search bar has not retained the query text", topNavBar.getSearchBarText().equals(queryText));
+			final String[] words = queryText.split("\\s+");
+			for (final String word : words) {
+				assertTrue("'You searched for' section does not include word: " + word + " for query text: " + queryText, searchPage.youSearchedFor().contains(word));
+			}
+			assertTrue("'Results for' heading text does not contain the query text: " + queryText, searchPage.getResultsForText().contains(queryText));
+		}
+	}
+
+	@Test
+	public void testRelatedConceptsDifferentInDifferentLanguages() {
+		topNavBar.search("France");
+		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
+		final List<String> englishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
+		searchPage.selectLanguage("French", getConfig().getType().getName());
+		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
+		final List<String> frenchConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
+		assertFalse("Concepts should be different in different languages", englishConcepts.equals(frenchConcepts));
+
+		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
+		final List<String> secondEnglishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
+		assertEquals("Related concepts have changed on second search of same query text", englishConcepts, secondEnglishConcepts);
+	}
+
+	@Test
+	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
+		topNavBar.search("nice");
+		searchPage.forwardToLastPageButton().click();
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+		final int currentPage = searchPage.getCurrentPageNumber();
+		final String url = getDriver().getCurrentUrl();
+		assertTrue("Url and current page number are out of sync", url.contains("nice/" + currentPage));
+		final String illegitimateUrl = url.replace("nice/" + currentPage, "nice/" + (currentPage + 5));
+		getDriver().navigate().to(illegitimateUrl);
+		searchPage = new AppBody(getDriver()).getSearchPage();
+		assertEquals("Page number should not have changed", currentPage, searchPage.getCurrentPageNumber());
+		assertEquals("Url should have reverted to original url", url, getDriver().getCurrentUrl());
+	}
+
+	@Test
+	public void testNoRelatedConceptsIfNoResultsFound() {
+		final String garbageQueryText = "garbagedjlsfjijlsf";
+		topNavBar.search(garbageQueryText);
+		assertTrue("Garbage text returned results. garbageQueryText string needs changed to be more garbage like", searchPage.getText().contains("No results found"));
+		assertEquals("Garbage text returned results. garbageQueryText string needs changed to be more garbage like", 0, searchPage.countSearchResults());
+
+		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		assertTrue("If there are no search results there should be no related concepts", searchPage.getText().contains("No related concepts found"));
+	}
+
+	@Test
+	public void testParametricValuesLoads() throws InterruptedException {
+		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
+		searchPage.expandSubFilter(SearchBase.Filter.PARAMETRIC_VALUES);
+		Thread.sleep(20000);
+		assertFalse("Load indicator still visible after 20 seconds", searchPage.parametricValueLoadIndicator().isDisplayed());
 	}
 }

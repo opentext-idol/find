@@ -9,13 +9,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
+import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class SearchPageOnPremiseITCase extends ABCTestBase {
@@ -45,21 +50,58 @@ public class SearchPageOnPremiseITCase extends ABCTestBase {
 		topNavBar.search("car");
 		searchPage.selectLanguage("English", getConfig().getType().getName());
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		assertThat("All databases not showing", searchPage.getSelectedDatabases().contains("All"));
+		final List<String> databasesList = searchPage.getAllDatabases();
+		final List<WebElement> databaseCheckboxes = searchPage.getDatabaseCheckboxes();
+		for (int i = 0; i < databasesList.size(); i++) {
+			assertTrue("Database '" + databasesList.get(i) + "' is not selected", databaseCheckboxes.get(i).isSelected());
+		}
+		assertTrue("'All' databases checkbox is not selected", searchPage.allDatabasesCheckbox().isSelected());
 
-		searchPage.selectDatabase("WikiEnglish");
-		assertThat("Database not showing", searchPage.getSelectedDatabases().contains("WikiEnglish"));
+		for (final String database : databasesList) {
+			if (!database.equals("wikienglish")) {
+				searchPage.deselectDatabase(database);
+			}
+		}
+		assertFalse("'All' databases checkbox is not selected", searchPage.allDatabasesCheckbox().isSelected());
+		assertEquals("Only one database should be selected", 1, searchPage.getSelectedDatabases().size());
+		assertThat("Correct database not selected", searchPage.getSelectedDatabases().contains("wikienglish"));
 		final String wikiEnglishResult = searchPage.getSearchResult(1).getText();
-		searchPage.deselectDatabase("WikiEnglish");
 
-		searchPage.selectDatabase("Wookiepedia");
-		assertThat("Database not showing", searchPage.getSelectedDatabases().contains("Wookiepedia"));
+		for (int j = 1; j <= 2; j++) {
+			for (int i = 1; i <= 6; i++) {
+				assertTrue("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i).contains("wikienglish"));
+			}
+			searchPage.forwardPageButton().click();
+			searchPage.loadOrFadeWait();
+		}
+
+		searchPage.backToFirstPageButton().click();
+		searchPage.selectDatabase("wookiepedia");
+		searchPage.deselectDatabase("wikienglish");
+		assertEquals("Only one database should be selected", 1, searchPage.getSelectedDatabases().size());
+		assertThat("Correct database not selected", searchPage.getSelectedDatabases().contains("wookiepedia"));
 		final String wookiepediaResult = searchPage.getSearchResult(1).getText();
 		assertNotEquals(wookiepediaResult, wikiEnglishResult);
 
-		searchPage.selectDatabase("WikiEnglish");
-		assertThat("Databases not showing", searchPage.getSelectedDatabases().containsAll(Arrays.asList("Wookiepedia", "WikiEnglish")));
-		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText().equals(wookiepediaResult) || searchPage.getSearchResult(1).getText().equals(wikiEnglishResult));
+		for (int j = 1; j <= 2; j++) {
+			for (int i = 1; i <= 6; i++) {
+				assertTrue("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i).contains("wookiepedia"));
+			}
+			searchPage.forwardPageButton().click();
+		}
+
+		searchPage.backToFirstPageButton().click();
+		searchPage.selectDatabase("wikienglish");
+		assertEquals("Only one database should be selected", 2, searchPage.getSelectedDatabases().size());
+		assertThat("Correct databases not showing", searchPage.getSelectedDatabases().containsAll(Arrays.asList("wookiepedia", "wikienglish")));
+		assertThat("Search result not from selected databases", searchPage.getSearchResult(1).getText().equals(wookiepediaResult) || searchPage.getSearchResult(1).getText().equals(wikiEnglishResult));
+
+		for (int j = 1; j <= 2; j++) {
+			for (int i = 1; i <= 6; i++) {
+				assertTrue("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i).contains("wikienglish") || searchPage.getSearchResultDetails(i).contains("wookiepedia"));
+			}
+			searchPage.forwardPageButton().click();
+		}
 	}
 
 }

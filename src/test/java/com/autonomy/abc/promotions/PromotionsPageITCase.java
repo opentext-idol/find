@@ -11,14 +11,12 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewDynamicPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.SchedulePage;
+import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -355,7 +353,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 		setUpANewMultiDocPromotion("English", "wizard", "Sponsored", "wand magic spells", 4);
 		promotionsPage.schedulePromotion();
 
-		schedulePage = body.getSchedulePage();
+		try {
+			schedulePage = body.getSchedulePage();
+		} catch (final NoSuchElementException e) {
+			fail("Schedule Page has not loaded");
+		}
+
 		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
 		assertThat("Finish button not visible", schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed());
@@ -467,7 +470,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 		setUpANewMultiDocPromotion("English", "cone", "Hotwire", "\"ice cream\" chips", 4);
 		promotionsPage.schedulePromotion();
 
-		schedulePage = body.getSchedulePage();
+		try {
+			schedulePage = body.getSchedulePage();
+		} catch (final NoSuchElementException e) {
+			fail("Schedule Page has not loaded");
+		}
 		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("schedule"));
 		assertThat("Wrong wizard text", schedulePage.getText().contains("Schedule your promotion"));
 		assertThat("Finish button not visible", schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).isDisplayed());
@@ -616,7 +623,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testResetTimeAndDate() {
 		setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4);
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		try {
+			schedulePage = body.getSchedulePage();
+		} catch (final NoSuchElementException e) {
+			fail("Schedule Page has not loaded");
+		}
 		schedulePage.schedule().click();
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		schedulePage.loadOrFadeWait();
@@ -633,7 +644,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testTextInputToCalendar() {
 		setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4);
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		try {
+			schedulePage = body.getSchedulePage();
+		} catch (final NoSuchElementException e) {
+			fail("Schedule Page has not loaded");
+		}
 		schedulePage.schedule().click();
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		schedulePage.loadOrFadeWait();
@@ -678,7 +693,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testIncrementDecrementTimeOnCalendar() {
 		setUpANewMultiDocPromotion("Kazakh", "Қазақстан", "Sponsored", "Kaz", 5);
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		try {
+			schedulePage = body.getSchedulePage();
+		} catch (final NoSuchElementException e) {
+			fail("Schedule Page has not loaded");
+		}
 		schedulePage.loadOrFadeWait();
 		schedulePage.schedule().click();
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
@@ -730,7 +749,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testPromotionIsPrepopulated() {
 		setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4);
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		try {
+			schedulePage = body.getSchedulePage();
+		} catch (final NoSuchElementException e) {
+			fail("Schedule Page has not loaded");
+		}
 
 		final Date startDate = DateUtils.addDays(schedulePage.getTodayDate(), 4);
 		final Date endDate = DateUtils.addDays(schedulePage.getTodayDate(), 8);
@@ -766,7 +789,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 		setUpANewPromotion("Georgian", "საქართველო", "Hotwire", "Georgia");
 
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		try {
+			schedulePage = body.getSchedulePage();
+		} catch (final NoSuchElementException e) {
+			fail("Schedule Page has not loaded");
+		}
 		schedulePage.navigateWizardAndSetEndDate(schedulePage.getTodayDate());
 
 		List<String> availableFrequencies = schedulePage.getAvailableFrequencies();
@@ -856,19 +883,19 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.backButton().click();
 		setUpANewMultiDocPinToPositionPromotion("Swahili", "mbwa", "pooch swahili", 3);
 		promotionsPage.backButton().click();
-		setUpANewDynamicPromotion("Afrikaans", "pooch", "hond wolf", "Hotwire");
+		setUpANewDynamicPromotion("Afrikaans", "hond", "pooch hond wolf", "Hotwire");
 		promotionsPage.backButton().click();
-		setUpANewDynamicPromotion("Afrikaans", "pooch", "lupo wolf", "Sponsored");
+		setUpANewDynamicPromotion("Afrikaans", "hond", "lupo wolf", "Sponsored");
 		promotionsPage.backButton().click();
 		promotionsPage.loadOrFadeWait();
 		assertEquals(7, promotionsPage.promotionsList().size());
 
 		List<WebElement> promotions = promotionsPage.promotionsList();
 		for (int i = 0; i < promotions.size() - 1; i++) {
-			assertTrue(promotions.get(i).getText().compareTo(promotions.get(i + 1).getText()) <= 0);
+			assertTrue("Following promotions not in alphabetical order: " + promotions.get(i).getText().toLowerCase().split("\\n")[1] + ", " + promotions.get(i + 1).getText().toLowerCase().split("\\n")[1], promotions.get(i).getText().toLowerCase().split("\\n")[1].compareTo(promotions.get(i + 1).getText().toLowerCase().split("\\n")[1]) <= 0);
 		}
 
-		promotionsPage.getPromotionLinkWithTitleContaining(promotions.get(3).getText()).click();
+		promotionsPage.getPromotionLinkWithTitleContaining(promotions.get(3).getText().split("\\n")[1]).click();
 		promotionsPage.createNewTitle("aaa");
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.backButton().click();
@@ -876,10 +903,10 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		final List<WebElement> promotionsAgain = promotionsPage.promotionsList();
 		for (int i = 0; i < promotionsAgain.size() - 1; i++) {
-			assertTrue(promotionsAgain.get(i).getText().toLowerCase().compareTo(promotionsAgain.get(i + 1).getText().toLowerCase()) <= 0);
+			assertTrue("Following promotions not in alphabetical order: " + promotionsAgain.get(i).getText().toLowerCase().split("\\n")[1] + ", " + promotionsAgain.get(i + 1).getText().toLowerCase().split("\\n")[1], promotionsAgain.get(i).getText().split("\\n")[1].toLowerCase().compareTo(promotionsAgain.get(i + 1).getText().split("\\n")[1].toLowerCase()) <= 0);
 		}
 
-		promotionsPage.getPromotionLinkWithTitleContaining(promotions.get(3).getText()).click();
+		promotionsPage.getPromotionLinkWithTitleContaining(promotions.get(3).getText().split("\\n")[1]).click();
 		promotionsPage.createNewTitle(promotions.get(3).getText());
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.backButton().click();
@@ -894,10 +921,10 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
-		assertEquals(4, promotionsPage.promotionsList().size());
+		assertEquals(3, promotionsPage.promotionsList().size());
 		promotions = promotionsPage.promotionsList();
 		for (int i = 0; i < promotions.size() - 1; i++) {
-			assertTrue(promotions.get(i).getText().toLowerCase().compareTo(promotions.get(i + 1).getText().toLowerCase()) <= 0);
+			assertTrue("Following promotions not in alphabetical order: " + promotions.get(i).getText().split("\\n")[1] + ", " + promotions.get(i + 1).getText().split("\\n")[1], promotions.get(i).getText().split("\\n")[1].toLowerCase().compareTo(promotions.get(i + 1).getText().split("\\n")[1].toLowerCase()) <= 0);
 		}
 
 		promotionsPage.getPromotionLinkWithTitleContaining("hound").click();
@@ -908,7 +935,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
-		assertEquals(4, promotionsPage.promotionsList().size());
+		assertEquals(3, promotionsPage.promotionsList().size());
 
 		promotionsPage.getPromotionLinkWithTitleContaining("hound").click();
 		promotionsPage.loadOrFadeWait();
@@ -918,7 +945,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
-		assertEquals(3, promotionsPage.promotionsList().size());
+		assertEquals(2, promotionsPage.promotionsList().size());
 
 		assertEquals("All Types", promotionsPage.promotionsCategoryFilterValue());
 
@@ -973,7 +1000,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("Rhodesian");
-		assertEquals(1, promotionsPage.promotionsList().size());
+		assertEquals("Filter should have returned one document", 1, promotionsPage.promotionsList().size());
 
 		promotionsPage.selectPromotionsCategoryFilter("All Types");
 		promotionsPage.clearPromotionsSearchFilter();
@@ -1190,6 +1217,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		topNavBar.search("Ming");
 		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
 
+		searchPage.expandFilter(SearchBase.Filter.FIELD_TEXT);
 		searchPage.fieldTextAddButton().click();
 		searchPage.fieldTextInput().sendKeys("MATCH{Richard}:NAME");
 		searchPage.fieldTextTickConfirm().click();

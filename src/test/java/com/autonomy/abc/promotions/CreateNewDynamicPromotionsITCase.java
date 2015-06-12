@@ -89,7 +89,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		try {
 			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		} catch (final TimeoutException t) {
-			fail("Promotions summery has not appeared");
+			fail("Promotions summary has not appeared");
 		}
 
 		assertEquals(searchPage.getSelectedLanguage(), "French");
@@ -329,7 +329,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		try {
 			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		} catch (final TimeoutException t) {
-			fail("Promotions summery has not appeared");
+			fail("Promotions summary has not appeared");
 		}
 
 		assertEquals(searchPage.getSelectedLanguage(), language);
@@ -382,7 +382,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		list = searchPage.promotionsSummaryList(true).size();
 		searchPage.loadOrFadeWait();
-		assertEquals(promotionResultsCount, list);
+		assertEquals("Wrong number of promoted documents displayed", promotionResultsCount, list);
 	}
 
 	@Test
@@ -426,7 +426,11 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.createDynamicPromotion("Top Promotions", "sausage");
 
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		try {
+			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		} catch (final TimeoutException t) {
+			fail("Promotions summary has not appeared");
+		}
 		assertEquals(promotionResultsCount, searchPage.promotionsSummaryList(true).size());
 
 		navBar.switchPage(NavBarTabId.PROMOTIONS);
@@ -445,7 +449,12 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.createDynamicPromotion("Top Promotions", "home");
 
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		try {
+			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		} catch (final TimeoutException t) {
+			fail("Promotions summary has not appeared");
+		}
+
 		assertThat("No promoted items displayed", searchPage.getPromotionSummarySize() != 0);
 
 		navBar.switchPage(NavBarTabId.PROMOTIONS);
@@ -470,10 +479,15 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.createDynamicPromotion("Top Promotions", "phrase");
 
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		try {
+			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+		} catch (final TimeoutException t) {
+			fail("Promotions summary has not appeared");
+		}
+
 		navBar.switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage.getPromotionLinkWithTitleContaining("phrase").click();
 		promotionsPage.loadOrFadeWait();
-		assertEquals("Urdu", promotionsPage.getLanguage());
+		assertEquals("Promotion has been created in the wrong language", "Urdu", promotionsPage.getLanguage());
 	}
 }

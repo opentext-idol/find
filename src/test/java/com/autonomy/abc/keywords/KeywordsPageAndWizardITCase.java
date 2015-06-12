@@ -14,7 +14,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -956,7 +958,11 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.selectLanguage("Arabic", getConfig().getType().getName());
 
 		searchPage.blacklistLink().click();
-		createKeywordsPage.finishBlacklistWizardButton().click();
+		try {
+			createKeywordsPage.finishBlacklistWizardButton().click();
+		} catch (final NoSuchElementException e) {
+			fail("blacklist link on search page has not navigated to the wizard");
+		}
 		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(keywordsPage.selectLanguageButton()));
 		assertEquals("Blacklist has been created in the wrong language", "Arabic", keywordsPage.getSelectedLanguage());
 		keywordsPage.loadOrFadeWait();
@@ -1295,10 +1301,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.selectLanguage("German");
-		keywordsPage.getSynonymIcon("strong", "strung").click();
-		keywordsPage.getSynonymIcon("string", "strung").click();
+		try {
+			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"));
+			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string", "strung"));
+		} catch (final WebDriverException w) {
+			fail("Unable to delete a synonym quickly");
+		}
 		Thread.sleep(5000);
-		assertEquals(3, keywordsPage.countSynonymLists());
+		assertEquals("Incorrect number of synonyms", 3, keywordsPage.countSynonymLists());
 	}
 
 	@Test
@@ -1331,6 +1341,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			for (int i = 0; i < keywords.size() - 1; i++) {
 				assertTrue(keywords.get(i).compareTo(keywords.get(i + 1)) <= 0);
 			}
+			navBar.switchPage(NavBarTabId.KEYWORDS);
 		}
 
 		keywordsPage.searchFilterTextBox().sendKeys("cc");

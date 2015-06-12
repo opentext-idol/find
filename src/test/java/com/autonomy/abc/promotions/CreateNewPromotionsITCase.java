@@ -45,6 +45,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 	@After
 	public void cleanUp() {
+		topNavBar.showSideBar();
 		promotionsPage = body.getPromotionsPage();
 		promotionsPage.deleteAllPromotions();
 	}
@@ -434,7 +435,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 			final NotificationsDropDown notifications = body.getNotifications();
 			topNavBar.loadOrFadeWait();
 			assertThat("Notification text incorrect", notifications.notificationNumber(1).getText().contains("Created a new spotlight promotion: Spotlight for: MyFirstNotification" + spotlightType.replaceAll("\\s+", "")));
-			assertThat("User wrong in notification", notifications.notificationNumber(1).getText().contains(navBar.getSignedInUser()));
+			assertThat("User wrong in notification", notifications.notificationNumber(1).getText().contains(getLoginName()));
 
 			notifications.notificationNumber(1).click();
 			assertThat("notification link has not directed back to the promotions page", getDriver().getCurrentUrl().contains("promotions/detail/spotlight"));

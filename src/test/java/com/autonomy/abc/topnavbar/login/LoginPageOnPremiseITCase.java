@@ -4,9 +4,8 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
-import com.autonomy.abc.selenium.menubar.SideNavBar;
-import com.autonomy.abc.selenium.page.login.LoginOnPremisePage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.page.login.LoginOnPremisePage;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -36,6 +35,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 		usersPage = body.getUsersPage();
 		usersPage.deleteOtherUsers();
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal has not opened", usersPage.isModalShowing());
 		usersPage.createNewUser("admin", "qwerty", "Admin");
 		usersPage.closeModal();
 		body.logout();
@@ -47,9 +47,6 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 		loginPage.login("admin", "qwerty");
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".initial-loading-indicator")));
 		assertThat("Overview page has not loaded", getDriver().getCurrentUrl().contains("overview"));
-
-		navBar = new SideNavBar(getDriver());
-		assertThat("Logged in user not displayed", navBar.getSignedInUser().equals("admin"));
 	}
 
 	@Test
@@ -57,9 +54,6 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 		loginPage.login("ADmIn", "qwerty");
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".initial-loading-indicator")));
 		assertThat("Overview page has not loaded - login should not be case sensitive", getDriver().getCurrentUrl().contains("overview"));
-
-		navBar = new SideNavBar(getDriver());
-		assertThat("logged in user not displayed", navBar.getSignedInUser().equals("admin"));
 	}
 
 	@Test

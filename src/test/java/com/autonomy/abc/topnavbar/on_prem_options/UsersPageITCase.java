@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class UsersPageITCase extends ABCTestBase {
@@ -49,6 +50,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testCreateUser() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", getDriver().findElements(By.cssSelector(".modal[aria-hidden='false']")).size() > 0);
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		assertThat("Correct modal has not opened", newUserModal.getText().startsWith("Create New Users"));
 
@@ -73,13 +75,14 @@ public class UsersPageITCase extends ABCTestBase {
 
 	@Test
 	public void testWontDeleteSelf() {
-		assertThat("Delete button not disabled", usersPage.isAttributePresent((usersPage.getUserRow(usersPage.getSignedInUserName()).findElement(By.cssSelector("button"))), "disabled"));
+		assertThat("Delete button not disabled", usersPage.isAttributePresent((usersPage.getUserRow(getLoginName()).findElement(By.cssSelector("button"))), "disabled"));
 	}
 
 	@Test
 	public void testDeleteAllUsers() {
 		final int initialNumberOfUsers = usersPage.countNumberOfUsers();
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("Paul", "w", "User");
 		usersPage.createNewUser("Stephen", "w", "Admin");
 		usersPage.closeModal();
@@ -105,6 +108,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testAddDuplicateUser() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.addUsername("Felix");
 		usersPage.addAndConfirmPassword("password", "password");
 		usersPage.createButton().click();
@@ -124,6 +128,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testUserDetails() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("William", "poiuy", "Admin");
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		assertThat("Completion message not shown", newUserModal.getText().contains("Done! User William successfully created"));
@@ -142,6 +147,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testEditUserPassword() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("alan", "q", "Admin");
 		usersPage.closeModal();
 
@@ -159,6 +165,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testEditUserType() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("Bella", "a", "Admin");
 		usersPage.closeModal();
 
@@ -191,6 +198,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testAddStupidlyLongUsername() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser(STUPIDLY_LONG_USERNAME, "b", "User");
 		usersPage.closeModal();
 
@@ -204,6 +212,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testLogOutAndLogInWithNewUser() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", getDriver().findElements(By.cssSelector(".modal[aria-hidden='false']")).size() > 0);
 		usersPage.createNewUser("James", "b", "User");
 		usersPage.closeModal();
 
@@ -216,6 +225,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testChangeOfPasswordWorksOnLogin() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("James", "b", "User");
 		usersPage.closeModal();
 
@@ -230,6 +240,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testCreateUserPermissionNoneAndTestLogin() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("Norman", "n", "User");
 		usersPage.closeModal();
 		assertThat("Edit type link should be visible", usersPage.getTableUserTypeLink("Norman").isDisplayed());
@@ -246,23 +257,23 @@ public class UsersPageITCase extends ABCTestBase {
 		LoginOnPremisePage loginPage = body.getLoginOnPremisePage();
 		loginPage.login("Norman", "n");
 		loginPage = body.getLoginOnPremisePage();
-		assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your username and password."));
+		assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your loginName and password."));
 		assertThat("URL wrong", getDriver().getCurrentUrl().contains("login/index"));
 	}
 
 	@Test
 	public void testAnyUserCanNotAccessConfigPage() {
 		String baseUrl = config.getWebappUrl();
-		baseUrl = baseUrl.substring(0, baseUrl.length() - 2);
-		getDriver().get(baseUrl + "config");
+		baseUrl = baseUrl.substring(0, baseUrl.length());
+		getDriver().get(baseUrl + "/config");
 		body.loadOrFadeWait();
-		assertFalse(getDriver().getCurrentUrl().contains("config"));
-		Assert.assertTrue(getDriver().getCurrentUrl().contains("overview"));
+		assertTrue("Users are not allowed to access the config page", getDriver().findElement(By.cssSelector("body")).getText().contains("Authentication Failed"));
 	}
 
 	@Test
 	public void testUserCannotAccessUsersPageOrSettingsPage() {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("James", "b", "User");
 		usersPage.closeModal();
 
@@ -285,6 +296,7 @@ public class UsersPageITCase extends ABCTestBase {
 	@Test
 	public void testXmlHttpRequestToUserConfigBlockedForInadequatePermissions() throws UnhandledAlertException {
 		usersPage.createUserButton().click();
+		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("James", "b", "User");
 		usersPage.closeModal();
 		body.logout();

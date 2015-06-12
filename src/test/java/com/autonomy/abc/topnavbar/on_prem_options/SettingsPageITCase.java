@@ -206,7 +206,7 @@ public class SettingsPageITCase extends ABCTestBase {
 			settingsPage.changeHost("a", settingsPanel);
 			settingsPage.portBox(settingsPanel).clear();
 			settingsPage.testConnection(settingsPanel.getTitle());
-			assertThat("Incorrect/No Error Message", settingsPage.getPanelWithName(settingsPanel.getTitle()).getText().contains("One or more of the required field is missing"));
+			assertThat("Incorrect/No Error Message in panel " + settingsPanel.getTitle(), settingsPage.getPanelWithName(settingsPanel.getTitle()).getText().contains("Port must not be blank, and inside the range 1-65535"));
 		}
 	}
 

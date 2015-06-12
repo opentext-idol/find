@@ -41,7 +41,7 @@ public class TestConfig {
 
 	public WebDriver createWebDriver(final String browser, final Platform platform) {
 		final DesiredCapabilities capabilities;
-		LoggingPreferences logPrefs = new LoggingPreferences();
+		final LoggingPreferences logPrefs = new LoggingPreferences();
 		logPrefs.enable(LogType.BROWSER, Level.ALL);
 
 		switch (browser) {
@@ -62,7 +62,7 @@ public class TestConfig {
 				capabilities = DesiredCapabilities.opera();
 				break;
 			default:
-				throw new IllegalArgumentException("bad value for parameter browser: " + (browser == null ? "null" : browser));
+				throw new IllegalArgumentException("bad value for parameter browser: " + browser);
 		}
 
 		capabilities.setBrowserName(browser);

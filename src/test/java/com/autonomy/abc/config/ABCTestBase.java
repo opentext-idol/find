@@ -39,6 +39,7 @@ public abstract class ABCTestBase {
 	public AppBody body;
 	protected SideNavBar navBar;
 	protected TopNavBar topNavBar;
+	private String loginName;
 
 	static {
 		final String[] allBrowsers = {"firefox", "internet explorer", "chrome"};
@@ -133,7 +134,16 @@ public abstract class ABCTestBase {
 		return config;
 	}
 
+	private void setLoginName(final String loginName) {
+		this.loginName = loginName;
+	}
+
+	public String getLoginName() {
+		return loginName;
+	}
+
 	public void abcOnPremiseLogin(final String userName, final String password) {
+		loginName = userName;
 		driver.findElement(By.cssSelector("[name='username']")).clear();
 		driver.findElement(By.cssSelector("[name='username']")).sendKeys(userName);
 		driver.findElement(By.cssSelector("[name='password']")).clear();
