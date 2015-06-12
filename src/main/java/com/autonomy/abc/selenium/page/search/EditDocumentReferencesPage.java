@@ -5,6 +5,8 @@ import com.autonomy.abc.selenium.page.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 public class EditDocumentReferencesPage extends SearchBase implements AppPage {
 
 	public EditDocumentReferencesPage(final TopNavBar topNavBar, final WebElement element) {
@@ -18,6 +20,14 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
 
 	public WebElement saveButton() {
 		return findElement(By.cssSelector(".edit-document-references")).findElement(By.xpath(".//*[text() = 'Save']"));
+	}
+
+	public List<String> promotionsBucketList() {
+		return bucketList(findElement(By.cssSelector(".edit-document-references")));
+	}
+
+	public List<WebElement> promotionsBucketWebElements() {
+		return findElement(By.cssSelector(".edit-document-references")).findElements(By.xpath(".//*[contains(@class, 'promotions-bucket-document')]/.."));
 	}
 
 	public WebElement cancelButton() {

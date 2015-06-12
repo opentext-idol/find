@@ -73,6 +73,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 			loadOrFadeWait();
 			selectLanguage(language);
 			for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
+				scrollIntoView(blacklisted, getDriver());
 				blacklisted.click();
 				Thread.sleep(3000);
 			}

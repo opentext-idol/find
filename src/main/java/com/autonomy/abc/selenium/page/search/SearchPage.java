@@ -19,13 +19,17 @@ public class SearchPage extends SearchBase implements AppPage {
 		super($el, topNavBar.getDriver());
 	}
 
+	public List<String> promotionsBucketList() {
+		return bucketList(this);
+	}
+
 	@Override
 	public void navigateToPage() {
 		getDriver().get("search");
 	}
 
 	public WebElement showHideUnmodifiedResults() {
-		return findElement(By.cssSelector(".results-toggle"));
+		return findElement(By.xpath(".//button[contains(text(), 'unmodified results')]"));
 	}
 
 	public WebElement searchTitle() {
@@ -55,6 +59,7 @@ public class SearchPage extends SearchBase implements AppPage {
 
 	public List<String> createAMultiDocumentPromotion(final int finalNumberOfDocs) {
 		promoteTheseDocumentsButton().click();
+		loadOrFadeWait();
 		final int checkboxesPerPage = 6;
 		final List<String> promotedDocTitles = new ArrayList<>();
 
@@ -68,6 +73,7 @@ public class SearchPage extends SearchBase implements AppPage {
 				forwardPageButton().click();
 				loadOrFadeWait();
 				waitForSearchLoadIndicatorToDisappear();
+				loadOrFadeWait();
 			}
 		}
 
@@ -159,10 +165,7 @@ public class SearchPage extends SearchBase implements AppPage {
 		executor.executeScript("arguments[0].click();", element);
 
 		loadOrFadeWait();
-	}
-
-	public String getSelectedLanguage() {
-		return findElement(By.cssSelector(".current-language-selection")).getText();
+		waitForSearchLoadIndicatorToDisappear();
 	}
 
 	public WebElement promoteThisQueryButton() {

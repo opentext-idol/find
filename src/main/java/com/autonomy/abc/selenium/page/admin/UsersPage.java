@@ -21,7 +21,7 @@ public class UsersPage extends AppElement implements AppPage {
 	public void navigateToPage() { getDriver().get("users"); }
 
 	public WebElement createUserButton() {
-		return findElement(By.cssSelector("#create-user"));
+		return findElement(By.xpath(".//button[contains(text(), 'Create User')]"));
 	}
 
 	public WebElement createButton() {
@@ -119,10 +119,6 @@ public class UsersPage extends AppElement implements AppPage {
 		getTableUserPasswordBox(userName).clear();
 		getTableUserPasswordBox(userName).sendKeys(newPassword);
 		getUserRow(userName).findElement(By.cssSelector(".editable-submit")).click();
-	}
-
-	public String getSignedInUserName() {
-		return findElement(By.cssSelector(".profile-element strong")).getText();
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<UsersPage> {

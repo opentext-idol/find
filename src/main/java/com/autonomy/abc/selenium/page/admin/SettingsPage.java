@@ -23,6 +23,7 @@ public class SettingsPage extends AppElement implements AppPage {
 	public void navigateToPage() { getDriver().get("settings"); }
 
 	public void saveChangesClick() {
+		loadOrFadeWait();
 		findElement(By.xpath(".//*[contains(text(), 'Save Changes')]")).click();
 		loadOrFadeWait();
 	}

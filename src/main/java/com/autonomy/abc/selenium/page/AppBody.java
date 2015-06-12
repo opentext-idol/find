@@ -93,7 +93,7 @@ public class AppBody extends AppElement {
 	}
 
 	public SearchPage getSearchPage() {
-		return searchPage.$searchPage(getParent(getParent(getParent(getDriver().findElement(By.cssSelector(".search-control-button"))))));
+		return searchPage.$searchPage(getParent(getParent(getParent(getDriver().findElement(By.cssSelector(".search-control-column"))))));
 	}
 
 	public CreateNewPromotionsPage getCreateNewPromotionsPage() {

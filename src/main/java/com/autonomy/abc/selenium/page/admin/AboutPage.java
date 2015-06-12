@@ -48,8 +48,8 @@ public class AboutPage extends AppElement implements AppPage {
 	}
 
 	public void searchInSearchBox(final String searchTerm) {
-		findElement(By.cssSelector(".ibox-content [type='search']")).clear();
-		findElement(By.cssSelector(".ibox-content [type='search']")).sendKeys(searchTerm);
+		findElement(By.cssSelector(".dataTables_filter [type='search']")).clear();
+		findElement(By.cssSelector(".dataTables_filter [type='search']")).sendKeys(searchTerm);
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<AboutPage> {

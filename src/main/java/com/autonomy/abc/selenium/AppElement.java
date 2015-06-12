@@ -263,6 +263,10 @@ public class AppElement implements WebElement {
 		}
 	}
 
+	public boolean isModalShowing() {
+		return getDriver().findElements(By.cssSelector(".modal[aria-hidden='false']")).size() > 0;
+	}
+
 	public static class Placeholder extends AbstractWebElementPlaceholder<AppElement> {
 
 		public Placeholder(final AppElement ancestor, final By by) {
@@ -286,4 +290,18 @@ public class AppElement implements WebElement {
 		final int centre = element.getLocation().getY() + element.getSize().height / 2;
 		executor.executeScript("window.scrollTo(0, " + centre + " - Math.floor(window.innerHeight/2));");
 	}
+
+	public void scrollIntoViewAndClick(final WebElement element) {
+		scrollIntoView(element, getDriver());
+		element.click();
+	}
+
+	public List<String> webElementListToStringList(final List<WebElement> list) {
+		final List<String> stringList = new ArrayList<>();
+		for (final WebElement element : list) {
+			stringList.add(element.getText());
+		}
+		return stringList;
+	}
+
 }

@@ -17,10 +17,6 @@ public class SideNavBar extends TabBar {
 		return new SideNavBarTab(this, id.toString());
 	}
 
-	public String getSignedInUser() {
-		return findElement(By.cssSelector(".profile-element strong")).getText();
-	}
-
 	@Override
 	public void switchPage(final NavBarTabId tabId) {
 		super.switchPage(tabId);

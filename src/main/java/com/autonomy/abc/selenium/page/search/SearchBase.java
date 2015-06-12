@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.page.AppPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
 import org.openqa.selenium.By;
@@ -44,16 +45,12 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3"));
 	}
 
-	public int promotedItemsCount() {
-		return findElements(By.cssSelector(".promotions-bucket-document")).size();
+	public String getSearchResultDetails(final int searchResultNumber) {
+		return getParent(getSearchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
 	}
 
-	public List<String> promotionsBucketList() {
-		final List<String> bucketDocTitles = new ArrayList<>();
-		for (final WebElement bucketDoc : findElements(By.cssSelector(".promotions-bucket-document"))) {
-			bucketDocTitles.add(bucketDoc.getText());
-		}
-		return bucketDocTitles;
+	public int promotedItemsCount() {
+		return findElements(By.cssSelector(".promotions-bucket-document")).size();
 	}
 
 	public List<WebElement> promotionsBucketWebElements() {
@@ -123,6 +120,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		}
 	}
 
+	public String getSelectedLanguage() {
+		return findElement(By.cssSelector(".current-language-selection")).getText();
+	}
+
 	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
 		return findElement(By.cssSelector(".promoted-items")).findElement(By.xpath(".//*[contains(text(), '" + docTitle + "')]"));
 	}
@@ -136,7 +137,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		expandSubFilter(Filter.DATABASES);
 
 		if (!getSelectedDatabases().contains(databaseName) ) {
-			getDatabasesList().findElement(By.xpath(".//label[text()[contains(., '" + databaseName + "')]]/..")).click();
+			getParent(getDatabaseCheckboxes().get(getAllDatabases().indexOf(databaseName))).click();
 			loadOrFadeWait();
 		}
 	}
@@ -147,8 +148,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 			selectAllIndexes();
 		} else {
 			expandSubFilter(Filter.DATABASES);
-			if (!findElement(By.xpath(".//label[text()[contains(., 'All')]]/div")).getAttribute("class").contains("checked")) {
-				findElement(By.xpath(".//label[text()[contains(., 'All')]/div/input")).click();
+			for (final WebElement checkbox : getDatabaseCheckboxes()) {
+				if (!checkbox.isSelected()) {
+					getParent(checkbox).click();
+				}
 			}
 		}
 	}
@@ -167,11 +170,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 		if (selectedDatabases.contains(databaseName)) {
 			if (selectedDatabases.size() > 1) {
-				getDatabasesList().findElement(By.xpath(".//td[contains(text(), '" + databaseName + "')]/..")).click();
+				getParent(getDatabaseCheckboxes().get(getAllDatabases().indexOf(databaseName))).click();
 			} else {
-				getDatabasesList().findElement(By.xpath(".//td[contains(text(), 'All')]/..")).click();
+				System.out.println("Only one database remaining. Can't deselect final database");
 			}
-
 			loadOrFadeWait();
 		}
 	}
@@ -243,6 +245,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public void expandFilter(final Filter filterName) {
 		if (getFilter(filterName.getName()).getAttribute("class").contains("collapsed")) {
+			scrollIntoView(getFilter(filterName.getName()), getDriver());
 			getFilter(filterName.getName()).click();
 			loadOrFadeWait();
 		}
@@ -276,20 +279,37 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 				System.out.println("Loading");
 				loadOrFadeWait();
 			}
-		} catch (final StaleElementReferenceException e) {
+		} catch (final StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
 			System.out.println("No Loading");
 		}
+	}
 
+	public void waitForRelatedConceptsLoadIndicatorToDisappear() {
+		try {
+			while (!findElement(By.cssSelector(".search-related-concepts .loading")).getAttribute("class").contains("hidden")){
+				loadOrFadeWait();
+			}
+		} catch (final StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
+			// Loading Complete
+		}
+	}
+
+	protected List<String> bucketList(final WebElement element) {
+		final List<String> bucketDocTitles = new ArrayList<>();
+		for (final WebElement bucketDoc : element.findElements(By.cssSelector(".promotions-bucket-document"))) {
+			bucketDocTitles.add(bucketDoc.getText());
+		}
+		return bucketDocTitles;
 	}
 
 	public void openFromDatePicker() {
-		findElement(By.cssSelector(".results-filter-min-date .clickable")).click();
+		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
 		loadOrFadeWait();
 	}
 
 	public void closeFromDatePicker() {
 		if (getDriver().findElements(By.cssSelector(".datepicker")).size() > 0) {
-			findElement(By.cssSelector(".results-filter-min-date .clickable")).click();
+			findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
 			loadOrFadeWait();
 			waitForSearchLoadIndicatorToDisappear();
 		}
@@ -301,6 +321,38 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 			return null;
 		}
 		return DATE_FORMAT.parse(dateString.split(", ")[1]);
+	}
+
+	public String getResultsForText() {
+		return getDriver().findElement(By.cssSelector(".heading strong")).getText();
+	}
+
+	public int countRelatedConcepts() {
+		return getRelatedConcepts().size();
+	}
+
+	public List<WebElement> getRelatedConcepts() {
+		return findElements(By.cssSelector(".concepts li"));
+	}
+
+	public WebElement relatedConcept(final String conceptText) {
+		return findElement(By.cssSelector(".concepts")).findElement(By.xpath(".//a[text()=\"" + conceptText + "\"]"));
+	}
+
+	public WebElement parametricValueLoadIndicator() {
+		return findElement(By.cssSelector(".search-parametric .processing"));
+	}
+
+	public List<String> getAllDatabases() {
+		return webElementListToStringList(findElements(By.cssSelector(".child-categories label")));
+	}
+
+	public List<WebElement> getDatabaseCheckboxes() {
+		return findElements(By.cssSelector(".child-categories input"));
+	}
+
+	public WebElement allDatabasesCheckbox() {
+		return findElement(By.cssSelector(".checkbox input[data-category-id='all']"));
 	}
 
 	public enum Filter {

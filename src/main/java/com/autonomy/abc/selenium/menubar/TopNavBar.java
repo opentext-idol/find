@@ -55,4 +55,10 @@ public class TopNavBar extends TabBar {
 	public String getSearchBarText() {
 		return findElement(By.cssSelector("[name='top-search']")).getAttribute("value");
 	}
+
+	public void showSideBar() {
+		if (getDriver().findElement(By.cssSelector("body")).getAttribute("class").contains("hide-navbar")) {
+			sideBarToggle();
+		}
+	}
 }
