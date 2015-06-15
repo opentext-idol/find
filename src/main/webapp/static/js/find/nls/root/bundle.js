@@ -38,6 +38,7 @@ define([
         'placeholder.port': 'port',
         'search.noResults': 'No results found',
         'search.dates': 'Dates',
+        'search.relatedConcepts': 'See also',
         'settings.cancel': 'Cancel',
         'settings.cancel.message': 'All unsaved changes will be lost.',
         'settings.cancel.title': 'Revert settings?',
