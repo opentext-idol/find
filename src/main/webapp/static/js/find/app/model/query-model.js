@@ -3,6 +3,14 @@ define([
 ], function(Backbone) {
 
     return Backbone.Model.extend({
+        defaults: {
+            queryText: '',
+            indexes: [],
+            fieldText: null,
+            minDate: null,
+            maxDate: null
+        },
+
         getFieldTextString: function() {
             var fieldText = this.get('fieldText');
 
