@@ -132,6 +132,8 @@ define([
         },
 
         searchRequest: function() {
+            this.$('.find-input').val(this.queryModel.get('queryText')); //when clicking one of the suggested search links
+
             this.entityCollection.fetch({
                 data: {
                     text: this.queryModel.get('queryText'),
