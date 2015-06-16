@@ -47,11 +47,13 @@ define([
     return BasePage.extend({
 
         template: _.template(template),
-        noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
 
         events: {
-            'keyup .find-input': 'keyupAnimation',
+            'keyup .find-input': _.debounce(function() {
+                var findInput = this.$('.find-input').val();
+                this.queryModel.set('queryText', findInput);
+            }, 500),
             'mouseover .entity-to-summary': function(e) {
                 var title = $(e.currentTarget).find('a').html();
                 this.$('[data-title="'+ title +'"]').addClass('label label-primary entity-to-summary').removeClass('label-info');
@@ -65,8 +67,15 @@ define([
         initialize: function() {
             this.queryModel = new QueryModel(new BackboneQueryModel());
 
+            // The query model fires and triggers results only when it has both queryText and indexes
             this.listenTo(this.queryModel, 'change', function() {
                 this.searchRequest();
+            });
+
+            // Because the queryModel doesn't fire with the empty string, we listen to the unadulterated model
+            // underlying the main model for the change in queryText.
+            this.listenTo(this.queryModel.model, 'change:queryText', function(model, text){
+                this.uiStateChange(text);
             });
 
             this.entityCollection = new EntityCollection();
@@ -103,9 +112,9 @@ define([
             router.on('route:search', function(text) {
                 if (text) {
                     this.$('.find-input').val(text); //when clicking one of the suggested search links
-                    this.keyupAnimation();
+                    this.queryModel.set('queryText', text);
                 } else {
-                    this.reverseAnimation(); //when clicking the small 'find' logo
+                    this.queryModel.set('queryText', ''); //when clicking the small 'find' logo
                 }
             }, this);
         },
@@ -128,7 +137,7 @@ define([
 
             this.resultsView.setElement(this.$('.results-container')).render();
 
-            this.reverseAnimation();
+            this.reducedState();
         },
 
         searchRequest: function() {
@@ -145,24 +154,25 @@ define([
             vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
 
-        keyupAnimation: _.debounce(function() {
-            /*fancy animation*/
-            if($.trim(this.$('.find-input').val()).length) { // input has at least one non whitespace character
-                this.$('.find').addClass('animated-container').removeClass('reverse-animated-container');
-
-                this.$('.main-results-content').show();
-                this.$('.related-concepts-container').show();
-                this.$('.parametric-container').show();
-                this.$('.date-container').show();
-
-                this.queryModel.set('queryText', this.$('.find-input').val())
+        uiStateChange: function(text) {
+            if(text.length) { // input has at least one non whitespace character
+                this.expandedState();
             } else {
-                this.reverseAnimation();
-                vent.navigate('find/search', {trigger: false});
+                this.reducedState();
             }
-        }, 500),
+        },
 
-        reverseAnimation: function() {
+        expandedState: function() {
+            /*fancy animation*/
+            this.$('.find').addClass('animated-container').removeClass('reverse-animated-container');
+
+            this.$('.main-results-content').show();
+            this.$('.related-concepts-container').show();
+            this.$('.parametric-container').show();
+            this.$('.date-container').show();
+        },
+
+        reducedState: function() {
             /*fancy reverse animation*/
             this.$('.find').removeClass('animated-container').addClass('reverse-animated-container');
 
@@ -170,6 +180,8 @@ define([
             this.$('.related-concepts-container').hide();
             this.$('.parametric-container').hide();
             this.$('.date-container').hide();
+
+            vent.navigate('find/search', {trigger: false});
         }
     });
 });

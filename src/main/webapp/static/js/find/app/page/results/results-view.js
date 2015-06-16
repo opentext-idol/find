@@ -13,6 +13,7 @@ define([
     return Backbone.View.extend({
 
         template: _.template(resultsView),
+        noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
         audioPlayerTemplate: _.template(audioPlayerTemplate),
 
         events: {
