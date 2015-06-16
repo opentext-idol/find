@@ -2,14 +2,16 @@ define([
     'backbone',
     'find/app/model/documents-collection',
     'text!find/templates/app/page/suggestions-container.html',
+    'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, DocumentsCollection, suggestionsTemplate, loadingSpinnerTemplate) {
+], function(Backbone, DocumentsCollection, suggestionsTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
 
     return Backbone.View.extend({
 
         className: 'suggestions-content',
 
         suggestionsTemplate: _.template(suggestionsTemplate),
+        topResultsPopoverContents: _.template(topResultsPopoverContents),
 
         events: {
             'mouseover a': _.debounce(function(e) {
