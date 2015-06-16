@@ -7,8 +7,10 @@ define([
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/colorbox-controls.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/view/audio-player.html'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, audioPlayerTemplate) {
+    'text!find/templates/app/page/view/audio-player.html',
+    'moment',
+    'colorbox'
+], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, audioPlayerTemplate, moment) {
 
     return Backbone.View.extend({
 
@@ -21,6 +23,14 @@ define([
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
                 this.queryModel.set('queryText', queryText);
+            },
+            'mouseover .entity-to-summary': function(e) {
+                var title = $(e.currentTarget).find('a').html();
+                this.$('[data-title="'+ title +'"]').addClass('label label-primary entity-to-summary').removeClass('label-info');
+            },
+            'mouseleave .entity-to-summary': function() {
+                this.$('.suggestions-content li a').removeClass('label label-primary entity-to-summary');
+                this.$('.main-results-content .entity-to-summary').removeClass('label-primary').addClass('label-info');
             }
         },
 
