@@ -21,3 +21,5 @@ src/test/js/lib/
 
 src/main/webapp/static/lib/
 node_modules/
+.grunt/
+spec-runner.html

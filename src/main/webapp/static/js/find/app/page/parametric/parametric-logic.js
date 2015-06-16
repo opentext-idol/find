@@ -7,50 +7,25 @@ define([
 
     return Backbone.Model.extend({
 
-        updateParametricFieldText: function() {
-            var fieldTextString = null;
-
-            if (this.requestFieldText) {
-                fieldTextString = this.requestFieldText.toString();
-            }
-
-            this.collection.fetch({
-                data: {
-                    databases: this.indexes,
-                    queryText: this.queryText,
-                    fieldText: fieldTextString
-                },
-                error: _.bind(function (model, err) {
-                    console.log(err);
-                }, this)
-            })
-        },
-
-        update: function () {
-            if (this.queryText && !_.isEmpty(this.indexes)) {
-                this.updateParametricFieldText();
-            }
-        },
-
         initialize: function (options) {
+            this.queryModel = options.queryModel;
             this.collection = options.parametricCollection;
 
-            this.indexes = options.indexes;
-            this.queryText = options.queryText;
-        },
-
-        setIndexes: function (indexes) {
-            if(this.indexes !== indexes) {
-                this.indexes = indexes;
-                this.update();
-            }
-        },
-
-        setQueryText: function (queryText) {
-            if(this.queryText !== queryText) {
-                this.queryText = queryText;
-                this.update();
-            }
+            this.listenTo(this.queryModel, 'change', function() {
+                if(!_.isEmpty(this.queryModel.get('indexes'))) {
+                    this.collection.fetch({
+                        data: {
+                            databases: this.queryModel.get('indexes'),
+                            queryText: this.queryModel.get('queryText'),
+                            fieldText: this.queryModel.getFieldTextString() || null
+                        },
+                        error: _.bind(function (model, err) {
+                            //TODO: remove this
+                            console.log(err);
+                        }, this)
+                    })
+                }
+            }, this)
         },
 
         setRequestParametricValues: function(parametricValues) {
@@ -67,9 +42,7 @@ define([
                 this.requestFieldText = null;
             }
 
-            this.trigger('change', this.requestFieldText);
-
-            this.update();
+            this.queryModel.setParametricFieldText(this.requestFieldText);
         }
 
     })

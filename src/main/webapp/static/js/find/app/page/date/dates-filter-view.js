@@ -20,6 +20,10 @@ define([
             }
         },
 
+        initialize: function(options) {
+            this.queryModel = options.queryModel;
+        },
+
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n
@@ -43,11 +47,11 @@ define([
         },
 
         setMinDate: function(date) {
-            this.trigger('change', {type: 'min', date: date});
+            this.queryModel.set('minDate', date);
         },
 
         setMaxDate: function(date) {
-            this.trigger('change', {type: 'max', date: date});
+            this.queryModel.set('maxDate', date);
         }
     });
 
