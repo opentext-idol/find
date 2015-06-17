@@ -1,6 +1,6 @@
 define([
     'find/app/model/backbone-query-model',
-    'find/app/model/query-model',
+    'find/app/model/query-model'
 ], function(BackboneQueryModel, QueryModel) {
 
     describe('Query Model', function() {
@@ -48,6 +48,22 @@ define([
             this.queryModel.model.set('queryText', 'text');
 
             expect(this.queryModel.get('queryText')).toEqual('text');
+        });
+
+        it("should proxy down the 'setParametricFieldText' method down successfully to the underlying model", function() {
+            var fakeFieldText = 'A string whose existence does not constitute an example of valid field text';
+
+            this.queryModel.setParametricFieldText(fakeFieldText);
+
+            expect(this.queryModel.model.get('fieldText')).toEqual(fakeFieldText);
+        });
+
+        it("should return the string representing field text from the underlying model with the 'getFieldTextString' proxied method", function() {
+            var mockFieldTextString = 'MATCH{SCIENTIST}:person_profession';
+
+            this.queryModel.model.setParametricFieldText(mockFieldTextString);
+
+            expect(this.queryModel.getFieldTextString()).toEqual(mockFieldTextString);
         });
     })
 });
