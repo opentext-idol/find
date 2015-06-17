@@ -456,3 +456,21 @@ input:-moz-placeholder::before {
 .no-bottom-margin {
     margin-bottom: 0;
 }
+
+/* Rotating chevrons on collapsible panels *******************/
+.collapsed .rotating-chevron {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    -webkit-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+}
+
+.rotating-chevron {
+    display: inline-block;
+}
+
+/*** Cursor *************************************************/
+
+.clickable {
+    cursor: pointer;
+}
