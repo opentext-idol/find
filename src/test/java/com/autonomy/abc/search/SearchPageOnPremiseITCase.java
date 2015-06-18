@@ -71,7 +71,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase {
 			for (int i = 1; i <= 6; i++) {
 				assertTrue("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i).contains("wikienglish"));
 			}
-			searchPage.forwardPageButton().click();
+			searchPage.javascriptClick(searchPage.forwardPageButton());
 			searchPage.loadOrFadeWait();
 		}
 
@@ -87,7 +87,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase {
 			for (int i = 1; i <= 6; i++) {
 				assertTrue("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i).contains("wookiepedia"));
 			}
-			searchPage.forwardPageButton().click();
+			searchPage.javascriptClick(searchPage.forwardPageButton());
 		}
 
 		searchPage.backToFirstPageButton().click();
@@ -100,7 +100,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase {
 			for (int i = 1; i <= 6; i++) {
 				assertTrue("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i).contains("wikienglish") || searchPage.getSearchResultDetails(i).contains("wookiepedia"));
 			}
-			searchPage.forwardPageButton().click();
+			searchPage.javascriptClick(searchPage.forwardPageButton());
 		}
 	}
 

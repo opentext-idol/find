@@ -62,4 +62,11 @@ public class SearchPageHostedITCase extends ABCTestBase {
 		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText().equals(wookiepediaResult) || searchPage.getSearchResult(1).getText().equals(wikiEnglishResult));
 	}
 
+	@Test
+	public void testParametricSearch() {
+		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+		topNavBar.search("*");
+
+	}
+
 }

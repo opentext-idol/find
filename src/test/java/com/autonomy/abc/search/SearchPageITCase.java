@@ -97,6 +97,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testAddFilesToPromoteBucket() {
 		searchPage.promoteTheseDocumentsButton().click();
+		searchPage.loadOrFadeWait();
 
 		for (int i = 1; i < 7; i++) {
 			AppElement.scrollIntoView(searchPage.searchResultCheckbox(i), getDriver());
@@ -120,25 +121,25 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Back to first page button is not disabled", searchPage.isBackToFirstPageButtonDisabled());
 		assertThat("Back a page button is not disabled", AppElement.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
 
-		searchPage.forwardPageButton().click();
+		searchPage.javascriptClick(searchPage.forwardPageButton());
 		searchPage.paginateWait();
 		assertThat("Back to first page button is not enabled", !AppElement.getParent(searchPage.backToFirstPageButton()).getAttribute("class").contains("disabled"));
 		assertThat("Back a page button is not enabled", !AppElement.getParent(searchPage.backPageButton()).getAttribute("class").contains("disabled"));
 		assertThat("Page 2 is not active", searchPage.isPageActive(2));
 
-		searchPage.forwardPageButton().click();
+		searchPage.javascriptClick(searchPage.forwardPageButton());
 		searchPage.paginateWait();
-		searchPage.forwardPageButton().click();
+		searchPage.javascriptClick(searchPage.forwardPageButton());
 		searchPage.paginateWait();
-		searchPage.backPageButton().click();
+		searchPage.javascriptClick(searchPage.backPageButton());
 		searchPage.paginateWait();
 		assertThat("Page 3 is not active", searchPage.isPageActive(3));
 
-		searchPage.backToFirstPageButton().click();
+		searchPage.javascriptClick(searchPage.backToFirstPageButton());
 		searchPage.paginateWait();
 		assertThat("Page 1 is not active", searchPage.isPageActive(1));
 
-		searchPage.forwardToLastPageButton().click();
+		searchPage.javascriptClick(searchPage.forwardToLastPageButton());
 		searchPage.paginateWait();
 		assertThat("Forward to last page button is not disabled", AppElement.getParent(searchPage.forwardToLastPageButton()).getAttribute("class").contains("disabled"));
 		assertThat("Forward a page button is not disabled", AppElement.getParent(searchPage.forwardPageButton()).getAttribute("class").contains("disabled"));
@@ -146,14 +147,14 @@ public class SearchPageITCase extends ABCTestBase {
 		final int numberOfPages = searchPage.getCurrentPageNumber();
 
 		for (int i = numberOfPages - 1; i > 0; i--) {
-			searchPage.backPageButton().click();
+			searchPage.javascriptClick(searchPage.backPageButton());
 			searchPage.paginateWait();
 			assertThat("Page " + String.valueOf(i) + " is not active", searchPage.isPageActive(i));
 			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
-			searchPage.forwardPageButton().click();
+			searchPage.javascriptClick(searchPage.forwardPageButton());
 			searchPage.paginateWait();
 			assertThat("Page " + String.valueOf(j) + " is not active", searchPage.isPageActive(j));
 			assertThat("Url incorrect", getDriver().getCurrentUrl().endsWith(String.valueOf(j)));
@@ -371,7 +372,7 @@ public class SearchPageITCase extends ABCTestBase {
 			assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size() == 3 - docIndex);
 		}
 
-		assertThat("promote button should not be displayed when bucket has no documents", !searchPage.promoteTheseItemsButton().isDisplayed());
+		assertThat("promote button should be disabled when bucket has no documents", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 
 		topNavBar.search("tooth");
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size() == 0);
@@ -379,7 +380,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.searchResultCheckbox(5).click();
 		final List<String> docTitles = new ArrayList<>();
 		docTitles.add(searchPage.getSearchResultTitle(5));
-		searchPage.forwardPageButton().click();
+		searchPage.javascriptClick(searchPage.forwardPageButton());
 		searchPage.loadOrFadeWait();
 		searchPage.searchResultCheckbox(3).click();
 		docTitles.add(searchPage.getSearchResultTitle(3));
@@ -393,11 +394,11 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Document should no longer be in the bucket", !searchPage.promotionsBucketList().contains(docTitles.get(1)));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(3).isSelected());
 
-		searchPage.backPageButton().click();
+		searchPage.javascriptClick(searchPage.backPageButton());
 		searchPage.deleteDocFromWithinBucket(docTitles.get(0));
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size() == 0);
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(5).isSelected());
-		assertThat("promote button should not be displayed when bucket has no documents", !searchPage.promoteTheseItemsButton().isDisplayed());
+		assertThat("promote button should be disabled when bucket has no documents", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 	}
 
 	@Test
@@ -423,7 +424,7 @@ public class SearchPageITCase extends ABCTestBase {
 					searchPage.loadOrFadeWait();
 				}
 
-				searchPage.forwardPageButton().click();
+				searchPage.javascriptClick(searchPage.forwardPageButton());
 				searchPage.loadOrFadeWait();
 			}
 		}
@@ -454,7 +455,7 @@ public class SearchPageITCase extends ABCTestBase {
 				searchPage.loadOrFadeWait();
 			}
 
-			searchPage.forwardPageButton().click();
+			searchPage.javascriptClick(searchPage.forwardPageButton());
 			searchPage.loadOrFadeWait();
 		}
 	}
@@ -718,8 +719,8 @@ public class SearchPageITCase extends ABCTestBase {
 		createPromotionsPage.addSearchTrigger("duck");
 		createPromotionsPage.finishButton().click();
 		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-		assertTrue(searchPage.getText().contains(promotedDocs.get(0)));
-		assertTrue(searchPage.getText().contains(promotedDocs.get(1)));
+		assertTrue(promotedDocs.get(0) + " should be visible", searchPage.getText().contains(promotedDocs.get(0)));
+		assertTrue(promotedDocs.get(1) + " should be visible", searchPage.getText().contains(promotedDocs.get(1)));
 
 		searchPage.showFieldTextOptions();
 		searchPage.fieldTextAddButton().click();
@@ -773,9 +774,9 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.selectLanguage("English", getConfig().getType().getName());
 		for (final String searchTerm : Arrays.asList("OR", "WHEN", "SENTENCE", "SOUNDEX", "DNEAR")) {
 			topNavBar.search(searchTerm);
-			assertTrue("Correct error message not present" + searchPage.getText(), searchPage.getText().contains("An error occurred executing the search action"));
-			assertTrue("Correct error message not present", searchPage.getText().contains("An error occurred fetching the query analysis."));
-			assertTrue("Correct error message not present", searchPage.getText().contains("Opening boolean operator"));
+			assertTrue("Correct error message not present for searchterm: " + searchTerm + searchPage.getText(), searchPage.getText().contains("An error occurred executing the search action"));
+			assertTrue("Correct error message not present for searchterm: " + searchTerm, searchPage.getText().contains("An error occurred fetching the query analysis."));
+			assertTrue("Correct error message not present for searchterm: " + searchTerm, searchPage.getText().contains("Opening boolean operator"));
 		}
 		for (final String searchTerm : Arrays.asList("a", "the", "of")) {
 			topNavBar.search(searchTerm);
@@ -887,6 +888,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.forwardToLastPageButton().click();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		final int currentPage = searchPage.getCurrentPageNumber();
+		final String docTitle = searchPage.getSearchResultTitle(4);
 		final String url = getDriver().getCurrentUrl();
 		assertTrue("Url and current page number are out of sync", url.contains("nice/" + currentPage));
 		final String illegitimateUrl = url.replace("nice/" + currentPage, "nice/" + (currentPage + 5));
@@ -894,6 +896,8 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage = new AppBody(getDriver()).getSearchPage();
 		assertEquals("Page number should not have changed", currentPage, searchPage.getCurrentPageNumber());
 		assertEquals("Url should have reverted to original url", url, getDriver().getCurrentUrl());
+		assertFalse("Error message should not be showing", searchPage.isErrorMessageShowing());
+		assertEquals("Search results have changed on last page", docTitle, searchPage.getSearchResultTitle(4));
 	}
 
 	@Test
