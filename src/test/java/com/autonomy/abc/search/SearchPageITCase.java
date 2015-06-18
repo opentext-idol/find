@@ -16,6 +16,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -796,7 +797,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testDatesFilter() throws ParseException {
+	public void testFromDateFilter() throws ParseException {
 		topNavBar.search("Dog");
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 		final String firstResult = searchPage.getSearchResultTitle(1);
@@ -820,6 +821,81 @@ public class SearchPageITCase extends ABCTestBase {
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
 		searchPage.closeFromDatePicker();
 		assertTrue("Document should be visible. Date filter not working", firstResult.equals(searchPage.getSearchResultTitle(1)));
+	}
+
+	@Test
+	public void testUntilDateFilter() throws ParseException {
+		topNavBar.search("Dog");
+		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+		final String firstResult = searchPage.getSearchResultTitle(1);
+		final Date date = searchPage.getDateFromResult(1);
+		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
+		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		searchPage.openUntilDatePicker();
+		datePicker = new DatePicker(searchPage.$el(), getDriver());
+		datePicker.calendarDateSelect(date);
+		searchPage.closeUntilDatePicker();
+		assertEquals("Document should still be displayed", firstResult, searchPage.getSearchResultTitle(1));
+
+		searchPage.openUntilDatePicker();
+		datePicker = new DatePicker(searchPage.$el(), getDriver());
+		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
+		searchPage.closeUntilDatePicker();
+		assertFalse("Document should not be visible. Date filter not working", firstResult.equals(searchPage.getSearchResultTitle(1)));
+
+		searchPage.openUntilDatePicker();
+		datePicker = new DatePicker(searchPage.$el(), getDriver());
+		datePicker.calendarDateSelect(DateUtils.addMinutes(date, 1));
+		searchPage.closeUntilDatePicker();
+		assertTrue("Document should be visible. Date filter not working", firstResult.equals(searchPage.getSearchResultTitle(1)));
+	}
+
+	@Test
+	public void testFromDateAlwaysBeforeUntilDate() {
+		topNavBar.search("food");
+		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
+		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00");
+		searchPage.fromDateTextBox().sendKeys(Keys.ENTER);
+		searchPage.untilDateTextBox().sendKeys("04/05/2000 12:00");
+		assertEquals("Dates should be equal", searchPage.fromDateTextBox().getAttribute("value"), searchPage.untilDateTextBox().getAttribute("value"));
+
+		searchPage.fromDateTextBox().clear();
+		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:01");
+		searchPage.fromDateTextBox().sendKeys(Keys.ENTER);
+		assertFalse("From date cannot be after the until date", searchPage.fromDateTextBox().getAttribute("value").equals("04/05/2000 12:01"));
+
+		searchPage.fromDateTextBox().clear();
+		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00");
+		searchPage.untilDateTextBox().clear();
+		searchPage.untilDateTextBox().sendKeys("04/05/2000 11:59");
+		searchPage.untilDateTextBox().sendKeys(Keys.ENTER);
+		assertFalse("Until date cannot be before the from date", searchPage.untilDateTextBox().getAttribute("value").equals("04/05/2000 11:59"));
+	}
+
+	@Test
+	public void testSortByRelevance() {
+		topNavBar.search("string");
+		searchPage.sortByRelevance();
+		List<Float> weights = searchPage.getWeightsOnPage(5);
+		for (int i = 0; i < weights.size() - 1; i++) {
+			assertTrue("Weight of search result " + i + " is not greater that weight of search result " + (i+1), weights.get(i) >= weights.get(i + 1));
+		}
+
+		searchPage.sortByDate();
+		searchPage.sortByRelevance();
+		weights = searchPage.getWeightsOnPage(5);
+		for (int i = 0; i < weights.size() - 1; i++) {
+			assertTrue("Weight of search result " + i + " is not greater that weight of search result " + (i+1), weights.get(i) >= weights.get(i + 1));
+		}
+
+		searchPage.sortByDate();
+		topNavBar.search("paper packages");
+		searchPage.sortByRelevance();
+		weights = searchPage.getWeightsOnPage(5);
+		for (int i = 0; i < weights.size() - 1; i++) {
+			assertTrue("Weight of search result " + i + " is not greater that weight of search result " + (i+1), weights.get(i) >= weights.get(i + 1));
+		}
 	}
 
 	@Test
