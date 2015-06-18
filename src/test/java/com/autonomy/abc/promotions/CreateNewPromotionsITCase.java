@@ -329,14 +329,13 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
 
 		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOf(promotionsPage.addMorePromotedItemsButton()));
-		assertThat("Linked to wrong page", getDriver().getCurrentUrl().contains("promotions/detail/spotlight"));
 		assertThat("Linked to wrong page", promotionsPage.getText().contains("Spotlight for: " + searchTrigger));
 
 		promotionsPage.clickableSearchTrigger(searchTrigger).click();
 		promotionsPage.loadOrFadeWait();
 
-		assertThat("Wrong document spotlighted", createPromotionsPage.getTopPromotedLinkTitle().equals(promotedDocTitle));
-		assertThat("Wrong spotlight button text", createPromotionsPage.getTopPromotedLinkButtonText().equals(spotlightType));
+		assertThat("Wrong document spotlighted", searchPage.getTopPromotedLinkTitle().equals(promotedDocTitle));
+		assertThat("Wrong spotlight button text", searchPage.getTopPromotedLinkButtonText().equals(spotlightType));
 
 		searchPage.showHideUnmodifiedResults().click();
 		searchPage.loadOrFadeWait();
@@ -428,6 +427,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 			topNavBar.search("dog");
 			searchPage.createAPromotion();
 
+			createPromotionsPage = body.getCreateNewPromotionsPage();
 			createPromotionsPage.addSpotlightPromotion(spotlightType, "MyFirstNotification" + spotlightType.replaceAll("\\s+", ""), getConfig().getType().getName());
 			searchPage.waitForGritterToClear();
 
@@ -452,6 +452,6 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		searchPage.promoteTheseDocumentsButton().click();
 		assertEquals(0, searchPage.promotionsBucketWebElements().size());
-		assertThat("promote these items button should be hidden", !searchPage.promoteTheseItemsButton().isDisplayed());
+		assertThat("promote these items button should be disabled", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 	}
 }

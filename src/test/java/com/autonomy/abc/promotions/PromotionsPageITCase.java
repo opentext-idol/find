@@ -260,7 +260,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testAddingLotsOfDocsToAPromotion() {
 		setUpANewMultiDocPromotion("English", "sith", "Hotwire", "darth sith", 100);
-		assertEquals(promotionsPage.getPromotedList().size(), 100);
+		assertEquals("Wrong number of documents in the promotions list", 100, promotionsPage.getPromotedList().size());
 	}
 
 	private String setUpANewPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers) {
@@ -999,6 +999,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.backButton().click();
 
 		promotionsPage.clearPromotionsSearchFilter();
+		promotionsPage.selectPromotionsCategoryFilter("Dynamic Spotlight");
 		promotionsPage.promotionsSearchFilter().sendKeys("Rhodesian");
 		assertEquals("Filter should have returned one document", 1, promotionsPage.promotionsList().size());
 

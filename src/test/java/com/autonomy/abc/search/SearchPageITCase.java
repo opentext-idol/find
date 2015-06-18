@@ -500,23 +500,22 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testLanguageDisabledWhenBucketOpened() {
 		//This test currently fails because language dropdown is not disabled when the promotions bucket is open
-		searchPage.selectLanguage("Hindi", getConfig().getType().getName());
-		topNavBar.search("पपीहा");
+		searchPage.selectLanguage("English", getConfig().getType().getName());
+		topNavBar.search("al");
 		searchPage.loadOrFadeWait();
 		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
 
 		searchPage.promoteTheseDocumentsButton().click();
-		assertThat("Languages should be disabled", searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+		searchPage.searchResultCheckbox(1).click();
+		assertEquals("There should be one document in the bucket", 1, searchPage.promotionsBucketList().size());
+		searchPage.selectLanguage("French", getConfig().getType().getName());
+		assertFalse("The promotions bucket should close when the language is changed", searchPage.promotionsBucket().isDisplayed());
 
-		searchPage.promotionsBucketClose();
-		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
-
-		searchPage.selectLanguage("Arabic", getConfig().getType().getName());
 		searchPage.promoteTheseDocumentsButton().click();
-		assertThat("Languages should be disabled", searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+		assertEquals("There should be no documents in the bucket after changing language", 0, searchPage.promotionsBucketList().size());
 
-		searchPage.promotionsBucketClose();
-		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+		searchPage.selectLanguage("English", getConfig().getType().getName());
+		assertFalse("The promotions bucket should close when the language is changed", searchPage.promotionsBucket().isDisplayed());
 	}
 
 	@Test

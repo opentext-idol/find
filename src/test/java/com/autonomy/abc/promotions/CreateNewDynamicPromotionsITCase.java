@@ -275,6 +275,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		assertFalse("\"undefined\" returned as query text when wizard cancelled", searchPage.searchTitle().getText().contains("undefined"));
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
+		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
 		dynamicPromotionsPage.continueButton("spotlightType").click();
 		dynamicPromotionsPage.loadOrFadeWait();
