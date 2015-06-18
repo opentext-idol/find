@@ -67,14 +67,6 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		return getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
 	}
 
-	public String getTopPromotedLinkTitle() {
-		return findElement(By.cssSelector(".promotions .search-result h3")).getText();
-	}
-
-	public String getTopPromotedLinkButtonText() {
-		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
-	}
-
 	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger, final String type) {
 		promotionType("SPOTLIGHT").click();
 		loadOrFadeWait();

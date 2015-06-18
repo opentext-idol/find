@@ -359,6 +359,14 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return !findElement(By.cssSelector(".search-information")).getAttribute("class").contains("hide");
 	}
 
+	public String getTopPromotedLinkTitle() {
+		return findElement(By.cssSelector(".promotions .search-result-title")).getText();
+	}
+
+	public String getTopPromotedLinkButtonText() {
+		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
+	}
+
 	public enum Filter {
 		FILTER_BY("Filter By"),
 		RELATED_CONCEPTS("Related Concepts"),
