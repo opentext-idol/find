@@ -3,10 +3,7 @@ package com.autonomy.abc.selenium.page.search;
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.page.AppPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -315,6 +312,27 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		}
 	}
 
+	public WebElement fromDateTextBox() {
+		return findElement(By.cssSelector("[data-filter-name=\"minDate\"] input"));
+	}
+
+	public WebElement untilDateTextBox() {
+		return findElement(By.cssSelector("[data-filter-name=\"maxDate\"] input"));
+	}
+
+	public void openUntilDatePicker() {
+		findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
+		loadOrFadeWait();
+	}
+
+	public void closeUntilDatePicker() {
+		if (getDriver().findElements(By.cssSelector(".datepicker")).size() > 0) {
+			findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
+			loadOrFadeWait();
+			waitForSearchLoadIndicatorToDisappear();
+		}
+	}
+
 	public Date getDateFromResult(final int index) throws ParseException {
 		final String dateString = getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
 		if (dateString.equals("")) {
@@ -365,6 +383,37 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public String getTopPromotedLinkButtonText() {
 		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
+	}
+
+	public void sortByRelevance() {
+		sortBy("by relevance");
+	}
+
+	public void sortByDate() {
+		sortBy("by date");
+	}
+
+	public void sortBy(final String sortBy) {
+		findElement(By.cssSelector(".current-search-sort")).click();
+
+		final WebElement element = findElement(By.cssSelector(".search-results-sort")).findElement(By.xpath(".//a[text()='" + sortBy + "']"));
+		// IE doesn't like clicking dropdown elements
+		final JavascriptExecutor executor = (JavascriptExecutor)getDriver();
+		executor.executeScript("arguments[0].click();", element);
+
+		loadOrFadeWait();
+		waitForSearchLoadIndicatorToDisappear();
+	}
+
+	public List<Float> getWeightsOnPage(final int numberOfPages) {
+		final List<Float> weights = new ArrayList<>();
+		for (int i = 1; i <= numberOfPages; i++) {
+			for (final WebElement weight : findElements(By.cssSelector(".weight"))) {
+				weights.add(Float.parseFloat(weight.getText().substring(8)));
+			}
+			javascriptClick(forwardPageButton());
+		}
+		return weights;
 	}
 
 	public enum Filter {
