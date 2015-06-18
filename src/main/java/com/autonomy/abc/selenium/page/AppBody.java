@@ -97,11 +97,11 @@ public class AppBody extends AppElement {
 	}
 
 	public CreateNewPromotionsPage getCreateNewPromotionsPage() {
-		return createPromotionsPage.$createNewPromotionsPage(getDriver().findElement(By.cssSelector(".page-content-pages")));
+		return createPromotionsPage.$createNewPromotionsPage(getDriver().findElement(By.cssSelector(".pd-wizard")));
 	}
 
 	public CreateNewDynamicPromotionsPage getCreateNewDynamicPromotionsPage() {
-		return dynamicPromotionsPage.$createNewDynamicPromotionsPage(getDriver().findElement(By.cssSelector(".page-content-pages")));
+		return dynamicPromotionsPage.$createNewDynamicPromotionsPage(getDriver().findElement(By.cssSelector(".pd-wizard")));
 	}
 
 	public SchedulePage getSchedulePage() {
@@ -109,7 +109,7 @@ public class AppBody extends AppElement {
 	}
 
 	public CreateNewKeywordsPage getCreateKeywordsPage() {
-		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".page-content-pages")));
+		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".pd-wizard")));
 	}
 
 	public LoginOnPremisePage getLoginOnPremisePage() {
@@ -133,7 +133,7 @@ public class AppBody extends AppElement {
 	}
 
 	public EditDocumentReferencesPage getEditDocumentReferencesPage() {
-		return editReferences.$editReferences(findElement(By.xpath(".//*[contains(@class, 'edit-document-references')]/../..")));
+		return editReferences.$editReferences(findElement(By.cssSelector("[style='display: block;'] .main-page-contents.search-page-contents")));
 	}
 
 	public void logout() {

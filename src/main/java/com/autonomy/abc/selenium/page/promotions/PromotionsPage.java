@@ -188,15 +188,19 @@ public class PromotionsPage extends AppElement implements AppPage {
 				promotionsList.addAll(getVisiblePromotionItems());
 
 				if (promotionSummaryForwardButton().isDisplayed()) {
-					promotionSummaryForwardToEndButton().click();
+					loadOrFadeWait();
+
+					javascriptClick(promotionSummaryForwardToEndButton());
 					loadOrFadeWait();
 					promotionsList.addAll(getVisiblePromotionItems());
 					final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
 
 					//starting at 1 because I add the results for the first page above
 					for (int i = 1; i < numberOfPages; i++) {
-						promotionSummaryBackButton().click();
-						new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(docLogo()));
+						loadOrFadeWait();
+						javascriptClick(promotionSummaryBackButton());
+						loadOrFadeWait();
+						new WebDriverWait(getDriver(), 6).until(ExpectedConditions.visibilityOf(docLogo()));
 
 						promotionsList.addAll(getVisiblePromotionItems());
 					}
@@ -224,15 +228,11 @@ public class PromotionsPage extends AppElement implements AppPage {
 	private List<String> getVisiblePromotionItems() {
 		final List<String> promotionsList = new LinkedList<>();
 
-		for (final WebElement promotionTitle : getPromotionsPage().findElements(By.cssSelector(".search-results h3 a"))) {
+		for (final WebElement promotionTitle : findElements(By.cssSelector(".query-search-results .search-results h3 a"))) {
 			promotionsList.add(promotionTitle.getText());
 		}
 
 		return promotionsList;
-	}
-
-	public WebElement getPromotionsPage() {
-		return findElement(By.xpath(".//h2[text()='Promotions']/../../.."));
 	}
 
 	public WebElement docLogo() {

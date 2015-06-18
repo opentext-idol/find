@@ -70,7 +70,8 @@ public class SearchPage extends SearchBase implements AppPage {
 
 			// Change page when we have checked all boxes on the current page, if we have more to check
 			if (i < finalNumberOfDocs - 1 && checkboxIndex == checkboxesPerPage) {
-				forwardPageButton().click();
+				loadOrFadeWait();
+				javascriptClick(forwardPageButton());
 				loadOrFadeWait();
 				waitForSearchLoadIndicatorToDisappear();
 				loadOrFadeWait();

@@ -19,15 +19,15 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
 	}
 
 	public WebElement saveButton() {
-		return findElement(By.cssSelector(".edit-document-references")).findElement(By.xpath(".//*[text() = 'Save']"));
+		return findElement(By.xpath(".//*[text() = 'Save']"));
 	}
 
 	public List<String> promotionsBucketList() {
-		return bucketList(findElement(By.cssSelector(".edit-document-references")));
+		return bucketList(this);
 	}
 
 	public List<WebElement> promotionsBucketWebElements() {
-		return findElement(By.cssSelector(".edit-document-references")).findElements(By.xpath(".//*[contains(@class, 'promotions-bucket-document')]/.."));
+		return findElements(By.xpath(".//*[contains(@class, 'promotions-bucket-document')]/.."));
 	}
 
 	public WebElement cancelButton() {

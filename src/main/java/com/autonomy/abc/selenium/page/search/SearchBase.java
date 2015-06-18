@@ -62,7 +62,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement promotionsBucket() {
-		return findElement(By.xpath(".//div[@class='promoted-items']/.."));
+		return findElement(By.cssSelector(".promotions-bucket-well"));
 	}
 
 	public void deleteDocFromWithinBucket(final String docTitle) {
@@ -98,7 +98,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	public int getCurrentPageNumber() {
 		loadOrFadeWait();
 		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(docLogo()));
-		return Integer.parseInt(findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.cssSelector("li.active span")).getText());
+		return Integer.parseInt(findElement(By.cssSelector(".pagination-nav.centre li.active span")).getText());
 	}
 
 	public boolean isBackToFirstPageButtonDisabled() {
@@ -125,7 +125,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
-		return findElement(By.cssSelector(".promoted-items")).findElement(By.xpath(".//*[contains(text(), '" + docTitle + "')]"));
+		return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + docTitle + "')]"));
 	}
 
 	public WebElement getDatabasesList() {
@@ -353,6 +353,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public WebElement allDatabasesCheckbox() {
 		return findElement(By.cssSelector(".checkbox input[data-category-id='all']"));
+	}
+
+	public boolean isErrorMessageShowing() {
+		return !findElement(By.cssSelector(".search-information")).getAttribute("class").contains("hide");
 	}
 
 	public enum Filter {

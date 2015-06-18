@@ -296,6 +296,11 @@ public class AppElement implements WebElement {
 		element.click();
 	}
 
+	public void javascriptClick(final WebElement element) {
+		final JavascriptExecutor executor = (JavascriptExecutor) driver;
+		executor.executeScript("arguments[0].click();", element);
+	}
+
 	public List<String> webElementListToStringList(final List<WebElement> list) {
 		final List<String> stringList = new ArrayList<>();
 		for (final WebElement element : list) {
