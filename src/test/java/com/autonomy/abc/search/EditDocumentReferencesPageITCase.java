@@ -155,10 +155,11 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		topNavBar.search("abode");
 		editReferences.searchResultCheckbox(1).click();
 		editReferences.searchResultCheckbox(2).click();
-		editReferences.forwardPageButton().click();
+		editReferences.javascriptClick(editReferences.forwardPageButton());
 		editReferences.searchResultCheckbox(3).click();
 		editReferences.searchResultCheckbox(4).click();
 		topNavBar.search("cottage");
+		assertEquals("Page one of new search not displayed", 1, editReferences.getCurrentPageNumber());
 		editReferences.searchResultCheckbox(5).click();
 		editReferences.searchResultCheckbox(6).click();
 		editReferences.cancelButton().click();
@@ -200,7 +201,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		promotionsPage.addMorePromotedItemsButton().click();
 		promotionsPage.loadOrFadeWait();
 		editReferences = body.getEditDocumentReferencesPage();
-		assertEquals("Wrong Promotion language", "French" ,editReferences.getSelectedLanguage());
 
 		for (int i = 0; i < 5; i++){
 			final String handle = getDriver().getWindowHandle();
@@ -237,7 +237,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 				editReferences.loadOrFadeWait();
 			}
 
-			editReferences.forwardPageButton().click();
+			editReferences.javascriptClick(editReferences.forwardPageButton());
 			editReferences.loadOrFadeWait();
 		}
 
