@@ -40,7 +40,11 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 				for (int i = 0; i <= numberOfSynonymGroups; i++) {
 					if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() > 2) {
 						findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
-						Thread.sleep(3000);
+						int count = 0;
+						while (findElements(By.cssSelector(".fa-spin")).size() > 0 && count < 10) {
+							loadOrFadeWait();
+							count++;
+						}
 					} else {
 						if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() == 2) {
 							findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
@@ -75,7 +79,11 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 			for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
 				scrollIntoView(blacklisted, getDriver());
 				blacklisted.click();
-				Thread.sleep(3000);
+				int count = 0;
+				while (findElements(By.cssSelector(".fa-spin")).size() > 0 && count < 10) {
+					loadOrFadeWait();
+					count++;
+				}
 			}
 		}
 	}

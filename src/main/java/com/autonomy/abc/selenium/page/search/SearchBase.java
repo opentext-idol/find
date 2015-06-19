@@ -416,6 +416,17 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return weights;
 	}
 
+	public Date getDateFromFilter(final WebElement filter) throws ParseException {
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		return dateFormat.parse(filter.getAttribute("value"));
+	}
+
+	public void sendDateToFilter(final Date date, final WebElement filter) {
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		filter.clear();
+		filter.sendKeys(dateFormat.format(date));
+	}
+
 	public enum Filter {
 		FILTER_BY("Filter By"),
 		RELATED_CONCEPTS("Related Concepts"),
