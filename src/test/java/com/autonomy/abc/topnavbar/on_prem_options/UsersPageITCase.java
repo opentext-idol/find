@@ -257,7 +257,7 @@ public class UsersPageITCase extends ABCTestBase {
 		LoginOnPremisePage loginPage = body.getLoginOnPremisePage();
 		loginPage.login("Norman", "n");
 		loginPage = body.getLoginOnPremisePage();
-		assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your loginName and password."));
+		assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your username and password."));
 		assertThat("URL wrong", getDriver().getCurrentUrl().contains("login/index"));
 	}
 

@@ -42,7 +42,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws MalformedURLException {
 		keywordsPage = body.getKeywordsPage();
-		createKeywordsPage = body.getCreateKeywordsPage();
 		notifications = body.getNotifications();
 	}
 
@@ -51,6 +50,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Create new keywords button is not visible", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl().contains("keywords/create"));
 		assertThat("Create new keywords button should not be visible", !keywordsPage.createNewKeywordsButton().isDisplayed());
 		assertThat("Create Synonyms button should be visible", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).isDisplayed());
@@ -66,6 +66,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testNavigateSynonymsWizard() throws InterruptedException {
 		try {
 			keywordsPage.createNewKeywordsButton().click();
+			createKeywordsPage = body.getCreateKeywordsPage();
 			assertThat("Continue button should be disabled until a keywords type is selected", keywordsPage.isAttributePresent(createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE), "disabled"));
 
 			createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
@@ -124,6 +125,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	@Test
 	public void testWizardCancelButtonsWorksAfterClickingTheNavBarToggleButton() {
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl().contains("keywords/create"));
 
 		topNavBar.sideBarToggle();
@@ -131,6 +133,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl().contains("keywords/create"));
 
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
@@ -141,6 +144,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl().contains("keywords/create"));
 
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
@@ -153,6 +157,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -161,6 +166,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -175,6 +181,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testNavigateBlacklistedWizard() throws InterruptedException {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		assertThat("Continue button should be disabled until a keywords type is selected", createKeywordsPage.isAttributePresent(createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE), "disabled"));
 
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
@@ -229,6 +236,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("dog hound canine", "English");
 
 		searchPage = body.getSearchPage();
@@ -246,6 +254,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Synonym group canine not visible", keywordsPage.getSynonymGroupSynonyms("canine").containsAll(Arrays.asList("dog", "hound")));
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("illegal", "English");
 		assertThat("Blacklisted term 'illegal' not visible", keywordsPage.getBlacklistedTerms().contains("illegal"));
 
@@ -273,6 +282,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("frog toad amphibian tadpole", "English");
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
@@ -306,6 +316,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("wine merlot shiraz bordeaux", "English");
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
@@ -313,6 +324,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("wine red scarlet burgundy", "English");
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
@@ -364,10 +376,12 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testCreateDuplicateBlacklist() throws InterruptedException {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("fish", "English");
 		assertThat("Blacklist fish not visible", keywordsPage.getBlacklistedTerms().contains("fish"));
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -382,6 +396,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Duplicate blacklist term should not be added", createKeywordsPage.countKeywords() == 0);
 		assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishBlacklistWizardButton(), "disabled"));
 
+		createKeywordsPage.addBlacklistedTextBox().clear();
 		createKeywordsPage.addBlacklistedTextBox().sendKeys("chips");
 		createKeywordsPage.addBlacklistTermsButton().click();
 		assertThat("Duplicate blacklist warning message has not disappeared", !createKeywordsPage.getText().contains("The word \"fish\" is already blacklisted"));
@@ -394,13 +409,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.BLACKLISTED).click();
 		assertThat("Cancel button redirects to wrong page", getDriver().getCurrentUrl().endsWith("keywords"));
-		assertEquals(1, keywordsPage.getBlacklistedTerms().size());
+		assertEquals("Wrong number of blacklisted terms", 1, keywordsPage.getBlacklistedTerms().size());
 	}
 
 	@Test
 	public void testWhitespaceBlacklistTermsWizard() throws InterruptedException {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -425,6 +441,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testWhitespaceSynonymsWizard() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -459,6 +476,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testQuotesInSynonymsWizard() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -499,6 +517,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testQuotesInBlacklistWizard() throws InterruptedException {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -573,6 +592,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		for (final String synonymGroup : groupsOfFiveSynonyms) {
 			keywordsPage.createNewKeywordsButton().click();
+			createKeywordsPage = body.getCreateKeywordsPage();
 			createKeywordsPage.createSynonymGroup(synonymGroup, "English");
 
 			navBar.switchPage(NavBarTabId.KEYWORDS);
@@ -585,6 +605,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("one two three", "English");
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
@@ -624,6 +645,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("one two three", "English");
 		searchPage = body.getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
@@ -646,6 +668,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("orange", "English");
 		body.waitForGritterToClear();
 		navBar.switchPage(NavBarTabId.OVERVIEW);
@@ -657,6 +680,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl().contains("keyword"));
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("piano keyboard pianoforte", "English");
 		body.waitForGritterToClear();
 
@@ -711,6 +735,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.blacklistLink().click();
 		searchPage.loadOrFadeWait();
 		assertThat("link not directing to blacklist wizard", getDriver().getCurrentUrl().contains("keywords/create"));
+		createKeywordsPage = body.getCreateKeywordsPage();
 		assertThat("link not directing to blacklist wizard", createKeywordsPage.getText().contains("Select terms to blacklist"));
 		assertEquals(1, createKeywordsPage.countKeywords());
 		assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
@@ -740,6 +765,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.createSynonymsLink().click();
 		searchPage.loadOrFadeWait();
 		assertThat("link not directing to synonym group wizard", getDriver().getCurrentUrl().contains("keywords/create"));
+		createKeywordsPage = body.getCreateKeywordsPage();
 		assertThat("link not directing to synonym group wizard", createKeywordsPage.getText().contains("Select synonyms"));
 		assertEquals(1, createKeywordsPage.countKeywords());
 		assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList().contains("rouge"));
@@ -787,6 +813,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.createSynonymsLink().click();
 		searchPage.loadOrFadeWait();
 		assertThat("link not directing to synonym group wizard", getDriver().getCurrentUrl().contains("keywords/create"));
+		createKeywordsPage = body.getCreateKeywordsPage();
 		assertThat("link not directing to synonym group wizard", createKeywordsPage.getText().contains("Select synonyms"));
 		assertEquals(3, createKeywordsPage.countKeywords());
 		assertThat("Wrong prospective blacklisted terms added", createKeywordsPage.getProspectiveKeywordsList().containsAll(Arrays.asList("lodge", "dodge", "podge")));
@@ -824,6 +851,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("honeyBee bumbleBee buzzyBee", "English");
 		final List<String> synonymListBees = Arrays.asList("honeybee", "bumblebee", "buzzybee");
 		searchPage = body.getSearchPage();
@@ -907,6 +935,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		List<String> synonymListBears = Arrays.asList("grizzly", "brownbear", "bigbear");
 		createKeywordsPage.createSynonymGroup(StringUtils.join(synonymListBears, ' '), "English");
 		searchPage = body.getSearchPage();
@@ -959,6 +988,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		searchPage.blacklistLink().click();
 		try {
+			createKeywordsPage = body.getCreateKeywordsPage();
 			createKeywordsPage.finishBlacklistWizardButton().click();
 		} catch (final NoSuchElementException e) {
 			fail("blacklist link on search page has not navigated to the wizard");
@@ -987,6 +1017,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testSynonymGroupMembersSearchWholeGroup() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		final List<String> synonymListCars = Arrays.asList("car", "auto", "motor");
 		createKeywordsPage.createSynonymGroup(StringUtils.join(synonymListCars, ' '), "Swahili");
 		searchPage = body.getSearchPage();
@@ -1004,6 +1035,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		try {
 			keywordsPage.deleteAllSynonyms();
 			keywordsPage.createNewKeywordsButton().click();
+			createKeywordsPage = body.getCreateKeywordsPage();
 			createKeywordsPage.createSynonymGroup("house home dwelling abode", "English");
 
 			searchPage = body.getSearchPage();
@@ -1037,6 +1069,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		try {
 			keywordsPage.deleteAllSynonyms();
 			keywordsPage.createNewKeywordsButton().click();
+			createKeywordsPage = body.getCreateKeywordsPage();
 			createKeywordsPage.createSynonymGroup("house home dwelling abode residence", "English");
 
 			searchPage = body.getSearchPage();
@@ -1079,6 +1112,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() throws InterruptedException {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("Baku", "Azeri");
 
 		topNavBar.search("Baku");
@@ -1091,12 +1125,15 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("Atlanta", "Georgian");
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("Tirana", "Albanian");
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("Croatia Kroatia Hrvatska", "Croatian");
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 
@@ -1119,12 +1156,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("road rue strasse", "French");
 		topNavBar.search("Korea");
 		searchPage = body.getSearchPage();
 		searchPage.selectLanguage("Chinese", getConfig().getType().getName());
 		searchPage.createSynonymsLink().click();
 		searchPage.loadOrFadeWait();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.addSynonyms("한국");
 		createKeywordsPage.finishSynonymWizardButton().click();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
@@ -1150,6 +1189,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("double duo two pair couple", "Urdu");
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
@@ -1184,6 +1224,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	@Test
 	public void testSynonymsNotCaseSensitive() {
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -1217,6 +1258,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testSpinnerPresentOnLastSynonymWhilePenultimateSynonymSpinnerPresent() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("ying yang", "Korean");
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();
@@ -1233,6 +1275,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	@Test
 	public void testBooleanTermsNotValidKeyword() {
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -1278,6 +1321,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testAddKeywordsBoxOpenClickDelete() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("бір екі үш төрт бес", "Kazakh");
 
 		navBar.switchPage(NavBarTabId.KEYWORDS);
@@ -1295,6 +1339,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testQuickSynonymDelete() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("string strong strang streng strung", "German");
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();
@@ -1334,6 +1379,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		for (final String synonyms : Arrays.asList("aa ba ca da", "ab bb cb db", "dc cc bc ac", "ca ba da aa")) {
 			keywordsPage.createNewKeywordsButton().click();
+			createKeywordsPage = body.getCreateKeywordsPage();
 			createKeywordsPage.createSynonymGroup(synonyms, "English");
 
 			final List<String> keywords = keywordsPage.getLeadSynonymsList();
@@ -1357,6 +1403,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
 
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.BLACKLIST);
@@ -1374,8 +1421,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("ea es ed ef eg eh", "English");
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 
@@ -1398,6 +1447,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage.createSynonymGroup("ea es ed ef eg eh", "English");
@@ -1419,6 +1469,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("ea es ed ef eg eh", "English");
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 
@@ -1435,6 +1486,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testAllowKeywordStringsThatContainBooleansWithinThem() throws InterruptedException {
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -1456,6 +1508,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.SYNONYMS).click();
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
@@ -1476,6 +1529,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.BLACKLISTED).click();
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.createNewKeywordsButton().click();
+		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("place holder", "English");
 		navBar.switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();

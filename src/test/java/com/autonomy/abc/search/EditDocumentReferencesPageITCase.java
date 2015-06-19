@@ -73,6 +73,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 		promotionsPage.addMorePromotedItemsButton().click();
 		promotionsPage.loadOrFadeWait();
 
+		editReferences = body.getEditDocumentReferencesPage();
 		final List<String> secondPromotionsBucketList = editReferences.promotionsBucketList();
 		assertEquals("Wrong number of promoted documents", promotionsBucketList.size(), secondPromotionsBucketList.size());
 

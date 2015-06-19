@@ -78,11 +78,11 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
-		assertThat("Promote these items button should not be visible", !searchPage.promoteTheseItemsButton().isDisplayed());
+		assertThat("Promote these items button should not be enabled", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount() == 0);
 
 		searchPage.searchResultCheckbox(1).click();
-		assertThat("Promote these items button should be visible", searchPage.promoteTheseItemsButton().isDisplayed());
+		assertThat("Promote these items button should be enabled", !searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount() == 1);
 
 		searchPage.promotionsBucketClose();
@@ -91,7 +91,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
-		assertThat("Promote these items button should not be visible", !searchPage.promoteTheseItemsButton().isDisplayed());
+		assertThat("Promote these items button should not be enabled", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount() == 0);
 	}
 
@@ -856,21 +856,39 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
 		searchPage.expandSubFilter(SearchBase.Filter.DATES);
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00");
-		searchPage.fromDateTextBox().sendKeys(Keys.ENTER);
+
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 12:00");
 		assertEquals("Dates should be equal", searchPage.fromDateTextBox().getAttribute("value"), searchPage.untilDateTextBox().getAttribute("value"));
 
 		searchPage.fromDateTextBox().clear();
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:01");
-		searchPage.fromDateTextBox().sendKeys(Keys.ENTER);
+		//clicking sort by relevance because an outside click is needed for the changes to take place
+		searchPage.sortByRelevance();
 		assertFalse("From date cannot be after the until date", searchPage.fromDateTextBox().getAttribute("value").equals("04/05/2000 12:01"));
 
 		searchPage.fromDateTextBox().clear();
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00");
 		searchPage.untilDateTextBox().clear();
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 11:59");
-		searchPage.untilDateTextBox().sendKeys(Keys.ENTER);
+		searchPage.sortByRelevance();
 		assertFalse("Until date cannot be before the from date", searchPage.untilDateTextBox().getAttribute("value").equals("04/05/2000 11:59"));
+	}
+
+	@Test
+	public void testFromDateEqualsUntilDate() throws ParseException {
+		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
+		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		searchPage.openFromDatePicker();
+		searchPage.closeFromDatePicker();
+		searchPage.openUntilDatePicker();
+		searchPage.closeUntilDatePicker();
+		assertEquals("Datepicker dates are not equal", searchPage.fromDateTextBox().getAttribute("value"), searchPage.untilDateTextBox().getAttribute("value"));
+		final Date date = searchPage.getDateFromFilter(searchPage.untilDateTextBox());
+		searchPage.sendDateToFilter(DateUtils.addMinutes(date, 1), searchPage.untilDateTextBox());
+		searchPage.sendDateToFilter(DateUtils.addMinutes(date, -1), searchPage.untilDateTextBox());
+		//clicking sort by relevance because an outside click is needed for the changes to take place
+		searchPage.sortByRelevance();
+		assertEquals("Datepicker dates are not equal", searchPage.fromDateTextBox().getAttribute("value"), searchPage.untilDateTextBox().getAttribute("value"));
 	}
 
 	@Test
