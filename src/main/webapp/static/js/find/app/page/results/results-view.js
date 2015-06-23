@@ -47,7 +47,7 @@ define([
                         data: {
                             text: this.queryModel.get('queryText'),
                             max_results: 30,
-                            summary: 'quick',
+                            summary: 'context',
                             index: this.queryModel.get('indexes'),
                             field_text: this.queryModel.getFieldTextString(),
                             min_date: this.queryModel.get('minDate'),
@@ -60,7 +60,7 @@ define([
                     data: {
                         text: this.queryModel.get('queryText'),
                         max_results: 30, // TODO maybe less?
-                        summary: 'quick',
+                        summary: 'context',
                         index: this.queryModel.get('indexes'),
                         field_text: this.queryModel.getFieldTextString(),
                         min_date: this.queryModel.get('minDate'),

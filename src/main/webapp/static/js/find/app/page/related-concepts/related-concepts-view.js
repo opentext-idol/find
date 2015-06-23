@@ -21,7 +21,7 @@ define([
                     data: {
                         text: $(e.currentTarget).html(),
                         max_results: 3,
-                        summary: 'quick',
+                        summary: 'context',
                         index: this.queryModel.get('indexes')
                     }
                 });
