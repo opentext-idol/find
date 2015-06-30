@@ -5,9 +5,16 @@
 
 require.config({
     baseUrl: 'src/main/webapp/static/js',
+    paths: {
+        'js-testing': '../lib/hp-autonomy-js-testing-utils/src/js',
+        'mock': '../../../../test/js/mock'
+    },
     map: {
         '*': {
             'find/lib/backbone/backbone-extensions': 'backbone'
+        },
+        'find/app/page/indexes/indexes-view': {
+            'find/app/model/indexes-collection': 'mock/model/indexes-collection'
         }
     }
 });
