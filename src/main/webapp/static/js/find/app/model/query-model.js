@@ -5,6 +5,10 @@ define([
     var EventsProxy = function(queryModel) {
         this.model = queryModel;
 
+        this.listenTo(this.model, 'change:queryText change:indexes', function() {
+            this.model.set('fieldText', null);
+        });
+
         this.listenTo(this.model, 'all', function(event) {
             if (event !== 'change' || (this.model.get('queryText') && !_.isEmpty(this.model.get('indexes')))) {
                 this.trigger.apply(this, arguments);
