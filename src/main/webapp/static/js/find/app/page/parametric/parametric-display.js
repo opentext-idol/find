@@ -17,6 +17,7 @@ define([
 
         initialize: function(options) {
             this.collection = options.parametricCollection;
+            this.queryModel = options.queryModel;
 
             this.fieldNamesListView = new ListView({
                 className: 'unstyled',
@@ -41,6 +42,12 @@ define([
             }, this));
 
             this.listenTo(this.fieldNamesListView, 'item:changeFieldText', _.debounce(this.changeFieldText, DEBOUNCE_WAIT_MILLISECONDS));
+
+            this.listenTo(this.queryModel, 'change:fieldText', function(model, value) {
+                if (!value) {
+                    this.clearFieldText();
+                }
+            })
         },
 
         render: function() {

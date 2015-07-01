@@ -9,8 +9,9 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/view/audio-player.html',
     'moment',
+    'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, audioPlayerTemplate, moment) {
+], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, audioPlayerTemplate, moment, i18n) {
 
     return Backbone.View.extend({
 

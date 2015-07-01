@@ -17,6 +17,7 @@ define([
             });
 
             this.view = new ParametricDisplay({
+                queryModel: this.queryModel,
                 parametricCollection: this.collection
             });
 

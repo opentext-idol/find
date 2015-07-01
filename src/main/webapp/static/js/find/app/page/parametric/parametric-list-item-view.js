@@ -54,7 +54,7 @@ define([
         },
 
         getChecked: function() {
-            return this.checked;
+            return _.clone(this.checked);
         }
 
     });
