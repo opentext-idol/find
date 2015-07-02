@@ -30,22 +30,23 @@ public class DocumentsServiceImpl implements DocumentsService {
     private QueryTextIndexService queryTextIndexService;
 
     @Override
-    public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final DateTime minDate, final DateTime maxDate) throws IodErrorException {
-        return queryTextIndex(text, maxResults, summary, indexes, fieldText, minDate, maxDate, false);
+    public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final Sort sort, final DateTime minDate, final DateTime maxDate) throws IodErrorException {
+        return queryTextIndex(text, maxResults, summary, indexes, fieldText, sort, minDate, maxDate, false);
     }
 
     @Override
-    public Documents queryTextIndexForPromotions(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final DateTime minDate, final DateTime maxDate) throws IodErrorException {
-        return queryTextIndex(text, maxResults, summary, indexes, fieldText, minDate, maxDate, true);
+    public Documents queryTextIndexForPromotions(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText , final Sort sort, final DateTime minDate, final DateTime maxDate) throws IodErrorException {
+        return queryTextIndex(text, maxResults, summary, indexes, fieldText, sort, minDate, maxDate, true);
     }
 
-    private Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final DateTime minDate, final DateTime maxDate, final boolean doPromotions) throws IodErrorException {
+    private Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<String> indexes, final String fieldText, final Sort sort, final DateTime minDate, final DateTime maxDate, final boolean doPromotions) throws IodErrorException {
         final Map<String, Object> params = new QueryRequestBuilder()
                 .setAbsoluteMaxResults(maxResults)
                 .setSummary(summary)
                 .setIndexes(indexes)
                 .setFieldText(fieldText)
                 .setQueryProfile(queryProfileService.getQueryProfile())
+                .setSort(sort)
                 .setMinDate(minDate)
                 .setMaxDate(maxDate)
                 .setPromotions(doPromotions)

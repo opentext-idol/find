@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.iod.client.api.search.Documents;
+import com.hp.autonomy.iod.client.api.search.Sort;
 import com.hp.autonomy.iod.client.api.search.Summary;
 import com.hp.autonomy.iod.client.error.IodErrorException;
 import org.joda.time.DateTime;
@@ -34,10 +35,11 @@ public class DocumentsController {
         @RequestParam("summary") final Summary summary,
         @RequestParam("index") final List<String> index,
         @RequestParam(value = "field_text", defaultValue = "") final String fieldText,
+        @RequestParam(value = "sort", required = false) final Sort sort,
         @RequestParam(value = "min_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
         @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate
     ) throws IodErrorException {
-        return documentsService.queryTextIndex(text, maxResults, summary, index, fieldText, minDate, maxDate);
+        return documentsService.queryTextIndex(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
     }
 
     @RequestMapping(value="promotions", method = RequestMethod.GET)
@@ -48,9 +50,10 @@ public class DocumentsController {
             @RequestParam("summary") final Summary summary,
             @RequestParam("index") final List<String> index,
             @RequestParam("field_text") final String fieldText,
+            @RequestParam(value = "sort", required = false) final Sort sort,
             @RequestParam(value = "min_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate
     ) throws IodErrorException {
-        return documentsService.queryTextIndexForPromotions(text, maxResults, summary, index, fieldText, minDate, maxDate);
+        return documentsService.queryTextIndexForPromotions(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
     }
 }
