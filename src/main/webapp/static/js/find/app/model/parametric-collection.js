@@ -2,6 +2,12 @@ define([
     'backbone'
 ], function(Backbone) {
 
+    var prettifyFieldName = function(name) {
+        return _.map(name.split("_"), function(word) {
+            return word[0].toUpperCase() + word.slice(1);
+        }).join(" ");
+    };
+
     return Backbone.Collection.extend({
         url: '../api/parametric',
 
@@ -20,6 +26,7 @@ define([
             parse: function(response, options) {
                 return {
                     name: response.name,
+                    displayName: prettifyFieldName(response.name),
                     values: _.sortBy(response.values, function (value) {
                         return -1 * value.count;
                     })
