@@ -13,8 +13,8 @@ import java.util.List;
 
 public interface DocumentsService {
 
-    Documents queryTextIndex(String text, int maxResults, Summary summary, List<String> indexes, String fieldText, DateTime minDate, DateTime maxDate) throws IodErrorException;
+    Documents queryTextIndex(String text, int maxResults, Summary summary, List<String> indexes, String fieldText, Sort sort, DateTime minDate, DateTime maxDate) throws IodErrorException;
 
-    Documents queryTextIndexForPromotions(String text, int maxResults, Summary summary, List<String> indexes, String fieldText, DateTime minDate, DateTime maxDate) throws IodErrorException;
+    Documents queryTextIndexForPromotions(String text, int maxResults, Summary summary, List<String> indexes, String fieldText, Sort sort, DateTime minDate, DateTime maxDate) throws IodErrorException;
 
 }

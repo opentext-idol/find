@@ -52,7 +52,8 @@ define([
                             index: this.queryModel.get('indexes'),
                             field_text: this.queryModel.getFieldTextString(),
                             min_date: this.queryModel.get('minDate'),
-                            max_date: this.queryModel.get('maxDate')
+                            max_date: this.queryModel.get('maxDate'),
+                            sort: this.queryModel.get('sort')
                         }
                     }, this);
                 }
@@ -65,7 +66,8 @@ define([
                         index: this.queryModel.get('indexes'),
                         field_text: this.queryModel.getFieldTextString(),
                         min_date: this.queryModel.get('minDate'),
-                        max_date: this.queryModel.get('maxDate')
+                        max_date: this.queryModel.get('maxDate'),
+                        sort: this.queryModel.get('sort')
                     }
                 }, this);
             });
