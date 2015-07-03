@@ -8,12 +8,13 @@ define([
     'find/app/page/date/dates-filter-view',
     'find/app/page/results/results-view',
     'find/app/page/related-concepts/related-concepts-view',
+    'find/app/page/sort/sort-view',
     'find/app/util/collapsible',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/service-view.html',
     'text!find/templates/app/util/filter-header.html'
 ], function(Backbone, $, _, EntityCollection, ParametricCollection,
-            ParametricController, DateView, ResultsView, RelatedConceptsView, Collapsible, i18n, template, filterHeader) {
+            ParametricController, DateView, ResultsView, RelatedConceptsView, SortView, Collapsible, i18n, template, filterHeader) {
 
     var filterHeaderTemplate = _.template(filterHeader);
 
@@ -64,6 +65,10 @@ define([
                 entityCollection: this.entityCollection
             });
 
+            this.sortView = new SortView({
+                queryModel: this.queryModel
+            });
+
             // Collapse wrappers
 
             this.parametricViewWrapper = collapseView('parametric.title', 'parametric-filter', this.parametricController.view);
@@ -78,6 +83,8 @@ define([
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
 
             this.relatedConceptsViewWrapper.render();
+
+            this.sortView.setElement(this.$('.sort-container')).render();
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
 
