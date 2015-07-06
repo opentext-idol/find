@@ -14,9 +14,10 @@ import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -300,55 +301,55 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testSearchParentheses() {
 		topNavBar.search("(");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("Bracket Mismatch in the query"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("Bracket Mismatch in the query"));
 
 		topNavBar.search(")");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("Bracket Mismatch in the query"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("Bracket Mismatch in the query"));
 
 		topNavBar.search("()");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("No valid query text supplied"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("No valid query text supplied"));
 
 		topNavBar.search(") (");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("Terminating boolean operator"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("Terminating boolean operator"));
 
 		topNavBar.search(")war");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("Bracket Mismatch in the query"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("Bracket Mismatch in the query"));
 	}
 
 	@Test
 	public void testSearchQuotationMarks() {
 		topNavBar.search("\"");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("Unclosed phrase"));
 
 		topNavBar.search("\"\"");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("No valid query text supplied"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("No valid query text supplied"));
 
 		topNavBar.search("\" \"");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("No valid query text supplied"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("No valid query text supplied"));
 
 		topNavBar.search("\" \"");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("No valid query text supplied"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("No valid query text supplied"));
 
 		topNavBar.search("\"word");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("Unclosed phrase"));
 
 		topNavBar.search("\" word");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("Unclosed phrase"));
 
 		topNavBar.search("\" wo\"rd\"");
-		assertThat("No error message shown", searchPage.getText().contains("An error occurred executing the search action"));
-		assertThat("Incorrect error message shown", searchPage.getText().contains("Unclosed phrase"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("An error occurred executing the search action"));
+		assertThat("Correct error message not shown", searchPage.getText().contains("Unclosed phrase"));
 	}
 
 	@Test
@@ -637,7 +638,7 @@ public class SearchPageITCase extends ABCTestBase {
 		int initialSearchCount = searchPage.countSearchResults();
 		topNavBar.search("leg[2:2]");
 		searchPage.loadOrFadeWait();
-		assertTrue(initialSearchCount > searchPage.countSearchResults());
+		assertTrue("Failed with the following search term: leg[2:2]  Search count should have reduced on initial search 'leg'", initialSearchCount > searchPage.countSearchResults());
 
 		topNavBar.search("red");
 		searchPage.loadOrFadeWait();
@@ -645,26 +646,33 @@ public class SearchPageITCase extends ABCTestBase {
 		topNavBar.search("red star");
 		searchPage.loadOrFadeWait();
 		final int secondSearchCount = searchPage.countSearchResults();
-		assertTrue(initialSearchCount < secondSearchCount);
+		assertTrue("Failed with the following search term: red star  Search count should have increased on initial search: red", initialSearchCount < secondSearchCount);
 
 		topNavBar.search("\"red star\"");
 		searchPage.loadOrFadeWait();
 		final int thirdSearchCount = searchPage.countSearchResults();
-		assertTrue(secondSearchCount > thirdSearchCount);
+		assertTrue("Failed with the following search term: '\"red star\"'  Search count should have reduced on initial search: red star", secondSearchCount > thirdSearchCount);
 
 		topNavBar.search("red NOT star");
 		searchPage.loadOrFadeWait();
-		assertTrue(initialSearchCount > searchPage.countSearchResults());
+		final int redNotStar = searchPage.countSearchResults();
+		assertTrue("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red", initialSearchCount > redNotStar);
+
+		topNavBar.search("star NOT red");
+		searchPage.loadOrFadeWait();
+		final int starNotRed = searchPage.countSearchResults();
+		assertTrue("Failed with the following search term: star NOT red  Search count should have reduced on initial search: red", initialSearchCount > starNotRed);
 
 		topNavBar.search("red OR star");
 		searchPage.loadOrFadeWait();
-		assertEquals(secondSearchCount, searchPage.countSearchResults());
+		assertEquals("Failed with the following search term: red OR star  Search count should be the same as initial search: red star", secondSearchCount, searchPage.countSearchResults());
 
 		topNavBar.search("red AND star");
 		searchPage.loadOrFadeWait();
 		final int fourthSearchCount = searchPage.countSearchResults();
-		assertTrue(secondSearchCount > fourthSearchCount);
-		assertTrue(thirdSearchCount < fourthSearchCount);
+		assertTrue("Failed with the following search term: red AND star  Search count should have reduced on initial search: red star", secondSearchCount > fourthSearchCount);
+		assertTrue("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"", thirdSearchCount < fourthSearchCount);
+		assertEquals("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star", fourthSearchCount + redNotStar + starNotRed, secondSearchCount);
 	}
 
 	@Test
@@ -787,7 +795,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testAllowSearchOfKeywordStringsThatContainBooleansWithinThem() {
+	public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
 		final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
 		for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
 			topNavBar.search(hiddenBooleansProximity);
@@ -798,8 +806,8 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testFromDateFilter() throws ParseException {
-		topNavBar.search("Dog");
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+		topNavBar.search("Dog");
 		final String firstResult = searchPage.getSearchResultTitle(1);
 		final Date date = searchPage.getDateFromResult(1);
 		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
@@ -825,15 +833,23 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testUntilDateFilter() throws ParseException {
-		topNavBar.search("Dog");
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+		topNavBar.search("Dog");
 		final String firstResult = searchPage.getSearchResultTitle(1);
 		final Date date = searchPage.getDateFromResult(1);
 		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
 		searchPage.expandSubFilter(SearchBase.Filter.DATES);
 		searchPage.openUntilDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
-		datePicker.calendarDateSelect(date);
+		try {
+			datePicker.calendarDateSelect(date);
+		} catch (final ElementNotVisibleException e) {
+			for (final String label : searchPage.filterLabelList()) {
+				assertFalse("A 'From' date filter has been applied while only an 'Until' filter was selected by the user", label.contains("From: "));
+			}
+			assertFalse("A 'From' date filter has been applied while only an 'Until' filter was selected by the user", searchPage.fromDateTextBox().getAttribute("value").isEmpty());
+			throw e;
+		}
 		searchPage.closeUntilDatePicker();
 		assertEquals("Document should still be displayed", firstResult, searchPage.getSearchResultTitle(1));
 
@@ -981,7 +997,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.forwardToLastPageButton().click();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		final int currentPage = searchPage.getCurrentPageNumber();
-		final String docTitle = searchPage.getSearchResultTitle(4);
+		final String docTitle = searchPage.getSearchResultTitle(1);
 		final String url = getDriver().getCurrentUrl();
 		assertTrue("Url and current page number are out of sync", url.contains("nice/" + currentPage));
 		final String illegitimateUrl = url.replace("nice/" + currentPage, "nice/" + (currentPage + 5));
@@ -990,7 +1006,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertEquals("Page number should not have changed", currentPage, searchPage.getCurrentPageNumber());
 		assertEquals("Url should have reverted to original url", url, getDriver().getCurrentUrl());
 		assertFalse("Error message should not be showing", searchPage.isErrorMessageShowing());
-		assertEquals("Search results have changed on last page", docTitle, searchPage.getSearchResultTitle(4));
+		assertEquals("Search results have changed on last page", docTitle, searchPage.getSearchResultTitle(1));
 	}
 
 	@Test

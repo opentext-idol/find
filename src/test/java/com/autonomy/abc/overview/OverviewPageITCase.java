@@ -146,15 +146,15 @@ public class OverviewPageITCase extends ABCTestBase{
 			assertThat("Have not linked to synonyms wizard", createNewKeywordsPage.getText().contains("Select synonyms"));
 			assertEquals(1, createNewKeywordsPage.countKeywords());
 			assertThat("incorrect synonym in prospective keywords list", createNewKeywordsPage.getProspectiveKeywordsList().contains(linkText));
-			assertThat("finish button should be disabled", createNewKeywordsPage.isAttributePresent(createNewKeywordsPage.finishSynonymWizardButton(), "disabled"));
+			assertThat("finish button should be disabled", createNewKeywordsPage.isAttributePresent(createNewKeywordsPage.finishWizardButton(), "disabled"));
 
 			extraSynonym += "z";
 			createNewKeywordsPage.addSynonyms(extraSynonym);
 			assertEquals(2, createNewKeywordsPage.countKeywords());
 			assertThat("incorrect synonym in prospective keywords list", createNewKeywordsPage.getProspectiveKeywordsList().containsAll(Arrays.asList(linkText, extraSynonym)));
-			assertThat("finish button should be enabled", !createNewKeywordsPage.isAttributePresent(createNewKeywordsPage.finishSynonymWizardButton(), "disabled"));
+			assertThat("finish button should be enabled", !createNewKeywordsPage.isAttributePresent(createNewKeywordsPage.finishWizardButton(), "disabled"));
 
-			createNewKeywordsPage.finishSynonymWizardButton().click();
+			createNewKeywordsPage.finishWizardButton().click();
 
 			final SearchPage searchPage = body.getSearchPage();
 			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));

@@ -6,6 +6,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.promotions.CreateNewDynamicPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.junit.Before;
@@ -55,12 +56,20 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("promotions/create-dynamic/"));
 		assertThat("Wrong stage of wizard", dynamicPromotionsPage.spotlightType("Hotwire").isDisplayed());
-		assertThat("Continue button should be disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.continueButton("spotlightType"), "disabled"));
+		assertThat("Wrong wizard step displayed, wrong title", dynamicPromotionsPage.getCurrentStepTitle().contains("Spotlight type"));
+		assertThat("Continue button should be disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE), "disabled"));
 
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
+
+		assertThat("Wrong wizard step displayed, dial not present", dynamicPromotionsPage.dial().isDisplayed());
+		assertThat("Wrong wizard step displayed, wrong title", dynamicPromotionsPage.getCurrentStepTitle().contains("Results number"));
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+
 		assertThat("Wrong wizard step", dynamicPromotionsPage.triggerAddButton().isDisplayed());
+		assertThat("Wrong wizard step displayed, wrong title", dynamicPromotionsPage.getCurrentStepTitle().contains("Trigger words"));
 		assertThat("Finish button should be disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
 		assertThat("Trigger add button should be disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
 		assertEquals(dynamicPromotionsPage.getSearchTriggersList().size(), 0);
@@ -107,13 +116,15 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
 		assertThat("Wizard has not progressed to Select the position", dynamicPromotionsPage.getText().contains("Select Promotion Triggers"));
 		assertThat("Trigger add button is not disabled when text box is empty", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
 		assertThat("Finish button is not disabled when there are no match terms", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
-		assertThat("Cancel button is not enabled when there are no match terms", !dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.cancelButton("triggers"), "disabled"));
+		assertThat("Cancel button is not enabled when there are no match terms", !dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER), "disabled"));
 
 		dynamicPromotionsPage.addSearchTrigger("animal");
 		assertThat("Finish button is not enabled when a trigger is added", !dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
@@ -133,7 +144,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		assertThat("bushy search trigger not present", dynamicPromotionsPage.getSearchTriggersList().contains("bushy"));
 		assertThat("tail search trigger not removed", !dynamicPromotionsPage.getSearchTriggersList().contains("tail"));
 
-		dynamicPromotionsPage.cancelButton("triggers").click();
+		dynamicPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER).click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("create"));
 	}
 
@@ -146,7 +157,9 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
 		assertThat("Trigger add button is not disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
@@ -176,7 +189,9 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
 		assertThat("Trigger add button is not disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
@@ -213,7 +228,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
 		dynamicPromotionsPage.addSearchTrigger("France");
@@ -249,7 +264,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
 		final String searchTrigger = "<h1>Hey</h1>";
@@ -268,7 +283,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		topNavBar.sideBarToggle();
-		dynamicPromotionsPage.cancelButton("spotlightType").click();
+		dynamicPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
 
 		searchPage.loadOrFadeWait();
@@ -277,10 +292,24 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 		topNavBar.sideBarToggle();
-		dynamicPromotionsPage.cancelButton("triggers").click();
+		dynamicPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
+		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
+
+		searchPage.loadOrFadeWait();
+		assertFalse("\"undefined\" returned as query text when wizard cancelled", searchPage.searchTitle().getText().contains("undefined"));
+		searchPage.promoteThisQueryButton().click();
+		searchPage.loadOrFadeWait();
+		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage.spotlightType("Top Promotions").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+		topNavBar.sideBarToggle();
+		dynamicPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER).click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
 	}
 
@@ -302,6 +331,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 	private void addDynamicPromotion(final String searchTerm, final String language, final String promotionType, final String trigger) {
 		topNavBar.search(searchTerm);
 		searchPage.selectLanguage(language, getConfig().getType().getName());
+		searchPage.waitForSearchLoadIndicatorToDisappear();
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
 
 		final String firstDocTitle = searchPage.getSearchResultTitle(1);
@@ -310,10 +340,12 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("promotions/create-dynamic/"));
 		assertThat("Wrong stage of wizard", dynamicPromotionsPage.spotlightType(promotionType).isDisplayed());
-		assertThat("Continue button should be disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.continueButton("spotlightType"), "disabled"));
+		assertThat("Continue button should be disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE), "disabled"));
 
 		dynamicPromotionsPage.spotlightType(promotionType).click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong wizard step", dynamicPromotionsPage.triggerAddButton().isDisplayed());
 		assertThat("Finish button should be disabled", dynamicPromotionsPage.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
@@ -349,7 +381,9 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Sponsored").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
 		dynamicPromotionsPage.addSearchTrigger("cat");
@@ -371,7 +405,9 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Hotwire").click();
-		dynamicPromotionsPage.continueButton("spotlightType").click();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
+		dynamicPromotionsPage.loadOrFadeWait();
+		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
 		dynamicPromotionsPage.loadOrFadeWait();
 
 		dynamicPromotionsPage.addSearchTrigger("cat");

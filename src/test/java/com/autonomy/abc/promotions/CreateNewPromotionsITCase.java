@@ -6,6 +6,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.NotificationsDropDown;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -52,9 +53,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
 	@Test
 	public void testAddPinToPosition() {
+		assertThat("Wrong wizard step displayed, wrong title", createPromotionsPage.getCurrentStepTitle().contains("Promotion type"));
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
+		assertThat("Wrong wizard step displayed, wrong title", createPromotionsPage.getCurrentStepTitle().contains("Promotion details"));
 		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
 		assertThat("Minus button is not disabled when position equals 1", createPromotionsPage.isAttributePresent(createPromotionsPage.selectPositionMinusButton(), "disabled"));
 
@@ -63,8 +66,9 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		assertThat("Pin to position value not set to 2", createPromotionsPage.positionInputValue() == 2);
 		assertThat("Minus button is not enabled when position equals 2", !createPromotionsPage.isAttributePresent(createPromotionsPage.selectPositionMinusButton(), "disabled"));
 
-		createPromotionsPage.continueButton("pinToPosition").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
+		assertThat("Wrong wizard step displayed, wrong title", createPromotionsPage.getCurrentStepTitle().contains("Promotion triggers"));
 		assertThat("Wizard has not progressed to Select the position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
 		assertThat("Promote button is not disabled when no triggers are added", createPromotionsPage.isAttributePresent(createPromotionsPage.finishButton(), "disabled"));
 
@@ -87,12 +91,12 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 	@Test
 	public void testPinToPositionSetPosition() {
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
 
 		createPromotionsPage.selectPositionPlusButton().click();
 		assertThat("Pin to position value not set to 2", createPromotionsPage.positionInputValue() == 2);
-		assertThat("Minus button is not enabled when position equals 2", !createPromotionsPage.continueButton("pinToPosition").getAttribute("class").contains("disabled"));
+		assertThat("Minus button is not enabled when position equals 2", !createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).getAttribute("class").contains("disabled"));
 		assertThat("Continue button is not enabled when position equals 2", !createPromotionsPage.selectPositionMinusButton().getAttribute("class").contains("disabled"));
 
 		createPromotionsPage.selectPositionPlusButton().click();
@@ -114,7 +118,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 			//try catch because chrome struggles to focus on this element
 		}
 
-		createPromotionsPage.cancelButton("pinToPosition").click();
+		createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("create"));
 	}
 
@@ -123,7 +127,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		createPromotionsPage.navigateToTriggers();
 		assertThat("Wizard has not progressed to Select the position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
 		assertThat("Trigger add button is not disabled when text box is empty", createPromotionsPage.isAttributePresent(createPromotionsPage.triggerAddButton(), "disabled"));
-		assertThat("Trigger add button is not disabled when text box is empty", !createPromotionsPage.isAttributePresent(createPromotionsPage.cancelButton("trigger"), "disabled"));
+		assertThat("Trigger add button is not disabled when text box is empty", !createPromotionsPage.isAttributePresent(createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER), "disabled"));
 
 		createPromotionsPage.addSearchTrigger("animal");
 		assertThat("Promote button is not enabled when a trigger is added", !createPromotionsPage.isAttributePresent(createPromotionsPage.finishButton(), "disabled"));
@@ -143,7 +147,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		assertThat("bushy search trigger not present", createPromotionsPage.getSearchTriggersList().contains("bushy"));
 		assertThat("tail search trigger not removed", !createPromotionsPage.getSearchTriggersList().contains("tail"));
 
-		createPromotionsPage.cancelButton("trigger").click();
+		createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER).click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("create"));
 	}
 
@@ -233,7 +237,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 	@Test
 	public void testNonNumericEntryInPinToPosition() {
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
 		createPromotionsPage.loadOrFadeWait();
 		assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
@@ -255,7 +259,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 			createPromotionsPage.pinToPositionInput().sendKeys("bad");
 			assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 2);
 
-			createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton("pinToPosition"));
+			createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE));
 			createPromotionsPage.loadOrFadeWait();
 			assertThat("Wizard has not progressed with a legitimate position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
 		} catch (final WebDriverException e) {
@@ -303,19 +307,22 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 	}
 
 	private void addSpotlightPromotion(final String spotlightType, final String searchTrigger) {
+		assertThat("Wrong wizard step displayed, wrong title", createPromotionsPage.getCurrentStepTitle().contains("Promotion type"));
 		createPromotionsPage.promotionType("SPOTLIGHT").click();
 		createPromotionsPage.loadOrFadeWait();
-		assertThat("Continue button not enabled", !createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton("type"), "disabled"));
+		assertThat("Continue button not enabled", !createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE), "disabled"));
 
-		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
-		assertThat("Continue button not disabled", createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton("spotlightType"), "disabled"));
+		assertThat("Wrong wizard step displayed, wrong title", createPromotionsPage.getCurrentStepTitle().contains("Promotion details"));
+		assertThat("Continue button not disabled", createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE), "disabled"));
 
 		createPromotionsPage.spotlightType(spotlightType).click();
-		assertThat("Continue button not enabled", !createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton("spotlightType"), "disabled"));
+		assertThat("Continue button not enabled", !createPromotionsPage.isAttributePresent(createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE), "disabled"));
 
-		createPromotionsPage.continueButton("spotlightType").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
+		assertThat("Wrong wizard step displayed, wrong title", createPromotionsPage.getCurrentStepTitle().contains("Promotion triggers"));
 		assertThat("Promote button not disabled", createPromotionsPage.isAttributePresent(createPromotionsPage.finishButton(), "disabled"));
 
 		createPromotionsPage.addSearchTrigger(searchTrigger);
@@ -358,68 +365,72 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		assertThat("Incorrect URL", getDriver().getCurrentUrl().endsWith("promotions/create"));
 
 		topNavBar.sideBarToggle();
-		createPromotionsPage.cancelButton("type").click();
+		createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
 		assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
 
 		searchPage.promoteTheseItemsButton().click();
+		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.promotionType("SPOTLIGHT").click();
-		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong section of wizard", createPromotionsPage.spotlightType("Sponsored").isDisplayed());
 
 		topNavBar.sideBarToggle();
-		createPromotionsPage.cancelButton("spotlightType").click();
+		createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
 		assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
 
 		for (final String spotlightType : Arrays.asList("Sponsored", "Hotwire", "Top Promotions")) {
 			searchPage.promoteTheseItemsButton().click();
+			createPromotionsPage = body.getCreateNewPromotionsPage();
 			createPromotionsPage.promotionType("SPOTLIGHT").click();
-			createPromotionsPage.continueButton("type").click();
+			createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 			createPromotionsPage.loadOrFadeWait();
 			assertThat("Wrong section of wizard", createPromotionsPage.spotlightType(spotlightType).isDisplayed());
 
 			createPromotionsPage.spotlightType(spotlightType).click();
-			createPromotionsPage.continueButton("spotlightType").click();
+			createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 			createPromotionsPage.loadOrFadeWait();
 			assertThat("Wizard has not navigated forward", createPromotionsPage.triggerAddButton().isDisplayed());
 			topNavBar.sideBarToggle();
-			createPromotionsPage.cancelButton("trigger").click();
+			createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER).click();
 			assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
 			assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
 		}
 
 		searchPage.promoteTheseItemsButton().click();
+		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong section of wizard", createPromotionsPage.selectPositionPlusButton().isDisplayed());
 
 		topNavBar.sideBarToggle();
-		createPromotionsPage.cancelButton("pinToPosition").click();
+		createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
 		assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
 
 		searchPage.loadOrFadeWait();
 		searchPage.promoteTheseItemsButton().click();
+		createPromotionsPage = body.getCreateNewPromotionsPage();
 		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-		createPromotionsPage.continueButton("type").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
 		createPromotionsPage.selectPositionPlusButton().click();
-		createPromotionsPage.continueButton("pinToPosition").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		createPromotionsPage.loadOrFadeWait();
 		assertThat("Wizard has not navigated forward", createPromotionsPage.triggerAddButton().isDisplayed());
 
 		topNavBar.sideBarToggle();
-		createPromotionsPage.cancelButton("trigger").click();
+		createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER).click();
 		assertThat("Cancel button does not work after navbar toggle", getDriver().getCurrentUrl().contains("search/modified"));
 		assertThat("Items have not remained in the bucket", searchPage.promotedItemsCount() == 1);
 	}
 
 	@Test
 	public void testNotificationsForPromotions() throws InterruptedException {
-		createPromotionsPage.cancelButton("type").click();
+		createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.promotionsBucketClose();
 

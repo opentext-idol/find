@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -22,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.*;
+
+import static org.junit.Assert.fail;
 
 
 @Ignore
@@ -169,7 +172,12 @@ public abstract class ABCTestBase {
 		ModalView.getVisibleModalView(driver).findElement(By.cssSelector(".js-apikey-input")).sendKeys(apiKey);
 		wait.until(ExpectedConditions.visibilityOf(ModalView.getVisibleModalView(driver).findElement(By.id("apikey_submit"))));
 		ModalView.getVisibleModalView(driver).findElement(By.id("apikey_submit")).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top-blue")));
+
+		try {
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top-blue")));
+		} catch (final TimeoutException t) {
+			fail("Application has not loaded in 40 seconds");
+		}
 	}
 }
 
