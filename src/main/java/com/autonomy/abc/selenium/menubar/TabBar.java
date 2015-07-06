@@ -25,6 +25,7 @@ public abstract class TabBar extends AppElement {
 	public void switchPage(final NavBarTabId id) {
 		final Tab tab = getTab(id);
 		tab.click();
+		loadOrFadeWait();
 	}
 
 }

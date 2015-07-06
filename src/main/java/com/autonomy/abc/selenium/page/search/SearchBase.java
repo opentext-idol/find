@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.AppElement;
+import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.AppPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
 import org.openqa.selenium.*;
@@ -151,6 +152,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 				}
 			}
 		}
+		new AppBody(getDriver()).getSearchPage().waitForSearchLoadIndicatorToDisappear();
 	}
 
 	public void selectAllIndexes() {
@@ -271,10 +273,12 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear() {
+		int count = 0;
 		try {
-			while (findElement(By.cssSelector(".search-information h3")).getText().contains("Loading...")){
+			while (findElement(By.cssSelector(".search-information h3")).getText().contains("Loading...") && count < 50){
 				System.out.println("Loading");
 				loadOrFadeWait();
+				count++;
 			}
 		} catch (final StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
 			System.out.println("No Loading");
@@ -425,6 +429,18 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		filter.clear();
 		filter.sendKeys(dateFormat.format(date));
+	}
+
+	public List<String> filterLabelList() {
+		return webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
+	}
+
+	public List<String> getLeadSynonymsList() {
+		final List<String> leadSynonyms = new ArrayList<>();
+		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {
+			leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());
+		}
+		return leadSynonyms;
 	}
 
 	public enum Filter {

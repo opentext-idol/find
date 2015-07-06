@@ -56,7 +56,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		synonymGroupTextBox(synonymGroupLead).clear();
 		synonymGroupTextBox(synonymGroupLead).sendKeys(synonym);
 		synonymGroupTickButton(synonymGroupLead).click();
-		loadOrFadeWait();
+		waitForRefreshIconToDisappear();
 	}
 
 	public WebElement synonymGroupPlusButton(final String synonymGroupLead) {
@@ -73,7 +73,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 
 	public void deleteSynonym(final String synonym, final String synonymGroupLead) throws InterruptedException {
 		getSynonymIcon(synonym, synonymGroupLead).click();
-		Thread.sleep(3000);
+		waitForRefreshIconToDisappear();
 	}
 
 	public List<String> getSynonymGroupSynonyms(final String leadSynonym) {
@@ -96,7 +96,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	}
 
 	public WebElement getSynonymIcon(final String synonym, final String synonymLead) {
-		return synonymGroup(synonymLead).findElement(By.xpath(".//span[contains(text(), '" + synonym + "')]/../i"));
+		return synonymGroup(synonymLead).findElement(By.xpath(".//span[contains(text(), '" + synonym + "')]/..")).findElement(By.cssSelector("i"));
 	}
 
 	public boolean areAnyKeywordsDisabled() {
@@ -105,5 +105,13 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 
 	public int countDisabledKeywords() {
 		return findElements(By.cssSelector(".keywords-list-container .disabled")).size();
+	}
+
+	public void waitForRefreshIconToDisappear() {
+		int count = 0;
+		while (findElements(By.cssSelector(".fa-refresh")).size() > 0 && count < 30) {
+			loadOrFadeWait();
+			count++;
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.menubar.TopNavBar;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class CreateNewDynamicPromotionsPage extends CreateNewPromotionsBase {
@@ -16,11 +17,17 @@ public class CreateNewDynamicPromotionsPage extends CreateNewPromotionsBase {
 
 	public void createDynamicPromotion(final String type, final String trigger) {
 		spotlightType(type).click();
-		continueButton("spotlightType").click();
+		continueButton(WizardStep.PROMOTION_TYPE).click();
+		loadOrFadeWait();
+		continueButton(WizardStep.RESULTS).click();
 		loadOrFadeWait();
 		addSearchTrigger(trigger);
 		finishButton().click();
 		loadOrFadeWait();
+	}
+
+	public WebElement dial() {
+		return findElement(By.cssSelector(".dial"));
 	}
 
 	public static class Placeholder {

@@ -27,10 +27,10 @@ public class AppBody extends AppElement {
 
 	private final AbstractWebElementPlaceholder<OverviewPage> overviewPage;
 	private final AbstractWebElementPlaceholder<PromotionsPage> promotionsPage;
-	private final AbstractWebElementPlaceholder<KeywordsPage> keywordsPage;
 	private final AbstractWebElementPlaceholder<AboutPage> aboutPage;
 	private final AbstractWebElementPlaceholder<UsersPage> usersPage;
 	private final AbstractWebElementPlaceholder<SettingsPage> settingsPage;
+	private final KeywordsPage.Placeholder keywordsPage;
 	private final SearchPage.Placeholder searchPage;
 	private final LoginOnPremisePage.Placeholder loginOnPremPage;
 	private final CreateNewPromotionsPage.Placeholder createPromotionsPage;
@@ -51,7 +51,6 @@ public class AppBody extends AppElement {
 
 		this.overviewPage = new OverviewPage.Placeholder(this, navBar, topNavBar);
 		this.promotionsPage = new PromotionsPage.Placeholder(this, navBar, topNavBar);
-		this.keywordsPage = new KeywordsPage.Placeholder(this, navBar, topNavBar);
 		this.aboutPage = new AboutPage.Placeholder(this, navBar, topNavBar);
 		this.usersPage = new UsersPage.Placeholder(this, navBar, topNavBar);
 		this.settingsPage = new SettingsPage.Placeholder(this, navBar, topNavBar);
@@ -62,6 +61,7 @@ public class AppBody extends AppElement {
 		this.dynamicPromotionsPage = new CreateNewDynamicPromotionsPage.Placeholder(topNavBar);
 		this.schedulePage = new SchedulePage.Placeholder(topNavBar);
 		this.createKeywordsPage = new CreateNewKeywordsPage.Placeholder(topNavBar);
+		this.keywordsPage = new KeywordsPage.Placeholder(topNavBar);
 		this.topNavBar = new TopNavBar(driver);
 		this.sideNavBar = new SideNavBar(driver);
 		this.notifications = new NotificationsDropDown.Placeholder(topNavBar);
@@ -77,7 +77,7 @@ public class AppBody extends AppElement {
 	}
 
 	public KeywordsPage getKeywordsPage() {
-		return keywordsPage.$page();
+		return keywordsPage.$keywordsPage(getDriver().findElement(By.cssSelector(".keywords-container")));
 	}
 
 	public AboutPage getAboutPage() {

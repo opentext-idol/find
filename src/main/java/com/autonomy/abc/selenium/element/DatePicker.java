@@ -142,6 +142,7 @@ public class DatePicker extends AppElement {
 		loadOrFadeWait();
 		timePickerHour().click();
 		selectTimePickerHour(Integer.parseInt(hour.format(date)));
+		loadOrFadeWait();
 		timePickerMinute().click();
 		selectTimePickerMinute(Integer.parseInt(minute.format(date)));
 		setMinuteUsingIncrementDecrement(Integer.parseInt(minute.format(date)));

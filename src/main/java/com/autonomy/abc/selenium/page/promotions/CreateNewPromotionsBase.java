@@ -21,12 +21,34 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		getDriver().get("promotions/create");
 	}
 
-	public WebElement continueButton(final String dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep + "']")).findElement(By.cssSelector(".next-step"));
+	public WebElement continueButton(final WizardStep dataStep) {
+		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.cssSelector(".next-step"));
 	}
 
-	public WebElement cancelButton(final String dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep + "']")).findElement(By.cssSelector(".cancel-wizard"));
+	public String getCurrentStepTitle() {
+		return findElement(By.cssSelector(".current-step-pill .current-step-title")).getText();
+	}
+
+	public enum WizardStep {
+		TYPE("type"),
+		PROMOTION_TYPE("promotionType"),
+		RESULTS("results"),
+		TRIGGER("triggers");
+
+
+		private final String title;
+
+		WizardStep(final String title) {
+			this.title = title;
+		}
+
+		public String getTitle() {
+			return title;
+		}
+	}
+
+	public WebElement cancelButton(final WizardStep dataStep) {
+		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.cssSelector(".cancel-wizard"));
 	}
 
 	public void addSearchTrigger(final String searchTrigger) {
@@ -60,7 +82,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}
 
 	public WebElement finishButton() {
-		return findElement(By.xpath(".//h3[contains(text(), 'Select Promotion Triggers')]/../../button[contains(text(), 'Finish')]"));
+		return findElement(By.cssSelector("[data-step='" + WizardStep.TRIGGER.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Finish')]"));
 	}
 
 	public WebElement spotlightType(final String type ) {
@@ -70,12 +92,12 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger, final String type) {
 		promotionType("SPOTLIGHT").click();
 		loadOrFadeWait();
-		continueButton("type").click();
+		continueButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		if (type.equals("On Premise")) {
 			spotlightType(spotlightType).click();
 			loadOrFadeWait();
-			continueButton("spotlightType").click();
+			continueButton(WizardStep.PROMOTION_TYPE).click();
 			loadOrFadeWait();
 		}
 		addSearchTrigger(searchTrigger);

@@ -1,11 +1,7 @@
 package com.autonomy.abc.selenium.page.keywords;
 
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
-import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.AppPage;
-import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
@@ -15,8 +11,8 @@ import java.util.List;
 
 public class KeywordsPage extends KeywordsBase implements AppPage {
 
-	public KeywordsPage(final SideNavBar sideNavBar, final WebElement $el) {
-		super($el, sideNavBar.getDriver());
+	public KeywordsPage(final TopNavBar topNavBar, final WebElement $el) {
+		super($el, topNavBar.getDriver());
 	}
 
 	@Override
@@ -40,11 +36,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 				for (int i = 0; i <= numberOfSynonymGroups; i++) {
 					if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() > 2) {
 						findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
-						int count = 0;
-						while (findElements(By.cssSelector(".fa-spin")).size() > 0 && count < 10) {
-							loadOrFadeWait();
-							count++;
-						}
+						waitForRefreshIconToDisappear();
 					} else {
 						if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() == 2) {
 							findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
@@ -79,11 +71,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 			for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
 				scrollIntoView(blacklisted, getDriver());
 				blacklisted.click();
-				int count = 0;
-				while (findElements(By.cssSelector(".fa-spin")).size() > 0 && count < 10) {
-					loadOrFadeWait();
-					count++;
-				}
+				waitForRefreshIconToDisappear();
 			}
 		}
 	}
@@ -116,7 +104,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement searchFilterTextBox() {
-		return findElement(By.cssSelector(".search-filter .form-control"));
+		return findElement(By.cssSelector(".search-filter [placeholder='Search for keywords...']"));
 	}
 
 	public void selectLanguage(final String language) {
@@ -167,16 +155,16 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 		return leadSynonyms;
 	}
 
-	public static class Placeholder extends AbstractMainPagePlaceholder<KeywordsPage> {
 
-		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {
-			super(body, sideNavBar, topNavBar, "keywords", NavBarTabId.KEYWORDS, false);
+	public static class Placeholder {
+		private final TopNavBar topNavBar;
+
+		public Placeholder(final TopNavBar topNavBar) {
+			this.topNavBar = topNavBar;
 		}
 
-		@Override
-		protected KeywordsPage convertToActualType(final WebElement element) {
-			return new KeywordsPage(navBar, element);
+		public KeywordsPage $keywordsPage(final WebElement element) {
+			return new KeywordsPage(topNavBar, element);
 		}
-
 	}
 }

@@ -2,10 +2,7 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -79,13 +76,14 @@ public class SearchPage extends SearchBase implements AppPage {
 		}
 
 		promoteTheseItemsButton().click();
+		loadOrFadeWait();
 		return promotedDocTitles;
 	}
 
 	public void paginateWait() {
 		try {
 			new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(docLogo()));
-		} catch (final StaleElementReferenceException e) {
+		} catch (final StaleElementReferenceException|NoSuchElementException n) {
 			loadOrFadeWait();
 		}
 	}
@@ -294,4 +292,5 @@ public class SearchPage extends SearchBase implements AppPage {
 			return new SearchPage(topNavBar, element);
 		}
 	}
+
 }

@@ -48,9 +48,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 
 	public enum WizardStep {
 		TYPE("type"),
-		LANGUAGE("language"),
-		BLACKLISTED("blacklisted"),
-		SYNONYMS("synonyms"),
+		TRIGGERS("triggers"),
 		FINISH("finish-step");
 
 		private final String title;
@@ -73,7 +71,7 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement addBlacklistTermsButton() {
-		return findElement(By.cssSelector("[data-step='blacklisted']")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
+		return findElement(By.cssSelector("[data-branch='blacklisted']")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
 	public WebElement addSynonymsTextBox() {
@@ -81,15 +79,11 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement addBlacklistedTextBox() {
-		return findElement(By.cssSelector("[data-step='blacklisted'] .form-group [name='words']"));
+		return findElement(By.cssSelector("[data-branch='blacklisted'] .form-group [name='words']"));
 	}
 
-	public WebElement finishSynonymWizardButton() {
-		return findElement(By.cssSelector("[data-step='synonyms'] .finish-step"));
-	}
-
-	public WebElement finishBlacklistWizardButton() {
-		return findElement(By.cssSelector("[data-step='blacklisted'] .finish-step"));
+	public WebElement finishWizardButton() {
+		return findElement(By.cssSelector(".current-step .finish-step"));
 	}
 
 	public void addSynonyms(final String synonyms) {
@@ -113,29 +107,26 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 	}
 
 	public void createSynonymGroup(final String synonymGroup, final String language) throws InterruptedException {
-		keywordsType(KeywordType.SYNONYM).click();
-		continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
+		keywordsType(KeywordType.SYNONYM).click();
 		selectLanguage(language);
-		continueWizardButton(WizardStep.LANGUAGE).click();
+		continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
-		finishSynonymWizardButton().click();
+		finishWizardButton().click();
 		Thread.sleep(5000);
 	}
 
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
 		keywordsType(KeywordType.BLACKLIST).click();
-		continueWizardButton(WizardStep.TYPE).click();
-		loadOrFadeWait();
 		selectLanguage(language);
-		continueWizardButton(WizardStep.LANGUAGE).click();
+		continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		addBlacklistedTerm(blacklistedTerm);
 		loadOrFadeWait();
-		finishBlacklistWizardButton().click();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle")));
+		finishWizardButton().click();
+		new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle")));
 	}
 
 	private void addBlacklistedTerm(final String blacklistedTerm) {
@@ -162,13 +153,13 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement languagesSelectBox() {
-		return findElement(By.cssSelector("[data-step='language'] .dropdown-toggle"));
+		return findElement(By.cssSelector("[data-step='type'] .dropdown-toggle"));
 	}
 
 	public void selectLanguage(final String language) {
 		languagesSelectBox().click();
 		loadOrFadeWait();
-		final WebElement element = findElement(By.cssSelector("[data-step='language'] .dropdown-menu")).findElement(By.xpath(".//a[contains(text(), '" + language + "')]"));
+		final WebElement element = findElement(By.cssSelector("[data-step='type'] .dropdown-menu")).findElement(By.xpath(".//a[contains(text(), '" + language + "')]"));
 		// IE doesn't want to click the dropdown elements
 		final JavascriptExecutor executor = (JavascriptExecutor)getDriver();
 		executor.executeScript("arguments[0].click();", element);

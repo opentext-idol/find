@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.AppPage;
+import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -31,7 +32,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement newPromotionButton() {
-		return findElement(By.cssSelector("[data-route='promotions/new']"));
+		return findElement(By.xpath(".//a[text()[contains(., 'Promote existing documents')]]"));
 	}
 
 	public WebElement getPromotionLinkWithTitleContaining(final String promotionTitleSubstring) {
@@ -48,7 +49,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 		final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
 		deleteModal.findElement(By.cssSelector(".btn-danger")).click();
 		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(newPromotionButton()));
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(newPromotionButton()));
 	}
 
 	public void schedulePromotion() {
@@ -66,7 +67,12 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public List<WebElement> promotionsList() {
-		return findElements(By.cssSelector(".promotion-list-container li a"));
+		try {
+			return findElements(By.cssSelector(".promotion-list-container li a"));
+		} catch (Exception e) {
+			loadOrFadeWait();
+			return findElements(By.cssSelector(".promotion-list-container li a"));
+		}
 	}
 
 	public void deleteAllPromotions() {
@@ -133,7 +139,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement backButton() {
-		return findElement(By.cssSelector(".btn[data-route='promotions']"));
+		return findElement(By.xpath(".//a[text()[contains(., 'Go Back')]]"));
 	}
 
 	public String getPromotionTitle() {
@@ -309,7 +315,97 @@ public class PromotionsPage extends AppElement implements AppPage {
 		loadOrFadeWait();
 		fieldTextInputBox().sendKeys(fieldText);
 		fieldTextTickConfirmButton().click();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(fieldTextRemoveButton()));
+		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(fieldTextRemoveButton()));
+	}
+
+
+	public List <String> setUpANewMultiDocPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs, final String type) {
+		new TopNavBar(getDriver()).search(navBarSearchTerm);
+		new TopNavBar(getDriver()).loadOrFadeWait();
+		final SearchPage searchPage = new AppBody(getDriver()).getSearchPage();
+		searchPage.selectLanguage(language, type);
+		final List<String> promotedDocTitles = searchPage.createAMultiDocumentPromotion(numberOfDocs);
+		final CreateNewPromotionsPage createPromotionsPage = new AppBody(getDriver()).getCreateNewPromotionsPage();
+		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers, type);
+
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
+		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
+		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
+
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+		return promotedDocTitles;
+	}
+
+
+	public String setUpANewPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final String type) {
+		new TopNavBar(getDriver()).search(navBarSearchTerm);
+		final SearchPage searchPage = new AppBody(getDriver()).getSearchPage();
+		searchPage.selectLanguage(language, type);
+		final String promotedDocTitle = searchPage.createAPromotion();
+		final CreateNewPromotionsPage createPromotionsPage = new AppBody(getDriver()).getCreateNewPromotionsPage();
+		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers, type);
+
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
+		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
+
+		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers.split(" ")[0]).click();
+
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.addMorePromotedItemsButton()));
+		return promotedDocTitle;
+	}
+
+
+
+	public List <String> setUpANewMultiDocPinToPositionPromotion(final String language, final String navBarSearchTerm, final String searchTriggers, final int numberOfDocs, final String type) {
+		new TopNavBar(getDriver()).search(navBarSearchTerm);
+		final SearchPage searchPage = new AppBody(getDriver()).getSearchPage();
+		searchPage.selectLanguage(language, type);
+		final List<String> promotedDocTitles = searchPage.createAMultiDocumentPromotion(numberOfDocs);
+		searchPage.loadOrFadeWait();
+		final CreateNewPromotionsPage createPromotionsPage = new AppBody(getDriver()).getCreateNewPromotionsPage();
+		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
+		createPromotionsPage.loadOrFadeWait();
+		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
+		createPromotionsPage.loadOrFadeWait();
+		createPromotionsPage.addSearchTrigger(searchTriggers);
+		createPromotionsPage.finishButton().click();
+		createPromotionsPage.loadOrFadeWait();
+
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
+		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
+		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
+
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+		return promotedDocTitles;
+	}
+
+	public String setUpANewDynamicPromotion(final String language, final String navBarSearchTerm, final String searchTriggers, final String spotlightType, final String type) {
+		new TopNavBar(getDriver()).search(navBarSearchTerm);
+		final SearchPage searchPage = new AppBody(getDriver()).getSearchPage();
+		searchPage.selectLanguage(language, type);
+		final String searchResultTitle;
+
+		if (searchPage.getText().contains("No results found")) {
+			searchResultTitle = null;
+		} else {
+			searchResultTitle = searchPage.getSearchResult(1).getText();
+		}
+
+		searchPage.promoteThisQueryButton().click();
+		searchPage.loadOrFadeWait();
+		final CreateNewDynamicPromotionsPage dynamicPromotionsPage = new AppBody(getDriver()).getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage.createDynamicPromotion(spotlightType, searchTriggers);
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
+		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
+		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
+		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+
+		return searchResultTitle;
 	}
 
 	public static class Placeholder extends AbstractMainPagePlaceholder<PromotionsPage> {

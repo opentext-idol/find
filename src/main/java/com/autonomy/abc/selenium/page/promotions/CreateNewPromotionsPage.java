@@ -33,10 +33,10 @@ public class CreateNewPromotionsPage extends CreateNewPromotionsBase {
 
 	public void navigateToTriggers() {
 		pinToPosition().click();
-		continueButton("type").click();
+		continueButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		selectPositionPlusButton().click();
-		continueButton("pinToPosition").click();
+		continueButton(WizardStep.PROMOTION_TYPE).click();
 		loadOrFadeWait();
 	}
 
