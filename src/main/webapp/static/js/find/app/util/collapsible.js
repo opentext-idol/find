@@ -11,12 +11,25 @@ define([
             this.name = options.name;
             this.header = options.header;
             this.view = options.view;
+            this.collapsed = options.collapsed;
         },
 
         render: function() {
+            var headerState, contentState;
+
+            if(this.collapsed) {
+                headerState = 'collapsed';
+                contentState = '';
+            } else {
+                headerState = '';
+                contentState = 'in';
+            }
+
             this.$el.html(this.template({
                 header: this.header,
-                name: this.name
+                name: this.name,
+                headerState: headerState,
+                contentState: contentState
             }));
 
             this.view.render();
