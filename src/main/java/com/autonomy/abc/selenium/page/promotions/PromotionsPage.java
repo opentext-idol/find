@@ -398,7 +398,7 @@ public class PromotionsPage extends AppElement implements AppPage {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 		final CreateNewDynamicPromotionsPage dynamicPromotionsPage = new AppBody(getDriver()).getCreateNewDynamicPromotionsPage();
-		dynamicPromotionsPage.createDynamicPromotion(spotlightType, searchTriggers);
+		dynamicPromotionsPage.createDynamicPromotion(spotlightType, searchTriggers, type);
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
 		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();

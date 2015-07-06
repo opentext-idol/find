@@ -15,12 +15,14 @@ public class CreateNewDynamicPromotionsPage extends CreateNewPromotionsBase {
 		getDriver().get("promotions/create-dynamic");
 	}
 
-	public void createDynamicPromotion(final String type, final String trigger) {
+	public void createDynamicPromotion(final String type, final String trigger, final String applicationType) {
 		spotlightType(type).click();
 		continueButton(WizardStep.PROMOTION_TYPE).click();
 		loadOrFadeWait();
-		continueButton(WizardStep.RESULTS).click();
-		loadOrFadeWait();
+		if (applicationType.equals("Hosted")) {
+			continueButton(WizardStep.RESULTS).click();
+			loadOrFadeWait();
+		}
 		addSearchTrigger(trigger);
 		finishButton().click();
 		loadOrFadeWait();
