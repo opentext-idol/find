@@ -14,6 +14,13 @@ define([
     'colorbox'
 ], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, audioPlayerTemplate, entityTemplate, moment, i18n) {
 
+    /** Whitespace OR character in set bounded by [] */
+    var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
+    /** Start of input OR boundary chars */
+    var startRegex = '(^|' + boundaryChars + ')';
+    /** End of input OR boundary chars */
+    var endRegex = '($|' + boundaryChars + ')';
+
     return Backbone.View.extend({
 
         template: _.template(resultsView),
@@ -231,14 +238,14 @@ define([
 
             // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
             // changed here and messing things up badly
-            _.each(entities, _.bind(function(entity) {
+            _.each(entities, function(entity) {
                 summary = this.replaceBoundedText(summary, entity.text, entity.id)
-            }, this));
+            }, this);
 
             // Loop through entities again, replacing text with labels
-            _.each(entities, _.bind(function(entity) {
+            _.each(entities, function(entity) {
                 summary = this.replaceTextWithLabel(summary, entity.id, entity.text, "entity-to-summary");
-            }, this));
+            }, this);
 
             // Add the search text label
             summary = this.replaceTextWithLabel(summary, searchTextID, searchText, "entity-to-summary");
@@ -255,14 +262,6 @@ define([
          * @returns {string|XML|void}  `text`, but with replacements made
          */
         replaceBoundedText: function(text, textToFind, replacement) {
-
-            /** Whitespace OR character in set bounded by [] */
-            var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
-            /** Start of input OR boundary chars */
-            var startRegex = '(^|' + boundaryChars + ')';
-            /** End of input OR boundary chars */
-            var endRegex = '($|' + boundaryChars + ')';
-
             return text.replace(new RegExp(startRegex + textToFind + endRegex, 'gi'), '$1' + replacement + '$2');
         },
 
@@ -280,7 +279,7 @@ define([
                 labelClasses: labelClasses
             });
 
-            return text.replace(new RegExp(textToFind, 'g'), label);
+            return text.replace(new RegExp(startRegex + textToFind + endRegex, 'g'), '$1' + label + '$2');
         }
     })
 });
