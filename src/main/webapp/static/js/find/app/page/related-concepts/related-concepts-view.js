@@ -59,7 +59,8 @@ define([
                             html: true,
                             content: '<h6>Top Results</h6>',
                             placement: 'right',
-                            trigger: 'hover'
+                            trigger: 'hover',
+                            container: $('body')
                         })
                     }, this);
                 }
