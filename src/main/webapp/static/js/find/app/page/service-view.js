@@ -49,6 +49,10 @@ define([
                 });
             });
 
+            this.indexesView = new IndexesView({
+                queryModel: this.queryModel
+            });
+
             this.resultsView = new ResultsView({
                 queryModel: this.queryModel,
                 entityCollection: this.entityCollection
@@ -73,7 +77,7 @@ define([
             });
 
             // Collapse wrappers
-
+            this.indexesViewWrapper = collapseView('search.indexes', 'indexes-filter', this.indexesView, false);
             this.parametricViewWrapper = collapseView('parametric.title', 'parametric-filter', this.parametricController.view, false);
             this.dateViewWrapper = collapseView('search.dates', 'dates-filter', this.dateView, false);
             this.relatedConceptsViewWrapper = collapseView('search.relatedConcepts', 'related-concepts', this.relatedConceptsView, false);
@@ -81,6 +85,8 @@ define([
 
         render: function() {
             this.$el.html(this.template);
+
+            this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
 
             this.parametricViewWrapper.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();

@@ -37,6 +37,7 @@ define([
         'placeholder.ip': 'IP',
         'placeholder.port': 'port',
         'search.noResults': 'No results found',
+        'search.indexes': 'Indexes',
         'search.dates': 'Dates',
         'search.relatedConcepts': 'See also',
         'search.resultsSort': 'Sort',
