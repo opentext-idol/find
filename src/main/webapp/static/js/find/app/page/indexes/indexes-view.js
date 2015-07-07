@@ -2,14 +2,12 @@ define([
     'backbone',
     'underscore',
     'find/app/model/indexes-collection',
-    'text!find/templates/app/page/indexes/indexes-popover-button.html',
-    'text!find/templates/app/page/index-popover.html',
-    'text!find/templates/app/page/index-popover-contents.html'
-], function(Backbone, _, IndexesCollection, indexesContainTemplate, popoverTemplate, contentTemplate) {
+    'text!find/templates/app/page/index-list.html',
+    'text!find/templates/app/page/index-item.html'
+], function(Backbone, _, IndexesCollection, listTemplate, itemTemplate) {
     return Backbone.View.extend({
-        indexesContain: _.template(indexesContainTemplate),
-        popover: _.template(popoverTemplate),
-        content: _.template(contentTemplate),
+        listTemplate: _.template(listTemplate),
+        itemTemplate: _.template(itemTemplate),
 
         events: {
             'change .indexCheckbox': function(e) {
@@ -41,28 +39,21 @@ define([
                 this.trigger('sync');
 
                 this.indexesCollection.each(function(model) {
-                    var htmlTemplateOutput = $(this.content({
+                    var htmlTemplateOutput = $(this.itemTemplate({
                         index: model.get('index')
                     }));
 
-                    this.$indexesDisplay.find('.indexes-list').append(htmlTemplateOutput);
+                    this.$el.find('.indexes-list').append(htmlTemplateOutput);
 
                     if (this.indexes[model.get('index')]) { // If index is selected, set the checkbox to checked
                         htmlTemplateOutput.find('input').prop('checked', true);
                     }
                 }, this);
-
-                this.$('.list-indexes').popover({
-                    html: true,
-                    content: this.$indexesDisplay,
-                    placement: 'bottom'
-                });
             }, this);
         },
 
         render: function() {
-            this.$el.html(this.indexesContain());
-            this.$indexesDisplay = $(this.popover());
+            this.$el.html(this.listTemplate());
         },
 
         selectedIndexes: function() {
