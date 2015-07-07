@@ -8,16 +8,25 @@ define([
     'text!find/templates/app/page/colorbox-controls.html',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/view/audio-player.html',
+    'text!find/templates/app/page/results/entity-label.html',
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, audioPlayerTemplate, moment, i18n) {
+], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, audioPlayerTemplate, entityTemplate, moment, i18n) {
+
+    /** Whitespace OR character in set bounded by [] */
+    var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
+    /** Start of input OR boundary chars */
+    var startRegex = '(^|' + boundaryChars + ')';
+    /** End of input OR boundary chars */
+    var endRegex = '($|' + boundaryChars + ')';
 
     return Backbone.View.extend({
 
         template: _.template(resultsView),
         noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
         audioPlayerTemplate: _.template(audioPlayerTemplate),
+        entityTemplate: _.template(entityTemplate),
 
         events: {
             'click .query-text' : function(e) {
@@ -212,7 +221,12 @@ define([
         },
 
         addLinksToSummary: function(summary) {
-            //creating an array of the entity titles, longest first
+            // Process the search text first
+            var searchText = this.queryModel.get("queryText");
+            var searchTextID = _.uniqueId('Find-IOD-QueryText-Placeholder');
+            summary = this.replaceBoundedText(summary, searchText, searchTextID)
+
+            // Create an array of the entity titles, longest first
             var entities = this.entityCollection.map(function(entity) {
                 return {
                     text: entity.get('text'),
@@ -222,22 +236,50 @@ define([
                 return b.text.length - a.text.length;
             });
 
+            // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
+            // changed here and messing things up badly
             _.each(entities, function(entity) {
-                summary = summary.replace(new RegExp('(^|\\s|[,.-:;?\'"!\\(\\)\\[\\]{}])' + entity.text + '($|\\s|[,.-:;?\'"!\\(\\)\\[\\]{}])', 'gi'), '$1' + entity.id + '$2');
-            });
+                summary = this.replaceBoundedText(summary, entity.text, entity.id)
+            }, this);
 
+            // Loop through entities again, replacing text with labels
             _.each(entities, function(entity) {
-                // TODO: use a template
-                summary = summary.replace(new RegExp(entity.id, 'g'),
-                    '<span class="label label-info entity-to-summary" data-title="' + entity.text +'">'
-                    + '<a class="query-text" data-title="' + entity.text + '">'
-                    + entity.text
-                    + '</a></span>');
-            });
+                summary = this.replaceTextWithLabel(summary, entity.id, entity.text, "entity-to-summary");
+            }, this);
+
+            // Add the search text label
+            summary = this.replaceTextWithLabel(summary, searchTextID, searchText, "entity-to-summary");
 
             return summary;
+        },
+
+        /**
+         * Finds a string that's bounded by [some regex stuff] and replaces it with something else.
+         * Used as part 1 of highlighting text in result summaries.
+         * @param text  The text to search in
+         * @param textToFind  The text to search for
+         * @param replacement  What to replace textToFind with
+         * @returns {string|XML|void}  `text`, but with replacements made
+         */
+        replaceBoundedText: function(text, textToFind, replacement) {
+            return text.replace(new RegExp(startRegex + textToFind + endRegex, 'gi'), '$1' + replacement + '$2');
+        },
+
+        /**
+         * Finds a string and replaces it with an HTML label.
+         * Used as part 2 of highlighting text in results summaries.
+         * @param text  The text to search in
+         * @param textToFind  The text to replace with a label
+         * @param replacement  The term or phrase to display in the label
+         * @returns {string|XML|*}  `text`, but with replacements made
+         */
+        replaceTextWithLabel: function(text, textToFind, replacement, labelClasses) {
+            var label = this.entityTemplate({
+                replacement: replacement,
+                labelClasses: labelClasses
+            });
+
+            return text.replace(new RegExp(startRegex + textToFind + endRegex, 'g'), '$1' + label + '$2');
         }
-
     })
-
 });
