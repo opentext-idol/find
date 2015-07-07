@@ -21,7 +21,7 @@ define([
             this.$validateButtonParent.before(template({strings: this.strings}));
 
             this.$apikey = this.$('input[name="apikey"]');
-            this.$apiKeyControlGroup = this.$('.control-group').eq(0);
+            this.$apiKeyControlGroup = this.$('.form-group').eq(0);
         },
 
         getConfig: function() {

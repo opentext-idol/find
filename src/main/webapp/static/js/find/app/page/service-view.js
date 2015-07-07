@@ -9,22 +9,25 @@ define([
     'find/app/page/results/results-view',
     'find/app/page/related-concepts/related-concepts-view',
     'find/app/page/sort/sort-view',
+    'find/app/page/indexes/indexes-view',
     'find/app/util/collapsible',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/service-view.html',
     'text!find/templates/app/util/filter-header.html'
 ], function(Backbone, $, _, EntityCollection, ParametricCollection,
-            ParametricController, DateView, ResultsView, RelatedConceptsView, SortView, Collapsible, i18n, template, filterHeader) {
+            ParametricController, DateView, ResultsView, RelatedConceptsView, SortView,
+            IndexesView, Collapsible, i18n, template, filterHeader) {
 
     var filterHeaderTemplate = _.template(filterHeader);
 
-    var collapseView = function(title, collapseParameter, view) {
+    var collapseView = function(title, collapseParameter, view, collapsed) {
         return new Collapsible({
             header: filterHeaderTemplate({
                 title: i18n[title]
             }),
             name: collapseParameter,
-            view: view
+            view: view,
+            collapsed: collapsed
         });
     };
 
@@ -71,9 +74,9 @@ define([
 
             // Collapse wrappers
 
-            this.parametricViewWrapper = collapseView('parametric.title', 'parametric-filter', this.parametricController.view);
-            this.dateViewWrapper = collapseView('search.dates', 'dates-filter', this.dateView);
-            this.relatedConceptsViewWrapper = collapseView('search.relatedConcepts', 'related-concepts', this.relatedConceptsView);
+            this.parametricViewWrapper = collapseView('parametric.title', 'parametric-filter', this.parametricController.view, false);
+            this.dateViewWrapper = collapseView('search.dates', 'dates-filter', this.dateView, false);
+            this.relatedConceptsViewWrapper = collapseView('search.relatedConcepts', 'related-concepts', this.relatedConceptsView, false);
         },
 
         render: function() {
