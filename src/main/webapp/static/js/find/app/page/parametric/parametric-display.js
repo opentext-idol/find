@@ -20,7 +20,7 @@ define([
             this.queryModel = options.queryModel;
 
             this.fieldNamesListView = new ListView({
-                className: 'unstyled',
+                className: 'list-unstyled',
                 collection: this.collection,
                 tagName: 'ul',
                 ItemView: ParametricListItemView,
