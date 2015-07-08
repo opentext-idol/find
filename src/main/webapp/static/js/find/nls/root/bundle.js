@@ -39,7 +39,7 @@ define([
         'search.noResults': 'No results found',
         'search.indexes': 'Indexes',
         'search.dates': 'Dates',
-        'search.relatedConcepts': 'See also',
+        'search.relatedConcepts': 'Related Concepts',
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',

@@ -57,12 +57,6 @@ html, body {
     box-shadow: none !important;
 }
 
-ul.unstyled,
-ol.unstyled {
-    list-style: none outside none;
-    margin-left: 0;
-}
-
 .left-side-container {
     background-color: #F7F7F7;
 }
@@ -414,6 +408,7 @@ input.find-input {
 a.entity-to-summary {
     cursor:pointer;
     color:white;
+    font-size: 11px;
 }
 
 .entity-to-summary a {
@@ -495,6 +490,27 @@ input:-moz-placeholder::before {
 
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 {
     color: rgb(91, 145, 214);
+}
+
+/*TODO use bootstrap theme customiser for these */
+.popover {
+    border-radius: 0;
+}
+
+.popover, .popover-title {
+    background-color:#353535;
+}
+
+.popover-content p {
+    color: #fff;
+}
+
+.popover-title {
+    display: none;
+}
+
+.popover.bottom > .arrow:after {
+    border-bottom-color:#353535;
 }
 
 @media (min-width: 980px) {
