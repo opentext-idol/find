@@ -1,18 +1,26 @@
 <div class="search-dates-wrapper m-l-md">
-    <div class="control-group">
-        <div>
+    <div class="form-group">
+        <div class="input-group m-b-sm">
             <h5><%-i18n['app.from']%></h5>
-            <button class="clear-min-date btn btn-default"><i class="icon-remove"></i></button>
-            <div class="input-append date results-filter-min-date">
-                <input type="text" value="" readonly><span class="add-on date-select"><i data-date-icon="icon-calendar"></i></span>
+            <div class="input-group date results-filter-min-date">
+                <input type="text" class="form-control" value="">
+                <span class="input-group-addon date-select">
+                    <i data-date-icon="icon-calendar" class="icon-calendar"></i>
+                </span>
+                <span class="input-group-addon clear-min-date"><i class="icon-remove"></i></span>
             </div>
         </div>
+    </div>
 
-        <div>
+    <div class="form-group">
+        <div class="input-group m-b-sm">
             <h5><%-i18n['app.until']%></h5>
-            <button class="clear-max-date btn btn-default"><div class="icon-remove"></div></button>
-            <div class="input-append date results-filter-max-date">
-                <input type="text" value="" readonly><span class="add-on date-select"><i data-date-icon="icon-calendar"></i></span>
+            <div class="input-group date results-filter-max-date">
+                <input type="text" class="form-control" value="">
+                <span class="input-group-addon date-select">
+                    <i data-date-icon="icon-calendar" class="icon-calendar"></i>
+                </span>
+                <span class="input-group-addon clear-max-date"><i class="icon-remove"></i></span>
             </div>
         </div>
     </div>
