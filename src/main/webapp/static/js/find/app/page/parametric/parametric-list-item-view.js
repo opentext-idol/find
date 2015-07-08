@@ -42,7 +42,7 @@ define([
             this.$checkboxInput = this.$('input');
 
             this.$checkboxInput.iCheck({
-                checkboxClass: 'icheckbox_square-red filter-checkbox'
+                checkboxClass: 'icheckbox_square-blue filter-checkbox'
             });
 
             // icheck won't add the necessary position: relative if the element isn't in the DOM...
