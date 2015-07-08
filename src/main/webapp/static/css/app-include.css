@@ -337,7 +337,6 @@ input.find-input {
     color: rgb(91, 145, 214);
 }
 
-
 /* fancy colourbox buttons */
 .btn-colorbox, .btn-colorbox:focus {
     color: #ffffff;
@@ -379,8 +378,9 @@ input.find-input {
     width: 250px;
 }
 
-.popover-content h6 {
+.popover-content h5 {
     margin:0;
+    font-weight: 700;
 }
 
 .find-form .popover label {
@@ -503,6 +503,11 @@ input:-moz-placeholder::before {
 
 .popover-content p {
     color: #fff;
+    font-size: 12px;
+}
+
+.popover-content {
+    padding: 15px 14px 9px;
 }
 
 .popover-title {
