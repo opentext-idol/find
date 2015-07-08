@@ -9,7 +9,7 @@ require.config({
         'backbone-base': '../lib/backbone/backbone',
         bootstrap: 'lib/bootstrap/js/bootstrap',
         colorbox: '../lib/colorbox/jquery.colorbox',
-        'bootstrap-datetimepicker': '../lib/bootstrap-timepicker/src/js/bootstrap-datetimepicker',
+        'bootstrap-datetimepicker': '../lib/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
         i18n: '../lib/requirejs-i18n/i18n',
         iCheck: '../lib/icheck/icheck',
         'peg': '../lib/pegjs/peg-0.8.0',

@@ -33,14 +33,30 @@ define([
             this.$maxDate = this.$('.results-filter-max-date');
 
             this.$minDate.datetimepicker({
-                format: 'yyyy/MM/dd hh:mm'
-            }).on('changeDate', _.bind(function(ev) {
+                format: 'YYYY/MM/DD hh:mm',
+                icons: {
+                    time: 'icon-time',
+                    date: 'icon-calendar',
+                    up: 'icon-chevron-up',
+                    down:'icon-chevron-down',
+                    next: 'icon-chevron-right',
+                    previous: 'icon-chevron-left'
+                }
+            }).on('dp.change', _.bind(function(ev) {
                 this.setMinDate(moment((ev.date)).toISOString());
             }, this));
 
             this.$maxDate.datetimepicker({
-                format: 'yyyy/MM/dd hh:mm'
-            }).on('changeDate', _.bind(function(ev) {
+                format: 'YYYY/MM/DD hh:mm',
+                icons: {
+                    time: 'icon-time',
+                    date: 'icon-calendar',
+                    up: 'icon-chevron-up',
+                    down:'icon-chevron-down',
+                    next: 'icon-chevron-right',
+                    previous: 'icon-chevron-left'
+                }
+            }).on('dp.change', _.bind(function(ev) {
                 this.setMaxDate(moment((ev.date)).toISOString());
             }, this));
 
