@@ -3,20 +3,27 @@ define([
     'underscore',
     'find/app/model/indexes-collection',
     'text!find/templates/app/page/index-list.html',
-    'text!find/templates/app/page/index-item.html'
+    'text!find/templates/app/page/index-item.html',
+    'iCheck'
 ], function(Backbone, _, IndexesCollection, listTemplate, itemTemplate) {
     return Backbone.View.extend({
         listTemplate: _.template(listTemplate),
         itemTemplate: _.template(itemTemplate),
 
         events: {
-            'change .indexCheckbox': function(e) {
+            'ifClicked .indexes-list input': function(e) {
                 var toggledIndex = $(e.currentTarget).val();
-                var checked = $(e.currentTarget).is(':checked');
+                var checked = !$(e.currentTarget).prop('checked');
 
                 this.indexes[toggledIndex] = checked;
 
                 this.queryModel.set('indexes', this.selectedIndexes());
+
+                if(this.selectedIndexes().length === 1) {
+                    this.$('[value="'+this.selectedIndexes()[0]+'"]').iCheck('disable');
+                } else {
+                    this.$('.indexes-list input').iCheck('enable');
+                }
             }
         },
 
@@ -49,6 +56,10 @@ define([
                         htmlTemplateOutput.find('input').prop('checked', true);
                     }
                 }, this);
+
+                this.$('.indexes-list input').iCheck({
+                    checkboxClass: 'icheckbox_square-blue filter-checkbox'
+                });
             }, this);
         },
 
