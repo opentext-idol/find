@@ -6,49 +6,60 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.ApiKeyService;
 import com.hp.autonomy.frontend.find.configuration.FindConfig;
-
-import java.util.*;
-
-import com.hp.autonomy.iod.client.api.textindexing.*;
-import com.hp.autonomy.iod.client.error.IodErrorException;
+import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
+import com.hp.autonomy.hod.client.api.resource.Resource;
+import com.hp.autonomy.hod.client.api.resource.ResourceFlavour;
+import com.hp.autonomy.hod.client.api.resource.ResourceType;
+import com.hp.autonomy.hod.client.api.resource.Resources;
+import com.hp.autonomy.hod.client.api.resource.ResourcesService;
+import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.client.token.TokenProxy;
+import com.hp.autonomy.hod.client.token.TokenProxyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class IndexesServiceImpl implements IndexesService {
 
-    @Autowired
-    private ApiKeyService apiKeyService;
+    private static final Set<ResourceFlavour> FLAVOURS_TO_REMOVE = EnumSet.of(ResourceFlavour.querymanipulation, ResourceFlavour.categorization);
 
     @Autowired
     private ConfigService<FindConfig> configService;
 
     @Autowired
-    private ListIndexesService listIndexesService;
+    private ResourcesService resourcesService;
+
+    @Autowired
+    private TokenProxyService tokenProxyService;
 
     @Override
-    public Indexes listIndexes() throws IodErrorException {
-        return listIndexes(apiKeyService.getApiKey());
+    public Resources listIndexes() throws HodErrorException {
+        return listIndexes(tokenProxyService.getTokenProxy());
     }
 
     @Override
-    public Indexes listIndexes(final String apiKey) throws IodErrorException {
-        final Set<IndexType> types = new HashSet<>();
-        types.add(IndexType.content);
+    public Resources listIndexes(final TokenProxy tokenProxy) throws HodErrorException {
+        final Set<ResourceType> types = new HashSet<>();
+        types.add(ResourceType.content);
 
-        final Map<String, Object> params = new ListIndexesRequestBuilder()
-                .setIndexTypes(types)
-                .build();
+        final ListResourcesRequestBuilder params = new ListResourcesRequestBuilder()
+                .setTypes(types);
 
-        final Indexes indexes = listIndexesService.listIndexes(apiKey, params);
+        final Resources indexes = resourcesService.list(tokenProxy, params);
 
-        final Iterator<Index> iterator = indexes.getIndexes().iterator();
+        final Iterator<Resource> iterator = indexes.getResources().iterator();
+
         while (iterator.hasNext()) {
-            final Index i = iterator.next();
+            final Resource i = iterator.next();
 
-            if (i.getFlavor() == IndexFlavor.querymanipulation || i.getFlavor() == IndexFlavor.categorization) {
+            if (FLAVOURS_TO_REMOVE.contains(i.getFlavour())) {
                 iterator.remove();
             }
         }
@@ -57,19 +68,19 @@ public class IndexesServiceImpl implements IndexesService {
     }
 
     @Override
-    public List<Index> listActiveIndexes() {
+    public List<Resource> listActiveIndexes() {
         return configService.getConfig().getIod().getActiveIndexes();
     }
 
     @Override
-    public List<Index> listVisibleIndexes() throws IodErrorException {
-        final List<Index> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
+    public List<Resource> listVisibleIndexes() throws HodErrorException {
+        final List<Resource> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if(activeIndexes.isEmpty()) {
-            final Indexes indexes = listIndexes();
+            final Resources resources = listIndexes();
 
-            final List<Index> mergedIndexes = indexes.getPublicIndexes();
-            mergedIndexes.addAll(indexes.getIndexes());
+            final List<Resource> mergedIndexes = resources.getPublicResources();
+            mergedIndexes.addAll(resources.getResources());
 
             return mergedIndexes;
         }

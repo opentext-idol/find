@@ -5,19 +5,20 @@
 
 package com.hp.autonomy.frontend.find.search;
 
-import com.hp.autonomy.iod.client.api.textindexing.Index;
-import com.hp.autonomy.iod.client.api.textindexing.Indexes;
-import com.hp.autonomy.iod.client.error.IodErrorException;
+import com.hp.autonomy.hod.client.api.resource.Resource;
+import com.hp.autonomy.hod.client.api.resource.Resources;
+import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.client.token.TokenProxy;
 
 import java.util.List;
 
 public interface IndexesService {
 
-    Indexes listIndexes() throws IodErrorException;
+    Resources listIndexes() throws HodErrorException;
 
-    Indexes listIndexes(String apiKey) throws IodErrorException;
+    Resources listIndexes(TokenProxy tokenProxy) throws HodErrorException;
 
-    List<Index> listActiveIndexes();
+    List<Resource> listActiveIndexes();
 
-    List<Index> listVisibleIndexes() throws IodErrorException;
+    List<Resource> listVisibleIndexes() throws HodErrorException;
 }

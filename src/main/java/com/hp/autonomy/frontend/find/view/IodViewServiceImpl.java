@@ -8,19 +8,19 @@ package com.hp.autonomy.frontend.find.view;
  * Last modified by $Author: $ on $Date: $
  */
 
-import com.hp.autonomy.frontend.find.ApiKeyService;
-import com.hp.autonomy.iod.client.api.formatconversion.ViewDocumentService;
-import com.hp.autonomy.iod.client.api.search.Document;
-import com.hp.autonomy.iod.client.api.search.Documents;
-import com.hp.autonomy.iod.client.api.search.GetContentRequestBuilder;
-import com.hp.autonomy.iod.client.api.search.GetContentService;
-import com.hp.autonomy.iod.client.api.search.Print;
-import com.hp.autonomy.iod.client.error.IodErrorException;
+import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentRequestBuilder;
+import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentRequestBuilder;
+import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Document;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
+import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import retrofit.client.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,10 +37,7 @@ import java.util.Map;
 public class IodViewServiceImpl implements IodViewService {
 
     @Autowired
-    private ApiKeyService apiKeyService;
-
-    @Autowired
-    private GetContentService getContentService;
+    private GetContentService<Documents> getContentService;
 
     @Autowired
     private ViewDocumentService viewDocumentService;
@@ -60,18 +57,17 @@ public class IodViewServiceImpl implements IodViewService {
      * @param documentReference  Document reference to load
      * @param indexes  IOD Indexes to search for the document reference in
      * @throws IOException
-     * @throws IodErrorException  Thrown if document reference is invalid/not found in the indexes supplied
+     * @throws HodErrorException  Thrown if document reference is invalid/not found in the indexes supplied
      */
     @Override
-    public void viewDocument(final OutputStream outputStream, final String documentReference, final String indexes) throws IOException, IodErrorException {
+    public void viewDocument(final OutputStream outputStream, final String documentReference, final ResourceIdentifier indexes) throws IOException, HodErrorException {
 
         // Call GetContent with the document reference as we need details from the full document (e.g. URL)
-        final Map<String, Object> getContentParams = new GetContentRequestBuilder()
-                .setPrint(Print.all)
-                .build();
+        final GetContentRequestBuilder getContentParams = new GetContentRequestBuilder()
+                .setPrint(Print.all);
 
         // An IodErrorException can be thrown here if the document isn't found.
-        final Documents documents = getContentService.getContent(apiKeyService.getApiKey(), Collections.singletonList(documentReference), indexes, getContentParams);
+        final Documents documents = getContentService.getContent(Collections.singletonList(documentReference), indexes, getContentParams);
         final Document document = documents.getDocuments().get(0);
 
         // Check for a URL field on the document
@@ -90,24 +86,27 @@ public class IodViewServiceImpl implements IodViewService {
         final UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_2_SLASHES);
 
         // Attempt to load the URL
-        InputStream inputStream;
+        InputStream inputStream = null;
+
         try {
-            final URL url = new URL(documentUrl);
-            final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
-            final String encodedUrl = uri.toASCIIString();
+            try {
+                final URL url = new URL(documentUrl);
+                final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
+                final String encodedUrl = uri.toASCIIString();
 
-            if (urlValidator.isValid(encodedUrl)) {
-                final Response response = viewDocumentService.viewUrl(apiKeyService.getApiKey(), encodedUrl, null);
-                inputStream = response.getBody().in();
-            } else {
-                throw new URISyntaxException(encodedUrl, "Invalid URL");
+                if (urlValidator.isValid(encodedUrl)) {
+                    inputStream = viewDocumentService.viewUrl(encodedUrl, new ViewDocumentRequestBuilder());
+                } else {
+                    throw new URISyntaxException(encodedUrl, "Invalid URL");
+                }
+            } catch (final URISyntaxException | MalformedURLException | HodErrorException e) {
+                // Fallback - URL was not valid or IOD failed, use raw document content from IOD instead
+                inputStream = formatRawContent(document);
             }
-        } catch (final URISyntaxException | MalformedURLException | IodErrorException e) {
-            // Fallback - URL was not valid or IOD failed, use raw document content from IOD instead
-            inputStream = formatRawContent(document);
-        }
 
-        IOUtils.copy(inputStream, outputStream);
-        inputStream.close();
+            IOUtils.copy(inputStream, outputStream);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 }

@@ -10,25 +10,28 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 import com.hp.autonomy.frontend.configuration.ValidationResult;
-import com.hp.autonomy.iod.client.api.textindexing.Index;
-import com.hp.autonomy.iod.client.api.textindexing.Indexes;
 import com.hp.autonomy.frontend.find.search.IndexesService;
-import java.util.List;
-
-import com.hp.autonomy.iod.client.error.IodErrorException;
+import com.hp.autonomy.hod.client.api.authentication.ApiKey;
+import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
+import com.hp.autonomy.hod.client.api.authentication.TokenType;
+import com.hp.autonomy.hod.client.api.resource.Resource;
+import com.hp.autonomy.hod.client.api.resource.Resources;
+import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.client.token.TokenProxy;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.web.client.RestClientException;
+
+import java.util.List;
 
 @Data
 @JsonDeserialize(builder = IodConfig.Builder.class)
 public class IodConfig implements ConfigurationComponent {
 
     private final String apiKey;
-    private final List<Index> activeIndexes;
+    private final List<Resource> activeIndexes;
 
-    private IodConfig(final String apiKey, final List<Index> activeIndexes) {
+    private IodConfig(final String apiKey, final List<Resource> activeIndexes) {
         this.apiKey = apiKey;
         this.activeIndexes = activeIndexes;
     }
@@ -39,17 +42,20 @@ public class IodConfig implements ConfigurationComponent {
         return true;
     }
 
-    public ValidationResult<?> validate(final IndexesService indexesService) {
+    public ValidationResult<?> validate(final IndexesService indexesService, final AuthenticationService authenticationService) {
         try {
             if(StringUtils.isBlank(apiKey)) {
                 return new ValidationResult<>(false, "API Key is blank");
             }
 
-            final Indexes indexes = indexesService.listIndexes(apiKey);
-            final List<Index> activeIndexes = indexesService.listActiveIndexes();
+            //TODO the settings page should prompt for application and domain
+            final TokenProxy tokenProxy = authenticationService.authenticateApplication(new ApiKey(apiKey), "IOD-TEST-APPLICATION", "IOD-TEST-DOMAIN", TokenType.simple);
+
+            final Resources indexes = indexesService.listIndexes(tokenProxy);
+            final List<Resource> activeIndexes = indexesService.listActiveIndexes();
 
             return new ValidationResult<>(true, new IndexResponse(indexes, activeIndexes));
-        } catch (IodErrorException e) {
+        } catch (final HodErrorException e) {
             return new ValidationResult<>(false, "Unable to list indexes");
         }
     }
@@ -72,7 +78,7 @@ public class IodConfig implements ConfigurationComponent {
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder {
         private String apiKey;
-        private List<Index> activeIndexes;
+        private List<Resource> activeIndexes;
 
         public IodConfig build() {
             return new IodConfig(apiKey, activeIndexes);
@@ -81,10 +87,10 @@ public class IodConfig implements ConfigurationComponent {
 
     @Data
     private static class IndexResponse {
-        private final Indexes indexes;
-        private final List<Index> activeIndexes;
+        private final Resources indexes;
+        private final List<Resource> activeIndexes;
 
-        private IndexResponse(final Indexes indexes, final List<Index> activeIndexes) {
+        private IndexResponse(final Resources indexes, final List<Resource> activeIndexes) {
             this.indexes = indexes;
             this.activeIndexes = activeIndexes;
         }

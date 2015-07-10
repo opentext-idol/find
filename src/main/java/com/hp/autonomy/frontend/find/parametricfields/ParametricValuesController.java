@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.parametricfields;
 
-import com.hp.autonomy.iod.client.error.IodErrorException;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +21,10 @@ public class ParametricValuesController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Set<ParametricFieldName> getParametricValues(
-            @RequestParam("databases") final Set<String> databases,
+            @RequestParam("databases") final Set<ResourceIdentifier> databases,
             @RequestParam("queryText") final String queryText,
             @RequestParam("fieldText") final String fieldText
-    ) throws IodErrorException {
+    ) throws HodErrorException {
         final ParametricRequest parametricRequest = new ParametricRequest.Builder().setDatabases(databases).setQueryText(queryText).setFieldText(fieldText).build();
 
         return parametricValuesService.getAllParametricValues(parametricRequest);
