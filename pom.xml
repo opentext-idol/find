@@ -555,8 +555,8 @@
 
         <dependency>
             <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>java-hod-client</artifactId>
-            <version>0.9.1</version>
+            <artifactId>java-iod-client</artifactId>
+            <version>0.7.0</version>
         </dependency>
     </dependencies>
 </project>
