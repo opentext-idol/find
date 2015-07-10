@@ -37,9 +37,14 @@ define([
                     return $(input).val();
                 });
 
-                activeIndexes = _.filter(this.indexes, function (index) {
-                    return _.contains(selectedIndexes, index.index);
-                });
+                activeIndexes = _.chain(this.indexes)
+                    .filter(function (index) {
+                        return _.contains(selectedIndexes, index.resource);
+                    })
+                    .map(function(index) {
+                        return _.omit(index, 'private')
+                    })
+                    .value();
             }
             else if(this.$('input[type="checkbox"]').length) {
                 // no checkboxes ticked
@@ -83,13 +88,13 @@ define([
                 this.lastValidation = response.valid;
 
                 if(this.lastValidation && response.data && response.data.indexes) {
-                    var privateIndexes = response.data.indexes.indexes;
+                    var privateIndexes = response.data.indexes.resources;
 
                     _.each(privateIndexes, function(privateIndex) {
                         privateIndex.private = true;
                     });
 
-                    this.indexes = response.data.indexes.publicIndexes.concat(privateIndexes);
+                    this.indexes = response.data.indexes.publicResources.concat(privateIndexes);
                 }
                 else {
                     this.indexes = [];
