@@ -5,6 +5,9 @@
 
 package com.hp.autonomy.frontend.find;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.configuration.IodConfig;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
@@ -19,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class FindTokenProxyService implements TokenProxyService {
 
     @Autowired
-    private ApiKeyService apiKeyService;
+    private ConfigService<FindConfig> configService;
 
     private final AuthenticationService authenticationService;
 
@@ -30,14 +33,14 @@ public class FindTokenProxyService implements TokenProxyService {
     @Override
     public TokenProxy getTokenProxy() {
         try {
-            final String apiKey = apiKeyService.getApiKey();
+            final IodConfig iodConfig = configService.getConfig().getIod();
+            final String apiKey = iodConfig.getApiKey();
 
             if (apiKey == null) {
                 // app probably hasn't been configured yet
                 return null;
             } else {
-                // TODO application and domain should be in the config
-                return authenticationService.authenticateApplication(new ApiKey(apiKey), "IOD-TEST-APPLICATION", "IOD-TEST-DOMAIN", TokenType.simple);
+                return authenticationService.authenticateApplication(new ApiKey(apiKey), iodConfig.getApplication(), iodConfig.getDomain(), TokenType.simple);
             }
         } catch (final HodErrorException e) {
             throw new RuntimeException("Could not obtain token proxy", e);
