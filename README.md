@@ -1,14 +1,14 @@
 # HP Find
 [![Build Status](https://travis-ci.org/hpautonomy/find.svg?branch=master)](https://travis-ci.org/hpautonomy/find)
 
-HP Find is a web application backed by [IDOL OnDemand](https://www.idolondemand.com)
+HP Find is a web application backed by [Haven OnDemand](https://www.idolondemand.com)
 
 A live preview of HP Find can be found at [find.idolondemand.com](http://find.idolondemand.com).
 
 ## Key Features
-* Querying IDOL OnDemand indexes
-* Viewing IDOL OnDemand results
-* Suggested related searches from IDOL OnDemand
+* Querying Haven OnDemand indexes
+* Viewing Haven OnDemand results
+* Suggested related searches from Haven OnDemand
 
 ## Building HP Find
 Building HP Find requires the following to be installed
@@ -33,8 +33,8 @@ If using the jetty:run goal, the properties can be set on the command line
 The properties you'll need to set are:
 
 * -Dhp.find.home . This is the directory where the webapp will store log files and the config.json file.
-* -Dfind.https.proxyHost . Optional property. The host for the https proxy. Set this if you need a proxy server to talk to IDOL OnDemand.
-* -Dfind.https.proxyPort . Optional property. The port for the https proxy. Set this if you need a proxy server to talk to IDOL OnDemand. Defaults to 80 if find.https.proxyHost is defined.
+* -Dfind.https.proxyHost . Optional property. The host for the https proxy. Set this if you need a proxy server to talk to Haven OnDemand.
+* -Dfind.https.proxyPort . Optional property. The port for the https proxy. Set this if you need a proxy server to talk to Haven OnDemand. Defaults to 80 if find.https.proxyHost is defined.
 
 ## Configuring HP Find
 Once you've started HP Find, you'll need to configure HP Find. When run for the first time, a login screen will appear. The credentials for this are in the config file.

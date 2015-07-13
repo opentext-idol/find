@@ -14,7 +14,7 @@ public class SystemPropertyQueryProfileService implements QueryProfileService {
     /**
      * Gets the name of the query profile that should be used with queries.
      * Currently either a default value or read from a system property.
-     * @return  The name of the query profile to send to IDOL OnDemand along with queries.
+     * @return  The name of the query profile to send to Haven OnDemand along with queries.
      */
     @Override
     public String getQueryProfile() {
