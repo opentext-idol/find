@@ -86,4 +86,25 @@
     <session-config>
         <session-timeout>60</session-timeout>
     </session-config>
+
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/authentication-error</location>
+    </error-page>
+
+    <error-page>
+        <error-code>401</error-code>
+        <location>/authentication-error</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/server-error</location>
+    </error-page>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/not-found-error</location>
+    </error-page>
 </web-app>
