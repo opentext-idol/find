@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.search;
 
-import com.hp.autonomy.hod.client.api.resource.Resource;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
@@ -18,7 +18,7 @@ public interface IndexesService {
 
     Resources listIndexes(TokenProxy tokenProxy) throws HodErrorException;
 
-    List<Resource> listActiveIndexes();
+    List<ResourceIdentifier> listActiveIndexes();
 
-    List<Resource> listVisibleIndexes() throws HodErrorException;
+    List<ResourceIdentifier> listVisibleIndexes() throws HodErrorException;
 }

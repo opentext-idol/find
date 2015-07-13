@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.search;
 
-import com.hp.autonomy.hod.client.api.resource.Resource;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class ListIndexesController {
 
     @RequestMapping(value = "/api/search/list-indexes", method = RequestMethod.GET)
     @ResponseBody
-    public List<Resource> listActiveIndexes() throws HodErrorException {
+    public List<ResourceIdentifier> listActiveIndexes() throws HodErrorException {
         return indexesService.listVisibleIndexes();
     }
 }

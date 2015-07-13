@@ -24,6 +24,8 @@ define([
             this.$validateButtonParent.before(template({strings: this.strings}));
 
             this.$apikey = this.$('input[name="apikey"]');
+            this.$application = this.$('input[name="application"]');
+            this.$domain = this.$('input[name="domain"]');
             this.$apiKeyControlGroup = this.$('.form-group').eq(0);
         },
 
@@ -31,6 +33,8 @@ define([
             var $indexCheckboxes = this.$('input[type="checkbox"]:checked');
 
             var activeIndexes;
+
+            var domain = this.$domain.val();
 
             if ($indexCheckboxes.length) {
                 var selectedIndexes = _.map($indexCheckboxes, function (input) {
@@ -42,7 +46,10 @@ define([
                         return _.contains(selectedIndexes, index.resource);
                     })
                     .map(function(index) {
-                        return _.omit(index, 'private')
+                        return {
+                            domain: index.private ? domain : 'PUBLIC_INDEXES',
+                            name: index.resource
+                        }
                     })
                     .value();
             }
@@ -57,6 +64,8 @@ define([
 
             return {
                 apiKey: this.$apikey.val(),
+                application: this.$application.val(),
+                domain: domain,
                 activeIndexes: activeIndexes
             };
         },
@@ -65,6 +74,8 @@ define([
             ServerWidget.prototype.updateConfig.apply(this, arguments);
 
             this.$apikey.val(config.apiKey);
+            this.$application.val(config.application);
+            this.$domain.val(config.domain);
             this.indexes = config.activeIndexes;
         },
 
@@ -77,6 +88,16 @@ define([
                 if (config.apiKey === '') {
                     isValid = false;
                     this.updateInputValidation(this.$apikey);
+                }
+
+                if (config.application === '') {
+                    isValid = false;
+                    this.updateInputValidation(this.$application);
+                }
+
+                if (config.domain === '') {
+                    isValid = false;
+                    this.updateInputValidation(this.$domain);
                 }
             }
 

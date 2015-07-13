@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.find.configuration.FindConfig;
 import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
 import com.hp.autonomy.hod.client.api.resource.Resource;
 import com.hp.autonomy.hod.client.api.resource.ResourceFlavour;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.resource.ResourceType;
 import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
@@ -19,6 +20,7 @@ import com.hp.autonomy.hod.client.token.TokenProxyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -68,21 +70,29 @@ public class IndexesServiceImpl implements IndexesService {
     }
 
     @Override
-    public List<Resource> listActiveIndexes() {
+    public List<ResourceIdentifier> listActiveIndexes() {
         return configService.getConfig().getIod().getActiveIndexes();
     }
 
     @Override
-    public List<Resource> listVisibleIndexes() throws HodErrorException {
-        final List<Resource> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
+    public List<ResourceIdentifier> listVisibleIndexes() throws HodErrorException {
+        final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if(activeIndexes.isEmpty()) {
             final Resources resources = listIndexes();
+            final String domain = configService.getConfig().getIod().getDomain();
 
-            final List<Resource> mergedIndexes = resources.getPublicResources();
-            mergedIndexes.addAll(resources.getResources());
+            final List<ResourceIdentifier> resourceIdentifiers = new ArrayList<>();
 
-            return mergedIndexes;
+            for (final Resource resource : resources.getPublicResources()) {
+                resourceIdentifiers.add(new ResourceIdentifier(ResourceIdentifier.PUBLIC_INDEXES_DOMAIN, resource.getResource()));
+            }
+
+            for (final Resource resource : resources.getResources()) {
+                resourceIdentifiers.add(new ResourceIdentifier(domain, resource.getResource()));
+            }
+
+            return resourceIdentifiers;
         }
         else {
             return activeIndexes;

@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
@@ -14,7 +15,7 @@ import com.hp.autonomy.frontend.find.search.IndexesService;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
-import com.hp.autonomy.hod.client.api.resource.Resource;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
@@ -22,6 +23,7 @@ import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -29,11 +31,19 @@ import java.util.List;
 public class IodConfig implements ConfigurationComponent {
 
     private final String apiKey;
-    private final List<Resource> activeIndexes;
+    private final String application;
+    private final String domain;
+    private final List<JsonResourceIdentifier> activeIndexes;
 
-    private IodConfig(final String apiKey, final List<Resource> activeIndexes) {
+    private IodConfig(final String apiKey, final String application, final String domain, final List<JsonResourceIdentifier> activeIndexes) {
         this.apiKey = apiKey;
+        this.application = application;
+        this.domain = domain;
         this.activeIndexes = activeIndexes;
+    }
+
+    public List<ResourceIdentifier> getActiveIndexes() {
+        return new ArrayList<ResourceIdentifier>(activeIndexes);
     }
 
     @Override
@@ -48,11 +58,18 @@ public class IodConfig implements ConfigurationComponent {
                 return new ValidationResult<>(false, "API Key is blank");
             }
 
-            //TODO the settings page should prompt for application and domain
-            final TokenProxy tokenProxy = authenticationService.authenticateApplication(new ApiKey(apiKey), "IOD-TEST-APPLICATION", "IOD-TEST-DOMAIN", TokenType.simple);
+            if(StringUtils.isBlank(apiKey)) {
+                return new ValidationResult<>(false, "Application is blank");
+            }
+
+            if(StringUtils.isBlank(apiKey)) {
+                return new ValidationResult<>(false, "Domain is blank");
+            }
+
+            final TokenProxy tokenProxy = authenticationService.authenticateApplication(new ApiKey(apiKey), application, domain, TokenType.simple);
 
             final Resources indexes = indexesService.listIndexes(tokenProxy);
-            final List<Resource> activeIndexes = indexesService.listActiveIndexes();
+            final List<ResourceIdentifier> activeIndexes = indexesService.listActiveIndexes();
 
             return new ValidationResult<>(true, new IndexResponse(indexes, activeIndexes));
         } catch (final HodErrorException e) {
@@ -65,6 +82,8 @@ public class IodConfig implements ConfigurationComponent {
             final Builder builder = new Builder();
 
             builder.setApiKey(this.apiKey == null ? iod.apiKey : this.apiKey);
+            builder.setApplication(this.application == null ? iod.application : this.application);
+            builder.setDomain(this.domain == null ? iod.domain : this.domain);
             builder.setActiveIndexes(this.activeIndexes == null ? iod.activeIndexes : this.activeIndexes);
 
             return builder.build();
@@ -78,21 +97,32 @@ public class IodConfig implements ConfigurationComponent {
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder {
         private String apiKey;
-        private List<Resource> activeIndexes;
+        private String application;
+        private String domain;
+        private List<JsonResourceIdentifier> activeIndexes;
 
         public IodConfig build() {
-            return new IodConfig(apiKey, activeIndexes);
+            return new IodConfig(apiKey, application, domain, activeIndexes);
         }
     }
 
     @Data
     private static class IndexResponse {
         private final Resources indexes;
-        private final List<Resource> activeIndexes;
+        private final List<ResourceIdentifier> activeIndexes;
 
-        private IndexResponse(final Resources indexes, final List<Resource> activeIndexes) {
+        private IndexResponse(final Resources indexes, final List<ResourceIdentifier> activeIndexes) {
             this.indexes = indexes;
             this.activeIndexes = activeIndexes;
         }
+    }
+
+    // TODO: remove this once we've released the version of the Hod client with JSON annotations on ResourceIdentifier
+    private static class JsonResourceIdentifier extends ResourceIdentifier {
+
+        public JsonResourceIdentifier(@JsonProperty("domain") final String domain, @JsonProperty("name") final String name) {
+            super(domain, name);
+        }
+
     }
 }
