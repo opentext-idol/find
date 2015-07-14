@@ -4,26 +4,20 @@ define([
     'find/app/model/indexes-collection',
     'text!find/templates/app/page/index-list.html',
     'text!find/templates/app/page/index-item.html',
-    'iCheck'
-], function(Backbone, _, IndexesCollection, listTemplate, itemTemplate) {
+    'js-whatever/js/list-view'
+], function(Backbone, _, IndexesCollection, listTemplate, itemTemplate, ListView) {
     return Backbone.View.extend({
         listTemplate: _.template(listTemplate),
         itemTemplate: _.template(itemTemplate),
+        className: 'table',
+        tagName: 'table',
 
         events: {
-            'ifClicked .indexes-list input': function(e) {
-                var toggledIndex = $(e.currentTarget).val();
-                var checked = !$(e.currentTarget).prop('checked');
-
-                this.indexes[toggledIndex] = checked;
-
-                this.queryModel.set('indexes', this.selectedIndexes());
-
-                if(this.selectedIndexes().length === 1) {
-                    this.$('[value="'+this.selectedIndexes()[0]+'"]').iCheck('disable');
-                } else {
-                    this.$('.indexes-list input').iCheck('enable');
-                }
+            'click tr': function(e) {
+                var $targetRow = $(e.currentTarget);
+                var id = $targetRow.find('[data-id]').data('id');
+                this.changeIndex($targetRow);
+                $targetRow.find('i').toggleClass('hide');
             }
         },
 
@@ -41,25 +35,21 @@ define([
                     this.indexes[indexModel.get('index')] = true;
                 }, this));
 
+                this.listView = new ListView({
+                    collection: this.indexesCollection,
+                    itemOptions: {
+                        tagName: 'tr',
+                        className: 'clickable',
+                        template: this.itemTemplate
+                    }
+                });
+
                 this.queryModel.set('indexes', this.selectedIndexes());
 
                 this.trigger('sync');
 
-                this.indexesCollection.each(function(model) {
-                    var htmlTemplateOutput = $(this.itemTemplate({
-                        index: model.get('index')
-                    }));
+                this.listView.setElement(this.$el).render();
 
-                    this.$el.find('.indexes-list').append(htmlTemplateOutput);
-
-                    if (this.indexes[model.get('index')]) { // If index is selected, set the checkbox to checked
-                        htmlTemplateOutput.find('input').prop('checked', true);
-                    }
-                }, this);
-
-                this.$('.indexes-list input').iCheck({
-                    checkboxClass: 'icheckbox_square-blue filter-checkbox'
-                });
             }, this);
         },
 
@@ -71,6 +61,20 @@ define([
             return _.chain(this.indexes).map(function(value, key) {
                 return (value ? key : undefined); // Return names of selected indexes and undefined for unselected ones
             }).compact().value();
+        },
+
+        changeIndex: function(index) {
+            var toggledIndex = index.find('[data-id]').data('id');
+            var isSelected = index.find('i').hasClass('hide');
+
+            this.indexes[toggledIndex] = isSelected;
+            this.queryModel.set('indexes', this.selectedIndexes());
+
+            if(this.selectedIndexes().length === 1) {
+                this.$('[data-id="'+this.selectedIndexes()[0]+'"]').parent().addClass('disabled-index');
+            } else {
+                this.$('[data-id]').parent().removeClass('disabled-index');
+            }
         }
     });
 });

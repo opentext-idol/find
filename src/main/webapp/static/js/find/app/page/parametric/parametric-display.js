@@ -20,15 +20,14 @@ define([
             this.queryModel = options.queryModel;
 
             this.fieldNamesListView = new ListView({
-                className: 'list-unstyled',
                 collection: this.collection,
-                tagName: 'ul',
                 ItemView: ParametricListItemView,
                 proxyEvents: [
                     'changeFieldText'
                 ],
                 itemOptions: {
-                    className: 'animated fadeIn',
+                    tagName: 'table',
+                    className: 'table animated fadeIn',
                     template: _.template(fieldTemplate)
                 }
             });

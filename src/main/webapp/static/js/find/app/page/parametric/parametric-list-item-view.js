@@ -14,14 +14,17 @@ define([
         },
 
         events: {
-            'ifClicked .filter-checkbox' : function(e) {
-                var target = $(e.target);
-                var value = $(target).closest('[data-value]').attr('data-value');
+            'click .selectable-table-item': function(event) {
+                var $targetRow = $(event.currentTarget);
+                var id = $targetRow.find('[data-id]').data('id');
+                this.trigger('change', $targetRow);
 
-                if(target.prop('checked')) {
-                    this.checked = _.without(this.checked, value);
+                $targetRow.find('i').toggleClass('hide');
+
+                if($targetRow.find('i').hasClass('hide')) {
+                    this.checked = _.without(this.checked, id);
                 } else {
-                    this.checked.push(value);
+                    this.checked.push(id);
                     this.checked = _.uniq(this.checked);
                 }
 
@@ -41,15 +44,8 @@ define([
 
             this.$checkboxInput = this.$('input');
 
-            this.$checkboxInput.iCheck({
-                checkboxClass: 'icheckbox_square-blue filter-checkbox'
-            });
-
-            // icheck won't add the necessary position: relative if the element isn't in the DOM...
-            this.$('.filter-checkbox').css('position', 'relative');
-
             _.each(this.checked, function(value) {
-                this.$('[data-value="' + value + '"]').find('input').iCheck('check')
+                this.$('[data-value="' + value + '"]').find('i').removeClass('hide')
             }, this);
         },
 
