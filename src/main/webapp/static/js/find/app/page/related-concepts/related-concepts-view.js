@@ -57,10 +57,8 @@ define([
 
                         this.$('li a').popover({
                             html: true,
-                            content: '<h6>Top Results</h6>',
-                            placement: 'right',
-                            trigger: 'hover',
-                            container: $('body')
+                            placement: 'bottom',
+                            trigger: 'hover'
                         })
                     }, this);
                 }

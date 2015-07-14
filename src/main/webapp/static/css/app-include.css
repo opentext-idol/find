@@ -21,6 +21,56 @@ html, body {
     margin-bottom: 0;
 }
 
+.m-t-xs {
+    margin-top: 5px;
+}
+
+.m-t-sm {
+    margin-top: 10px;
+}
+
+.m-b-sm {
+    margin-bottom: 10px;
+}
+
+.m-b-nil {
+    margin-bottom: 0;
+}
+
+.m-l-xs {
+    margin-left: 5px;
+}
+
+.m-l-sm {
+    margin-left: 10px;
+}
+
+.m-r-sm {
+    margin-right: 10px;
+}
+
+.m-r-xs {
+    margin-right: 5px;
+}
+
+.no-box-shadow {
+    box-shadow: none !important;
+}
+
+.left-side-container {
+    background-color: #F7F7F7;
+}
+
+.left-side-container td {
+    border-bottom: 1px solid #ddd;
+    border-top: none !important;
+    word-break: break-all;
+}
+
+.right-side-container {
+    background-color: #F7F7F7;
+}
+
 .bootstrap-datetimepicker-widget td.day.active {
     color: #ffffff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -99,12 +149,31 @@ html, body {
     height: 100%;
 }
 
+.main-content .container-fluid {
+    height:80%;
+}
+
+.find-main-subcontainer,
+.main-content .content {
+    height:100%;
+}
+
 .find {
     text-align: center;
 }
 
 .find-logo {
     font-size: 24px;
+}
+
+a.unstyled {
+    color:#fff;
+    text-decoration: none;
+}
+
+a.unstyled:hover {
+    color:#fff !important;
+    text-decoration: none !important;
 }
 
 input.find-input {
@@ -119,24 +188,12 @@ input.find-input {
     background-color: #A3877A;
 }
 
-/*main results bubbles styling*/
-.main-results-container {
-    display: inline-block;
-    -webkit-transition-duration: 0.3s;
-    transition-duration: 0.3s;
-    -webkit-transition-property: -webkit-transform;
-    transition-property: transform;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    -webkit-transform: translateZ(0);
-    -ms-transform: translateZ(0);
-    transform: translateZ(0);
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+.sort-container a {
+    cursor: pointer;
 }
 
-.main-results-container:hover {
-    -webkit-transform: scale(1.02);
-    -ms-transform: scale(1.02);
-    transform: scale(1.02);
+.sort-container a:hover {
+    text-decoration: none;
 }
 
 .main-results-content {
@@ -144,31 +201,31 @@ input.find-input {
     flex-wrap: wrap;
 }
 
-.main-results-content .span5 {
-    margin-right:15px;
-    margin-bottom: 20px;
+.main-results-container {
+    border-bottom: 1px solid #d3d3d3;
+    width: 100%;
+    padding: 0 10px;
 }
 
-.main-results-container:not(:first-child) {
-    margin-left: 0;
+.document-reference {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: inline-block;
+    color: #aeaeae;
 }
 
-.main-results-container p {
-    line-height: 31px;
-    font-size: 17px;
+.document-date {
+    color: #aeaeae;
+    font-style: italic;
+    font-size: small;
+    cursor: default;
 }
 
-.drop-shadow {
-    position:relative;
-    float:left;
-    width:40%;
-    padding:1em;
-    background: white;
-    -webkit-box-shadow:0px 3px 6px rgba(3, 2, 2, 0.29), 0 0 6px rgba(255, 255, 255, 0.1) inset;
-    -moz-box-shadow:0px 3px 6px rgba(3, 2, 2, 0.29), 0 0 6px rgba(255, 255, 255, 0.1) inset;
-    box-shadow:0px 3px 6px rgba(3, 2, 2, 0.29), 0 0 6px rgba(255, 255, 255, 0.1) inset;
+.promoted-document {
+    background-color: #E2E2E2;
 }
-/* end of main results bubble styling*/
 
 .suggestions-content li {
     list-style: none;
@@ -183,11 +240,15 @@ input.find-input {
     position: relative;
 }
 
+.find {
+    /* We need to be on top of the static navbar */
+    z-index: 9999;
+}
+
 /* fancy animation */
 .animated-container {
     position: absolute;
-    margin-top: 10px;
-    top: 0;
+    top: -60px;
     transition: all 1000ms ease;
 }
 
@@ -198,8 +259,8 @@ input.find-input {
 }
 
 .animated-container .find-input {
-    height: 20px;
     font-size: 18px;
+    border-bottom: none;
     transition: all 1000ms ease;
 }
 /* fancy reverse animation */
@@ -218,19 +279,27 @@ input.find-input {
 .reverse-animated-container .find-input {
     height: 40px !important;
     font-size: 34px !important;
+    border-bottom: 2px solid rgb(91, 145, 214) !important;
     transition: all 1000ms ease;
+}
+
+.reverse-animated-container .find-form:focus,
+.reverse-animated-container .find-input:focus,
+.animated-container .find-form:focus,
+.animated-container .find-input:focus {
+    outline: 0;
 }
 /* end of fancy animation */
 
 .suggestions-content a {
-    color: rgba(138, 113, 102, 0.96)
+    color: rgb(91, 145, 214);
 }
 
 .main-content h4,
 .main-content h5,
 .error-body h1,
 .error-body h3 {
-    color: rgba(138, 113, 102, 0.96);
+    color: rgb(91, 145, 214);
 }
 
 .error-body {
@@ -254,26 +323,25 @@ input.find-input {
     top: 50%;
     width: 200px;
     font-size: 28px;
-    color: rgba(138, 113, 102, 0.96);
+    color: rgb(91, 145, 214);
 }
 
 .main-results-content .no-results {
     font-size: 28px;
-    color: rgba(138, 113, 102, 0.96);
+    color: rgb(91, 145, 214);
 }
 
 
 .main-results-content .loading-spinner i, .related-concepts-container .loading-spinner i, .parametric-container .loading-spinner i {
-    color:rgb(177, 85, 85);
+    color:rgb(91, 145, 214);
 }
 
 .related-concepts-container .loading-spinner,
 .parametric-container .loading-spinner {
     text-align: center;
     font-size: 18px;
-    color: rgba(138, 113, 102, 0.96);
+    color: rgb(91, 145, 214);
 }
-
 
 /* fancy colourbox buttons */
 .btn-colorbox, .btn-colorbox:focus {
@@ -304,18 +372,21 @@ input.find-input {
 
 .result-summary {
     text-align: justify;
-}
-
-.popover .arrow {
-    display: none;
+    overflow: hidden;
+    text-overflow: clip;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    max-height: 60px;
 }
 
 .suggestion-cluster .popover {
     width: 250px;
 }
 
-.popover-content h6 {
+.popover-content h5 {
     margin:0;
+    font-weight: 700;
 }
 
 .find-form .popover label {
@@ -343,6 +414,7 @@ input.find-input {
 a.entity-to-summary {
     cursor:pointer;
     color:white;
+    font-size: 11px;
 }
 
 .entity-to-summary a {
@@ -351,10 +423,6 @@ a.entity-to-summary {
 
 .entity-to-summary a:hover {
     text-decoration: none;
-}
-
-.entity-to-summary.label-info {
-    background-color: #b15555;
 }
 
 @media only screen and (max-width: 1210px) {
@@ -383,6 +451,12 @@ a.entity-to-summary {
     right: -65px;
 }
 
+.disabled-index {
+    color: #aaa;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .indexes-list-group .controls {
     margin-left: 100px;
 }
@@ -395,13 +469,12 @@ a.entity-to-summary {
 input.find-input[type="text"], input.find-input[type="text"]:focus {
     border-color: transparent;
     box-shadow: none;
-    border-bottom: 3px solid #b15555;
     border-radius: 0;
 }
 
 input::-webkit-input-placeholder,
 input::-moz-placeholder {
-    color: indianred;
+    color: rgb(91, 145, 214);
     opacity: 0.5;
 }
 
@@ -411,16 +484,16 @@ input::-moz-placeholder {
 input:-moz-placeholder::before {
     font-family: fontAwesome;
     content: '\f105';
-    color: indianred
+    color: rgb(91, 145, 214);
 }
 
 .page .header {
     margin-bottom: 20px;
 }
 
-.navbar-inner {
-    border: none;
-    background: #555;
+.find-navbar {
+    border-bottom: 3px solid rgb(91, 145, 214);
+    background-color: #555;
 }
 
 .navbar .nav > .active > a {
@@ -428,13 +501,33 @@ input:-moz-placeholder::before {
 }
 
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 {
-    color: rgba(138, 113, 102, 0.96);
+    color: rgb(91, 145, 214);
 }
 
-@media (max-width: 767px) {
-    .page-wrap {
-        padding: 0 20px;
-    }
+/*TODO use bootstrap theme customiser for these */
+.popover {
+    border-radius: 0;
+}
+
+.popover, .popover-title {
+    background-color:#353535;
+}
+
+.popover-content p {
+    color: #fff;
+    font-size: 12px;
+}
+
+.popover-content {
+    padding: 15px 14px 9px;
+}
+
+.popover-title {
+    display: none;
+}
+
+.popover.bottom > .arrow:after {
+    border-bottom-color:#353535;
 }
 
 @media (min-width: 980px) {

@@ -1,23 +1,22 @@
-<div class="main-results-container span5 drop-shadow" data-rel="results" data-reference="<%-reference %>">
+<% var promoted = promotion ? 'promoted-document' : ''; %>
+
+<div class="main-results-container m-b-sm <%-promoted%>" data-rel="results" data-reference="<%-reference %>">
+    <% if (promotion) { %>
+        <span class="pull-right m-t-xs text-muted">
+            <i class="icon-star"></i> Promoted
+        </span>
+    <% } %>
     <a href="<%-href %>" class="result-header">
-        <h4><%- title %></h4>
+        <h4 class="pull-left m-b-nil"><%- title %></h4>
+        <span class="document-date pull-left m-t-sm m-l-xs">
+            <%- date %>
+        </span>
     </a>
+    <span class="document-reference"><%-reference %></span>
     <p class="result-summary">
         <%= summary %>
         <% if(summary.length > 200) { %>
             <a href='<%-href %>' class="dots">&#91;...&#93;</a>
-        <% } %>
-    </p>
-    <p>
-        <% if (date) { %>
-            <span class="pull-left no-bottom-margin">
-                <%- date %>
-            </span>
-        <% } %>
-        <% if (promotion) { %>
-            <span class="pull-right no-bottom-margin">
-                <small><i class="icon-star"></i> Promoted</small>
-            </span>
         <% } %>
     </p>
 </div>

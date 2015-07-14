@@ -36,15 +36,13 @@ define([
 
             this.indexesView.$('.list-indexes').click();
 
-            this.indexesView.$('[name="wiki_eng"]').click();
+            this.indexesView.$('[data-id="wiki_eng"]').click();
 
             expect(this.indexesView.queryModel.set).toHaveBeenCalledWith('indexes', ['foo', 'bar']);
         });
 
         it("should contain an index after it has been reselected by clicking it twice", function() {
-            this.indexesView.$('.list-indexes').click();
-
-            this.indexesView.$('[name="wiki_eng"]').click().click();
+            this.indexesView.$('[data-id="wiki_eng"]').click().click();
 
             var finalCallCount = this.indexesView.queryModel.set.calls.count();
             var lastCallArguments = this.indexesView.queryModel.set.calls.mostRecent().args;
