@@ -102,9 +102,16 @@
         <property name="location" value="classpath:com/hp/autonomy/frontend/find/find.properties"/>
     </bean>
 
-    <bean name="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <bean name="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="converters">
-            <set/>
+            <set>
+                <bean class="com.hp.autonomy.frontend.find.converter.StringToResourceIdentifierConverter"/>
+            </set>
+        </property>
+        <property name="formatters">
+            <set>
+                <bean class="org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory"/>
+            </set>
         </property>
     </bean>
 

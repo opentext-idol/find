@@ -92,7 +92,7 @@ define([
 
         selectAll: function() {
             this.indexesCollection.each(function(indexModel) {
-                this.indexes[indexModel.get('index')] = true;
+                this.indexes[indexModel.id] = true;
             }, this);
 
             this.updateQueryModel(this.selectedIndexes());
