@@ -11,15 +11,23 @@ define([
 
         url: '../api/search/query-text-index/results',
 
-	    sync: function(method, model, options) {
-		    options = options || {};
-		    options.traditional = true; // Force "traditional" serialization of query parameters, e.g. index=foo&index=bar, for IOD multi-index support.
+        initialize: function(models, options) {
+            this.indexesCollection = options.indexesCollection;
+        },
 
-		    return Backbone.Collection.prototype.sync.call(this, method, model, options);
-	    },
+        sync: function(method, model, options) {
+            options = options || {};
+            options.traditional = true; // Force "traditional" serialization of query parameters, e.g. index=foo&index=bar, for IOD multi-index support.
 
-		parse: function(response) {
-			return response.documents;
-		}
+            return Backbone.Collection.prototype.sync.call(this, method, model, options);
+        },
+
+        parse: function(response) {
+            return _.map(response.documents, function(document) {
+                document.index = this.indexesCollection.findWhere({name: document.index});
+
+                return document;
+            }, this);
+        }
     })
 });

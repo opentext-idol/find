@@ -25,7 +25,6 @@ define([
             this.indexesCollection = options.indexesCollection;
 
             this.indexes = {};
-            this.indexesCollection.fetch();
 
             this.listenTo(this.indexesCollection, 'sync', function() {
                 this.selectAll();

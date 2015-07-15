@@ -37,7 +37,9 @@ define([
             this.queryModel = options.queryModel;
             this.entityCollection = options.entityCollection;
 
-            this.topResultsCollection = new DocumentsCollection();
+            this.topResultsCollection = new DocumentsCollection([], {
+                indexesCollection: options.indexesCollection
+            });
         },
 
         render: function() {

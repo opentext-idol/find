@@ -7,13 +7,14 @@ define([
     'js-whatever/js/base-page',
     'find/app/model/backbone-query-model',
     'find/app/model/query-model',
+    'find/app/model/indexes-collection',
     'find/app/page/input-view',
     'find/app/page/service-view',
     'find/app/router',
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
+], function(BasePage, BackboneQueryModel, QueryModel, IndexesCollection, InputView, ServiceView, router, vent, _, template) {
 
     return BasePage.extend({
 
@@ -22,6 +23,9 @@ define([
         initialize: function() {
             var backboneQueryModel = new BackboneQueryModel();
             this.queryModel = new QueryModel(backboneQueryModel);
+
+            var indexesCollection = new IndexesCollection();
+            indexesCollection.fetch();
 
             // Because the queryModel doesn't fire with the empty string, we listen to the unadulterated model
             // underlying the main model for the change in queryText.
@@ -34,10 +38,12 @@ define([
             });
 
             this.inputView = new InputView({
+                indexesCollection: indexesCollection,
                 queryModel: this.queryModel
             });
 
             this.serviceView = new ServiceView({
+                indexesCollection: indexesCollection,
                 queryModel: this.queryModel
             });
 

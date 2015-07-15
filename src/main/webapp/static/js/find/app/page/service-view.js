@@ -68,8 +68,9 @@ define([
             });
 
             this.resultsView = new ResultsView({
-                queryModel: this.queryModel,
-                entityCollection: this.entityCollection
+                entityCollection: this.entityCollection,
+                indexesCollection: options.indexesCollection,
+                queryModel: this.queryModel
             });
 
             // Left Views
@@ -93,8 +94,9 @@ define([
 
             //Right Collapsed View
             this.relatedConceptsView = new RelatedConceptsView({
-                queryModel: this.queryModel,
-                entityCollection: this.entityCollection
+                entityCollection: this.entityCollection,
+                indexesCollection: options.indexesCollection,
+                queryModel: this.queryModel
             });
 
             this.sortView = new SortView({

@@ -6,7 +6,7 @@ define([
         getHref: function(reference, index) {
             if (index) {
                 return '../api/user/view/viewDocument?' + $.param({
-                    indexes: index,
+                    indexes: index.id,
                     reference: reference
                 });
             } else {
