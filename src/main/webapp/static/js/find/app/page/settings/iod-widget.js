@@ -6,14 +6,17 @@
 define([
     'settings/js/server-widget',
     'find/app/model/indexes-collection',
+    'text!find/templates/app/page/settings/server-widget.html',
     'text!find/templates/app/page/settings/iod-widget.html',
     'text!find/templates/app/page/settings/indexes-list.html'
-], function(ServerWidget, IndexesCollection, template, indexesTemplate) {
+], function(ServerWidget, IndexesCollection, serverWidget, template, indexesTemplate) {
 
     template = _.template(template);
     indexesTemplate = _.template(indexesTemplate);
 
     return ServerWidget.extend({
+        serverTemplate: _.template(serverWidget),
+
         render: function() {
             ServerWidget.prototype.render.call(this);
 

@@ -10,8 +10,10 @@ define([
     'settings/js/settings-page',
     'find/app/model/config',
     'find/app/page/settings/iod-widget',
-    'settings/js/widgets/single-user-widget'
-], function(i18n, vent, router, SettingsPage, configModel, IodWidget, SingleUserWidget) {
+    'settings/js/widgets/single-user-widget',
+    'find/app/page/settings/validate-on-save-modal',
+    'find/app/util/confirm-view'
+], function(i18n, vent, router, SettingsPage, configModel, IodWidget, SingleUserWidget, ValidateOnSaveModal, Confirm) {
 
     var serverStrings = function() {
         return {
@@ -31,12 +33,14 @@ define([
     var urlRoot = /\bconfig\/[\/]*$/.test(window.location.pathname) ? '../api/config/config/' : '../api/useradmin/config/';
 
     return SettingsPage.extend({
+        SaveModalConstructor: ValidateOnSaveModal,
         configModel: configModel,
         router: router,
         routeRoot: 'find/settings',
         scrollSelector: '.body',
         vent: vent,
         validateUrl: urlRoot + 'config-validation',
+        groupClass: 'col-md-4',
         strings: {
             cancelButton: i18n['settings.cancel'],
             cancelCancel: i18n['app.cancel'],
@@ -108,6 +112,26 @@ define([
                     })
                 ]
             ];
+        },
+
+        handleCancelButton: function(e) {
+            e.preventDefault();
+
+            new Confirm({
+                cancelClass: 'btn-default',
+                cancelIcon: 'icon-remove',
+                cancelText: this.strings.cancelCancel,
+                okText: this.strings.cancelOk,
+                okClass: 'btn-primary',
+                okIcon: 'icon-undo',
+                message: this.strings.cancelMessage,
+                title: this.strings.cancelTitle,
+                hiddenEvent: 'hidden.bs.modal',
+                okHandler: _.bind(function() {
+                    this.loadFromConfig();
+                }, this)
+            });
+
         }
     });
 

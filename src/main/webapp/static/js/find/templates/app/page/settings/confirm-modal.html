@@ -1,0 +1,21 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <% if (config.closable) { %><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><% } %>
+            <h4 class="modal-title"><%=config.title%></h4>
+        </div>
+        <div class="modal-body">
+            <p><%=config.message%></p>
+        </div>
+        <% if (config.showButtons) { %>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-w-m <%-config.okClass%> okButton" data-dismiss="modal"><%=config.okText%></button>
+            <button type="button" class="btn btn-w-m <%-config.cancelClass%> cancelButton" data-dismiss="modal"><%=config.cancelText%></button>
+        </div>
+        <% } else if (config.closable) { %>
+        <div class="modal-footer">
+            <a href="#" class="btn <%-config.okClass%> okButton" data-dismiss="modal"><i class="<%-config.okIcon%>"></i> <%=config.okText%></a>
+        </div>
+        <% } %>
+    </div>
+</div>
