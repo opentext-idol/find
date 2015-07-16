@@ -7,12 +7,12 @@ define([
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/colorbox-controls.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/view/audio-player.html',
+    'text!find/templates/app/page/view/media-player.html',
     'text!find/templates/app/page/results/entity-label.html',
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, audioPlayerTemplate, entityTemplate, moment, i18n) {
+], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, entityTemplate, moment, i18n) {
 
     /** Whitespace OR character in set bounded by [] */
     var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
@@ -21,11 +21,13 @@ define([
     /** End of input OR boundary chars */
     var endRegex = '($|' + boundaryChars + ')';
 
+    var mediaTypes = ['audio', 'video'];
+
     return Backbone.View.extend({
 
         template: _.template(resultsView),
         noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
-        audioPlayerTemplate: _.template(audioPlayerTemplate),
+        mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         entityTemplate: _.template(entityTemplate),
 
         events: {
@@ -136,6 +138,29 @@ define([
             $.colorbox.next();
         },
 
+        colorboxArguments: function(media, url, offset) {
+            var args = {
+                current: '{current} of {total}',
+                height:'70%',
+                iframe: !Boolean(media),
+                rel: 'results',
+                width:'70%',
+                onComplete: _.bind(function() {
+                    $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+                }, this)
+            };
+
+            if(media) {
+                args.html = this.mediaPlayerTemplate({
+                    media: media,
+                    url: url,
+                    offset: offset
+                })
+            }
+
+            return args;
+        },
+
         formatResult: function(model, isPromotion) {
             var reference = model.get('reference');
             var summary = model.get('summary');
@@ -179,39 +204,20 @@ define([
             }
 
             var fields = model.get('fields');
-            if (fields.content_type && fields.url && fields.content_type[0].indexOf('audio') == 0) {
-                // This is an audio file with a URL, use the audio player template
+            var contentType = fields.content_type ? fields.content_type[0] : '';
 
+            var media = _.find(mediaTypes, function(mediaType) {
+                return contentType.indexOf(mediaType) === 0;
+            });
+
+            if (media && fields.url) {
                 var url = fields.url[0];
                 var offset = fields.offset ? fields.offset[0] : 0;
 
-                $newResult.find('.result-header').colorbox({
-                    iframe: false,
-                    width:'70%',
-                    height:'70%',
-                    rel: 'results',
-                    current: '{current} of {total}',
-                    onComplete: _.bind(function() {
-                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-                    }, this),
-                    html: this.audioPlayerTemplate({
-                        url: url,
-                        offset: offset
-                    })
-                })
-
+                $newResult.find('.result-header').colorbox(this.colorboxArguments(media, url, offset));
             } else {
                 // Use the standard Viewserver display
-                $newResult.find('.result-header').colorbox({
-                    iframe: true,
-                    width:'70%',
-                    height:'70%',
-                    rel: 'results',
-                    current: '{current} of {total}',
-                    onComplete: _.bind(function() {
-                        $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-                    }, this)
-                });
+                $newResult.find('.result-header').colorbox(this.colorboxArguments());
             }
 
             $newResult.find('.dots').click(function (e) {
