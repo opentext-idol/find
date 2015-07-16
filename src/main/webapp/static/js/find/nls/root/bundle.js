@@ -43,6 +43,7 @@ define([
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',
+        'search.filtersDisplay.nfilters': '{0} Filter(s)',
         'settings.cancel': 'Cancel',
         'settings.cancel.message': 'All unsaved changes will be lost.',
         'settings.cancel.title': 'Revert settings?',

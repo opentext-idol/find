@@ -1,9 +1,8 @@
 define([
     'backbone',
     'underscore',
-    'abc/app/app-config',
-    'i18n!abc/nls/bundle'
-], function(Backbone, _, config, i18n) {
+    'i18n!find/nls/bundle'
+], function(Backbone, _, i18n) {
 
     var FilterTypes = {
         DATABASES: 'DATABASES',
@@ -11,18 +10,6 @@ define([
         MIN_DATE: 'MIN_DATE',
         PARAMETRIC: 'PARAMETRIC'
     };
-
-    function getDatabasesFilterText(selectedIndexesCollection) {
-        var databasesString;
-
-        if (config.hosted) {
-            databasesString = i18n['searchPage.indexes'];
-        } else {
-            databasesString = i18n['searchPage.databases'];
-        }
-
-        return databasesString + ': ' + selectedIndexesCollection.pluck('id').join(', ');
-    }
 
     function getDateFilterText(filterType, date) {
         // Filters model date attributes are moments
@@ -84,12 +71,14 @@ define([
     // views aren't backed by a collection.
     return Backbone.Collection.extend({
         initialize: function(models, options) {
-            this.queryModelModel = options.queryModel;
+            this.queryModel = options.queryModel;
 
             this.listenTo(this.queryModel, 'change:minDate', this.updateMinDate);
             this.listenTo(this.queryModel, 'change:maxDate', this.updateMaxDate);
             this.listenTo(this.queryModel, 'change:indexes', this.updateDatabases);
             this.listenTo(this.queryModel, 'change:fieldText', this.setParametricFieldText(this.queryModel.get('fieldText')));
+
+            this.listenTo(this.queryModel, 'change', console.log(_.clone(this.queryModel)));
 
             // Update the search request model when a dates filter is removed
             this.on('remove', function(model) {
@@ -122,9 +111,13 @@ define([
                 models.push({
                     id: FilterTypes.DATABASES,
                     type: FilterTypes.DATABASES,
-                    text: getDatabasesFilterText(this.queryModel.get('indexes'))
+                    text: this.getDatabasesFilterText()
                 });
             }
+        },
+
+        getDatabasesFilterText: function() {
+            return i18n['search.indexes'] + ': ' + this.queryModel.get('indexes').join(', ');
         },
 
         setParametricFieldText: function(node) {
@@ -141,7 +134,7 @@ define([
             var filterModel = this.get(FilterTypes.DATABASES);
 
             if (this.queryModel.get('allIndexesSelected')) {
-                var filterText = getDatabasesFilterText(this.queryModel.get('indexes'));
+                var filterText = this.getDatabasesFilterText();
 
                 if (filterModel) {
                     filterModel.set('text', filterText);

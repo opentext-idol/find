@@ -3,7 +3,7 @@ define([
     'js-whatever/js/list-view',
     'text!find/templates/app/page/filter-display/filter-display-view.html',
     'text!find/templates/app/page/filter-display/filter-display-item.html',
-    'i18n!abc/nls/bundle'
+    'i18n!find/nls/bundle'
 ], function(Backbone, ListView, template, itemTemplate, i18n) {
 
     // Each of the collection's models should have an id and a text attribute
@@ -47,7 +47,7 @@ define([
 
         updateFilterCount: function() {
             if (this.$filterDisplayCount) {
-                this.$filterDisplayCount.text(i18n['searchPage.filters'](this.collection.length));
+                this.$filterDisplayCount.text(i18n['search.filtersDisplay.nfilters'](this.collection.length));
             }
         },
 

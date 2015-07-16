@@ -3,8 +3,10 @@ define([
     'jquery',
     'underscore',
     'find/app/model/entity-collection',
+    'find/app/model/search-filters-collection',
     'find/app/model/parametric-collection',
     'find/app/page/parametric/parametric-controller',
+    'find/app/page/filter-display/filter-display-view',
     'find/app/page/date/dates-filter-view',
     'find/app/page/results/results-view',
     'find/app/page/related-concepts/related-concepts-view',
@@ -14,8 +16,8 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/service-view.html',
     'text!find/templates/app/util/filter-header.html'
-], function(Backbone, $, _, EntityCollection, ParametricCollection,
-            ParametricController, DateView, ResultsView, RelatedConceptsView, SortView,
+], function(Backbone, $, _, EntityCollection, SearchFiltersCollection, ParametricCollection,
+            ParametricController, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
             IndexesView, Collapsible, i18n, template, filterHeader) {
 
     var filterHeaderTemplate = _.template(filterHeader);
@@ -38,6 +40,7 @@ define([
             this.queryModel = options.queryModel;
 
             this.entityCollection = new EntityCollection();
+            this.filtersCollection = new SearchFiltersCollection([], {queryModel: this.queryModel});
 
             this.listenTo(this.queryModel, 'change', function() {
                 this.entityCollection.fetch({
@@ -55,6 +58,10 @@ define([
             });
 
             // Left Collapsed Views
+            this.filterDisplayView = new FilterDisplayView({
+                collection: this.filtersCollection
+            });
+
             this.indexesView = new IndexesView({
                 queryModel: this.queryModel
             });
@@ -87,6 +94,7 @@ define([
         render: function() {
             this.$el.html(this.template);
 
+            this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
             this.parametricViewWrapper.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
