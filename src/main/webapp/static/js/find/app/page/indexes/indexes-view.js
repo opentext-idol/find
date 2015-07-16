@@ -45,7 +45,7 @@ define([
                     }
                 });
 
-                this.queryModel.set('indexes', this.selectedIndexes());
+                this.informQueryModel(this.selectedIndexes());
 
                 this.trigger('sync');
 
@@ -69,13 +69,21 @@ define([
             var isSelected = index.find('i').hasClass('hide');
 
             this.indexes[toggledIndex] = isSelected;
-            this.queryModel.set('indexes', this.selectedIndexes());
 
-            if(this.selectedIndexes().length === 1) {
-                this.$('[data-id="'+this.selectedIndexes()[0]+'"]').parent().addClass('disabled-index');
+            var selectedIndexes = this.selectedIndexes();
+
+            this.informQueryModel(selectedIndexes);
+
+            if(selectedIndexes.length === 1) {
+                this.$('[data-id="'+selectedIndexes[0]+'"]').parent().addClass('disabled-index');
             } else {
                 this.$('[data-id]').parent().removeClass('disabled-index');
             }
+        },
+
+        informQueryModel: function(selectedIndexes) {
+            this.queryModel.set('allIndexesSelected', this.indexesCollection.length === selectedIndexes.length);
+            this.queryModel.set('indexes', selectedIndexes);
         }
     });
 });
