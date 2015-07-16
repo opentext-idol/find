@@ -2,12 +2,17 @@ define([
     'backbone',
     'moment',
     'i18n!find/nls/bundle',
+    'js-whatever/js/list-view',
     'text!find/templates/app/page/date/dates-filter-view.html',
+    'text!find/templates/app/page/date/custom-datepicker.html',
+    'text!find/templates/app/page/date/date-item.html',
     'bootstrap-datetimepicker'
-], function(Backbone, moment, i18n, template) {
+], function(Backbone, moment, i18n, ListView, template, datepicker, dateItemTemplate) {
 
     return Backbone.View.extend({
         template: _.template(template),
+        datepickerTemplate: _.template(datepicker),
+        itemTemplate: _.template(dateItemTemplate),
 
         events: {
             'click .clear-min-date': function() {
@@ -17,16 +22,65 @@ define([
             'click .clear-max-date': function() {
                 this.setMaxDate(null);
                 this.$maxDate.find('input').val('');
+            },
+            'click tr': function(e) {
+                this.$('.date-filters-list i').addClass('hide');
+                var $targetRow = $(e.currentTarget);
+                $targetRow.find('i').toggleClass('hide');
+
+                this.$('.search-dates-wrapper').toggleClass('hide', $targetRow.find('[data-id]').data('id') != 'Custom');
+
+                if($targetRow.find('[data-id]').data('id') != 'Custom') {
+                    this.changeDates($targetRow);
+                }
             }
         },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
+
+            this.dateFiltersCollection = new Backbone.Collection([
+                {
+                    label: 'Last week',
+                    minDate: moment(new Date(Date.now() + -7*24*3600*1000)).toISOString(),
+                    maxDate: moment(new Date()).toISOString()
+                },
+                {
+                    label: 'Last month',
+                    minDate: moment(new Date(Date.now() + -30*24*3600*1000)).toISOString(),
+                    maxDate: moment(new Date()).toISOString()
+                },
+                {
+                    label: 'Last year',
+                    minDate: moment(new Date(Date.now() + -365*24*3600*1000)).toISOString(),
+                    maxDate: moment(new Date()).toISOString()
+                },
+                {
+                    label: 'Custom',
+                    minDate: this.$minDate,
+                    maxDate: this.$maxDate
+                }
+            ]);
+
+            this.listView = new ListView({
+                collection: this.dateFiltersCollection,
+                itemOptions: {
+                    tagName: 'tr',
+                    className: 'clickable',
+                    template: this.itemTemplate
+                }
+            });
         },
 
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n
+            }));
+
+            this.listView.setElement(this.$('table')).render();
+
+            this.$el.append(this.datepickerTemplate({
+                i18n:i18n
             }));
 
             this.$minDate = this.$('.results-filter-min-date');
@@ -68,6 +122,14 @@ define([
 
         setMaxDate: function(date) {
             this.queryModel.set('maxDate', date);
+        },
+
+        changeDates: function(row) {
+            var minDate = row.find('[data-min]').data('min');
+            var maxDate = row.find('[data-max]').data('max');
+
+            this.setMinDate(minDate);
+            this.setMaxDate(maxDate);
         }
     });
 

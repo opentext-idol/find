@@ -6,6 +6,7 @@ define([
     'text!find/templates/app/page/index-item.html',
     'js-whatever/js/list-view'
 ], function(Backbone, _, IndexesCollection, listTemplate, itemTemplate, ListView) {
+
     return Backbone.View.extend({
         listTemplate: _.template(listTemplate),
         itemTemplate: _.template(itemTemplate),
