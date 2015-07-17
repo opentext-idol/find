@@ -45,6 +45,15 @@ public class IodViewServiceImpl implements IodViewService {
     @Autowired
     private ViewDocumentService viewDocumentService;
 
+    private InputStream formatRawContent(final Document document) throws IOException {
+        String result = "<h1>" + document.getTitle() + "</h1>";
+        result += "<p>" + document.getContent() + "</p>";
+
+        result = result.replace("\n", "<br>");
+
+        return IOUtils.toInputStream(result, "UTF-8");
+    }
+
     /**
      * Uses IOD GetContent and ViewDocument to return the content of a document.
      * @param outputStream  Stream to write the document to
@@ -95,7 +104,7 @@ public class IodViewServiceImpl implements IodViewService {
             }
         } catch (final URISyntaxException | MalformedURLException | IodErrorException e) {
             // Fallback - URL was not valid or IOD failed, use raw document content from IOD instead
-            inputStream = IOUtils.toInputStream(document.getContent(), "UTF-8");
+            inputStream = formatRawContent(document);
         }
 
         IOUtils.copy(inputStream, outputStream);
