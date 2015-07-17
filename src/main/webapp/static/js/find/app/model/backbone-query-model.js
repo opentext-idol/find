@@ -29,6 +29,10 @@ define([
 
         setParametricFieldText: function(fieldText) {
             this.set('fieldText', fieldText);
+        },
+
+        getISODate: function() {
+            this.get('date').toIsoString();
         }
     }, {
         Sort: Sort
