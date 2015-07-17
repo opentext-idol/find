@@ -138,11 +138,13 @@ define([
             $.colorbox.next();
         },
 
-        colorboxArguments: function(media, url, offset) {
+        colorboxArguments: function(options) {
+            options = options || {};
+
             var args = {
                 current: '{current} of {total}',
                 height:'70%',
-                iframe: !Boolean(media),
+                iframe: !Boolean(options.media),
                 rel: 'results',
                 width:'70%',
                 onComplete: _.bind(function() {
@@ -150,11 +152,11 @@ define([
                 }, this)
             };
 
-            if(media) {
+            if(options.media) {
                 args.html = this.mediaPlayerTemplate({
-                    media: media,
-                    url: url,
-                    offset: offset
+                    media: options.media,
+                    url: options.url,
+                    offset: options.offset
                 })
             }
 
@@ -214,7 +216,7 @@ define([
                 var url = fields.url[0];
                 var offset = fields.offset ? fields.offset[0] : 0;
 
-                $newResult.find('.result-header').colorbox(this.colorboxArguments(media, url, offset));
+                $newResult.find('.result-header').colorbox(this.colorboxArguments({media: media, url: url, offset: offset}));
             } else {
                 // Use the standard Viewserver display
                 $newResult.find('.result-header').colorbox(this.colorboxArguments());
