@@ -13,7 +13,7 @@ define([
 
     function getDateFilterText(filterType, date) {
         // Filters model date attributes are moments
-        var dateString = date.format('LL');
+        var dateString = date;//.format('LL');
         var textPrefixKey = filterType === FilterTypes.MAX_DATE ? 'app.until' : 'app.from';
         return i18n[textPrefixKey] + ': ' + dateString;
     }

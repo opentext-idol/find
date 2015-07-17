@@ -42,18 +42,18 @@ define([
             this.dateFiltersCollection = new Backbone.Collection([
                 {
                     label: 'Last week',
-                    minDate: moment(new Date(Date.now() + -7*24*3600*1000)).toISOString(),
-                    maxDate: moment(new Date()).toISOString()
+                    minDate: moment(new Date(Date.now() + -7*24*3600*1000)),
+                    maxDate: moment(new Date())
                 },
                 {
                     label: 'Last month',
-                    minDate: moment(new Date(Date.now() + -30*24*3600*1000)).toISOString(),
-                    maxDate: moment(new Date()).toISOString()
+                    minDate: moment(new Date(Date.now() + -30*24*3600*1000)),
+                    maxDate: moment(new Date())
                 },
                 {
                     label: 'Last year',
-                    minDate: moment(new Date(Date.now() + -365*24*3600*1000)).toISOString(),
-                    maxDate: moment(new Date()).toISOString()
+                    minDate: moment(new Date(Date.now() + -365*24*3600*1000)),
+                    maxDate: moment(new Date())
                 },
                 {
                     label: 'Custom',
@@ -97,7 +97,7 @@ define([
                     previous: 'icon-chevron-left'
                 }
             }).on('dp.change', _.bind(function(ev) {
-                this.setMinDate(moment((ev.date)).toISOString());
+                this.setMinDate(moment((ev.date)));
             }, this));
 
             this.$maxDate.datetimepicker({
@@ -111,12 +111,13 @@ define([
                     previous: 'icon-chevron-left'
                 }
             }).on('dp.change', _.bind(function(ev) {
-                this.setMaxDate(moment((ev.date)).toISOString());
+                this.setMaxDate(moment((ev.date)));
             }, this));
 
         },
 
         setMinDate: function(date) {
+            console.log('date here: ' + date);
             this.queryModel.set('minDate', date);
         },
 

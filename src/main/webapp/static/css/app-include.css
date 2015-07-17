@@ -577,6 +577,15 @@ input:-moz-placeholder::before {
     margin-bottom: 0;
 }
 
+.label-white {
+    background-color: #FFFFFF !important;
+    color: #5E5E5E !important;
+}
+
+.label-white.border {
+    border: 1px solid #e7eaec;
+}
+
 /* Rotating chevrons on collapsible panels *******************/
 .collapsed .rotating-chevron {
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
