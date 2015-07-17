@@ -133,7 +133,7 @@ define([
         updateDatabases: function() {
             var filterModel = this.get(FilterTypes.DATABASES);
 
-            if (this.queryModel.get('allIndexesSelected')) {
+            if (!this.queryModel.get('allIndexesSelected')) {
                 var filterText = this.getDatabasesFilterText();
 
                 if (filterModel) {
