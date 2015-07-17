@@ -31,8 +31,8 @@ define([
             this.set('fieldText', fieldText);
         },
 
-        getISODate: function() {
-            this.get('date').toIsoString();
+        getIsoDate: function() {
+            this.get('date').toISOString();
         }
     }, {
         Sort: Sort
