@@ -31,8 +31,13 @@ define([
             this.set('fieldText', fieldText);
         },
 
-        getIsoDate: function() {
-            this.get('date').toISOString();
+        getIsoDate: function(type) {
+            var date = this.get(type);
+            if(date) {
+                return date.toISOString();
+            } else {
+                return null;
+            }
         }
     }, {
         Sort: Sort

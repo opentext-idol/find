@@ -39,6 +39,7 @@ define([
     return Backbone.View.extend({
 
         template: _.template(resultsView),
+        resultsTemplate: _.template(resultsTemplate),
         noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         entityTemplate: _.template(entityTemplate),
@@ -75,8 +76,8 @@ define([
                             summary: 'context',
                             index: this.queryModel.get('indexes'),
                             field_text: this.queryModel.getFieldTextString(),
-                            min_date: this.queryModel.get('minDate'),
-                            max_date: this.queryModel.get('maxDate'),
+                            min_date: this.queryModel.getIsoDate('minDate'),
+                            max_date: this.queryModel.getIsoDate('maxDate'),
                             sort: this.queryModel.get('sort')
                         }
                     }, this);
@@ -89,8 +90,8 @@ define([
                         summary: 'context',
                         index: this.queryModel.get('indexes'),
                         field_text: this.queryModel.getFieldTextString(),
-                        min_date: this.queryModel.get('minDate'),
-                        max_date: this.queryModel.get('maxDate'),
+                        min_date: this.queryModel.getIsoDate('minDate'),
+                        max_date: this.queryModel.getIsoDate('maxDate'),
                         sort: this.queryModel.get('sort')
                     }
                 }, this);
@@ -202,7 +203,7 @@ define([
 
             var href = viewClient.getHref(reference, model.get('index'));
 
-            var $newResult = $(_.template(resultsTemplate ,{
+            var $newResult = $(this.resultsTemplate({
                 title: model.get('title'),
                 reference: reference,
                 href: href,

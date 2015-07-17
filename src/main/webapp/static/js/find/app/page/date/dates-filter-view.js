@@ -97,7 +97,7 @@ define([
                     previous: 'icon-chevron-left'
                 }
             }).on('dp.change', _.bind(function(ev) {
-                this.setMinDate(moment((ev.date)));
+                this.setMinDate(ev.date);
             }, this));
 
             this.$maxDate.datetimepicker({
@@ -111,13 +111,12 @@ define([
                     previous: 'icon-chevron-left'
                 }
             }).on('dp.change', _.bind(function(ev) {
-                this.setMaxDate(moment((ev.date)));
+                this.setMaxDate(ev.date);
             }, this));
 
         },
 
         setMinDate: function(date) {
-            console.log('date here: ' + date);
             this.queryModel.set('minDate', date);
         },
 
@@ -126,8 +125,8 @@ define([
         },
 
         changeDates: function(row) {
-            var minDate = row.find('[data-min]').data('min');
-            var maxDate = row.find('[data-max]').data('max');
+            var minDate = moment(row.find('[data-min]').data('min'));
+            var maxDate = moment(row.find('[data-max]').data('max'));
 
             this.setMinDate(minDate);
             this.setMaxDate(maxDate);

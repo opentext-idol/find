@@ -91,19 +91,19 @@ define([
                 }
             });
 
-            if (this.queryModel.get('minDate')) {
+            if (this.queryModel.getIsoDate('minDate')) {
                 models.push({
                     id: FilterTypes.MIN_DATE,
                     type: FilterTypes.MIN_DATE,
-                    text: getDateFilterText(FilterTypes.MIN_DATE, this.queryModel.get('minDate'))
+                    text: getDateFilterText(FilterTypes.MIN_DATE, this.queryModel.getIsoDate('minDate'))
                 });
             }
 
-            if (this.queryModel.get('maxDate')) {
+            if (this.queryModel.getIsoDate('maxDate')) {
                 models.push({
                     id: FilterTypes.MAX_DATE,
                     type: FilterTypes.MAX_DATE,
-                    text: getDateFilterText(FilterTypes.MAX_DATE, this.queryModel.get('maxDate'))
+                    text: getDateFilterText(FilterTypes.MAX_DATE, this.queryModel.getIsoDate('maxDate'))
                 });
             }
 
@@ -148,11 +148,11 @@ define([
         },
 
         updateMaxDate: function() {
-            updateDateFilter(this, FilterTypes.MAX_DATE, this.queryModel.get('maxDate'));
+            updateDateFilter(this, FilterTypes.MAX_DATE, this.queryModel.getIsoDate('maxDate'));
         },
 
         updateMinDate: function() {
-            updateDateFilter(this, FilterTypes.MIN_DATE, this.queryModel.get('minDate'));
+            updateDateFilter(this, FilterTypes.MIN_DATE, this.queryModel.getIsoDate('minDate'));
         }
     }, {
         FilterTypes: FilterTypes
