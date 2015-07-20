@@ -3,6 +3,7 @@ define([
     'find/app/model/documents-collection',
     'find/app/model/promotions-collection',
     'find/app/util/view-server-client',
+    'find/app/util/document-mime-types',
     'text!find/templates/app/page/results/results-view.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/colorbox-controls.html',
@@ -12,7 +13,7 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, entityTemplate, moment, i18n) {
+], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, documentMimeTypes, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, entityTemplate, moment, i18n) {
 
     /** Whitespace OR character in set bounded by [] */
     var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
@@ -22,6 +23,18 @@ define([
     var endRegex = '($|' + boundaryChars + ')';
 
     var mediaTypes = ['audio', 'video'];
+
+    var getContentTypeClass = function(model) {
+        var contentType =  model.get('fields').content_type ? model.get('fields').content_type[0] : '';
+
+        var matchedType = _.find(documentMimeTypes, function(mimeType) {
+            return Boolean(_.find(mimeType.typeRegex, function(regex) {
+                return regex().test(contentType);
+            }));
+        });
+
+        return matchedType.className;
+    };
 
     return Backbone.View.extend({
 
@@ -196,7 +209,8 @@ define([
                 index: model.get('index'),
                 summary: summary,
                 promotion: isPromotion,
-                date: date
+                date: date,
+                contentType: getContentTypeClass(model)
             }));
 
             if (isPromotion) {
