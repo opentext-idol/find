@@ -14,7 +14,9 @@ define([
             fieldText: null,
             minDate: null,
             maxDate: null,
-            sort: Sort.relevance
+            sort: Sort.relevance,
+            //allIndexesSelected: null,
+            humanizeDate: null
         },
 
         getFieldTextString: function() {

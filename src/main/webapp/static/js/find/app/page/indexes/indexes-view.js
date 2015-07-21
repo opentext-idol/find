@@ -82,8 +82,10 @@ define([
         },
 
         informQueryModel: function(selectedIndexes) {
-            this.queryModel.set('allIndexesSelected', this.indexesCollection.length === selectedIndexes.length);
-            this.queryModel.set('indexes', selectedIndexes);
+            this.queryModel.set({
+                indexes: selectedIndexes,
+                allIndexesSelected : this.indexesCollection.length === selectedIndexes.length
+            });
         }
     });
 });

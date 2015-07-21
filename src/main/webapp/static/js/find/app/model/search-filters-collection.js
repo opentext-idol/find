@@ -7,7 +7,7 @@ define([
 ], function(Backbone, _, moment, datesFilterView, i18n) {
 
     var FilterTypes = {
-        DATABASES: 'DATABASES',
+        indexes: 'indexes',
         maxDate: 'maxDate',
         minDate: 'minDate',
         HUMANIZE_DATE: 'humanizeDate',
@@ -16,7 +16,7 @@ define([
 
     function getDateFilterText(filterType, date) {
         // Filters model date attributes are moments
-        var dateString = date;//.format('LL');
+        var dateString = date;
         var textPrefixKey = filterType === FilterTypes.maxDate ? 'app.until' : 'app.from';
         return i18n[textPrefixKey] + ': ' + dateString;
     }
@@ -76,8 +76,6 @@ define([
                 if(changed.fieldText) {
                     this.setParametricFieldText(this.queryModel.get('fieldText'))
                 }
-
-                console.log('fudge');
             });
 
             // Update the search request model when a dates filter is removed
@@ -107,10 +105,10 @@ define([
                 });
             }
 
-            if (this.queryModel.get('allIndexesSelected')) {
+            if (!this.queryModel.get('allIndexesSelected')) {
                 models.push({
-                    id: FilterTypes.DATABASES,
-                    type: FilterTypes.DATABASES,
+                    id: FilterTypes.indexes,
+                    type: FilterTypes.indexes,
                     text: this.getDatabasesFilterText()
                 });
             }
@@ -131,7 +129,7 @@ define([
         },
 
         updateDatabases: function() {
-            var filterModel = this.get(FilterTypes.DATABASES);
+            var filterModel = this.get(FilterTypes.indexes);
 
             if (!this.queryModel.get('allIndexesSelected')) {
                 var filterText = this.getDatabasesFilterText();
@@ -140,7 +138,7 @@ define([
                     filterModel.set('text', filterText);
                 } else {
                     // The databases filter model has equal id and type since only one filter of this type can be present
-                    this.add({id: FilterTypes.DATABASES, type: FilterTypes.DATABASES, text: filterText});
+                    this.add({id: FilterTypes.indexes, type: FilterTypes.indexes, text: filterText});
                 }
             } else if (this.contains(filterModel)) {
                 this.remove(filterModel);
@@ -168,9 +166,9 @@ define([
 
                 var date = this.queryModel.get(filterType);
 
-                if (filterType && !date) {
-                    var displayDate = date.format('MMMM Do YYYY, h:mm:ss a');
-                    var filterText = getDateFilterText(filterType, moment(displayDate));
+                if (filterType && date) {
+                    var displayDate = date.format('LLL');
+                    var filterText = getDateFilterText(filterType, displayDate);
 
                     if (filterModel) {
                         filterModel.set('text', filterText);
@@ -185,7 +183,8 @@ define([
         }
 
     }, {
-        FilterTypes: FilterTypes
+        FilterTypes: FilterTypes,
+        getDateFilterText: getDateFilterText
     });
 
 });

@@ -32,24 +32,27 @@ define([
         });
 
         it("should not contain an index after it has been deselected by clicking it once", function() {
-            expect(this.indexesView.queryModel.set).not.toHaveBeenCalledWith('indexes', ['foo', 'bar']);
-
             this.indexesView.$('.list-indexes').click();
 
             this.indexesView.$('[data-id="wiki_eng"]').click();
 
-            expect(this.indexesView.queryModel.set).toHaveBeenCalledWith('indexes', ['foo', 'bar']);
+            var callArgument = this.indexesView.queryModel.set.calls.mostRecent().args[0];
+            expect(callArgument.indexes).toContain('foo');
+            expect(callArgument.indexes).toContain('bar');
+            expect(callArgument.allIndexesSelected).toBe(false);
         });
 
         it("should contain an index after it has been reselected by clicking it twice", function() {
             this.indexesView.$('[data-id="wiki_eng"]').click().click();
 
             var finalCallCount = this.indexesView.queryModel.set.calls.count();
-            var lastCallArguments = this.indexesView.queryModel.set.calls.mostRecent().args;
+            var callArgument = this.indexesView.queryModel.set.calls.mostRecent().args[0];
 
             expect(finalCallCount).toBe(4);
-            expect(lastCallArguments[0]).toBe('indexes');
-            expect(lastCallArguments[1]).toContain('wiki_eng');
+            expect(callArgument.indexes).toContain('foo');
+            expect(callArgument.indexes).toContain('bar');
+            expect(callArgument.indexes).toContain('wiki_eng');
+            expect(callArgument.allIndexesSelected).toBe(true);
 
         });
 
