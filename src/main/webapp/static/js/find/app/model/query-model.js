@@ -18,7 +18,7 @@ define([
 
     _.extend(EventsProxy.prototype, Backbone.Events);
 
-    _.each(['get', 'set', 'getIsoDate', 'getFieldTextString', 'setParametricFieldText'], function(methodName) {
+    _.each(['get', 'set', 'changedAttributes', 'getIsoDate', 'getFieldTextString', 'setParametricFieldText'], function(methodName) {
         EventsProxy.prototype[methodName] = function() {
             return this.model[methodName].apply(this.model, arguments);
         }

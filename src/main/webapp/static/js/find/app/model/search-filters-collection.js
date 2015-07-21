@@ -1,38 +1,24 @@
 define([
     'backbone',
     'underscore',
+    'moment',
+    'find/app/page/date/dates-filter-view',
     'i18n!find/nls/bundle'
-], function(Backbone, _, i18n) {
+], function(Backbone, _, moment, datesFilterView, i18n) {
 
     var FilterTypes = {
         DATABASES: 'DATABASES',
-        MAX_DATE: 'MAX_DATE',
-        MIN_DATE: 'MIN_DATE',
+        maxDate: 'maxDate',
+        minDate: 'minDate',
+        HUMANIZE_DATE: 'humanizeDate',
         PARAMETRIC: 'PARAMETRIC'
     };
 
     function getDateFilterText(filterType, date) {
         // Filters model date attributes are moments
         var dateString = date;//.format('LL');
-        var textPrefixKey = filterType === FilterTypes.MAX_DATE ? 'app.until' : 'app.from';
+        var textPrefixKey = filterType === FilterTypes.maxDate ? 'app.until' : 'app.from';
         return i18n[textPrefixKey] + ': ' + dateString;
-    }
-
-    function updateDateFilter(filtersCollection, filterType, date) {
-        var filterModel = filtersCollection.get(filterType);
-
-        if (date) {
-            var filterText = getDateFilterText(filterType, date);
-
-            if (filterModel) {
-                filterModel.set('text', filterText);
-           } else {
-                // Date filter models have equal id and type attributes since only one model of each type can be present
-                filtersCollection.add({id: filterType, type: filterType, text: filterText});
-            }
-        } else if (filtersCollection.contains(filterModel)) {
-            filtersCollection.remove(filterModel);
-        }
     }
 
     // Takes a field text node and deconstructs it into model attributes to add to the collection
@@ -73,37 +59,51 @@ define([
         initialize: function(models, options) {
             this.queryModel = options.queryModel;
 
-            this.listenTo(this.queryModel, 'change:minDate', this.updateMinDate);
-            this.listenTo(this.queryModel, 'change:maxDate', this.updateMaxDate);
-            this.listenTo(this.queryModel, 'change:indexes', this.updateDatabases);
-            this.listenTo(this.queryModel, 'change:fieldText', this.setParametricFieldText(this.queryModel.get('fieldText')));
+            this.listenTo(this.queryModel, 'change', function() {
+                var changed = this.queryModel.changedAttributes();
+                var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
 
-            this.listenTo(this.queryModel, 'change', console.log(_.clone(this.queryModel)));
+                if(changed.humanizeDate) {
+                    this.humanDate();
+                } else if (!_.isEmpty(dateFilterTypes)) {
+                    this.intervalDate(dateFilterTypes);
+                }
+
+                if(changed.indexes) {
+                    this.updateDatabases();
+                }
+
+                if(changed.fieldText) {
+                    this.setParametricFieldText(this.queryModel.get('fieldText'))
+                }
+
+                console.log('fudge');
+            });
 
             // Update the search request model when a dates filter is removed
             this.on('remove', function(model) {
                 var type = model.get('type');
 
-                if (type === FilterTypes.MAX_DATE) {
+                if (type === FilterTypes.maxDate) {
                     this.queryModel.set('maxDate', null);
-                } else if (type === FilterTypes.MIN_DATE) {
+                } else if (type === FilterTypes.minDate) {
                     this.queryModel.set('minDate', null);
                 }
             });
 
-            if (this.queryModel.getIsoDate('minDate')) {
+            if (this.queryModel.get('minDate')) {
                 models.push({
-                    id: FilterTypes.MIN_DATE,
-                    type: FilterTypes.MIN_DATE,
-                    text: getDateFilterText(FilterTypes.MIN_DATE, this.queryModel.getIsoDate('minDate'))
+                    id: FilterTypes.minDate,
+                    type: FilterTypes.minDate,
+                    text: getDateFilterText(FilterTypes.minDate, moment(this.queryModel.get('minDate')).format('LLL'))
                 });
             }
 
-            if (this.queryModel.getIsoDate('maxDate')) {
+            if (this.queryModel.get('maxDate')) {
                 models.push({
-                    id: FilterTypes.MAX_DATE,
-                    type: FilterTypes.MAX_DATE,
-                    text: getDateFilterText(FilterTypes.MAX_DATE, this.queryModel.getIsoDate('maxDate'))
+                    id: FilterTypes.maxDate,
+                    type: FilterTypes.maxDate,
+                    text: getDateFilterText(FilterTypes.maxDate, moment(this.queryModel.get('maxDate')).format('LLL'))
                 });
             }
 
@@ -147,13 +147,43 @@ define([
             }
         },
 
-        updateMaxDate: function() {
-            updateDateFilter(this, FilterTypes.MAX_DATE, this.queryModel.getIsoDate('maxDate'));
+        humanDate: function(filterTypes) {
+            this.remove(
+                _.union(
+                    this.where({type: FilterTypes.HUMANIZE_DATE}),
+                    this.where({type: FilterTypes.maxDate}),
+                    this.where({type: FilterTypes.minDate})
+                )
+            );
+
+            var humanizeDate = this.queryModel.get('humanizeDate');
+            this.add({id: humanizeDate, type: FilterTypes.HUMANIZE_DATE, text: i18n['search.dates.timeInterval.' + humanizeDate]});
         },
 
-        updateMinDate: function() {
-            updateDateFilter(this, FilterTypes.MIN_DATE, this.queryModel.getIsoDate('minDate'));
+        intervalDate: function(filterTypes) {
+            this.remove(this.where({type: FilterTypes.HUMANIZE_DATE}));
+
+            _.each(filterTypes, function(filterType) {
+                var filterModel = this.get(filterType);
+
+                var date = this.queryModel.get(filterType);
+
+                if (filterType && !date) {
+                    var displayDate = date.format('MMMM Do YYYY, h:mm:ss a');
+                    var filterText = getDateFilterText(filterType, moment(displayDate));
+
+                    if (filterModel) {
+                        filterModel.set('text', filterText);
+                    } else {
+                        // Date filter models have equal id and type attributes since only one model of each type can be present
+                        this.add({id: filterType, type: filterType, text: filterText});
+                    }
+                } else if (this.contains(filterModel)) {
+                    this.remove(filterModel);
+                }
+            }, this);
         }
+
     }, {
         FilterTypes: FilterTypes
     });

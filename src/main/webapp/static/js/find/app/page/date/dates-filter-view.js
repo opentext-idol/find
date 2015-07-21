@@ -9,6 +9,12 @@ define([
     'bootstrap-datetimepicker'
 ], function(Backbone, moment, i18n, ListView, template, datepicker, dateItemTemplate) {
 
+    var timeIntervals = {
+        year: 'year',
+        month: 'month',
+        week: 'week'
+    };
+
     return Backbone.View.extend({
         template: _.template(template),
         datepickerTemplate: _.template(datepicker),
@@ -28,10 +34,16 @@ define([
                 var $targetRow = $(e.currentTarget);
                 $targetRow.find('i').toggleClass('hide');
 
-                this.$('.search-dates-wrapper').toggleClass('hide', $targetRow.find('[data-id]').data('id') != 'Custom');
+                this.$('.search-dates-wrapper').toggleClass('hide', $targetRow.find('[data-id]').data('id') !== 'custom');
 
-                if($targetRow.find('[data-id]').data('id') != 'Custom') {
-                    this.changeDates($targetRow);
+                if($targetRow.find('[data-id]').data('id') !== 'custom') {
+                    this.humanDates($targetRow);
+                } else {
+                    this.queryModel.set({
+                        minDate: this.customMinDate,
+                        maxDate: this.customMaxDate,
+                        humanizeDate: null
+                    });
                 }
             }
         },
@@ -39,24 +51,31 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
 
+            this.customMinDate = null;
+            this.customMaxDate = null;
+
             this.dateFiltersCollection = new Backbone.Collection([
                 {
-                    label: 'Last week',
-                    minDate: moment(new Date(Date.now() + -7*24*3600*1000)),
-                    maxDate: moment(new Date())
+                    id: timeIntervals.week,
+                    label: i18n['search.dates.timeInterval.' + timeIntervals.week],
+                    minDate: moment().subtract(1, 'weeks'),
+                    maxDate: moment()
                 },
                 {
-                    label: 'Last month',
-                    minDate: moment(new Date(Date.now() + -30*24*3600*1000)),
-                    maxDate: moment(new Date())
+                    id: timeIntervals.month,
+                    label: i18n['search.dates.timeInterval.' + timeIntervals.month],
+                    minDate: moment().subtract(1, 'months'),
+                    maxDate: moment()
                 },
                 {
-                    label: 'Last year',
-                    minDate: moment(new Date(Date.now() + -365*24*3600*1000)),
-                    maxDate: moment(new Date())
+                    id: timeIntervals.year,
+                    label: i18n['search.dates.timeInterval.' + timeIntervals.year],
+                    minDate: moment().subtract(1, 'years'),
+                    maxDate: moment()
                 },
                 {
-                    label: 'Custom',
+                    id: 'custom',
+                    label: i18n['search.dates.custom'],
                     minDate: this.$minDate,
                     maxDate: this.$maxDate
                 }
@@ -117,19 +136,29 @@ define([
         },
 
         setMinDate: function(date) {
-            this.queryModel.set('minDate', date);
+            this.customMinDate = date;
+
+            this.queryModel.set({
+                'minDate': date,
+                'humanizeDate': null
+            });
         },
 
         setMaxDate: function(date) {
-            this.queryModel.set('maxDate', date);
+            this.customMaxDate = date;
+
+            this.queryModel.set({
+                'maxDate': date,
+                'humanizeDate': null
+            });
         },
 
-        changeDates: function(row) {
-            var minDate = moment(row.find('[data-min]').data('min'));
-            var maxDate = moment(row.find('[data-max]').data('max'));
-
-            this.setMinDate(minDate);
-            this.setMaxDate(maxDate);
+        humanDates: function(row) {
+            this.queryModel.set({
+                minDate: moment(row.find('[data-min]').data('min')),
+                maxDate: moment(row.find('[data-max]').data('max')),
+                humanizeDate: row.find('[data-id]').data('id')
+            });
         }
     });
 

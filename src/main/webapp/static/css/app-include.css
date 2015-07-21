@@ -573,6 +573,35 @@ input:-moz-placeholder::before {
     }
 }
 
+.filter-checkbox {
+    margin-right: 10px;
+}
+
+.filter-display-view {
+    line-height: 2.0em;
+}
+
+.shorten {
+    max-width: 400px;
+    text-overflow: ellipsis;
+    //white-space: nowrap;
+    overflow: hidden;
+}
+
+.filter-display-text {
+    vertical-align: middle;
+    line-height: 1.2em;
+}
+
+.filters-margin {
+    margin-top: 0;
+    margin-right: 5px;
+}
+
+.filters-remove-icon {
+    margin-left: 5px;
+}
+
 .no-bottom-margin {
     margin-bottom: 0;
 }
