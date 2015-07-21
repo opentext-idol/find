@@ -11,10 +11,10 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
        xmlns:security="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
                          http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd
-                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd" >
+                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd" >
 
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="com.hp.autonomy.frontend">
@@ -35,11 +35,13 @@
     <security:http pattern="/public/**" security="none"/>
 
     <security:http pattern="/api/useradmin/**" entry-point-ref="forbiddenEntryPoint">
-        <security:intercept-url pattern="/api/useradmin/**" access="ROLE_ADMIN"/>
+        <security:intercept-url pattern="/api/useradmin/**" access="hasRole('ADMIN')"/>
+        <security:csrf disabled="true"/>
     </security:http>
 
     <security:http pattern="/api/config/**" entry-point-ref="forbiddenEntryPoint">
-        <security:intercept-url pattern="/api/config/**" access="ROLE_DEFAULT"/>
+        <security:intercept-url pattern="/api/config/**" access="hasRole('DEFAULT')"/>
+        <security:csrf disabled="true"/>
     </security:http>
 
     <bean id="defaultLoginAuthenticationProvider" class="com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider">
@@ -64,17 +66,16 @@
 
     <security:http>
         <security:access-denied-handler ref="findAccessDeniedHandler"/>
-        <security:intercept-url pattern="/p/**" access="ROLE_ADMIN"/>
-        <security:intercept-url pattern="/config/**" access="ROLE_DEFAULT"/>
+        <security:intercept-url pattern="/p/**" access="hasRole('ADMIN')"/>
+        <security:intercept-url pattern="/config/**" access="hasRole('DEFAULT')"/>
         <security:form-login
                 authentication-failure-url="/loginPage?error=auth"
                 authentication-success-handler-ref="loginSuccessHandler"
                 login-processing-url="/authenticate"
                 login-page="/loginPage"
-                password-parameter="password"
-                username-parameter="username"
                 />
-        <security:logout logout-url="/logout" logout-success-url="/public/"/>
+        <security:logout logout-success-url="/public/"/>
+        <security:csrf disabled="true"/>
     </security:http>
 
     <security:authentication-manager>
