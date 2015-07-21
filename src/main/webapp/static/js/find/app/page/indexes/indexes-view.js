@@ -32,9 +32,7 @@ define([
 
             this.listenTo(this.indexesCollection, 'sync', function() {
                 // Default to searching against all indexes
-                this.indexesCollection.each(_.bind(function(indexModel) {
-                    this.indexes[indexModel.get('index')] = true;
-                }, this));
+                this.selectAll();
 
                 this.listView = new ListView({
                     collection: this.indexesCollection,
@@ -44,8 +42,6 @@ define([
                         template: this.itemTemplate
                     }
                 });
-
-                this.informQueryModel(this.selectedIndexes());
 
                 this.trigger('sync');
 
@@ -79,6 +75,14 @@ define([
             } else {
                 this.$('[data-id]').parent().removeClass('disabled-index');
             }
+        },
+
+        selectAll: function() {
+            this.indexesCollection.each(_.bind(function(indexModel) {
+                this.indexes[indexModel.get('index')] = true;
+            }, this));
+
+            this.informQueryModel(this.selectedIndexes());
         },
 
         informQueryModel: function(selectedIndexes) {

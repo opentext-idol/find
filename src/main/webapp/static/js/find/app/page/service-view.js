@@ -42,6 +42,16 @@ define([
             this.entityCollection = new EntityCollection();
             this.filtersCollection = new SearchFiltersCollection([], {queryModel: this.queryModel});
 
+            this.listenTo(this.filtersCollection, 'remove', function(model) {
+                var type = model.get('type');
+
+                if (type === SearchFiltersCollection.FilterTypes.indexes) {
+                    this.indexesView.selectAll();
+                } else if (type === SearchFiltersCollection.FilterTypes.PARAMETRIC) {
+                    this.queryModel.set('fieldText', null);
+                }
+            });
+
             this.listenTo(this.queryModel, 'change', function() {
                 this.entityCollection.fetch({
                     data: {
