@@ -73,15 +73,7 @@ define([
 
             this.indexes[toggledIndex] = !this.indexes[toggledIndex];
 
-            var selectedIndexes = this.selectedIndexes();
-
-            this.informQueryModel(selectedIndexes);
-
-            if(selectedIndexes.length === 1) {
-                this.$('[data-id="'+selectedIndexes[0]+'"]').parent().addClass('disabled-index');
-            } else {
-                this.$('[data-id]').parent().removeClass('disabled-index');
-            }
+            this.informQueryModel(this.selectedIndexes());
         },
 
         updateUI: function() {
@@ -91,7 +83,15 @@ define([
                 var checkbox = this.$("[data-id='" + key + "']").parent().find('i');
 
                 checkbox.toggleClass('hide', !value);
-            })
+            });
+
+            var selectedIndexes = this.selectedIndexes();
+
+            if(selectedIndexes.length === 1) {
+                this.$('[data-id="'+selectedIndexes[0]+'"]').parent().addClass('disabled-index');
+            } else {
+                this.$('[data-id]').parent().removeClass('disabled-index');
+            }
         },
 
         selectAll: function() {
