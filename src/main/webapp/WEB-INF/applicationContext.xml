@@ -11,10 +11,12 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
        xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
                          http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd
-                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd" >
+                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
+                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="com.hp.autonomy.frontend">
@@ -29,14 +31,17 @@
         <ehcache:evict-expired-elements interval="60" />
     </ehcache:config>
 
+    <util:constant id="ssoPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_PAGE"/>
+    <util:constant id="ssoAuthenticationUri" static-field="com.hp.autonomy.frontend.find.FindController.SSO_AUTHENTICATION_URI"/>
+
     <bean id="forbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
     <bean id="ssoEntryPoint" class="com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint">
-        <constructor-arg value="/sso"/>
+        <constructor-arg ref="ssoPage"/>
     </bean>
 
     <bean id="ssoAuthenticationFilter" class="com.hp.autonomy.hod.sso.SsoAuthenticationFilter">
-        <constructor-arg value="/authenticate-sso"/>
+        <constructor-arg ref="ssoAuthenticationUri"/>
         <property name="authenticationManager" ref="authenticationManager"/>
     </bean>
 

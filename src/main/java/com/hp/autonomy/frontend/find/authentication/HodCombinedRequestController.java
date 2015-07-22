@@ -15,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/authentication")
 public class HodCombinedRequestController {
+
+    public static final String COMBINED_REQUEST = "/api/authentication/combined-request";
+    public static final String LIST_APPLICATION_REQUEST = "/api/authentication/list-application-request";
+
     @Autowired
     private HodAuthenticationRequestService tokenService;
 
-    @RequestMapping(value = "/combined-request", method = RequestMethod.GET)
+    @RequestMapping(value = COMBINED_REQUEST, method = RequestMethod.GET)
     public SignedRequest getCombinedRequest(
             @RequestParam("domain") final String domain,
             @RequestParam("application") final String application,

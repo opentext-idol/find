@@ -20,9 +20,17 @@ import java.util.UUID;
 @Controller
 @Slf4j
 public class ErrorController {
+
+    public static final String CLIENT_AUTHENTICATION_ERROR = "/client-authentication-error";
+
     @RequestMapping("/authentication-error")
     public ModelAndView authenticationErrorPage(final HttpServletRequest request) throws ServletException, IOException {
         return buildModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null);
+    }
+
+    @RequestMapping(CLIENT_AUTHENTICATION_ERROR)
+    public ModelAndView clientAuthenticationErrorPage(final HttpServletRequest request) throws ServletException, IOException {
+        return buildModelAndView(request, "error.clientAuthenticationErrorMain", "error.clientAuthenticationErrorSub", null);
     }
 
     @RequestMapping("/server-error")

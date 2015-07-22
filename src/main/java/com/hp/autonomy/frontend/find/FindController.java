@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
+import com.hp.autonomy.frontend.find.authentication.HodCombinedRequestController;
+import com.hp.autonomy.frontend.find.web.ErrorController;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ import java.util.Map;
 
 @Controller
 public class FindController {
+
+    public static final String SSO_PAGE = "/sso";
+    public static final String SSO_AUTHENTICATION_URI = "/authenticate-sso";
 
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
@@ -48,17 +53,16 @@ public class FindController {
         }
     }
 
-    // TODO pull out strings
     @RequestMapping(value = "/sso", method = RequestMethod.GET)
     public ModelAndView sso() throws JsonProcessingException, HodErrorException {
         final Map<String, Object> ssoConfig = new HashMap<>();
-        ssoConfig.put("authenticatePath", "/authenticate-sso");
-        ssoConfig.put("combinedRequestApi", "/api/authentication/combined-request");
-        ssoConfig.put("errorPage", "/client-authentication-error");
+        ssoConfig.put("authenticatePath", SSO_AUTHENTICATION_URI);
+        ssoConfig.put("combinedRequestApi", HodCombinedRequestController.COMBINED_REQUEST);
+        ssoConfig.put("errorPage", ErrorController.CLIENT_AUTHENTICATION_ERROR);
         ssoConfig.put("listApplicationRequest", hodAuthenticationRequestService.getListApplicationRequest());
-        ssoConfig.put("listApplicationRequestApi", "/api/authentication/list-application-request");
+        ssoConfig.put("listApplicationRequestApi", HodCombinedRequestController.LIST_APPLICATION_REQUEST);
         ssoConfig.put("ssoPage", System.getProperty("find.hod.sso", "https://www.idolondemand.com/sso.html"));
-        ssoConfig.put("ssoEntryPage", "/sso");
+        ssoConfig.put("ssoEntryPage", SSO_PAGE);
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("configJson", contextObjectMapper.writeValueAsString(ssoConfig));
