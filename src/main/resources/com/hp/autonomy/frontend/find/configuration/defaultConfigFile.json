@@ -10,5 +10,8 @@
     "iod": {
         "apiKey": "",
         "activeIndexes": []
-    }
+    },
+    "allowedOrigins": [
+        "http://localhost:8080"
+    ]
 }

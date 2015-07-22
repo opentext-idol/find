@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.find.FindTokenProxyService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
@@ -32,14 +33,23 @@ import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.token.InMemoryTokenRepository;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
+import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
+import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
+import com.hp.autonomy.hod.sso.HodSsoConfig;
+import com.hp.autonomy.hod.sso.UnboundTokenService;
+import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AppConfiguration {
+
+    @Autowired
+    private ConfigService<? extends HodSsoConfig> configService;
 
     @Bean(name = "dispatcherObjectMapper")
     public ObjectMapper dispatcherObjectMapper() {
@@ -143,5 +153,15 @@ public class AppConfiguration {
     @Bean
     public ViewDocumentService viewDocumentService() {
         return new ViewDocumentServiceImpl(hodServiceConfig());
+    }
+
+    @Bean
+    public HodAuthenticationRequestService hodAuthenticationRequestService() {
+        return new HodAuthenticationRequestServiceImpl(configService, authenticationService(), unboundTokenService());
+    }
+
+    @Bean
+    public UnboundTokenService unboundTokenService() {
+        return new UnboundTokenServiceImpl(authenticationService(), configService);
     }
 }

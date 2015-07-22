@@ -31,8 +31,22 @@
 
     <bean id="forbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
-    <security:http pattern="/static/**" security="none"/>
-    <security:http pattern="/public/**" security="none"/>
+    <bean id="ssoEntryPoint" class="com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint">
+        <constructor-arg value="/sso"/>
+    </bean>
+
+    <bean id="ssoAuthenticationFilter" class="com.hp.autonomy.hod.sso.SsoAuthenticationFilter">
+        <constructor-arg value="/authenticate-sso"/>
+        <property name="authenticationManager" ref="authenticationManager"/>
+    </bean>
+
+    <security:http pattern="/static-*/**" security="none"/>
+
+    <!-- TODO: restructure URLs to avoid regex -->
+    <security:http pattern="/api/((?!config|useradmin|authentication)[^/])*(/.*)?" entry-point-ref="ssoEntryPoint" request-matcher="regex">
+        <security:intercept-url pattern="/api/((?!config|useradmin|authentication)[^/])*(/.*)?" access="hasRole('PUBLIC')"/>
+        <security:csrf disabled="true"/>
+    </security:http>
 
     <security:http pattern="/api/useradmin/**" entry-point-ref="forbiddenEntryPoint">
         <security:intercept-url pattern="/api/useradmin/**" access="hasRole('ADMIN')"/>
@@ -54,6 +68,12 @@
         <constructor-arg value="ROLE_ADMIN"/>
     </bean>
 
+    <bean id="hodAuthenticationProvider" class="com.hp.autonomy.hod.sso.HodAuthenticationProvider">
+        <constructor-arg ref="tokenRepository"/>
+        <constructor-arg value="ROLE_PUBLIC"/>
+        <constructor-arg ref="authenticationService"/>
+    </bean>
+
     <bean id="loginSuccessHandler" class="com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler">
         <constructor-arg value="ROLE_DEFAULT"/>
         <constructor-arg value="/config/"/>
@@ -64,23 +84,31 @@
         <constructor-arg value="loginPage"/>
     </bean>
 
-    <security:http>
+    <security:http pattern="/p/.*|/config/.*|/authenticate|/logout" request-matcher="regex">
         <security:access-denied-handler ref="findAccessDeniedHandler"/>
-        <security:intercept-url pattern="/p/**" access="hasRole('ADMIN')"/>
-        <security:intercept-url pattern="/config/**" access="hasRole('DEFAULT')"/>
+        <security:intercept-url pattern="/p/.*" access="hasRole('ADMIN')"/>
+        <security:intercept-url pattern="/config/.*" access="hasRole('DEFAULT')"/>
         <security:form-login
                 authentication-failure-url="/loginPage?error=auth"
                 authentication-success-handler-ref="loginSuccessHandler"
                 login-processing-url="/authenticate"
                 login-page="/loginPage"
                 />
-        <security:logout logout-success-url="/public/"/>
+        <security:logout logout-success-url="/public/" logout-url="/logout"/>
         <security:csrf disabled="true"/>
     </security:http>
 
-    <security:authentication-manager>
+    <security:http pattern="/public/.*|/sso|/authenticate-sso|/api/authentication/.*" request-matcher="regex" entry-point-ref="ssoEntryPoint">
+        <security:access-denied-handler error-page="/authentication-error"/>
+        <security:intercept-url pattern="/public/.*" access="hasRole('PUBLIC')"/>
+        <security:custom-filter ref="ssoAuthenticationFilter" after="PRE_AUTH_FILTER"/>
+        <security:csrf disabled="true"/>
+    </security:http>
+
+    <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="defaultLoginAuthenticationProvider"/>
         <security:authentication-provider ref="singleUserAuthenticationProvider"/>
+        <security:authentication-provider ref="hodAuthenticationProvider"/>
     </security:authentication-manager>
 
     <bean class="com.hp.autonomy.frontend.logging.ApplicationStartLogger"/>
