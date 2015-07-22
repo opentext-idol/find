@@ -15,10 +15,7 @@ define([
 
         events: {
             'click tr': function(e) {
-                var $targetRow = $(e.currentTarget);
-                var id = $targetRow.find('[data-id]').data('id');
-                this.changeIndex($targetRow);
-                $targetRow.find('i').toggleClass('hide');
+                this.changeIndex($(e.currentTarget));
             }
         },
 
@@ -31,7 +28,6 @@ define([
             this.indexesCollection.fetch();
 
             this.listenTo(this.indexesCollection, 'sync', function() {
-                // Default to searching against all indexes
                 this.selectAll();
 
                 this.listView = new ListView({
@@ -48,6 +44,18 @@ define([
                 this.listView.setElement(this.$el).render();
 
             }, this);
+
+            this.listenTo(this.queryModel, 'change:indexes', function() {
+                this.indexes = {};
+
+                var queryModelIndexes = this.queryModel.get('indexes');
+
+                _.each(queryModelIndexes, function(index) {
+                    this.indexes[index] = true;
+                }, this);
+
+                this.updateUI();
+            });
         },
 
         render: function() {
@@ -60,11 +68,10 @@ define([
             }).compact().value();
         },
 
-        changeIndex: function(index) {
-            var toggledIndex = index.find('[data-id]').data('id');
-            var isSelected = index.find('i').hasClass('hide');
+        changeIndex: function($targetRow) {
+            var toggledIndex = $targetRow.find('[data-id]').data('id');
 
-            this.indexes[toggledIndex] = isSelected;
+            this.indexes[toggledIndex] = !this.indexes[toggledIndex];
 
             var selectedIndexes = this.selectedIndexes();
 
@@ -75,6 +82,16 @@ define([
             } else {
                 this.$('[data-id]').parent().removeClass('disabled-index');
             }
+        },
+
+        updateUI: function() {
+            this.$('i').addClass('hide');
+
+            _.each(this.indexes, function(value, key) {
+                var checkbox = this.$("[data-id='" + key + "']").parent().find('i');
+
+                checkbox.toggleClass('hide', !value);
+            })
         },
 
         selectAll: function() {
