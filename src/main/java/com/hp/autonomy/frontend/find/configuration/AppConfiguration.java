@@ -11,7 +11,6 @@ import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
-import com.hp.autonomy.frontend.find.FindTokenProxyService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -36,6 +35,7 @@ import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
+import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
 import org.apache.http.HttpHost;
@@ -110,7 +110,7 @@ public class AppConfiguration {
 
     @Bean
     public TokenProxyService tokenProxyService() {
-        return new FindTokenProxyService(authenticationService());
+        return new SpringSecurityTokenProxyService();
     }
 
     @Bean
