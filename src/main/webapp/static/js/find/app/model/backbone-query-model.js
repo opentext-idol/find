@@ -7,6 +7,13 @@ define([
         relevance: 'relevance'
     };
 
+    var DateRange = {
+        year: 'year',
+        month: 'month',
+        week: 'week',
+        custom: 'custom'
+    };
+
     return Backbone.Model.extend({
         defaults: {
             queryText: '',
@@ -15,8 +22,7 @@ define([
             minDate: null,
             maxDate: null,
             sort: Sort.relevance,
-            //allIndexesSelected: null,
-            humanizeDate: null
+            dateRange: null
         },
 
         getFieldTextString: function() {
@@ -42,6 +48,7 @@ define([
             }
         }
     }, {
-        Sort: Sort
+        Sort: Sort,
+        DateRange: DateRange
     });
 });

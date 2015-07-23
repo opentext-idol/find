@@ -2,15 +2,16 @@ define([
     'backbone',
     'underscore',
     'moment',
+    'find/app/model/backbone-query-model',
     'find/app/page/date/dates-filter-view',
     'i18n!find/nls/bundle'
-], function(Backbone, _, moment, datesFilterView, i18n) {
+], function(Backbone, _, moment, QueryModel, datesFilterView, i18n) {
 
     var FilterTypes = {
         indexes: 'indexes',
         maxDate: 'maxDate',
         minDate: 'minDate',
-        HUMANIZE_DATE: 'humanizeDate',
+        HUMANIZE_DATE: 'dateRange',
         PARAMETRIC: 'PARAMETRIC'
     };
 
@@ -63,10 +64,12 @@ define([
                 var changed = this.queryModel.changedAttributes();
                 var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
 
-                if(changed.humanizeDate) {
-                    this.humanDate();
-                } else if (!_.isEmpty(dateFilterTypes)) {
-                    this.intervalDate(dateFilterTypes);
+                if(!_.isEmpty(dateFilterTypes)) {
+                    if(this.queryModel.get('dateRange') === QueryModel.DateRange.custom) {
+                        this.intervalDate(dateFilterTypes);
+                    } else {
+                        this.humanDate();
+                    }
                 }
 
                 if(changed.indexes) {
@@ -145,7 +148,7 @@ define([
             }
         },
 
-        humanDate: function(filterTypes) {
+        humanDate: function() {
             this.remove(
                 _.union(
                     this.where({type: FilterTypes.HUMANIZE_DATE}),
@@ -154,8 +157,8 @@ define([
                 )
             );
 
-            var humanizeDate = this.queryModel.get('humanizeDate');
-            this.add({id: humanizeDate, type: FilterTypes.HUMANIZE_DATE, text: i18n['search.dates.timeInterval.' + humanizeDate]});
+            var dateRange = this.queryModel.get('dateRange');
+            this.add({id: dateRange, type: FilterTypes.HUMANIZE_DATE, text: i18n['search.dates.timeInterval.' + dateRange]});
         },
 
         intervalDate: function(filterTypes) {

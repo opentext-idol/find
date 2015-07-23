@@ -1,7 +1,7 @@
 define([
     'mock/backbone-mock-factory',
     'find/app/model/search-filters-collection',
-    'find/app/model/query-model',
+    'find/app/model/backbone-query-model',
     'fieldtext/js/field-text-parser',
     'backbone',
     'moment'
@@ -47,7 +47,10 @@ define([
             beforeEach(function() {
                 this.maxDate = moment(INITIAL_MIN_DATE).add(2, 'days');
 
-                this.queryModel.set('maxDate', this.maxDate)
+                this.queryModel.set({
+                    dateRange: QueryModel.DateRange.custom,
+                    maxDate: this.maxDate
+                })
             });
 
             it('contains three models', function() {
@@ -65,7 +68,10 @@ define([
             beforeEach(function() {
                 this.minDate = moment(INITIAL_MIN_DATE).subtract(2, 'days');
 
-                this.queryModel.set('minDate', this.minDate)
+                this.queryModel.set({
+                    dateRange: QueryModel.DateRange.custom,
+                    minDate: this.minDate
+                })
             });
 
             it('contains two models', function() {
