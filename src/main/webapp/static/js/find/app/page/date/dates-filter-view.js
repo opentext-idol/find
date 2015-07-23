@@ -64,8 +64,10 @@ define([
 
             _.each(['minDate', 'maxDate'], function(date) {
                 this.listenTo(this.queryModel, 'change:' + date, function(model, value) {
-                    // datepicker doesn't like undefined
-                    this['$' + date].data('DateTimePicker').date(value || null);
+                    if (!value) {
+                        // datepicker doesn't like undefined, so pass in null
+                        this['$' + date].data('DateTimePicker').date(null);
+                    }
                 });
             }, this);
 
