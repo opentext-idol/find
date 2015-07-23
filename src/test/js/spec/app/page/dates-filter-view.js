@@ -30,7 +30,7 @@ define([
 
         describe('after selecting the last week checkbox', function() {
             beforeEach(function() {
-                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.week + "']").click();
+                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.week + "'] i").click();
             });
 
             it('should tick the weeks checkbox', function() {
@@ -40,11 +40,31 @@ define([
             it('should change the dateRange on the queryModel to weeks', function() {
                 expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.week);
             });
+
+            describe('after clicking the last week checkbox again', function() {
+                beforeEach(function() {
+                    this.datesFilterView.$("[data-id='" + QueryModel.DateRange.week + "'] i").click();
+                });
+
+                it('should not tick any date range', function() {
+                    var checkboxes = this.datesFilterView.$("[data-id] i");
+                    var anyTicked = _.find(checkboxes, function(checkbox) {
+                        return $(!checkbox).hasClass('hide');
+                    });
+                    expect(anyTicked).toBe(undefined);
+                });
+
+                it('should set the dateRange attribute on the queryModel to "nothing" and the minDate and maxDate attributes should be null', function() {
+                    expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.nothing);
+                    expect(this.queryModel.get('maxDate')).toBe(null);
+                    expect(this.queryModel.get('minDate')).toBe(null);
+                });
+            });
         });
 
         describe('after selecting the custom checkbox', function() {
             beforeEach(function() {
-                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "']").click();
+                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "'] i").click();
             });
 
             it('should tick the custom checkbox', function() {
@@ -82,7 +102,7 @@ define([
 
                     describe('then selecting last month', function() {
                         beforeEach(function() {
-                            this.datesFilterView.$("[data-id='" + QueryModel.DateRange.month + "']").click();
+                            this.datesFilterView.$("[data-id='" + QueryModel.DateRange.month + "'] i").click();
                         });
 
                         it('should tick the months checkbox', function() {
@@ -99,7 +119,7 @@ define([
 
                         describe('then selecting custom again', function() {
                             beforeEach(function() {
-                                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "']").click();
+                                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "'] i").click();
                             });
 
                             it('should tick the custom checkbox', function() {

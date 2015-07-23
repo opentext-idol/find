@@ -8,10 +8,11 @@ define([
     };
 
     var DateRange = {
+        nothing: 'nothing',
+        custom: 'custom',
         year: 'year',
         month: 'month',
-        week: 'week',
-        custom: 'custom'
+        week: 'week'
     };
 
     return Backbone.Model.extend({
@@ -22,7 +23,7 @@ define([
             minDate: null,
             maxDate: null,
             sort: Sort.relevance,
-            dateRange: null
+            dateRange: DateRange.nothing
         },
 
         getFieldTextString: function() {

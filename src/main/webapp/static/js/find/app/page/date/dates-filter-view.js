@@ -10,10 +10,13 @@ define([
     'bootstrap-datetimepicker'
 ], function(Backbone, moment, i18n, QueryModel, ListView, template, datepicker, dateItemTemplate) {
 
+    var DatesDisplayFormat = 'YYYY/MM/DD hh:mm';
+
     var DateRangeDescription = {
-        year:   {maxDate: moment(), minDate: moment().subtract(1, 'years')},
+        nothing: {maxDate: null, minDate: null},
+        year:  {maxDate: moment(), minDate: moment().subtract(1, 'years')},
         month: {maxDate: moment(), minDate: moment().subtract(1, 'months')},
-        week:  {maxDate: moment(), minDate: moment().subtract(1, 'weeks')}
+        week: {maxDate: moment(), minDate: moment().subtract(1, 'weeks')}
     };
 
     return Backbone.View.extend({
@@ -24,7 +27,14 @@ define([
         events: {
             'click tr': function(e) {
                 var $targetRow = $(e.currentTarget);
-                this.queryModel.set('dateRange', $targetRow.find('[data-id]').data('id'));
+                var selected = $targetRow.find('[data-id]').data('id');
+                var previous = this.queryModel.get('dateRange');
+
+                if(selected === previous) {
+                    this.queryModel.set('dateRange', QueryModel.DateRange.nothing);
+                } else {
+                    this.queryModel.set('dateRange', selected);
+                }
             }
         },
 
@@ -64,10 +74,13 @@ define([
 
             _.each(['minDate', 'maxDate'], function(date) {
                 this.listenTo(this.queryModel, 'change:' + date, function(model, value) {
-                    if (!value) {
-                        // datepicker doesn't like undefined, so pass in null
-                        this['$' + date].data('DateTimePicker').date(null);
+                    var display = '';
+                    if(value) {
+                        if(value._isAMomentObject) {
+                            display = value.format(DatesDisplayFormat);
+                        }
                     }
+                    $(this['$' + date]).find('input').val(display);
                 });
             }, this);
 
@@ -110,7 +123,7 @@ define([
             this.$maxDate = this.$('.results-filter-max-date');
 
             this.$minDate.datetimepicker({
-                format: 'YYYY/MM/DD hh:mm',
+                format: DatesDisplayFormat,
                 icons: {
                     time: 'icon-time',
                     date: 'icon-calendar',
@@ -124,7 +137,7 @@ define([
             }, this));
 
             this.$maxDate.datetimepicker({
-                format: 'YYYY/MM/DD hh:mm',
+                format: DatesDisplayFormat,
                 icons: {
                     time: 'icon-time',
                     date: 'icon-calendar',

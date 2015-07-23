@@ -64,11 +64,15 @@ define([
                 var changed = this.queryModel.changedAttributes();
                 var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
 
+                var dateRange = this.queryModel.get('dateRange');
+
                 if(!_.isEmpty(dateFilterTypes)) {
-                    if(this.queryModel.get('dateRange') === QueryModel.DateRange.custom) {
+                    if(dateRange === QueryModel.DateRange.custom) {
                         this.intervalDate(dateFilterTypes);
-                    } else {
+                    } else if(dateRange !== QueryModel.DateRange.nothing) {
                         this.humanDate();
+                    } else {
+                        this.removeAllDateFilters();
                     }
                 }
 
@@ -148,7 +152,7 @@ define([
             }
         },
 
-        humanDate: function() {
+        removeAllDateFilters: function() {
             this.remove(
                 _.union(
                     this.where({type: FilterTypes.HUMANIZE_DATE}),
@@ -156,6 +160,10 @@ define([
                     this.where({type: FilterTypes.minDate})
                 )
             );
+        },
+
+        humanDate: function() {
+            this.removeAllDateFilters();
 
             var dateRange = this.queryModel.get('dateRange');
             this.add({id: dateRange, type: FilterTypes.HUMANIZE_DATE, text: i18n['search.dates.timeInterval.' + dateRange]});
