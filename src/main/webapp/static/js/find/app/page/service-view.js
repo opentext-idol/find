@@ -67,10 +67,13 @@ define([
                 entityCollection: this.entityCollection
             });
 
-            // Left Collapsed Views
+            // Left Views
+
             this.filterDisplayView = new FilterDisplayView({
                 collection: this.filtersCollection
             });
+
+            // Left Collapsed Views
 
             this.indexesView = new IndexesView({
                 queryModel: this.queryModel
@@ -102,7 +105,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template);
+            this.$el.html(this.template({i18n: i18n}));
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();

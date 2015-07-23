@@ -28,7 +28,6 @@ define([
             });
 
             this.listenTo(this.collection, 'reset update', function() {
-                this.updateFilterCount();
                 this.updateVisibility();
             });
         },
@@ -39,16 +38,7 @@ define([
 
             this.listView.setElement(this.$('.filter-display-list')).render();
 
-            this.$filterDisplayCount = this.$('.filter-display-count');
-            this.updateFilterCount();
-
             return this;
-        },
-
-        updateFilterCount: function() {
-            if (this.$filterDisplayCount) {
-                this.$filterDisplayCount.text(i18n['search.filtersDisplay.nfilters'](this.collection.length));
-            }
         },
 
         updateVisibility: function() {
