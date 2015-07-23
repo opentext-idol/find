@@ -5,10 +5,12 @@
             "username": "admin",
             "hashedPassword": ""
         },
-        "className": "com.autonomy.frontend.configuration.SingleUserAuthentication"
+        "name": "SingleUserAuthentication"
     },
     "iod": {
         "apiKey": "",
+        "application": "",
+        "domain": "",
         "activeIndexes": []
     },
     "allowedOrigins": []
