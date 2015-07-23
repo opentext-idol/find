@@ -582,9 +582,9 @@ input:-moz-placeholder::before {
 }
 
 .shorten {
-    max-width: 400px;
+    max-width: 200px;
     text-overflow: ellipsis;
-    //white-space: nowrap;
+    white-space: nowrap;
     overflow: hidden;
 }
 
@@ -606,9 +606,22 @@ input:-moz-placeholder::before {
     margin-bottom: 0;
 }
 
-.label-white {
+.inline-block {
+    display: inline-block;
+}
+
+.filter-label {
     background-color: #FFFFFF !important;
-    color: #5E5E5E !important;
+    padding: 5px;
+    font-size: 100%;
+    font-weight: normal;
+    color: #5e5e5e;
+    border: solid 1px #dddddd;
+    border-radius: 0;
+}
+
+.filter-label span {
+    color: #2FA4E7;
 }
 
 .label-white.border {

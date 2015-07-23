@@ -22,7 +22,7 @@ define([
             this.listView = new ListView({
                 collection: this.collection,
                 itemOptions: {
-                    className: 'label-white border filters-margin inline-block',
+                    className: 'label filter-label border filters-margin inline-block',
                     template: this.itemTemplate
                 }
             });
