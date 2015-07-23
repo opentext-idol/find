@@ -47,10 +47,12 @@
 
     <security:http pattern="/static-*/**" security="none"/>
 
-    <!-- TODO: restructure URLs to avoid regex -->
-    <security:http pattern="/api/((?!config|useradmin|authentication)[^/])*(/.*)?" entry-point-ref="ssoEntryPoint" request-matcher="regex">
-        <security:intercept-url pattern="/api/((?!config|useradmin|authentication)[^/])*(/.*)?" access="hasRole('PUBLIC')"/>
+    <security:http pattern="/api/public/**" entry-point-ref="ssoEntryPoint">
+        <security:intercept-url pattern="/api/public/**" access="hasRole('PUBLIC')"/>
         <security:csrf disabled="true"/>
+        <security:headers defaults-disabled="true">
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
     </security:http>
 
     <security:http pattern="/api/useradmin/**" entry-point-ref="forbiddenEntryPoint">

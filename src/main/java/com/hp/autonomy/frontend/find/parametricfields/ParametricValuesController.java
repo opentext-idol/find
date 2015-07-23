@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Set;
 
 @Controller
-@RequestMapping("/api/parametric")
+@RequestMapping("/api/public/parametric")
 public class ParametricValuesController {
 
     @Autowired

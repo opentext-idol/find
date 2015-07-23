@@ -9,7 +9,7 @@ define([
 
     return Backbone.Collection.extend({
 
-        url: '../api/search/query-text-index/results',
+        url: '../api/public/search/query-text-index/results',
 
         initialize: function(models, options) {
             this.indexesCollection = options.indexesCollection;

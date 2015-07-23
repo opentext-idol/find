@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 @Controller
-@RequestMapping({"/api/user/view"})
+@RequestMapping({"/api/public/view"})
 @Slf4j
 public class IodViewController extends AbstractViewController {
 

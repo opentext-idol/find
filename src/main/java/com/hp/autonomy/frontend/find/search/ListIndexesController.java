@@ -21,7 +21,7 @@ public class ListIndexesController {
     @Autowired
     private IndexesService indexesService;
 
-    @RequestMapping(value = "/api/search/list-indexes", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/public/search/list-indexes", method = RequestMethod.GET)
     @ResponseBody
     public List<ResourceIdentifier> listActiveIndexes() throws HodErrorException {
         return indexesService.listVisibleIndexes();

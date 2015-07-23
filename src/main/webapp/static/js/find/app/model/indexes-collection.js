@@ -9,7 +9,7 @@ define([
 
     return Backbone.Collection.extend({
 
-        url: '../api/search/list-indexes',
+        url: '../api/public/search/list-indexes',
 
         parse: function(response) {
             return _.map(response, function(responseItem) {

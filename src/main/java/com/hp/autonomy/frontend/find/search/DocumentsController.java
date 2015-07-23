@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/search/query-text-index")
+@RequestMapping("/api/public/search/query-text-index")
 public class DocumentsController {
 
     @Autowired
