@@ -37,14 +37,34 @@ The properties you'll need to set are:
 * -Dfind.https.proxyPort . Optional property. The port for the https proxy. Set this if you need a proxy server to talk to Haven OnDemand. Defaults to 80 if find.https.proxyHost is defined.
 
 ## Configuring HP Find
-Once you've started HP Find, you'll need to configure HP Find. When run for the first time, a login screen will appear. The credentials for this are in the config file.
+Earlier versions of Find had a settings page, but this is currently unavailable. To configure Find, create a config.json
+file in your Find home directory.
 
-This will take you to the Settings Page. You'll need an IOD API key. Once provided, you can configure which IOD indexes you wish to allow searching against.
+Below is an example config file:
 
-You can also configure a user to allow these settings to be changed later. The current password is the password you used to login.
-The new password will be stored in the config file as a BCrypt hash.
-
-Once you've configured HP Find, save the config file with the save changes button, and logout. You will be redirected to the Search page. You can access the settings page again by pointing your browser at /find/login (there is no link to this in the UI).
+    {
+        "login": {
+            "method": "singleUser",
+            "singleUser": {
+                "username": "admin",
+                "hashedPassword": "",
+                "passwordRedacted" : false
+            },
+            "name": "SingleUserAuthentication"
+        },
+        "iod": {
+            "apiKey": "YOUR API KEY",
+            "application": "YOUR APPLICATION",
+            "domain": "YOUR DOMAIN",
+            "activeIndexes": [{
+                "domain": "PUBLIC_INDEXES",
+                "name": "wiki_eng"
+            }]
+        },
+        "allowedOrigins": [
+            "http://mydomain.example.com:8080"
+        ]
+    }
 
 ## Is it any good?
 Yes.
