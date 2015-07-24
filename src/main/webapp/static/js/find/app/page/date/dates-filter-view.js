@@ -10,10 +10,9 @@ define([
     'bootstrap-datetimepicker'
 ], function(Backbone, moment, i18n, QueryModel, ListView, template, datepicker, dateItemTemplate) {
 
-    var DatesDisplayFormat = 'YYYY/MM/DD hh:mm';
+    var DATES_DISPLAY_FORMAT = 'YYYY/MM/DD hh:mm';
 
-    var DateRangeDescription = {
-        nothing: {maxDate: null, minDate: null},
+    var dateRangeDescription = {
         year:  {maxDate: moment(), minDate: moment().subtract(1, 'years')},
         month: {maxDate: moment(), minDate: moment().subtract(1, 'months')},
         week: {maxDate: moment(), minDate: moment().subtract(1, 'weeks')}
@@ -31,7 +30,7 @@ define([
                 var previous = this.queryModel.get('dateRange');
 
                 if(selected === previous) {
-                    this.queryModel.set('dateRange', QueryModel.DateRange.nothing);
+                    this.queryModel.unset('dateRange');
                 } else {
                     this.queryModel.set('dateRange', selected);
                 }
@@ -59,7 +58,7 @@ define([
                 },
                 {
                     id: QueryModel.DateRange.custom,
-                    label: i18n['search.dates.custom']
+                    label: i18n['search.dates.timeInterval.'  + QueryModel.DateRange.custom]
                 }
             ]);
 
@@ -75,18 +74,16 @@ define([
             _.each(['minDate', 'maxDate'], function(date) {
                 this.listenTo(this.queryModel, 'change:' + date, function(model, value) {
                     var display = '';
+
                     if(value) {
-                        if(value._isAMomentObject) {
-                            display = value.format(DatesDisplayFormat);
-                        }
+                        display = value.format(DATES_DISPLAY_FORMAT);
                     }
-                    $(this['$' + date]).find('input').val(display);
+
+                    this['$' + date].find('input').val(display);
                 });
             }, this);
 
-            this.listenTo(this.queryModel, 'change:dateRange', function() {
-                var dateRange = this.queryModel.get('dateRange');
-
+            this.listenTo(this.queryModel, 'change:dateRange', function(queryModel, dateRange) {
                 this.$('.date-filters-list i').addClass('hide');
                 this.$("[data-id='" + dateRange + "'] i").removeClass('hide');
 
@@ -99,9 +96,11 @@ define([
                         dateRange: QueryModel.DateRange.custom
                     })
                 } else {
+                    var dateRangeDescription = dateRangeDescription[dateRange] || {};
+
                     this.queryModel.set({
-                        minDate: DateRangeDescription[dateRange]['minDate'],
-                        maxDate: DateRangeDescription[dateRange]['maxDate'],
+                        minDate: dateRangeDescription.minDate,
+                        maxDate: dateRangeDescription.maxDate,
                         dateRange: dateRange
                     });
                 }
@@ -123,7 +122,7 @@ define([
             this.$maxDate = this.$('.results-filter-max-date');
 
             this.$minDate.datetimepicker({
-                format: DatesDisplayFormat,
+                format: DATES_DISPLAY_FORMAT,
                 icons: {
                     time: 'icon-time',
                     date: 'icon-calendar',
@@ -137,7 +136,7 @@ define([
             }, this));
 
             this.$maxDate.datetimepicker({
-                format: DatesDisplayFormat,
+                format: DATES_DISPLAY_FORMAT,
                 icons: {
                     time: 'icon-time',
                     date: 'icon-calendar',
@@ -167,14 +166,6 @@ define([
             this.queryModel.set({
                 maxDate: date,
                 dateRange: QueryModel.DateRange.custom
-            });
-        },
-
-        humanDates: function(row) {
-            this.queryModel.set({
-                minDate: moment(row.find('[data-min]').data('min')),
-                maxDate: moment(row.find('[data-max]').data('max')),
-                dateRange: row.find('[data-id]').data('id')
             });
         }
     });

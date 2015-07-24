@@ -8,7 +8,6 @@ define([
     };
 
     var DateRange = {
-        nothing: 'nothing',
         custom: 'custom',
         year: 'year',
         month: 'month',
@@ -22,8 +21,7 @@ define([
             fieldText: null,
             minDate: null,
             maxDate: null,
-            sort: Sort.relevance,
-            dateRange: DateRange.nothing
+            sort: Sort.relevance
         },
 
         getFieldTextString: function() {

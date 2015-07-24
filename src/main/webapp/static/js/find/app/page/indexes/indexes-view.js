@@ -15,7 +15,9 @@ define([
 
         events: {
             'click tr': function(e) {
-                this.changeIndex($(e.currentTarget));
+                var toggledIndex = $(e.currentTarget).find('[data-id]').data('id');
+
+                this.changeIndex(toggledIndex);
             }
         },
 
@@ -45,16 +47,14 @@ define([
 
             }, this);
 
-            this.listenTo(this.queryModel, 'change:indexes', function() {
+            this.listenTo(this.queryModel, 'change:indexes', function(model, queryModelIndexes) {
                 this.indexes = {};
-
-                var queryModelIndexes = this.queryModel.get('indexes');
 
                 _.each(queryModelIndexes, function(index) {
                     this.indexes[index] = true;
                 }, this);
 
-                this.updateUI();
+                this.update();
             });
         },
 
@@ -68,22 +68,20 @@ define([
             }).compact().value();
         },
 
-        changeIndex: function($targetRow) {
-            var toggledIndex = $targetRow.find('[data-id]').data('id');
-
+        changeIndex: function(toggledIndex) {
             this.indexes[toggledIndex] = !this.indexes[toggledIndex];
 
-            this.informQueryModel(this.selectedIndexes());
+            this.updateQueryModel(this.selectedIndexes());
         },
 
-        updateUI: function() {
+        update: function() {
             this.$('i').addClass('hide');
 
             _.each(this.indexes, function(value, key) {
                 var checkbox = this.$("[data-id='" + key + "']").parent().find('i');
 
                 checkbox.toggleClass('hide', !value);
-            });
+            }, this);
 
             var selectedIndexes = this.selectedIndexes();
 
@@ -95,17 +93,17 @@ define([
         },
 
         selectAll: function() {
-            this.indexesCollection.each(_.bind(function(indexModel) {
+            this.indexesCollection.each(function(indexModel) {
                 this.indexes[indexModel.get('index')] = true;
-            }, this));
+            }, this);
 
-            this.informQueryModel(this.selectedIndexes());
+            this.updateQueryModel(this.selectedIndexes());
         },
 
-        informQueryModel: function(selectedIndexes) {
+        updateQueryModel: function(selectedIndexes) {
             this.queryModel.set({
                 indexes: selectedIndexes,
-                allIndexesSelected : this.indexesCollection.length === selectedIndexes.length
+                allIndexesSelected: this.indexesCollection.length === selectedIndexes.length
             });
         }
     });

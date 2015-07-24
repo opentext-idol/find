@@ -68,13 +68,11 @@ define([
             });
 
             // Left Views
-
             this.filterDisplayView = new FilterDisplayView({
                 collection: this.filtersCollection
             });
 
             // Left Collapsed Views
-
             this.indexesView = new IndexesView({
                 queryModel: this.queryModel
             });

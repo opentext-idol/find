@@ -40,7 +40,7 @@ define([
         'search.noResults': 'No results found',
         'search.indexes': 'Indexes',
         'search.dates': 'Dates',
-        'search.dates.custom': 'Custom',
+        'search.dates.timeInterval.custom': 'Custom',
         'search.dates.timeInterval.week': 'Last Week',
         'search.dates.timeInterval.month': 'Last Month',
         'search.dates.timeInterval.year': 'Last Year',

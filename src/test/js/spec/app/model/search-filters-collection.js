@@ -2,10 +2,11 @@ define([
     'mock/backbone-mock-factory',
     'find/app/model/search-filters-collection',
     'find/app/model/backbone-query-model',
+    'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'backbone',
     'moment'
-], function(mockFactory, FiltersCollection, QueryModel, fieldTextParser, Backbone, moment) {
+], function(mockFactory, FiltersCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
 
     var WOOKIEPEDIA = 'wookiepedia';
     var WIKI_ENG = 'wiki_eng';
@@ -57,10 +58,11 @@ define([
                 expect(this.collection.length).toBe(3);
             });
 
-            it('contains a max date filter model', function() {
+            it('contains a max date filter model with the correct date', function() {
                 var model = this.collection.get(FiltersCollection.FilterTypes.maxDate);
                 expect(model).toBeDefined();
-                expect(model.get('text')).toContain(FiltersCollection.getDateFilterText(FiltersCollection.FilterTypes.maxDate, moment(this.maxDate).format('LLL')));
+                expect(model.get('text')).toContain(i18n['app.until']);
+                expect(model.get('text')).toContain(moment(this.maxDate).format(DATE_FORMAT));
             });
         });
 
@@ -80,7 +82,8 @@ define([
 
             it('updates the min date filter model', function() {
                 var model = this.collection.get(FiltersCollection.FilterTypes.minDate);
-                expect(model.get('text')).toContain(FiltersCollection.getDateFilterText(FiltersCollection.FilterTypes.minDate, moment(this.minDate).format('LLL')));
+                expect(model.get('text')).toContain(i18n['app.from']);
+                expect(model.get('text')).toContain(moment(this.minDate).format(DATE_FORMAT))
             });
         });
 

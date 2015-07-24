@@ -15,9 +15,7 @@ define([
         PARAMETRIC: 'PARAMETRIC'
     };
 
-    function getDateFilterText(filterType, date) {
-        // Filters model date attributes are moments
-        var dateString = date;
+    function getDateFilterText(filterType, dateString) {
         var textPrefixKey = filterType === FilterTypes.maxDate ? 'app.until' : 'app.from';
         return i18n[textPrefixKey] + ': ' + dateString;
     }
@@ -69,7 +67,7 @@ define([
                 if(!_.isEmpty(dateFilterTypes)) {
                     if(dateRange === QueryModel.DateRange.custom) {
                         this.intervalDate(dateFilterTypes);
-                    } else if(dateRange !== QueryModel.DateRange.nothing) {
+                    } else if(dateRange) {
                         this.humanDate();
                     } else {
                         this.removeAllDateFilters();
@@ -153,20 +151,23 @@ define([
         },
 
         removeAllDateFilters: function() {
-            this.remove(
-                _.union(
-                    this.where({type: FilterTypes.HUMANIZE_DATE}),
-                    this.where({type: FilterTypes.maxDate}),
-                    this.where({type: FilterTypes.minDate})
-                )
-            );
+            this.remove(this.filter(function(model) {
+                return _.contains([FilterTypes.HUMANIZE_DATE, FilterTypes.maxDate, FilterTypes.minDate], model.get('type'));
+            }));
         },
 
         humanDate: function() {
             this.removeAllDateFilters();
 
             var dateRange = this.queryModel.get('dateRange');
-            this.add({id: dateRange, type: FilterTypes.HUMANIZE_DATE, text: i18n['search.dates.timeInterval.' + dateRange]});
+
+            if (dateRange) {
+                this.add({
+                    id: dateRange,
+                    type: FilterTypes.HUMANIZE_DATE,
+                    text: i18n['search.dates.timeInterval.' + dateRange]
+                });
+            }
         },
 
         intervalDate: function(filterTypes) {
@@ -177,7 +178,7 @@ define([
 
                 var date = this.queryModel.get(filterType);
 
-                if (filterType && date) {
+                if (date) {
                     var displayDate = date.format('LLL');
                     var filterText = getDateFilterText(filterType, displayDate);
 
@@ -185,17 +186,20 @@ define([
                         filterModel.set('text', filterText);
                     } else {
                         // Date filter models have equal id and type attributes since only one model of each type can be present
-                        this.add({id: filterType, type: filterType, text: filterText});
+                        this.add({
+                            id: filterType,
+                            type: filterType,
+                            text: filterText
+                        });
                     }
-                } else if (this.contains(filterModel)) {
+                } else if(filterModel) {
                     this.remove(filterModel);
                 }
             }, this);
         }
 
     }, {
-        FilterTypes: FilterTypes,
-        getDateFilterText: getDateFilterText
+        FilterTypes: FilterTypes
     });
 
 });
