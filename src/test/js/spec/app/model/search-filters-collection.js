@@ -1,12 +1,13 @@
 define([
     'mock/backbone-mock-factory',
     'find/app/model/search-filters-collection',
+    'mock/model/indexes-collection',
     'find/app/model/backbone-query-model',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'backbone',
     'moment'
-], function(mockFactory, FiltersCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
+], function(mockFactory, FiltersCollection, IndexesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
 
     var WOOKIEPEDIA = 'wookiepedia';
     var WIKI_ENG = 'wiki_eng';
@@ -16,14 +17,23 @@ define([
 
     describe('Search filters collection initialised with a min date and an indexes filter', function() {
         beforeEach(function() {
+            IndexesCollection.reset();
+
+            this.indexesCollection = new IndexesCollection();
+
+            this.indexesCollection.set([
+                {index: WOOKIEPEDIA},
+                {index: WIKI_ENG}
+            ]);
+
             this.queryModel = new Backbone.Model({
                 minDate: INITIAL_MIN_DATE,
-                indexes: [WIKI_ENG],
-                allIndexesSelected: false
+                indexes: [WIKI_ENG]
             });
 
             this.collection = new FiltersCollection([], {
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                indexesCollection: this.indexesCollection
             });
         });
 
@@ -90,11 +100,9 @@ define([
         describe('after all databases are selected', function() {
             beforeEach(function() {
                 this.indexes = [WOOKIEPEDIA, WIKI_ENG];
-                this.allIndexesSelected = true;
 
                 this.queryModel.set({
-                    indexes: this.indexes,
-                    allIndexesSelected: this.allIndexesSelected
+                    indexes: this.indexes
                 });
             });
 
@@ -109,8 +117,7 @@ define([
             describe('then a database is deselected', function() {
                 beforeEach(function() {
                     this.queryModel.set({
-                        indexes: [WOOKIEPEDIA],
-                        allIndexesSelected: false
+                        indexes: [WOOKIEPEDIA]
                     });
                 });
 

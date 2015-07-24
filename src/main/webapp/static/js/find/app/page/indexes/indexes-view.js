@@ -100,8 +100,7 @@ define([
 
         updateQueryModel: function(selectedIndexes) {
             this.queryModel.set({
-                indexes: selectedIndexes,
-                allIndexesSelected: this.indexesCollection.length === selectedIndexes.length
+                indexes: selectedIndexes
             });
         }
     });

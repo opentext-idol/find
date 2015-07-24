@@ -76,7 +76,6 @@ define([
                     expect(this.queryModel.get('indexes')).not.toContain(INDEX[0]);
                     expect(this.queryModel.get('indexes')).toContain(INDEX[1]);
                     expect(this.queryModel.get('indexes')).toContain(INDEX[2]);
-                    expect(this.queryModel.get('allIndexesSelected')).toBe(false);
                 });
 
                 it("should uncheck the clicked index", function() {
@@ -99,7 +98,6 @@ define([
                     expect(this.queryModel.get('indexes')).toContain(INDEX[0]);
                     expect(this.queryModel.get('indexes')).toContain(INDEX[1]);
                     expect(this.queryModel.get('indexes')).toContain(INDEX[2]);
-                    expect(this.queryModel.get('allIndexesSelected')).toBe(true);
                 });
 
                 it('should leave the indexes selected in the ui unchanged', function() {

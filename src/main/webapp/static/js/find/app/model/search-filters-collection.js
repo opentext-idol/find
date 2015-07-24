@@ -57,6 +57,7 @@ define([
     return Backbone.Collection.extend({
         initialize: function(models, options) {
             this.queryModel = options.queryModel;
+            this.indexesCollection = options.indexesCollection;
 
             this.listenTo(this.queryModel, 'change', function() {
                 var changed = this.queryModel.changedAttributes();
@@ -110,7 +111,7 @@ define([
                 });
             }
 
-            if (!this.queryModel.get('allIndexesSelected')) {
+            if (!this.allIndexesSelected()) {
                 models.push({
                     id: FilterTypes.indexes,
                     type: FilterTypes.indexes,
@@ -133,10 +134,14 @@ define([
             this.set(nonParametricModels.concat(newParametricAttributes));
         },
 
+        allIndexesSelected: function() {
+            return this.indexesCollection.length === this.queryModel.get('indexes').length
+        },
+
         updateDatabases: function() {
             var filterModel = this.get(FilterTypes.indexes);
 
-            if (!this.queryModel.get('allIndexesSelected')) {
+            if (!this.allIndexesSelected()) {
                 var filterText = this.getDatabasesFilterText();
 
                 if (filterModel) {

@@ -42,7 +42,10 @@ define([
 
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
-            this.filtersCollection = new SearchFiltersCollection([], {queryModel: this.queryModel});
+            this.filtersCollection = new SearchFiltersCollection([], {
+                queryModel: this.queryModel,
+                indexesCollection: this.indexesCollection
+            });
 
             this.listenTo(this.filtersCollection, 'remove', function(model) {
                 var type = model.get('type');
