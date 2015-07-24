@@ -23,3 +23,14 @@ src/main/webapp/static/lib/
 node_modules/
 .grunt/
 spec-runner.html
+
+# Vagrant
+cookbooks/
+tmp
+
+# Git
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*.orig
