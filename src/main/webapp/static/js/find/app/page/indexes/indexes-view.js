@@ -1,11 +1,10 @@
 define([
     'backbone',
     'underscore',
-    'find/app/model/indexes-collection',
     'text!find/templates/app/page/index-list.html',
     'text!find/templates/app/page/index-item.html',
     'js-whatever/js/list-view'
-], function(Backbone, _, IndexesCollection, listTemplate, itemTemplate, ListView) {
+], function(Backbone, _, listTemplate, itemTemplate, ListView) {
 
     return Backbone.View.extend({
         listTemplate: _.template(listTemplate),
@@ -23,8 +22,7 @@ define([
 
         initialize: function (options) {
             this.queryModel = options.queryModel;
-
-            this.indexesCollection = new IndexesCollection();
+            this.indexesCollection = options.indexesCollection;
 
             this.indexes = {};
             this.indexesCollection.fetch();

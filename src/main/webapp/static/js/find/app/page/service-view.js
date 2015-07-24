@@ -2,6 +2,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/search-filters-collection',
     'find/app/model/parametric-collection',
@@ -16,7 +17,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/service-view.html',
     'text!find/templates/app/util/filter-header.html'
-], function(Backbone, $, _, EntityCollection, SearchFiltersCollection, ParametricCollection,
+], function(Backbone, $, _, IndexesCollection, EntityCollection, SearchFiltersCollection, ParametricCollection,
             ParametricController, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
             IndexesView, Collapsible, i18n, template, filterHeader) {
 
@@ -39,6 +40,7 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
 
+            this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
             this.filtersCollection = new SearchFiltersCollection([], {queryModel: this.queryModel});
 
@@ -74,7 +76,8 @@ define([
 
             // Left Collapsed Views
             this.indexesView = new IndexesView({
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                indexesCollection: this.indexesCollection
             });
 
             this.parametricController = new ParametricController({

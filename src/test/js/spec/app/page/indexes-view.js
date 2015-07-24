@@ -16,23 +16,26 @@ define([
         beforeEach(function() {
             IndexesCollection.reset();
 
+            this.indexesCollection = new IndexesCollection();
+
             this.queryModel = new Backbone.Model();
 
             this.indexesView = new IndexesView({
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                indexesCollection: this.indexesCollection
             });
 
             this.idElement = idElement(this.indexesView);
 
             this.indexesView.render();
 
-            IndexesCollection.instances[0].set([
+            this.indexesCollection.set([
                 {index: INDEX[0]},
                 {index: INDEX[1]},
                 {index: INDEX[2]}
             ]);
 
-            IndexesCollection.instances[0].trigger('sync');
+            this.indexesCollection.trigger('sync');
         });
 
         describe('after initialization', function() {
