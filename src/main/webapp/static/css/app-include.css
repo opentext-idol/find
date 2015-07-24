@@ -573,8 +573,59 @@ input:-moz-placeholder::before {
     }
 }
 
+.filter-checkbox {
+    margin-right: 10px;
+}
+
+.filter-display-view {
+    line-height: 2.0em;
+}
+
+.shorten {
+    max-width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.filter-display-text {
+    vertical-align: middle;
+    line-height: 1.2em;
+}
+
+.filters-margin {
+    margin-top: 0;
+    margin-right: 5px;
+}
+
+.filters-remove-icon {
+    margin-left: 5px;
+}
+
 .no-bottom-margin {
     margin-bottom: 0;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.filter-label {
+    background-color: #FFFFFF !important;
+    padding: 5px;
+    font-size: 100%;
+    font-weight: normal;
+    color: #5e5e5e;
+    border: solid 1px #dddddd;
+    border-radius: 0;
+}
+
+.filter-label span {
+    color: #2FA4E7;
+}
+
+.label-white.border {
+    border: 1px solid #e7eaec;
 }
 
 /* Rotating chevrons on collapsible panels *******************/

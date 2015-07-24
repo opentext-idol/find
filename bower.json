@@ -3,7 +3,8 @@
   "private": true,
   "authors": [
     "Alex Scown <alex.scown@hp.com>",
-    "Alyona Ivanova <alyona.ivanova@hp.com>"
+    "Alyona Ivanova <alyona.ivanova@hp.com>",
+    "Daniel Grayling <daniel.grayling@hp.com"
   ],
   "moduleType": [
     "amd"
@@ -17,12 +18,12 @@
     "mockups"
   ],
   "dependencies": {
-    "backbone": "backbone#~1.1.0",
+    "backbone": "~1.2.0",
     "colorbox": "colorbox#~1.5.10",
     "fontawesome": "components-font-awesome#~3.2.1",
     "jquery": "components/jquery#~1.10.2",
     "json": "json2#*",
-    "underscore": "components/underscore#~1.5.2",
+    "underscore": "~1.8.3",
     "hp-autonomy-js-whatever": "~2.2.0",
     "hp-autonomy-login-page": "~1.0.2",
     "hp-autonomy-settings-page": "~0.1.0",
@@ -40,8 +41,9 @@
     "hp-autonomy-js-testing-utils": "~1.0.2"
   },
   "resolutions": {
-    "underscore": "~1.5.2",
+    "underscore": "~1.8.3",
     "hp-autonomy-js-whatever": "~2.2.0",
-    "jquery": "~1.10.2"
+    "jquery": "~1.10.2",
+    "backbone": "~1.2.0"
   }
 }

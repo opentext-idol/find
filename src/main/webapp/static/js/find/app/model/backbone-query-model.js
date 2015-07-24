@@ -7,6 +7,13 @@ define([
         relevance: 'relevance'
     };
 
+    var DateRange = {
+        custom: 'custom',
+        year: 'year',
+        month: 'month',
+        week: 'week'
+    };
+
     return Backbone.Model.extend({
         defaults: {
             queryText: '',
@@ -29,8 +36,18 @@ define([
 
         setParametricFieldText: function(fieldText) {
             this.set('fieldText', fieldText);
+        },
+
+        getIsoDate: function(type) {
+            var date = this.get(type);
+            if(date) {
+                return date.toISOString();
+            } else {
+                return null;
+            }
         }
     }, {
-        Sort: Sort
+        Sort: Sort,
+        DateRange: DateRange
     });
 });

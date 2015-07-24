@@ -1,11 +1,10 @@
 define([
     'backbone',
     'underscore',
-    'find/app/model/indexes-collection',
     'text!find/templates/app/page/index-list.html',
     'text!find/templates/app/page/index-item.html',
     'js-whatever/js/list-view'
-], function(Backbone, _, IndexesCollection, listTemplate, itemTemplate, ListView) {
+], function(Backbone, _, listTemplate, itemTemplate, ListView) {
 
     return Backbone.View.extend({
         listTemplate: _.template(listTemplate),
@@ -15,26 +14,21 @@ define([
 
         events: {
             'click tr': function(e) {
-                var $targetRow = $(e.currentTarget);
-                var id = $targetRow.find('[data-id]').data('id');
-                this.changeIndex($targetRow);
-                $targetRow.find('i').toggleClass('hide');
+                var toggledIndex = $(e.currentTarget).find('[data-id]').data('id');
+
+                this.changeIndex(toggledIndex);
             }
         },
 
         initialize: function (options) {
             this.queryModel = options.queryModel;
-
-            this.indexesCollection = new IndexesCollection();
+            this.indexesCollection = options.indexesCollection;
 
             this.indexes = {};
             this.indexesCollection.fetch();
 
             this.listenTo(this.indexesCollection, 'sync', function() {
-                // Default to searching against all indexes
-                this.indexesCollection.each(_.bind(function(indexModel) {
-                    this.indexes[indexModel.get('index')] = true;
-                }, this));
+                this.selectAll();
 
                 this.listView = new ListView({
                     collection: this.indexesCollection,
@@ -45,13 +39,21 @@ define([
                     }
                 });
 
-                this.queryModel.set('indexes', this.selectedIndexes());
-
                 this.trigger('sync');
 
                 this.listView.setElement(this.$el).render();
 
             }, this);
+
+            this.listenTo(this.queryModel, 'change:indexes', function(model, queryModelIndexes) {
+                this.indexes = {};
+
+                _.each(queryModelIndexes, function(index) {
+                    this.indexes[index] = true;
+                }, this);
+
+                this.update();
+            });
         },
 
         render: function() {
@@ -64,18 +66,42 @@ define([
             }).compact().value();
         },
 
-        changeIndex: function(index) {
-            var toggledIndex = index.find('[data-id]').data('id');
-            var isSelected = index.find('i').hasClass('hide');
+        changeIndex: function(toggledIndex) {
+            this.indexes[toggledIndex] = !this.indexes[toggledIndex];
 
-            this.indexes[toggledIndex] = isSelected;
-            this.queryModel.set('indexes', this.selectedIndexes());
+            this.updateQueryModel(this.selectedIndexes());
+        },
 
-            if(this.selectedIndexes().length === 1) {
-                this.$('[data-id="'+this.selectedIndexes()[0]+'"]').parent().addClass('disabled-index');
+        update: function() {
+            this.$('i').addClass('hide');
+
+            _.each(this.indexes, function(value, key) {
+                var checkbox = this.$("[data-id='" + key + "']").parent().find('i');
+
+                checkbox.toggleClass('hide', !value);
+            }, this);
+
+            var selectedIndexes = this.selectedIndexes();
+
+            if(selectedIndexes.length === 1) {
+                this.$('[data-id="'+selectedIndexes[0]+'"]').parent().addClass('disabled-index');
             } else {
                 this.$('[data-id]').parent().removeClass('disabled-index');
             }
+        },
+
+        selectAll: function() {
+            this.indexesCollection.each(function(indexModel) {
+                this.indexes[indexModel.get('index')] = true;
+            }, this);
+
+            this.updateQueryModel(this.selectedIndexes());
+        },
+
+        updateQueryModel: function(selectedIndexes) {
+            this.queryModel.set({
+                indexes: selectedIndexes
+            });
         }
     });
 });

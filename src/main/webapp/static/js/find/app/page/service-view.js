@@ -2,9 +2,12 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
+    'find/app/model/search-filters-collection',
     'find/app/model/parametric-collection',
     'find/app/page/parametric/parametric-controller',
+    'find/app/page/filter-display/filter-display-view',
     'find/app/page/date/dates-filter-view',
     'find/app/page/results/results-view',
     'find/app/page/related-concepts/related-concepts-view',
@@ -14,8 +17,8 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/service-view.html',
     'text!find/templates/app/util/filter-header.html'
-], function(Backbone, $, _, EntityCollection, ParametricCollection,
-            ParametricController, DateView, ResultsView, RelatedConceptsView, SortView,
+], function(Backbone, $, _, IndexesCollection, EntityCollection, SearchFiltersCollection, ParametricCollection,
+            ParametricController, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
             IndexesView, Collapsible, i18n, template, filterHeader) {
 
     var filterHeaderTemplate = _.template(filterHeader);
@@ -37,7 +40,22 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
 
+            this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
+            this.filtersCollection = new SearchFiltersCollection([], {
+                queryModel: this.queryModel,
+                indexesCollection: this.indexesCollection
+            });
+
+            this.listenTo(this.filtersCollection, 'remove', function(model) {
+                var type = model.get('type');
+
+                if (type === SearchFiltersCollection.FilterTypes.indexes) {
+                    this.indexesView.selectAll();
+                } else if (type === SearchFiltersCollection.FilterTypes.PARAMETRIC) {
+                    this.queryModel.set('fieldText', null);
+                }
+            });
 
             this.listenTo(this.queryModel, 'change', function() {
                 this.entityCollection.fetch({
@@ -54,9 +72,15 @@ define([
                 entityCollection: this.entityCollection
             });
 
+            // Left Views
+            this.filterDisplayView = new FilterDisplayView({
+                collection: this.filtersCollection
+            });
+
             // Left Collapsed Views
             this.indexesView = new IndexesView({
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                indexesCollection: this.indexesCollection
             });
 
             this.parametricController = new ParametricController({
@@ -85,8 +109,9 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template);
+            this.$el.html(this.template({i18n: i18n}));
 
+            this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
             this.parametricViewWrapper.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
