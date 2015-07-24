@@ -96,11 +96,11 @@ define([
                         dateRange: QueryModel.DateRange.custom
                     })
                 } else {
-                    var dateRangeDescription = dateRangeDescription[dateRange] || {};
+                    var dateRangeProperties = dateRangeDescription[dateRange] || {};
 
                     this.queryModel.set({
-                        minDate: dateRangeDescription.minDate,
-                        maxDate: dateRangeDescription.maxDate,
+                        minDate: dateRangeProperties.minDate,
+                        maxDate: dateRangeProperties.maxDate,
                         dateRange: dateRange
                     });
                 }
