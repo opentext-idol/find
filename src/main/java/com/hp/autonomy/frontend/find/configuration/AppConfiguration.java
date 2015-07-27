@@ -40,18 +40,64 @@ import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
+import com.hp.autonomy.frontend.configuration.HostAndPort;
+import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.iod.client.api.formatconversion.ViewDocumentService;
+import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsService;
+import com.hp.autonomy.iod.client.api.search.GetContentService;
+import com.hp.autonomy.iod.client.api.search.GetParametricValuesService;
+import com.hp.autonomy.iod.client.api.search.QueryTextIndexService;
+import com.hp.autonomy.iod.client.api.search.RetrieveIndexFieldsService;
+import com.hp.autonomy.iod.client.api.textindexing.ListIndexesService;
+import com.hp.autonomy.iod.client.converter.IodConverter;
+import com.hp.autonomy.iod.client.error.IodErrorHandler;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import retrofit.RestAdapter;
+import retrofit.client.ApacheClient;
+import retrofit.converter.JacksonConverter;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import retrofit.RestAdapter;
+import retrofit.client.ApacheClient;
+import retrofit.converter.JacksonConverter;
 
 @Configuration
+@EnableRedisHttpSession
 public class AppConfiguration {
 
     @Autowired
-    private ConfigService<? extends HodSsoConfig> configService;
+    private ConfigService<FindConfig> configService;
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        final RedisConfig config = configService.getConfig().getRedis();
+        final JedisConnectionFactory connectionFactory;
+
+        //If we haven't specified any sentinels then assume non-distributed setup
+        if (config.getSentinels().isEmpty()) {
+            connectionFactory = new JedisConnectionFactory();
+            connectionFactory.setHostName(config.getAddress().getHost());
+            connectionFactory.setPort(config.getAddress().getPort());
+        } else {
+            final RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration().master(config.getMasterName());
+            for (final HostAndPort node : config.getSentinels()) {
+                sentinelConfig.sentinel(node.getHost(), node.getPort());
+            }
+
+            connectionFactory = new JedisConnectionFactory(sentinelConfig);
+        }
+
+        connectionFactory.setPassword(config.getPassword());
+
+        return connectionFactory;
+    }
 
     @Bean(name = "dispatcherObjectMapper")
     public ObjectMapper dispatcherObjectMapper() {
