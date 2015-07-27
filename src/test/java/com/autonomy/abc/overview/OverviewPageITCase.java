@@ -129,9 +129,8 @@ public class OverviewPageITCase extends ABCTestBase{
 
 	@Test
 	public void testZeroHitTermsLinks() throws UnsupportedEncodingException, InterruptedException {
-		final CreateNewKeywordsPage createNewKeywordsPage = body.getCreateKeywordsPage();
-		final KeywordsPage keywordsPage = body.getKeywordsPage();
-		navBar.switchPage(NavBarTabId.KEYWORDS);
+        navBar.switchPage(NavBarTabId.KEYWORDS);
+        final KeywordsPage keywordsPage = body.getKeywordsPage();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.deleteAllBlacklistedTerms();
 		navBar.switchPage(NavBarTabId.OVERVIEW);
@@ -142,6 +141,8 @@ public class OverviewPageITCase extends ABCTestBase{
 		for (final WebElement tableLink : tableLinks) {
 			final String linkText = tableLink.getText();
 			tableLink.click();
+
+            final CreateNewKeywordsPage createNewKeywordsPage = body.getCreateKeywordsPage();
 
 			assertThat("Have not linked to synonyms wizard", createNewKeywordsPage.getText().contains("Select synonyms"));
 			assertEquals(1, createNewKeywordsPage.countKeywords());
