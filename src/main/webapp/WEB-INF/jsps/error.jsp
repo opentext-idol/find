@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%--
@@ -22,13 +23,18 @@
     <link rel="stylesheet" type="text/css" href="static-${applicationVersion}/css/app.css"/>
 </head>
 <body>
-    <div class="error-body">
-        <h1>${pageContext.response.status}</h1>
-        <h3>${mainMessage}</h3>
-        <div>
-            <p>${subMessage}</p>
-            <p><spring:message code="error.contactSupport"/></p>
-        </div>
+<div class="error-body">
+    <h1>
+        <c:choose>
+            <c:when test="${statusCode == null}">${pageContext.response.status}</c:when>
+            <c:otherwise>${statusCode}</c:otherwise>
+        </c:choose>
+    </h1>
+    <h3>${mainMessage}</h3>
+    <div>
+        <p>${subMessage}</p>
+        <p><spring:message code="error.contactSupport"/></p>
     </div>
+</div>
 </body>
 </html>

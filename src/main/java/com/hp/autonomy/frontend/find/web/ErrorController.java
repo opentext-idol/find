@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.RequestDispatcher;
@@ -25,12 +26,15 @@ public class ErrorController {
 
     @RequestMapping("/authentication-error")
     public ModelAndView authenticationErrorPage(final HttpServletRequest request) throws ServletException, IOException {
-        return buildModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null);
+        return buildModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null, null);
     }
 
     @RequestMapping(CLIENT_AUTHENTICATION_ERROR)
-    public ModelAndView clientAuthenticationErrorPage(final HttpServletRequest request) throws ServletException, IOException {
-        return buildModelAndView(request, "error.clientAuthenticationErrorMain", "error.clientAuthenticationErrorSub", null);
+    public ModelAndView clientAuthenticationErrorPage(
+        @RequestParam("statusCode") final int statusCode,
+        final HttpServletRequest request
+    ) throws ServletException, IOException {
+        return buildModelAndView(request, "error.clientAuthenticationErrorMain", "error.clientAuthenticationErrorSub", null, statusCode);
     }
 
     @RequestMapping("/server-error")
@@ -50,25 +54,27 @@ public class ErrorController {
             subMessageArguments = null;
         }
 
-        return buildModelAndView(request, "error.internalServerErrorMain", subMessageCode, subMessageArguments);
+        return buildModelAndView(request, "error.internalServerErrorMain", subMessageCode, subMessageArguments, null);
     }
 
     @RequestMapping("/not-found-error")
     public ModelAndView notFoundError(final HttpServletRequest request) {
-        return buildModelAndView(request, "error.notFoundMain", "error.notFoundSub", null);
+        return buildModelAndView(request, "error.notFoundMain", "error.notFoundSub", null, null);
     }
 
     private ModelAndView buildModelAndView(
-            final HttpServletRequest request,
-            final String mainMessageCode,
-            final String subMessageCode,
-            final Object[] subMessageArguments
+        final HttpServletRequest request,
+        final String mainMessageCode,
+        final String subMessageCode,
+        final Object[] subMessageArguments,
+        final Integer statusCode
     ) {
         final ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addObject("mainMessageCode", mainMessageCode);
         modelAndView.addObject("subMessageArguments", subMessageArguments);
         modelAndView.addObject("subMessageCode", subMessageCode);
         modelAndView.addObject("baseUrl", getBaseUrl(request));
+        modelAndView.addObject("statusCode", statusCode);
 
         return modelAndView;
     }
