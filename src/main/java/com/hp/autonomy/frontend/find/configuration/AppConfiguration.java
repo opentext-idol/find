@@ -92,7 +92,7 @@ public class AppConfiguration {
     }
 
     private HodServiceConfig.Builder hodServiceConfigBuilder() {
-        return new HodServiceConfig.Builder(System.getProperty("find.iod.api", "https://api.idolondemand.com/"))
+        return new HodServiceConfig.Builder(System.getProperty("find.iod.api", "https://api.idolondemand.com"))
             .setHttpClient(httpClient())
             .setTokenRepository(tokenRepository());
     }
