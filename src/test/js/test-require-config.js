@@ -13,7 +13,7 @@ require.config({
         '*': {
             'find/lib/backbone/backbone-extensions': 'backbone'
         },
-        'find/app/page/indexes/indexes-view': {
+        'find/app/page/service-view': {
             'find/app/model/indexes-collection': 'mock/model/indexes-collection'
         }
     }
