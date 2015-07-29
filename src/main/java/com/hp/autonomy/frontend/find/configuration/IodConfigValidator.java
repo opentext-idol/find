@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.configuration;
 import com.hp.autonomy.frontend.configuration.ValidationResult;
 import com.hp.autonomy.frontend.configuration.Validator;
 import com.hp.autonomy.frontend.find.search.IndexesService;
+import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class IodConfigValidator implements Validator<IodConfig> {
@@ -15,9 +16,12 @@ public class IodConfigValidator implements Validator<IodConfig> {
     @Autowired
     private IndexesService indexesService;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
     @Override
     public ValidationResult<?> validate(final IodConfig iodConfig) {
-        return iodConfig.validate(indexesService);
+        return iodConfig.validate(indexesService, authenticationService);
     }
 
     @Override

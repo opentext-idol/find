@@ -57,6 +57,8 @@ define([
                 }
             });
 
+			this.indexesCollection.fetch()
+
             this.listenTo(this.queryModel, 'change', function() {
                 this.entityCollection.fetch({
                     data: {
@@ -68,8 +70,9 @@ define([
             });
 
             this.resultsView = new ResultsView({
-                queryModel: this.queryModel,
-                entityCollection: this.entityCollection
+                entityCollection: this.entityCollection,
+                indexesCollection: this.indexesCollection,
+                queryModel: this.queryModel
             });
 
             // Left Views
@@ -93,8 +96,9 @@ define([
 
             //Right Collapsed View
             this.relatedConceptsView = new RelatedConceptsView({
-                queryModel: this.queryModel,
-                entityCollection: this.entityCollection
+                entityCollection: this.entityCollection,
+                indexesCollection: this.indexesCollection,
+                queryModel: this.queryModel
             });
 
             this.sortView = new SortView({

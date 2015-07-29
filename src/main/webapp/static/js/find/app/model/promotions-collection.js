@@ -9,7 +9,11 @@ define([
 
     return Backbone.Collection.extend({
 
-        url: '../api/search/query-text-index/promotions',
+        url: '../api/public/search/query-text-index/promotions',
+
+        initialize: function(models, options) {
+            this.indexesCollection = options.indexesCollection;
+        },
 
         sync: function(method, model, options) {
             options = options || {};
@@ -19,7 +23,11 @@ define([
         },
 
         parse: function(response) {
-            return response.documents;
+            return _.map(response.documents, function(document) {
+                document.index = this.indexesCollection.findWhere({name: document.index});
+
+                return document;
+            }, this);
         }
     })
 });

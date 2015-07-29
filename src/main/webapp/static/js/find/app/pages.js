@@ -14,10 +14,6 @@ define([
         initializePages: function() {
             this.pages = [
                 {
-                    constructor: FindSearch
-                    , pageName: 'search'
-                    , classes: ''
-                }, {
                     constructor: SettingsPage
                     , pageName: 'settings'
                     , classes: 'hide-from-non-useradmin'

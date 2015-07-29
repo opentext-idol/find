@@ -13,23 +13,28 @@ import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.PasswordsConfig;
+import com.hp.autonomy.hod.sso.HodSsoConfig;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jasypt.util.text.TextEncryptor;
 
+import java.util.Set;
+
 @JsonDeserialize(builder = FindConfig.Builder.class)
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class FindConfig extends AbstractConfig<FindConfig> implements AuthenticationConfig<FindConfig>, PasswordsConfig<FindConfig> {
+public class FindConfig extends AbstractConfig<FindConfig> implements AuthenticationConfig<FindConfig>, PasswordsConfig<FindConfig>, HodSsoConfig {
 
     private final Authentication<?> login;
     private final IodConfig iod;
+    private final Set<String> allowedOrigins;
 
     private FindConfig(final Builder builder) {
         this.login = builder.login;
         this.iod = builder.iod;
+        this.allowedOrigins = builder.allowedOrigins;
     }
 
     @Override
@@ -39,6 +44,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
 
             builder.setLogin(this.login == null ? config.login : this.login.merge(config.login));
             builder.setIod(this.iod == null ? config.iod : this.iod.merge(config.iod));
+            builder.setAllowedOrigins(this.allowedOrigins == null ? config.allowedOrigins : this.allowedOrigins);
 
             return builder.build();
         }
@@ -106,6 +112,12 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
         return login;
     }
 
+    @Override
+    @JsonIgnore
+    public String getApiKey() {
+        return getIod().getApiKey();
+    }
+
     @JsonPOJOBuilder(withPrefix = "set")
     @Setter
     @Accessors(chain = true)
@@ -113,12 +125,14 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
 
         private Authentication<?> login;
         private IodConfig iod;
+        private Set<String> allowedOrigins;
 
         public Builder() {}
 
         public Builder(final FindConfig config) {
             this.login = config.login;
             this.iod = config.iod;
+            this.allowedOrigins = config.allowedOrigins;
         }
 
         public FindConfig build() {

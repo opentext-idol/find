@@ -14,7 +14,7 @@ define([
 
         events: {
             'click tr': function(e) {
-                var toggledIndex = $(e.currentTarget).find('[data-id]').data('id');
+                var toggledIndex = $(e.currentTarget).find('tr[data-id]').data('id');
 
                 this.changeIndex(toggledIndex);
             }
@@ -25,7 +25,6 @@ define([
             this.indexesCollection = options.indexesCollection;
 
             this.indexes = {};
-            this.indexesCollection.fetch();
 
             this.listenTo(this.indexesCollection, 'sync', function() {
                 this.selectAll();
@@ -76,7 +75,7 @@ define([
             this.$('i').addClass('hide');
 
             _.each(this.indexes, function(value, key) {
-                var checkbox = this.$("[data-id='" + key + "']").parent().find('i');
+                var checkbox = this.$("tr[data-id='" + key + "'] i");
 
                 checkbox.toggleClass('hide', !value);
             }, this);
@@ -84,15 +83,15 @@ define([
             var selectedIndexes = this.selectedIndexes();
 
             if(selectedIndexes.length === 1) {
-                this.$('[data-id="'+selectedIndexes[0]+'"]').parent().addClass('disabled-index');
+                this.$('tr[data-id="' + selectedIndexes[0] + '"]').addClass('disabled-index');
             } else {
-                this.$('[data-id]').parent().removeClass('disabled-index');
+                this.$('tr[data-id]').removeClass('disabled-index');
             }
         },
 
         selectAll: function() {
             this.indexesCollection.each(function(indexModel) {
-                this.indexes[indexModel.get('index')] = true;
+                this.indexes[indexModel.id] = true;
             }, this);
 
             this.updateQueryModel(this.selectedIndexes());

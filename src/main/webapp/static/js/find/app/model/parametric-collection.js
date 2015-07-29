@@ -9,7 +9,7 @@ define([
     };
 
     return Backbone.Collection.extend({
-        url: '../api/parametric',
+        url: '../api/public/parametric',
 
         comparator: 'name',
 

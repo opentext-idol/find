@@ -9,26 +9,47 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
-import com.hp.autonomy.iod.client.api.formatconversion.ViewDocumentService;
-import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsService;
-import com.hp.autonomy.iod.client.api.search.GetContentService;
-import com.hp.autonomy.iod.client.api.search.GetParametricValuesService;
-import com.hp.autonomy.iod.client.api.search.QueryTextIndexService;
-import com.hp.autonomy.iod.client.api.search.RetrieveIndexFieldsService;
-import com.hp.autonomy.iod.client.api.textindexing.ListIndexesService;
-import com.hp.autonomy.iod.client.converter.IodConverter;
-import com.hp.autonomy.iod.client.error.IodErrorHandler;
+import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
+import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
+import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
+import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
+import com.hp.autonomy.hod.client.api.resource.ResourcesService;
+import com.hp.autonomy.hod.client.api.resource.ResourcesServiceImpl;
+import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
+import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentServiceImpl;
+import com.hp.autonomy.hod.client.api.textindex.query.fields.RetrieveIndexFieldsService;
+import com.hp.autonomy.hod.client.api.textindex.query.fields.RetrieveIndexFieldsServiceImpl;
+import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricValuesService;
+import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricValuesServiceImpl;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
+import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsService;
+import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsServiceImpl;
+import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
+import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServiceImpl;
+import com.hp.autonomy.hod.client.config.HodServiceConfig;
+import com.hp.autonomy.hod.client.token.InMemoryTokenRepository;
+import com.hp.autonomy.hod.client.token.TokenProxyService;
+import com.hp.autonomy.hod.client.token.TokenRepository;
+import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
+import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
+import com.hp.autonomy.hod.sso.HodSsoConfig;
+import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
+import com.hp.autonomy.hod.sso.UnboundTokenService;
+import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
 import org.apache.http.HttpHost;
+import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import retrofit.RestAdapter;
-import retrofit.client.ApacheClient;
-import retrofit.converter.JacksonConverter;
 
 @Configuration
 public class AppConfiguration {
+
+    @Autowired
+    private ConfigService<? extends HodSsoConfig> configService;
 
     @Bean(name = "dispatcherObjectMapper")
     public ObjectMapper dispatcherObjectMapper() {
@@ -52,7 +73,7 @@ public class AppConfiguration {
     }
 
     @Bean
-    public RestAdapter iodRestAdapter() {
+    public HttpClient httpClient() {
         final HttpClientBuilder builder = HttpClientBuilder.create();
 
         final String proxyHost = System.getProperty("find.https.proxyHost");
@@ -62,46 +83,85 @@ public class AppConfiguration {
             builder.setProxy(new HttpHost(proxyHost, proxyPort));
         }
 
-        return new RestAdapter.Builder()
-                .setClient(new ApacheClient(builder.build()))
-                .setEndpoint(System.getProperty("find.iod.api", "https://api.idolondemand.com/1"))
-                .setConverter(new IodConverter(new JacksonConverter()))
-                .setErrorHandler(new IodErrorHandler())
-                .build();
+        return builder.build();
     }
 
     @Bean
-    public ListIndexesService listIndexesService() {
-        return iodRestAdapter().create(ListIndexesService.class);
+    public TokenRepository tokenRepository() {
+        return new InMemoryTokenRepository();
+    }
+
+    private HodServiceConfig.Builder hodServiceConfigBuilder() {
+        return new HodServiceConfig.Builder(System.getProperty("find.iod.api", "https://api.idolondemand.com"))
+            .setHttpClient(httpClient())
+            .setTokenRepository(tokenRepository());
     }
 
     @Bean
-    public QueryTextIndexService queryTextIndexService() {
-        return iodRestAdapter().create(QueryTextIndexService.class);
+    public HodServiceConfig initialHodServiceConfig() {
+        return hodServiceConfigBuilder()
+            .build();
+    }
+
+    @Bean
+    public AuthenticationService authenticationService() {
+        return new AuthenticationServiceImpl(initialHodServiceConfig());
+    }
+
+    @Bean
+    public TokenProxyService tokenProxyService() {
+        return new SpringSecurityTokenProxyService();
+    }
+
+    @Bean
+    public HodServiceConfig hodServiceConfig() {
+        return hodServiceConfigBuilder()
+            .setTokenProxyService(tokenProxyService())
+            .build();
+    }
+
+    @Bean
+    public ResourcesService resourcesService() {
+        return new ResourcesServiceImpl(hodServiceConfig());
+    }
+
+    @Bean
+    public QueryTextIndexService<Documents> queryTextIndexService() {
+        return QueryTextIndexServiceImpl.documentsService(hodServiceConfig());
     }
 
     @Bean
     public FindRelatedConceptsService relatedConceptsService() {
-        return iodRestAdapter().create(FindRelatedConceptsService.class);
+        return new FindRelatedConceptsServiceImpl(hodServiceConfig());
     }
 
     @Bean
     public RetrieveIndexFieldsService retrieveIndexFieldsService() {
-        return iodRestAdapter().create(RetrieveIndexFieldsService.class);
+        return new RetrieveIndexFieldsServiceImpl(hodServiceConfig());
     }
 
     @Bean
     public GetParametricValuesService getParametricValuesService() {
-        return iodRestAdapter().create(GetParametricValuesService.class);
+        return new GetParametricValuesServiceImpl(hodServiceConfig());
     }
 
     @Bean
-    public GetContentService getContentService() {
-        return iodRestAdapter().create(GetContentService.class);
+    public GetContentService<Documents> getContentService() {
+        return GetContentServiceImpl.documentsService(hodServiceConfig());
     }
 
     @Bean
     public ViewDocumentService viewDocumentService() {
-        return iodRestAdapter().create(ViewDocumentService.class);
+        return new ViewDocumentServiceImpl(hodServiceConfig());
+    }
+
+    @Bean
+    public HodAuthenticationRequestService hodAuthenticationRequestService() {
+        return new HodAuthenticationRequestServiceImpl(configService, authenticationService(), unboundTokenService());
+    }
+
+    @Bean
+    public UnboundTokenService unboundTokenService() {
+        return new UnboundTokenServiceImpl(authenticationService(), configService);
     }
 }

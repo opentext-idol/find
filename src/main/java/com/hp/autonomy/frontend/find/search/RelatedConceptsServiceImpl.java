@@ -5,16 +5,15 @@
 
 package com.hp.autonomy.frontend.find.search;
 
-import com.hp.autonomy.frontend.find.ApiKeyService;
-import com.hp.autonomy.iod.client.api.search.Entities;
-import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsRequestBuilder;
-import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsService;
-import com.hp.autonomy.iod.client.error.IodErrorException;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
+import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsRequestBuilder;
+import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsService;
+import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class RelatedConceptsServiceImpl implements RelatedConceptsService {
@@ -22,17 +21,13 @@ public class RelatedConceptsServiceImpl implements RelatedConceptsService {
     @Autowired
     private FindRelatedConceptsService findRelatedConceptsService;
 
-    @Autowired
-    private ApiKeyService apiKeyService;
-
     @Override
-    public Entities findRelatedConcepts(final String text, final List<String> indexes, final String fieldText) throws IodErrorException {
+    public List<Entity> findRelatedConcepts(final String text, final List<ResourceIdentifier> indexes, final String fieldText) throws HodErrorException {
 
-        final Map<String, Object> params = new FindRelatedConceptsRequestBuilder()
+        final FindRelatedConceptsRequestBuilder params = new FindRelatedConceptsRequestBuilder()
                 .setIndexes(indexes)
-                .setFieldText(fieldText)
-                .build();
+                .setFieldText(fieldText);
 
-        return findRelatedConceptsService.findRelatedConceptsWithText(apiKeyService.getApiKey(), text, params);
+        return findRelatedConceptsService.findRelatedConceptsWithText(text, params);
     }
 }

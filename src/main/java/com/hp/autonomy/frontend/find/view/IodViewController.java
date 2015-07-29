@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.view;
 
-import com.hp.autonomy.iod.client.error.IodErrorException;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.error.HodErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -19,7 +20,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 @Controller
-@RequestMapping({"/api/user/view"})
+@RequestMapping({"/api/public/view"})
 @Slf4j
 public class IodViewController extends AbstractViewController {
 
@@ -32,16 +33,16 @@ public class IodViewController extends AbstractViewController {
     @RequestMapping(value = "/viewDocument", method = RequestMethod.GET)
     public void viewDocument(
             @RequestParam("reference") final String reference,
-            @RequestParam("indexes") final String indexes,
+            @RequestParam("indexes") final ResourceIdentifier indexes,
             final HttpServletResponse response
-    ) throws IodErrorException, IOException {
+    ) throws HodErrorException, IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         iodViewService.viewDocument(response.getOutputStream(), reference, indexes);
     }
 
     @ExceptionHandler
     public ModelAndView handleIodErrorException(
-            final IodErrorException e,
+            final HodErrorException e,
             final HttpServletRequest request,
             final HttpServletResponse response
     ) {

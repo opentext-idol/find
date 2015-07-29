@@ -64,8 +64,13 @@ define([
             this.queryModel = options.queryModel;
             this.entityCollection = options.entityCollection;
 
-            this.documentsCollection = new DocumentsCollection();
-            this.promotionsCollection = new PromotionsCollection();
+            this.documentsCollection = new DocumentsCollection([], {
+                indexesCollection: options.indexesCollection
+            });
+
+            this.promotionsCollection = new PromotionsCollection([], {
+                indexesCollection: options.indexesCollection
+            });
 
             this.listenTo(this.queryModel, 'change', function() {
                 if (!_.isEmpty(this.queryModel.get('indexes'))) {
@@ -207,7 +212,6 @@ define([
                 title: model.get('title'),
                 reference: reference,
                 href: href,
-                index: model.get('index'),
                 summary: summary,
                 promotion: isPromotion,
                 date: date,

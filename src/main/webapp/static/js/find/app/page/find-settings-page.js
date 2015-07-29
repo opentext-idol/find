@@ -83,6 +83,9 @@ define([
                         isOpened: true,
                         title: 'IoD settings',
                         strings: _.extend(serverStrings(), {
+                            application: i18n['settings.iod.application'],
+                            apiKey: i18n['settings.iod.apiKey'],
+                            domain: i18n['settings.iod.domain'],
                             iconClass: 'key',
                             validateFailed: 'Invalid API Key',
                             validateSuccess: 'API Key OK',
