@@ -36,37 +36,19 @@ import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
-import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
-import com.hp.autonomy.frontend.configuration.HostAndPort;
-import com.hp.autonomy.frontend.configuration.RedisConfig;
-import com.hp.autonomy.iod.client.api.formatconversion.ViewDocumentService;
-import com.hp.autonomy.iod.client.api.search.FindRelatedConceptsService;
-import com.hp.autonomy.iod.client.api.search.GetContentService;
-import com.hp.autonomy.iod.client.api.search.GetParametricValuesService;
-import com.hp.autonomy.iod.client.api.search.QueryTextIndexService;
-import com.hp.autonomy.iod.client.api.search.RetrieveIndexFieldsService;
-import com.hp.autonomy.iod.client.api.textindexing.ListIndexesService;
-import com.hp.autonomy.iod.client.converter.IodConverter;
-import com.hp.autonomy.iod.client.error.IodErrorHandler;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import retrofit.RestAdapter;
-import retrofit.client.ApacheClient;
-import retrofit.converter.JacksonConverter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import retrofit.RestAdapter;
-import retrofit.client.ApacheClient;
-import retrofit.converter.JacksonConverter;
 
 @Configuration
 @EnableRedisHttpSession
