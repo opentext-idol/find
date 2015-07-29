@@ -2,6 +2,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/model/dates-filter-model',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/search-filters-collection',
@@ -17,7 +18,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/service-view.html',
     'text!find/templates/app/util/filter-header.html'
-], function(Backbone, $, _, IndexesCollection, EntityCollection, SearchFiltersCollection, ParametricCollection,
+], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection, ParametricCollection,
             ParametricController, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
             IndexesView, Collapsible, i18n, template, filterHeader) {
 
@@ -40,10 +41,13 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
 
+            this.datesFilterModel = new DatesFilterModel({queryModel: this.queryModel});
+
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
             this.filtersCollection = new SearchFiltersCollection([], {
                 queryModel: this.queryModel,
+                datesFilterModel: this.datesFilterModel,
                 indexesCollection: this.indexesCollection
             });
 
@@ -77,7 +81,8 @@ define([
 
             // Left Views
             this.filterDisplayView = new FilterDisplayView({
-                collection: this.filtersCollection
+                collection: this.filtersCollection,
+                datesFilterModel: this.datesFilterModel
             });
 
             // Left Collapsed Views
@@ -91,7 +96,8 @@ define([
             });
 
             this.dateView = new DateView({
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                datesFilterModel: this.datesFilterModel
             });
 
             //Right Collapsed View

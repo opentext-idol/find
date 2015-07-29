@@ -1,10 +1,11 @@
 define([
     'backbone',
     'js-whatever/js/list-view',
+    'find/app/model/search-filters-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/filter-display/filter-display.html',
     'text!find/templates/app/page/filter-display/filter-display-item.html'
-], function(Backbone, ListView, i18n, template, itemTemplate) {
+], function(Backbone, ListView, SearchFiltersCollection, i18n, template, itemTemplate) {
 
     // Each of the collection's models should have an id and a text attribute
     return Backbone.View.extend({
@@ -14,11 +15,30 @@ define([
         events: {
             'click .filters-remove-icon': function(e) {
                 var id = $(e.currentTarget).closest('[data-id]').attr('data-id');
-                this.collection.remove(id);
+                var metatype = $(e.currentTarget).closest('[data-metatype]').attr('data-metatype');
+                var type = $(e.currentTarget).closest('[data-type]').attr('data-type');
+
+                if(metatype && metaType === SearchFiltersCollection.metaFilterTypes.date) {
+                    if(type === SearchFiltersCollection.FilterTypes.dateRange) {
+                        this.datesFilterModel.setDateRange(null);
+                    }
+                    if(type === SearchFiltersCollection.FilterTypes.minDate) {
+                        this.datesFilterModel.setMinDate(null);
+                    }
+                    if(type === SearchFiltersCollection.FilterTypes.maxDate) {
+                        this.datesFilterModel.setMaxDate(null);
+                    }
+                } else {
+                    this.collection.remove(id);
+                }
+
+
             }
         },
 
-        initialize: function() {
+        initialize: function(options) {
+            this.datesFilterModel = options.datesFilterModel;
+
             this.listView = new ListView({
                 collection: this.collection,
                 itemOptions: {

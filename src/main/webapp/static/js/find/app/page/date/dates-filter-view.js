@@ -27,21 +27,19 @@ define([
             'click tr': function(e) {
                 var $targetRow = $(e.currentTarget);
                 var selected = $targetRow.find('[data-id]').data('id');
-                var previous = this.queryModel.get('dateRange');
+                var previous = this.datesFilterModel.get('dateRange');
 
                 if(selected === previous) {
-                    this.queryModel.unset('dateRange');
+                    this.datesFilterModel.setDateRange(null);
                 } else {
-                    this.queryModel.set('dateRange', selected);
+                    this.datesFilterModel.setDateRange(selected);
                 }
             }
         },
 
         initialize: function(options) {
+            this.datesFilterModel = options.datesFilterModel;
             this.queryModel = options.queryModel;
-
-            this.customMinDate = null;
-            this.customMaxDate = null;
 
             this.dateFiltersCollection = new Backbone.Collection([
                 {
@@ -83,27 +81,13 @@ define([
                 });
             }, this);
 
-            this.listenTo(this.queryModel, 'change:dateRange', function(queryModel, dateRange) {
+            this.listenTo(this.datesFilterModel, 'change:dateRange', function(datesFilterModel, dateRange) {
+                // Clear all checkboxes, check selected
                 this.$('.date-filters-list i').addClass('hide');
                 this.$("[data-id='" + dateRange + "'] i").removeClass('hide');
 
+                // If custom show custom options
                 this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== QueryModel.DateRange.custom);
-
-                if(dateRange === QueryModel.DateRange.custom) {
-                    this.queryModel.set({
-                        minDate: this.customMinDate,
-                        maxDate: this.customMaxDate,
-                        dateRange: QueryModel.DateRange.custom
-                    })
-                } else {
-                    var dateRangeProperties = dateRangeDescription[dateRange] || {};
-
-                    this.queryModel.set({
-                        minDate: dateRangeProperties.minDate,
-                        maxDate: dateRangeProperties.maxDate,
-                        dateRange: dateRange
-                    });
-                }
             });
         },
 
@@ -152,21 +136,11 @@ define([
         },
 
         setMinDate: function(date) {
-            this.customMinDate = date;
-
-            this.queryModel.set({
-                minDate: date,
-                dateRange: QueryModel.DateRange.custom
-            });
+            this.datesFilterModel.setMinDate(date);
         },
 
         setMaxDate: function(date) {
-            this.customMaxDate = date;
-
-            this.queryModel.set({
-                maxDate: date,
-                dateRange: QueryModel.DateRange.custom
-            });
+            this.datesFilterModel.setMaxDate(date);
         }
     });
 
