@@ -14,7 +14,7 @@ define([
 
         events: {
             'click tr': function(e) {
-                var toggledIndex = $(e.currentTarget).find('tr[data-id]').data('id');
+                var toggledIndex = $(e.currentTarget).data('id');
 
                 this.changeIndex(toggledIndex);
             }
