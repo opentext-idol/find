@@ -2,15 +2,20 @@ define([
     'backbone',
     'moment',
     'find/app/page/date/dates-filter-view',
-    'find/app/model/backbone-query-model'
-], function(Backbone, moment, DatesFilterView, QueryModel) {
+    'find/app/model/backbone-query-model',
+    'find/app/model/dates-filter-model'
+], function(Backbone, moment, DatesFilterView, QueryModel, DatesFilterModel) {
 
     describe('Dates Filter View', function() {
         beforeEach(function() {
+            this.now = moment();
+
             this.queryModel = new Backbone.Model();
+            this.datesFilterModel = new DatesFilterModel({queryModel: this.queryModel});
 
             this.datesFilterView = new DatesFilterView({
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                datesFilterModel: this.datesFilterModel
             });
 
             this.datesFilterView.render();
@@ -40,7 +45,7 @@ define([
             });
 
             it('should change the dateRange on the queryModel to weeks', function() {
-                expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.week);
+                expect(this.datesFilterModel.get('dateRange')).toBe(QueryModel.DateRange.week);
             });
 
             describe('after clicking the last week checkbox again', function() {
@@ -56,10 +61,10 @@ define([
                     expect(anyTicked).toBe(undefined);
                 });
 
-                it('should set the dateRange attribute on the queryModel to "nothing" and the minDate and maxDate attributes should be null', function() {
-                    expect(this.queryModel.get('dateRange')).not.toBeDefined();
-                    expect(this.queryModel.get('maxDate')).toBe(undefined);
-                    expect(this.queryModel.get('minDate')).toBe(undefined);
+                it('should set the dateRange attribute on the datesFilterModel to null and the minDate and maxDate attributes should be null', function() {
+                    expect(this.datesFilterModel.get('dateRange')).toBe(null);
+                    expect(this.queryModel.get('maxDate')).toBe(null);
+                    expect(this.queryModel.get('minDate')).toBe(null);
                 });
             });
         });
@@ -73,13 +78,13 @@ define([
                 expect(this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "'] i").hasClass('hide')).toBe(false);
             });
 
-            it('should change the dateRange on the queryModel to weeks', function() {
-                expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.custom);
+            it('should change the dateRange on the datesFilterModel to custom', function() {
+                expect(this.datesFilterModel.get('dateRange')).toBe(QueryModel.DateRange.custom);
             });
 
             it('should set the minDate and maxDate attributes on the queryModel to null', function() {
-                expect(this.queryModel.get('maxDate')).toBe(null);
-                expect(this.queryModel.get('minDate')).toBe(null);
+                expect(this.queryModel.get('maxDate')).toBeFalsy();
+                expect(this.queryModel.get('minDate')).toBeFalsy();
             });
 
             describe('simulating a change made by the datepicker to minDate', function() {
@@ -92,13 +97,12 @@ define([
                     expect(this.queryModel.get('minDate')).toBe(this.twoMonthsAgo);
                 });
 
-                describe('clicking the Max Date icon', function() {
+                describe('simulating a change made by the datepicker to maxDate', function() {
                     beforeEach(function() {
-                        this.now = moment();
                         this.datesFilterView.setMaxDate(this.now);
                     });
 
-                    it('should set the maxDate attribute to the moment object supplied by setMinDate on the query model', function() {
+                    it('should set the maxDate attribute to the moment object supplied by setMaxDate on the query model', function() {
                         expect(this.queryModel.get('maxDate')).toBe(this.now);
                     });
 
@@ -112,7 +116,7 @@ define([
                         });
 
                         it('should change the dateRange on the queryModel to month', function() {
-                            expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.month);
+                            expect(this.datesFilterModel.get('dateRange')).toBe(QueryModel.DateRange.month);
                         });
 
                         it('should change at least the minDate attribute on the query model', function() {
@@ -128,13 +132,13 @@ define([
                                 expect(this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "'] i").hasClass('hide')).toBe(false);
                             });
 
-                            it('should change the dateRange on the queryModel to weeks', function() {
-                                expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.custom);
+                            it('should change the dateRange on the datesFilterModel to custom', function() {
+                                expect(this.datesFilterModel.get('dateRange')).toBe(QueryModel.DateRange.custom);
                             });
 
-                            it('should set the minDate and maxDate attributes on the queryModel to null', function() {
-                                expect(this.queryModel.get('maxDate')).toBe(this.now);
-                                expect(this.queryModel.get('minDate')).toBe(this.twoMonthsAgo);
+                            it('should set the minDate and maxDate attributes on the queryModel to what they were last time the custom checkbox was selected', function() {
+                                expect(this.queryModel.get('maxDate').toString()).toEqual(this.now.toString());
+                                expect(this.queryModel.get('minDate').toString()).toEqual(this.twoMonthsAgo.toString());
                             });
                         });
                     });

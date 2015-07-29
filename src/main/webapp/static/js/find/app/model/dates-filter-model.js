@@ -37,8 +37,8 @@ define([
         setDateRange: function(dateRange) {
             if(dateRange === DateRange.custom) {
                 this.set({
-                    minDate: this.get('mixDate'),
-                    maxDate: this.get('maxDate'),
+                    minDate: this.customMinDate,
+                    maxDate: this.customMaxDate,
                     dateRange: DateRange.custom
                 });
             } else if(dateRange) {
@@ -58,15 +58,22 @@ define([
             }
         },
 
-        setMinDate: function(date) {this.set({
-            dateRange: DateRange.custom,
-            minDate: date
-        });
+        setMinDate: function(date) {
+            this.customMinDate = date;
+
+            this.set({
+                dateRange: DateRange.custom,
+                minDate: date,
+                maxDate: this.customMaxDate
+            });
         },
 
         setMaxDate: function(date) {
+            this.customMaxDate = date;
+
             this.set({
                 dateRange: DateRange.custom,
+                minDate: this.customMinDate,
                 maxDate: date
             });
         }
