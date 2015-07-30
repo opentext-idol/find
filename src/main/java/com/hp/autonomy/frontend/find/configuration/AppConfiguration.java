@@ -11,6 +11,8 @@ import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
+import com.hp.autonomy.frontend.view.hod.HodViewService;
+import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -163,5 +165,10 @@ public class AppConfiguration {
     @Bean
     public UnboundTokenService unboundTokenService() {
         return new UnboundTokenServiceImpl(authenticationService(), configService);
+    }
+
+    @Bean
+    public HodViewService hodViewService() {
+        return new HodViewServiceImpl(viewDocumentService(), getContentService());
     }
 }

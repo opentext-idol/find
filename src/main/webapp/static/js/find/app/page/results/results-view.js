@@ -9,11 +9,13 @@ define([
     'text!find/templates/app/page/colorbox-controls.html',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/view/media-player.html',
+    'text!find/templates/app/page/view/view-document.html',
     'text!find/templates/app/page/results/entity-label.html',
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, documentMimeTypes, resultsView, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, entityTemplate, moment, i18n) {
+], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, documentMimeTypes, resultsView, resultsTemplate,
+            colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
 
     /** Whitespace OR character in set bounded by [] */
     var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
@@ -43,6 +45,7 @@ define([
         noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         entityTemplate: _.template(entityTemplate),
+        viewDocumentTemplate: _.template(viewDocumentTemplate),
 
         events: {
             'click .query-text' : function(e) {
@@ -158,12 +161,10 @@ define([
         },
 
         colorboxArguments: function(options) {
-            options = options || {};
-
             var args = {
                 current: '{current} of {total}',
                 height:'70%',
-                iframe: !Boolean(options.media),
+                iframe: false,
                 rel: 'results',
                 width:'70%',
                 onComplete: _.bind(function() {
@@ -176,7 +177,11 @@ define([
                     media: options.media,
                     url: options.url,
                     offset: options.offset
-                })
+                });
+            } else {
+                args.html = this.viewDocumentTemplate({
+                    src: options.href
+                });
             }
 
             return args;
@@ -238,7 +243,7 @@ define([
                 $newResult.find('.result-header').colorbox(this.colorboxArguments({media: media, url: url, offset: offset}));
             } else {
                 // Use the standard Viewserver display
-                $newResult.find('.result-header').colorbox(this.colorboxArguments());
+                $newResult.find('.result-header').colorbox(this.colorboxArguments({href: href}));
             }
 
             $newResult.find('.dots').click(function (e) {
@@ -251,7 +256,7 @@ define([
             // Process the search text first
             var searchText = this.queryModel.get("queryText");
             var searchTextID = _.uniqueId('Find-IOD-QueryText-Placeholder');
-            summary = this.replaceBoundedText(summary, searchText, searchTextID)
+            summary = this.replaceBoundedText(summary, searchText, searchTextID);
 
             // Create an array of the entity titles, longest first
             var entities = this.entityCollection.map(function(entity) {

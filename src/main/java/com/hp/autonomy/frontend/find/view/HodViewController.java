@@ -1,5 +1,7 @@
 package com.hp.autonomy.frontend.find.view;
 
+import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
+import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +24,10 @@ import java.util.Locale;
 @Controller
 @RequestMapping({"/api/public/view"})
 @Slf4j
-public class IodViewController extends AbstractViewController {
+public class HodViewController extends AbstractViewController {
 
     @Autowired
-    private IodViewService iodViewService;
+    private HodViewService hodViewService;
 
     @Autowired
     private MessageSource messageSource;
@@ -37,7 +39,8 @@ public class IodViewController extends AbstractViewController {
             final HttpServletResponse response
     ) throws HodErrorException, IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
-        iodViewService.viewDocument(response.getOutputStream(), reference, indexes);
+        ViewContentSecurityPolicy.addContentSecurityPolicy(response);
+        hodViewService.viewDocument(reference, indexes, response.getOutputStream());
     }
 
     @ExceptionHandler
