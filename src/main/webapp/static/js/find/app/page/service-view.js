@@ -61,7 +61,7 @@ define([
                 }
             });
 
-			this.indexesCollection.fetch()
+			this.indexesCollection.fetch();
 
             this.listenTo(this.queryModel, 'change', function() {
                 this.entityCollection.fetch({
