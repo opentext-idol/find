@@ -16,7 +16,7 @@ define([
     var INITIAL_MIN_DATE = moment();
     var DATE_FORMAT = 'LLL';
 
-    describe('Search filters collection initialised with a min date and an indexes filter', function() {
+    describe('Search filters collection initialised with an indexes filter and DatesFilterModel with a min date set', function() {
         beforeEach(function() {
             IndexesCollection.reset();
 
@@ -28,12 +28,16 @@ define([
             ]);
 
             this.queryModel = new Backbone.Model({
-                indexes: [WIKI_ENG]
+                indexes: [WIKI_ENG],
+                minDate: INITIAL_MIN_DATE
             });
 
-            this.datesFilterModel = new DatesFilterModel({queryModel: this.queryModel});
+            this.datesFilterModel = new Backbone.Model({});
 
-            this.datesFilterModel.setMinDate(INITIAL_MIN_DATE);
+            this.datesFilterModel.set({
+                dateRange: DatesFilterModel.dateRange.custom,
+                minDate: INITIAL_MIN_DATE
+            });
 
             this.collection = new FiltersCollection([], {
                 queryModel: this.queryModel,
@@ -59,11 +63,16 @@ define([
             expect(model.get('text')).not.toContain(WOOKIEPEDIA);
         });
 
-        describe('after setMaxDate has been called on the datesFilterModel', function() {
+        describe('after datesFilterModel has a maxDate set', function() {
             beforeEach(function() {
                 this.maxDate = moment(INITIAL_MIN_DATE).add(2, 'days');
 
-                this.datesFilterModel.setMaxDate(this.maxDate);
+                this.queryModel.set('maxDate', this.maxDate);
+                this.datesFilterModel.set({
+                    dateRange: DatesFilterModel.dateRange.custom,
+                    minDate: this.maxDate
+                });
+
             });
 
             it('contains three models', function() {
@@ -78,11 +87,16 @@ define([
             });
         });
 
-        describe('after setMinDate has been called on the datesFilterModel', function() {
+        describe('after datesFilterModel has a minDate set', function() {
             beforeEach(function() {
                 this.minDate = moment(INITIAL_MIN_DATE).subtract(2, 'days');
 
-                this.datesFilterModel.setMinDate(this.minDate);
+                this.datesFilterModel.set({
+                    dateRange: DatesFilterModel.dateRange.custom,
+                    minDate: this.minDate
+                });
+
+                this.queryModel.set('minDate', this.minDate);
             });
 
             it('contains two models', function() {
@@ -133,9 +147,14 @@ define([
             });
         });
 
-        describe('after setMinDate is called in on the datesFilterModel', function() {
+        describe('after datesFilterModel has a minDate set', function() {
             beforeEach(function() {
-                this.datesFilterModel.setMinDate(null);
+                this.datesFilterModel.set({
+                    dateRange: null,
+                    minDate: null
+                });
+
+                this.queryModel.set('minDate', null);
             });
 
             it('sets the request model minDate attribute to null', function() {
