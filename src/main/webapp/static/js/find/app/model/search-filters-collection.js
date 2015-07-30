@@ -72,7 +72,7 @@ define([
                 var dateRange = this.datesFilterModel.get('dateRange');
 
                 if(!_.isEmpty(dateFilterTypes)) {
-                    if(dateRange === DatesFilterModel.DateRange.custom) {
+                    if(dateRange === DatesFilterModel.dateRange.custom) {
                         this.intervalDate(dateFilterTypes);
                     } else if(dateRange) {
                         this.humanDate();

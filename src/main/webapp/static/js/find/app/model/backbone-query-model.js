@@ -7,13 +7,6 @@ define([
         relevance: 'relevance'
     };
 
-    var DateRange = {
-        custom: 'custom',
-        year: 'year',
-        month: 'month',
-        week: 'week'
-    };
-
     return Backbone.Model.extend({
         defaults: {
             queryText: '',
@@ -47,7 +40,6 @@ define([
             }
         }
     }, {
-        Sort: Sort,
-        DateRange: DateRange
+        Sort: Sort
     });
 });

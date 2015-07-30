@@ -2,21 +2,15 @@ define([
     'backbone',
     'moment',
     'i18n!find/nls/bundle',
-    'find/app/model/backbone-query-model',
+    'find/app/model/dates-filter-model',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/date/dates-filter-view.html',
     'text!find/templates/app/page/date/custom-datepicker.html',
     'text!find/templates/app/page/date/date-item.html',
     'bootstrap-datetimepicker'
-], function(Backbone, moment, i18n, QueryModel, ListView, template, datepicker, dateItemTemplate) {
+], function(Backbone, moment, i18n, DatesFilterModel, ListView, template, datepicker, dateItemTemplate) {
 
     var DATES_DISPLAY_FORMAT = 'YYYY/MM/DD hh:mm';
-
-    var dateRangeDescription = {
-        year:  {maxDate: moment(), minDate: moment().subtract(1, 'years')},
-        month: {maxDate: moment(), minDate: moment().subtract(1, 'months')},
-        week: {maxDate: moment(), minDate: moment().subtract(1, 'weeks')}
-    };
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -43,20 +37,20 @@ define([
 
             this.dateFiltersCollection = new Backbone.Collection([
                 {
-                    id: QueryModel.DateRange.week,
-                    label: i18n['search.dates.timeInterval.' + QueryModel.DateRange.week]
+                    id: DatesFilterModel.dateRange.week,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.week]
                 },
                 {
-                    id: QueryModel.DateRange.month,
-                    label: i18n['search.dates.timeInterval.' + QueryModel.DateRange.month]
+                    id: DatesFilterModel.dateRange.month,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.month]
                 },
                 {
-                    id: QueryModel.DateRange.year,
-                    label: i18n['search.dates.timeInterval.' + QueryModel.DateRange.year]
+                    id: DatesFilterModel.dateRange.year,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.year]
                 },
                 {
-                    id: QueryModel.DateRange.custom,
-                    label: i18n['search.dates.timeInterval.'  + QueryModel.DateRange.custom]
+                    id: DatesFilterModel.dateRange.custom,
+                    label: i18n['search.dates.timeInterval.'  + DatesFilterModel.dateRange.custom]
                 }
             ]);
 
@@ -87,7 +81,7 @@ define([
                 this.$("[data-id='" + dateRange + "'] i").removeClass('hide');
 
                 // If custom show custom options
-                this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== QueryModel.DateRange.custom);
+                this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== DatesFilterModel.dateRange.custom);
             });
         },
 

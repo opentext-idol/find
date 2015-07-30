@@ -3,7 +3,7 @@ define([
     'moment'
 ], function(Backbone, moment) {
 
-    var DateRange = {
+    var dateRange = {
         custom: 'custom',
         year: 'year',
         month: 'month',
@@ -34,20 +34,20 @@ define([
             })
         },
 
-        setDateRange: function(dateRange) {
-            if(dateRange === DateRange.custom) {
+        setDateRange: function(range) {
+            if(range === dateRange.custom) {
                 this.set({
                     minDate: this.customMinDate,
                     maxDate: this.customMaxDate,
-                    dateRange: DateRange.custom
+                    dateRange: dateRange.custom
                 });
-            } else if(dateRange) {
-                var dateRangeProperties = dateRangeDescription[dateRange] || {};
+            } else if(range) {
+                var dateRangeProperties = dateRangeDescription[range] || {};
 
                 this.set({
                     minDate: dateRangeProperties.minDate,
                     maxDate: dateRangeProperties.maxDate,
-                    dateRange: dateRange
+                    dateRange: range
                 });
             } else {
                 this.set({
@@ -62,7 +62,7 @@ define([
             this.customMinDate = date;
 
             this.set({
-                dateRange: DateRange.custom,
+                dateRange: dateRange.custom,
                 minDate: date,
                 maxDate: this.customMaxDate
             });
@@ -72,12 +72,12 @@ define([
             this.customMaxDate = date;
 
             this.set({
-                dateRange: DateRange.custom,
+                dateRange: dateRange.custom,
                 minDate: this.customMinDate,
                 maxDate: date
             });
         }
     }, {
-        DateRange: DateRange
+       dateRange: dateRange
     });
 });
