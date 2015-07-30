@@ -18,7 +18,7 @@ define([
                 var metatype = $(e.currentTarget).closest('[data-metatype]').attr('data-metatype');
                 var type = $(e.currentTarget).closest('[data-type]').attr('data-type');
 
-                if(metatype && metaType === SearchFiltersCollection.metaFilterTypes.date) {
+                if(metatype && metatype === SearchFiltersCollection.metaFilterTypes.date) {
                     if(type === SearchFiltersCollection.FilterTypes.dateRange) {
                         this.datesFilterModel.setDateRange(null);
                     }
