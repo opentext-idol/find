@@ -63,6 +63,7 @@
         <url-pattern>/public/*</url-pattern>
         <url-pattern>/login</url-pattern>
         <url-pattern>/authenticate</url-pattern>
+        <url-pattern>/authenticate-sso</url-pattern>
         <url-pattern>/logout</url-pattern>
         <url-pattern>/sso</url-pattern>
     </filter-mapping>
