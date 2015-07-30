@@ -78,6 +78,6 @@ define([
             });
         }
     }, {
-       dateRange: dateRange
+        dateRange: dateRange
     });
 });
