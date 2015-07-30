@@ -154,7 +154,7 @@ define([
 
         removeAllDateFilters: function() {
             this.remove(this.filter(function(model) {
-                return _.contains([FilterTypes.dateRange, FilterTypes.maxDate, FilterTypes.minDate], model.get('type'));
+                return metaFilterType.date === model.get('metaType');
             }));
         },
 

@@ -15,10 +15,10 @@ define([
         events: {
             'click .filters-remove-icon': function(e) {
                 var id = $(e.currentTarget).closest('[data-id]').attr('data-id');
-                var metatype = $(e.currentTarget).closest('[data-metatype]').attr('data-metatype');
+                var metaType = $(e.currentTarget).closest('[data-metatype]').attr('data-metatype');
                 var type = $(e.currentTarget).closest('[data-type]').attr('data-type');
 
-                if(metatype && metatype === SearchFiltersCollection.metaFilterTypes.date) {
+                if(metaType && metaType === SearchFiltersCollection.metaFilterTypes.date) {
                     if(type === SearchFiltersCollection.FilterTypes.dateRange) {
                         this.datesFilterModel.setDateRange(null);
                     }
