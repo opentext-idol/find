@@ -2,21 +2,15 @@ define([
     'backbone',
     'moment',
     'i18n!find/nls/bundle',
-    'find/app/model/backbone-query-model',
+    'find/app/model/dates-filter-model',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/date/dates-filter-view.html',
     'text!find/templates/app/page/date/custom-datepicker.html',
     'text!find/templates/app/page/date/date-item.html',
     'bootstrap-datetimepicker'
-], function(Backbone, moment, i18n, QueryModel, ListView, template, datepicker, dateItemTemplate) {
+], function(Backbone, moment, i18n, DatesFilterModel, ListView, template, datepicker, dateItemTemplate) {
 
     var DATES_DISPLAY_FORMAT = 'YYYY/MM/DD hh:mm';
-
-    var dateRangeDescription = {
-        year:  {maxDate: moment(), minDate: moment().subtract(1, 'years')},
-        month: {maxDate: moment(), minDate: moment().subtract(1, 'months')},
-        week: {maxDate: moment(), minDate: moment().subtract(1, 'weeks')}
-    };
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -27,38 +21,36 @@ define([
             'click tr': function(e) {
                 var $targetRow = $(e.currentTarget);
                 var selected = $targetRow.find('[data-id]').data('id');
-                var previous = this.queryModel.get('dateRange');
+                var previous = this.datesFilterModel.get('dateRange');
 
                 if(selected === previous) {
-                    this.queryModel.unset('dateRange');
+                    this.datesFilterModel.setDateRange(null);
                 } else {
-                    this.queryModel.set('dateRange', selected);
+                    this.datesFilterModel.setDateRange(selected);
                 }
             }
         },
 
         initialize: function(options) {
+            this.datesFilterModel = options.datesFilterModel;
             this.queryModel = options.queryModel;
-
-            this.customMinDate = null;
-            this.customMaxDate = null;
 
             this.dateFiltersCollection = new Backbone.Collection([
                 {
-                    id: QueryModel.DateRange.week,
-                    label: i18n['search.dates.timeInterval.' + QueryModel.DateRange.week]
+                    id: DatesFilterModel.dateRange.week,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.week]
                 },
                 {
-                    id: QueryModel.DateRange.month,
-                    label: i18n['search.dates.timeInterval.' + QueryModel.DateRange.month]
+                    id: DatesFilterModel.dateRange.month,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.month]
                 },
                 {
-                    id: QueryModel.DateRange.year,
-                    label: i18n['search.dates.timeInterval.' + QueryModel.DateRange.year]
+                    id: DatesFilterModel.dateRange.year,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.year]
                 },
                 {
-                    id: QueryModel.DateRange.custom,
-                    label: i18n['search.dates.timeInterval.'  + QueryModel.DateRange.custom]
+                    id: DatesFilterModel.dateRange.custom,
+                    label: i18n['search.dates.timeInterval.'  + DatesFilterModel.dateRange.custom]
                 }
             ]);
 
@@ -83,27 +75,13 @@ define([
                 });
             }, this);
 
-            this.listenTo(this.queryModel, 'change:dateRange', function(queryModel, dateRange) {
+            this.listenTo(this.datesFilterModel, 'change:dateRange', function(datesFilterModel, dateRange) {
+                // Clear all checkboxes, check selected
                 this.$('.date-filters-list i').addClass('hide');
                 this.$("[data-id='" + dateRange + "'] i").removeClass('hide');
 
-                this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== QueryModel.DateRange.custom);
-
-                if(dateRange === QueryModel.DateRange.custom) {
-                    this.queryModel.set({
-                        minDate: this.customMinDate,
-                        maxDate: this.customMaxDate,
-                        dateRange: QueryModel.DateRange.custom
-                    })
-                } else {
-                    var dateRangeProperties = dateRangeDescription[dateRange] || {};
-
-                    this.queryModel.set({
-                        minDate: dateRangeProperties.minDate,
-                        maxDate: dateRangeProperties.maxDate,
-                        dateRange: dateRange
-                    });
-                }
+                // If custom show custom options
+                this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== DatesFilterModel.dateRange.custom);
             });
         },
 
@@ -152,21 +130,11 @@ define([
         },
 
         setMinDate: function(date) {
-            this.customMinDate = date;
-
-            this.queryModel.set({
-                minDate: date,
-                dateRange: QueryModel.DateRange.custom
-            });
+            this.datesFilterModel.setMinDate(date);
         },
 
         setMaxDate: function(date) {
-            this.customMaxDate = date;
-
-            this.queryModel.set({
-                maxDate: date,
-                dateRange: QueryModel.DateRange.custom
-            });
+            this.datesFilterModel.setMaxDate(date);
         }
     });
 

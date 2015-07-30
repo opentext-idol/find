@@ -1,5 +1,6 @@
 define([
     'mock/backbone-mock-factory',
+    'find/app/model/dates-filter-model',
     'find/app/model/search-filters-collection',
     'mock/model/indexes-collection',
     'find/app/model/backbone-query-model',
@@ -7,7 +8,7 @@ define([
     'fieldtext/js/field-text-parser',
     'backbone',
     'moment'
-], function(mockFactory, FiltersCollection, IndexesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
+], function(mockFactory, DatesFilterModel, FiltersCollection, IndexesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
 
     var WOOKIEPEDIA = 'wookiepedia';
     var WIKI_ENG = 'wiki_eng';
@@ -15,7 +16,7 @@ define([
     var INITIAL_MIN_DATE = moment();
     var DATE_FORMAT = 'LLL';
 
-    describe('Search filters collection initialised with a min date and an indexes filter', function() {
+    describe('Search filters collection initialised with an indexes filter and DatesFilterModel with a min date set', function() {
         beforeEach(function() {
             IndexesCollection.reset();
 
@@ -27,12 +28,18 @@ define([
             ]);
 
             this.queryModel = new Backbone.Model({
-                minDate: INITIAL_MIN_DATE,
-                indexes: [WIKI_ENG]
+                indexes: [WIKI_ENG],
+                minDate: INITIAL_MIN_DATE
+            });
+
+            this.datesFilterModel = new Backbone.Model({
+                dateRange: DatesFilterModel.dateRange.custom,
+                minDate: INITIAL_MIN_DATE
             });
 
             this.collection = new FiltersCollection([], {
                 queryModel: this.queryModel,
+                datesFilterModel: this.datesFilterModel,
                 indexesCollection: this.indexesCollection
             });
         });
@@ -54,14 +61,16 @@ define([
             expect(model.get('text')).not.toContain(WOOKIEPEDIA);
         });
 
-        describe('after a maxDate property is set on the request model', function() {
+        describe('after datesFilterModel has a maxDate set', function() {
             beforeEach(function() {
                 this.maxDate = moment(INITIAL_MIN_DATE).add(2, 'days');
 
-                this.queryModel.set({
-                    dateRange: QueryModel.DateRange.custom,
+                this.queryModel.set('maxDate', this.maxDate);
+
+                this.datesFilterModel.set({
+                    dateRange: DatesFilterModel.dateRange.custom,
                     maxDate: this.maxDate
-                })
+                });
             });
 
             it('contains three models', function() {
@@ -76,14 +85,16 @@ define([
             });
         });
 
-        describe('after a new minDate is set on the request model', function() {
+        describe('after datesFilterModel has a minDate set', function() {
             beforeEach(function() {
                 this.minDate = moment(INITIAL_MIN_DATE).subtract(2, 'days');
 
-                this.queryModel.set({
-                    dateRange: QueryModel.DateRange.custom,
+                this.datesFilterModel.set({
+                    dateRange: DatesFilterModel.dateRange.custom,
                     minDate: this.minDate
-                })
+                });
+
+                this.queryModel.set('minDate', this.minDate);
             });
 
             it('contains two models', function() {
@@ -134,9 +145,14 @@ define([
             });
         });
 
-        describe('after the minDate model is removed', function() {
+        describe('after datesFilterModel has a minDate set', function() {
             beforeEach(function() {
-                this.collection.remove(FiltersCollection.FilterTypes.minDate);
+                this.datesFilterModel.set({
+                    dateRange: null,
+                    minDate: null
+                });
+
+                this.queryModel.set('minDate', null);
             });
 
             it('sets the request model minDate attribute to null', function() {

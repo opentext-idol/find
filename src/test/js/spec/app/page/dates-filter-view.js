@@ -2,15 +2,20 @@ define([
     'backbone',
     'moment',
     'find/app/page/date/dates-filter-view',
-    'find/app/model/backbone-query-model'
-], function(Backbone, moment, DatesFilterView, QueryModel) {
+    'find/app/model/dates-filter-model'
+], function(Backbone, moment, DatesFilterView, DatesFilterModel) {
 
     describe('Dates Filter View', function() {
         beforeEach(function() {
+            this.now = moment(1000000000000);
+            this.twoMonthsAgo = moment(this.now).subtract(2, 'months');
+
             this.queryModel = new Backbone.Model();
+            this.datesFilterModel = new Backbone.Model();
 
             this.datesFilterView = new DatesFilterView({
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                datesFilterModel: this.datesFilterModel
             });
 
             this.datesFilterView.render();
@@ -30,138 +35,98 @@ define([
 
         });
 
-        describe('after selecting the last week checkbox', function() {
+        describe('after this.datesFilterModel.setDateRange is called with weeks', function() {
             beforeEach(function() {
-                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.week + "'] i").click();
+                this.datesFilterModel.set({
+                    minDate: moment(),
+                    maxDate: moment(),
+                    dateRange: DatesFilterModel.dateRange.week
+                });
             });
 
             it('should tick the weeks checkbox', function() {
-                expect(this.datesFilterView.$("[data-id='" + QueryModel.DateRange.week + "'] i").hasClass('hide')).toBe(false);
+                expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.dateRange.week + "'] i").hasClass('hide')).toBe(false);
             });
 
             it('should change the dateRange on the queryModel to weeks', function() {
-                expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.week);
+                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.dateRange.week);
             });
 
-            describe('after clicking the last week checkbox again', function() {
+            describe('after this.datesFilterModel.setDateRange is called with null', function() {
                 beforeEach(function() {
-                    this.datesFilterView.$("[data-id='" + QueryModel.DateRange.week + "'] i").click();
+                    this.datesFilterModel.set('dateRange', null);
                 });
 
                 it('should not tick any date range', function() {
                     var checkboxes = this.datesFilterView.$("[data-id] i");
-                    var anyTicked = _.find(checkboxes, function(checkbox) {
+
+                    var anyTicked = _.some(checkboxes, function(checkbox) {
                         return !$(checkbox).hasClass('hide');
                     });
-                    expect(anyTicked).toBe(undefined);
-                });
 
-                it('should set the dateRange attribute on the queryModel to "nothing" and the minDate and maxDate attributes should be null', function() {
-                    expect(this.queryModel.get('dateRange')).not.toBeDefined();
-                    expect(this.queryModel.get('maxDate')).toBe(undefined);
-                    expect(this.queryModel.get('minDate')).toBe(undefined);
+                    expect(anyTicked).toBe(false);
                 });
             });
         });
 
-        describe('after selecting the custom checkbox', function() {
+        describe('after this.datesFilterModel.setDateRange is called with custom', function() {
             beforeEach(function() {
-                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "'] i").click();
+                this.datesFilterModel.set('dateRange', DatesFilterModel.dateRange.custom);
             });
 
             it('should tick the custom checkbox', function() {
-                expect(this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "'] i").hasClass('hide')).toBe(false);
+                expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.dateRange.custom + "'] i").hasClass('hide')).toBe(false);
             });
 
-            it('should change the dateRange on the queryModel to weeks', function() {
-                expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.custom);
+            it('should change the dateRange on the datesFilterModel to custom', function() {
+                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.dateRange.custom);
             });
 
-            it('should set the minDate and maxDate attributes on the queryModel to null', function() {
-                expect(this.queryModel.get('maxDate')).toBe(null);
-                expect(this.queryModel.get('minDate')).toBe(null);
-            });
-
-            describe('simulating a change made by the datepicker to minDate', function() {
+            describe('then this.datesFilterModel.setDateRange is called with month', function() {
                 beforeEach(function() {
-                    this.twoMonthsAgo = moment().subtract(2, 'months');
-                    this.datesFilterView.setMinDate(this.twoMonthsAgo);
+                    this.datesFilterModel.set('dateRange', DatesFilterModel.dateRange.month);
                 });
 
-                it('should set the minDate attribute to the moment object supplied by setMinDate on the query model', function() {
-                    expect(this.queryModel.get('minDate')).toBe(this.twoMonthsAgo);
+                it('should tick the months checkbox', function() {
+                    expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.dateRange.month + "'] i").hasClass('hide')).toBe(false);
                 });
 
-                describe('clicking the Max Date icon', function() {
+                describe('then this.datesFilterModel.setDateRange is called with custom', function() {
                     beforeEach(function() {
-                        this.now = moment();
-                        this.datesFilterView.setMaxDate(this.now);
+                        this.datesFilterModel.set('dateRange', DatesFilterModel.dateRange.custom);
                     });
 
-                    it('should set the maxDate attribute to the moment object supplied by setMinDate on the query model', function() {
-                        expect(this.queryModel.get('maxDate')).toBe(this.now);
-                    });
-
-                    describe('then selecting last month', function() {
-                        beforeEach(function() {
-                            this.datesFilterView.$("[data-id='" + QueryModel.DateRange.month + "'] i").click();
-                        });
-
-                        it('should tick the months checkbox', function() {
-                            expect(this.datesFilterView.$("[data-id='" + QueryModel.DateRange.month + "'] i").hasClass('hide')).toBe(false);
-                        });
-
-                        it('should change the dateRange on the queryModel to month', function() {
-                            expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.month);
-                        });
-
-                        it('should change at least the minDate attribute on the query model', function() {
-                            expect(this.queryModel.get('minDate')).not.toBe(this.now);
-                        });
-
-                        describe('then selecting custom again', function() {
-                            beforeEach(function() {
-                                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "'] i").click();
-                            });
-
-                            it('should tick the custom checkbox', function() {
-                                expect(this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "'] i").hasClass('hide')).toBe(false);
-                            });
-
-                            it('should change the dateRange on the queryModel to weeks', function() {
-                                expect(this.queryModel.get('dateRange')).toBe(QueryModel.DateRange.custom);
-                            });
-
-                            it('should set the minDate and maxDate attributes on the queryModel to null', function() {
-                                expect(this.queryModel.get('maxDate')).toBe(this.now);
-                                expect(this.queryModel.get('minDate')).toBe(this.twoMonthsAgo);
-                            });
-                        });
+                    it('should tick the custom checkbox', function() {
+                        expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.dateRange.custom + "'] i").hasClass('hide')).toBe(false);
                     });
                 });
-
-
-            })
+            });
         });
 
-        describe('after selecting the custom checkbox, setting min and max dates and then the query model having the min and max dates set to null', function() {
+        describe('after custom is set on the datesFilterModel', function() {
             beforeEach(function() {
-                this.datesFilterView.$("[data-id='" + QueryModel.DateRange.custom + "']").click();
-                this.datesFilterView.setMinDate(this.twoMonthsAgo);
-                this.datesFilterView.setMaxDate(this.now);
-
-                this.queryModel.set({
-                    dateRange: 'custom',
-                    minDate: null,
-                    maxDate: null
+                this.datesFilterModel.set({
+                    dateRange: 'custom'
                 });
             });
 
-            it('should clear the text from the display box', function() {
-                expect(this.datesFilterView.$('.results-filter-min-date input').val()).toBe('');
-                expect(this.datesFilterView.$('.results-filter-max-date input').val()).toBe('');
+            it('should show the datepickers', function() {
+                expect($('.search-dates-wrapper').hasClass('hide')).toBe(false);
             });
-        })
-    })
 
+            describe('after setting min and max dates on the datesFilterModel the new values should be reflected in the input', function() {
+                beforeEach(function() {
+                    this.queryModel.set({
+                        maxDate: this.now,
+                        minDate: this.twoMonthsAgo
+                    });
+                });
+
+                it('should clear the text from the display box', function() {
+                    expect(this.datesFilterView.$('.results-filter-min-date input').val()).toBe("2001/07/09 02:46");
+                    expect(this.datesFilterView.$('.results-filter-max-date input').val()).toBe("2001/09/09 02:46");
+                });
+            });
+        });
+    });
 });
