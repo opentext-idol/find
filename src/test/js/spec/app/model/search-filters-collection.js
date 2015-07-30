@@ -32,9 +32,7 @@ define([
                 minDate: INITIAL_MIN_DATE
             });
 
-            this.datesFilterModel = new Backbone.Model({});
-
-            this.datesFilterModel.set({
+            this.datesFilterModel = new Backbone.Model({
                 dateRange: DatesFilterModel.dateRange.custom,
                 minDate: INITIAL_MIN_DATE
             });
@@ -68,11 +66,11 @@ define([
                 this.maxDate = moment(INITIAL_MIN_DATE).add(2, 'days');
 
                 this.queryModel.set('maxDate', this.maxDate);
+
                 this.datesFilterModel.set({
                     dateRange: DatesFilterModel.dateRange.custom,
-                    minDate: this.maxDate
+                    maxDate: this.maxDate
                 });
-
             });
 
             it('contains three models', function() {

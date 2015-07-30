@@ -7,8 +7,8 @@ define([
 
     describe('Dates Filter View', function() {
         beforeEach(function() {
-            this.now = moment();
-            this.twoMonthsAgo = moment().subtract(2, 'months');
+            this.now = moment(1000000000000);
+            this.twoMonthsAgo = moment(this.now).subtract(2, 'months');
 
             this.queryModel = new Backbone.Model();
             this.datesFilterModel = new Backbone.Model();
@@ -59,14 +59,12 @@ define([
 
                 it('should not tick any date range', function() {
                     var checkboxes = this.datesFilterView.$("[data-id] i");
-                    var anyTicked = _.find(checkboxes, function(checkbox) {
+
+                    var anyTicked = _.some(checkboxes, function(checkbox) {
                         return !$(checkbox).hasClass('hide');
                     });
-                    expect(anyTicked).toBe(undefined);
-                });
 
-                it('should set the dateRange attribute on the datesFilterModel to null and the minDate and maxDate attributes should be null', function() {
-                    expect(this.datesFilterModel.get('dateRange')).toBe(null);
+                    expect(anyTicked).toBe(false);
                 });
             });
         });
@@ -82,11 +80,6 @@ define([
 
             it('should change the dateRange on the datesFilterModel to custom', function() {
                 expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.dateRange.custom);
-            });
-
-            it('should set the minDate and maxDate attributes on the queryModel to null', function() {
-                expect(this.queryModel.get('maxDate')).toBeFalsy();
-                expect(this.queryModel.get('minDate')).toBeFalsy();
             });
 
             describe('then this.datesFilterModel.setDateRange is called with month', function() {
@@ -130,8 +123,8 @@ define([
                 });
 
                 it('should clear the text from the display box', function() {
-                    expect(this.datesFilterView.$('.results-filter-min-date input').val().length > 5).toBe(true);
-                    expect(this.datesFilterView.$('.results-filter-max-date input').val().length > 5).toBe(true);
+                    expect(this.datesFilterView.$('.results-filter-min-date input').val()).toBe("2001/07/09 02:46");
+                    expect(this.datesFilterView.$('.results-filter-max-date input').val()).toBe("2001/09/09 02:46");
                 });
             });
         });

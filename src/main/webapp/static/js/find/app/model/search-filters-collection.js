@@ -153,9 +153,7 @@ define([
         },
 
         removeAllDateFilters: function() {
-            this.remove(this.filter(function(model) {
-                return metaFilterType.date === model.get('metaType');
-            }));
+            this.remove(this.where({metaType: metaFilterType.date}));
         },
 
         humanDate: function() {
