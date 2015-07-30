@@ -133,9 +133,9 @@ define([
             });
         });
 
-        describe('after the minDate model is removed', function() {
+        describe('after setMinDate is called in on the datesFilterModel', function() {
             beforeEach(function() {
-                this.collection.remove(FiltersCollection.FilterTypes.minDate);
+                this.datesFilterModel.setMinDate(null);
             });
 
             it('sets the request model minDate attribute to null', function() {
