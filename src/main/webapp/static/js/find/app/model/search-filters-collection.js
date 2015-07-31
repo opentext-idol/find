@@ -118,7 +118,14 @@ define([
         },
 
         getDatabasesFilterText: function() {
-            return i18n['search.indexes'] + ': ' + this.queryModel.get('indexes').join(', ');
+            var selectedIndexes = this.queryModel.get('indexes');
+
+            _.map(selectedIndexes, function(selectedIndexWithDomain) {
+                return this.indexesCollection.get(selectedIndexWithDomain).get('name');
+            }, this);
+
+            return i18n['search.indexes'] + ': ' + selectedIndexes.join(', ');
+
         },
 
         setParametricFieldText: function(node) {

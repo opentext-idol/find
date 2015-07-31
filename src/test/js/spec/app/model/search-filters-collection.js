@@ -10,8 +10,16 @@ define([
     'moment'
 ], function(mockFactory, DatesFilterModel, FiltersCollection, IndexesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
 
-    var WOOKIEPEDIA = 'wookiepedia';
-    var WIKI_ENG = 'wiki_eng';
+    var WOOKIEPEDIA = {
+        id: 'TESTDOMAIN:wookiepedia',
+        domain: 'TESTDOMAIN',
+        name: 'wookiepedia'
+    };
+    var WIKI_ENG = {
+        id: 'TESTDOMAIN:wiki_eng',
+        domain: 'TESTDOMAIN',
+        name: 'wiki_eng'
+    };
 
     var INITIAL_MIN_DATE = moment();
     var DATE_FORMAT = 'LLL';
@@ -23,12 +31,12 @@ define([
             this.indexesCollection = new IndexesCollection();
 
             this.indexesCollection.set([
-                {index: WOOKIEPEDIA},
-                {index: WIKI_ENG}
+                WOOKIEPEDIA,
+                WIKI_ENG
             ]);
 
             this.queryModel = new Backbone.Model({
-                indexes: [WIKI_ENG],
+                indexes: [WIKI_ENG.id],
                 minDate: INITIAL_MIN_DATE
             });
 
@@ -57,8 +65,8 @@ define([
         it('contains a databases filter model', function() {
             var model = this.collection.get(FiltersCollection.FilterTypes.indexes);
             expect(model).toBeDefined();
-            expect(model.get('text')).toContain(WIKI_ENG);
-            expect(model.get('text')).not.toContain(WOOKIEPEDIA);
+            expect(model.get('text')).toContain(WIKI_ENG.name);
+            expect(model.get('text')).not.toContain(WOOKIEPEDIA.name);
         });
 
         describe('after datesFilterModel has a maxDate set', function() {
@@ -128,7 +136,7 @@ define([
             describe('then a database is deselected', function() {
                 beforeEach(function() {
                     this.queryModel.set({
-                        indexes: [WOOKIEPEDIA]
+                        indexes: [WOOKIEPEDIA.id]
                     });
                 });
 
@@ -139,8 +147,8 @@ define([
                 it('adds a databases filter model', function() {
                     var model = this.collection.get(FiltersCollection.FilterTypes.indexes);
                     expect(model).toBeDefined();
-                    expect(model.get('text')).toContain(WOOKIEPEDIA);
-                    expect(model.get('text')).not.toContain(WIKI_ENG);
+                    expect(model.get('text')).toContain(WOOKIEPEDIA.name);
+                    expect(model.get('text')).not.toContain(WIKI_ENG.name);
                 });
             });
         });
