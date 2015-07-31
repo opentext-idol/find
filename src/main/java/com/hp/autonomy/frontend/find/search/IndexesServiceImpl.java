@@ -17,7 +17,9 @@ import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
+import com.hp.autonomy.hod.sso.HodAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -79,8 +81,10 @@ public class IndexesServiceImpl implements IndexesService {
         final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if(activeIndexes.isEmpty()) {
+            final HodAuthentication auth = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
             final Resources resources = listIndexes();
-            final String domain = configService.getConfig().getIod().getDomain();
+            final String domain = auth.getDomain();
 
             final List<ResourceIdentifier> resourceIdentifiers = new ArrayList<>();
 
