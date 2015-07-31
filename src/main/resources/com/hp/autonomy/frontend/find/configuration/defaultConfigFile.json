@@ -19,6 +19,7 @@
             "host": "hp-find-backend",
             "port": 6379
         },
+        "database": 0,
         "sentinels": []
     }
 }
