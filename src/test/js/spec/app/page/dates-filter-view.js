@@ -7,7 +7,7 @@ define([
 
     describe('Dates Filter View', function() {
         beforeEach(function() {
-            this.now = moment(1000000000000);
+            this.now = moment.utc(1000000000000);
             this.twoMonthsAgo = moment(this.now).subtract(2, 'months');
 
             this.queryModel = new Backbone.Model();
@@ -123,8 +123,8 @@ define([
                 });
 
                 it('should clear the text from the display box', function() {
-                    expect(this.datesFilterView.$('.results-filter-min-date input').val()).toBe("2001/07/09 02:46");
-                    expect(this.datesFilterView.$('.results-filter-max-date input').val()).toBe("2001/09/09 02:46");
+                    expect(this.datesFilterView.$('.results-filter-min-date input').val()).toBe("2001/07/09 01:46");
+                    expect(this.datesFilterView.$('.results-filter-max-date input').val()).toBe("2001/09/09 01:46");
                 });
             });
         });
