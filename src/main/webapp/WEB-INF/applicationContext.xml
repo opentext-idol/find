@@ -165,18 +165,7 @@
           p:defaultConfigFile="/com/hp/autonomy/frontend/find/configuration/defaultConfigFile.json"
           p:mapper-ref="contextObjectMapper"
           p:textEncryptor-ref="org.jasypt.util.text.BasicTextEncryptor"
-          p:filterProvider-ref="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider"
-          p:validationService-ref="validationService"/>
-
-    <bean id="validationService" class="com.hp.autonomy.frontend.configuration.ValidationServiceImpl">
-        <property name="validators">
-            <set>
-                <bean class="com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator"
-                      p:configService-ref="configFileService"/>
-                <bean class="com.hp.autonomy.frontend.find.configuration.IodConfigValidator" />
-            </set>
-        </property>
-    </bean>
+          p:filterProvider-ref="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider"/>
 
     <bean id="configurationFilter" class="com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter$SerializeExceptFilter">
         <constructor-arg>

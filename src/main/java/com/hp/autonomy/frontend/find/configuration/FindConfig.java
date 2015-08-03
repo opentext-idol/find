@@ -14,6 +14,7 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.PasswordsConfig;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
+import com.hp.autonomy.frontend.configuration.RedisConfig;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,11 +31,13 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     private final Authentication<?> login;
     private final IodConfig iod;
     private final Set<String> allowedOrigins;
+    private final RedisConfig redis;
 
     private FindConfig(final Builder builder) {
         this.login = builder.login;
         this.iod = builder.iod;
         this.allowedOrigins = builder.allowedOrigins;
+        this.redis = builder.redis;
     }
 
     @Override
@@ -45,6 +48,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
             builder.setLogin(this.login == null ? config.login : this.login.merge(config.login));
             builder.setIod(this.iod == null ? config.iod : this.iod.merge(config.iod));
             builder.setAllowedOrigins(this.allowedOrigins == null ? config.allowedOrigins : this.allowedOrigins);
+            builder.setRedis(this.redis == null ? config.redis : this.redis.merge(config.redis));
 
             return builder.build();
         }
@@ -126,6 +130,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
         private Authentication<?> login;
         private IodConfig iod;
         private Set<String> allowedOrigins;
+        private RedisConfig redis;
 
         public Builder() {}
 
@@ -133,6 +138,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
             this.login = config.login;
             this.iod = config.iod;
             this.allowedOrigins = config.allowedOrigins;
+            this.redis = config.redis;
         }
 
         public FindConfig build() {

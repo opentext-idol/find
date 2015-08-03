@@ -13,5 +13,13 @@
         "domain": "",
         "activeIndexes": []
     },
-    "allowedOrigins": []
+    "allowedOrigins": [],
+    "redis": {
+        "address": {
+            "host": "hp-find-backend",
+            "port": 6379
+        },
+        "database": 0,
+        "sentinels": []
+    }
 }

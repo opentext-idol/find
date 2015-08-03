@@ -36,6 +36,16 @@ The properties you'll need to set are:
 * -Dfind.https.proxyHost . Optional property. The host for the https proxy. Set this if you need a proxy server to talk to Haven OnDemand.
 * -Dfind.https.proxyPort . Optional property. The port for the https proxy. Set this if you need a proxy server to talk to Haven OnDemand. Defaults to 80 if find.https.proxyHost is defined.
 
+## Vagrant
+HP Find includes a Vagrant file, which will provision an Ubuntu 12.04 VM running a Redis server, which will be used to
+store sessions. 
+
+The Vagrantfile requires several plugins, which will be installed if they are not installed already.
+
+The VM has the IP address 192.168.242.242, and can be accessed via DNS with the name hp-find-backend.
+
+The Redis runs on port 6379.
+
 ## Configuring HP Find
 Earlier versions of Find had a settings page, but this is currently unavailable. To configure Find, create a config.json
 file in your Find home directory.
