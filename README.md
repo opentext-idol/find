@@ -16,12 +16,16 @@ Building HP Find requires the following to be installed
 * [Apache Maven 3](http://maven.apache.org)
 * [NodeJS](http://nodejs.org)
 
-The jetty:run goal will stand up a local web server for development. The package goal will build a war file.
+[NPM](https://www.npmjs.com/) and [Bower](http://bower.io/) are used to manage dependencies. These are automatically
+run in the maven process-sources phase.
 
-Running with the production profile will minify the Javascript and CSS, and bless the CSS for older versions of Internet Explorer.
+The maven jetty:run goal will stand up a local web server for development. The package goal will build a war file.
+
+Running with the production profile will minify the Javascript and CSS, and bless the CSS for older versions of Internet
+Explorer.
 
 When developing the develop profile should be used. You will need to create a copy of src/main/filters/filter-dev.properties.example in the same directory.
-This should be named filter-dev.properties. This file should be ignored by git.
+This should be named filter-dev.properties.
 
 ## HP Find setup
 You'll need to install [Tomcat](http://tomcat.apache.org) to run the HP Find war file.
