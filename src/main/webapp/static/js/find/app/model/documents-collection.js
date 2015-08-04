@@ -4,8 +4,9 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    'backbone',
+    'underscore'
+], function(Backbone, _) {
 
     return Backbone.Collection.extend({
 
@@ -28,6 +29,27 @@ define([
 
                 return document;
             }, this);
-        }
+        },
+
+        model: Backbone.Model.extend({
+            parse: function(response) {
+                if (!response.title) {
+                    // If there is no title, use the last part of the reference (assuming the reference is a file path)
+                    // C:\Documents\file.txt -> file.txt
+                    // /home/user/another-file.txt -> another-file.txt
+                    var splitReference = response.reference.split(/\/|\\/);
+                    var lastPart = _.last(splitReference);
+
+                    if (/\S/.test(lastPart)) {
+                        // Use the "file name" if it contains a non whitespace character
+                        response.title = lastPart;
+                    } else {
+                        response.title = response.reference;
+                    }
+                }
+
+                return response;
+            }
+        })
     })
 });
