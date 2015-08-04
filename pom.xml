@@ -50,24 +50,6 @@
                 <finalName>${project.artifactId}-${env}</finalName>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <version>2.8</version>
-                        <executions>
-                            <execution>
-                                <id>copy</id>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>unpack-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>META-INF/test-resources/lib/**/*,META-INF/resources/lib/**/*</includes>
-                                    <outputDirectory>${basedir}/target/web-resources</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>1.3.1</version>
@@ -99,31 +81,6 @@
                                         <argument>${basedir}/node_modules/bower/bin/bower</argument>
                                         <argument>install</argument>
                                     </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <id>move-webjars</id>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <move todir="${basedir}/src/main/webapp/static/lib" failonerror="false">
-                                            <fileset dir="${basedir}/target/web-resources/META-INF/resources/lib"/>
-                                        </move>
-                                        <move todir="${basedir}/src/test/js" failonerror="false">
-                                            <fileset dir="${basedir}/target/web-resources/META-INF/test-resources/"/>
-                                        </move>
-                                        <delete dir="${basedir}/target/web-resources" failonerror="false"/>
-                                    </target>
                                 </configuration>
                             </execution>
                         </executions>
@@ -230,61 +187,6 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <version>2.8</version>
-                        <executions>
-                            <execution>
-                                <id>copy</id>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>unpack-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>META-INF/resources/**/*,META-INF/test-resources/**/*</includes>
-                                    <outputDirectory>${basedir}/target/web-resources</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <id>move-webjars</id>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <move todir="${basedir}/src/main/webapp/static/lib" failonerror="false">
-                                            <fileset dir="${basedir}/target/web-resources/META-INF/resources/lib"/>
-                                        </move>
-                                        <move todir="${basedir}/src/test/js" failonerror="false">
-                                            <fileset dir="${basedir}/target/web-resources/META-INF/test-resources"/>
-                                        </move>
-                                        <delete dir="${basedir}/target/web-resources" failonerror="false"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>clean-up-relics</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <delete dir="${basedir}/${project.build.finalName}/lib" failonerror="false"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.tomcat.maven</groupId>
                         <artifactId>tomcat7-maven-plugin</artifactId>
                         <version>2.3-SNAPSHOT</version>
@@ -342,24 +244,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/webapp/static/lib</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/test/js/lib</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>node_modules</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
