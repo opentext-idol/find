@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.web;
 
+import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,13 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ErrorResponse messageNotReadableHandler(final HttpMessageNotReadableException exception) throws Exception {
         return handler(exception);
+    }
+
+    @ExceptionHandler(HodAuthenticationFailedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse authenticationFailedHandler(final HodAuthenticationFailedException exception) {
+        return new ErrorResponse("TOKEN HAS EXPIRED");
     }
 
     @ExceptionHandler(Exception.class)

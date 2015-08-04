@@ -49,10 +49,20 @@ public class AbstractViewController {
         final String mainMessage,
         final String subMessage
     ) {
+        return buildErrorModelAndView(request, mainMessage, subMessage, true);
+    }
+
+    protected ModelAndView buildErrorModelAndView(
+        final HttpServletRequest request,
+        final String mainMessage,
+        final String subMessage,
+        final boolean contactSupport
+    ) {
         final ModelAndView modelAndView = new ModelAndView(ERROR_PAGE);
         modelAndView.addObject("mainMessage", mainMessage);
         modelAndView.addObject("subMessage", subMessage);
         modelAndView.addObject("baseUrl", getBaseUrl(request));
+        modelAndView.addObject("contactSupport", contactSupport);
 
         return modelAndView;
     }

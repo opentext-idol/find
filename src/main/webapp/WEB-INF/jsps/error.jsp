@@ -33,7 +33,7 @@
     <h3>${mainMessage}</h3>
     <div>
         <p>${subMessage}</p>
-        <p><spring:message code="error.contactSupport"/></p>
+        <c:if test="${contactSupport}"><p><spring:message code="error.contactSupport"/></p></c:if>
     </div>
 </div>
 </body>

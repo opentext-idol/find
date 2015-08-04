@@ -2,6 +2,7 @@ package com.hp.autonomy.frontend.find.view;
 
 import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
+import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +88,25 @@ public class HodViewController extends AbstractViewController {
                 request,
                 messageSource.getMessage("error.iodErrorMain", null, locale),
                 subMessage
+        );
+    }
+
+    @ExceptionHandler
+    public ModelAndView hodAuthenticationFailedException(
+        final HodAuthenticationFailedException e,
+        final HttpServletRequest request,
+        final HttpServletResponse response
+    ) throws IOException {
+        response.reset();
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+        log.error("HodAuthenticationFailedException thrown while viewing document", e);
+
+        return buildErrorModelAndView(
+            request,
+            messageSource.getMessage("error.iodErrorMain", null, Locale.ENGLISH),
+            messageSource.getMessage("error.iodTokenExpired", null, Locale.ENGLISH),
+            false
         );
     }
 }

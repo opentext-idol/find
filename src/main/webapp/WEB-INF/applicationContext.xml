@@ -47,7 +47,7 @@
 
     <security:http pattern="/static-*/**" security="none"/>
 
-    <security:http pattern="/api/public/**" entry-point-ref="ssoEntryPoint">
+    <security:http pattern="/api/public/**" entry-point-ref="forbiddenEntryPoint">
         <security:intercept-url pattern="/api/public/**" access="hasRole('PUBLIC')"/>
         <security:csrf disabled="true"/>
         <security:headers defaults-disabled="true">
@@ -87,13 +87,13 @@
         <constructor-arg value="/p/"/>
     </bean>
 
-    <bean id="findAccessDeniedHandler" class="com.hp.autonomy.frontend.configuration.authentication.FindAccessDeniedHandler">
+    <bean id="adminAccessDeniedHandler" class="com.hp.autonomy.frontend.configuration.authentication.FindAccessDeniedHandler">
         <constructor-arg value="loginPage"/>
     </bean>
 
     <!-- TODO reenable this once we have a better plan for the settings page (remove entry point and uncomment login page)-->
     <security:http pattern="/p/.*|/config/.*|/authenticate|/logout" request-matcher="regex" entry-point-ref="forbiddenEntryPoint">
-        <security:access-denied-handler ref="findAccessDeniedHandler"/>
+        <security:access-denied-handler ref="adminAccessDeniedHandler"/>
         <security:intercept-url pattern="/p/.*" access="hasRole('ADMIN')"/>
         <security:intercept-url pattern="/config/.*" access="hasRole('DEFAULT')"/>
         <!--<security:form-login-->

@@ -14,7 +14,10 @@ define([
         var error = options.error;
 
         options.error = function (jqXHR, status, message) {
-            if (jqXHR.status === 403) {
+            if (jqXHR.status === 401) {
+                window.location = "../sso"
+            }
+            else if (jqXHR.status === 403) {
                 // refresh the page - the filters should then redirect to the login screen
                 window.location.reload();
             }

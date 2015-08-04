@@ -7,6 +7,8 @@ package com.hp.autonomy.frontend.find.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +18,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.UUID;
 
 @Controller
@@ -24,9 +27,12 @@ public class ErrorController {
 
     public static final String CLIENT_AUTHENTICATION_ERROR = "/client-authentication-error";
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping("/authentication-error")
     public ModelAndView authenticationErrorPage(final HttpServletRequest request) throws ServletException, IOException {
-        return buildModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null, null);
+        return buildModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null, null, false);
     }
 
     @RequestMapping(CLIENT_AUTHENTICATION_ERROR)
@@ -34,7 +40,7 @@ public class ErrorController {
         @RequestParam("statusCode") final int statusCode,
         final HttpServletRequest request
     ) throws ServletException, IOException {
-        return buildModelAndView(request, "error.clientAuthenticationErrorMain", "error.clientAuthenticationErrorSub", null, statusCode);
+        return buildModelAndView(request, "error.clientAuthenticationErrorMain", "error.clientAuthenticationErrorSub", null, statusCode, false);
     }
 
     @RequestMapping("/server-error")
@@ -54,12 +60,12 @@ public class ErrorController {
             subMessageArguments = null;
         }
 
-        return buildModelAndView(request, "error.internalServerErrorMain", subMessageCode, subMessageArguments, null);
+        return buildModelAndView(request, "error.internalServerErrorMain", subMessageCode, subMessageArguments, null, true);
     }
 
     @RequestMapping("/not-found-error")
     public ModelAndView notFoundError(final HttpServletRequest request) {
-        return buildModelAndView(request, "error.notFoundMain", "error.notFoundSub", null, null);
+        return buildModelAndView(request, "error.notFoundMain", "error.notFoundSub", null, null, true);
     }
 
     private ModelAndView buildModelAndView(
@@ -67,14 +73,17 @@ public class ErrorController {
         final String mainMessageCode,
         final String subMessageCode,
         final Object[] subMessageArguments,
-        final Integer statusCode
+        final Integer statusCode,
+        final boolean contactSupport
     ) {
+        final Locale locale = Locale.ENGLISH;
+
         final ModelAndView modelAndView = new ModelAndView("error");
-        modelAndView.addObject("mainMessageCode", mainMessageCode);
-        modelAndView.addObject("subMessageArguments", subMessageArguments);
-        modelAndView.addObject("subMessageCode", subMessageCode);
+        modelAndView.addObject("mainMessage", messageSource.getMessage(mainMessageCode, null, locale));
+        modelAndView.addObject("subMessage",  messageSource.getMessage(subMessageCode, subMessageArguments, locale));
         modelAndView.addObject("baseUrl", getBaseUrl(request));
         modelAndView.addObject("statusCode", statusCode);
+        modelAndView.addObject("contactSupport", contactSupport);
 
         return modelAndView;
     }
