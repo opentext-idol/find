@@ -1,10 +1,11 @@
 define([
     'backbone',
+    'i18n!find/nls/bundle',
     'find/app/model/documents-collection',
     'text!find/templates/app/page/related-concepts/related-concepts-view.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, DocumentsCollection, template, topResultsPopoverContents, loadingSpinnerTemplate) {
+], function(Backbone, i18n, DocumentsCollection, template, topResultsPopoverContents, loadingSpinnerTemplate) {
 
     return Backbone.View.extend({
 
@@ -12,11 +13,11 @@ define([
 
         template: _.template(template),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
-        loadingSpinnerTemplate: _.template(loadingSpinnerTemplate),
+        loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
 
         events: {
             'mouseover a': _.debounce(function(e) {
-                this.$(' .popover-content').append(_.template(loadingSpinnerTemplate));
+                this.$(' .popover-content').append(this.loadingTemplate);
 
                 this.topResultsCollection.fetch({
                     data: {
@@ -81,7 +82,7 @@ define([
             this.listenTo(this.entityCollection, 'request', function() {
                 this.$el.empty();
 
-                this.$el.append(this.loadingSpinnerTemplate());
+                this.$el.append(this.loadingSpinnerTemplate);
 
                 this.$el.removeClass('hide');
             });

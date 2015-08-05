@@ -7,6 +7,7 @@ define([
 ], function(substitution) {
     return substitution({
         'app.cancel': 'Cancel',
+        'app.loading': 'Loading...',
         'app.logout': 'Logout',
         'app.name': "Find",
         'app.ok': 'OK',

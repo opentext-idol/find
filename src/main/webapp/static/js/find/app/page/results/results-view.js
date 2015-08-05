@@ -41,6 +41,7 @@ define([
     return Backbone.View.extend({
 
         template: _.template(resultsView),
+        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
         resultsTemplate: _.template(resultsTemplate),
         noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
@@ -118,7 +119,7 @@ define([
             /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function () {
                 this.$('.main-results-content').empty();
-                this.$('.main-results-content').append(_.template(loadingSpinnerTemplate));
+                this.$('.main-results-content').append(this.loadingTemplate);
             });
 
             this.listenTo(this.documentsCollection, 'add', function (model) {
