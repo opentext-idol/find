@@ -18,12 +18,8 @@ define([
                             databases: this.queryModel.get('indexes'),
                             queryText: this.queryModel.get('queryText'),
                             fieldText: this.queryModel.getFieldTextString() || null
-                        },
-                        error: _.bind(function (model, err) {
-                            //TODO: remove this
-                            console.log(err);
-                        }, this)
-                    })
+                        }
+                    });
                 }
             }, this)
         },
