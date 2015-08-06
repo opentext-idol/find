@@ -87,7 +87,8 @@ define([
                             min_date: this.queryModel.getIsoDate('minDate'),
                             max_date: this.queryModel.getIsoDate('maxDate'),
                             sort: this.queryModel.get('sort')
-                        }
+                        },
+                        reset: false
                     }, this);
                 }
 
@@ -101,7 +102,8 @@ define([
                         min_date: this.queryModel.getIsoDate('minDate'),
                         max_date: this.queryModel.getIsoDate('maxDate'),
                         sort: this.queryModel.get('sort')
-                    }
+                    },
+                    reset: false
                 }, this);
             });
         },

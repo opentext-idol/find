@@ -5,22 +5,16 @@
 
 define([
     'backbone',
+    'find/app/model/find-base-collection',
     'underscore'
-], function(Backbone, _) {
+], function(Backbone, FindBaseCollection, _) {
 
-    return Backbone.Collection.extend({
+    return FindBaseCollection.extend({
 
         url: '../api/public/search/query-text-index/results',
 
         initialize: function(models, options) {
             this.indexesCollection = options.indexesCollection;
-        },
-
-        sync: function(method, model, options) {
-            options = options || {};
-            options.traditional = true; // Force "traditional" serialization of query parameters, e.g. index=foo&index=bar, for IOD multi-index support.
-
-            return Backbone.Collection.prototype.sync.call(this, method, model, options);
         },
 
         parse: function(response) {

@@ -1,6 +1,7 @@
 define([
-    'backbone'
-], function(Backbone) {
+    'backbone',
+    'find/app/model/find-base-collection'
+], function(Backbone, FindBaseCollection) {
 
     var prettifyFieldName = function(name) {
         return _.map(name.split("_"), function(word) {
@@ -8,17 +9,10 @@ define([
         }).join(" ");
     };
 
-    return Backbone.Collection.extend({
+    return FindBaseCollection.extend({
         url: '../api/public/parametric',
 
         comparator: 'name',
-
-        sync: function(method, model, options) {
-            options = options || {};
-            options.traditional = true; // Force "traditional" serialization of query parameters, e.g. index=foo&index=bar, for IOD multi-index support.
-
-            return Backbone.Collection.prototype.sync.call(this, method, model, options);
-        },
 
         model: Backbone.Model.extend({
             idAttribute: 'name',
@@ -38,5 +32,4 @@ define([
             }
         })
     });
-
 });
