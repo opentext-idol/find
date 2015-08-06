@@ -25,16 +25,16 @@ define([
             this.relatedConceptsView.render();
         });
 
+        afterEach(function() {
+            IndexesCollection.reset();
+        });
+
         it('should only render one loading spinner when multiple request events are triggered', function() {
             this.entityCollection.trigger('request');
             this.entityCollection.trigger('request');
 
             expect(this.relatedConceptsView.$('.loading-spinner')).toHaveLength(1);
         });
-
-        afterEach(function() {
-            IndexesCollection.reset();
-        })
     })
 
 });
