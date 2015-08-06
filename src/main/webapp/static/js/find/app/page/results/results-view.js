@@ -253,6 +253,9 @@ define([
         },
 
         addLinksToSummary: function(summary) {
+            // Protect us from XSS
+            summary = _.escape(summary)
+
             // Process the search text first
             var searchText = this.queryModel.get("queryText");
             var searchTextID = _.uniqueId('Find-IOD-QueryText-Placeholder');
