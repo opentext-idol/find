@@ -120,7 +120,7 @@ define([
         getDatabasesFilterText: function() {
             var selectedIndexes = this.queryModel.get('indexes');
 
-            _.map(selectedIndexes, function(selectedIndexWithDomain) {
+            selectedIndexes = _.map(selectedIndexes, function(selectedIndexWithDomain) {
                 return this.indexesCollection.get(selectedIndexWithDomain).get('name');
             }, this);
 
