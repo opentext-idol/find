@@ -88,8 +88,10 @@ public class IndexesServiceImpl implements IndexesService {
 
             final List<ResourceIdentifier> resourceIdentifiers = new ArrayList<>();
 
-            for (final Resource resource : resources.getPublicResources()) {
-                resourceIdentifiers.add(new ResourceIdentifier(ResourceIdentifier.PUBLIC_INDEXES_DOMAIN, resource.getResource()));
+            if (configService.getConfig().getIod().getPublicIndexesEnabled()) {
+                for (final Resource resource : resources.getPublicResources()) {
+                    resourceIdentifiers.add(new ResourceIdentifier(ResourceIdentifier.PUBLIC_INDEXES_DOMAIN, resource.getResource()));
+                }
             }
 
             for (final Resource resource : resources.getResources()) {

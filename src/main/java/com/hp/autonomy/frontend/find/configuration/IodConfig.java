@@ -34,12 +34,14 @@ public class IodConfig implements ConfigurationComponent {
     private final String application;
     private final String domain;
     private final List<JsonResourceIdentifier> activeIndexes;
+    private final Boolean publicIndexesEnabled;
 
-    private IodConfig(final String apiKey, final String application, final String domain, final List<JsonResourceIdentifier> activeIndexes) {
+    private IodConfig(final String apiKey, final String application, final String domain, final List<JsonResourceIdentifier> activeIndexes, final Boolean publicIndexesEnabled) {
         this.apiKey = apiKey;
         this.application = application;
         this.domain = domain;
         this.activeIndexes = activeIndexes;
+        this.publicIndexesEnabled = publicIndexesEnabled;
     }
 
     public List<ResourceIdentifier> getActiveIndexes() {
@@ -85,6 +87,7 @@ public class IodConfig implements ConfigurationComponent {
             builder.setApplication(this.application == null ? iod.application : this.application);
             builder.setDomain(this.domain == null ? iod.domain : this.domain);
             builder.setActiveIndexes(this.activeIndexes == null ? iod.activeIndexes : this.activeIndexes);
+            builder.setPublicIndexesEnabled(this.publicIndexesEnabled);
 
             return builder.build();
         }
@@ -100,9 +103,10 @@ public class IodConfig implements ConfigurationComponent {
         private String application;
         private String domain;
         private List<JsonResourceIdentifier> activeIndexes;
+        private Boolean publicIndexesEnabled;
 
         public IodConfig build() {
-            return new IodConfig(apiKey, application, domain, activeIndexes);
+            return new IodConfig(apiKey, application, domain, activeIndexes, publicIndexesEnabled);
         }
     }
 

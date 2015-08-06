@@ -11,7 +11,8 @@
         "apiKey": "",
         "application": "",
         "domain": "",
-        "activeIndexes": []
+        "activeIndexes": [],
+        "publicIndexesEnabled": true
     },
     "allowedOrigins": [],
     "redis": {
