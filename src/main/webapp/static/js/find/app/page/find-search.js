@@ -29,8 +29,6 @@ define([
                 this.$('.find-input').val(text); //when clicking one of the suggested search links
 
                 this.uiStateChange(text);
-
-                vent.navigate('find/search/' + encodeURIComponent(text), {trigger: false});
             });
 
             this.inputView = new InputView({
@@ -73,6 +71,8 @@ define([
             this.$('.find').addClass('animated-container').removeClass('reverse-animated-container');
 
             this.$('.service-view-container').show();
+
+            vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
 
         reducedState: function() {
