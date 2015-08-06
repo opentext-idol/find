@@ -39,7 +39,8 @@
     "hp-autonomy-hod-sso-js": "~0.2.2"
   },
   "devDependencies": {
-    "hp-autonomy-js-testing-utils": "~1.0.2"
+    "hp-autonomy-js-testing-utils": "~1.0.2",
+    "jasmine-jquery": "~2.1.0"
   },
   "resolutions": {
     "underscore": "~1.8.3",

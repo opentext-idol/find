@@ -6,8 +6,12 @@
 require.config({
     baseUrl: 'src/main/webapp/static/js',
     paths: {
+        'jasmine-jquery': '../lib/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../lib/hp-autonomy-js-testing-utils/src/js',
         'mock': '../../../../test/js/mock'
+    },
+    shim: {
+        'jasmine-jquery': ['jquery']
     },
     map: {
         '*': {
@@ -15,6 +19,9 @@ require.config({
         },
         'find/app/page/service-view': {
             'find/app/model/indexes-collection': 'mock/model/indexes-collection'
+        },
+        'find/app/page/related-concepts/related-concepts-view': {
+            'find/app/model/documents-collection': 'mock/model/documents-collection'
         }
     }
 });
