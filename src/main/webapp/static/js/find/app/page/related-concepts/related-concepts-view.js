@@ -1,17 +1,18 @@
 define([
     'backbone',
     'find/app/model/documents-collection',
-    'text!find/templates/app/page/suggestions-container.html',
+    'text!find/templates/app/page/related-concepts/related-concepts-view.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, DocumentsCollection, suggestionsTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
+], function(Backbone, DocumentsCollection, template, topResultsPopoverContents, loadingSpinnerTemplate) {
 
     return Backbone.View.extend({
 
         className: 'suggestions-content',
 
-        suggestionsTemplate: _.template(suggestionsTemplate),
+        template: _.template(template),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
+        loadingSpinnerTemplate: _.template(loadingSpinnerTemplate),
 
         events: {
             'mouseover a': _.debounce(function(e) {
@@ -53,7 +54,7 @@ define([
                     var clusters = this.entityCollection.groupBy('cluster');
 
                     _.each(clusters, function(entities) {
-                        this.$el.append(this.suggestionsTemplate({
+                        this.$el.append(this.template({
                             entities: entities
                         }));
 
@@ -78,9 +79,9 @@ define([
 
             /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
-                if(!this.$('ul').length) {
-                    this.$el.append(_.template(loadingSpinnerTemplate));
-                }
+                this.$el.empty();
+
+                this.$el.append(this.loadingSpinnerTemplate());
 
                 this.$el.removeClass('hide');
             });

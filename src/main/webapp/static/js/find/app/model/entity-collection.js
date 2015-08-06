@@ -12,9 +12,18 @@ define([
         url: '../api/public/search/find-related-concepts',
 
         fetch: function(options) {
-            return Backbone.Collection.prototype.fetch.call(this, _.defaults(options, {
-                reset: true
+            if (this.currentRequest) {
+                this.currentRequest.abort();
+            }
+
+            this.currentRequest = Backbone.Collection.prototype.fetch.call(this, _.defaults(options, {
+                reset: true,
+                success: _.bind(function() {
+                    this.currentRequest = null;
+                }, this)
             }));
+
+            return this.currentRequest;
         },
 
         sync: function(method, model, options) {
