@@ -118,9 +118,15 @@ define([
             });
 
             /*main results content*/
+            this.listenTo(this.promotionsCollection, 'request', function () {
+                this.$('.main-results-content .promotions').empty();
+                this.$('.main-results-content .promotions').append(_.template(this.loadingTemplate));
+            });
+
+            /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function () {
-                this.$('.main-results-content').empty();
-                this.$('.main-results-content').append(this.loadingTemplate);
+                this.$('.main-results-content .results').empty();
+                this.$('.main-results-content .results').append(_.template(this.loadingTemplate));
             });
 
             this.listenTo(this.documentsCollection, 'add', function (model) {
@@ -129,8 +135,8 @@ define([
 
             this.listenTo(this.documentsCollection, 'sync', function () {
                 if (this.documentsCollection.isEmpty()) {
-                    this.$('.main-results-content .loading-spinner').remove();
-                    this.$('.main-results-content').append(this.noResultsTemplate({i18n: i18n}));
+                    this.$('.main-results-content .results .loading-spinner').remove();
+                    this.$('.main-results-content .results').append(this.noResultsTemplate({i18n: i18n}));
                 }
             });
 
@@ -208,12 +214,7 @@ define([
                 }
             }
 
-            // Remove existing document with this reference
-            this.$("[data-reference='" + reference + "']").remove();
-
             summary = this.addLinksToSummary(summary);
-
-            this.$('.main-results-content .loading-spinner').remove();
 
             var href = viewClient.getHref(reference, model.get('index'));
 
@@ -228,9 +229,13 @@ define([
             }));
 
             if (isPromotion) {
-                this.$('.main-results-content').prepend($newResult);
+                this.$('.main-results-content .promotions .loading-spinner').remove();
+                this.$(".promotions [data-reference='" + reference + "']").remove(); // Remove existing document with this reference
+                this.$('.main-results-content .promotions').append($newResult);
             } else {
-                this.$('.main-results-content').append($newResult);
+                this.$('.main-results-content .results .loading-spinner').remove();
+                this.$(".results [data-reference='" + reference + "']").remove(); // Remove existing document with this reference
+                this.$('.main-results-content .results').append($newResult);
             }
 
             var fields = model.get('fields');
