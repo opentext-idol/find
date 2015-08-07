@@ -12,7 +12,7 @@
         "application": "",
         "domain": "",
         "activeIndexes": [],
-        "publicIndexesEnabled": true
+        "publicIndexesEnabled": false
     },
     "allowedOrigins": [],
     "redis": {
