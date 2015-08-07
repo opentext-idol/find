@@ -16,27 +16,21 @@ define([
     'find/app/page/indexes/indexes-view',
     'find/app/util/collapsible',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/service-view.html',
-    'text!find/templates/app/util/filter-header.html'
+    'text!find/templates/app/page/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection, ParametricCollection,
             ParametricController, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
-            IndexesView, Collapsible, i18n, template, filterHeader) {
+            IndexesView, Collapsible, i18n, template) {
 
-    var filterHeaderTemplate = _.template(filterHeader);
-
-    var collapseView = function(title, collapseParameter, view, collapsed) {
+    var collapseView = function(titleKey, view) {
         return new Collapsible({
-            header: filterHeaderTemplate({
-                title: i18n[title]
-            }),
-            name: collapseParameter,
             view: view,
-            collapsed: collapsed
+            collapsed: false,
+            title: i18n[titleKey]
         });
     };
 
     return Backbone.View.extend({
-        template: _.template(template),
+        template: _.template(template)({i18n: i18n}),
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
@@ -45,6 +39,7 @@ define([
 
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
+
             this.filtersCollection = new SearchFiltersCollection([], {
                 queryModel: this.queryModel,
                 datesFilterModel: this.datesFilterModel,
@@ -61,7 +56,7 @@ define([
                 }
             });
 
-			this.indexesCollection.fetch();
+            this.indexesCollection.fetch();
 
             this.listenTo(this.queryModel, 'change', function() {
                 this.entityCollection.fetch({
@@ -112,14 +107,14 @@ define([
             });
 
             // Collapse wrappers
-            this.indexesViewWrapper = collapseView('search.indexes', 'indexes-filter', this.indexesView, false);
-            this.parametricViewWrapper = collapseView('parametric.title', 'parametric-filter', this.parametricController.view, false);
-            this.dateViewWrapper = collapseView('search.dates', 'dates-filter', this.dateView, false);
-            this.relatedConceptsViewWrapper = collapseView('search.relatedConcepts', 'related-concepts', this.relatedConceptsView, false);
+            this.indexesViewWrapper = collapseView('search.indexes', this.indexesView);
+            this.parametricViewWrapper = collapseView('parametric.title', this.parametricController.view);
+            this.dateViewWrapper = collapseView('search.dates', this.dateView);
+            this.relatedConceptsViewWrapper = collapseView('search.relatedConcepts', this.relatedConceptsView);
         },
 
         render: function() {
-            this.$el.html(this.template({i18n: i18n}));
+            this.$el.html(this.template);
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();

@@ -4,37 +4,41 @@ define([
 ], function(Backbone, collapsibleTemplate) {
 
     return Backbone.View.extend({
+        template: _.template(collapsibleTemplate, {variable: 'data'}),
 
-        template: _.template(collapsibleTemplate, null, {variable: 'data'}),
+        events: {
+            'show.bs.collapse': function() {
+                this.collapsed = false;
+                this.updateHeaderState();
+            },
+            'hide.bs.collapse': function() {
+                this.collapsed = true;
+                this.updateHeaderState();
+            }
+        },
 
         initialize: function(options) {
-            this.name = options.name;
-            this.header = options.header;
             this.view = options.view;
-            this.collapsed = options.collapsed;
+            this.collapsed = options.collapsed || false;
+            this.title = options.title;
         },
 
         render: function() {
-            var headerState, contentState;
-
-            if(this.collapsed) {
-                headerState = 'collapsed';
-                contentState = '';
-            } else {
-                headerState = '';
-                contentState = 'in';
-            }
-
             this.$el.html(this.template({
-                header: this.header,
-                name: this.name,
-                headerState: headerState,
-                contentState: contentState
+                contentState: this.collapsed ? '' : 'in',
+                title: this.title
             }));
+
+            this.$header = this.$('.collapsible-header');
+            this.updateHeaderState();
 
             this.view.render();
             this.$('.collapse').append(this.view.$el);
-        }
+        },
 
+        updateHeaderState: function() {
+            // The "collapsed" class controls the icons with class "rotating-chevron"
+            this.$header.toggleClass('collapsed', this.collapsed);
+        }
     });
 });
