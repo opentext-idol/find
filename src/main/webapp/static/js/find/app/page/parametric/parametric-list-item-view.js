@@ -2,10 +2,9 @@ define([
     'backbone',
     'underscore',
     'find/app/util/collapsible',
-    'js-whatever/js/list-item-view',
     'text!find/templates/app/page/parametric/parametric-list-item-view.html',
     'iCheck'
-], function(Backbone, _, Collapsible, ListItemView, template) {
+], function(Backbone, _, Collapsible, template) {
 
     var ValuesView = Backbone.View.extend({
         className: 'table',
@@ -19,10 +18,8 @@ define([
 
     return Backbone.View.extend({
         className: 'animated fadeIn',
-        setDataIdAttribute: ListItemView.prototype.setDataIdAttribute,
 
         initialize: function() {
-            this.setDataIdAttribute();
             this.checked = [];
 
             // Parametric collection ID attribute is the name so we don't expect it or the displayName to change
@@ -60,7 +57,6 @@ define([
         render: function() {
             this.$el.empty().append(this.collapsible.$el);
             this.collapsible.render();
-            this.setDataIdAttribute();
 
             this.$checkboxInput && this.$checkboxInput.off();
             this.$checkboxInput = this.$('input');
