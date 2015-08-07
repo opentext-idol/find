@@ -87,7 +87,7 @@ public class IodConfig implements ConfigurationComponent {
             builder.setApplication(this.application == null ? iod.application : this.application);
             builder.setDomain(this.domain == null ? iod.domain : this.domain);
             builder.setActiveIndexes(this.activeIndexes == null ? iod.activeIndexes : this.activeIndexes);
-            builder.setPublicIndexesEnabled(this.publicIndexesEnabled);
+            builder.setPublicIndexesEnabled(this.publicIndexesEnabled == null ? iod.publicIndexesEnabled : this.publicIndexesEnabled);
 
             return builder.build();
         }

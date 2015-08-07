@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.search;
 
-import com.hp.autonomy.frontend.find.QueryProfileService;
+import com.hp.autonomy.frontend.find.FindQueryProfileService;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
@@ -25,7 +25,7 @@ import java.util.List;
 public class DocumentsServiceImpl implements DocumentsService {
 
     @Autowired
-    private QueryProfileService queryProfileService;
+    private FindQueryProfileService findQueryProfileService;
 
     @Autowired
     private QueryTextIndexService<Documents> queryTextIndexService;
@@ -46,7 +46,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .setSummary(summary)
                 .setIndexes(indexes)
                 .setFieldText(fieldText)
-                .setQueryProfile(queryProfileService.getQueryProfile())
+                .setQueryProfile(findQueryProfileService.getQueryProfile())
                 .setSort(sort)
                 .setMinDate(minDate)
                 .setMaxDate(maxDate)
