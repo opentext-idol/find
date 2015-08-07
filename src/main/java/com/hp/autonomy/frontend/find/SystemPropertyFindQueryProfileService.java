@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SystemPropertyQueryProfileService implements QueryProfileService {
+public class SystemPropertyFindQueryProfileService implements FindQueryProfileService {
 
     private final String DEFAULT_QUERY_PROFILE_NAME = "search_default_profile";
 

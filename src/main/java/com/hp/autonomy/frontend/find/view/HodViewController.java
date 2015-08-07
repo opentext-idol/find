@@ -1,15 +1,20 @@
 package com.hp.autonomy.frontend.find.view;
 
+import com.hp.autonomy.frontend.find.FindQueryProfileService;
 import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
+import com.hp.autonomy.hod.client.api.queryprofile.QueryProfile;
+import com.hp.autonomy.hod.client.api.queryprofile.QueryProfileService;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.sso.HodAuthentication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +36,12 @@ public class HodViewController extends AbstractViewController {
     private HodViewService hodViewService;
 
     @Autowired
+    private QueryProfileService queryProfileService;
+
+    @Autowired
+    private FindQueryProfileService findQueryProfileService;
+
+    @Autowired
     private MessageSource messageSource;
 
     @RequestMapping(value = "/viewDocument", method = RequestMethod.GET)
@@ -42,6 +53,23 @@ public class HodViewController extends AbstractViewController {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
         hodViewService.viewDocument(reference, indexes, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/viewStaticContentPromotion", method = RequestMethod.GET)
+    public void viewStaticContentPromotion(
+        @RequestParam("reference") final String reference,
+        final HttpServletResponse response
+    ) throws IOException, HodErrorException {
+        response.setContentType(MediaType.TEXT_HTML_VALUE);
+        ViewContentSecurityPolicy.addContentSecurityPolicy(response);
+
+        final HodAuthentication hodAuthentication = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
+        final String queryProfileName = findQueryProfileService.getQueryProfile();
+
+        final QueryProfile queryProfile = queryProfileService.retrieveQueryProfile(queryProfileName);
+
+        hodViewService.viewStaticContentPromotion(reference, new ResourceIdentifier(hodAuthentication.getDomain(), queryProfile.getQueryManipulationIndex()), response.getOutputStream());
     }
 
     @ExceptionHandler

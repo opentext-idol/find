@@ -4,7 +4,7 @@
  */
 package com.hp.autonomy.frontend.find;
 
-public interface QueryProfileService {
+public interface FindQueryProfileService {
 
     String getQueryProfile();
 

@@ -22,6 +22,8 @@ import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
+import com.hp.autonomy.hod.client.api.queryprofile.QueryProfileService;
+import com.hp.autonomy.hod.client.api.queryprofile.QueryProfileServiceImpl;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.api.resource.ResourcesServiceImpl;
 import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
@@ -266,6 +268,11 @@ public class AppConfiguration {
     }
 
     @Bean
+    public QueryProfileService queryProfileService() {
+        return new QueryProfileServiceImpl(hodServiceConfig());
+    }
+
+    @Bean
     public HodAuthenticationRequestService hodAuthenticationRequestService() {
         return new HodAuthenticationRequestServiceImpl(configService, authenticationService(), unboundTokenService());
     }
@@ -277,6 +284,6 @@ public class AppConfiguration {
 
     @Bean
     public HodViewService hodViewService() {
-        return new HodViewServiceImpl(viewDocumentService(), getContentService());
+        return new HodViewServiceImpl(viewDocumentService(), getContentService(), queryTextIndexService());
     }
 }
