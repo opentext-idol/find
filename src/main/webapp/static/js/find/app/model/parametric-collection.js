@@ -11,13 +11,18 @@ define([
 
     return FindBaseCollection.extend({
         url: '../api/public/parametric',
-
         comparator: 'name',
+
+        fetch: function(options) {
+            return FindBaseCollection.prototype.fetch.call(this, _.defaults(options, {
+                reset: false
+            }));
+        },
 
         model: Backbone.Model.extend({
             idAttribute: 'name',
 
-            parse: function(response, options) {
+            parse: function(response) {
                 return {
                     name: response.name,
                     displayName: prettifyFieldName(response.name),

@@ -1,11 +1,4 @@
 <tbody>
-    <tr>
-        <td class="col-md-1 text-left"></td>
-        <td>
-            <strong><%-data.displayName%></strong>
-        </td>
-    </tr>
-
     <% _.each(data.values, function(item) { %>
         <tr class="parametric-value-element selectable-table-item clickable" data-value="<%- item.value %>">
             <td class="col-md-1 text-right"><i class="icon-ok hide"></i></td>
@@ -13,4 +6,3 @@
         </tr>
     <% }); %>
 </tbody>
-

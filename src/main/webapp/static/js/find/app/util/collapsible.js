@@ -36,6 +36,11 @@ define([
             this.$('.collapse').append(this.view.$el);
         },
 
+        remove: function() {
+            this.view.remove();
+            Backbone.View.prototype.remove.call(this);
+        },
+
         updateHeaderState: function() {
             // The "collapsed" class controls the icons with class "rotating-chevron"
             this.$header.toggleClass('collapsed', this.collapsed);

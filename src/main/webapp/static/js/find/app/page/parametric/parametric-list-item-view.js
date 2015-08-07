@@ -1,16 +1,36 @@
 define([
     'backbone',
     'underscore',
+    'find/app/util/collapsible',
     'js-whatever/js/list-item-view',
+    'text!find/templates/app/page/parametric/parametric-list-item-view.html',
     'iCheck'
-], function(Backbone, _, ListItemView) {
+], function(Backbone, _, Collapsible, ListItemView, template) {
 
+    var ValuesView = Backbone.View.extend({
+        className: 'table',
+        tagName: 'table',
+        template: _.template(template, {variable: 'data'}),
 
-    return ListItemView.extend({
+        render: function() {
+            this.$el.html(this.template({values: this.model.get('values')}));
+        }
+    });
+
+    return Backbone.View.extend({
+        className: 'animated fadeIn',
+        setDataIdAttribute: ListItemView.prototype.setDataIdAttribute,
+
         initialize: function() {
-            ListItemView.prototype.initialize.apply(this, arguments);
-
+            this.setDataIdAttribute();
             this.checked = [];
+
+            // Parametric collection ID attribute is the name so we don't expect it or the displayName to change
+            this.collapsible = new Collapsible({
+                title: this.model.get('displayName'),
+                view: new ValuesView({model: this.model}),
+                collapsed: false
+            });
         },
 
         events: {
@@ -21,7 +41,7 @@ define([
 
                 $targetRow.find('i').toggleClass('hide');
 
-                if($targetRow.find('i').hasClass('hide')) {
+                if ($targetRow.find('i').hasClass('hide')) {
                     this.checked = _.without(this.checked, id);
                 } else {
                     this.checked.push(id);
@@ -38,20 +58,25 @@ define([
         },
 
         render: function() {
+            this.$el.empty().append(this.collapsible.$el);
+            this.collapsible.render();
+            this.setDataIdAttribute();
+
             this.$checkboxInput && this.$checkboxInput.off();
-
-            ListItemView.prototype.render.apply(this, arguments);
-
             this.$checkboxInput = this.$('input');
 
             _.each(this.checked, function(value) {
-                this.$('[data-value="' + value + '"]').find('i').removeClass('hide')
+                this.$('[data-value="' + value + '"]').find('i').removeClass('hide');
             }, this);
         },
 
         getChecked: function() {
             return _.clone(this.checked);
-        }
+        },
 
+        remove: function() {
+            Backbone.View.prototype.remove.call(this);
+            this.collapsible.remove();
+        }
     });
 });

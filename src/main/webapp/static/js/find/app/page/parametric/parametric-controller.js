@@ -1,29 +1,51 @@
 define([
+    'underscore',
     'backbone',
+    'fieldtext/js/field-text-parser',
     'find/app/model/parametric-collection',
-    'find/app/page/parametric/parametric-logic',
     'find/app/page/parametric/parametric-display'
-], function(Backbone, ParametricCollection, ParametricLogic, ParametricDisplay) {
+], function(_, Backbone, parser, ParametricCollection, ParametricDisplay) {
 
-    return Backbone.Model.extend({
-        initialize: function (options) {
-            this.queryModel = options.queryModel;
+    function ParametricController(options) {
+        this.queryModel = options.queryModel;
+        this.collection = new ParametricCollection();
 
-            this.collection = new ParametricCollection();
+        this.view = new ParametricDisplay({
+            queryModel: this.queryModel,
+            parametricCollection: this.collection
+        });
 
-            this.logic = new ParametricLogic({
-                queryModel: this.queryModel,
-                parametricCollection: this.collection
-            });
+        this.listenTo(this.queryModel, 'change', function() {
+            if(!_.isEmpty(this.queryModel.get('indexes'))) {
+                this.collection.fetch({
+                    data: {
+                        databases: this.queryModel.get('indexes'),
+                        queryText: this.queryModel.get('queryText'),
+                        fieldText: this.queryModel.getFieldTextString() || null
+                    }
+                });
+            }
+        }, this);
 
-            this.view = new ParametricDisplay({
-                queryModel: this.queryModel,
-                parametricCollection: this.collection
-            });
+        this.listenTo(this.view, 'change', function(parametricValues) {
+            var expressionNodes = parametricValues.map(function(data) {
+                return new parser.ExpressionNode("MATCH", [data.field], data.values);
+            }, this).value();
 
-            this.listenTo(this.view, 'change', function(parametricValues) {
-                this.logic.setRequestParametricValues(parametricValues);
-            });
-        }
-    })
+            if(!_.isEmpty(expressionNodes)) {
+                this.requestFieldText = _.reduce(expressionNodes, function(memo, expression) {
+                    return memo.AND(expression);
+                });
+            }
+            else {
+                this.requestFieldText = null;
+            }
+
+            this.queryModel.setParametricFieldText(this.requestFieldText);
+        });
+    }
+
+    _.extend(ParametricController.prototype, Backbone.Events);
+    return ParametricController;
+
 });

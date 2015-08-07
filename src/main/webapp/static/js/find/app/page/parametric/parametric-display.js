@@ -6,14 +6,13 @@ define([
     'find/app/page/parametric/parametric-list-item-view',
     'fieldtext/js/field-text-parser',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/parametric/parametric-view.html',
-    'text!find/templates/app/page/parametric/parametric-list-item-view.html'
-], function(Backbone, _, ListView, FilteringCollection, ParametricListItemView, parser, i18n, template, listItemTemplate) {
+    'text!find/templates/app/page/parametric/parametric-view.html'
+], function(Backbone, _, ListView, FilteringCollection, ParametricListItemView, parser, i18n, template) {
 
     var DEBOUNCE_WAIT_MILLISECONDS = 500;
 
     return Backbone.View.extend({
-        template: _.template(template),
+        template: _.template(template)({i18n: i18n}),
 
         initialize: function(options) {
             this.collection = options.parametricCollection;
@@ -24,12 +23,7 @@ define([
                 ItemView: ParametricListItemView,
                 proxyEvents: [
                     'changeFieldText'
-                ],
-                itemOptions: {
-                    tagName: 'table',
-                    className: 'table animated fadeIn',
-                    template: _.template(listItemTemplate)
-                }
+                ]
             });
 
             this.collection.on('request', _.bind(function() {
@@ -50,9 +44,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({
-                i18n: i18n
-            }));
+            this.$el.html(this.template);
 
             this.$fieldNamesListView = this.$('.search-parametric-wrapper').append(this.fieldNamesListView.render().$el);
             this.$emptyMessage = this.$('.no-field-names');

@@ -108,7 +108,6 @@ define([
 
             // Collapse wrappers
             this.indexesViewWrapper = collapseView('search.indexes', this.indexesView);
-            this.parametricViewWrapper = collapseView('parametric.title', this.parametricController.view);
             this.dateViewWrapper = collapseView('search.dates', this.dateView);
             this.relatedConceptsViewWrapper = collapseView('search.relatedConcepts', this.relatedConceptsView);
         },
@@ -118,7 +117,7 @@ define([
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
-            this.parametricViewWrapper.setElement(this.$('.parametric-container')).render();
+            this.parametricController.view.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
 
             this.relatedConceptsViewWrapper.render();
