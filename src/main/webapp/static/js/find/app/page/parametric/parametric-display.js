@@ -7,8 +7,8 @@ define([
     'fieldtext/js/field-text-parser',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/parametric/parametric-view.html',
-    'text!find/templates/app/page/parametric/field-name.html'
-], function(Backbone, _, ListView, FilteringCollection, ParametricListItemView, parser, i18n, template, fieldTemplate) {
+    'text!find/templates/app/page/parametric/parametric-list-item-view.html'
+], function(Backbone, _, ListView, FilteringCollection, ParametricListItemView, parser, i18n, template, listItemTemplate) {
 
     var DEBOUNCE_WAIT_MILLISECONDS = 500;
 
@@ -28,7 +28,7 @@ define([
                 itemOptions: {
                     tagName: 'table',
                     className: 'table animated fadeIn',
-                    template: _.template(fieldTemplate)
+                    template: _.template(listItemTemplate)
                 }
             });
 
