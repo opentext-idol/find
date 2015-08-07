@@ -4,6 +4,7 @@ define([
     'find/app/model/promotions-collection',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
+    'js-whatever/js/escape-regex',
     'text!find/templates/app/page/results/results-view.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/colorbox-controls.html',
@@ -14,7 +15,7 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, documentMimeTypes, resultsView, resultsTemplate,
+], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, documentMimeTypes, escapeRegex, resultsView, resultsTemplate,
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
 
     /** Whitespace OR character in set bounded by [] */
@@ -257,7 +258,7 @@ define([
 
         addLinksToSummary: function(summary) {
             // Protect us from XSS
-            summary = _.escape(summary)
+            summary = _.escape(summary);
 
             // Process the search text first
             var searchText = this.queryModel.get("queryText");
@@ -300,7 +301,7 @@ define([
          * @returns {string|XML|void}  `text`, but with replacements made
          */
         replaceBoundedText: function(text, textToFind, replacement) {
-            return text.replace(new RegExp(startRegex + textToFind + endRegex, 'gi'), '$1' + replacement + '$2');
+            return text.replace(new RegExp(startRegex + escapeRegex(textToFind) + endRegex, 'gi'), '$1' + replacement + '$2');
         },
 
         /**
