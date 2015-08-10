@@ -339,10 +339,6 @@ input.find-input {
     font-weight: 900;
 }
 
-.blue {
-    color: rgb(91, 145, 214);
-}
-
 .results-container .loading-spinner {
     line-height: 32px;
     margin: auto;

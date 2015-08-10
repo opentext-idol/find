@@ -12,7 +12,7 @@ define([
         className: 'suggestions-content',
 
         template: _.template(template),
-        messageTemplate: _.template('<div class="blue"><%-message%> </div>'),
+        messageTemplate: _.template('<div><%-message%> </div>'),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
         loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
 
