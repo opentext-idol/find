@@ -349,7 +349,7 @@ input.find-input {
     color: rgb(91, 145, 214);
 }
 
-.results-container .no-results {
+.results-container .result-message {
     font-size: 28px;
     color: rgb(91, 145, 214);
 }

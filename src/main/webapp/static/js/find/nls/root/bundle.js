@@ -49,6 +49,8 @@ define([
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',
+        'search.error.results' : 'There was an error retrieving results',
+        'search.error.promotions' : 'There was an error retrieving promotions',
         'settings.cancel': 'Cancel',
         'settings.cancel.message': 'All unsaved changes will be lost.',
         'settings.cancel.title': 'Revert settings?',

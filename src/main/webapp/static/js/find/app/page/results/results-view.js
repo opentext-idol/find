@@ -44,7 +44,7 @@ define([
         template: _.template(resultsView),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
         resultsTemplate: _.template(resultsTemplate),
-        noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
+        messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         entityTemplate: _.template(entityTemplate),
         viewDocumentTemplate: _.template(viewDocumentTemplate),
@@ -138,6 +138,13 @@ define([
                 this.clearLoadingSpinner();
             });
 
+            this.listenTo(this.promotionsCollection, 'error', function () {
+                this.promotionsFinished = true;
+                this.clearLoadingSpinner();
+
+                this.$('.main-results-content .promotions').append(this.messageTemplate({message: i18n["search.error.promotions"]}));
+            });
+
             /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function () {
                 this.resultsFinished = false;
@@ -154,8 +161,15 @@ define([
                 this.clearLoadingSpinner();
 
                 if (this.documentsCollection.isEmpty()) {
-                    this.$('.main-results-content .results').append(this.noResultsTemplate({i18n: i18n}));
+                    this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
+            });
+
+            this.listenTo(this.documentsCollection, 'error', function () {
+                this.resultsFinished = true;
+                this.clearLoadingSpinner();
+
+                this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.error.results"]}));
             });
 
             this.listenTo(this.entityCollection, 'reset', function() {
