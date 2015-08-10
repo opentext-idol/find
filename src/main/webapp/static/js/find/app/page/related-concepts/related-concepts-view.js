@@ -12,6 +12,7 @@ define([
         className: 'suggestions-content',
 
         template: _.template(template),
+        messageTemplate: _.template('<div class="blue"><%-message%> </div>'),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
         loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
 
@@ -83,6 +84,14 @@ define([
                 this.$el.empty();
 
                 this.$el.append(this.loadingSpinnerTemplate);
+
+                this.$el.removeClass('hide');
+            });
+
+            this.listenTo(this.entityCollection, 'error', function() {
+                this.$el.empty();
+
+                this.$el.append(this.messageTemplate({message: i18n['search.error.relatedConcepts']}));
 
                 this.$el.removeClass('hide');
             });
