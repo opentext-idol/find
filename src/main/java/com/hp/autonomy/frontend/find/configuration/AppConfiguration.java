@@ -38,6 +38,7 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConcepts
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServiceImpl;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
+import com.hp.autonomy.hod.client.token.InMemoryTokenRepository;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.redis.RedisTokenRepository;
@@ -169,38 +170,45 @@ public class AppConfiguration {
 
     @Bean
     public TokenRepository tokenRepository() {
-        final RedisConfig redisConfig = configService.getConfig().getRedis();
-        final JedisConnectionFactory jedisConnectionFactory = redisConnectionFactory();
-        final Integer database = redisConfig.getDatabase();
+        final TokenStoreConfig repoType = configService.getConfig().getTokenStoreConfig();
 
-        final Pool<Jedis> pool;
+        if (repoType == TokenStoreConfig.REDIS) {
+            final RedisConfig redisConfig = configService.getConfig().getRedis();
+            final JedisConnectionFactory jedisConnectionFactory = redisConnectionFactory();
+            final Integer database = redisConfig.getDatabase();
 
-        if(redisConfig.getSentinels().isEmpty()) {
-            final HostAndPort address = redisConfig.getAddress();
+            final Pool<Jedis> pool;
 
-            if (database != null) {
-                pool = new JedisPool(jedisConnectionFactory.getPoolConfig(), address.getHost(), address.getPort(), Protocol.DEFAULT_TIMEOUT, null, database);
+            if(redisConfig.getSentinels().isEmpty()) {
+                final HostAndPort address = redisConfig.getAddress();
+
+                if (database != null) {
+                    pool = new JedisPool(jedisConnectionFactory.getPoolConfig(), address.getHost(), address.getPort(), Protocol.DEFAULT_TIMEOUT, null, database);
+                }
+                else {
+                    pool = new JedisPool(jedisConnectionFactory.getPoolConfig(), address.getHost(), address.getPort());
+                }
             }
             else {
-                pool = new JedisPool(jedisConnectionFactory.getPoolConfig(), address.getHost(), address.getPort());
+                final Set<String> sentinels = new HashSet<>();
+
+                for(final HostAndPort hostAndPort : redisConfig.getSentinels()) {
+                    sentinels.add(hostAndPort.getHost() + ':' + hostAndPort.getPort());
+                }
+
+                if (database != null) {
+                    pool = new JedisSentinelPool(redisConfig.getMasterName(), sentinels, jedisConnectionFactory.getPoolConfig(), Protocol.DEFAULT_TIMEOUT, null, database);
+                }
+                else {
+                    pool = new JedisSentinelPool(redisConfig.getMasterName(), sentinels, jedisConnectionFactory.getPoolConfig());
+                }
             }
+            return new RedisTokenRepository(pool);
+
+        } else {
+            // TokenStoreConfig.INMEMORY is both a valid option and also our fallback option
+            return new InMemoryTokenRepository();
         }
-        else {
-            final Set<String> sentinels = new HashSet<>();
-
-            for(final HostAndPort hostAndPort : redisConfig.getSentinels()) {
-                sentinels.add(hostAndPort.getHost() + ':' + hostAndPort.getPort());
-            }
-
-            if (database != null) {
-                pool = new JedisSentinelPool(redisConfig.getMasterName(), sentinels, jedisConnectionFactory.getPoolConfig(), Protocol.DEFAULT_TIMEOUT, null, database);
-            }
-            else {
-                pool = new JedisSentinelPool(redisConfig.getMasterName(), sentinels, jedisConnectionFactory.getPoolConfig());
-            }
-        }
-
-        return new RedisTokenRepository(pool);
     }
 
     private HodServiceConfig.Builder hodServiceConfigBuilder() {

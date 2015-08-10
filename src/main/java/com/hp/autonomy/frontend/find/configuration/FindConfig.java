@@ -32,12 +32,14 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     private final IodConfig iod;
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
+    private final TokenStoreConfig tokenStoreConfig;
 
     private FindConfig(final Builder builder) {
         this.login = builder.login;
         this.iod = builder.iod;
         this.allowedOrigins = builder.allowedOrigins;
         this.redis = builder.redis;
+        this.tokenStoreConfig = builder.tokenStoreConfig;
     }
 
     @Override
@@ -49,6 +51,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
             builder.setIod(this.iod == null ? config.iod : this.iod.merge(config.iod));
             builder.setAllowedOrigins(this.allowedOrigins == null ? config.allowedOrigins : this.allowedOrigins);
             builder.setRedis(this.redis == null ? config.redis : this.redis.merge(config.redis));
+            builder.setTokenStoreConfig(this.tokenStoreConfig == null ? config.tokenStoreConfig : this.tokenStoreConfig);
 
             return builder.build();
         }
@@ -131,6 +134,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
         private IodConfig iod;
         private Set<String> allowedOrigins;
         private RedisConfig redis;
+        private TokenStoreConfig tokenStoreConfig;
 
         public Builder() {}
 
@@ -139,6 +143,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
             this.iod = config.iod;
             this.allowedOrigins = config.allowedOrigins;
             this.redis = config.redis;
+            this.tokenStoreConfig = config.tokenStoreConfig;
         }
 
         public FindConfig build() {
