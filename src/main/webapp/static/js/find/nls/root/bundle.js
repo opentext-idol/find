@@ -52,6 +52,7 @@ define([
         'search.error.results' : 'An error occurred retrieving results',
         'search.error.promotions' : 'An error occurred retrieving promotions',
         'search.error.relatedConcepts' : 'An error occurred retrieving related concepts',
+        'search.error.parametric' : 'An error occurred retrieving additional filters',
         'settings.cancel': 'Cancel',
         'settings.cancel.message': 'All unsaved changes will be lost.',
         'settings.cancel.title': 'Revert settings?',
