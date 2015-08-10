@@ -58,7 +58,7 @@ define([
 
             this.indexesCollection.fetch();
 
-            this.listenTo(this.queryModel, 'change', function() {
+            this.listenTo(this.queryModel, 'change:queryText change:indexes change:fieldText', function() {
                 this.entityCollection.fetch({
                     data: {
                         text: this.queryModel.get('queryText'),
