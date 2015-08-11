@@ -26,17 +26,11 @@ define([
                 ]
             });
 
-            this.collection.on('request', _.bind(function() {
-                this.setProcessing();
-            }, this));
+            this.listenTo(this.collection, 'request', this.setProcessing);
 
-            this.collection.on('sync', _.bind(function() {
-                this.setDone();
-            }, this));
+            this.listenTo(this.collection, 'sync', this.setDone);
 
-            this.collection.on('error', _.bind(function() {
-                this.setError();
-            }, this));
+            this.listenTo(this.collection, 'error', this.setError);
 
             this.listenTo(this.fieldNamesListView, 'item:changeFieldText', _.debounce(this.changeFieldText, DEBOUNCE_WAIT_MILLISECONDS));
 
