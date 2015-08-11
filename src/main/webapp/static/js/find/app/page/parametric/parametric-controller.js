@@ -29,7 +29,9 @@ define([
 
         this.listenTo(this.view, 'change', function(parametricValues) {
             var expressionNodes = parametricValues.map(function(data) {
-                return new parser.ExpressionNode("MATCH", [data.field], data.values);
+                var node = new parser.ExpressionNode("MATCH", [data.field], data.values);
+                node.displayField = data.displayField;
+                return node;
             }, this).value();
 
             if(!_.isEmpty(expressionNodes)) {

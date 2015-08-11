@@ -59,6 +59,7 @@ define([
                 .map(function(view) {
                     return {
                         field: view.model.get('name'),
+                        displayField: view.model.get('displayName'),
                         values: view.getChecked()
                     }
                 })

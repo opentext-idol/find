@@ -43,7 +43,7 @@ define([
             // There should only be one field per MATCH node for parametric field text
             var field = node.fields[0];
 
-            var displayText = field + ': ' + node.values.join(', ');
+            var displayText = node.displayField + ': ' + node.values.join(', ');
 
             return [{
                 field: field,
