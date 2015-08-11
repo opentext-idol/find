@@ -223,11 +223,6 @@ input.find-input {
     text-decoration: none;
 }
 
-.main-results-content {
-    display: flex;
-    flex-wrap: wrap;
-}
-
 .main-results-container {
     border-bottom: 1px solid #d3d3d3;
     width: 100%;
