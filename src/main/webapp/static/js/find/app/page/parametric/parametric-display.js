@@ -26,13 +26,11 @@ define([
                 ]
             });
 
-            this.collection.on('request', _.bind(function() {
-                this.setProcessing();
-            }, this));
+            this.listenTo(this.collection, 'request', this.setProcessing);
 
-            this.collection.on('sync', _.bind(function() {
-                this.setDone();
-            }, this));
+            this.listenTo(this.collection, 'sync', this.setDone);
+
+            this.listenTo(this.collection, 'error', this.setError);
 
             this.listenTo(this.fieldNamesListView, 'item:changeFieldText', _.debounce(this.changeFieldText, DEBOUNCE_WAIT_MILLISECONDS));
 
@@ -48,6 +46,7 @@ define([
 
             this.$fieldNamesListView = this.$('.search-parametric-wrapper').append(this.fieldNamesListView.render().$el);
             this.$emptyMessage = this.$('.no-field-names');
+            this.$errorMessage = this.$('.parametric-error');
             this.$processing = this.$('.processing');
 
             return this;
@@ -91,6 +90,7 @@ define([
                 this.$processing.removeClass('hide');
                 this.$fieldNamesListView.addClass('hide');
                 this.$emptyMessage.addClass('hide');
+                this.$errorMessage.addClass('hide');
             }
         },
 
@@ -99,6 +99,13 @@ define([
                 this.$emptyMessage.toggleClass('hide', !this.collection.isEmpty());
                 this.$fieldNamesListView.toggleClass('hide', this.collection.isEmpty());
             }
+            if(this.$processing) {
+                this.$processing.addClass('hide');
+            }
+        },
+
+        setError: function() {
+            this.$errorMessage.removeClass('hide');
             if(this.$processing) {
                 this.$processing.addClass('hide');
             }

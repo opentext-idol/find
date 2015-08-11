@@ -44,7 +44,7 @@ define([
         template: _.template(resultsView),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
         resultsTemplate: _.template(resultsTemplate),
-        noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
+        messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         entityTemplate: _.template(entityTemplate),
         viewDocumentTemplate: _.template(viewDocumentTemplate),
@@ -110,23 +110,46 @@ define([
             });
         },
 
+        clearLoadingSpinner: function() {
+            if(this.resultsFinished && this.promotionsFinished) {
+                this.$loadingSpinner.addClass('hide');
+            }
+        },
+
         render: function() {
             this.$el.html(this.template());
 
+            this.$loadingSpinner = $(this.loadingTemplate);
+
+            this.$el.prepend(this.$loadingSpinner);
+
+            /*promotions content content*/
             this.listenTo(this.promotionsCollection, 'add', function(model) {
                 this.formatResult(model, true)
             });
 
-            /*main results content*/
             this.listenTo(this.promotionsCollection, 'request', function () {
+                this.promotionsFinished = false;
                 this.$('.main-results-content .promotions').empty();
-                this.$('.main-results-content .promotions').append(_.template(this.loadingTemplate));
+            });
+
+            this.listenTo(this.promotionsCollection, 'sync', function () {
+                this.promotionsFinished = true;
+                this.clearLoadingSpinner();
+            });
+
+            this.listenTo(this.promotionsCollection, 'error', function () {
+                this.promotionsFinished = true;
+                this.clearLoadingSpinner();
+
+                this.$('.main-results-content .promotions').append(this.messageTemplate({message: i18n["search.error.promotions"]}));
             });
 
             /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function () {
+                this.resultsFinished = false;
+                this.$loadingSpinner.removeClass('hide');
                 this.$('.main-results-content .results').empty();
-                this.$('.main-results-content .results').append(_.template(this.loadingTemplate));
             });
 
             this.listenTo(this.documentsCollection, 'add', function (model) {
@@ -134,10 +157,19 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'sync', function () {
+                this.resultsFinished = true;
+                this.clearLoadingSpinner();
+
                 if (this.documentsCollection.isEmpty()) {
-                    this.$('.main-results-content .results .loading-spinner').remove();
-                    this.$('.main-results-content .results').append(this.noResultsTemplate({i18n: i18n}));
+                    this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
+            });
+
+            this.listenTo(this.documentsCollection, 'error', function () {
+                this.resultsFinished = true;
+                this.clearLoadingSpinner();
+
+                this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.error.results"]}));
             });
 
             this.listenTo(this.entityCollection, 'reset', function() {
@@ -229,10 +261,8 @@ define([
             }));
 
             if (isPromotion) {
-                this.$('.main-results-content .promotions .loading-spinner').remove();
                 this.$('.main-results-content .promotions').append($newResult);
             } else {
-                this.$('.main-results-content .results .loading-spinner').remove();
                 this.$('.main-results-content .results').append($newResult);
             }
 
