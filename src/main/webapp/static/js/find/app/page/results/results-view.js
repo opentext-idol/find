@@ -230,11 +230,9 @@ define([
 
             if (isPromotion) {
                 this.$('.main-results-content .promotions .loading-spinner').remove();
-                this.$(".promotions [data-reference='" + reference + "']").remove(); // Remove existing document with this reference
                 this.$('.main-results-content .promotions').append($newResult);
             } else {
                 this.$('.main-results-content .results .loading-spinner').remove();
-                this.$(".results [data-reference='" + reference + "']").remove(); // Remove existing document with this reference
                 this.$('.main-results-content .results').append($newResult);
             }
 
