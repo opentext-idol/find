@@ -171,6 +171,9 @@ define([
         describe('after setParametricFieldText is called with a field text node containing restrictions on the AGE and NAME fields', function() {
             beforeEach(function() {
                 var node = fieldTextParser.parse('MATCH{4}:AGE AND MATCH{bobby,penny}:NAME');
+                node.left.displayField = 'Age';
+                node.right.displayField = 'Name';
+
                 this.collection.setParametricFieldText(node);
             });
 
@@ -181,14 +184,14 @@ define([
             it('contains an AGE parametric filter model', function() {
                 var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'});
                 expect(model).toBeDefined();
-                expect(model.get('text')).toContain('AGE');
+                expect(model.get('text')).toContain('Age');
                 expect(model.get('text')).toContain('4');
             });
 
             it('contains a NAME parametric filter model', function() {
                 var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'});
                 expect(model).toBeDefined();
-                expect(model.get('text')).toContain('NAME');
+                expect(model.get('text')).toContain('Name');
                 expect(model.get('text')).toContain('penny');
                 expect(model.get('text')).toContain('bobby');
             });
@@ -196,6 +199,7 @@ define([
             describe('then setParametricFieldText is called with a field text node containing a restriction on only the AGE field', function() {
                 beforeEach(function() {
                     var node = fieldTextParser.parse('MATCH{6}:AGE');
+                    node.displayField = 'Age';
                     this.collection.setParametricFieldText(node);
                 });
 
@@ -206,7 +210,7 @@ define([
                 it('contains an AGE parametric filter model', function() {
                     var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'});
                     expect(model).toBeDefined();
-                    expect(model.get('text')).toContain('AGE');
+                    expect(model.get('text')).toContain('Age');
                     expect(model.get('text')).toContain('6');
                 });
             });
@@ -214,6 +218,8 @@ define([
             describe('then setParametricFieldText is called with a field text node containing a restriction on the GENDER field a different restriction on the NAME field', function() {
                 beforeEach(function() {
                     var node = fieldTextParser.parse('MATCH{female}:GENDER AND MATCH{jo,jamie}:NAME');
+                    node.left.displayField = 'Gender';
+                    node.right.displayField = 'Name';
                     this.collection.setParametricFieldText(node);
                 });
 
@@ -224,14 +230,14 @@ define([
                 it('contains a GENDER parametric filter model', function() {
                     var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'GENDER'});
                     expect(model).toBeDefined();
-                    expect(model.get('text')).toContain('GENDER');
+                    expect(model.get('text')).toContain('Gender');
                     expect(model.get('text')).toContain('female');
                 });
 
                 it('contains a NAME parametric filter model', function() {
                     var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'});
                     expect(model).toBeDefined();
-                    expect(model.get('text')).toContain('NAME');
+                    expect(model.get('text')).toContain('Name');
                     expect(model.get('text')).toContain('jamie');
                     expect(model.get('text')).toContain('jo');
                 });
