@@ -59,13 +59,7 @@ define([
             this.indexesCollection.fetch();
 
             this.listenTo(this.queryModel, 'change', function() {
-                var attributes = ['queryText', 'indexes', 'fieldText'];
-
-                var hasChangedAttribute = _.any(attributes, function (attr) {
-                    return _.has(this.queryModel.changedAttributes(), attr)
-                }, this);
-
-                if (hasChangedAttribute) {
+                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
                     this.entityCollection.fetch({
                         data: {
                             text: this.queryModel.get('queryText'),
