@@ -18,9 +18,10 @@ define([
 
         events: {
             'mouseover a': _.debounce(function(e) {
-                this.$(' .popover-content').append(this.loadingTemplate);
+                this.$('.popover-content').append(this.loadingSpinnerTemplate);
 
                 this.topResultsCollection.fetch({
+                    reset: false,
                     data: {
                         text: $(e.currentTarget).html(),
                         max_results: 3,
