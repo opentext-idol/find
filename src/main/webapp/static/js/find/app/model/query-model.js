@@ -16,7 +16,15 @@ define([
         });
     };
 
-    _.extend(EventsProxy.prototype, Backbone.Events);
+    _.extend(EventsProxy.prototype, Backbone.Events, {
+
+        hasAnyChangedAttributes: function(attributes) {
+            return _.any(attributes, function (attr) {
+                return _.has(this.changedAttributes(), attr)
+            }, this);
+        }
+
+    });
 
     _.each(['get', 'set', 'unset', 'changedAttributes', 'getIsoDate', 'getFieldTextString', 'setParametricFieldText'], function(methodName) {
         EventsProxy.prototype[methodName] = function() {

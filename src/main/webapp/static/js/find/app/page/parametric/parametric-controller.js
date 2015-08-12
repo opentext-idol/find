@@ -15,8 +15,8 @@ define([
             parametricCollection: this.collection
         });
 
-        this.listenTo(this.queryModel, 'change:queryText change:indexes change:fieldText', function() {
-            if(!_.isEmpty(this.queryModel.get('indexes'))) {
+        this.listenTo(this.queryModel, 'change', function() {
+            if(this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
                 this.collection.fetch({
                     data: {
                         databases: this.queryModel.get('indexes'),

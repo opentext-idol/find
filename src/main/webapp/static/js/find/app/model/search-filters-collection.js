@@ -66,27 +66,31 @@ define([
             this.indexesCollection = options.indexesCollection;
 
             this.listenTo(this.queryModel, 'change', function() {
-                var changed = this.queryModel.changedAttributes();
-                var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
+                if (this.queryModel.hasAnyChangedAttributes(['minDate', 'maxDate', 'indexes', 'fieldText'])) {
 
-                var dateRange = this.datesFilterModel.get('dateRange');
+                    var changed = this.queryModel.changedAttributes();
+                    var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
 
-                if(!_.isEmpty(dateFilterTypes)) {
-                    if(dateRange === DatesFilterModel.dateRange.custom) {
-                        this.intervalDate(dateFilterTypes);
-                    } else if(dateRange) {
-                        this.humanDate();
-                    } else {
-                        this.removeAllDateFilters();
+                    var dateRange = this.datesFilterModel.get('dateRange');
+
+                    if(!_.isEmpty(dateFilterTypes)) {
+                        if(dateRange === DatesFilterModel.dateRange.custom) {
+                            this.intervalDate(dateFilterTypes);
+                        } else if(dateRange) {
+                            this.humanDate();
+                        } else {
+                            this.removeAllDateFilters();
+                        }
                     }
-                }
 
-                if(changed.indexes) {
-                    this.updateDatabases();
-                }
+                    if(changed.indexes) {
+                        this.updateDatabases();
+                    }
 
-                if(changed.fieldText) {
-                    this.setParametricFieldText(this.queryModel.get('fieldText'))
+                    if(changed.fieldText) {
+                        this.setParametricFieldText(this.queryModel.get('fieldText'))
+                    }
+
                 }
             });
 
