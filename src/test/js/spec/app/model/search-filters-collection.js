@@ -40,6 +40,10 @@ define([
                 minDate: INITIAL_MIN_DATE
             });
 
+            this.queryModel.hasAnyChangedAttributes = function() {
+                return true;
+            };
+
             this.datesFilterModel = new Backbone.Model({
                 dateRange: DatesFilterModel.dateRange.custom,
                 minDate: INITIAL_MIN_DATE
