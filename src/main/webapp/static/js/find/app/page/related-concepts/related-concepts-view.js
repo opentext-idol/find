@@ -7,14 +7,14 @@ define([
     'text!find/templates/app/page/related-concepts/related-concept-list-item.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, i18n, DocumentsCollection, viewStateSelector, relatedConceptsView, relatedConceptTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
+], function(Backbone, i18n, DocumentsCollection, viewStateSelector, relatedConceptsView, relatedConceptListItemTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
 
     return Backbone.View.extend({
 
         className: 'suggestions-content',
 
-        relatedConceptsView: _.template(relatedConceptsView),
-        relatedConceptTemplate: _.template(relatedConceptTemplate),
+        template: _.template(relatedConceptsView),
+        listItemTemplate: _.template(relatedConceptListItemTemplate),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
         loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
 
@@ -51,7 +51,7 @@ define([
                 this.$list.empty();
 
                 if (this.entityCollection.isEmpty()) {
-                    this.selectViewState([]);
+                    this.selectViewState(['none']);
                 }
                 else {
                     this.selectViewState(['list']);
@@ -59,7 +59,7 @@ define([
                     var clusters = this.entityCollection.groupBy('cluster');
 
                     _.each(clusters, function(entities) {
-                        this.$list.append(this.relatedConceptTemplate({
+                        this.$list.append(this.listItemTemplate({
                             entities: entities
                         }));
 
@@ -95,10 +95,12 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.relatedConceptsView({i18n:i18n}));
+            this.$el.html(this.template({i18n:i18n}));
 
             this.$list = this.$('.related-concepts-list');
             this.$error = this.$('.related-concepts-error');
+
+            this.$none = this.$('.related-concepts-none');
 
             this.$notLoading = this.$('.not-loading');
 
@@ -109,6 +111,7 @@ define([
                 list: this.$list,
                 processing: this.$processing,
                 error: this.$error,
+                none: this.$none,
                 notLoading: this.$notLoading
             });
         }

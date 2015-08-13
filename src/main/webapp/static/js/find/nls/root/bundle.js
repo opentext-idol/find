@@ -47,6 +47,7 @@ define([
         'search.dates.timeInterval.year': 'Last Year',
         'search.relatedConcepts': 'Related Concepts',
         'search.relatedConcepts.notLoading': 'The list of indexes has not yet been retrieved',
+        'search.relatedConcepts.none': 'There are no related concepts',
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',
