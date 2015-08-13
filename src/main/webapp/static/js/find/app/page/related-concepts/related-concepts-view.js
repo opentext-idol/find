@@ -3,16 +3,17 @@ define([
     'i18n!find/nls/bundle',
     'find/app/model/documents-collection',
     'text!find/templates/app/page/related-concepts/related-concepts-view.html',
+    'text!find/templates/app/page/related-concepts/related-concept-list-item.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, i18n, DocumentsCollection, template, topResultsPopoverContents, loadingSpinnerTemplate) {
+], function(Backbone, i18n, DocumentsCollection, relatedConceptsView, relatedConceptTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
 
     return Backbone.View.extend({
 
         className: 'suggestions-content',
 
-        template: _.template(template),
-        messageTemplate: _.template('<div><%-message%> </div>'),
+        relatedConceptsView: _.template(relatedConceptsView),
+        relatedConceptTemplate: _.template(relatedConceptTemplate),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
         loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
 
@@ -44,20 +45,20 @@ define([
             this.topResultsCollection = new DocumentsCollection([], {
                 indexesCollection: options.indexesCollection
             });
-        },
 
-        render: function() {
             this.listenTo(this.entityCollection, 'reset', function() {
-                this.$el.empty();
+                this.$list.empty();
 
                 if (this.entityCollection.isEmpty()) {
-                    this.$el.addClass('hide')
+                    this.$list.addClass('hide');
                 }
                 else {
+                    this.$list.removeClass('hide');
+
                     var clusters = this.entityCollection.groupBy('cluster');
 
                     _.each(clusters, function(entities) {
-                        this.$el.append(this.template({
+                        this.$list.append(this.relatedConceptTemplate({
                             entities: entities
                         }));
 
@@ -70,6 +71,23 @@ define([
                 }
             });
 
+            /*suggested links*/
+            this.listenTo(this.entityCollection, 'request', function() {
+                this.$processing.removeClass('hide');
+                this.$list.addClass('hide');
+                this.$error.addClass('hide');
+
+                this.$notLoading.addClass('hide');
+            });
+
+            this.listenTo(this.entityCollection, 'error', function() {
+                this.$error.removeClass('hide');
+                this.$list.addClass('hide');
+                this.$processing.addClass('hide');
+
+                this.$error.text(i18n['search.error.relatedConcepts']);
+            });
+
             /*top 3 results popover*/
             this.listenTo(this.topResultsCollection, 'add', function(model){
                 this.$('.popover-content .loading-spinner').remove();
@@ -79,23 +97,18 @@ define([
                     summary: model.get('summary').trim().substring(0, 100) + "..."
                 }));
             });
+        },
 
-            /*suggested links*/
-            this.listenTo(this.entityCollection, 'request', function() {
-                this.$el.empty();
+        render: function() {
+            this.$el.html(this.relatedConceptsView({i18n:i18n}));
 
-                this.$el.append(this.loadingSpinnerTemplate);
+            this.$list = this.$('.related-concepts-list');
+            this.$error = this.$('.related-concepts-error');
 
-                this.$el.removeClass('hide');
-            });
+            this.$notLoading = this.$('.not-loading');
 
-            this.listenTo(this.entityCollection, 'error', function() {
-                this.$el.empty();
-
-                this.$el.append(this.messageTemplate({message: i18n['search.error.relatedConcepts']}));
-
-                this.$el.removeClass('hide');
-            });
+            this.$processing = this.$('.processing');
+            this.$processing.append(this.loadingSpinnerTemplate);
         }
 
     })
