@@ -7,7 +7,7 @@ define([
     'text!find/templates/app/page/related-concepts/related-concept-list-item.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, i18n, DocumentsCollection, ViewStateSelector, relatedConceptsView, relatedConceptTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
+], function(Backbone, i18n, DocumentsCollection, viewStateSelector, relatedConceptsView, relatedConceptTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
 
     return Backbone.View.extend({
 
@@ -51,10 +51,10 @@ define([
                 this.$list.empty();
 
                 if (this.entityCollection.isEmpty()) {
-                    this.viewStateSelector.showViewStates([]);
+                    this.selectViewState([]);
                 }
                 else {
-                    this.viewStateSelector.showViewStates(['list']);
+                    this.selectViewState(['list']);
 
                     var clusters = this.entityCollection.groupBy('cluster');
 
@@ -74,11 +74,11 @@ define([
 
             /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
-                this.viewStateSelector.showViewStates(['processing']);
+                this.selectViewState(['processing']);
             });
 
             this.listenTo(this.entityCollection, 'error', function() {
-                this.viewStateSelector.showViewStates(['error']);
+                this.selectViewState(['error']);
 
                 this.$error.text(i18n['search.error.relatedConcepts']);
             });
@@ -105,7 +105,12 @@ define([
             this.$processing = this.$('.processing');
             this.$processing.append(this.loadingSpinnerTemplate);
 
-            this.viewStateSelector = ViewStateSelector({list: this.$list, processing: this.$processing, error: this.$error, notLoading: this.$notLoading});
+            this.selectViewState = viewStateSelector({
+                list: this.$list,
+                processing: this.$processing,
+                error: this.$error,
+                notLoading: this.$notLoading
+            });
         }
 
     })
