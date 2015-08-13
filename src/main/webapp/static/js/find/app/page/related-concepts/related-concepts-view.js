@@ -2,11 +2,12 @@ define([
     'backbone',
     'i18n!find/nls/bundle',
     'find/app/model/documents-collection',
+    'find/app/util/view-state-selector',
     'text!find/templates/app/page/related-concepts/related-concepts-view.html',
     'text!find/templates/app/page/related-concepts/related-concept-list-item.html',
     'text!find/templates/app/page/top-results-popover-contents.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, i18n, DocumentsCollection, relatedConceptsView, relatedConceptTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
+], function(Backbone, i18n, DocumentsCollection, ViewStateSelector, relatedConceptsView, relatedConceptTemplate, topResultsPopoverContents, loadingSpinnerTemplate) {
 
     return Backbone.View.extend({
 
@@ -16,18 +17,6 @@ define([
         relatedConceptTemplate: _.template(relatedConceptTemplate),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
         loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
-
-        showViewStates: function(showStates) {
-            // Hide all the states
-            _.each(this.viewStates, function(value, key) {
-                value.addClass('hide');
-            }, this);
-
-            // Show the states asked for
-            _.each(showStates, function(stateKey) {
-                this.viewStates[stateKey].removeClass('hide');
-            }, this)
-        },
 
         events: {
             'mouseover a': _.debounce(function(e) {
@@ -62,10 +51,10 @@ define([
                 this.$list.empty();
 
                 if (this.entityCollection.isEmpty()) {
-                    this.showViewStates([]);
+                    this.viewStateSelector.showViewStates([]);
                 }
                 else {
-                    this.showViewStates(['list']);
+                    this.viewStateSelector.showViewStates(['list']);
 
                     var clusters = this.entityCollection.groupBy('cluster');
 
@@ -85,11 +74,11 @@ define([
 
             /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
-                this.showViewStates(['processing']);
+                this.viewStateSelector.showViewStates(['processing']);
             });
 
             this.listenTo(this.entityCollection, 'error', function() {
-                this.showViewStates(['error']);
+                this.viewStateSelector.showViewStates(['error']);
 
                 this.$error.text(i18n['search.error.relatedConcepts']);
             });
@@ -116,7 +105,7 @@ define([
             this.$processing = this.$('.processing');
             this.$processing.append(this.loadingSpinnerTemplate);
 
-            this.viewStates = {list: this.$list, processing: this.$processing, error: this.$error, notLoading: this.$notLoading}
+            this.viewStateSelector = ViewStateSelector({list: this.$list, processing: this.$processing, error: this.$error, notLoading: this.$notLoading});
         }
 
     })
