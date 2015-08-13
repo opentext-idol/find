@@ -17,6 +17,18 @@ define([
         topResultsPopoverContents: _.template(topResultsPopoverContents),
         loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
 
+        showViewStates: function(showStates) {
+            // Hide all the states
+            _.each(this.viewStates, function(value, key) {
+                value.addClass('hide');
+            }, this);
+
+            // Show the states asked for
+            _.each(showStates, function(stateKey) {
+                this.viewStates[stateKey].removeClass('hide');
+            }, this)
+        },
+
         events: {
             'mouseover a': _.debounce(function(e) {
                 this.$('.popover-content').append(this.loadingSpinnerTemplate);
@@ -50,10 +62,10 @@ define([
                 this.$list.empty();
 
                 if (this.entityCollection.isEmpty()) {
-                    this.$list.addClass('hide');
+                    this.showViewStates([]);
                 }
                 else {
-                    this.$list.removeClass('hide');
+                    this.showViewStates(['list']);
 
                     var clusters = this.entityCollection.groupBy('cluster');
 
@@ -73,17 +85,11 @@ define([
 
             /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
-                this.$processing.removeClass('hide');
-                this.$list.addClass('hide');
-                this.$error.addClass('hide');
-
-                this.$notLoading.addClass('hide');
+                this.showViewStates(['processing']);
             });
 
             this.listenTo(this.entityCollection, 'error', function() {
-                this.$error.removeClass('hide');
-                this.$list.addClass('hide');
-                this.$processing.addClass('hide');
+                this.showViewStates(['error']);
 
                 this.$error.text(i18n['search.error.relatedConcepts']);
             });
@@ -109,6 +115,8 @@ define([
 
             this.$processing = this.$('.processing');
             this.$processing.append(this.loadingSpinnerTemplate);
+
+            this.viewStates = {list: this.$list, processing: this.$processing, error: this.$error, notLoading: this.$notLoading}
         }
 
     })
