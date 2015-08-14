@@ -21,7 +21,7 @@ public class NotificationsDropDown extends AppElement implements AppPage {
 	}
 
 	public WebElement notificationNumber(final int index) {
-		return findElement(By.cssSelector("li:nth-child(" + (index*2 - 1) + ") a"));
+		return getDriver().findElement(By.cssSelector("li li:nth-child(" + (index*2 - 1) + ") a div"));
 	}
 
 	public static class Placeholder {

@@ -8,6 +8,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +110,8 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 	public void createSynonymGroup(final String synonymGroup, final String language) throws InterruptedException {
 		loadOrFadeWait();
 		keywordsType(KeywordType.SYNONYM).click();
-		selectLanguage(language);
+		//selectLanguage(language);  //TODO CANNOT SELECT A LANGUAGE AT THE MOMENT FOR SYNONYMS
+        (LoggerFactory.getLogger(CreateNewKeywordsPage.class)).warn("Cannot select language for synonyms yet");
 		continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		addSynonyms(synonymGroup);
@@ -118,15 +120,18 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 		Thread.sleep(5000);
 	}
 
-	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
+	public void createBlacklistedTerm(final String blacklistedTerm, final String language) throws InterruptedException {
 		keywordsType(KeywordType.BLACKLIST).click();
-		selectLanguage(language);
-		continueWizardButton(WizardStep.TYPE).click();
+        //selectLanguage(language);  //TODO CANNOT SELECT A LANGUAGE AT THE MOMENT FOR BLACKLIST
+        (LoggerFactory.getLogger(CreateNewKeywordsPage.class)).warn("Cannot select language for blacklist yet");
+        continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		addBlacklistedTerm(blacklistedTerm);
 		loadOrFadeWait();
 		finishWizardButton().click();
-		new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle")));
+		//new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle")));
+		Thread.sleep(5000); //TODO This isn't a great way to do it - but it's being used in createSynonymGroup, and the commented
+								//out line above doesn't seem to be working
 	}
 
 	private void addBlacklistedTerm(final String blacklistedTerm) {

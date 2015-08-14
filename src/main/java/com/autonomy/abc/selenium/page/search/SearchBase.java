@@ -192,7 +192,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public int countSynonymLists() {
-		return findElements(By.cssSelector(".search-synonyms-keywords .keywords-sub-list .btn-default")).size();
+		//return findElements(By.cssSelector(".search-synonyms-keywords .keywords-sub-list .btn-default")).size();
+        // TODO possibly change this back
+		//return findElements(By.className("add-synonym")).size();
+		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
 	}
 
 	public WebElement fieldTextAddButton() {

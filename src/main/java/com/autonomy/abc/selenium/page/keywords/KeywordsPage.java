@@ -5,6 +5,9 @@ import com.autonomy.abc.selenium.page.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 	public void deleteAllSynonyms() throws InterruptedException {
 		loadOrFadeWait();
 		filterView(KeywordsFilter.SYNONYMS);
+		WebDriverWait wait = new WebDriverWait(getDriver(),40);	//TODO Possibly too long?
 
 		for (final String language : getLanguageList()) {
 			selectLanguage(language);
@@ -35,7 +39,9 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 			if (numberOfSynonymGroups >= 2) {
 				for (int i = 0; i <= numberOfSynonymGroups; i++) {
 					if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() > 2) {
-						findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
+                        wait.until(ExpectedConditions.elementToBeClickable(
+								By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword"))).click();	//TODO check works
+						//findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
 						waitForRefreshIconToDisappear();
 					} else {
 						if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() == 2) {
@@ -51,7 +57,9 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 	}
 
 	public int countSynonymLists() {
-		return findElements(By.cssSelector(".keywords-list .keywords-sub-list .btn-default")).size();
+		//return findElements(By.cssSelector(".keywords-list .keywords-sub-list .btn-default")).size();
+		// TODO possibly change this back
+        return (findElement(By.className("keywords-list"))).findElements(By.cssSelector(".add-synonym")).size();
 	}
 
 	public WebElement leadSynonym(final String synonym) {
@@ -62,12 +70,16 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 		return findElements(By.cssSelector(".scrollable-menu li")).size();
 	}
 
+    //TODO Seems to leave on word
 	public void deleteAllBlacklistedTerms() throws InterruptedException {
 		filterView(KeywordsFilter.BLACKLIST);
 
 		for (final String language : getLanguageList()) {
 			loadOrFadeWait();
-			selectLanguage(language);
+
+			//selectLanguage(language);
+			(LoggerFactory.getLogger(KeywordsPage.class)).warn("Cannot select language for blacklists yet");
+
 			for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
 				scrollIntoView(blacklisted, getDriver());
 				blacklisted.click();
@@ -77,9 +89,17 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 	}
 
 	public void filterView(final KeywordsFilter filter) {
-		findElement(By.cssSelector(".keywords-filters .dropdown-toggle")).click();
+        findElement(By.cssSelector(".keywords-filters .dropdown-toggle")).click();
 		loadOrFadeWait();
-		findElement(By.xpath(".//a[text()='" + filter.toString() + "']")).click();
+		//findElement(By.xpath(".//a[text()='" + filter.toString() + "']")).click();
+        //findElement(By.xpath(".//a[text()='Synonmys']")).click();   //TODO CHANGE THIS BACK WHEN THEY LEARN TO SPELL GOOD
+
+        if(filter == KeywordsFilter.SYNONYMS){
+            findElement(By.xpath(".//a[text()='Synonmys']")).click();
+            (LoggerFactory.getLogger(KeywordsPage.class)).warn("Synonyms XPath Deliberately Misspelt");
+        } else {
+            findElement(By.xpath(".//a[text()='" + filter.toString() + "']")).click();
+        }
 	}
 
 	public enum KeywordsFilter {
