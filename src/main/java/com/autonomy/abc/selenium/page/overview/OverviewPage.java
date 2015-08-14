@@ -38,8 +38,12 @@ public class OverviewPage extends AppElement implements AppPage {
 		return Integer.parseInt(getWidget(widget).findElement(By.xpath(".//*[contains(text(), 'Zero hit queries')]/..")).findElement(By.cssSelector(".query-count")).getText().replace(",", ""));
 	}
 
-	public int getZeroHitPercentage(final Widget widget) {
-		return Integer.parseInt(getWidget(widget).findElement(By.xpath(".//*[contains(text(), 'Percentage of queries with zero hits')]/..")).findElement(By.cssSelector(".query-count")).getText().split("\\s+")[0]);
+    public String getZeroHitPercentage(final Widget widget) {
+        return getWidget(widget).findElement(By.xpath(".//*[contains(text(), 'Percentage of queries with zero hits')]/..")).findElement(By.cssSelector(".query-count")).getText().split("\\s+")[0];
+    }
+
+	public int getZeroHitPercentageParseInt(final Widget widget) {
+		return Integer.parseInt(getZeroHitPercentage(widget));
 	}
 
 	public enum Widget {
