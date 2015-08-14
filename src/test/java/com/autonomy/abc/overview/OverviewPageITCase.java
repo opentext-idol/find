@@ -186,13 +186,42 @@ public class OverviewPageITCase extends ABCTestBase{
 		}
 	}
 
+    private boolean percentageIsNumber(OverviewPage.Widget widgetElement) {
+        try {
+            overviewPage.getZeroHitPercentageParseInt(widgetElement);
+        } catch(NumberFormatException e) {
+            return false;
+        }
+
+        return true;
+    }
+
 	@Test
 	public void testPercentageOfQueriesWithZeroHits() {
+
 		assertTrue(overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH) <= overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH));
 		assertTrue(overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH) <= overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH));
 		assertTrue(overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH) <= overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH));
-		assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH)), overviewPage.getZeroHitPercentage(OverviewPage.Widget.TODAY_SEARCH));
-		assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH)), overviewPage.getZeroHitPercentage(OverviewPage.Widget.YESTERDAY_SEARCH));
-		assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH)), overviewPage.getZeroHitPercentage(OverviewPage.Widget.WEEKLY_SEARCH));
+
+        if(percentageIsNumber(OverviewPage.Widget.TODAY_SEARCH)) {
+            assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH)),
+                    overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.TODAY_SEARCH));
+        } else {
+            assertEquals("N/A", overviewPage.getZeroHitPercentage(OverviewPage.Widget.TODAY_SEARCH));
+        }
+
+        if (percentageIsNumber(OverviewPage.Widget.YESTERDAY_SEARCH)) {
+            assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH)),
+                    overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.YESTERDAY_SEARCH));
+        } else {
+            assertEquals("N/A", overviewPage.getZeroHitPercentage(OverviewPage.Widget.YESTERDAY_SEARCH));
+        }
+
+        if (percentageIsNumber(OverviewPage.Widget.WEEKLY_SEARCH)) {
+            assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH)),
+                    overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.WEEKLY_SEARCH));
+        } else {
+            assertEquals("N/A", overviewPage.getZeroHitPercentage(OverviewPage.Widget.WEEKLY_SEARCH));
+        }
 	}
 }
