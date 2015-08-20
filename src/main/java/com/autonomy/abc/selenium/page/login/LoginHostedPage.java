@@ -1,53 +1,41 @@
 package com.autonomy.abc.selenium.page.login;
 
 import com.autonomy.abc.selenium.AppElement;
+import com.autonomy.abc.selenium.config.Timeouts;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoginHostedPage extends AppElement {
+	private static Logger logger = LoggerFactory.getLogger(LoginHostedPage.class);
+
 	public LoginHostedPage(final WebElement element, final WebDriver driver) {
 		super(element, driver);
 	}
 
-	public void loginWith(final LoginProviders provider) {
-		/*
-		 * Try catches necessary because of inconsistent loading of IOD SSO page,
-		 * some elements aren't loaded when the signal to selenium is given that the page is loaded.
-		 */
+    public LoginHostedPage(final WebDriver driver) {
+        this(new WebDriverWait(driver, Timeouts.LOGIN_PAGE_LOAD).until(ExpectedConditions.visibilityOfElementLocated(By.className("login-body"))), driver);
+    }
 
-		loadOrFadeWait();
-		try {
-			getDriver().findElement(By.xpath(".//a[text()[contains(., '" + provider.toString() + "')]]")).click();
-		} catch (final Exception e) {
-			try {
-				Thread.sleep(5000);
-				getDriver().findElement(By.xpath(".//a[text()[contains(., '" + provider.toString() + "')]]")).click();
-			} catch (final InterruptedException e1) {
-				e1.printStackTrace();
-			}
+	public void loginWith(final AuthProvider provider) {
+		provider.login(this);
+		if (!hasLoggedIn()) {
+			logger.warn("Initial login attempt failed, trying again");
+			provider.login(this);
 		}
-		loadOrFadeWait();
 	}
 
-	public enum LoginProviders {
-
-		GOOGLE("Google"),
-		FACEBOOK("Facebook"),
-		TWITTER("Twitter"),
-		YAHOO("Yahoo"),
-		HP_PASSPORT("HP Passport"),
-		OPEN_ID("Open ID"),
-		API_KEY("APIKey");
-
-		private final String provider;
-
-		LoginProviders(final String name) {
-			provider = name;
+	private boolean hasLoggedIn() {
+		try {
+			new WebDriverWait(getDriver(), Timeouts.LOGIN_SUBMITTED).until(ExpectedConditions.visibilityOfElementLocated(By.className("navbar-static-top-blue")));
+		} catch (TimeoutException e) {
+			return false;
 		}
-
-		public String toString() {
-			return provider;
-		}
+		return true;
 	}
 }
