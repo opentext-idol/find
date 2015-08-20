@@ -3,8 +3,12 @@ package com.autonomy.abc.selenium.page.keywords;
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.page.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +96,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 
 	public void deleteBlacklistedTerm(final String blacklistedTerm) {
 		findElement(By.cssSelector("[data-term = '" + blacklistedTerm + "'] .blacklisted-word .remove-keyword")).click();
-		loadOrFadeWait();
+		waitForRefreshIconToDisappear();
 	}
 
 	public WebElement getSynonymIcon(final String synonym, final String synonymLead) {
@@ -108,10 +112,26 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	}
 
 	public void waitForRefreshIconToDisappear() {
-		int count = 0;
-		while (findElements(By.cssSelector(".fa-refresh")).size() > 0 && count < 30) {
-			loadOrFadeWait();
-			count++;
-		}
+		new WebDriverWait(getDriver(),60).until(new ExpectedCondition<Boolean>(){
+
+            @Override
+            public Boolean apply(WebDriver webDriver) {
+                List<WebElement> refreshIcons = findElements(By.className("fa-refresh"));
+
+                int visibleRefreshIcons = 0;
+
+				try {
+                    for (WebElement icon : refreshIcons) {
+                        if (icon.isDisplayed()) {
+                            visibleRefreshIcons++;
+                        }
+                    }
+                } catch (StaleElementReferenceException e){
+                    //NOOP
+                }
+
+                return visibleRefreshIcons == 0;
+            }
+        });
 	}
 }

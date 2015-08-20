@@ -28,6 +28,11 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 		return findElement(By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../.."));
 	}
 
+	public WebElement keywordsType(final KeywordType type, WebDriverWait wait) {
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(
+				By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../..")));
+	}
+
 	public enum KeywordType {
 		SYNONYM("Synonyms"),
 		BLACKLIST("Blacklisted Terms");
@@ -107,16 +112,32 @@ public class CreateNewKeywordsPage extends AppElement implements AppPage {
 		return findElements(By.cssSelector(".remove-word")).size();
 	}
 
+    public int countKeywords(KeywordsPage.KeywordsFilter keywordType) {
+        WebElement keywords = null;
+
+        if (keywordType == KeywordsPage.KeywordsFilter.BLACKLIST){
+            keywords = findElement(By.xpath("//div[@data-branch='blacklisted']"));
+        } else if (keywordType == KeywordsPage.KeywordsFilter.SYNONYMS){
+			keywords = findElement(By.xpath("//div[@data-branch='synonyms']"));
+        }
+
+        return keywords.findElements(By.cssSelector(".remove-word")).size();
+    }
+
 	public void createSynonymGroup(final String synonymGroup, final String language) throws InterruptedException {
 		loadOrFadeWait();
-		keywordsType(KeywordType.SYNONYM).click();
+
+		keywordsType(KeywordType.SYNONYM, new WebDriverWait(getDriver(),15)).click();
 		//selectLanguage(language);  //TODO CANNOT SELECT A LANGUAGE AT THE MOMENT FOR SYNONYMS
         (LoggerFactory.getLogger(CreateNewKeywordsPage.class)).warn("Cannot select language for synonyms yet");
+
+		Thread.sleep(2000);
+
 		continueWizardButton(WizardStep.TYPE).click();
 		loadOrFadeWait();
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
-		finishWizardButton().click();
+		(new WebDriverWait(getDriver(),10)).until(ExpectedConditions.elementToBeClickable(finishWizardButton())).click();
 		Thread.sleep(5000);
 	}
 

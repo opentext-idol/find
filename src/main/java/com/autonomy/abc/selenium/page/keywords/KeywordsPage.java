@@ -27,6 +27,10 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 		return findElement(By.xpath(".//a[contains(text(), 'Create new keywords')]"));
 	}
 
+	public WebElement createNewKeywordsButton(WebDriverWait wait) {
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//a[contains(text(), 'Create new keywords')]")));
+	}
+
 	public void deleteAllSynonyms() throws InterruptedException {
 		loadOrFadeWait();
 		filterView(KeywordsFilter.SYNONYMS);
@@ -39,9 +43,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 			if (numberOfSynonymGroups >= 2) {
 				for (int i = 0; i <= numberOfSynonymGroups; i++) {
 					if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() > 2) {
-                        wait.until(ExpectedConditions.elementToBeClickable(
-								By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword"))).click();	//TODO check works
-						//findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
+                        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword"))).click();	//TODO check works
 						waitForRefreshIconToDisappear();
 					} else {
 						if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() == 2) {
@@ -70,7 +72,6 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 		return findElements(By.cssSelector(".scrollable-menu li")).size();
 	}
 
-    //TODO Seems to leave on word
 	public void deleteAllBlacklistedTerms() throws InterruptedException {
 		filterView(KeywordsFilter.BLACKLIST);
 
@@ -82,7 +83,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 
 			for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
 				scrollIntoView(blacklisted, getDriver());
-				blacklisted.click();
+ 				blacklisted.click();
 				waitForRefreshIconToDisappear();
 			}
 		}
@@ -91,15 +92,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 	public void filterView(final KeywordsFilter filter) {
         findElement(By.cssSelector(".keywords-filters .dropdown-toggle")).click();
 		loadOrFadeWait();
-		//findElement(By.xpath(".//a[text()='" + filter.toString() + "']")).click();
-        //findElement(By.xpath(".//a[text()='Synonmys']")).click();   //TODO CHANGE THIS BACK WHEN THEY LEARN TO SPELL GOOD
-
-        if(filter == KeywordsFilter.SYNONYMS){
-            findElement(By.xpath(".//a[text()='Synonmys']")).click();
-            (LoggerFactory.getLogger(KeywordsPage.class)).warn("Synonyms XPath Deliberately Misspelt");
-        } else {
-            findElement(By.xpath(".//a[text()='" + filter.toString() + "']")).click();
-        }
+		findElement(By.xpath(".//a[text()='" + filter.toString() + "']")).click();
 	}
 
 	public enum KeywordsFilter {
@@ -124,7 +117,7 @@ public class KeywordsPage extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement searchFilterTextBox() {
-		return findElement(By.cssSelector(".search-filter [placeholder='Search for keywords...']"));
+		return findElement(By.className("keywords-search-filter"));
 	}
 
 	public void selectLanguage(final String language) {

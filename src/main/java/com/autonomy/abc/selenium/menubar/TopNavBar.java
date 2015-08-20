@@ -49,7 +49,7 @@ public class TopNavBar extends TabBar {
 	}
 
 	public void notificationsDropdown() {
-		findElement(By.cssSelector(".fa-bell")).click();
+        findElement(By.className("count-info")).click();
 	}
 
 	public String getSearchBarText() {
