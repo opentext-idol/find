@@ -1,10 +1,10 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.element.ModalView;
+import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.page.login.ApiKey;
 import com.autonomy.abc.selenium.page.login.LoginHostedPage;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
@@ -156,27 +156,12 @@ public abstract class ABCTestBase {
 	}
 
 	public void abcHostedLogin(final String apiKey) {
-		final AppElement appElement = new AppElement(body, driver);
-		appElement.loadOrFadeWait();
-		final WebDriverWait wait = new WebDriverWait(driver, 40);
-		new LoginHostedPage(body, driver).loginWith(LoginHostedPage.LoginProviders.API_KEY);
-		appElement.loadOrFadeWait();
-
-		/* Clicking APIKey Button doesn't always open the modal first time. The if below will retry the button if the modal doesn't open */
-		if (getDriver().findElements(By.cssSelector(".modal[aria-hidden='false']")).size() == 0) {
-			new LoginHostedPage(body, driver).loginWith(LoginHostedPage.LoginProviders.API_KEY);
-		}
-
-		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.cssSelector(".modal[aria-hidden='false']"))));
-		wait.until(ExpectedConditions.visibilityOf(ModalView.getVisibleModalView(driver).findElement(By.cssSelector(".js-apikey-input"))));
-		ModalView.getVisibleModalView(driver).findElement(By.cssSelector(".js-apikey-input")).sendKeys(apiKey);
-		wait.until(ExpectedConditions.visibilityOf(ModalView.getVisibleModalView(driver).findElement(By.id("apikey_submit"))));
-		ModalView.getVisibleModalView(driver).findElement(By.id("apikey_submit")).click();
-
+		LoginHostedPage loginHostedPage = new LoginHostedPage(driver);
+        loginHostedPage.loginWith(new ApiKey(apiKey));
 		try {
-			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top-blue")));
+			new WebDriverWait(getDriver(), Timeouts.LOGIN_SUBMITTED).until(ExpectedConditions.visibilityOfElementLocated(By.className("navbar-static-top-blue")));
 		} catch (final TimeoutException t) {
-			fail("Application has not loaded in 40 seconds");
+			fail("Login timed out");
 		}
 	}
 }
