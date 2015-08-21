@@ -38,10 +38,7 @@ define([
                     }
                 });
 
-                this.trigger('sync');
-
                 this.listView.setElement(this.$el).render();
-
             }, this);
 
             this.listenTo(this.queryModel, 'change:indexes', function(model, queryModelIndexes) {
