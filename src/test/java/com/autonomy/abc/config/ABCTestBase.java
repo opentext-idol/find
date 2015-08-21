@@ -1,5 +1,6 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.framework.TestDebuggerRule;
 import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
@@ -10,6 +11,7 @@ import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
@@ -105,6 +107,9 @@ public abstract class ABCTestBase {
 		return output;
 	}
 
+	@Rule
+	public TestDebuggerRule debugger = new TestDebuggerRule(this);
+
 	@Before
 	public void baseSetUp() throws MalformedURLException {
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
@@ -126,6 +131,12 @@ public abstract class ABCTestBase {
 
 	@After
 	public void baseTearDown() {
+		// TODO: should run only after failure
+		debugger.log();
+		if (System.getenv("ABCDEBUG") != null) {
+			debugger.takeScreenshot();
+			debugger.saveCurrentPage();
+		}
 		driver.quit();
 	}
 
