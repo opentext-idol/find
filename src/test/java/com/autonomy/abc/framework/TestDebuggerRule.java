@@ -63,7 +63,7 @@ public class TestDebuggerRule implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 testName = description.getMethodName();
-                timestamp = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
+                timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
                 base.evaluate();
             }
         };

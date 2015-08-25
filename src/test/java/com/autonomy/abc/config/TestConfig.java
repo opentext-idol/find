@@ -56,6 +56,8 @@ public class TestConfig {
 				final ChromeOptions options = new ChromeOptions();
 				options.addArguments("--lang=en_GB");
 				options.addArguments("--start-maximized");
+                // avoids "Disable developer mode extensions" popup
+                options.addArguments("--disable-extensions");
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 				break;
 			case "opera":
