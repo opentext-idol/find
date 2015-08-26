@@ -138,7 +138,7 @@ public class AppBody extends AppElement {
 
 	public void logout() {
 		topNavBar.findElement(By.cssSelector(".fa-cog")).click();
-		topNavBar.findElement(By.xpath(".//span[text()='Logout']")).click();
+		topNavBar.findElement(By.xpath(".//a[text()=' Logout']")).click();
 	}
 
 	public DatePicker getDatePicker() {

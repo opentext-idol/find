@@ -98,7 +98,12 @@ public class SettingsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement protocolBox(final String panelName) {
-		return getPanelWithName(panelName).findElement(By.cssSelector("[name='protocol']"));
+        String name = "protocol";
+        if(panelName.equals("Content") || panelName.equals("QMS Agentstore")){
+            name = "standard-" + name;
+        }
+
+		return getPanelWithName(panelName).findElement(By.cssSelector("[name='"+name+"']"));
 	}
 
 	public void selectProtocol(final String protocol, final Panel panelName) {

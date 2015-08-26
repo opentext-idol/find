@@ -134,4 +134,22 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
             }
         });
 	}
+
+	public int countRefreshIcons() {
+		try {
+            List<WebElement> refreshIcons = findElements(By.cssSelector(".keywords-list .fa-refresh"));
+
+            int visibleIcons = 0;
+
+            for(WebElement refresh : refreshIcons){
+                if (refresh.isDisplayed()){
+                    visibleIcons++;
+                }
+            }
+
+            return visibleIcons;
+        } catch (Exception e){
+            return 0;
+        }
+	}
 }

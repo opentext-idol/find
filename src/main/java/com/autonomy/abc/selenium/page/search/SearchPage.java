@@ -25,9 +25,13 @@ public class SearchPage extends SearchBase implements AppPage {
 		getDriver().get("search");
 	}
 
-	public WebElement showHideUnmodifiedResults() {
-		return findElement(By.xpath(".//button[contains(text(), 'unmodified results')]"));
+	public WebElement modifiedResultsCheckBox() {
+        return findElement(By.className("search-type-toggle"));
 	}
+
+    public boolean modifiedResultsShown(){
+        return findElement(By.className("search-type-toggle")).findElement(By.className("checkbox-input")).isSelected();
+    }
 
 	public WebElement searchTitle() {
 		return getDriver().findElement(By.cssSelector(".heading > strong"));
@@ -218,7 +222,7 @@ public class SearchPage extends SearchBase implements AppPage {
 	private List<String> getVisiblePromotionLabels() {
 		final List<String> labelList = new LinkedList<>();
 
-		for (final WebElement labelTitle : findElements(By.cssSelector(".promotions-list .promotion-name"))) {
+		for (final WebElement labelTitle : findElements(By.cssSelector(".promotions-list .search-result-title"))) {
 			labelList.add(labelTitle.getText());
 		}
 
@@ -275,6 +279,10 @@ public class SearchPage extends SearchBase implements AppPage {
 
 	public WebElement getDocLogo(final int searchResultNumber) {
 		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
+	}
+
+	public WebElement getDocLogo(final int searchResultNumber, WebDriverWait wait) {
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o")));
 	}
 
 	public int countPinToPositionLabels() {

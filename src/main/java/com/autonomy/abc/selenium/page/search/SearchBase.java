@@ -7,13 +7,16 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
+import java.beans.Visibility;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 public abstract class SearchBase extends KeywordsBase implements AppPage {
 
@@ -65,6 +68,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public void deleteDocFromWithinBucket(final String docTitle) {
 		final String xpathString = cleanXpathString(docTitle);
+        LoggerFactory.getLogger(SearchBase.class).info(xpathString);
 		promotionsBucket().findElement(By.xpath(".//*[contains(text(), " + xpathString + ")]/../i")).click();
 		loadOrFadeWait();
 	}
@@ -108,7 +112,8 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public int countSearchResults() {
-		final String bracketedSearchResultsTotal = getDriver().findElement(By.cssSelector(".page-heading span")).getText();
+        ((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
+		final String bracketedSearchResultsTotal = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
 		return Integer.parseInt(bracketedSearchResultsTotal.substring(1, bracketedSearchResultsTotal.length() - 1));
 	}
 
@@ -123,7 +128,34 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
-		return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + docTitle + "')]"));
+        LoggerFactory.getLogger(SearchBase.class).info(docTitle);
+        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + docTitle + "')]"));
+	}
+
+    /**
+     * Takes a document title, and finds a document on the page with the same first five words
+     * - this is to counteract the issue with Latin encoding where they cannot be found via xpath
+     *
+     * @param docTitle   Document title to attempt to find
+     * @return           Web Element with the same first five words as the docTitle
+     */
+    public WebElement getPromotionBucketElementByTrimmedTitle(final String docTitle) {
+        String trimmedTitle = "";
+        int count = 0;
+
+        //Get the first five words
+        for(String word : docTitle.split(" ")){
+            trimmedTitle = trimmedTitle + " " + word;
+
+            if(count == 5){
+                break;
+            }
+
+            count++;
+        }
+
+        //Find web element using trimmedTitle string. This will have a trailing space, and so you need to .trim() the String
+        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + trimmedTitle.trim() + "')]"));
 	}
 
 	public WebElement getDatabasesList() {
@@ -279,7 +311,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		int count = 0;
 		try {
 			while (findElement(By.cssSelector(".search-information h3")).getText().contains("Loading...") && count < 50){
-				System.out.println("Loading");
+//				System.out.println("Loading");
 				loadOrFadeWait();
 				count++;
 			}
@@ -287,6 +319,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 			System.out.println("No Loading");
 		}
 	}
+
+    public void waitForPromotionsLoadIndicatorToDisappear() {
+        new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@data-cbox-rel='promoted-items-title']")));
+    }
 
 	public void waitForRelatedConceptsLoadIndicatorToDisappear() {
 		try {
@@ -365,7 +401,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement parametricValueLoadIndicator() {
-		return findElement(By.cssSelector(".search-parametric .processing"));
+		return findElement(By.cssSelector(".search-parametric .processing-indicator"));
 	}
 
 	public List<String> getAllDatabases() {
