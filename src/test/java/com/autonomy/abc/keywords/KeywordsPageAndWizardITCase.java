@@ -175,7 +175,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = body.getCreateKeywordsPage();
-		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(),containsString("keywords/create"));
+		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
 
 		//TODO Not sure why these were repeated
 		//keywordsPage.createNewKeywordsButton().click();
@@ -932,7 +932,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		for (final String synonym : synonymListBears) {
 			assertThat(synonym + " not included in title", searchPage.title(), containsString(synonym));
 			assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
-			assertThat(synonym + " synonym group not complete in'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsList(synonymListBears));
+			assertThat(synonym + " synonym group not complete in'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
 			assertEquals("Wrong number of synonym lists displayed", 3, searchPage.countSynonymLists());
 		}
 
@@ -947,7 +947,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		for (final String synonym : synonymListBees) {
 			assertThat(synonym + " not included in title", searchPage.title(),containsString(synonym));
 			assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
-			assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsList(synonymListBees)); //TODO check if can hamcrest this
+			assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBees)); //TODO check if can hamcrest this
 			assertEquals(3, searchPage.countSynonymLists());
 		}
 
@@ -959,7 +959,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
 			for (final String synonym : synonymList) {
-				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsList(synonymList));
+				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
 			}
 		}
 
@@ -969,7 +969,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
 			for (final String synonym : synonymList) {
-				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsList(synonymList));
+				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
 			}
 		}
 
@@ -979,8 +979,8 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertEquals(3, keywordsPage.countSynonymLists());
 
 		for (final String synonym : synonymListBees) {
-			assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsList(synonymListBees));
-			assertThat("synonym included in synonym group: " + synonym + " that should not be there", keywordsPage.getSynonymGroupSynonyms(synonym),not(containsList(synonymListBears)));
+			assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBees));
+			assertThat("synonym included in synonym group: " + synonym + " that should not be there", keywordsPage.getSynonymGroupSynonyms(synonym),not(containsItems(synonymListBears)));
 		}
 
 		keywordsPage.searchFilterTextBox().clear();
@@ -991,7 +991,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
 			for (final String synonym : synonymList) {
-				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsList(synonymList));
+				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
 			}
 		}
 
@@ -1001,8 +1001,8 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertEquals(3, keywordsPage.countSynonymLists());      //Fails because of capital letter
 
 		for (final String synonym : synonymListBears) {
-			assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsList(synonymListBears));
-			assertThat("synonym included in synonym group: " + synonym + " that should not be there", keywordsPage.getSynonymGroupSynonyms(synonym),not(containsList(synonymListBees)));
+			assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
+			assertThat("synonym included in synonym group: " + synonym + " that should not be there", keywordsPage.getSynonymGroupSynonyms(synonym),not(containsItems(synonymListBees)));
 		}
 
 		keywordsPage.searchFilterTextBox().clear();
@@ -1013,13 +1013,13 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
 			for (final String synonym : synonymList) {
-				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsList(synonymList));
+				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
 			}
 		}
 	}
 
-    private Matcher<? super List<String>> containsList(List<String> list) {
-        return containsInAnyOrder(list.toArray());
+    private Matcher<Iterable<String>> containsItems(List<String> list) {
+        return hasItems(list.toArray(new String[list.size()]));
     }
 
     @Test
@@ -1033,14 +1033,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		for (final String synonym : synonymListBears) {
 			assertThat(synonym + " not included in title", searchPage.title(),containsString(synonym));
 			assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
-			assertThat(synonym + " synonym group not complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsList(synonymListBears));
+			assertThat(synonym + " synonym group not complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
 			assertEquals(3, searchPage.countSynonymLists());
 		}
 
 		searchPage.addSynonymToGroup("kodiak", "grizzly");
 		searchPage.loadOrFadeWait();
 		for (final String synonym : synonymListBears) {
-			assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsList(synonymListBears));
+			assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym), containsItems(synonymListBears));
 			assertThat("kodiak not included in synonym group " + synonym, searchPage.getSynonymGroupSynonyms(synonym),hasItem("kodiak"));
 			assertEquals(3, searchPage.countSynonymLists());
 		}
@@ -1049,7 +1049,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		synonymListBears = Arrays.asList("grizzly", "brownbear");
 		for (final String synonym : synonymListBears) {
-			assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsList(synonymListBears));
+			assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
 			assertThat("bigbear not deleted from group " + synonym, searchPage.getSynonymGroupSynonyms(synonym),not(hasItem("bigbear")));
 			assertThat("kodiak not included in synonym group " + synonym, searchPage.getSynonymGroupSynonyms(synonym),hasItem("kodiak"));
 			assertEquals(2, searchPage.countSynonymLists());
@@ -1063,7 +1063,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		synonymListBears = Arrays.asList("grizzly", "brownbear", "kodiak");
 		for (final String synonym : synonymListBears) {
-			assertThat(synonym + " group incomplete", keywordsPage.getSynonymGroupSynonyms(synonym),containsList(synonymListBears));
+			assertThat(synonym + " group incomplete", keywordsPage.getSynonymGroupSynonyms(synonym), containsItems(synonymListBears));
 			assertEquals(3, keywordsPage.getSynonymGroupSynonyms(synonym).size());
 			assertThat("bigbear not deleted from group " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),not(hasItem("bigbear")));
 		}
@@ -1268,7 +1268,12 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage = body.getCreateKeywordsPage();
 		createKeywordsPage.createSynonymGroup("Croatia Kroatia Hrvatska", "Croatian");
 
-        wait.until(ExpectedConditions.visibilityOf(body.getSearchPage()));
+        if(getConfig().getType().equals(ApplicationType.ON_PREM)){
+            wait.until(ExpectedConditions.visibilityOf(body.getKeywordsPage()));
+        } else {
+            wait.until(ExpectedConditions.visibilityOf(body.getSearchPage()));
+        }
+
 		new SideNavBar(getDriver()).switchPage(NavBarTabId.KEYWORDS);
 
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
@@ -1308,12 +1313,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertEquals("wrong number of synonym lists displayed", 0, searchPage.countSynonymLists());
 
 		new SideNavBar(getDriver()).switchPage(NavBarTabId.KEYWORDS);
+        keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
+
 		keywordsPage.selectLanguage("French");
 		assertThat("synonym assigned to wrong language", keywordsPage.getText(), not(containsString("한국")));
 
 		keywordsPage.selectLanguage("Chinese");
 		assertEquals("wrong number of synonym lists displayed", 2, keywordsPage.countSynonymLists());
-		assertThat("synonym not assigned to correct language", keywordsPage.getText(),containsString("한국"));
+		assertThat("synonym not assigned to correct language", keywordsPage.getText(), containsString("한국"));
 	}
 
 	@Test
@@ -1381,8 +1388,8 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		// disallows any adding of synonyms if disallowed synonym found
 		createKeywordsPage.addSynonyms("Polar Bear");
 		assertEquals(1, createKeywordsPage.countKeywords());
-		assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(),hasItem("bear"));
-		assertThat("correct error message not showing", createKeywordsPage.getText(),containsString("bear is a duplicate of an existing keyword."));
+		assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(), hasItem("bear"));
+		assertThat("correct error message not showing", createKeywordsPage.getText(), containsString("bear is a duplicate of an existing keyword."));
 
         //jam and jaM are case variants so none should be added
 		createKeywordsPage.addSynonyms("jam jaM");
@@ -1656,8 +1663,16 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		final List<String> synonyms = Arrays.asList("ea", "es", "ed", "ef", "eg");
 		for (final String synonym : synonyms) {
 			keywordsPage.getSynonymIcon(synonym, synonym).click();
-			assertEquals("Too many synonyms are disabled on synonym delete", 6 - synonyms.indexOf(synonym), keywordsPage.countDisabledKeywords());
-			Thread.sleep(3000);
+//			assertEquals("Too many synonyms are disabled on synonym delete", 6 - synonyms.indexOf(synonym), keywordsPage.countDisabledKeywords());
+
+            if(keywordsPage.countSynonymLists() > 2) {
+                assertEquals("Too many synonyms are disabled on synonym delete", 6 - synonyms.indexOf(synonym), keywordsPage.countRefreshIcons());
+            } else {
+                //Remaining four synonyms should all be disabled
+                assertEquals("Too many synonyms are disabled on synonym delete", 4, keywordsPage.countRefreshIcons());
+            }
+
+            Thread.sleep(3000);
 			assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
 		}
 	}

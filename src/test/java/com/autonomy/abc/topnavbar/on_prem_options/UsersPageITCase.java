@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -258,14 +259,14 @@ public class UsersPageITCase extends ABCTestBase {
 		loginPage.login("Norman", "n");
 		loginPage = body.getLoginOnPremisePage();
 		assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your username and password."));
-		assertThat("URL wrong", getDriver().getCurrentUrl().contains("login/index"));
+        assertThat("URL wrong",getDriver().getCurrentUrl(),containsString("login"));
 	}
 
 	@Test
 	public void testAnyUserCanNotAccessConfigPage() {
 		String baseUrl = config.getWebappUrl();
-		baseUrl = baseUrl.substring(0, baseUrl.length());
-		getDriver().get(baseUrl + "/config");
+		baseUrl = baseUrl.replace("/p/","/config");
+		getDriver().get(baseUrl);
 		body.loadOrFadeWait();
 		assertTrue("Users are not allowed to access the config page", getDriver().findElement(By.cssSelector("body")).getText().contains("Authentication Failed"));
 	}

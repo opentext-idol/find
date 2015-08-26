@@ -344,11 +344,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 		assertThat("Wrong document spotlighted", searchPage.getTopPromotedLinkTitle().equals(promotedDocTitle));
 		assertThat("Wrong spotlight button text", searchPage.getTopPromotedLinkButtonText().equals(spotlightType));
 
-		searchPage.showHideUnmodifiedResults().click();
+		searchPage.modifiedResultsCheckBox().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Modified results have not been hidden", !searchPage.getText().contains(promotedDocTitle));
 
-		searchPage.showHideUnmodifiedResults().click();
+		searchPage.modifiedResultsCheckBox().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Modified results have not been shown", searchPage.getText().contains(promotedDocTitle));
 

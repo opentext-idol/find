@@ -88,6 +88,8 @@ public class SettingsPageITCase extends ABCTestBase {
 	@Test
 	public void testAllSettingsPanelsPresent() {
 		for (final SettingsPage.Panel panel : SettingsPage.Panel.values()) {
+			if (panel.equals(SettingsPage.Panel.LOCALE)) continue;
+
 			assertTrue(settingsPage.getPanelWithName(panel.getTitle()).isDisplayed());
 		}
 	}
@@ -222,7 +224,6 @@ public class SettingsPageITCase extends ABCTestBase {
 			}
 		}
 
-		settingsPage.selectLocale("English (UK)");
 		settingsPage.saveChanges();
 	}
 
