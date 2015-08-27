@@ -23,7 +23,7 @@ define([
             var success = options.success;
 
             this.currentRequest = Backbone.Collection.prototype.fetch.call(this, _.extend(options || {}, {
-                reset: options.reset || true,
+                reset: _.isUndefined(options.reset) ? true : options.reset,
                 success: _.bind(function() {
                     this.currentRequest = null;
 

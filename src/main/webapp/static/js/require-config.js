@@ -14,6 +14,7 @@ require.config({
         iCheck: '../lib/icheck/icheck',
         'peg': '../lib/pegjs/peg-0.8.0',
         'fieldtext': '../lib/hp-autonomy-fieldtext-js/src',
+        'parametric-refinement': '../lib/hp-autonomy-js-parametric-refinement/src',
         jquery: '../lib/jquery/jquery',
         'js-whatever': '../lib/hp-autonomy-js-whatever/src',
         json2: '../lib/json/json2',
