@@ -29,7 +29,7 @@
     "hp-autonomy-settings-page": "~0.1.0",
     "hp-autonomy-bootstrap-2": "~2.3.2",
     "hp-autonomy-fieldtext-js": "~1.1.0",
-    "hp-autonomy-js-parametric-refinement": "~0.1.0",
+    "hp-autonomy-js-parametric-refinement": "~0.1.1",
     "requirejs": "~2.1.15",
     "requirejs-text": "~2.0.13",
     "requirejs-i18n": "~2.0.4",
