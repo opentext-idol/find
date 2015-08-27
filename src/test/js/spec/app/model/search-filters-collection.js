@@ -269,6 +269,20 @@ define([
                     expect(vehicleModel.get('text')).toContain('car');
                 });
             });
+
+            describe('then the AGE filter model is removed', function() {
+                beforeEach(function() {
+                    this.collection.remove(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'}));
+                });
+
+                it('contains three models', function() {
+                    expect(this.collection.length).toBe(3);
+                });
+
+                it('still contains the NAME parametric filter model', function() {
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'})).toBeDefined();
+                });
+            });
         });
     });
 

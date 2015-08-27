@@ -219,7 +219,8 @@ define([
                     merge: true
                 });
             } else {
-                this.remove(id);
+                // this.remove(id) doesn't work when this has been called in response to a different remove event
+                this.remove(this.where({id: id}));
             }
         },
 
