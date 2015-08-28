@@ -46,7 +46,9 @@ public class ParametricValuesServiceImpl implements ParametricValuesService {
 
         for (final String name : fieldNamesSet) {
             final Set<FieldNames.ValueAndCount> values = new HashSet<>(fieldNames.getValuesAndCountsForFieldName(name));
-            parametricFieldNames.add(new ParametricFieldName(name, values));
+            if(!values.isEmpty()) {
+                parametricFieldNames.add(new ParametricFieldName(name, values));
+            }
         }
 
         return parametricFieldNames;

@@ -85,7 +85,7 @@ define([
                             max_results: 30,
                             summary: 'context',
                             index: this.queryModel.get('indexes'),
-                            field_text: this.queryModel.getFieldTextString(),
+                            field_text: this.queryModel.get('fieldText'),
                             min_date: this.queryModel.getIsoDate('minDate'),
                             max_date: this.queryModel.getIsoDate('maxDate'),
                             sort: this.queryModel.get('sort')
@@ -100,7 +100,7 @@ define([
                         max_results: 30, // TODO maybe less?
                         summary: 'context',
                         index: this.queryModel.get('indexes'),
-                        field_text: this.queryModel.getFieldTextString(),
+                        field_text: this.queryModel.get('fieldText'),
                         min_date: this.queryModel.getIsoDate('minDate'),
                         max_date: this.queryModel.getIsoDate('maxDate'),
                         sort: this.queryModel.get('sort')

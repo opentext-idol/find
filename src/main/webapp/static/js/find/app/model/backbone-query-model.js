@@ -17,20 +17,6 @@ define([
             sort: Sort.relevance
         },
 
-        getFieldTextString: function() {
-            var fieldText = this.get('fieldText');
-
-            if(fieldText) {
-                return fieldText.toString();
-            } else {
-                return null;
-            }
-        },
-
-        setParametricFieldText: function(fieldText) {
-            this.set('fieldText', fieldText);
-        },
-
         getIsoDate: function(type) {
             var date = this.get(type);
             if(date) {

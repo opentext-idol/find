@@ -2,19 +2,21 @@ define([
     'mock/backbone-mock-factory',
     'find/app/model/dates-filter-model',
     'find/app/model/search-filters-collection',
+    'parametric-refinement/selected-values-collection',
     'mock/model/indexes-collection',
     'find/app/model/backbone-query-model',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'backbone',
     'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, IndexesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
+], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, IndexesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
 
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
         domain: 'TESTDOMAIN',
         name: 'wookiepedia'
     };
+
     var WIKI_ENG = {
         id: 'TESTDOMAIN:wiki_eng',
         domain: 'TESTDOMAIN',
@@ -24,7 +26,7 @@ define([
     var INITIAL_MIN_DATE = moment();
     var DATE_FORMAT = 'LLL';
 
-    describe('Search filters collection initialised with an indexes filter and DatesFilterModel with a min date set', function() {
+    describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function() {
         beforeEach(function() {
             IndexesCollection.reset();
 
@@ -49,15 +51,20 @@ define([
                 minDate: INITIAL_MIN_DATE
             });
 
+            this.selectedParametricValues = new SelectedParametricValues([
+                {field: 'AGE', value: '4'}
+            ]);
+
             this.collection = new FiltersCollection([], {
                 queryModel: this.queryModel,
                 datesFilterModel: this.datesFilterModel,
-                indexesCollection: this.indexesCollection
+                indexesCollection: this.indexesCollection,
+                selectedParametricValues: this.selectedParametricValues
             });
         });
 
-        it('contains two models', function() {
-            expect(this.collection.length).toBe(2);
+        it('contains three models', function() {
+            expect(this.collection.length).toBe(3);
         });
 
         it('contains a min date filter model', function() {
@@ -73,6 +80,14 @@ define([
             expect(model.get('text')).not.toContain(WOOKIEPEDIA.name);
         });
 
+        it('contains an AGE parametric field filter model', function() {
+            var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC});
+            expect(model).toBeDefined();
+            expect(model.get('field')).toBe('AGE');
+            expect(model.get('text')).toContain('AGE');
+            expect(model.get('text')).toContain('4');
+        });
+
         describe('after datesFilterModel has a maxDate set', function() {
             beforeEach(function() {
                 this.maxDate = moment(INITIAL_MIN_DATE).add(2, 'days');
@@ -85,8 +100,8 @@ define([
                 });
             });
 
-            it('contains three models', function() {
-                expect(this.collection.length).toBe(3);
+            it('contains four models', function() {
+                expect(this.collection.length).toBe(4);
             });
 
             it('contains a max date filter model with the correct date', function() {
@@ -109,14 +124,14 @@ define([
                 this.queryModel.set('minDate', this.minDate);
             });
 
-            it('contains two models', function() {
-                expect(this.collection.length).toBe(2);
+            it('contains three models', function() {
+                expect(this.collection.length).toBe(3);
             });
 
             it('updates the min date filter model', function() {
                 var model = this.collection.get(FiltersCollection.FilterTypes.minDate);
                 expect(model.get('text')).toContain(i18n['app.from']);
-                expect(model.get('text')).toContain(moment(this.minDate).format(DATE_FORMAT))
+                expect(model.get('text')).toContain(moment(this.minDate).format(DATE_FORMAT));
             });
         });
 
@@ -129,8 +144,8 @@ define([
                 });
             });
 
-            it('contains one model', function() {
-                expect(this.collection.length).toBe(1);
+            it('contains two models', function() {
+                expect(this.collection.length).toBe(2);
             });
 
             it('removes the databases filter model', function() {
@@ -144,8 +159,8 @@ define([
                     });
                 });
 
-                it('contains two models', function() {
-                    expect(this.collection.length).toBe(2);
+                it('contains three models', function() {
+                    expect(this.collection.length).toBe(3);
                 });
 
                 it('adds a databases filter model', function() {
@@ -172,92 +187,100 @@ define([
             });
         });
 
-        describe('after setParametricFieldText is called with a field text node containing restrictions on the AGE and NAME fields', function() {
+        describe('after the parametric filter model is removed', function() {
             beforeEach(function() {
-                var node = fieldTextParser.parse('MATCH{4}:AGE AND MATCH{bobby,penny}:NAME');
-                node.left.displayField = 'Age';
-                node.right.displayField = 'Name';
+                this.collection.remove(this.collection.where({type: FiltersCollection.FilterTypes.PARAMETRIC}));
+            });
 
-                this.collection.setParametricFieldText(node);
+            it('removes the associated model from the selected parametric values collection', function() {
+                expect(this.selectedParametricValues.length).toBe(0);
+            });
+        });
+
+        describe('after two more parametric values are selected from the NAME field', function() {
+            beforeEach(function() {
+                this.selectedParametricValues.add([
+                    {field: 'NAME', value: 'bobby'},
+                    {field: 'NAME', value: 'penny'}
+                ]);
             });
 
             it('contains four models', function() {
                 expect(this.collection.length).toBe(4);
             });
 
-            it('contains an AGE parametric filter model', function() {
-                var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'});
-                expect(model).toBeDefined();
-                expect(model.get('text')).toContain('Age');
-                expect(model.get('text')).toContain('4');
-            });
-
             it('contains a NAME parametric filter model', function() {
                 var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'});
                 expect(model).toBeDefined();
-                expect(model.get('text')).toContain('Name');
-                expect(model.get('text')).toContain('penny');
+                expect(model.get('text')).toContain('NAME');
                 expect(model.get('text')).toContain('bobby');
+                expect(model.get('text')).toContain('penny');
             });
 
-            describe('then setParametricFieldText is called with a field text node containing a restriction on only the AGE field', function() {
+            describe('then one of the NAME values is deselected', function() {
                 beforeEach(function() {
-                    var node = fieldTextParser.parse('MATCH{6}:AGE');
-                    node.displayField = 'Age';
-                    this.collection.setParametricFieldText(node);
-                });
-
-                it('contains three models', function() {
-                    expect(this.collection.length).toBe(3);
-                });
-
-                it('contains an AGE parametric filter model', function() {
-                    var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'});
-                    expect(model).toBeDefined();
-                    expect(model.get('text')).toContain('Age');
-                    expect(model.get('text')).toContain('6');
-                });
-            });
-
-            describe('then setParametricFieldText is called with a field text node containing a restriction on the GENDER field a different restriction on the NAME field', function() {
-                beforeEach(function() {
-                    var node = fieldTextParser.parse('MATCH{female}:GENDER AND MATCH{jo,jamie}:NAME');
-                    node.left.displayField = 'Gender';
-                    node.right.displayField = 'Name';
-                    this.collection.setParametricFieldText(node);
+                    this.selectedParametricValues.remove(this.selectedParametricValues.findWhere({field: 'NAME', value: 'penny'}));
                 });
 
                 it('contains four models', function() {
                     expect(this.collection.length).toBe(4);
                 });
 
-                it('contains a GENDER parametric filter model', function() {
-                    var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'GENDER'});
-                    expect(model).toBeDefined();
-                    expect(model.get('text')).toContain('Gender');
-                    expect(model.get('text')).toContain('female');
-                });
-
-                it('contains a NAME parametric filter model', function() {
+                it('removes the deselected field value from the NAME parametric filter model', function() {
                     var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'});
-                    expect(model).toBeDefined();
-                    expect(model.get('text')).toContain('Name');
-                    expect(model.get('text')).toContain('jamie');
-                    expect(model.get('text')).toContain('jo');
+                    expect(model.get('text')).toContain('NAME');
+                    expect(model.get('text')).toContain('bobby');
+                    expect(model.get('text')).not.toContain('penny');
                 });
             });
 
-            describe('then setParametricFieldText is called with null', function() {
+            describe('then the AGE parametric value is deselected', function() {
                 beforeEach(function() {
-                    this.collection.setParametricFieldText(null);
+                    this.selectedParametricValues.remove(this.selectedParametricValues.findWhere({field: 'AGE', value: '4'}));
                 });
 
-                it('contains two models', function() {
-                    expect(this.collection.length).toBe(2);
+                it('contains three models', function() {
+                    expect(this.collection.length).toBe(3);
                 });
 
-                it('contains no parametric filter models', function() {
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC})).toBeUndefined();
+                it('removes the AGE filter model', function() {
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'})).toBeUndefined();
+                });
+            });
+
+            describe('then the selected parametric values collection is reset with a new selected field', function() {
+                beforeEach(function() {
+                    this.selectedParametricValues.reset([
+                        {field: 'VEHICLE', value: 'car'}
+                    ]);
+                });
+
+                it('contains three models', function() {
+                    expect(this.collection.length).toBe(3);
+                });
+
+                it('replaces all parametric filter models with one representing the new field', function() {
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'})).toBeUndefined();
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'})).toBeUndefined();
+
+                    var vehicleModel = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'VEHICLE'});
+                    expect(vehicleModel).toBeDefined();
+                    expect(vehicleModel.get('text')).toContain('VEHICLE');
+                    expect(vehicleModel.get('text')).toContain('car');
+                });
+            });
+
+            describe('then the AGE filter model is removed', function() {
+                beforeEach(function() {
+                    this.collection.remove(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'}));
+                });
+
+                it('contains three models', function() {
+                    expect(this.collection.length).toBe(3);
+                });
+
+                it('still contains the NAME parametric filter model', function() {
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'})).toBeDefined();
                 });
             });
         });
