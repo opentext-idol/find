@@ -24,7 +24,7 @@
     "jquery": "components/jquery#~1.10.2",
     "json": "json2#*",
     "underscore": "~1.8.3",
-    "hp-autonomy-js-whatever": "~2.2.0",
+    "hp-autonomy-js-whatever": "~2.3.0",
     "hp-autonomy-login-page": "~1.0.2",
     "hp-autonomy-settings-page": "~0.1.0",
     "hp-autonomy-bootstrap-2": "~2.3.2",
@@ -37,7 +37,8 @@
     "moment": "~2.10.3",
     "eonasdan-bootstrap-datetimepicker": "~4.14.30",
     "bootstrap-timepicker": "tarruda/bootstrap-datetimepicker",
-    "hp-autonomy-hod-sso-js": "~0.2.2"
+    "hp-autonomy-hod-sso-js": "~0.2.2",
+    "hp-autonomy-js-databases-view": "~0.1.0"
   },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "~1.1.1",
@@ -45,9 +46,9 @@
   },
   "resolutions": {
     "underscore": "~1.8.3",
-    "hp-autonomy-js-whatever": "~2.2.0",
+    "hp-autonomy-js-whatever": "~2.3.0",
     "jquery": "~1.10.2",
-    "backbone": "~1.2.0",
+    "backbone": "~1.2.1",
     "jasmine": ">=2"
   }
 }

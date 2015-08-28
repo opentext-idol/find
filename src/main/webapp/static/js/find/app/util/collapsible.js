@@ -7,11 +7,11 @@ define([
         template: _.template(collapsibleTemplate, {variable: 'data'}),
 
         events: {
-            'show.bs.collapse': function() {
+            'show.bs.collapse .collapsible-header': function() {
                 this.collapsed = false;
                 this.updateHeaderState();
             },
-            'hide.bs.collapse': function() {
+            'hide.bs.collapse .collapsible-header': function() {
                 this.collapsed = true;
                 this.updateHeaderState();
             }
