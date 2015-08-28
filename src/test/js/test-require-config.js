@@ -6,8 +6,8 @@
 require.config({
     baseUrl: 'src/main/webapp/static/js',
     paths: {
-        'jasmine-jquery': '../lib/jasmine-jquery/lib/jasmine-jquery',
-        'js-testing': '../lib/hp-autonomy-js-testing-utils/src/js',
+        'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
+        'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
         'mock': '../../../../test/js/mock'
     },
     shim: {

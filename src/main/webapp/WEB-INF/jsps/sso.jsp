@@ -12,8 +12,8 @@
     <title>Find</title>
     <link rel="icon" type="image/ico" href="${staticPath}/favicon.ico">
     <script type="application/json" id="config-json"><c:out value="${configJson}" escapeXml="false"/></script>
-    <script src="${staticPath}/lib/hp-autonomy-hod-sso-js/src/js/authenticate-combined.js"></script>
-    <script src="${staticPath}/lib/hp-autonomy-hod-sso-js/src/js/sso.js"></script>
+    <script src="${staticPath}/bower_components/hp-autonomy-hod-sso-js/src/js/authenticate-combined.js"></script>
+    <script src="${staticPath}/bower_components/hp-autonomy-hod-sso-js/src/js/sso.js"></script>
 </head>
 <body>
     <form method="post" id="authenticate-form" style="display: none;"></form>

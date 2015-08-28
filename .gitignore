@@ -19,7 +19,7 @@ filter-dev.properties
 src/test/js/lib/
 .vagrant/
 
-src/main/webapp/static/lib/
+src/main/webapp/static/bower_components/
 node_modules/
 .grunt/
 spec-runner.html
