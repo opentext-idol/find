@@ -35,6 +35,8 @@ import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricVa
 import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsServiceImpl;
+import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
+import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarServiceImpl;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServiceImpl;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
@@ -285,5 +287,10 @@ public class AppConfiguration {
     @Bean
     public HodViewService hodViewService() {
         return new HodViewServiceImpl(viewDocumentService(), getContentService(), queryTextIndexService());
+    }
+
+    @Bean
+    public FindSimilarService<Documents> findSimilarService() {
+        return FindSimilarServiceImpl.documentsService(hodServiceConfig());
     }
 }
