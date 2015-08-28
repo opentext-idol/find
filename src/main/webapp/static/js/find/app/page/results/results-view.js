@@ -42,7 +42,7 @@ define([
     return Backbone.View.extend({
 
         template: _.template(resultsView),
-        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
+        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),

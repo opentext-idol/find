@@ -16,7 +16,7 @@ define([
         template: _.template(relatedConceptsView),
         listItemTemplate: _.template(relatedConceptListItemTemplate),
         topResultsPopoverContents: _.template(topResultsPopoverContents),
-        loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
+        loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
 
         events: {
             'mouseover a': _.debounce(function(e) {

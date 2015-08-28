@@ -334,31 +334,24 @@ input.find-input {
     font-weight: 900;
 }
 
-.results-container .loading-spinner {
-    line-height: 32px;
-    margin: auto;
-    padding: 20px;
-    text-align: center;
-    width: 200px;
-    font-size: 28px;
-    color: rgb(91, 145, 214);
-}
-
 .results-container .result-message {
     font-size: 28px;
     color: rgb(91, 145, 214);
 }
 
-
-.results-container .loading-spinner i, .related-concepts-container .loading-spinner i, .parametric-container .loading-spinner i {
-    color:rgb(91, 145, 214);
-}
-
-.related-concepts-container .loading-spinner,
-.parametric-container .loading-spinner {
+/* Loading spinner */
+.loading-spinner {
     text-align: center;
     font-size: 18px;
+}
+
+.loading-spinner, .loading-spinner i {
     color: rgb(91, 145, 214);
+}
+
+.loading-spinner.loading-spinner-lg {
+    font-size: 28px;
+    line-height: 32px;
 }
 
 /* fancy colourbox buttons */
