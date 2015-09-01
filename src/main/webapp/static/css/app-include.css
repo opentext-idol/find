@@ -620,7 +620,8 @@ input:-moz-placeholder::before {
 }
 
 /* Rotating chevrons on collapsible panels *******************/
-.collapsed .rotating-chevron {
+.collapsed .rotating-chevron,
+.collapsed.rotating-chevron {
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
     -webkit-transform: rotate(270deg);
     -ms-transform: rotate(270deg);
@@ -635,4 +636,19 @@ input:-moz-placeholder::before {
 
 .clickable {
     cursor: pointer;
+}
+
+/* Indexes View */
+.database-name,
+.category-name {
+    padding: 0 8px; /* Same as table padding so it lines up */
+}
+
+.category-name {
+    font-weight: bold;
+}
+
+.database-input > span,
+.category-input > span {
+    display: inline-block;
 }

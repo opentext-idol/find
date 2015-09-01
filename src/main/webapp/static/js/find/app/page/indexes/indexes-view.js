@@ -1,105 +1,133 @@
 define([
     'backbone',
     'underscore',
-    'text!find/templates/app/page/index-list.html',
-    'text!find/templates/app/page/index-item.html',
-    'js-whatever/js/list-view'
-], function(Backbone, _, listTemplate, itemTemplate, ListView) {
+    'databases-view/js/databases-view',
+    'i18n!find/nls/bundle',
+    'text!find/templates/app/page/indexes/indexes-view.html',
+    'text!find/templates/app/page/indexes/index-list.html',
+    'text!find/templates/app/page/indexes/index-item.html'
+], function(Backbone, _, DatabasesView, i18n, template, listTemplate, itemTemplate) {
 
-    return Backbone.View.extend({
-        listTemplate: _.template(listTemplate),
-        itemTemplate: _.template(itemTemplate),
-        className: 'table',
-        tagName: 'table',
+    var CHECKED_CLASS = 'icon-ok';
+    var INDETERMINATE_CLASS = 'icon-minus';
+    var DISABLED_CLASS = 'disabled';
+
+    var ICON_SELECTOR = '> span > .database-icon';
+
+    return DatabasesView.extend({
+        template: _.template(template),
+        categoryTemplate: _.template(listTemplate),
+        databaseTemplate: _.template(itemTemplate),
 
         events: {
-            'click tr': function(e) {
-                var toggledIndex = $(e.currentTarget).data('id');
+            'click li[data-id]': function(e) {
+                e.stopPropagation();
 
-                this.changeIndex(toggledIndex);
+                var $target = $(e.currentTarget).find('.database-input');
+                var index = $target.attr('data-id');
+                var domain = $target.attr('data-domain');
+                var checked = $target.find('i').hasClass('icon-ok');
+
+                this.selectDatabase(index, domain, !checked);
+            },
+            'click .category-input': function(e) {
+                // data-target means they've clicked a chevron, so we want to collapse stuff
+                if (!$(e.target).attr('data-target')) {
+                    e.stopPropagation();
+
+                    var $target = $(e.currentTarget);
+                    var category = $target.attr('data-category-id');
+                    var checked = $target.find('i').hasClass('icon-ok');
+
+                    this.selectCategory(category, !checked);
+                }
+            },
+            'show.bs.collapse': function(e) {
+                e.stopPropagation();
+
+                $(e.target).parent().find('> span > i[data-target]').removeClass('collapsed');
+            },
+            'hide.bs.collapse': function(e) {
+                e.stopPropagation();
+
+                $(e.target).parent().find('> span > i[data-target]').addClass('collapsed');
             }
         },
 
         initialize: function (options) {
             this.queryModel = options.queryModel;
-            this.indexesCollection = options.indexesCollection;
 
-            this.indexes = {};
-
-            this.listenTo(this.indexesCollection, 'sync', function() {
-                this.selectAll();
-
-                this.listView = new ListView({
-                    collection: this.indexesCollection,
-                    itemOptions: {
-                        tagName: 'tr',
-                        className: 'clickable',
-                        template: this.itemTemplate
-                    }
-                });
-
-                this.trigger('sync');
-
-                this.listView.setElement(this.$el).render();
-
+            this.on('change', function() {
+                this.updateQueryModel(this.getSelection())
             }, this);
 
+            DatabasesView.prototype.initialize.call(this, {
+                databasesCollection: options.indexesCollection,
+                emptyMessage: i18n['search.indexes.empty'],
+                topLevelDisplayName: i18n['search.indexes.all'],
+                childCategories: [
+                    {
+                        name: 'public',
+                        displayName: i18n['search.indexes.publicIndexes'],
+                        className: 'list-unstyled',
+                        filter: function(model) {
+                            return model.get('domain') === 'PUBLIC_INDEXES';
+                        }
+                    }, {
+                        name: 'private',
+                        displayName: i18n['search.indexes.privateIndexes'],
+                        className: 'list-unstyled',
+                        filter: function(model) {
+                            return model.get('domain') !== 'PUBLIC_INDEXES';
+                        }
+                    }
+                ]
+            });
+
             this.listenTo(this.queryModel, 'change:indexes', function(model, queryModelIndexes) {
-                this.indexes = {};
+                this.currentSelection = _.map(this.collection.filter(function (model) {
+                    return _.contains(queryModelIndexes, model.id);
+                }), function (model) {
+                    return model.pick('name', 'domain');
+                });
 
-                _.each(queryModelIndexes, function(index) {
-                    this.indexes[index] = true;
-                }, this);
+                if(!this.forceSelection && this.currentSelection.length === options.indexesCollection.size()) {
+                    this.currentSelection = [];
+                }
 
-                this.update();
+                this.updateCheckedOptions();
             });
         },
 
-        render: function() {
-            this.$el.html(this.listTemplate());
+        check: function($input) {
+            $input.find(ICON_SELECTOR).addClass(CHECKED_CLASS).removeClass(INDETERMINATE_CLASS);
         },
 
-        selectedIndexes: function() {
-            return _.chain(this.indexes).map(function(value, key) {
-                return (value ? key : undefined); // Return names of selected indexes and undefined for unselected ones
-            }).compact().value();
+        uncheck: function($input) {
+            $input.find(ICON_SELECTOR).removeClass(CHECKED_CLASS).removeClass(INDETERMINATE_CLASS);
         },
 
-        changeIndex: function(toggledIndex) {
-            this.indexes[toggledIndex] = !this.indexes[toggledIndex];
-
-            this.updateQueryModel(this.selectedIndexes());
+        enable: function($input) {
+            $input.find(ICON_SELECTOR).removeClass(DISABLED_CLASS);
         },
 
-        update: function() {
-            this.$('i').addClass('hide');
-
-            _.each(this.indexes, function(value, key) {
-                var checkbox = this.$("tr[data-id='" + key + "'] i");
-
-                checkbox.toggleClass('hide', !value);
-            }, this);
-
-            var selectedIndexes = this.selectedIndexes();
-
-            if(selectedIndexes.length === 1) {
-                this.$('tr[data-id="' + selectedIndexes[0] + '"]').addClass('disabled-index');
-            } else {
-                this.$('tr[data-id]').removeClass('disabled-index');
-            }
+        disable: function($input) {
+            $input.find(ICON_SELECTOR).addClass(DISABLED_CLASS);
         },
 
-        selectAll: function() {
-            this.indexesCollection.each(function(indexModel) {
-                this.indexes[indexModel.id] = true;
-            }, this);
+        determinate: function($input) {
+            $input.find(ICON_SELECTOR).removeClass(INDETERMINATE_CLASS);
+        },
 
-            this.updateQueryModel(this.selectedIndexes());
+        indeterminate: function($input) {
+            $input.find(ICON_SELECTOR).addClass(INDETERMINATE_CLASS);
         },
 
         updateQueryModel: function(selectedIndexes) {
             this.queryModel.set({
-                indexes: selectedIndexes
+                indexes: _.map(selectedIndexes, function(index) {
+                    return this.collection.findWhere(index).id;
+                }, this)
             });
         }
     });
