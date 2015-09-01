@@ -9,6 +9,7 @@ define([
     'find/app/util/document-mime-types',
     'js-whatever/js/escape-regex',
     'text!find/templates/app/page/results-popover.html',
+    'text!find/templates/app/page/popover-message.html',
     'text!find/templates/app/page/results/results-view.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/colorbox-controls.html',
@@ -20,8 +21,8 @@ define([
     'i18n!find/nls/bundle',
     'colorbox'
 ], function(Backbone, $, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover, viewClient, documentMimeTypes,
-            escapeRegex, popoverTemplate, template, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate,
-            mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
+            escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate, colorboxControlsTemplate,
+            loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
 
     /** Whitespace OR character in set bounded by [] */
     var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
@@ -47,6 +48,7 @@ define([
     return Backbone.View.extend({
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
+        popoverMessageTemplate: _.template(popoverMessageTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         popoverTemplate: _.template(popoverTemplate),
@@ -371,13 +373,15 @@ define([
             });
 
             collection.fetch({
-                error: function() {
-                    // TODO: Error handling
-                    console.error('error', arguments);
-                },
+                error: _.bind(function() {
+                    $content.html(this.popoverMessageTemplate({message: i18n['search.similarDocuments.error']}));
+                }, this),
                 success: _.bind(function() {
-                    // TODO: Empty handling
-                    $content.html(this.popoverTemplate({collection: collection}));
+                    if (collection.isEmpty()) {
+                        $content.html(this.popoverMessageTemplate({message: i18n['search.similarDocuments.none']}));
+                    } else {
+                        $content.html(this.popoverTemplate({collection: collection}));
+                    }
                 }, this)
             });
         }

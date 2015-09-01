@@ -12,6 +12,7 @@ define([
 ], function(_, $, i18n, loadingTemplate) {
 
     var smallLoadingTemplate = _.template(loadingTemplate)({i18n: i18n, large: false});
+    var initialContent = '<div class="popover-content-inner">' + smallLoadingTemplate + '</div>';
 
     /**
      * Add popovers to the given element(s). When the popover is inserted into the DOM, the callback will be called with
@@ -22,13 +23,17 @@ define([
      */
     return function($el, callback) {
         $el.popover({
-            content: smallLoadingTemplate,
+            content: initialContent,
             html: true,
             placement: 'bottom',
             trigger: 'hover'
         }).on('inserted.bs.popover', function(e) {
             var $target = $(e.currentTarget);
-            callback($target.siblings('.popover').find('.popover-content'), $target);
+
+            // Don't pass the bootstrap .popover-content element to the caller since this element can be preserved between
+            // popover openings. The .popover-content-inner element will be destroyed each time, so we don't have to track
+            // the state ourselves.
+            callback($target.siblings('.popover').find('.popover-content-inner'), $target);
         });
     };
 

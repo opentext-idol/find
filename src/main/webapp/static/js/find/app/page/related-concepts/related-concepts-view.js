@@ -8,10 +8,11 @@ define([
     'find/app/util/view-state-selector',
     'text!find/templates/app/page/related-concepts/related-concepts-view.html',
     'text!find/templates/app/page/related-concepts/related-concept-list-item.html',
+    'text!find/templates/app/page/popover-message.html',
     'text!find/templates/app/page/results-popover.html',
     'text!find/templates/app/page/loading-spinner.html'
 ], function(Backbone, $, _, i18n, DocumentsCollection, popover, viewStateSelector, relatedConceptsView, relatedConceptListItemTemplate,
-            popoverTemplate, loadingSpinnerTemplate) {
+            popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
 
     function popoverHandler($content, $target) {
         var queryText = $target.text();
@@ -28,8 +29,15 @@ define([
                 summary: 'context',
                 index: this.queryModel.get('indexes')
             },
+            error: _.bind(function() {
+                $content.html(this.popoverMessageTemplate({message: i18n['search.relatedConcepts.topResults.error']}));
+            }, this),
             success: _.bind(function() {
-                $content.html(this.popoverTemplate({collection: topResultsCollection}));
+                if (topResultsCollection.isEmpty()) {
+                    $content.html(this.popoverMessageTemplate({message: i18n['search.relatedConcepts.topResults.none']}));
+                } else {
+                    $content.html(this.popoverTemplate({collection: topResultsCollection}));
+                }
             }, this)
         });
     }
@@ -40,6 +48,7 @@ define([
         template: _.template(relatedConceptsView),
         listItemTemplate: _.template(relatedConceptListItemTemplate),
         popoverTemplate: _.template(popoverTemplate),
+        popoverMessageTemplate: _.template(popoverMessageTemplate),
         loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
 
         events: {
