@@ -5,11 +5,13 @@
 
 define([
     'underscore',
-    'find/app/model/find-base-collection'
-], function(_, BaseCollection) {
+    'find/app/model/find-base-collection',
+    'find/app/model/document-model'
+], function(_, BaseCollection, DocumentModel) {
 
     return BaseCollection.extend({
         url: '../api/public/search/similar-documents',
+        model: DocumentModel,
 
         initialize: function(models, options) {
             this.indexes = options.indexes;
