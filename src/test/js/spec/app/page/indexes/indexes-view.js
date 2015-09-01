@@ -14,7 +14,7 @@ define([
 
         var idElement = function(indexesView) {
             return function(id) {
-                return indexesView.$("tr[data-id='" + id + "']");
+                return indexesView.$(".database-input[data-id='" + id + "']");
             }
         };
 
@@ -34,13 +34,17 @@ define([
 
             this.indexesView.render();
 
-            this.indexesCollection.set([
+            this.indexesCollection.getResourceIdentifiers.and.returnValue([
+                {domain: DOMAIN, name: INDEX[0]},
+                {domain: DOMAIN, name: INDEX[1]},
+                {domain: DOMAIN, name: INDEX[2]}
+            ]);
+
+            this.indexesCollection.reset([
                 {name: INDEX[0], domain: DOMAIN, id: indexId(INDEX[0])},
                 {name: INDEX[1], domain: DOMAIN, id: indexId(INDEX[1])},
                 {name: INDEX[2], domain: DOMAIN, id: indexId(INDEX[2])}
             ]);
-
-            this.indexesCollection.trigger('sync');
         });
 
         describe('after initialization', function() {
@@ -64,7 +68,7 @@ define([
                 expect(checkboxHidden).not.toBeDefined();
             });
 
-            it('should inform the query model with all the indexes by default', function() {
+            it('should update the query model with all the indexes by default', function() {
                 var indexes = this.queryModel.get('indexes');
 
                 expect(indexes).toContain(indexId(INDEX[0]));
@@ -74,29 +78,29 @@ define([
 
             describe('clicking an index once', function() {
                 beforeEach(function() {
-                    this.idElement(indexId(INDEX[0])).click();
+                    this.idElement(INDEX[0]).click();
                 });
 
-                it("should remove an index from the query model", function() {
-                    expect(this.queryModel.get('indexes')).not.toContain(indexId(INDEX[0]));
-                    expect(this.queryModel.get('indexes')).toContain(indexId(INDEX[1]));
-                    expect(this.queryModel.get('indexes')).toContain(indexId(INDEX[2]));
+                it("should add an index to the query model", function() {
+                    expect(this.queryModel.get('indexes')).toContain(indexId(INDEX[0]));
+                    expect(this.queryModel.get('indexes')).not.toContain(indexId(INDEX[1]));
+                    expect(this.queryModel.get('indexes')).not.toContain(indexId(INDEX[2]));
                 });
 
-                it("should uncheck the clicked index", function() {
-                    var checkedCheckbox = this.idElement(indexId(INDEX[0])).find('i');
-                    var uncheckedCheckboxOne = this.idElement(indexId(INDEX[1])).find('i');
-                    var uncheckedCheckboxTwo = this.idElement(indexId(INDEX[2])).find('i');
+                it("should check the clicked index", function() {
+                    var checkedCheckbox = this.idElement(INDEX[0]).find('i');
+                    var uncheckedCheckboxOne = this.idElement(INDEX[1]).find('i');
+                    var uncheckedCheckboxTwo = this.idElement(INDEX[2]).find('i');
 
-                    expect(checkedCheckbox.hasClass('hide')).toBe(true);
-                    expect(uncheckedCheckboxOne.hasClass('hide')).toBe(false);
-                    expect(uncheckedCheckboxTwo.hasClass('hide')).toBe(false);
+                    expect(checkedCheckbox).toHaveClass('icon-ok');
+                    expect(uncheckedCheckboxOne).not.toHaveClass('icon-ok');
+                    expect(uncheckedCheckboxTwo).not.toHaveClass('icon-ok');
                 });
             });
 
             describe('clicking an index twice', function() {
                 beforeEach(function() {
-                    this.idElement(indexId(INDEX[0])).click().click();
+                    this.idElement(INDEX[0]).click().click();
                 });
 
                 it("should leave the query model unchanged", function() {
@@ -114,19 +118,6 @@ define([
                 });
             });
 
-            describe('removing all the indexes except one', function() {
-                beforeEach(function() {
-                    // click all the checkboxes except the first one
-                    _.each(_.tail(INDEX), function(index) {
-                        this.idElement(indexId(index)).click();
-                    }, this)
-                });
-
-                it('should disable the last item', function() {
-                    expect(this.idElement(indexId(INDEX[0])).hasClass('disabled-index')).toBe(true);
-                });
-            })
-
         });
 
         describe('when the query model', function() {
@@ -136,13 +127,13 @@ define([
                 });
 
                 it('should select the right indexes', function() {
-                    var checkedCheckbox = this.idElement(indexId(INDEX[0])).find('i');
-                    var uncheckedCheckboxOne = this.idElement(indexId(INDEX[1])).find('i');
-                    var uncheckedCheckboxTwo = this.idElement(indexId(INDEX[2])).find('i');
+                    var uncheckedCheckbox = this.idElement(INDEX[0]).find('i');
+                    var checkedCheckboxOne = this.idElement(INDEX[1]).find('i');
+                    var checkedCheckboxTwo = this.idElement(INDEX[2]).find('i');
 
-                    expect(checkedCheckbox.hasClass('hide')).toBe(true);
-                    expect(uncheckedCheckboxOne.hasClass('hide')).toBe(false);
-                    expect(uncheckedCheckboxTwo.hasClass('hide')).toBe(false);
+                    expect(uncheckedCheckbox).not.toHaveClass('icon-ok');
+                    expect(checkedCheckboxOne).toHaveClass('icon-ok');
+                    expect(checkedCheckboxTwo).toHaveClass('icon-ok');
                 });
             });
 
@@ -152,17 +143,13 @@ define([
                 });
 
                 it('should select only the first index', function() {
-                    var uncheckedCheckbox = this.idElement(indexId(INDEX[0])).find('i');
-                    var checkedCheckboxOne = this.idElement(indexId(INDEX[1])).find('i');
-                    var checkedCheckboxTwo = this.idElement(indexId(INDEX[2])).find('i');
+                    var checkedCheckbox = this.idElement(INDEX[0]).find('i');
+                    var uncheckedCheckboxOne = this.idElement(INDEX[1]).find('i');
+                    var uncheckedCheckboxTwo = this.idElement(INDEX[2]).find('i');
 
-                    expect(uncheckedCheckbox.hasClass('hide')).toBe(false);
-                    expect(checkedCheckboxOne.hasClass('hide')).toBe(true);
-                    expect(checkedCheckboxTwo.hasClass('hide')).toBe(true);
-                });
-
-                it('should disable the first index', function() {
-                    expect(this.idElement(indexId(INDEX[0])).hasClass('disabled-index')).toBe(true);
+                    expect(checkedCheckbox).toHaveClass('icon-ok');
+                    expect(uncheckedCheckboxOne).not.toHaveClass('icon-ok');
+                    expect(uncheckedCheckboxTwo).not.toHaveClass('icon-ok');
                 });
             })
         });

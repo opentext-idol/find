@@ -83,6 +83,20 @@ define([
                     }
                 ]
             });
+
+            this.listenTo(this.queryModel, 'change:indexes', function(model, queryModelIndexes) {
+                this.currentSelection = _.map(this.collection.filter(function (model) {
+                    return _.contains(queryModelIndexes, model.id);
+                }), function (model) {
+                    return model.pick('name', 'domain');
+                });
+
+                if(!this.forceSelection && this.currentSelection.length === options.indexesCollection.size()) {
+                    this.currentSelection = [];
+                }
+
+                this.updateCheckedOptions();
+            });
         },
 
         check: function($input) {
