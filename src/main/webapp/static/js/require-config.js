@@ -10,7 +10,7 @@ require.config({
         bootstrap: '../lib/bootstrap/js/bootstrap',
         colorbox: '../bower_components/colorbox/jquery.colorbox',
         'bootstrap-datetimepicker': '../bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
-		'databases-view': '../bower_components/hp-autonomy-js-databases-view/src',
+        'databases-view': '../bower_components/hp-autonomy-js-databases-view/src',
         i18n: '../bower_components/requirejs-i18n/i18n',
         iCheck: '../bower_components/icheck/icheck',
         'peg': '../bower_components/pegjs/peg-0.8.0',
