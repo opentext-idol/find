@@ -1,10 +1,14 @@
 define([
     'backbone',
+    'jquery',
     'find/app/model/documents-collection',
     'find/app/model/promotions-collection',
+    'find/app/model/similar-documents-collection',
+    'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
     'js-whatever/js/escape-regex',
+    'text!find/templates/app/page/results-popover.html',
     'text!find/templates/app/page/results/results-view.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/colorbox-controls.html',
@@ -15,8 +19,9 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, documentMimeTypes, escapeRegex, resultsView, resultsTemplate,
-            colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
+], function(Backbone, $, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover, viewClient, documentMimeTypes,
+            escapeRegex, popoverTemplate, template, resultsTemplate, colorboxControlsTemplate, loadingSpinnerTemplate,
+            mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
 
     /** Whitespace OR character in set bounded by [] */
     var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
@@ -40,12 +45,11 @@ define([
     };
 
     return Backbone.View.extend({
-
-        template: _.template(resultsView),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
+        popoverTemplate: _.template(popoverTemplate),
         entityTemplate: _.template(entityTemplate),
         viewDocumentTemplate: _.template(viewDocumentTemplate),
 
@@ -66,8 +70,11 @@ define([
         },
 
         initialize: function(options) {
+            _.bindAll(this, 'handlePopover');
+
             this.queryModel = options.queryModel;
             this.entityCollection = options.entityCollection;
+            this.indexesCollection = options.indexesCollection;
 
             this.documentsCollection = new DocumentsCollection([], {
                 indexesCollection: options.indexesCollection
@@ -117,7 +124,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template());
+            this.$el.html(template);
 
             this.$loadingSpinner = $(this.loadingTemplate);
 
@@ -125,7 +132,7 @@ define([
 
             /*promotions content content*/
             this.listenTo(this.promotionsCollection, 'add', function(model) {
-                this.formatResult(model, true)
+                this.formatResult(model, true);
             });
 
             this.listenTo(this.promotionsCollection, 'request', function () {
@@ -251,6 +258,7 @@ define([
             var href = viewClient.getHref(reference, model.get('index'));
 
             var $newResult = $(this.resultsTemplate({
+                i18n: i18n,
                 title: model.get('title'),
                 reference: reference,
                 href: href,
@@ -287,6 +295,8 @@ define([
                 e.preventDefault();
                 $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
             });
+
+            popover($newResult.find('.similar-documents-trigger'), this.handlePopover);
         },
 
         addLinksToSummary: function(summary) {
@@ -303,7 +313,7 @@ define([
                 return {
                     text: entity.get('text'),
                     id:  _.uniqueId('Find-IOD-Entity-Placeholder')
-                }
+                };
             }).sort(function(a,b) {
                 return b.text.length - a.text.length;
             });
@@ -311,7 +321,7 @@ define([
             // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
             // changed here and messing things up badly
             _.each(entities, function(entity) {
-                summary = this.replaceBoundedText(summary, entity.text, entity.id)
+                summary = this.replaceBoundedText(summary, entity.text, entity.id);
             }, this);
 
             // Loop through entities again, replacing text with labels
@@ -352,6 +362,24 @@ define([
             });
 
             return text.replace(new RegExp(startRegex + textToFind + endRegex, 'g'), '$1' + label + '$2');
+        },
+
+        handlePopover: function($content, $target) {
+            var collection = new SimilarDocumentsCollection([], {
+                indexes: this.queryModel.get('indexes'),
+                reference: $target.closest('[data-reference]').attr('data-reference')
+            });
+
+            collection.fetch({
+                error: function() {
+                    // TODO: Error handling
+                    console.error('error', arguments);
+                },
+                success: _.bind(function() {
+                    // TODO: Empty handling
+                    $content.html(this.popoverTemplate({collection: collection}));
+                }, this)
+            });
         }
-    })
+    });
 });

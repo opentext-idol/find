@@ -55,6 +55,7 @@ define([
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',
+        'search.similarDocuments': 'Similar documents',
         'search.error.results' : 'An error occurred retrieving results',
         'search.error.promotions' : 'An error occurred retrieving promotions',
         'search.error.relatedConcepts' : 'An error occurred retrieving related concepts',
