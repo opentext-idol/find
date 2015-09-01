@@ -1,6 +1,6 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.framework.TestDebuggerRule;
+import com.autonomy.abc.framework.*;
 import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
@@ -8,12 +8,11 @@ import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.login.ApiKey;
 import com.autonomy.abc.selenium.page.login.LoginHostedPage;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
+import org.junit.*;
+import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.model.MultipleFailureException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
@@ -35,6 +34,7 @@ public abstract class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
 	private final static Set<String> USER_BROWSERS;
 	private final static Set<ApplicationType> APPLICATION_TYPES;
+	private final TestState testState = TestState.get();
 
 	public final TestConfig config;
 	public final String browser;
@@ -107,14 +107,19 @@ public abstract class ABCTestBase {
 		return output;
 	}
 
+	// StateHelperRule.finished() calls WebDriver.quit so must be the last thing called
 	@Rule
-	public TestDebuggerRule debugger = new TestDebuggerRule(this);
+	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this)).around(new TestArtifactRule(this));
 
 	@Before
 	public void baseSetUp() throws MalformedURLException {
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
 		driver = config.createWebDriver(browser, platform);
 		ImplicitWaits.setImplicitWait(driver);
+
+		testState.addStatementHandler(new StatementLoggingHandler(this));
+		testState.addStatementHandler(new StatementArtifactHandler(this));
+
 		driver.get(config.getWebappUrl());
 		getDriver().manage().window().maximize();
 
@@ -130,14 +135,8 @@ public abstract class ABCTestBase {
 	}
 
 	@After
-	public void baseTearDown() {
-		// TODO: should run only after failure
-		debugger.log();
-		if (System.getenv("ABCDEBUG") != null) {
-			debugger.takeScreenshot();
-			debugger.saveCurrentPage();
-		}
-		driver.quit();
+	public void baseTearDown() throws MultipleFailureException {
+		testState.throwIfFailed();
 	}
 
 	public WebDriver getDriver() {
