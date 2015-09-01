@@ -1,5 +1,5 @@
 define([
-    'mock/backbone-mock-factory',
+    'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
     'find/app/model/search-filters-collection',
     'parametric-refinement/selected-values-collection',
