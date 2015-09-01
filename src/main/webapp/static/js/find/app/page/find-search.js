@@ -16,7 +16,7 @@ define([
 ], function(BasePage, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
 
     return BasePage.extend({
-
+        className: 'search-page',
         template: _.template(template),
 
         initialize: function() {
