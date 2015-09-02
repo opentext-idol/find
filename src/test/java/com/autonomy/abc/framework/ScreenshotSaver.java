@@ -1,6 +1,5 @@
 package com.autonomy.abc.framework;
 
-import javafx.stage.Screen;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
