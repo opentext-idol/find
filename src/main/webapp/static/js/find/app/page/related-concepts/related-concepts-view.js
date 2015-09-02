@@ -63,7 +63,7 @@ define([
                             entities: entities
                         }));
 
-                        this.$('li a').popover({
+                        this.$('td a').popover({
                             html: true,
                             placement: 'bottom',
                             trigger: 'hover'

@@ -84,18 +84,15 @@ html, body {
     box-shadow: none !important;
 }
 
-.left-side-container {
-    background-color: #F7F7F7;
-}
-
+.right-side-container td,
 .left-side-container td {
     border-bottom: 1px solid #ddd;
-    border-top: none !important;
     word-break: break-all;
 }
 
 .right-side-container {
-    background-color: #F7F7F7;
+    height: 320px;
+    overflow-y: auto;
 }
 
 .bootstrap-datetimepicker-widget td.day.active {
@@ -185,12 +182,46 @@ html, body {
     height:100%;
 }
 
+.left-side-container {
+    font-size:13px;
+}
+
+.right-side-container {
+    font-size: 14px;
+}
+
+.right-side-container h4,
+.left-side-container h4 {
+    font-weight: 900;
+    font-size: 13px;
+    color:#555;
+}
+
+.right-side-container h4 i,
+.left-side-container h4 i {
+    color:lightgrey;
+    font-weight: bold;
+}
+
+.middle-container h4 {
+    color: #0096d6;
+    font-weight: bold;
+    font-size: 18px;
+}
+
 .find {
     text-align: center;
 }
 
 .find-logo {
-    font-size: 24px;
+    font-size: 25px;
+    font-weight: bolder;
+}
+
+.hp-logo {
+    background-image: url('../img/HP_white_40.png');
+    width:40px;
+    height:40px;
 }
 
 a.unstyled {
@@ -223,10 +254,16 @@ input.find-input {
     text-decoration: none;
 }
 
+.current-search-sort {
+    font-size: 13px;
+    color: #0096d6;
+}
+
 .main-results-container {
     border-bottom: 1px solid #d3d3d3;
     width: 100%;
     padding: 0 10px;
+    height: 140px;
 }
 
 .document-reference {
@@ -236,6 +273,11 @@ input.find-input {
     width: 100%;
     display: inline-block;
     color: #aeaeae;
+    font-size: 13px;
+}
+
+.content-type i {
+    font-size: 23px;
 }
 
 .document-date {
@@ -246,7 +288,11 @@ input.find-input {
 }
 
 .promoted-document {
-    background-color: #E2E2E2;
+    background-color: #C6C6C6;
+}
+
+.promoted-label {
+    font-size: 12px;
 }
 
 .suggestions-content li {
@@ -301,7 +347,7 @@ input.find-input {
 .reverse-animated-container .find-input {
     height: 40px !important;
     font-size: 34px !important;
-    border-bottom: 2px solid rgb(91, 145, 214) !important;
+    border-bottom: 2px solid #0096d6 !important;
     transition: all 1000ms ease;
 }
 
@@ -314,14 +360,13 @@ input.find-input {
 /* end of fancy animation */
 
 .suggestions-content a {
-    color: rgb(91, 145, 214);
+    color: #0096d6;
 }
 
-.main-content h4,
 .main-content h5,
 .error-body h1,
 .error-body h3 {
-    color: rgb(91, 145, 214);
+    color: #0096d6;
 }
 
 .error-body {
@@ -330,8 +375,8 @@ input.find-input {
 }
 
 .suggestion-head-text {
-    font-size: 16px;
-    font-weight: 900;
+    font-size: 14px;
+    font-weight: 800;
 }
 
 .results-container .loading-spinner {
@@ -341,24 +386,24 @@ input.find-input {
     text-align: center;
     width: 200px;
     font-size: 28px;
-    color: rgb(91, 145, 214);
+    color: #0096d6;
 }
 
 .results-container .result-message {
     font-size: 28px;
-    color: rgb(91, 145, 214);
+    color: #0096d6;
 }
 
 
 .results-container .loading-spinner i, .related-concepts-container .loading-spinner i, .parametric-container .loading-spinner i {
-    color:rgb(91, 145, 214);
+    color:#0096d6;
 }
 
 .related-concepts-container .loading-spinner,
 .parametric-container .loading-spinner {
     text-align: center;
     font-size: 18px;
-    color: rgb(91, 145, 214);
+    color: #0096d6;
 }
 
 /* fancy colourbox buttons */
@@ -432,7 +477,7 @@ input.find-input {
 a.entity-to-summary {
     cursor:pointer;
     color:white;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .entity-to-summary a {
@@ -441,6 +486,10 @@ a.entity-to-summary {
 
 .entity-to-summary a:hover {
     text-decoration: none;
+}
+
+.entity-to-summary {
+    padding: 2px;
 }
 
 @media only screen and (max-width: 1210px) {
@@ -488,11 +537,20 @@ input.find-input[type="text"], input.find-input[type="text"]:focus {
     border-color: transparent;
     box-shadow: none;
     border-radius: 0;
+    height: 30px;
+}
+
+.search-bar-icon {
+    top: 0;
+    position: absolute;
+    right: 15px;
+    font-size: 20px;
+    color: #0096d6;
 }
 
 input::-webkit-input-placeholder,
 input::-moz-placeholder {
-    color: rgb(91, 145, 214);
+    color: #0096d6;
     opacity: 0.5;
 }
 
@@ -502,7 +560,7 @@ input::-moz-placeholder {
 input:-moz-placeholder::before {
     font-family: fontAwesome;
     content: '\f105';
-    color: rgb(91, 145, 214);
+    color: #0096d6;
 }
 
 .page .header {
@@ -510,8 +568,8 @@ input:-moz-placeholder::before {
 }
 
 .find-navbar {
-    border-bottom: 3px solid rgb(91, 145, 214);
-    background-color: #555;
+    border-bottom: 3px solid #0096d6;
+    background-color: #0096d6;
 }
 
 .navbar .nav > .active > a {
@@ -519,7 +577,7 @@ input:-moz-placeholder::before {
 }
 
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 {
-    color: rgb(91, 145, 214);
+    color: #0096d6;
 }
 
 /*TODO use bootstrap theme customiser for these */

@@ -1,11 +1,11 @@
 <% var promoted = promotion ? 'promoted-document' : ''; %>
 
 <div class="main-results-container m-b-sm <%-promoted%>" data-rel="results" data-reference="<%-reference %>">
-    <span class="pull-right m-t-xs text-muted m-l-sm">
-        <i class="icomoon-large icomoon-file-<%-contentType%>"></i>
+    <span class="pull-right m-t-xs text-muted m-l-sm content-type">
+        <i class="icomoon-file-<%-contentType%>"></i>
     </span>
     <% if (promotion) { %>
-        <span class="pull-right m-t-xs text-muted">
+        <span class="pull-right m-t-xs text-muted promoted-label">
             <i class="icon-star"></i> Promoted
         </span>
     <% } %>
