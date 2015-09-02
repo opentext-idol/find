@@ -56,6 +56,10 @@ html, body {
     margin-top: 10px;
 }
 
+.m-b-xs {
+    margin-bottom: 5px;
+}
+
 .m-b-sm {
     margin-bottom: 10px;
 }
@@ -88,11 +92,6 @@ html, body {
 .left-side-container td {
     border-bottom: 1px solid #ddd;
     word-break: break-all;
-}
-
-.right-side-container {
-    height: 320px;
-    overflow-y: auto;
 }
 
 .bootstrap-datetimepicker-widget td.day.active {
@@ -197,9 +196,13 @@ html, body {
     color:#555;
 }
 
-.right-side-container h4 i,
-.left-side-container h4 i {
-    color:lightgrey;
+.rotating-chevron {
+    display: inline-block;
+    color: lightgrey;
+}
+
+.right-side-container h4 .rotating-chevron,
+.left-side-container h4 .rotating-chevron {
     font-weight: bold;
 }
 
@@ -207,6 +210,10 @@ html, body {
     color: #0096d6;
     font-weight: bold;
     font-size: 18px;
+    width: 90%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .find {
@@ -260,7 +267,7 @@ input.find-input {
 }
 
 .main-results-container {
-    border-bottom: 1px solid #d3d3d3;
+    border-bottom: 1px solid #F2F2F2;
     width: 100%;
     padding: 0 10px;
     height: 140px;
@@ -280,6 +287,13 @@ input.find-input {
     font-size: 23px;
 }
 
+.result-container-control {
+    color: #0096d6;
+    font-size: 13px;
+    cursor: default;
+    text-decoration: none;
+}
+
 .document-date {
     color: #aeaeae;
     font-style: italic;
@@ -288,7 +302,7 @@ input.find-input {
 }
 
 .promoted-document {
-    background-color: #C6C6C6;
+    background-color: #F2F2F2;
 }
 
 .promoted-label {
@@ -361,6 +375,11 @@ input.find-input {
 
 .suggestions-content a {
     color: #0096d6;
+}
+
+.suggestions-content {
+    height: 320px;
+    overflow-y: auto;
 }
 
 .main-content h5,
@@ -531,6 +550,7 @@ input.find-input[type="text"], input.find-input[type="text"]:focus {
     box-shadow: none;
     border-radius: 0;
     height: 30px;
+    padding-right: 40px;
 }
 
 .search-bar-icon {
@@ -679,10 +699,6 @@ input:-moz-placeholder::before {
     transform: rotate(270deg);
 }
 
-.rotating-chevron {
-    display: inline-block;
-}
-
 /*** Cursor *************************************************/
 
 .clickable {
@@ -695,11 +711,38 @@ input:-moz-placeholder::before {
     padding: 0 8px; /* Same as table padding so it lines up */
 }
 
-.category-name {
+.category-name,
+.category-name-icon,
+.child-categories li {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+}
+
+.category-name,
+.category-name-icon {
     font-weight: bold;
 }
 
 .database-input > span,
 .category-input > span {
     display: inline-block;
+}
+
+.category-input {
+    border-top: 1px solid lightgrey;
+    border-bottom: none !important;
+}
+
+.child-categories ul {
+    margin-bottom: 20px;
+}
+
+.child-categories li {
+    border-bottom: 1px solid #ddd;
+    word-break: break-all;
+}
+
+.child-categories li:first-child {
+    border-top: 1px solid lightgrey;
 }
