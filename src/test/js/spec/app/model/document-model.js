@@ -1,11 +1,11 @@
 define([
-    'find/app/model/documents-collection'
-], function(DocumentsCollection) {
+    'find/app/model/document-model'
+], function(DocumentModel) {
 
-    describe('Documents collection', function() {
-        describe('model parse method', function() {
+    describe('Document model', function() {
+        describe('parse method', function() {
             beforeEach(function() {
-                this.parse = DocumentsCollection.prototype.model.prototype.parse;
+                this.parse = DocumentModel.prototype.parse;
             });
 
             it('uses the title from the response if present', function() {

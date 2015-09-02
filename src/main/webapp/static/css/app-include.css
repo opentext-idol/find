@@ -379,31 +379,24 @@ input.find-input {
     font-weight: 800;
 }
 
-.results-container .loading-spinner {
-    line-height: 32px;
-    margin: auto;
-    padding: 20px;
-    text-align: center;
-    width: 200px;
-    font-size: 28px;
-    color: #0096d6;
-}
-
 .results-container .result-message {
     font-size: 28px;
     color: #0096d6;
 }
 
-
-.results-container .loading-spinner i, .related-concepts-container .loading-spinner i, .parametric-container .loading-spinner i {
-    color:#0096d6;
-}
-
-.related-concepts-container .loading-spinner,
-.parametric-container .loading-spinner {
+/* Loading spinner */
+.loading-spinner {
     text-align: center;
     font-size: 18px;
+}
+
+.loading-spinner, .loading-spinner i {
     color: #0096d6;
+}
+
+.loading-spinner.loading-spinner-lg {
+    font-size: 28px;
+    line-height: 32px;
 }
 
 /* fancy colourbox buttons */
@@ -443,7 +436,7 @@ input.find-input {
     max-height: 60px;
 }
 
-.suggestion-cluster .popover {
+.search-page .popover {
     width: 250px;
 }
 
@@ -678,7 +671,8 @@ input:-moz-placeholder::before {
 }
 
 /* Rotating chevrons on collapsible panels *******************/
-.collapsed .rotating-chevron {
+.collapsed .rotating-chevron,
+.collapsed.rotating-chevron {
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
     -webkit-transform: rotate(270deg);
     -ms-transform: rotate(270deg);
@@ -693,4 +687,19 @@ input:-moz-placeholder::before {
 
 .clickable {
     cursor: pointer;
+}
+
+/* Indexes View */
+.database-name,
+.category-name {
+    padding: 0 8px; /* Same as table padding so it lines up */
+}
+
+.category-name {
+    font-weight: bold;
+}
+
+.database-input > span,
+.category-input > span {
+    display: inline-block;
 }
