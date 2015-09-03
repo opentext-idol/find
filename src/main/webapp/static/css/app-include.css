@@ -644,7 +644,7 @@ input:-moz-placeholder::before {
 }
 
 .shorten {
-    max-width: 200px;
+    max-width: 130px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
