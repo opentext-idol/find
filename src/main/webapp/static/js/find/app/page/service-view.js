@@ -58,15 +58,21 @@ define([
 
             this.indexesCollection.fetch();
 
+            function fetch() {
+                this.entityCollection.fetch({
+                    data: {
+                        text: this.queryModel.get('queryText'),
+                        index: this.queryModel.get('indexes'),
+                        field_text: this.queryModel.get('fieldText')
+                    }
+                });
+            }
+
+            this.listenTo(this.queryModel, 'refresh', fetch);
+
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
-                    this.entityCollection.fetch({
-                        data: {
-                            text: this.queryModel.get('queryText'),
-                            index: this.queryModel.get('indexes'),
-                            field_text: this.queryModel.get('fieldText')
-                        }
-                    });
+                    fetch.call(this);
                 }
             });
 

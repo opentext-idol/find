@@ -22,7 +22,7 @@ define([
 
     });
 
-    _.each(['get', 'set', 'unset', 'changedAttributes', 'getIsoDate'], function(methodName) {
+    _.each(['get', 'set', 'unset', 'changedAttributes', 'getIsoDate', 'refresh'], function(methodName) {
         EventsProxy.prototype[methodName] = function() {
             return this.model[methodName].apply(this.model, arguments);
         };

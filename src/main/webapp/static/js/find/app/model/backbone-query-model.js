@@ -24,6 +24,14 @@ define([
             } else {
                 return null;
             }
+        },
+
+        refresh: function(queryText) {
+            if(this.get('queryText') === queryText) {
+                this.trigger('refresh');
+            } else {
+                this.set('queryText', queryText)
+            }
         }
     }, {
         Sort: Sort

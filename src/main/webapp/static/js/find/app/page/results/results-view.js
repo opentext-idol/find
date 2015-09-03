@@ -86,7 +86,7 @@ define([
                 indexesCollection: options.indexesCollection
             });
 
-            this.listenTo(this.queryModel, 'change', function() {
+            this.listenTo(this.queryModel, 'change refresh', function() {
                 if (!_.isEmpty(this.queryModel.get('indexes'))) {
                     this.documentsCollection.fetch({
                         data: {
@@ -101,21 +101,22 @@ define([
                         },
                         reset: false
                     }, this);
-                }
 
-                this.promotionsCollection.fetch({
-                    data: {
-                        text: this.queryModel.get('queryText'),
-                        max_results: 30, // TODO maybe less?
-                        summary: 'context',
-                        index: this.queryModel.get('indexes'),
-                        field_text: this.queryModel.get('fieldText'),
-                        min_date: this.queryModel.getIsoDate('minDate'),
-                        max_date: this.queryModel.getIsoDate('maxDate'),
-                        sort: this.queryModel.get('sort')
-                    },
-                    reset: false
-                }, this);
+                    // TODO: Move out of if statement when HOD allows fetching promotions without query text
+                    this.promotionsCollection.fetch({
+                        data: {
+                            text: this.queryModel.get('queryText'),
+                            max_results: 30, // TODO maybe less?
+                            summary: 'context',
+                            index: this.queryModel.get('indexes'),
+                            field_text: this.queryModel.get('fieldText'),
+                            min_date: this.queryModel.getIsoDate('minDate'),
+                            max_date: this.queryModel.getIsoDate('maxDate'),
+                            sort: this.queryModel.get('sort')
+                        },
+                        reset: false
+                    }, this);
+                }
             });
         },
 

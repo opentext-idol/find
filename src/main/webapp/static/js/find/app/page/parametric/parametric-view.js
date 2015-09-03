@@ -63,27 +63,33 @@ define([
                 this.selectedParametricValues.reset();
             });
 
+            function fetch() {
+                this.parametricCollection.reset();
+                this.model.set({processing: true, error: false});
+
+                this.parametricCollection.fetch({
+                    data: {
+                        databases: this.queryModel.get('indexes'),
+                        queryText: this.queryModel.get('queryText'),
+                        fieldText: this.queryModel.get('fieldText')
+                    },
+                    error: _.bind(function(collection, xhr) {
+                        if (xhr.status !== 0) {
+                            // The request was not aborted, so there isn't another request in flight
+                            this.model.set({error: true, processing: false});
+                        }
+                    }, this),
+                    success: _.bind(function() {
+                        this.model.set({processing: false});
+                    }, this)
+                });
+            }
+
+            this.listenTo(this.queryModel, 'refresh', fetch);
+
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
-                    this.parametricCollection.reset();
-                    this.model.set({processing: true, error: false});
-
-                    this.parametricCollection.fetch({
-                        data: {
-                            databases: this.queryModel.get('indexes'),
-                            queryText: this.queryModel.get('queryText'),
-                            fieldText: this.queryModel.get('fieldText')
-                        },
-                        error: _.bind(function(collection, xhr) {
-                            if (xhr.status !== 0) {
-                                // The request was not aborted, so there isn't another request in flight
-                                this.model.set({error: true, processing: false});
-                            }
-                        }, this),
-                        success: _.bind(function() {
-                            this.model.set({processing: false});
-                        }, this)
-                    });
+                    fetch.call(this);
                 }
             }, this);
         },
