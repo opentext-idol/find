@@ -12,16 +12,8 @@ import java.util.*;
 
 public class AppElement implements WebElement {
 
-	private WebElement $el;
+	private final WebElement $el;
 	private final WebDriver driver;
-
-	public void setEl(WebElement el){
-		$el = el;
-	}
-
-	public AppElement(final WebDriver driver){
-		this.driver = driver;
-	}
 
 	public AppElement(final WebElement element, final WebDriver driver) {
 		this.$el = element;

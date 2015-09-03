@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.predicates.HasCssValuePredicate;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ModalView extends AppElement {
@@ -14,7 +15,7 @@ public class ModalView extends AppElement {
 	}
 
 	public static ModalView getVisibleModalView(final WebDriver driver) {
-		final WebElement $el = driver.findElement(By.cssSelector(".modal[aria-hidden='false']"));
+		final WebElement $el = new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".modal[aria-hidden='false']")));
 		final ModalView view = new ModalView($el, driver);
 		new WebDriverWait(driver, 10).until(new HasCssValuePredicate(view, "opacity", "1"));
 		return view;

@@ -11,7 +11,6 @@ public abstract class AppBody {
     private final TopNavBar topNavBar;
     private final SideNavBar sideNavBar;
     private final WebDriver driver;
-    private AppPage currentPage;
 
     public AppBody(WebDriver driver, TopNavBar topNavBar, SideNavBar sideNavBar) {
         this.driver = driver;
@@ -21,7 +20,6 @@ public abstract class AppBody {
 
     public TopNavBar getTopNavBar() { return topNavBar; }
     public SideNavBar getSideNavBar() { return sideNavBar; }
-    public AppPage getCurrentPage() { return currentPage; }
 
     public void navigateTo(String s){
         driver.get(s);
