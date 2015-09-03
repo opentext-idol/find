@@ -23,7 +23,7 @@ public abstract class AppBody {
     public SideNavBar getSideNavBar() { return sideNavBar; }
     public AppPage getCurrentPage() { return currentPage; }
 
-    public void navigateTo(AppPage page){
-        page.navigateToPage(driver);
+    public void navigateTo(String s){
+        driver.get(s);
     }
 }

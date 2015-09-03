@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
-import com.autonomy.abc.selenium.menu.HSOSideNavBar;
-import com.autonomy.abc.selenium.menu.HSOTopNavBar;
+import com.autonomy.abc.selenium.menu.HSO.HSOSideNavBar;
+import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.openqa.selenium.WebDriver;
