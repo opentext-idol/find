@@ -1,0 +1,75 @@
+package com.autonomy.abc.matchers;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import static org.hamcrest.Matchers.containsString;
+
+public class ElementMatchers {
+    public static Matcher<? super WebElement> containsElement(final By by) {
+        return new TypeSafeMatcher<WebElement>() {
+            @Override
+            protected boolean matchesSafely(WebElement webElement) {
+                return webElement.findElements(by).size() > 0;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("a parent element containing a child ").appendValue(by);
+            }
+
+            @Override
+        public void describeMismatchSafely(final WebElement webElement, final Description description) {
+                description.appendText("no child found inside ").appendValue(webElement);
+            }
+        };
+    }
+
+    public static Matcher<? super WebElement> containsText(final String text) {
+        return new TypeSafeMatcher<WebElement>() {
+            private Matcher<String> container = containsString(text);
+            private String tagName;
+
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                tagName = item.getTagName();
+                return container.matches(item.getText());
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("a <" + tagName + "> containing ").appendValue(text);
+            }
+
+            @Override
+            public void describeMismatchSafely(final WebElement item, final Description description) {
+                description.appendText("text was \"" + item.getText() + "\"");
+            }
+        };
+    }
+
+    public static Matcher<? super WebElement> hasAttribute(final String text) {
+        return new TypeSafeMatcher<WebElement>() {
+            private String tagName;
+
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                tagName = item.getTagName();
+                return item.getAttribute(text) != null;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("a <" + tagName + "> with attribute ").appendValue(text);
+            }
+
+            @Override
+            public void describeMismatchSafely(final WebElement item, final Description description) {
+                description.appendText("element was ").appendText(item.toString());
+            }
+        };
+    }
+}
