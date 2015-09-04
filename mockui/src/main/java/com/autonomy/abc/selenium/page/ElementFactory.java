@@ -1,8 +1,11 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.openqa.selenium.WebDriver;
 
 public abstract class ElementFactory {
@@ -22,6 +25,12 @@ public abstract class ElementFactory {
     public CreateNewPromotionsPage getCreateNewPromotionsPage(){
         return new CreateNewPromotionsPage(driver);
     }
+
+    public abstract KeywordsPage getKeywordsPage();
+
+    public abstract CreateNewKeywordsPage getCreateNewKeywordsPage();
+
+    public abstract SearchPage getSearchPage();
 
     public WebDriver getDriver() {
         return driver;

@@ -38,6 +38,7 @@ public class SideNavBar extends AppElement {
     }
 
     public void switchPage(final NavBarTabId tab) {
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul//li//*[text()='" + tab.toString() + "']/.."))).click();
+        new WebDriverWait(getDriver(),30).until(
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul//li//*[text()=' " + tab.toString() + "']/.."))).click();
     }
 }

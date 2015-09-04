@@ -3,8 +3,6 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.config.ApplicationType;
 //import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
-import com.autonomy.abc.selenium.menu.SideNavBar;
-import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOAppBody;
@@ -44,8 +42,6 @@ public abstract class ABCTestBase {
 	private final ApplicationType type;
 	private WebDriver driver;
 	public AppBody body;
-	protected SideNavBar navBar;
-	protected TopNavBar topNavBar;
 	private String loginName;
 	private ElementFactory elementFactory;
 
@@ -128,8 +124,6 @@ public abstract class ABCTestBase {
 		elementFactory = ElementFactory.from(getConfig().getType(), driver);
 
 		body = new HSOAppBody(driver);
-		navBar = new SideNavBar(driver);
-		topNavBar = new HSOTopNavBar(driver);
 	}
 
 	@After
