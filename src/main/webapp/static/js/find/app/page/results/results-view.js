@@ -221,6 +221,14 @@ define([
                 width:'70%',
                 onComplete: _.bind(function() {
                     $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+
+                    var $viewServerPage = $('.view-server-page');
+
+                    $viewServerPage.on('load', function() {
+                        $('.view-server-loading-indicator').addClass('hidden');
+                        $('.view-server-page').removeClass('hidden');
+                    });
+
                 }, this)
             };
 
@@ -232,7 +240,11 @@ define([
                 });
             } else {
                 args.html = this.viewDocumentTemplate({
-                    src: options.href
+                    src: options.href,
+                    i18n: i18n,
+                    model: options.model,
+                    dateFields: ['date', 'dateCreated', 'dateModified'],
+                    fields: ['reference', 'author', 'categories']
                 });
             }
 
@@ -288,10 +300,10 @@ define([
                 var url = fields.url[0];
                 var offset = fields.offset ? fields.offset[0] : 0;
 
-                $newResult.find('.result-header').colorbox(this.colorboxArguments({media: media, url: url, offset: offset}));
+                $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, media: media, url: url, offset: offset}));
             } else {
                 // Use the standard Viewserver display
-                $newResult.find('.result-header').colorbox(this.colorboxArguments({href: href}));
+                $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
             }
 
             $newResult.find('.dots').click(function (e) {
