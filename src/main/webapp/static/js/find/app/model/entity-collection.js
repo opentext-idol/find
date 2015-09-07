@@ -8,6 +8,6 @@ define([
 ], function(FindBaseCollection) {
 
     return FindBaseCollection.extend({
-        url: '../api/public/search/find-related-concepts',
+        url: '../api/public/search/find-related-concepts'
     })
 });
