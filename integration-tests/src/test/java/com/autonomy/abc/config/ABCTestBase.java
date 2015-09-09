@@ -5,14 +5,10 @@ import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
-import com.autonomy.abc.selenium.config.ApplicationType;
 //import com.autonomy.abc.selenium.config.Timeouts;
-import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
-import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.HSOAppBody;
-import com.autonomy.abc.selenium.page.login.HSOLoginPage;
-import com.autonomy.abc.selenium.page.login.ApiKey;
+import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.page.*;
 //import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
 import org.junit.Before;
@@ -21,12 +17,9 @@ import org.junit.Rule;
 import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
+import org.junit.runners.model.MultipleFailureException;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +31,7 @@ import static org.junit.Assert.fail;
 
 @Ignore
 @RunWith(Parameterized.class)
-public abstract class ABCTestBase {
+public class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
 	private final static Set<String> USER_BROWSERS;
 	private final static Set<ApplicationType> APPLICATION_TYPES;
@@ -48,10 +41,11 @@ public abstract class ABCTestBase {
 	public final TestConfig config;
 	public final String browser;
 	private final Platform platform;
+	private final Application application;
 	private final ApplicationType type;
 	private WebDriver driver;
+	// TODO: use getBody() instead
 	public AppBody body;
-	private String loginName;
 	private ElementFactory elementFactory;
 
 	static {
@@ -89,6 +83,7 @@ public abstract class ABCTestBase {
 		this.browser = browser;
 		this.platform = platform;
 		this.type = type;
+		this.application = Application.ofType(type);
 	}
 
 	@Parameterized.Parameters
@@ -130,20 +125,17 @@ public abstract class ABCTestBase {
 		driver.get(config.getWebappUrl());
 		getDriver().manage().window().maximize();
 
-		if (config.getType() == ApplicationType.ON_PREM) {
-			abcOnPremiseLogin("richard", "q");
-		} else {
-			abcHostedLogin(System.getProperty("com.autonomy.apiKey"));
-		}
-
-		elementFactory = ElementFactory.from(getConfig().getType(), driver);
-
-		body = new HSOAppBody(driver);
+		// no side/top bar until logged in
+		body = application.createAppBody(driver, null, null);
+		elementFactory = application.createElementFactory(driver);
+		elementFactory.getLoginPage().loginWith(application.createCredentials());
+		// now has side/top bar
+		body = getBody();
 	}
 
 	@After
-	public void baseTearDown(){
-		getDriver().quit();
+	public void baseTearDown() throws MultipleFailureException {
+		testState.throwIfFailed();
 	}
 
 	public WebDriver getDriver() {
@@ -154,36 +146,15 @@ public abstract class ABCTestBase {
 		return config;
 	}
 
-	private void setLoginName(final String loginName) {
-		this.loginName = loginName;
-	}
-
-	public String getLoginName() {
-		return loginName;
-	}
-
-	public void abcOnPremiseLogin(final String userName, final String password) {
-		loginName = userName;
-		driver.findElement(By.cssSelector("[name='username']")).clear();
-		driver.findElement(By.cssSelector("[name='username']")).sendKeys(userName);
-		driver.findElement(By.cssSelector("[name='password']")).clear();
-		driver.findElement(By.cssSelector("[name='password']")).sendKeys(password);
-		driver.findElement(By.cssSelector("[type='submit']")).click();
-		new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top-blue")));
-	}
-
-	public void abcHostedLogin(final String apiKey) {
-		HSOLoginPage loginHostedPage = new HSOLoginPage(driver);
-		loginHostedPage.loginWith(new ApiKey(apiKey));
-		try {
-			new WebDriverWait(getDriver(), 40).until(ExpectedConditions.visibilityOfElementLocated(By.className("navbar-static-top")));
-		} catch (final TimeoutException t) {
-			fail("Login timed out");
-		}
+	public Application getApplication() {
+		return application;
 	}
 
 	public ElementFactory getElementFactory() {
 		return elementFactory;
 	}
 
+	public AppBody getBody() {
+		return application.createAppBody(driver);
+	}
 }

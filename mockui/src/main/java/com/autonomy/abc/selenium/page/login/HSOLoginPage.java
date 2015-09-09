@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HSOLoginPage extends AppElement implements AppPage {
+public class HSOLoginPage extends LoginPage implements AppPage {
     private static Logger logger = LoggerFactory.getLogger(HSOLoginPage.class);
 
     public HSOLoginPage(final WebDriver driver) {
@@ -25,15 +25,6 @@ public class HSOLoginPage extends AppElement implements AppPage {
             logger.warn("Initial login attempt failed, trying again");
             provider.login(this);
         }
-    }
-
-    public boolean hasLoggedIn() {
-        try {
-            new WebDriverWait(getDriver(), 30).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("navbar-static-top")));
-        } catch (TimeoutException e) {
-            return false;
-        }
-        return true;
     }
 
     @Override

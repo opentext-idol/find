@@ -1,8 +1,10 @@
 package com.autonomy.abc.selenium.page;
 
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.keywords.*;
+import com.autonomy.abc.selenium.page.login.HSOLoginPage;
+import com.autonomy.abc.selenium.page.login.LoginPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.HSOSearchPage;
@@ -20,6 +22,11 @@ public class HSOElementFactory extends ElementFactory {
     }
 
     @Override
+    public LoginPage getLoginPage() {
+        return new HSOLoginPage(getDriver());
+    }
+
+    @Override
     public KeywordsPage getKeywordsPage() {
         return new HSOKeywordsPage(getDriver());
     }
@@ -32,5 +39,10 @@ public class HSOElementFactory extends ElementFactory {
     @Override
     public SearchPage getSearchPage() {
         return new HSOSearchPage(getDriver());
+    }
+
+    @Override
+    public CreateNewPromotionsPage getCreateNewPromotionsPage() {
+        return new HSOCreateNewPromotionsPage(getDriver());
     }
 }
