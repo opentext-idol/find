@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.page.HSOAppBody;
 import com.autonomy.abc.selenium.page.login.HSOLoginPage;
 import com.autonomy.abc.selenium.page.login.ApiKey;
 //import com.autonomy.abc.selenium.util.ImplicitWaits;
+import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -110,24 +111,26 @@ public abstract class ABCTestBase {
 	public void baseSetUp() throws MalformedURLException {
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
 		driver = config.createWebDriver(browser, platform);
-		//ImplicitWaits.setImplicitWait(driver);
+		ImplicitWaits.setImplicitWait(driver);
 
 		driver.get(config.getWebappUrl());
 		getDriver().manage().window().maximize();
 
 		if (config.getType() == ApplicationType.ON_PREM) {
 			abcOnPremiseLogin("richard", "q");
+//			body = new OPAppBody(driver);
 		} else {
 			abcHostedLogin(System.getProperty("com.autonomy.apiKey"));
+			body = new HSOAppBody(driver);
 		}
 
 		elementFactory = ElementFactory.from(getConfig().getType(), driver);
 
-		body = new HSOAppBody(driver);
 	}
 
 	@After
 	public void baseTearDown(){
+		LoggerFactory.getLogger(ABCTestBase.class).info("Test Finished");
 		getDriver().quit();
 	}
 

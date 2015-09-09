@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page.search;
 import com.autonomy.abc.selenium.page.AppPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement getSearchResult(final int searchResultNumber) {
-		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3"));
+		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3")));
 	}
 
 	public String getSearchResultDetails(final int searchResultNumber) {
@@ -221,9 +222,6 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public int countSynonymLists() {
-		//return findElements(By.cssSelector(".search-synonyms-keywords .keywords-sub-list .btn-default")).size();
-        // TODO possibly change this back
-		//return findElements(By.className("add-synonym")).size();
 		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
 	}
 
@@ -304,6 +302,12 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fa-file-o")));
 	}
 
+	public void selectNewsEngIndex() {
+		//TODO click the filter dropdown
+		findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
+	}
+
 	public void waitForSearchLoadIndicatorToDisappear() {
 		int count = 0;
 		try {
@@ -315,6 +319,27 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		} catch (final StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
 			System.out.println("No Loading");
 		}
+
+/*		//TODO
+		new WebDriverWait(getDriver(),60).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					return !findElement(By.cssSelector(".search-information h3")).getText().contains("Loading...");	//TODO change this to the fa-spin ot whatever it actually is
+				} catch (Exception e) {
+					return true;
+				}
+			}
+		});*/
+	}
+
+	public void waitForSynonymsLoadingIndicatorToDisappear(){
+		new WebDriverWait(getDriver(),60).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				return driver.findElement(By.className("search-synonyms-loading")).getAttribute("style").contains("display: none");
+			}
+		});
 	}
 
     public void waitForPromotionsLoadIndicatorToDisappear() {

@@ -27,7 +27,11 @@ public abstract class TopNavBar extends AppElement {
         topSearch.clear();
         topSearch.sendKeys(searchTerm);
         topSearch.sendKeys(Keys.RETURN);
-        loadOrFadeWait();
+
         //new AppBody(getDriver()).getSearchPage().waitForSearchLoadIndicatorToDisappear();
+    }
+
+    public String getSearchBarText() {
+        return findElement(By.cssSelector("[name='top-search']")).getAttribute("value");
     }
 }

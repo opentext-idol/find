@@ -113,27 +113,28 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	}
 
 	public void waitForRefreshIconToDisappear() {
-		new WebDriverWait(getDriver(),60).until(new ExpectedCondition<Boolean>(){
+		WebDriverWait wait = new WebDriverWait(getDriver(),60);
+		wait.withMessage("Waiting for refresh icons to disappear");
+		wait.until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver webDriver) {
+				List<WebElement> refreshIcons = webDriver.findElements(By.className("fa-refresh"));
 
-            @Override
-            public Boolean apply(WebDriver webDriver) {
-                List<WebElement> refreshIcons = webDriver.findElements(By.className("fa-refresh"));
-
-                int visibleRefreshIcons = 0;
+				int visibleRefreshIcons = 0;
 
 				try {
-                    for (WebElement icon : refreshIcons) {
-                        if (icon.isDisplayed()) {
-                            visibleRefreshIcons++;
-                        }
-                    }
-                } catch (StaleElementReferenceException e){
-                    //NOOP
-                }
+					for (WebElement icon : refreshIcons) {
+						if (icon.isDisplayed()) {
+							visibleRefreshIcons++;
+						}
+					}
+				} catch (StaleElementReferenceException e) {
+					//NOOP
+				}
 
-                return visibleRefreshIcons == 0;
-            }
-        });
+				return visibleRefreshIcons == 0;
+			}
+		});
 	}
 
 	public int countRefreshIcons() {

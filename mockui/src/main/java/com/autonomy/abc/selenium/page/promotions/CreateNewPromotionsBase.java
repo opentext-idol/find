@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class CreateNewPromotionsBase extends AppElement implements AppPage {
 
 	public CreateNewPromotionsBase(final WebDriver driver) {
-		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.tagName("wrapper-content"))), driver);
+		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
 	}
 
 	public WebElement continueButton(final WizardStep dataStep) {

@@ -13,10 +13,11 @@ public class HSOTopNavBar extends TopNavBar {
 
     @Override
     public NotificationsDropDown getNotifications() {
-        return null;
+        return new NotificationsDropDown(getDriver());
     }
 
     public void notificationsDropdown() {
-        findElement(By.className("count-info")).click();
+        //I think the notification dropdown changes with every new notification, so need to use getDriver()
+        getDriver().findElement(By.className("count-info")).click();
     }
 }
