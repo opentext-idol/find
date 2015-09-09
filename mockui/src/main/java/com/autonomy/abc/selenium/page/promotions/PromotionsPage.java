@@ -36,7 +36,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void deletePromotion() {
-		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".extra-functions .dropdown-toggle"));
+		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".category-filter .dropdown-toggle"));
 		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
 		extraFunctionsDropdown.click();
 		loadOrFadeWait();

@@ -79,7 +79,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     public void filterView(final KeywordsFilter filter) {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//a[text()='" + filter.toString() + "']"))).click();
+        findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
     }
 
     public enum KeywordsFilter {

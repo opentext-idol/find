@@ -86,7 +86,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void paginateWait() {
 		try {
-			new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
+			waitForSearchLoadIndicatorToDisappear();
 		} catch (final StaleElementReferenceException|NoSuchElementException n) {
 			loadOrFadeWait();
 		}

@@ -5,11 +5,12 @@ import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
+import com.autonomy.abc.selenium.config.ApplicationType;
 //import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.config.Application;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.*;
 //import com.autonomy.abc.selenium.util.ImplicitWaits;
+import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -25,9 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.*;
-
-import static org.junit.Assert.fail;
-
 
 @Ignore
 @RunWith(Parameterized.class)
@@ -117,7 +115,7 @@ public class ABCTestBase {
 	public void baseSetUp() throws MalformedURLException {
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
 		driver = config.createWebDriver(browser, platform);
-		//ImplicitWaits.setImplicitWait(driver);
+		ImplicitWaits.setImplicitWait(driver);
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
 		testState.addStatementHandler(new StatementArtifactHandler(this));
