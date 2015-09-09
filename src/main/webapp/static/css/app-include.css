@@ -459,8 +459,8 @@ input.find-input {
     text-overflow: clip;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    max-height: 60px;
+    -webkit-line-clamp: 2;
+    max-height: 40px;
 }
 
 .search-page .popover {
