@@ -1,5 +1,10 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.framework.TestState;
+import com.autonomy.abc.framework.rules.StateHelperRule;
+import com.autonomy.abc.framework.rules.TestArtifactRule;
+import com.autonomy.abc.framework.statements.StatementArtifactHandler;
+import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.ApplicationType;
 //import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
@@ -13,6 +18,8 @@ import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
@@ -36,6 +43,8 @@ public abstract class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
 	private final static Set<String> USER_BROWSERS;
 	private final static Set<ApplicationType> APPLICATION_TYPES;
+	// testState is used by Rules/StatementHandlers
+	private final TestState testState = TestState.get();
 
 	public final TestConfig config;
 	public final String browser;
@@ -106,12 +115,18 @@ public abstract class ABCTestBase {
 		}
 		return output;
 	}
+	// StateHelperRule.finished() calls WebDriver.quit so must be the last thing called
+	@Rule
+	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this)).around(new TestArtifactRule(this));
 
 	@Before
 	public void baseSetUp() throws MalformedURLException {
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
 		driver = config.createWebDriver(browser, platform);
 		ImplicitWaits.setImplicitWait(driver);
+
+		testState.addStatementHandler(new StatementLoggingHandler(this));
+		testState.addStatementHandler(new StatementArtifactHandler(this));
 
 		driver.get(config.getWebappUrl());
 		getDriver().manage().window().maximize();
