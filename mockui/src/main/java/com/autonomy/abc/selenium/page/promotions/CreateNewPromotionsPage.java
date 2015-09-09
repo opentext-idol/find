@@ -6,7 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class CreateNewPromotionsPage extends CreateNewPromotionsBase {
+public abstract class CreateNewPromotionsPage extends CreateNewPromotionsBase {
 
 	public CreateNewPromotionsPage(final WebDriver driver) {
 		super(driver);
@@ -46,4 +46,6 @@ public class CreateNewPromotionsPage extends CreateNewPromotionsBase {
 	public WebElement pinToPositionInput() {
 		return findElement(By.cssSelector("div.position"));
 	}
+
+    public abstract void addSpotlightPromotion(String promotionType, String searchTrigger);
 }

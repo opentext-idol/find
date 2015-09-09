@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PromotionsPage extends AppElement implements AppPage {
+public abstract class PromotionsPage extends AppElement implements AppPage {
 
 	public PromotionsPage(WebDriver driver) {
 		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))),driver);
@@ -72,12 +72,6 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void deleteAllPromotions() {
-		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
-
-		if (getDriver().getCurrentUrl().contains("promotions/detail")) {
-			backButton().click();
-		}
-
 		for (final WebElement promotion : promotionsList()) {
 			promotion.click();
 			deletePromotion();
@@ -171,8 +165,8 @@ public class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void deleteDocument(final String title) {
-		promotedDocument(title).findElement(By.cssSelector(".remove-document-reference")).click();
-		new WebDriverWait(getDriver(), 3).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".remove-document-reference.fa-spin")));
+		promotedDocument(title).findElement(By.cssSelector(".remove-document-reference.clickable")).click();
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".search-result-item .fa-spin")));
 	}
 
 	public WebElement addMorePromotedItemsButton() {
@@ -318,6 +312,8 @@ public class PromotionsPage extends AppElement implements AppPage {
 	public void waitForLoad() {
 		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Promote existing documents")));
 	}
+
+//	public abstract List<String> setUpANewMultiDocPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs);
 
 /*
 	public List <String> setUpANewMultiDocPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs, final String type) {

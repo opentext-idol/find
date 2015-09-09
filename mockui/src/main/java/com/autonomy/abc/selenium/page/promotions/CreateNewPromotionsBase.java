@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class CreateNewPromotionsBase extends AppElement implements AppPage {
 
 	public CreateNewPromotionsBase(final WebDriver driver) {
-		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.tagName("wrapper-content"))), driver);
+		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
 	}
 
 	public WebElement continueButton(final WizardStep dataStep) {
@@ -85,6 +85,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		return getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
 	}
 
+	/*
 	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger, final String type) {
 		promotionType("SPOTLIGHT").click();
 		loadOrFadeWait();
@@ -100,7 +101,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		loadOrFadeWait();
 		finishButton().click();
 		loadOrFadeWait();
-	}
+	}*/
 
 	public WebElement promotionType(final String promotionType) {
 		return getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));
