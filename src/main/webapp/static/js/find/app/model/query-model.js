@@ -6,7 +6,7 @@ define([
         this.model = queryModel;
 
         this.listenTo(this.model, 'all', function(event) {
-            if (event !== 'change' || (this.model.get('queryText') && !_.isEmpty(this.model.get('indexes')))) {
+            if (event !== 'change' && event !== 'refresh' || (this.model.get('queryText') && !_.isEmpty(this.model.get('indexes')))) {
                 this.trigger.apply(this, arguments);
             }
         });
