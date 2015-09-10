@@ -68,6 +68,22 @@ html, body {
     margin-bottom: 10px;
 }
 
+.m-b-md {
+    margin-bottom: 20px;
+}
+
+.m-b-lg {
+    margin-bottom: 30px;
+}
+
+.m-b-xl {
+    margin-bottom: 40px;
+}
+
+.m-b-xxl {
+    margin-bottom: 60px;
+}
+
 .m-b-nil {
     margin-bottom: 0;
 }
@@ -178,6 +194,7 @@ html, body {
 .main-content {
     background-color: white;
     height: 100%;
+    overflow-x: hidden;
 }
 
 .main-content .container-fluid {
@@ -228,15 +245,34 @@ html, body {
     text-align: center;
 }
 
+.app-logo {
+    width: 80%;
+}
+
 .find-logo {
     font-size: 25px;
     font-weight: bolder;
+}
+
+.find-logo-large {
+    font-size: 90px;
+    color: #0096d6;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .hp-logo {
     background-image: url('../img/HP_white_40.png');
     width:40px;
     height:40px;
+}
+
+.hp-logo-large {
+    background-image: url('../img/HP_blue_logo.png');
+    width: 150px;
+    height: 150px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 a.unstyled {
@@ -356,7 +392,7 @@ input.find-input {
 /* fancy reverse animation */
 .reverse-animated-container {
     position: absolute;
-    top: 50%;
+    top: 30%;
     transition: all 1000ms ease;
 }
 
@@ -591,6 +627,13 @@ input:-moz-placeholder::before {
 .find-navbar {
     border-bottom: 3px solid #0096d6;
     background-color: #0096d6;
+    opacity: 0;
+    -webkit-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.find-navbar.visible {
+    opacity: 1;
 }
 
 .navbar .nav > .active > a {
@@ -640,6 +683,12 @@ input:-moz-placeholder::before {
         overflow: auto;
         -webkit-transition: bottom 0.5s ease;
         transition: bottom 0.5s ease;
+    }
+}
+
+@media (max-width: 991px) {
+    .reverse-animated-container .find-form {
+        width: 100%;
     }
 }
 
