@@ -2,9 +2,12 @@ package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.*;
-import com.autonomy.abc.selenium.page.login.ApiKey;
-import com.autonomy.abc.selenium.page.login.AuthProvider;
+import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.HSOAppBody;
+import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+import com.hp.autonomy.frontend.selenium.sso.ApiKey;
 import org.openqa.selenium.WebDriver;
 
 public class HSOApplication extends Application {

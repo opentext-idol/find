@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.page.keywords;
 
-import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.page.AppPage;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;

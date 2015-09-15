@@ -1,10 +1,8 @@
 package com.autonomy.abc.selenium.page;
 
-import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public abstract class AppBody {
 

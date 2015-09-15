@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.element;
 
-import com.autonomy.abc.selenium.AppElement;
-import org.apache.commons.lang.StringUtils;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -28,7 +28,7 @@ public class DatePicker extends AppElement {
 		}
 		String hourString = String.valueOf(hour);
 		if (hourString.length() == 1) {
-			hourString = "0" + hourString;
+			hourString = '0' + hourString;
 		}
 		findElement(By.cssSelector(".timepicker-hours")).findElement(By.xpath(".//td[contains(text(), '" + hourString + "')]")).click();
 	}
@@ -40,7 +40,7 @@ public class DatePicker extends AppElement {
 		minute = minute / 5 * 5; //rounding to nearest 5
 		String minuteString = String.valueOf(minute);
 		if (minuteString.length() == 1) {
-			minuteString = "0" + minuteString;
+			minuteString = '0' + minuteString;
 		}
 		findElement(By.cssSelector(".timepicker-minutes")).findElement(By.xpath(".//td[contains(text(), '" + minuteString + "')]")).click();
 		loadOrFadeWait();

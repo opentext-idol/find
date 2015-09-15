@@ -1,11 +1,11 @@
 package com.autonomy.abc.selenium.menu;
 
-import com.autonomy.abc.selenium.AppElement;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public abstract class Tab extends AppElement{
+public abstract class Tab extends AppElement {
     private String id;
 
     protected Tab(final SideNavBar parent, final By by) {
