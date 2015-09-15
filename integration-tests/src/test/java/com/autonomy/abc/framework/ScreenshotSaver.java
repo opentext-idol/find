@@ -23,7 +23,7 @@ public class ScreenshotSaver {
         File dest = new File(destination);
         try {
             FileUtils.moveFile(imageFile, dest);
-            LOGGER.info("Saved screenshot: " + destination);
+            LOGGER.info("Saved screenshot: " + dest.getAbsolutePath());
         } catch (IOException eio) {
             eio.printStackTrace();
         }

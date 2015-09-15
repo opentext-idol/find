@@ -31,22 +31,20 @@ public class ElementMatchers {
     public static Matcher<? super WebElement> containsText(final String text) {
         return new TypeSafeMatcher<WebElement>() {
             private Matcher<String> container = containsString(text);
-            private String tagName;
 
             @Override
             protected boolean matchesSafely(WebElement item) {
-                tagName = item.getTagName();
                 return container.matches(item.getText());
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("a <" + tagName + "> containing ").appendValue(text);
+                description.appendText("a tag containing ").appendValue(text);
             }
 
             @Override
             public void describeMismatchSafely(final WebElement item, final Description description) {
-                description.appendText("text was \"" + item.getText() + "\"");
+                description.appendText("<" + item.getTagName() + "> tag had text ").appendValue(item.getText());
             }
         };
     }

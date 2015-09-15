@@ -4,6 +4,7 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -17,10 +18,11 @@ public class PageSourceSaver {
     }
 
     public void saveTo(String destination) {
+        File dest = new File(destination);
         try {
-            PrintStream out = new PrintStream(new FileOutputStream(destination));
+            PrintStream out = new PrintStream(new FileOutputStream(dest));
             out.print(driver.getPageSource());
-            LOGGER.info("Saved page source: " + destination);
+            LOGGER.info("Saved page source: " + dest.getAbsolutePath());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
