@@ -16,7 +16,7 @@ define([
 ], function(BasePage, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
 
     return BasePage.extend({
-
+        className: 'search-page',
         template: _.template(template),
 
         initialize: function() {
@@ -68,18 +68,22 @@ define([
 
         expandedState: function() {
             /*fancy animation*/
-            this.$('.find').addClass('animated-container').removeClass('reverse-animated-container');
+            this.$('.find').addClass('animated-container col-md-offset-2').removeClass('reverse-animated-container col-md-offset-3');
 
             this.$('.service-view-container').show();
+            this.$('.app-logo').hide();
+            $('.find-navbar').addClass('visible');
 
             vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
 
         reducedState: function() {
             /*fancy reverse animation*/
-            this.$('.find').removeClass('animated-container').addClass('reverse-animated-container');
+            this.$('.find').removeClass('animated-container col-md-offset-2').addClass('reverse-animated-container col-md-offset-3');
 
             this.$('.service-view-container').hide();
+            this.$('.app-logo').show();
+            $('.find-navbar').removeClass('visible');
 
             vent.navigate('find/search', {trigger: false});
         }

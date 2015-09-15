@@ -20,10 +20,16 @@ define([
                 this.currentRequest.abort();
             }
 
-            this.currentRequest = Backbone.Collection.prototype.fetch.call(this, _.defaults(options, {
-                reset: options.reset || true,
+            var success = options.success;
+
+            this.currentRequest = Backbone.Collection.prototype.fetch.call(this, _.extend(options || {}, {
+                reset: _.isUndefined(options.reset) ? true : options.reset,
                 success: _.bind(function() {
                     this.currentRequest = null;
+
+                    if (success) {
+                        success.apply(options, arguments);
+                    }
                 }, this)
             }));
 
@@ -43,5 +49,6 @@ define([
 
             return Backbone.Collection.prototype.sync.call(this, method, model, options);
         }
-    })
+    });
+
 });

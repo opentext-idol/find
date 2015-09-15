@@ -39,10 +39,19 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: testRequireConfig
+    watch:
+      test:
+        files: [
+          'src/**/*.js'
+          'test/**/*.js'
+        ]
+        tasks: ['test']
 
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
+  grunt.loadNpmTasks 'grunt-contrib-watch'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['connect:server', 'jasmine:test']
   grunt.registerTask 'browser-test', ['connect:server:keepalive']
+  grunt.registerTask 'watch-test', ['watch:test']

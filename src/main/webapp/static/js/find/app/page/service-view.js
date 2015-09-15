@@ -6,8 +6,7 @@ define([
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/search-filters-collection',
-    'find/app/model/parametric-collection',
-    'find/app/page/parametric/parametric-controller',
+    'find/app/page/parametric/parametric-view',
     'find/app/page/filter-display/filter-display-view',
     'find/app/page/date/dates-filter-view',
     'find/app/page/results/results-view',
@@ -15,11 +14,12 @@ define([
     'find/app/page/sort/sort-view',
     'find/app/page/indexes/indexes-view',
     'find/app/util/collapsible',
+    'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection, ParametricCollection,
-            ParametricController, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
-            IndexesView, Collapsible, i18n, template) {
+], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection,
+            ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
+            IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, template) {
 
     var collapseView = function(titleKey, view) {
         return new Collapsible({
@@ -39,11 +39,13 @@ define([
 
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
+            this.selectedParametricValues = new SelectedParametricValuesCollection();
 
             this.filtersCollection = new SearchFiltersCollection([], {
                 queryModel: this.queryModel,
                 datesFilterModel: this.datesFilterModel,
-                indexesCollection: this.indexesCollection
+                indexesCollection: this.indexesCollection,
+                selectedParametricValues: this.selectedParametricValues
             });
 
             this.listenTo(this.filtersCollection, 'remove', function(model) {
@@ -51,21 +53,27 @@ define([
 
                 if (type === SearchFiltersCollection.FilterTypes.indexes) {
                     this.indexesView.selectAll();
-                } else if (type === SearchFiltersCollection.FilterTypes.PARAMETRIC) {
-                    this.queryModel.set('fieldText', null);
                 }
             });
 
             this.indexesCollection.fetch();
 
-            this.listenTo(this.queryModel, 'change:queryText change:indexes change:fieldText', function() {
+            function fetch() {
                 this.entityCollection.fetch({
                     data: {
                         text: this.queryModel.get('queryText'),
                         index: this.queryModel.get('indexes'),
-                        field_text: this.queryModel.getFieldTextString()
+                        field_text: this.queryModel.get('fieldText')
                     }
                 });
+            }
+
+            this.listenTo(this.queryModel, 'refresh', fetch);
+
+            this.listenTo(this.queryModel, 'change', function() {
+                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
+                    fetch.call(this);
+                }
             });
 
             this.resultsView = new ResultsView({
@@ -80,14 +88,15 @@ define([
                 datesFilterModel: this.datesFilterModel
             });
 
+            this.parametricView = new ParametricView({
+                queryModel: this.queryModel,
+                selectedParametricValues: this.selectedParametricValues
+            });
+
             // Left Collapsed Views
             this.indexesView = new IndexesView({
                 queryModel: this.queryModel,
                 indexesCollection: this.indexesCollection
-            });
-
-            this.parametricController = new ParametricController({
-                queryModel: this.queryModel
             });
 
             this.dateView = new DateView({
@@ -117,7 +126,7 @@ define([
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
-            this.parametricController.view.setElement(this.$('.parametric-container')).render();
+            this.parametricView.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
 
             this.relatedConceptsViewWrapper.render();
@@ -128,5 +137,6 @@ define([
 
             this.resultsView.setElement(this.$('.results-container')).render();
         }
-    })
+    });
+
 });

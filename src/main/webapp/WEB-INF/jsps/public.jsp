@@ -20,7 +20,7 @@
         <![endif]-->
         <link rel="stylesheet" type="text/css" href="../static-${applicationVersion}/css/app.css"/>
 
-        <script type="text/javascript" src="../static-${applicationVersion}/lib/requirejs/require.js" data-main="../static-${applicationVersion}/js/public.js"></script>
+        <script type="text/javascript" src="../static-${applicationVersion}/bower_components/requirejs/require.js" data-main="../static-${applicationVersion}/js/public.js"></script>
     </head>
     <body>
         <div class="page">

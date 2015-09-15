@@ -1,10 +1,15 @@
 define([
     'backbone',
+    'jquery',
     'find/app/model/documents-collection',
     'find/app/model/promotions-collection',
+    'find/app/model/similar-documents-collection',
+    'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
     'js-whatever/js/escape-regex',
+    'text!find/templates/app/page/results-popover.html',
+    'text!find/templates/app/page/popover-message.html',
     'text!find/templates/app/page/results/results-view.html',
     'text!find/templates/app/page/results-container.html',
     'text!find/templates/app/page/colorbox-controls.html',
@@ -15,8 +20,9 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, DocumentsCollection, PromotionsCollection, viewClient, documentMimeTypes, escapeRegex, resultsView, resultsTemplate,
-            colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
+], function(Backbone, $, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover, viewClient, documentMimeTypes,
+            escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate, colorboxControlsTemplate,
+            loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
 
     /** Whitespace OR character in set bounded by [] */
     var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
@@ -40,12 +46,12 @@ define([
     };
 
     return Backbone.View.extend({
-
-        template: _.template(resultsView),
-        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n}),
+        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
-        noResultsTemplate: _.template('<div class="no-results span10"><%- i18n["search.noResults"] %> </div>'),
+        popoverMessageTemplate: _.template(popoverMessageTemplate),
+        messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
+        popoverTemplate: _.template(popoverTemplate),
         entityTemplate: _.template(entityTemplate),
         viewDocumentTemplate: _.template(viewDocumentTemplate),
 
@@ -66,8 +72,11 @@ define([
         },
 
         initialize: function(options) {
+            _.bindAll(this, 'handlePopover');
+
             this.queryModel = options.queryModel;
             this.entityCollection = options.entityCollection;
+            this.indexesCollection = options.indexesCollection;
 
             this.documentsCollection = new DocumentsCollection([], {
                 indexesCollection: options.indexesCollection
@@ -77,7 +86,7 @@ define([
                 indexesCollection: options.indexesCollection
             });
 
-            this.listenTo(this.queryModel, 'change', function() {
+            this.listenTo(this.queryModel, 'change refresh', function() {
                 if (!_.isEmpty(this.queryModel.get('indexes'))) {
                     this.documentsCollection.fetch({
                         data: {
@@ -85,7 +94,22 @@ define([
                             max_results: 30,
                             summary: 'context',
                             index: this.queryModel.get('indexes'),
-                            field_text: this.queryModel.getFieldTextString(),
+                            field_text: this.queryModel.get('fieldText'),
+                            min_date: this.queryModel.getIsoDate('minDate'),
+                            max_date: this.queryModel.getIsoDate('maxDate'),
+                            sort: this.queryModel.get('sort')
+                        },
+                        reset: false
+                    }, this);
+
+                    // TODO: Move out of if statement when HOD allows fetching promotions without query text
+                    this.promotionsCollection.fetch({
+                        data: {
+                            text: this.queryModel.get('queryText'),
+                            max_results: 30, // TODO maybe less?
+                            summary: 'context',
+                            index: this.queryModel.get('indexes'),
+                            field_text: this.queryModel.get('fieldText'),
                             min_date: this.queryModel.getIsoDate('minDate'),
                             max_date: this.queryModel.getIsoDate('maxDate'),
                             sort: this.queryModel.get('sort')
@@ -93,40 +117,49 @@ define([
                         reset: false
                     }, this);
                 }
-
-                this.promotionsCollection.fetch({
-                    data: {
-                        text: this.queryModel.get('queryText'),
-                        max_results: 30, // TODO maybe less?
-                        summary: 'context',
-                        index: this.queryModel.get('indexes'),
-                        field_text: this.queryModel.getFieldTextString(),
-                        min_date: this.queryModel.getIsoDate('minDate'),
-                        max_date: this.queryModel.getIsoDate('maxDate'),
-                        sort: this.queryModel.get('sort')
-                    },
-                    reset: false
-                }, this);
             });
         },
 
-        render: function() {
-            this.$el.html(this.template());
+        clearLoadingSpinner: function() {
+            if(this.resultsFinished && this.promotionsFinished) {
+                this.$loadingSpinner.addClass('hide');
+            }
+        },
 
+        render: function() {
+            this.$el.html(template);
+
+            this.$loadingSpinner = $(this.loadingTemplate);
+
+            this.$el.prepend(this.$loadingSpinner);
+
+            /*promotions content content*/
             this.listenTo(this.promotionsCollection, 'add', function(model) {
-                this.formatResult(model, true)
+                this.formatResult(model, true);
             });
 
-            /*main results content*/
             this.listenTo(this.promotionsCollection, 'request', function () {
+                this.promotionsFinished = false;
                 this.$('.main-results-content .promotions').empty();
-                this.$('.main-results-content .promotions').append(_.template(this.loadingTemplate));
+            });
+
+            this.listenTo(this.promotionsCollection, 'sync', function () {
+                this.promotionsFinished = true;
+                this.clearLoadingSpinner();
+            });
+
+            this.listenTo(this.promotionsCollection, 'error', function () {
+                this.promotionsFinished = true;
+                this.clearLoadingSpinner();
+
+                this.$('.main-results-content .promotions').append(this.messageTemplate({message: i18n["search.error.promotions"]}));
             });
 
             /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function () {
+                this.resultsFinished = false;
+                this.$loadingSpinner.removeClass('hide');
                 this.$('.main-results-content .results').empty();
-                this.$('.main-results-content .results').append(_.template(this.loadingTemplate));
             });
 
             this.listenTo(this.documentsCollection, 'add', function (model) {
@@ -134,10 +167,19 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'sync', function () {
+                this.resultsFinished = true;
+                this.clearLoadingSpinner();
+
                 if (this.documentsCollection.isEmpty()) {
-                    this.$('.main-results-content .results .loading-spinner').remove();
-                    this.$('.main-results-content .results').append(this.noResultsTemplate({i18n: i18n}));
+                    this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
+            });
+
+            this.listenTo(this.documentsCollection, 'error', function () {
+                this.resultsFinished = true;
+                this.clearLoadingSpinner();
+
+                this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.error.results"]}));
             });
 
             this.listenTo(this.entityCollection, 'reset', function() {
@@ -179,6 +221,14 @@ define([
                 width:'70%',
                 onComplete: _.bind(function() {
                     $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
+
+                    var $viewServerPage = $('.view-server-page');
+
+                    $viewServerPage.on('load', function() {
+                        $('.view-server-loading-indicator').addClass('hidden');
+                        $('.view-server-page').removeClass('hidden');
+                    });
+
                 }, this)
             };
 
@@ -190,7 +240,11 @@ define([
                 });
             } else {
                 args.html = this.viewDocumentTemplate({
-                    src: options.href
+                    src: options.href,
+                    i18n: i18n,
+                    model: options.model,
+                    dateFields: ['date', 'dateCreated', 'dateModified'],
+                    fields: ['reference', 'author', 'categories']
                 });
             }
 
@@ -219,6 +273,7 @@ define([
             var href = viewClient.getHref(reference, model.get('index'));
 
             var $newResult = $(this.resultsTemplate({
+                i18n: i18n,
                 title: model.get('title'),
                 reference: reference,
                 href: href,
@@ -229,12 +284,8 @@ define([
             }));
 
             if (isPromotion) {
-                this.$('.main-results-content .promotions .loading-spinner').remove();
-                this.$(".promotions [data-reference='" + reference + "']").remove(); // Remove existing document with this reference
                 this.$('.main-results-content .promotions').append($newResult);
             } else {
-                this.$('.main-results-content .results .loading-spinner').remove();
-                this.$(".results [data-reference='" + reference + "']").remove(); // Remove existing document with this reference
                 this.$('.main-results-content .results').append($newResult);
             }
 
@@ -249,16 +300,18 @@ define([
                 var url = fields.url[0];
                 var offset = fields.offset ? fields.offset[0] : 0;
 
-                $newResult.find('.result-header').colorbox(this.colorboxArguments({media: media, url: url, offset: offset}));
+                $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, media: media, url: url, offset: offset}));
             } else {
                 // Use the standard Viewserver display
-                $newResult.find('.result-header').colorbox(this.colorboxArguments({href: href}));
+                $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
             }
 
             $newResult.find('.dots').click(function (e) {
                 e.preventDefault();
                 $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
             });
+
+            popover($newResult.find('.similar-documents-trigger'), this.handlePopover);
         },
 
         addLinksToSummary: function(summary) {
@@ -275,7 +328,7 @@ define([
                 return {
                     text: entity.get('text'),
                     id:  _.uniqueId('Find-IOD-Entity-Placeholder')
-                }
+                };
             }).sort(function(a,b) {
                 return b.text.length - a.text.length;
             });
@@ -283,7 +336,7 @@ define([
             // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
             // changed here and messing things up badly
             _.each(entities, function(entity) {
-                summary = this.replaceBoundedText(summary, entity.text, entity.id)
+                summary = this.replaceBoundedText(summary, entity.text, entity.id);
             }, this);
 
             // Loop through entities again, replacing text with labels
@@ -324,6 +377,26 @@ define([
             });
 
             return text.replace(new RegExp(startRegex + textToFind + endRegex, 'g'), '$1' + label + '$2');
+        },
+
+        handlePopover: function($content, $target) {
+            var collection = new SimilarDocumentsCollection([], {
+                indexes: this.queryModel.get('indexes'),
+                reference: $target.closest('[data-reference]').attr('data-reference')
+            });
+
+            collection.fetch({
+                error: _.bind(function() {
+                    $content.html(this.popoverMessageTemplate({message: i18n['search.similarDocuments.error']}));
+                }, this),
+                success: _.bind(function() {
+                    if (collection.isEmpty()) {
+                        $content.html(this.popoverMessageTemplate({message: i18n['search.similarDocuments.none']}));
+                    } else {
+                        $content.html(this.popoverTemplate({collection: collection}));
+                    }
+                }, this)
+            });
         }
-    })
+    });
 });

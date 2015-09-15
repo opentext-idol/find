@@ -1,7 +1,7 @@
 define([
-    'mock/backbone-mock-factory'
+    'js-testing/backbone-mock-factory'
 ], function(backboneMockFactory) {
 
-    return backboneMockFactory.getCollection(['fetch']);
+    return backboneMockFactory.getCollection(['fetch', 'getResourceIdentifiers']);
 
 });

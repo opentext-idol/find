@@ -11,7 +11,7 @@ define([
         events: {
             'keyup .find-input': _.debounce(function() {
                 var findInput = this.$('.find-input').val();
-                this.queryModel.set('queryText', findInput);
+                this.queryModel.refresh(findInput);
             }, 500),
             'submit .find-form': function(e) {
                 e.preventDefault();

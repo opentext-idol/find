@@ -1,8 +1,0 @@
-<tbody>
-    <% _.each(data.values, function(item) { %>
-        <tr class="parametric-value-element selectable-table-item clickable" data-value="<%- item.value %>">
-            <td class="col-md-1 text-right"><i class="icon-ok hide"></i></td>
-            <td data-id="<%-item.value%>"><%-item.value%> (<%-item.count%>)</td>
-        </tr>
-    <% }); %>
-</tbody>

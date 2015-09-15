@@ -25,68 +25,69 @@ define([
         return i18n[textPrefixKey] + ': ' + dateString;
     }
 
-    // Takes a field text node and deconstructs it into model attributes to add to the collection
-    // TODO: This should probably be handled in the parametric view so we don't have to deconstruct the field text
-    function deconstructParametricFieldText(node) {
-        if(!node || !node.toString()) {
-            return [];
-        }
-
-        if(_.contains(['AND', 'OR', 'XOR', 'BEFORE', 'AFTER'], node.operator)) {
-            var left = deconstructParametricFieldText(node.left);
-            var right = deconstructParametricFieldText(node.right);
-
-            return _.flatten([left, right]);
-        }
-
-        if (node.operator === 'MATCH') {
-            // There should only be one field per MATCH node for parametric field text
-            var field = node.fields[0];
-
-            var displayText = field + ': ' + node.values.join(', ');
-
-            return [{
-                field: field,
-                text: displayText,
-                type: FilterTypes.PARAMETRIC,
-                id: FilterTypes.PARAMETRIC + ':' + field
-            }];
-        }
+    // Get the filter model id for a given parametric field name
+    function parametricFilterId(fieldName) {
+        return FilterTypes.PARAMETRIC + ':' + fieldName;
     }
 
-    // This collection backs the search filters display view. It monitors the request model and selected indexes collection
-    // and creates/removes it's own models when they change.
+    // Get the display text for the given parametric field name and array of selected parametric values
+    function parametricFilterText(fieldName, values) {
+        return fieldName + ': ' + values.join(', ');
+    }
+
+    // Get an array of filter model attributes from the selected parametric values collection
+    function extractParametricFilters(selectedParametricValues) {
+        return _.map(selectedParametricValues.toFieldsAndValues(), function(values, field) {
+            return {
+                id: parametricFilterId(field),
+                field: field,
+                text: parametricFilterText(field, values),
+                type: FilterTypes.PARAMETRIC
+            };
+        });
+    }
+
+    // This collection backs the search filters display view. It monitors the query model and selected parmaetric values
+    // collection and creates/removes it's own models when they change.
     // When a dates filter model is removed, it updates the appropriate request model attribute with a null value. However,
-    // this currently can't be done for the selected databases or parametric filters because the databases and parametric
-    // views aren't backed by a collection.
+    // this currently can't be done for the selected databases because the databases view isn't backed by a collection.
     return Backbone.Collection.extend({
         initialize: function(models, options) {
             this.queryModel = options.queryModel;
             this.datesFilterModel = options.datesFilterModel;
             this.indexesCollection = options.indexesCollection;
+            this.selectedParametricValues = options.selectedParametricValues;
+
+            this.listenTo(this.selectedParametricValues, 'add remove', this.updateParametricSelection);
+            this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
 
             this.listenTo(this.queryModel, 'change', function() {
-                var changed = this.queryModel.changedAttributes();
-                var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
+                if (this.queryModel.hasAnyChangedAttributes(['minDate', 'maxDate', 'indexes'])) {
+                    var changed = this.queryModel.changedAttributes();
+                    var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
 
-                var dateRange = this.datesFilterModel.get('dateRange');
+                    var dateRange = this.datesFilterModel.get('dateRange');
 
-                if(!_.isEmpty(dateFilterTypes)) {
-                    if(dateRange === DatesFilterModel.dateRange.custom) {
-                        this.intervalDate(dateFilterTypes);
-                    } else if(dateRange) {
-                        this.humanDate();
-                    } else {
-                        this.removeAllDateFilters();
+                    if(!_.isEmpty(dateFilterTypes)) {
+                        if(dateRange === DatesFilterModel.dateRange.custom) {
+                            this.intervalDate(dateFilterTypes);
+                        } else if(dateRange) {
+                            this.humanDate();
+                        } else {
+                            this.removeAllDateFilters();
+                        }
+                    }
+
+                    if(changed.indexes) {
+                        this.updateDatabases();
                     }
                 }
+            });
 
-                if(changed.indexes) {
-                    this.updateDatabases();
-                }
-
-                if(changed.fieldText) {
-                    this.setParametricFieldText(this.queryModel.get('fieldText'))
+            this.on('remove', function(model) {
+                if (model.get('type') === FilterTypes.PARAMETRIC) {
+                    var field = model.get('field');
+                    this.selectedParametricValues.remove(this.selectedParametricValues.where({field: field}));
                 }
             });
 
@@ -115,6 +116,8 @@ define([
                     text: this.getDatabasesFilterText()
                 });
             }
+
+            Array.prototype.push.apply(models, extractParametricFilters(this.selectedParametricValues));
         },
 
         getDatabasesFilterText: function() {
@@ -128,18 +131,8 @@ define([
 
         },
 
-        setParametricFieldText: function(node) {
-            var newParametricAttributes = deconstructParametricFieldText(node);
-
-            var nonParametricModels = this.filter(function(model) {
-                return model.get('type') !== FilterTypes.PARAMETRIC;
-            });
-
-            this.set(nonParametricModels.concat(newParametricAttributes));
-        },
-
         allIndexesSelected: function() {
-            return this.indexesCollection.length === this.queryModel.get('indexes').length
+            return this.indexesCollection.length === this.queryModel.get('indexes').length;
         },
 
         updateDatabases: function() {
@@ -205,8 +198,34 @@ define([
                     this.remove(filterModel);
                 }
             }, this);
-        }
+        },
 
+        // Handles add and remove events from the selected parametric values collection
+        updateParametricSelection: function(selectionModel) {
+            var field = selectionModel.get('field');
+            var id = parametricFilterId(field);
+            var modelsForField = this.selectedParametricValues.where({field: field});
+
+            if (modelsForField.length) {
+                this.add({
+                    id: id,
+                    field: field,
+                    text: parametricFilterText(field, _.invoke(modelsForField, 'get', 'value')),
+                    type: FilterTypes.PARAMETRIC
+                }, {
+                    // Merge true to overwrite the text for any existing model for this field name
+                    merge: true
+                });
+            } else {
+                // this.remove(id) doesn't work when this has been called in response to a different remove event
+                this.remove(this.where({id: id}));
+            }
+        },
+
+        resetParametricSelection: function() {
+            this.remove(this.where({type: FilterTypes.PARAMETRIC}));
+            this.add(extractParametricFilters(this.selectedParametricValues));
+        }
     }, {
         FilterTypes: FilterTypes,
         metaFilterTypes: metaFilterType
