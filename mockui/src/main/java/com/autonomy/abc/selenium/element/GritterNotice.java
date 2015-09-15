@@ -28,11 +28,8 @@ public class GritterNotice extends AppElement {
     }
 
     public static ExpectedCondition<?> notificationAppears() {
+        // TODO: does this need "refreshed"?
         return ExpectedConditions.refreshed(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("gritter-item")));
-    }
-
-    public static ExpectedCondition<?> notificationDisappears() {
-        return ExpectedConditions.invisibilityOfElementLocated(By.id("gritter-notice-wrapper"));
     }
 
     public static ExpectedCondition<?> notificationsDisappear() {

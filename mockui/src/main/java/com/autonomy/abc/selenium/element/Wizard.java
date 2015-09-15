@@ -16,6 +16,10 @@ public class Wizard {
         this.driver = page.getDriver();
     }
 
+    /**
+     * Just make sure that the next wizard step loads properly
+     * as check for visibility does not work as expected
+     */
     public void loadOrFadeWait() {
         try {
             Thread.sleep(1000);
@@ -59,6 +63,10 @@ public class Wizard {
     // only works on wizard steps with single input element
     public FormInput formInput() {
         return new FormInput(getVisibleElement(By.tagName("input")), driver);
+    }
+
+    public FormInput textarea() {
+        return new FormInput(getVisibleElement(By.tagName("textarea")), driver);
     }
 
     public String getTitle() {

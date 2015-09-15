@@ -10,8 +10,7 @@ public class HSOSearchPage extends SearchPage {
     }
 
     @Override
-    public void selectLanguage(String language, String type) {
+    public void selectLanguage(String language) {
         LoggerFactory.getLogger(HSOSearchPage.class).warn("Cannot select language on hosted yet");
-        return;
     }
 }

@@ -17,4 +17,8 @@ public class NotificationsDropDown extends AppElement {
 //        return findElement(By.cssSelector("li li:nth-child(" + (index * 2 - 1) + ") a div"));
         return findElement(By.cssSelector("li:nth-child(" + (index * 2 - 1) + ") a div"));
     }
+
+    public void toggleNotificationsOpen() {
+        getParent(this).click();
+    }
 }
