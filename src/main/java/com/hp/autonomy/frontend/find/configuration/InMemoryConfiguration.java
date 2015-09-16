@@ -17,7 +17,7 @@ import org.springframework.session.web.http.SessionRepositoryFilter;
 
 @Configuration
 @Conditional(NotRedisCondition.class)
-public class SessionConfiguration {
+public class InMemoryConfiguration {
 
     @Bean
     @Conditional(NotRedisCondition.class)

@@ -28,7 +28,7 @@ import java.util.Set;
 @Configuration
 @Conditional(RedisCondition.class)
 @EnableRedisHttpSession
-public class RedisSessionConfiguration{
+public class RedisConfiguration {
 
     @Autowired
     private ConfigService<FindConfig> configService;
