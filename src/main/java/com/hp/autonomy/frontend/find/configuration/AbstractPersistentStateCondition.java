@@ -13,7 +13,7 @@ public abstract class AbstractPersistentStateCondition implements Condition {
     private static final String DEFAULT_VALUE = "INMEMORY";
 
     protected PersistentStateConfig getProperty(final ConditionContext context) {
-        return PersistentStateConfig.valueOf(context.getEnvironment().getProperty("hp.find.redis", DEFAULT_VALUE));
+        return PersistentStateConfig.valueOf(context.getEnvironment().getProperty("hp.find.persistentState", DEFAULT_VALUE));
     }
 
 }
