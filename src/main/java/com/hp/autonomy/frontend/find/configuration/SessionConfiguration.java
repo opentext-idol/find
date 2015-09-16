@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.configuration;
 
+import com.hp.autonomy.hod.client.token.InMemoryTokenRepository;
+import com.hp.autonomy.hod.client.token.TokenRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +29,11 @@ public class SessionConfiguration {
     @Conditional(NotRedisCondition.class)
     public SessionRepository<ExpiringSession> sessionRepository() {
         return new MapSessionRepository();
+    }
+
+    @Bean
+    public TokenRepository tokenRepository() {
+        return new InMemoryTokenRepository();
     }
 
 }
