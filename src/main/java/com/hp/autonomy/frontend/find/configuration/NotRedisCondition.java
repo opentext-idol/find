@@ -11,14 +11,9 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 public class NotRedisCondition implements Condition {
 
-    private final RedisCondition redisCondition;
-
-    public NotRedisCondition() {
-        this.redisCondition = new RedisCondition();
-    }
-
     @Override
     public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-        return !redisCondition.matches(context, metadata);
+        return PersistentStateConfig.valueOf(context.getEnvironment().getProperty("hp.find.redis", "INMEMORY")) == PersistentStateConfig.INMEMORY;
     }
+
 }

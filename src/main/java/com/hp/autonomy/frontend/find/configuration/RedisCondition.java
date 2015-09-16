@@ -13,6 +13,6 @@ public class RedisCondition implements Condition {
 
     @Override
     public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-        return Boolean.valueOf(context.getEnvironment().getProperty("hp.find.redis"));
+        return PersistentStateConfig.valueOf(context.getEnvironment().getProperty("hp.find.redis", "INMEMORY")) == PersistentStateConfig.REDIS;
     }
 }
