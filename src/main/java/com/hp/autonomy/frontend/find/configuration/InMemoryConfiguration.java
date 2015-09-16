@@ -16,17 +16,17 @@ import org.springframework.session.SessionRepository;
 import org.springframework.session.web.http.SessionRepositoryFilter;
 
 @Configuration
-@Conditional(NotRedisCondition.class)
+@Conditional(InMemoryCondition.class)
 public class InMemoryConfiguration {
 
     @Bean
-    @Conditional(NotRedisCondition.class)
+    @Conditional(InMemoryCondition.class)
     public SessionRepositoryFilter<ExpiringSession> springSessionRepositoryFilter() {
         return new SessionRepositoryFilter<>(sessionRepository());
     }
 
     @Bean
-    @Conditional(NotRedisCondition.class)
+    @Conditional(InMemoryCondition.class)
     public SessionRepository<ExpiringSession> sessionRepository() {
         return new MapSessionRepository();
     }

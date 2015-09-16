@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-public class NotRedisCondition implements Condition {
+public class InMemoryCondition implements Condition {
 
     @Override
     public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
