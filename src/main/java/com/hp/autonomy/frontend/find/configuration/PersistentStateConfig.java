@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.configuration;
 /**
  * Where to store the Haven OnDemand session token for logged in users
  */
-public enum TokenStoreConfig {
+public enum PersistentStateConfig {
     /** Store the token in memory - only good for a single Find node */
     INMEMORY,
 

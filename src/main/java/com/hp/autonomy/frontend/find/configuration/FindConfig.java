@@ -32,7 +32,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     private final IodConfig iod;
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
-    private final TokenStoreConfig tokenStoreConfig;
+    private final PersistentStateConfig tokenStoreConfig;
 
     private FindConfig(final Builder builder) {
         this.login = builder.login;
@@ -134,7 +134,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
         private IodConfig iod;
         private Set<String> allowedOrigins;
         private RedisConfig redis;
-        private TokenStoreConfig tokenStoreConfig;
+        private PersistentStateConfig tokenStoreConfig;
 
         public Builder() {}
 
