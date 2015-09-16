@@ -15,7 +15,6 @@
         "publicIndexesEnabled": false
     },
     "allowedOrigins": [],
-    "tokenStoreConfig": "REDIS",
     "redis": {
         "address": {
             "host": "hp-find-backend",
