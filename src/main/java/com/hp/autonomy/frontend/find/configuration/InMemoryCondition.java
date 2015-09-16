@@ -5,15 +5,14 @@
 
 package com.hp.autonomy.frontend.find.configuration;
 
-import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-public class InMemoryCondition implements Condition {
+public class InMemoryCondition extends AbstractPersistentStateCondition {
 
     @Override
     public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-        return PersistentStateConfig.valueOf(context.getEnvironment().getProperty("hp.find.redis", "INMEMORY")) == PersistentStateConfig.INMEMORY;
+        return getProperty(context) == PersistentStateConfig.INMEMORY;
     }
 
 }
