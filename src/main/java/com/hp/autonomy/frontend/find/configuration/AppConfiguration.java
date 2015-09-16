@@ -98,36 +98,6 @@ public class AppConfiguration {
         return validationService;
     }
 
-    @Bean
-    public JedisConnectionFactory redisConnectionFactory() {
-        final RedisConfig config = configService.getConfig().getRedis();
-        final JedisConnectionFactory connectionFactory;
-
-        //If we haven't specified any sentinels then assume non-distributed setup
-        if (config.getSentinels().isEmpty()) {
-            connectionFactory = new JedisConnectionFactory();
-            connectionFactory.setHostName(config.getAddress().getHost());
-            connectionFactory.setPort(config.getAddress().getPort());
-        } else {
-            final RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration().master(config.getMasterName());
-            for (final HostAndPort node : config.getSentinels()) {
-                sentinelConfig.sentinel(node.getHost(), node.getPort());
-            }
-
-            connectionFactory = new JedisConnectionFactory(sentinelConfig);
-        }
-
-        final Integer database = config.getDatabase();
-
-        if (database != null) {
-            connectionFactory.setDatabase(database);
-        }
-
-        connectionFactory.setPassword(config.getPassword());
-
-        return connectionFactory;
-    }
-
     @Bean(name = "dispatcherObjectMapper")
     public ObjectMapper dispatcherObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper();

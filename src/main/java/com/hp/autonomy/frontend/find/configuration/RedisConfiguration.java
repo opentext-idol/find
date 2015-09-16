@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import redis.clients.jedis.Jedis;
@@ -33,13 +34,40 @@ public class RedisConfiguration {
     @Autowired
     private ConfigService<FindConfig> configService;
 
-    @Autowired
-    private JedisConnectionFactory redisConnectionFactory;
+    @Bean
+    public JedisConnectionFactory redisConnectionFactory() {
+        final RedisConfig config = configService.getConfig().getRedis();
+        final JedisConnectionFactory connectionFactory;
+
+        //If we haven't specified any sentinels then assume non-distributed setup
+        if (config.getSentinels().isEmpty()) {
+            connectionFactory = new JedisConnectionFactory();
+            connectionFactory.setHostName(config.getAddress().getHost());
+            connectionFactory.setPort(config.getAddress().getPort());
+        } else {
+            final RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration().master(config.getMasterName());
+            for (final HostAndPort node : config.getSentinels()) {
+                sentinelConfig.sentinel(node.getHost(), node.getPort());
+            }
+
+            connectionFactory = new JedisConnectionFactory(sentinelConfig);
+        }
+
+        final Integer database = config.getDatabase();
+
+        if (database != null) {
+            connectionFactory.setDatabase(database);
+        }
+
+        connectionFactory.setPassword(config.getPassword());
+
+        return connectionFactory;
+    }
 
     @Bean
     public TokenRepository tokenRepository() {
         final RedisConfig redisConfig = configService.getConfig().getRedis();
-        final JedisConnectionFactory jedisConnectionFactory = redisConnectionFactory;
+        final JedisConnectionFactory jedisConnectionFactory = redisConnectionFactory();
         final Integer database = redisConfig.getDatabase();
 
         final Pool<Jedis> pool;
