@@ -81,7 +81,15 @@ Below is an example config file:
         },
         "allowedOrigins": [
             "http://mydomain.example.com:8080"
-        ]
+        ],
+        "redis": {
+            "address": {
+                "host": "hp-find-backend",
+                "port": 6379
+            },
+            "database": 0,
+            "sentinels": []
+        }
     }
 
 ## Is it any good?
