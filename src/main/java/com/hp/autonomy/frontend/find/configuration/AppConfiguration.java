@@ -42,7 +42,6 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServi
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
-import com.hp.autonomy.hod.redis.RedisTokenRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
 import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
@@ -56,23 +55,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisSentinelPool;
-import redis.clients.jedis.Protocol;
-import redis.clients.util.Pool;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 
 @Configuration
-@EnableRedisHttpSession
 public class AppConfiguration {
 
     @Autowired
     private FindConfigFileService configService;
+
+    @Autowired
+    private TokenRepository tokenRepository;
 
     @Bean
     public IodConfigValidator iodConfigValidator() {
@@ -102,36 +96,6 @@ public class AppConfiguration {
         configService.setValidationService(validationService);
 
         return validationService;
-    }
-
-    @Bean
-    public JedisConnectionFactory redisConnectionFactory() {
-        final RedisConfig config = configService.getConfig().getRedis();
-        final JedisConnectionFactory connectionFactory;
-
-        //If we haven't specified any sentinels then assume non-distributed setup
-        if (config.getSentinels().isEmpty()) {
-            connectionFactory = new JedisConnectionFactory();
-            connectionFactory.setHostName(config.getAddress().getHost());
-            connectionFactory.setPort(config.getAddress().getPort());
-        } else {
-            final RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration().master(config.getMasterName());
-            for (final HostAndPort node : config.getSentinels()) {
-                sentinelConfig.sentinel(node.getHost(), node.getPort());
-            }
-
-            connectionFactory = new JedisConnectionFactory(sentinelConfig);
-        }
-
-        final Integer database = config.getDatabase();
-
-        if (database != null) {
-            connectionFactory.setDatabase(database);
-        }
-
-        connectionFactory.setPassword(config.getPassword());
-
-        return connectionFactory;
     }
 
     @Bean(name = "dispatcherObjectMapper")
@@ -169,46 +133,10 @@ public class AppConfiguration {
         return builder.build();
     }
 
-    @Bean
-    public TokenRepository tokenRepository() {
-        final RedisConfig redisConfig = configService.getConfig().getRedis();
-        final JedisConnectionFactory jedisConnectionFactory = redisConnectionFactory();
-        final Integer database = redisConfig.getDatabase();
-
-        final Pool<Jedis> pool;
-
-        if(redisConfig.getSentinels().isEmpty()) {
-            final HostAndPort address = redisConfig.getAddress();
-
-            if (database != null) {
-                pool = new JedisPool(jedisConnectionFactory.getPoolConfig(), address.getHost(), address.getPort(), Protocol.DEFAULT_TIMEOUT, null, database);
-            }
-            else {
-                pool = new JedisPool(jedisConnectionFactory.getPoolConfig(), address.getHost(), address.getPort());
-            }
-        }
-        else {
-            final Set<String> sentinels = new HashSet<>();
-
-            for(final HostAndPort hostAndPort : redisConfig.getSentinels()) {
-                sentinels.add(hostAndPort.getHost() + ':' + hostAndPort.getPort());
-            }
-
-            if (database != null) {
-                pool = new JedisSentinelPool(redisConfig.getMasterName(), sentinels, jedisConnectionFactory.getPoolConfig(), Protocol.DEFAULT_TIMEOUT, null, database);
-            }
-            else {
-                pool = new JedisSentinelPool(redisConfig.getMasterName(), sentinels, jedisConnectionFactory.getPoolConfig());
-            }
-        }
-
-        return new RedisTokenRepository(pool);
-    }
-
     private HodServiceConfig.Builder hodServiceConfigBuilder() {
         return new HodServiceConfig.Builder(System.getProperty("find.iod.api", "https://api.idolondemand.com"))
             .setHttpClient(httpClient())
-            .setTokenRepository(tokenRepository());
+            .setTokenRepository(tokenRepository);
     }
 
     @Bean

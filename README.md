@@ -37,12 +37,16 @@ If using the jetty:run goal, the properties can be set on the command line
 The properties you'll need to set are:
 
 * -Dhp.find.home . This is the directory where the webapp will store log files and the config.json file.
-* -Dfind.https.proxyHost . Optional property. The host for the https proxy. Set this if you need a proxy server to talk to Haven OnDemand.
-* -Dfind.https.proxyPort . Optional property. The port for the https proxy. Set this if you need a proxy server to talk to Haven OnDemand. Defaults to 80 if find.https.proxyHost is defined.
+* -Dhp.find.persistentState . Optional property. The persistence mode for the application, which determines where 
+sessions, token proxies and caches are stored. Possible options are REDIS or INMEMORY. Defaults to REDIS.
+* -Dfind.https.proxyHost . Optional property. The host for the https proxy. Set this if you need a proxy server to talk 
+to Haven OnDemand.
+* -Dfind.https.proxyPort . Optional property. The port for the https proxy. Set this if you need a proxy server to talk 
+to Haven OnDemand. Defaults to 80 if find.https.proxyHost is defined.
 
 ## Vagrant
-HP Find includes a Vagrant file, which will provision an Ubuntu 12.04 VM running a Redis server, which will be used to
-store sessions. 
+HP Find includes a Vagrant file, which will provision an Ubuntu 12.04 VM running a Redis server, which will by default 
+be used to store sessions. 
 
 The Vagrantfile requires several plugins, which will be installed if they are not installed already.
 
@@ -77,7 +81,15 @@ Below is an example config file:
         },
         "allowedOrigins": [
             "http://mydomain.example.com:8080"
-        ]
+        ],
+        "redis": {
+            "address": {
+                "host": "hp-find-backend",
+                "port": 6379
+            },
+            "database": 0,
+            "sentinels": []
+        }
     }
 
 ## Is it any good?
