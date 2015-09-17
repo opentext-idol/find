@@ -459,7 +459,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void sortBy(final String sortBy) {
-		findElement(By.cssSelector(".current-search-sort")).click();
+		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".current-search-sort"))).click();
 
 		final WebElement element = findElement(By.cssSelector(".search-results-sort")).findElement(By.xpath(".//a[text()='" + sortBy + "']"));
 		// IE doesn't like clicking dropdown elements

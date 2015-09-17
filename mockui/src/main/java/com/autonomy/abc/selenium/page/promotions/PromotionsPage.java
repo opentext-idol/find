@@ -13,6 +13,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -36,8 +37,8 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void deletePromotion() {
-		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".category-filter .dropdown-toggle"));
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
+		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".extra-functions .dropdown-toggle"));
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
 		extraFunctionsDropdown.click();
 		loadOrFadeWait();
 		findElement(By.cssSelector(".promotion-view-delete")).click();
@@ -311,6 +312,19 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	@Override
 	public void waitForLoad() {
 		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Promote existing documents")));
+
+		new WebDriverWait(getDriver(),30).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				for(WebElement indicator : driver.findElements(By.className("loading-indicator"))){
+					if (indicator.isDisplayed()){
+						return false;
+					}
+				}
+
+				return true;
+			}
+		});
 	}
 
 //	public abstract List<String> setUpANewMultiDocPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs);

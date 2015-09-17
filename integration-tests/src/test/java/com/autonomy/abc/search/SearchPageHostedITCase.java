@@ -45,7 +45,7 @@ public class SearchPageHostedITCase extends ABCTestBase {
 		//TODO: Configure test Indexes for Hosted. Below is Database test from on Prem. Follow its structure.
 		assert false : "This test needs rewritten to handle indexes";
 		topNavBar.search("car");
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.selectLanguage("English");
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 		assertThat("All databases not showing", searchPage.getSelectedDatabases(), hasItem("All"));
 

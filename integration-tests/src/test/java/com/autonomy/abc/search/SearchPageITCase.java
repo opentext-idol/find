@@ -241,7 +241,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.createAMultiDocumentPromotion(18);
 		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat", getConfig().getType().getName());
+		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
 
 		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
@@ -823,7 +823,7 @@ public class SearchPageITCase extends ABCTestBase {
 
         searchPage.createAMultiDocumentPromotion(2);
 		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat", getConfig().getType().getName());
+		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
 
 //		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         searchPage.getDocLogo(1,new WebDriverWait(getDriver(),10));

@@ -145,7 +145,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
-		searchPage.selectLanguage("French", getConfig().getType().getName());
+		searchPage.selectLanguage("French");
 
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.selectNewsEngIndex();
@@ -821,7 +821,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteAllBlacklistedTerms();
 		body.getTopNavBar().search("noir");
 		searchPage = getElementFactory().getSearchPage();
-		searchPage.selectLanguage("French", getConfig().getType().getName());
+		searchPage.selectLanguage("French");
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.selectNewsEngIndex();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
@@ -857,7 +857,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.selectNewsEngIndex();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
-		searchPage.selectLanguage("French", getConfig().getType().getName());
+		searchPage.selectLanguage("French");
 
 		assertThat("No results for search rouge", searchPage.waitForDocLogo().isDisplayed());
 		assertThat("No add to blacklist link displayed", searchPage.blacklistLink().isDisplayed());
@@ -911,7 +911,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.selectNewsEngIndex();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.selectLanguage("English");
 
 		assertThat("No results for search", searchPage.waitForDocLogo().isDisplayed());
 		assertThat("No add to blacklist link displayed", searchPage.blacklistLink().isDisplayed());
@@ -1101,7 +1101,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		body.getTopNavBar().search("wizard");
 		searchPage = getElementFactory().getSearchPage();
 
-		searchPage.selectLanguage("Arabic", getConfig().getType().getName());
+		searchPage.selectLanguage("Arabic");
 
 		searchPage.blacklistLink().click();
 		try {
@@ -1128,14 +1128,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		body.getTopNavBar().search("wizard");
 		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
-		searchPage.selectLanguage("Arabic", getConfig().getType().getName());
+		searchPage.selectLanguage("Arabic");
 
 		assertThat("'You searched for:' section incorrect", searchPage.youSearchedFor(), hasItem("wizard"));
 		assertThat("Keywords incorrect", searchPage.getBlacklistedTerms(), hasItem("wizard"));
 		assertThat("link to blacklist or create synonyms should not be present", searchPage.getText(),
 				not(containsString("You can create synonyms or blacklist these search terms")));
 
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.selectLanguage("English");
 
 		assertThat("Term should not be blacklisted in English", searchPage.getText(),not(containsString("Any query terms were either blacklisted or stop words")));
 	}

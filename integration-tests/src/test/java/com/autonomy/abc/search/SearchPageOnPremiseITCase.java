@@ -48,7 +48,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testDatabaseSelection() {
 		topNavBar.search("car");
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.selectLanguage("English");
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 		final List<String> databasesList = searchPage.getAllDatabases();
 		final List<WebElement> databaseCheckboxes = searchPage.getDatabaseCheckboxes();

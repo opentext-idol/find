@@ -158,7 +158,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
 	}
 
-	public abstract void selectLanguage(final String language, final String type);
+	public abstract void selectLanguage(final String language);
+
+    @Deprecated
+    public void selectLanguage(final String language, final String type){
+        selectLanguage(language);
+    }
 
 	public WebElement promoteThisQueryButton() {
 		return findElement(By.xpath(".//button[contains(text(), 'Promote this query')]"));
@@ -206,6 +211,23 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		}
 
 		return promotionsList;
+	}
+
+	public List<String> getSearchResultTitles(int numberOfResults){
+        List<String> titles = new ArrayList<>();
+
+        for(int i = 0; i < numberOfResults; i++){
+            titles.add(getSearchResultTitle((i % 6) + 1));
+
+            if((i + 1) % 6 == 0){
+                forwardPageButton().click();
+                loadOrFadeWait();
+                waitForSearchLoadIndicatorToDisappear();
+                loadOrFadeWait();
+            }
+        }
+
+		return titles;
 	}
 
 	private List<String> getVisiblePromotionLabels() {
