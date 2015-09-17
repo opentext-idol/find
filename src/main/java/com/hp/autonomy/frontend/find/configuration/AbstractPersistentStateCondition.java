@@ -11,7 +11,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 public abstract class AbstractPersistentStateCondition implements Condition {
 
-    private static final String DEFAULT_VALUE = "REDIS";
+    private static final PersistentStateConfig DEFAULT_VALUE = PersistentStateConfig.REDIS;
 
     private final PersistentStateConfig persistentStateConfig;
 
@@ -25,7 +25,7 @@ public abstract class AbstractPersistentStateCondition implements Condition {
     }
 
     private PersistentStateConfig getProperty(final ConditionContext context) {
-        return PersistentStateConfig.valueOf(context.getEnvironment().getProperty("hp.find.persistentState", DEFAULT_VALUE));
+        return PersistentStateConfig.valueOf(context.getEnvironment().getProperty("hp.find.persistentState", DEFAULT_VALUE.name()));
     }
 
 }
