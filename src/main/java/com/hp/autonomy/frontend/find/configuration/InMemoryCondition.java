@@ -5,14 +5,10 @@
 
 package com.hp.autonomy.frontend.find.configuration;
 
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.core.type.AnnotatedTypeMetadata;
-
 public class InMemoryCondition extends AbstractPersistentStateCondition {
 
-    @Override
-    public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-        return getProperty(context) == PersistentStateConfig.INMEMORY;
+    public InMemoryCondition() {
+        super(PersistentStateConfig.INMEMORY);
     }
 
 }
