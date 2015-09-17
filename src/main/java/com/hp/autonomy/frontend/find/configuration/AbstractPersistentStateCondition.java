@@ -11,7 +11,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 public abstract class AbstractPersistentStateCondition implements Condition {
 
-    private static final String DEFAULT_VALUE = "INMEMORY";
+    private static final String DEFAULT_VALUE = "REDIS";
 
     private final PersistentStateConfig persistentStateConfig;
 
