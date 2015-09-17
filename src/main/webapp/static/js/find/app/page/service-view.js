@@ -40,25 +40,19 @@ define([
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
             this.selectedParametricValues = new SelectedParametricValuesCollection();
+            this.selectedIndexesCollection = new IndexesCollection();
 
             this.filtersCollection = new SearchFiltersCollection([], {
                 queryModel: this.queryModel,
                 datesFilterModel: this.datesFilterModel,
                 indexesCollection: this.indexesCollection,
+                selectedIndexesCollection: this.selectedIndexesCollection,
                 selectedParametricValues: this.selectedParametricValues
-            });
-
-            this.listenTo(this.filtersCollection, 'remove', function(model) {
-                var type = model.get('type');
-
-                if (type === SearchFiltersCollection.FilterTypes.indexes) {
-                    this.indexesView.selectAll();
-                }
             });
 
             this.indexesCollection.fetch();
 
-            function fetch() {
+            var fetchEntities = _.bind(function() {
                 this.entityCollection.fetch({
                     data: {
                         text: this.queryModel.get('queryText'),
@@ -66,15 +60,21 @@ define([
                         field_text: this.queryModel.get('fieldText')
                     }
                 });
-            }
+            }, this);
 
-            this.listenTo(this.queryModel, 'refresh', fetch);
+            this.listenTo(this.queryModel, 'refresh', fetchEntities);
 
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
-                    fetch.call(this);
+                    fetchEntities();
                 }
             });
+
+            this.listenTo(this.selectedIndexesCollection, 'update reset', _.debounce(_.bind(function() {
+                this.queryModel.set('indexes', this.selectedIndexesCollection.map(function(model) {
+                    return encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name'));
+                }));
+            }, this), 500));
 
             this.resultsView = new ResultsView({
                 entityCollection: this.entityCollection,
@@ -96,7 +96,8 @@ define([
             // Left Collapsed Views
             this.indexesView = new IndexesView({
                 queryModel: this.queryModel,
-                indexesCollection: this.indexesCollection
+                indexesCollection: this.indexesCollection,
+                selectedDatabasesCollection: this.selectedIndexesCollection
             });
 
             this.dateView = new DateView({

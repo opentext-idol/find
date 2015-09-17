@@ -1,12 +1,13 @@
 define([
     'backbone',
     'underscore',
+    'jquery',
     'databases-view/js/databases-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/indexes/indexes-view.html',
     'text!find/templates/app/page/indexes/index-list.html',
     'text!find/templates/app/page/indexes/index-item.html'
-], function(Backbone, _, DatabasesView, i18n, template, listTemplate, itemTemplate) {
+], function(Backbone, _, $, DatabasesView, i18n, template, listTemplate, itemTemplate) {
 
     var CHECKED_CLASS = 'icon-ok';
     var INDETERMINATE_CLASS = 'icon-minus';
@@ -24,7 +25,7 @@ define([
                 e.stopPropagation();
 
                 var $target = $(e.currentTarget).find('.database-input');
-                var index = $target.attr('data-id');
+                var index = $target.attr('data-name');
                 var domain = $target.attr('data-domain');
                 var checked = $target.find('i').hasClass('icon-ok');
 
@@ -55,15 +56,10 @@ define([
         },
 
         initialize: function (options) {
-            this.queryModel = options.queryModel;
-
-            this.on('change', function() {
-                this.updateQueryModel(this.getSelection())
-            }, this);
-
             DatabasesView.prototype.initialize.call(this, {
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
+                selectedDatabasesCollection: options.selectedDatabasesCollection,
                 topLevelDisplayName: i18n['search.indexes.all'],
                 childCategories: [
                     {
@@ -82,20 +78,6 @@ define([
                         }
                     }
                 ]
-            });
-
-            this.listenTo(this.queryModel, 'change:indexes', function(model, queryModelIndexes) {
-                this.currentSelection = _.map(this.collection.filter(function (model) {
-                    return _.contains(queryModelIndexes, model.id);
-                }), function (model) {
-                    return model.pick('name', 'domain');
-                });
-
-                if(!this.forceSelection && this.currentSelection.length === options.indexesCollection.size()) {
-                    this.currentSelection = [];
-                }
-
-                this.updateCheckedOptions();
             });
         },
 
@@ -121,14 +103,6 @@ define([
 
         indeterminate: function($input) {
             $input.find(ICON_SELECTOR).addClass(INDETERMINATE_CLASS);
-        },
-
-        updateQueryModel: function(selectedIndexes) {
-            this.queryModel.set({
-                indexes: _.map(selectedIndexes, function(index) {
-                    return this.collection.findWhere(index).id;
-                }, this)
-            });
         }
     });
 });

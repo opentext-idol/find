@@ -4,27 +4,19 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    'databases-view/js/databases-collection',
+    'underscore'
+], function(DatabasesCollection, _) {
 
-    return Backbone.Collection.extend({
-
+    return DatabasesCollection.extend({
         url: '../api/public/search/list-indexes',
-
-        getResourceIdentifiers: function() {
-            return this.map(function(model) {
-                return model.pick('domain', 'name');
-            });
-        },
 
         parse: function(response) {
             return _.map(response, function(responseItem) {
                 responseItem.id = encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name);
-
                 return responseItem;
             });
         }
-
-    })
+    });
 
 });

@@ -56,13 +56,15 @@ define([
             this.queryModel = options.queryModel;
             this.datesFilterModel = options.datesFilterModel;
             this.indexesCollection = options.indexesCollection;
+            this.selectedIndexesCollection = options.selectedIndexesCollection;
             this.selectedParametricValues = options.selectedParametricValues;
 
             this.listenTo(this.selectedParametricValues, 'add remove', this.updateParametricSelection);
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
+            this.listenTo(this.selectedIndexesCollection, 'reset update', this.updateDatabases);
 
             this.listenTo(this.queryModel, 'change', function() {
-                if (this.queryModel.hasAnyChangedAttributes(['minDate', 'maxDate', 'indexes'])) {
+                if (this.queryModel.hasAnyChangedAttributes(['minDate', 'maxDate'])) {
                     var changed = this.queryModel.changedAttributes();
                     var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
 
@@ -77,17 +79,17 @@ define([
                             this.removeAllDateFilters();
                         }
                     }
-
-                    if(changed.indexes) {
-                        this.updateDatabases();
-                    }
                 }
             });
 
             this.on('remove', function(model) {
-                if (model.get('type') === FilterTypes.PARAMETRIC) {
+                var type = model.get('type');
+
+                if (type === FilterTypes.PARAMETRIC) {
                     var field = model.get('field');
                     this.selectedParametricValues.remove(this.selectedParametricValues.where({field: field}));
+                } else if (type === FilterTypes.indexes) {
+                    this.selectedIndexesCollection.set(this.indexesCollection.toResourceIdentifiers());
                 }
             });
 
@@ -121,18 +123,12 @@ define([
         },
 
         getDatabasesFilterText: function() {
-            var selectedIndexes = this.queryModel.get('indexes');
-
-            selectedIndexes = _.map(selectedIndexes, function(selectedIndexWithDomain) {
-                return this.indexesCollection.get(selectedIndexWithDomain).get('name');
-            }, this);
-
-            return i18n['search.indexes'] + ': ' + selectedIndexes.join(', ');
-
+            var selectedIndexNames = this.selectedIndexesCollection.pluck('name');
+            return i18n['search.indexes'] + ': ' + selectedIndexNames.join(', ');
         },
 
         allIndexesSelected: function() {
-            return this.indexesCollection.length === this.queryModel.get('indexes').length;
+            return this.indexesCollection.length === this.selectedIndexesCollection.length;
         },
 
         updateDatabases: function() {
@@ -147,7 +143,7 @@ define([
                     // The databases filter model has equal id and type since only one filter of this type can be present
                     this.add({id: FilterTypes.indexes, type: FilterTypes.indexes, text: filterText});
                 }
-            } else if (this.contains(filterModel)) {
+            } else if (filterModel) {
                 this.remove(filterModel);
             }
         },

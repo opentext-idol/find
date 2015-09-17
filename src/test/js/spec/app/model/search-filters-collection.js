@@ -3,13 +3,13 @@ define([
     'find/app/model/dates-filter-model',
     'find/app/model/search-filters-collection',
     'parametric-refinement/selected-values-collection',
-    'mock/model/indexes-collection',
+    'databases-view/js/databases-collection',
     'find/app/model/backbone-query-model',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'backbone',
     'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, IndexesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
+], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
 
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
@@ -28,17 +28,10 @@ define([
 
     describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function() {
         beforeEach(function() {
-            IndexesCollection.reset();
-
-            this.indexesCollection = new IndexesCollection();
-
-            this.indexesCollection.set([
-                WOOKIEPEDIA,
-                WIKI_ENG
-            ]);
+            this.indexesCollection = new DatabasesCollection([WOOKIEPEDIA, WIKI_ENG]);
+            this.selectedIndexesCollection = new DatabasesCollection([WIKI_ENG]);
 
             this.queryModel = new Backbone.Model({
-                indexes: [WIKI_ENG.id],
                 minDate: INITIAL_MIN_DATE
             });
 
@@ -59,6 +52,7 @@ define([
                 queryModel: this.queryModel,
                 datesFilterModel: this.datesFilterModel,
                 indexesCollection: this.indexesCollection,
+                selectedIndexesCollection: this.selectedIndexesCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
         });
@@ -137,11 +131,7 @@ define([
 
         describe('after all databases are selected', function() {
             beforeEach(function() {
-                this.indexes = [WOOKIEPEDIA, WIKI_ENG];
-
-                this.queryModel.set({
-                    indexes: this.indexes
-                });
+                this.selectedIndexesCollection.set([WOOKIEPEDIA, WIKI_ENG]);
             });
 
             it('contains two models', function() {
@@ -154,9 +144,7 @@ define([
 
             describe('then a database is deselected', function() {
                 beforeEach(function() {
-                    this.queryModel.set({
-                        indexes: [WOOKIEPEDIA.id]
-                    });
+                    this.selectedIndexesCollection.set([WOOKIEPEDIA]);
                 });
 
                 it('contains three models', function() {
@@ -194,6 +182,16 @@ define([
 
             it('removes the associated model from the selected parametric values collection', function() {
                 expect(this.selectedParametricValues.length).toBe(0);
+            });
+        });
+
+        describe('after the indexes filter model is removed', function() {
+            beforeEach(function() {
+                this.collection.remove(this.collection.where({type: FiltersCollection.FilterTypes.indexes}));
+            });
+
+            it('selects all of the indexes', function() {
+                expect(this.selectedIndexesCollection.length).toBe(2);
             });
         });
 
