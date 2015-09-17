@@ -1,14 +1,11 @@
 package com.autonomy.abc.selenium.element;
 
-import com.autonomy.abc.selenium.AppElement;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.List;
 
 public class GritterNotice extends AppElement {
     public GritterNotice(WebElement element, WebDriver driver) {

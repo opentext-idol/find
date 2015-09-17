@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.page.keywords;
 
-import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.page.AppPage;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class CreateNewKeywordsPage extends AppElement implements AppPage {
 
-	public CreateNewKeywordsPage(WebDriver driver) {
+	public CreateNewKeywordsPage(final WebDriver driver) {
 		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))),driver);
 	}
 
@@ -26,7 +26,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../.."));
 	}
 
-	public WebElement keywordsType(final KeywordType type, WebDriverWait wait) {
+	public WebElement keywordsType(final KeywordType type, final WebDriverWait wait) {
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(
 				By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../..")));
 	}

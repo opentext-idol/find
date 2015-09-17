@@ -1,19 +1,23 @@
 package com.autonomy.abc.selenium.page;
 
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.page.keywords.*;
-import com.autonomy.abc.selenium.page.login.HSOLoginPage;
-import com.autonomy.abc.selenium.page.login.LoginPage;
+import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.HSOSearchPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
+import com.autonomy.abc.selenium.find.FindPage;
 
 public class HSOElementFactory extends ElementFactory {
-    public HSOElementFactory(WebDriver driver) {
+    public HSOElementFactory(final WebDriver driver) {
         super(driver);
     }
 
@@ -24,7 +28,7 @@ public class HSOElementFactory extends ElementFactory {
 
     @Override
     public LoginPage getLoginPage() {
-        return new HSOLoginPage(getDriver());
+        return new HSOLoginPage(getDriver(), new AbcHasLoggedIn(getDriver()));
     }
 
     @Override

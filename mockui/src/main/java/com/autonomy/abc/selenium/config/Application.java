@@ -4,8 +4,7 @@ import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.OPAppBody;
-import com.autonomy.abc.selenium.page.login.AuthProvider;
+import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import org.openqa.selenium.WebDriver;
 
 public abstract class Application {

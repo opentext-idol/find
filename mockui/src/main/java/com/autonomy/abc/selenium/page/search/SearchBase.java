@@ -1,8 +1,12 @@
 package com.autonomy.abc.selenium.page.search;
 
-import com.autonomy.abc.selenium.page.AppPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
-import org.openqa.selenium.*;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -56,7 +60,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public String bucketDocumentTitle(final int bucketNumber) {
-		return promotionsBucket().findElement(By.cssSelector(".promotions-bucket-document:nth-child(" + bucketNumber + ")")).getText();
+		return promotionsBucket().findElement(By.cssSelector(".promotions-bucket-document:nth-child(" + bucketNumber + ')')).getText();
 	}
 
 	public WebElement promotionsBucket() {
@@ -141,8 +145,8 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
         int count = 0;
 
         //Get the first five words
-        for(String word : docTitle.split(" ")){
-            trimmedTitle = trimmedTitle + " " + word;
+        for(final String word : docTitle.split(" ")){
+            trimmedTitle = trimmedTitle + ' ' + word;
 
             if(count == 5){
                 break;
@@ -217,7 +221,8 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return selected;
 	}
 
-	public WebElement leadSynonym(final String synonym) {
+	@Override
+    public WebElement leadSynonym(final String synonym) {
 		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']"));
 	}
 
@@ -336,7 +341,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	public void waitForSynonymsLoadingIndicatorToDisappear(){
 		new WebDriverWait(getDriver(),60).until(new ExpectedCondition<Boolean>() {
 			@Override
-			public Boolean apply(WebDriver driver) {
+			public Boolean apply(final WebDriver driver) {
 				return driver.findElement(By.className("search-synonyms-loading")).getAttribute("style").contains("display: none");
 			}
 		});
@@ -370,7 +375,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void closeFromDatePicker() {
-		if (getDriver().findElements(By.cssSelector(".datepicker")).size() > 0) {
+		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
 			findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
 			loadOrFadeWait();
 			waitForSearchLoadIndicatorToDisappear();
@@ -391,7 +396,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void closeUntilDatePicker() {
-		if (getDriver().findElements(By.cssSelector(".datepicker")).size() > 0) {
+		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
 			findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
 			loadOrFadeWait();
 			waitForSearchLoadIndicatorToDisappear();
@@ -400,7 +405,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public Date getDateFromResult(final int index) throws ParseException {
 		final String dateString = getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
-		if (dateString.equals("")) {
+		if (dateString.isEmpty()) {
 			return null;
 		}
 		return DATE_FORMAT.parse(dateString.split(", ")[1]);
