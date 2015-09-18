@@ -4,6 +4,9 @@ package com.autonomy.abc.selenium.page.promotions;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
+import com.autonomy.abc.selenium.element.Editable;
+import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.element.InlineEdit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -23,7 +26,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		waitForLoad();
 	}
 
-	public WebElement newPromotionButton() {
+	public WebElement promoteExistingButton() {
 		return findElement(By.xpath(".//a[text()[contains(., 'Promote existing documents')]]"));
 	}
 
@@ -31,6 +34,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return findElement(By.xpath(".//h3[contains(text(), '" + promotionTitleSubstring.replace("\"", "").split("\\s+")[0] + "')]/../../.."));
 	}
 
+	// TODO: move to Promotions
 	public void deletePromotion() {
 		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".extra-functions .dropdown-toggle"));
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
@@ -41,7 +45,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
 		deleteModal.findElement(By.cssSelector(".btn-danger")).click();
 		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(newPromotionButton()));
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteExistingButton()));
 	}
 
 	public void schedulePromotion() {
@@ -59,12 +63,16 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public List<WebElement> promotionsList() {
-		try {
-			return findElements(By.cssSelector(".promotion-list-container li a"));
-		} catch (Exception e) {
-			loadOrFadeWait();
-			return findElements(By.cssSelector(".promotion-list-container li a"));
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loading-indicator")));
+		return findElements(By.cssSelector(".promotion-list-container li a"));
+	}
+
+	public List<String> getPromotionTitles() {
+		List<String> promotionTitles = new ArrayList<>();
+		for (WebElement promotion : promotionsList()) {
+			promotionTitles.add(promotion.findElement(By.tagName("h3")).getText());
 		}
+		return promotionTitles;
 	}
 
 	public void deleteAllPromotions() {
@@ -96,7 +104,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 
 	public List <String> getPromotedList() {
 		final List <String> docTitles = new ArrayList<>();
-		for (final WebElement docTitle : findElements(By.cssSelector(".promoted-documents-list h3"))) {
+		for (final WebElement docTitle : findElements(By.cssSelector(".promotion-list-container h3"))) {
 			docTitles.add(docTitle.getText());
 		}
 		return docTitles;
@@ -110,10 +118,9 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return findElement(By.cssSelector(".promotion-match-terms")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
-	public void removeSearchTrigger(final String searchTrigger) throws InterruptedException {
+	public void removeSearchTrigger(final String searchTrigger) {
 		loadOrFadeWait();
 		waitUntilClickableThenClick(triggerRemoveButton(searchTrigger));
-		Thread.sleep(3000);
 	}
 
 	public WebElement clickableSearchTrigger(final String triggerName) {
@@ -125,21 +132,19 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement backButton() {
-		return findElement(By.xpath(".//a[text()[contains(., 'Go Back')]]"));
+		return findElement(By.xpath(".//a[text()[contains(., 'Back')]]"));
 	}
 
 	public String getPromotionTitle() {
 		return findElement(By.cssSelector(".promotion-title-edit span")).getText();
 	}
 
+	public Editable name() {
+		return new InlineEdit(findElement(By.className("promotion-title-edit")), getDriver());
+	}
+
 	public void createNewTitle(final String title) throws InterruptedException {
-		final WebElement pencil = findElement(By.cssSelector(".promotion-title-edit .fa-pencil"));
-		getParent(pencil).click();
-		final WebElement titleElement = findElement(By.cssSelector(".promotion-title-edit input"));
-		titleElement.clear();
-		titleElement.sendKeys(title);
-		findElement(By.cssSelector(".promotion-title-edit [type='submit']")).click();
-		Thread.sleep(3000);
+		name().setValueAndWait(title);
 	}
 
 	public String getPromotionType() {
@@ -147,9 +152,11 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public void changeSpotlightType(final String promotionType) {
-		findElement(By.cssSelector(".promotion-view-name-dropdown .dropdown-toggle")).click();
+		// clear notifications
+		new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationsDisappear());
+		findElement(By.cssSelector(".promotion-view-name-dropdown .clickable")).click();
 		findElement(By.cssSelector(".promotion-view-name-dropdown [data-spotlight-type='" + promotionType + "']")).click();
-		new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotion-view-name-dropdown .fa-lightbulb-o")));
+		new WebDriverWait(getDriver(),3).until(GritterNotice.notificationAppears());
 	}
 
 	public WebElement promotedDocument(final String title) {
@@ -259,50 +266,18 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		promotionsSearchFilter().sendKeys(Keys.BACK_SPACE);
 	}
 
+	public Editable queryText() {
+		return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
+	}
+
 	public String getQueryText() {
-		return findElement(By.cssSelector(".promotion-query-edit span")).getText();
+		return queryText().getValue();
 	}
 
 	public void editQueryText(final String newQueryText) {
-		getParent(findElement(By.cssSelector(".promotion-query-edit .fa-pencil"))).click();
-		findElement(By.cssSelector("[placeholder='New query']")).clear();
-		findElement(By.cssSelector("[placeholder='New query']")).sendKeys(newQueryText);
-		findElement(By.cssSelector(".promotion-query-edit [type='submit']")).click();
-		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotion-query-edit .fa-pencil")));
+		queryText().setValueAndWait(newQueryText);
 	}
 
-	public WebElement fieldTextAddButton() {
-		return findElement(By.cssSelector(".promotion-field-text")).findElement(By.xpath(".//button[contains(text(), 'Field Text')]"));
-	}
-
-	public WebElement fieldTextInputBox() {
-		return findElement(By.cssSelector(".promotion-field-text [placeholder='Field text']"));
-	}
-
-	public WebElement fieldTextTickConfirmButton() {
-		return getParent(findElement(By.cssSelector(".promotion-field-text .fa-check")));
-	}
-
-	public WebElement fieldTextRemoveButton() {
-		return getParent(findElement(By.cssSelector(".promotion-field-text .fa-remove")));
-	}
-
-	public WebElement fieldTextEditButton() {
-		return getParent(findElement(By.cssSelector(".promotion-field-text .fa-pencil")));
-	}
-
-	public String fieldTextValue() {
-		return findElement(By.cssSelector(".promotion-field-text .inline-edit-current-value")).getText();
-	}
-
-	public void addFieldText(final String fieldText) {
-		fieldTextAddButton().click();
-		loadOrFadeWait();
-		fieldTextInputBox().sendKeys(fieldText);
-		fieldTextTickConfirmButton().click();
-		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(fieldTextRemoveButton()));
-	}
 
 	@Override
 	public void waitForLoad() {
@@ -322,97 +297,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		});
 	}
 
-//	public abstract List<String> setUpANewMultiDocPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs);
-
-    // TODO can we remove these?
-
-//	public List <String> setUpANewMultiDocPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final int numberOfDocs, final String type) {
-//		new TopNavBar(getDriver()).search(navBarSearchTerm);
-//		new TopNavBar(getDriver()).loadOrFadeWait();
-//		final SearchPage searchPage = new AppBody(getDriver()).getSearchPage();
-//		searchPage.selectLanguage(language, type);
-//		final List<String> promotedDocTitles = searchPage.createAMultiDocumentPromotion(numberOfDocs);
-//		final CreateNewPromotionsPage createPromotionsPage = new AppBody(getDriver()).getCreateNewPromotionsPage();
-//		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers, type);
-//
-//		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-//		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
-//		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
-//		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
-//
-//		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
-//		return promotedDocTitles;
-//	}
-//
-//
-//	public String setUpANewPromotion(final String language, final String navBarSearchTerm, final String spotlightType, final String searchTriggers, final String type) {
-//		new TopNavBar(getDriver()).search(navBarSearchTerm);
-//		final SearchPage searchPage = new AppBody(getDriver()).getSearchPage();
-//		searchPage.selectLanguage(language, type);
-//		final String promotedDocTitle = searchPage.createAPromotion();
-//		final CreateNewPromotionsPage createPromotionsPage = new AppBody(getDriver()).getCreateNewPromotionsPage();
-//		createPromotionsPage.addSpotlightPromotion(spotlightType, searchTriggers, type);
-//
-//		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-//		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
-//		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
-//
-//		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers.split(" ")[0]).click();
-//
-//		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.addMorePromotedItemsButton()));
-//		return promotedDocTitle;
-//	}
-//
-//
-//
-//	public List <String> setUpANewMultiDocPinToPositionPromotion(final String language, final String navBarSearchTerm, final String searchTriggers, final int numberOfDocs, final String type) {
-//		new TopNavBar(getDriver()).search(navBarSearchTerm);
-//		final SearchPage searchPage = new AppBody(getDriver()).getSearchPage();
-//		searchPage.selectLanguage(language, type);
-//		final List<String> promotedDocTitles = searchPage.createAMultiDocumentPromotion(numberOfDocs);
-//		searchPage.loadOrFadeWait();
-//		final CreateNewPromotionsPage createPromotionsPage = new AppBody(getDriver()).getCreateNewPromotionsPage();
-//		createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-//		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
-//		createPromotionsPage.loadOrFadeWait();
-//		createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
-//		createPromotionsPage.loadOrFadeWait();
-//		createPromotionsPage.addSearchTrigger(searchTriggers);
-//		createPromotionsPage.finishButton().click();
-//		createPromotionsPage.loadOrFadeWait();
-//
-//		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-//		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
-//		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
-//		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
-//
-//		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
-//		return promotedDocTitles;
-//	}
-//
-//	public String setUpANewDynamicPromotion(final String language, final String navBarSearchTerm, final String searchTriggers, final String spotlightType, final String type) {
-//		new TopNavBar(getDriver()).search(navBarSearchTerm);
-//		final SearchPage searchPage = new AppBody(getDriver()).getSearchPage();
-//		searchPage.selectLanguage(language, type);
-//		final String searchResultTitle;
-//
-//		if (searchPage.getText().contains("No results found")) {
-//			searchResultTitle = null;
-//		} else {
-//			searchResultTitle = searchPage.getSearchResult(1).getText();
-//		}
-//
-//		searchPage.promoteThisQueryButton().click();
-//		searchPage.loadOrFadeWait();
-//		final CreateNewDynamicPromotionsPage dynamicPromotionsPage = new AppBody(getDriver()).getCreateNewDynamicPromotionsPage();
-//		dynamicPromotionsPage.createDynamicPromotion(spotlightType, searchTriggers, type);
-//		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-//		new SideNavBar(getDriver()).getTab(NavBarTabId.PROMOTIONS).click();
-//		final PromotionsPage promotionsPage = new AppBody(getDriver()).getPromotionsPage();
-//		promotionsPage.getPromotionLinkWithTitleContaining(searchTriggers).click();
-//		new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
-//
-//		return searchResultTitle;
-//	}
-
+	public void waitForTriggerUpdate() {
+		new WebDriverWait(getDriver(), 15).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".promotion-match-terms .fa-spin")));
+	}
 }
