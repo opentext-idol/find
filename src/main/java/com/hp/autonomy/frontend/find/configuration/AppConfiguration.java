@@ -6,14 +6,11 @@
 package com.hp.autonomy.frontend.find.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.databases.DatabasesService;
 import com.hp.autonomy.databases.DatabasesServiceImpl;
 import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.fields.IndexFieldsServiceImpl;
 import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
-import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
@@ -105,18 +102,6 @@ public class AppConfiguration {
         final ObjectMapper mapper = new ObjectMapper();
 
         mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
-
-        return mapper;
-    }
-
-    @Bean(name = "contextObjectMapper")
-    public ObjectMapper objectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
-
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
-        mapper.addMixInAnnotations(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class);
 
         return mapper;
     }
