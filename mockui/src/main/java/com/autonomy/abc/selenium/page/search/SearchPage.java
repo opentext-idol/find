@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class SearchPage extends SearchBase implements AppPage {
+	public final static int RESULTS_PER_PAGE = 6;
 
 	public SearchPage(final WebDriver driver) {
 		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
@@ -58,29 +59,29 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return promotedDocTitle;
 	}
 
-	public List<String> createAMultiDocumentPromotion(final int finalNumberOfDocs) {
+	public List<String> createAMultiDocumentPromotion(final int numberOfDocs) {
 		promoteTheseDocumentsButton().click();
 		loadOrFadeWait();
-		final int checkboxesPerPage = 6;
-		final List<String> promotedDocTitles = new ArrayList<>();
+		List<String> promotedDocTitles = addToBucket(numberOfDocs);
+		promoteTheseItemsButton().click();
+		loadOrFadeWait();
+		return promotedDocTitles;
+	}
 
+	public List<String> addToBucket(int finalNumberOfDocs) {
+		final List<String> promotedDocTitles = new ArrayList<>();
 		for (int i = 0; i < finalNumberOfDocs; i++) {
-			final int checkboxIndex = i % checkboxesPerPage + 1;
+			final int checkboxIndex = i % RESULTS_PER_PAGE + 1;
 			searchResultCheckbox(checkboxIndex).click();
 			promotedDocTitles.add(getSearchResultTitle(checkboxIndex));
 
 			// Change page when we have checked all boxes on the current page, if we have more to check
-			if (i < finalNumberOfDocs - 1 && checkboxIndex == checkboxesPerPage) {
-				loadOrFadeWait();
-				javascriptClick(forwardPageButton());
-				loadOrFadeWait();
+			if (i < finalNumberOfDocs - 1 && checkboxIndex == RESULTS_PER_PAGE) {
+				// TODO: does this need to be javascriptClick?
+				forwardPageButton().click();
 				waitForSearchLoadIndicatorToDisappear();
-				loadOrFadeWait();
 			}
 		}
-
-		promoteTheseItemsButton().click();
-		loadOrFadeWait();
 		return promotedDocTitles;
 	}
 
