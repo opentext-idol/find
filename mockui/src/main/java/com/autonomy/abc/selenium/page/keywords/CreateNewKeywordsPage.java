@@ -111,13 +111,13 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
     public int countKeywords(KeywordsPage.KeywordsFilter keywordType) {
-        WebElement keywords = null;
+        WebElement keywords;
 
         if (keywordType == KeywordsPage.KeywordsFilter.BLACKLIST){
             keywords = findElement(By.xpath("//div[@data-branch='blacklisted']"));
-        } else if (keywordType == KeywordsPage.KeywordsFilter.SYNONYMS){
+        } else {
 			keywords = findElement(By.xpath("//div[@data-branch='synonyms']"));
-        }
+		}
 
         return keywords.findElements(By.cssSelector(".remove-word")).size();
     }

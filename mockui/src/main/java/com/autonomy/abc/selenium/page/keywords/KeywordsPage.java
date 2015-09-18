@@ -30,6 +30,7 @@ public abstract class KeywordsPage extends KeywordsBase {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//a[contains(text(), 'Create new keywords')]")));
     }
 
+    @Deprecated
     public void deleteAllSynonyms() throws InterruptedException {
         loadOrFadeWait();
         filterView(KeywordsFilter.SYNONYMS);
@@ -58,12 +59,41 @@ public abstract class KeywordsPage extends KeywordsBase {
         }
     }
 
+    public void deleteKeywords() {
+        filterView(KeywordsFilter.ALL_TYPES);
+
+        for(final String language : getLanguageList()){
+            selectLanguage(language);
+
+            List<WebElement> synonymGroups = getDriver().findElements(By.cssSelector(".keywords-list .keywords-sub-list"));
+
+            for(int i = 1; i <= synonymGroups.size(); i++){
+                for(int j = getDriver().findElement(By.cssSelector(".keywords-list li:nth-child(1) ul")).findElements(By.tagName("li")).size(); j > 0; j--) {
+                    WebElement cross = getDriver().findElement(By.cssSelector(".keywords-list li:nth-child(1) ul li:nth-child("+j+") i"));
+
+                    if(!cross.getAttribute("class").contains("fa-spin")) {
+                        cross.click();
+                    }
+                }
+
+                waitForRefreshIconToDisappear();
+            }
+        }
+    }
+
     public int countSynonymLists() {
         return (findElement(By.className("keywords-list"))).findElements(By.cssSelector(".add-synonym")).size();
     }
 
+    @Deprecated
+    @Override
     public WebElement leadSynonym(final String synonym) {
-        return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]/ul/li/ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']"));
+        return synonymInGroup(synonym);
+    }
+
+    @Override
+    public WebElement synonymInGroup(String synonym){
+        return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]/ul/li/ul[contains(@class, 'keywords-sub-list')]/li[@data-term='" + synonym + "']"));
     }
 
     private int getNumberOfLanguages() {
@@ -76,6 +106,10 @@ public abstract class KeywordsPage extends KeywordsBase {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
         findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
+    }
+
+    public int countKeywords() {
+        return findElements(By.cssSelector(".keywords-list .remove-keyword")).size();
     }
 
     public enum KeywordsFilter {
@@ -110,7 +144,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public WebElement selectLanguageButton() {
-        return new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOfElementLocated(
+        return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(
                 By.cssSelector(".keywords-filters .current-language-selection")));
     }
 
@@ -133,6 +167,7 @@ public abstract class KeywordsPage extends KeywordsBase {
         }
     }
 
+    @Deprecated
     public List<String> getLeadSynonymsList() {
         final List<String> leadSynonyms = new ArrayList<>();
         for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {

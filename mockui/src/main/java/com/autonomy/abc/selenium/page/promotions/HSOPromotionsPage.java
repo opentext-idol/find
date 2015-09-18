@@ -18,7 +18,8 @@ public class HSOPromotionsPage extends PromotionsPage {
         findElement(By.cssSelector(".current-step .next-step")).click();
         loadOrFadeWait();
         findElement(By.cssSelector(".current-step input")).sendKeys(trigger);
-        triggerAddButton().click();
-        findElement(By.className("finish-step")).click();
+        findElement(By.cssSelector(".current-step .input-group .btn")).click();
+        loadOrFadeWait();
+        findElement(By.cssSelector(".current-step .finish-step")).click();
     }
 }

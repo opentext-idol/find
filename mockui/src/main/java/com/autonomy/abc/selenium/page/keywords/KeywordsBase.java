@@ -49,7 +49,10 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		return blacklistedTerms;
 	}
 
+	@Deprecated
 	public abstract WebElement leadSynonym(final String synonym);
+
+	public abstract WebElement synonymInGroup(final String synonym);
 
 	public WebElement synonymGroup(final String synonymGroupLead) {
 		return getParent(getParent(leadSynonym(synonymGroupLead)));
@@ -100,8 +103,13 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		waitForRefreshIconToDisappear();
 	}
 
+	@Deprecated
 	public WebElement getSynonymIcon(final String synonym, final String synonymLead) {
-		return synonymGroup(synonymLead).findElement(By.xpath(".//span[contains(text(), '" + synonym + "')]/..")).findElement(By.cssSelector("i"));
+		return getSynonymIcon(synonym);
+	}
+
+	public WebElement getSynonymIcon(final String synonym){
+		return findElement(By.xpath("//span[text()='"+synonym+"']/../i"));
 	}
 
 	public boolean areAnyKeywordsDisabled() {

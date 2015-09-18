@@ -221,9 +221,15 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return selected;
 	}
 
+	@Deprecated
 	@Override
     public WebElement leadSynonym(final String synonym) {
-		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']"));
+		return synonymInGroup(synonym);
+	}
+
+	@Override
+	public WebElement synonymInGroup(final String synonym){
+		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[@data-term='" + synonym + "']"));
 	}
 
 	public int countSynonymLists() {
@@ -287,7 +293,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public void expandSubFilter(final Filter filterName) {
 		if (getSubFilter(filterName).getAttribute("class").contains("collapsed")) {
-			getSubFilter(filterName).click();
+			scrollIntoViewAndClick(getSubFilter(filterName));
 			loadOrFadeWait();
 		}
 	}

@@ -2,7 +2,6 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -13,6 +12,7 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
@@ -78,7 +78,7 @@ public class SearchPageITCase extends ABCTestBase {
 		logger.info("Searching for: '"+searchTerm+"'");
 		topNavBar.search(searchTerm);
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertNotEquals(searchPage.getText(),contains(havenErrorMessage));
+		assertNotEquals(searchPage.getText(), contains(havenErrorMessage));
 	}
 
     @Test
@@ -90,20 +90,20 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.modifiedResultsCheckBox().click();
         assertTrue("Page should not be showing modified results", !searchPage.modifiedResultsShown());
-		assertThat("Url incorrect", getDriver().getCurrentUrl(),containsString("/unmodified"));
+		assertThat("Url incorrect", getDriver().getCurrentUrl(), containsString("/unmodified"));
 
 		searchPage.modifiedResultsCheckBox().click();
-        assertTrue("Page should be showing modified results",searchPage.modifiedResultsShown());
+        assertTrue("Page should be showing modified results", searchPage.modifiedResultsShown());
         assertThat("Url incorrect", getDriver().getCurrentUrl(), containsString("/modified"));
 	}
 
 	@Test
 	public void testSearchBasic(){
 		search("dog");
-		assertThat("Search title text is wrong",searchPage.searchTitle().getText(),is("dog"));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("dog"));
 
 		search("cat");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText(),is("cat"));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("cat"));
 
 		search("ElEPhanT");
 		assertThat("Search title text is wrong", searchPage.searchTitle().getText(),is("ElEPhanT"));
@@ -221,7 +221,7 @@ public class SearchPageITCase extends ABCTestBase {
 		search("horse");
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(),is(1));
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(1));
 		assertThat("File in bucket description does not match file added", searchPage.getSearchResultTitle(1),is(searchPage.bucketDocumentTitle(1)));
 	}
 
@@ -234,7 +234,6 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Create new promotions page not open", getDriver().getCurrentUrl(),endsWith("promotions/create"));
 	}
 
-    //TODO come back and test again
 	@Test
 	public void testMultiDocPromotionDrawerExpandAndPagination() {
 		search("freeze");
@@ -759,7 +758,7 @@ public class SearchPageITCase extends ABCTestBase {
 		search("leg[2:2]");
 		searchPage.loadOrFadeWait();
 		assertThat("Failed with the following search term: leg[2:2]  Search count should have reduced on initial search 'leg'",
-                initialSearchCount, greaterThan(searchPage.countSearchResults()));
+				initialSearchCount, greaterThan(searchPage.countSearchResults()));
 
 		search("red");
 		searchPage.loadOrFadeWait();
@@ -774,13 +773,13 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		final int thirdSearchCount = searchPage.countSearchResults();
         assertThat("Failed with the following search term: '\"red star\"'  Search count should have reduced on initial search: red star",
-                secondSearchCount, greaterThan(thirdSearchCount));
+				secondSearchCount, greaterThan(thirdSearchCount));
 
 		search("red NOT star");
 		searchPage.loadOrFadeWait();
 		final int redNotStar = searchPage.countSearchResults();
         assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
-                initialSearchCount, greaterThan(redNotStar));
+				initialSearchCount, greaterThan(redNotStar));
 
         //TODO check
         search("star");
@@ -791,22 +790,22 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		final int starNotRed = searchPage.countSearchResults();
         assertThat("Failed with the following search term: star NOT red  Search count should have reduced on initial search: star",
-                star, greaterThan(starNotRed));
+				star, greaterThan(starNotRed));
 
 		search("red OR star");
 		searchPage.loadOrFadeWait();
 		assertThat("Failed with the following search term: red OR star  Search count should be the same as initial search: red star",
-                secondSearchCount, is(searchPage.countSearchResults()));
+				secondSearchCount, is(searchPage.countSearchResults()));
 
 		search("red AND star");
 		searchPage.loadOrFadeWait();
 		final int fourthSearchCount = searchPage.countSearchResults();
         assertThat("Failed with the following search term: red AND star  Search count should have reduced on initial search: red star",
-                secondSearchCount, greaterThan(fourthSearchCount));
+				secondSearchCount, greaterThan(fourthSearchCount));
         assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
-                thirdSearchCount, lessThan(fourthSearchCount));
+				thirdSearchCount, lessThan(fourthSearchCount));
 		assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
-                fourthSearchCount + redNotStar + starNotRed, is(secondSearchCount));    //TODO Cech
+				fourthSearchCount + redNotStar + starNotRed, is(secondSearchCount));    //TODO Cech
 	}
 
     //TODO
@@ -1031,7 +1030,7 @@ public class SearchPageITCase extends ABCTestBase {
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
 		searchPage.closeUntilDatePicker();
         logger.info(searchPage.untilDateTextBox().getAttribute("value"));
-        assertEquals("Document should not be visible. Date filter not working", firstResult,not(searchPage.getSearchResultTitle(1)));
+        assertEquals("Document should not be visible. Date filter not working", firstResult, not(searchPage.getSearchResultTitle(1)));
 
 		searchPage.openUntilDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
@@ -1220,7 +1219,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertEquals(errorMessage, 0, searchPage.countSearchResults());
 
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
-        assertThat("If there are no search results there should be no related concepts", searchPage.getText(),containsString("No related concepts found"));
+        assertThat("If there are no search results there should be no related concepts", searchPage.getText(), containsString("No related concepts found"));
 	}
 
 	@Test
