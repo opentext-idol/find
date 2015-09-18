@@ -8,6 +8,8 @@ public class TestStatement extends TestName {
     private String name;
     private Description description;
     private String id;
+    private int number;
+    private String methodName;
 
     public TestStatement(String name, Description description) {
         this.name = name;
@@ -20,6 +22,8 @@ public class TestStatement extends TestName {
 
     public void setId(String methodName, int number) {
         id = methodName + "#" + number;
+        this.number = number;
+        this.methodName = methodName;
     }
 
     public String getId() {
@@ -46,5 +50,14 @@ public class TestStatement extends TestName {
             msg.append("\n").append(description).append("\n");
         }
         return msg.toString();
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    @Override
+    public String getMethodName() {
+        return methodName;
     }
 }

@@ -19,11 +19,11 @@ public class StatementArtifactHandler implements StatementHandler {
     }
 
     private String getPngLocation(TestStatement testStatement) {
-        return ".output\\" + testStatement.getId() + "_" + timestamp + ".png";
+        return ".output\\" + testStatement.getMethodName().split("\\[")[0] + "\\" + timestamp + "_"+testStatement.getNumber()+".png";
     }
 
     private String getHtmlLocation(TestStatement testStatement) {
-        return ".output\\" + testStatement.getId() + "_" + timestamp + ".html";
+        return ".output\\" + testStatement.getMethodName().split("\\[")[0] + "\\" + timestamp + "_"+testStatement.getNumber()+".html";
     }
 
     @Override

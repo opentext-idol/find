@@ -26,11 +26,11 @@ public class TestArtifactRule extends TestWatcher {
     }
 
     private String getPngLocation(Description description) {
-        return ".output\\" + description.getMethodName() + "_" + timestamp + ".png";
+        return ".output\\" + description.getMethodName().split("\\[")[0] + "\\" + timestamp + ".png";
     }
 
     private String getHtmlLocation(Description description) {
-        return ".output\\" + description.getMethodName() + "_" + timestamp + ".html";
+        return ".output\\" + description.getMethodName().split("\\[")[0] + "\\" + timestamp + ".html";
     }
 
     private void handle(Description description) {
