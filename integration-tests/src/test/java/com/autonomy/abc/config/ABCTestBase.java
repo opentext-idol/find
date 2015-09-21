@@ -129,11 +129,12 @@ public class ABCTestBase {
 		// no side/top bar until logged in
 		body = application.createAppBody(driver, null, null);
 		elementFactory = application.createElementFactory(driver);
-		elementFactory.getLoginPage().loginWith(application.createCredentials());
-		// now has side/top bar
 		try {
+			elementFactory.getLoginPage().loginWith(application.createCredentials());
+			// now has side/top bar
 			body = getBody();
-		} catch (TimeoutException e) {
+		} catch (Exception e) {
+			LOGGER.error("Unable to login");
 			fail("Unable to login");
 		}
 	}
