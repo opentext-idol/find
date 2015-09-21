@@ -20,12 +20,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.*;
+
+import static org.junit.Assert.fail;
 
 @Ignore
 @RunWith(Parameterized.class)
@@ -126,9 +129,14 @@ public class ABCTestBase {
 		// no side/top bar until logged in
 		body = application.createAppBody(driver, null, null);
 		elementFactory = application.createElementFactory(driver);
-		elementFactory.getLoginPage().loginWith(application.createCredentials());
-		// now has side/top bar
-		body = getBody();
+		try {
+			elementFactory.getLoginPage().loginWith(application.createCredentials());
+			// now has side/top bar
+			body = getBody();
+		} catch (Exception e) {
+			LOGGER.error("Unable to login");
+			fail("Unable to login");
+		}
 	}
 
 	@After

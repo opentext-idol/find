@@ -40,7 +40,7 @@ public class DynamicPromotion extends Promotion {
     }
 
     public void doResults(Wizard wizard) {
-        wizard.formInput().setAndSubmit(Integer.toString(numberOfResults));
+        wizard.formInput().setValue(Integer.toString(numberOfResults));
         wizard.continueButton().click();
         wizard.loadOrFadeWait();
     }

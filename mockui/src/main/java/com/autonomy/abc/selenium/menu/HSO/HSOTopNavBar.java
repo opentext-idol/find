@@ -4,6 +4,8 @@ import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSOTopNavBar extends TopNavBar {
 
@@ -18,6 +20,7 @@ public class HSOTopNavBar extends TopNavBar {
 
     public void notificationsDropdown() {
         //I think the notification dropdown changes with every new notification, so need to use getDriver()
-        getDriver().findElement(By.className("count-info")).click();
+        javascriptClick(getDriver().findElement(By.className("count-info")));
+        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.className("notification-list")));
     }
 }

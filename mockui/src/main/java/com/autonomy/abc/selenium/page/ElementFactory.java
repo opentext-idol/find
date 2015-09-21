@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
@@ -24,6 +25,10 @@ public abstract class ElementFactory {
     public abstract PromotionsPage getPromotionsPage();
 
     public abstract CreateNewPromotionsPage getCreateNewPromotionsPage();
+
+    public PromotionsDetailPage getPromotionsDetailPage() {
+        return new PromotionsDetailPage(driver);
+    };
 
     public abstract KeywordsPage getKeywordsPage();
 

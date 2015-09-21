@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
+import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -100,7 +101,8 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public int getCurrentPageNumber() {
 		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
+//		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
+		waitForSearchLoadIndicatorToDisappear();
 		return Integer.parseInt(findElement(By.cssSelector(".pagination-nav.centre li.active span")).getText());
 	}
 
@@ -264,7 +266,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public int visibleDocumentsCount() {
-		return findElements(By.cssSelector(".fa-file-o")).size();
+		return findElements(By.cssSelector(".search-page-contents .search-result-item")).size();
 	}
 
 	public void showFieldTextOptions() {
@@ -320,28 +322,11 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear() {
-		int count = 0;
-		try {
-			while (findElement(By.cssSelector(".search-information h3")).getText().contains("Loading...") && count < 50){
-//				System.out.println("Loading");
-				loadOrFadeWait();
-				count++;
-			}
-		} catch (final StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
-			System.out.println("No Loading");
-		}
+		waitForSearchLoadIndicatorToDisappear(30);
+	}
 
-/*		//TODO
-		new WebDriverWait(getDriver(),60).until(new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver driver) {
-				try {
-					return !findElement(By.cssSelector(".search-information h3")).getText().contains("Loading...");	//TODO change this to the fa-spin ot whatever it actually is
-				} catch (Exception e) {
-					return true;
-				}
-			}
-		});*/
+	public void waitForSearchLoadIndicatorToDisappear(int seconds) {
+		new WebDriverWait(getDriver(), seconds).until(Predicates.invisibilityOfAllElementsLocated(By.className("fa-spin")));
 	}
 
 	public void waitForSynonymsLoadingIndicatorToDisappear(){
