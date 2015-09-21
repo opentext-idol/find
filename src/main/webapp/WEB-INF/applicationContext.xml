@@ -33,6 +33,7 @@
     </ehcache:config>
 
     <util:constant id="ssoPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_PAGE"/>
+    <util:constant id="ssoLogoutPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_LOGOUT_PAGE"/>
     <util:constant id="ssoAuthenticationUri" static-field="com.hp.autonomy.frontend.find.FindController.SSO_AUTHENTICATION_URI"/>
 
     <bean id="forbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
@@ -92,6 +93,11 @@
         <constructor-arg value="loginPage"/>
     </bean>
 
+    <bean id="hodTokenLogoutSuccessHandler" class="com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler">
+        <constructor-arg ref="ssoLogoutPage"/>
+        <constructor-arg ref="tokenRepository"/>
+    </bean>
+
     <!-- TODO reenable this once we have a better plan for the settings page (remove entry point and uncomment login page)-->
     <security:http pattern="/p/.*|/config/.*|/authenticate|/logout" request-matcher="regex" entry-point-ref="forbiddenEntryPoint">
         <security:access-denied-handler ref="adminAccessDeniedHandler"/>
@@ -103,7 +109,7 @@
                 <!--login-processing-url="/authenticate"-->
                 <!--login-page="/loginPage"-->
                 <!--/>-->
-        <security:logout logout-success-url="/public/" logout-url="/logout"/>
+        <security:logout logout-url="/logout" success-handler-ref="hodTokenLogoutSuccessHandler"/>
         <security:csrf disabled="true"/>
     </security:http>
 

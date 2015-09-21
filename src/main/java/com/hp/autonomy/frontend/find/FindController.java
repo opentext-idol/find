@@ -31,6 +31,8 @@ public class FindController {
 
     public static final String SSO_PAGE = "/sso";
     public static final String SSO_AUTHENTICATION_URI = "/authenticate-sso";
+    public static final String SSO_LOGOUT_PAGE = "/sso-logout";
+    private static final String HOD_ENDPOINT = System.getProperty("find.iod.api");
 
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
@@ -53,7 +55,7 @@ public class FindController {
         }
     }
 
-    @RequestMapping(value = "/sso", method = RequestMethod.GET)
+    @RequestMapping(value = SSO_PAGE, method = RequestMethod.GET)
     public ModelAndView sso() throws JsonProcessingException, HodErrorException {
         final Map<String, Object> ssoConfig = new HashMap<>();
         ssoConfig.put("authenticatePath", SSO_AUTHENTICATION_URI);
@@ -68,5 +70,15 @@ public class FindController {
         attributes.put("configJson", contextObjectMapper.writeValueAsString(ssoConfig));
 
         return new ModelAndView("sso", attributes);
+    }
+
+    @RequestMapping(value = SSO_LOGOUT_PAGE, method = RequestMethod.GET)
+    public ModelAndView ssoLogoutPage() throws JsonProcessingException {
+        final Map<String, Object> ssoConfig = new HashMap<>();
+        ssoConfig.put("endpoint", HOD_ENDPOINT);
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put("configJson", contextObjectMapper.writeValueAsString(ssoConfig));
+        return new ModelAndView("sso-logout", attributes);
     }
 }
