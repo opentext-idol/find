@@ -20,9 +20,11 @@ define([
         events: {
             'click [data-field] [data-value]': function(e) {
                 var $target = $(e.currentTarget);
+                var $field = $target.closest('[data-field]');
 
                 var attributes = {
-                    field: $target.closest('[data-field]').attr('data-field'),
+                    field: $field.attr('data-field'),
+                    fieldDisplayName: $field.attr('data-field-display-name'),
                     value: $target.attr('data-value')
                 };
 
