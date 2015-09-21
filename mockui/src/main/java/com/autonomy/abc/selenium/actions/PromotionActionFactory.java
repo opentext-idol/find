@@ -66,7 +66,7 @@ public class PromotionActionFactory {
             final PromotionsDetailPage promotionsDetailPage = elementFactory.getPromotionsDetailPage();
             final Dropdown editMenu = promotionsDetailPage.editMenu();
             editMenu.open();
-            editMenu.getItems().get(0).click();
+            editMenu.getItem("Delete").click();
             final ModalView deleteModal = ModalView.getVisibleModalView(driver);
             deleteModal.findElement(By.cssSelector(".btn-danger")).click();
             elementFactory.getPromotionsPage();
