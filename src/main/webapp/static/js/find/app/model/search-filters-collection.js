@@ -199,6 +199,7 @@ define([
         // Handles add and remove events from the selected parametric values collection
         updateParametricSelection: function(selectionModel) {
             var field = selectionModel.get('field');
+            var fieldDisplayName = selectionModel.get('fieldDisplayName');
             var id = parametricFilterId(field);
             var modelsForField = this.selectedParametricValues.where({field: field});
 
@@ -206,7 +207,7 @@ define([
                 this.add({
                     id: id,
                     field: field,
-                    text: parametricFilterText(field, _.invoke(modelsForField, 'get', 'value')),
+                    text: parametricFilterText(fieldDisplayName, _.invoke(modelsForField, 'get', 'value')),
                     type: FilterTypes.PARAMETRIC
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name

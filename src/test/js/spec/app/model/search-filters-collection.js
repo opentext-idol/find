@@ -198,8 +198,8 @@ define([
         describe('after two more parametric values are selected from the NAME field', function() {
             beforeEach(function() {
                 this.selectedParametricValues.add([
-                    {field: 'NAME', value: 'bobby'},
-                    {field: 'NAME', value: 'penny'}
+                    {field: 'NAME', fieldDisplayName: 'Name', value: 'bobby'},
+                    {field: 'NAME', fieldDisplayName: 'Name', value: 'penny'}
                 ]);
             });
 
@@ -208,9 +208,9 @@ define([
             });
 
             it('contains a NAME parametric filter model', function() {
-                var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'});
+                var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC,  field: 'NAME'});
                 expect(model).toBeDefined();
-                expect(model.get('text')).toContain('NAME');
+                expect(model.get('text')).toContain('Name');
                 expect(model.get('text')).toContain('bobby');
                 expect(model.get('text')).toContain('penny');
             });
@@ -226,7 +226,7 @@ define([
 
                 it('removes the deselected field value from the NAME parametric filter model', function() {
                     var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'});
-                    expect(model.get('text')).toContain('NAME');
+                    expect(model.get('text')).toContain('Name');
                     expect(model.get('text')).toContain('bobby');
                     expect(model.get('text')).not.toContain('penny');
                 });
