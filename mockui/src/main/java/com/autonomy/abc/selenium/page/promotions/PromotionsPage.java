@@ -59,7 +59,11 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement spotlightButton() {
-		return findElement(By.cssSelector(".promotion-view-name-dropdown button"));
+		return findElement(By.cssSelector(".promotion-view-name-dropdown"));
+	}
+
+	public Editable promotionPosition() {
+		return new InlineEdit(findElement(By.className("promotion-position-edit")), getDriver());
 	}
 
 	public List<WebElement> promotionsList() {

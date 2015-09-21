@@ -50,4 +50,8 @@ public class Dropdown {
         return menu.findElements(By.tagName("li"));
     }
 
+    public WebElement getItem(String text) {
+        return menu.findElement(By.xpath(".//*[text()[contains(., '" + text + "')]]"));
+    }
+
 }

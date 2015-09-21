@@ -70,6 +70,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public List<String> addToBucket(int finalNumberOfDocs) {
 		final List<String> promotedDocTitles = new ArrayList<>();
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteTheseItemsButton()));
+		waitForSearchLoadIndicatorToDisappear();
 		for (int i = 0; i < finalNumberOfDocs; i++) {
 			final int checkboxIndex = i % RESULTS_PER_PAGE + 1;
 			searchResultCheckbox(checkboxIndex).click();
