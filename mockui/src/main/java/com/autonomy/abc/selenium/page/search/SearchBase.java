@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
+import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -319,7 +320,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear(int seconds) {
-		new WebDriverWait(getDriver(), seconds).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
+		new WebDriverWait(getDriver(), seconds).until(Predicates.invisibilityOfAllElementsLocated(By.className("fa-spin")));
 	}
 
 	public void waitForSynonymsLoadingIndicatorToDisappear(){
