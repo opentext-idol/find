@@ -51,17 +51,15 @@ public class ElementMatchers {
 
     public static Matcher<? super WebElement> hasAttribute(final String text) {
         return new TypeSafeMatcher<WebElement>() {
-            private String tagName;
 
             @Override
             protected boolean matchesSafely(WebElement item) {
-                tagName = item.getTagName();
                 return item.getAttribute(text) != null;
             }
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("a <" + tagName + "> with attribute ").appendValue(text);
+                description.appendText("a tag with attribute ").appendValue(text);
             }
 
             @Override
