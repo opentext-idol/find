@@ -7,11 +7,13 @@ package com.hp.autonomy.frontend.find.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.hp.autonomy.databases.DatabasesService;
+import com.hp.autonomy.databases.DatabasesServiceImpl;
+import com.hp.autonomy.fields.IndexFieldsService;
+import com.hp.autonomy.fields.IndexFieldsServiceImpl;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
-import com.hp.autonomy.frontend.configuration.HostAndPort;
-import com.hp.autonomy.frontend.configuration.RedisConfig;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
@@ -47,14 +49,14 @@ import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
 import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
+import com.hp.autonomy.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.parametricvalues.ParametricValuesServiceImpl;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisSentinelConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -88,8 +90,8 @@ public class AppConfiguration {
         // The type annotation here is required to make it compile
         //noinspection Convert2Diamond
         validationService.setValidators(new HashSet<Validator<?>>(Arrays.asList(
-            singleUserAuthenticationValidator(),
-            iodConfigValidator()
+                singleUserAuthenticationValidator(),
+                iodConfigValidator()
         )));
 
         // fix circular dependency
@@ -135,14 +137,14 @@ public class AppConfiguration {
 
     private HodServiceConfig.Builder hodServiceConfigBuilder() {
         return new HodServiceConfig.Builder(System.getProperty("find.iod.api", "https://api.idolondemand.com"))
-            .setHttpClient(httpClient())
-            .setTokenRepository(tokenRepository);
+                .setHttpClient(httpClient())
+                .setTokenRepository(tokenRepository);
     }
 
     @Bean
     public HodServiceConfig initialHodServiceConfig() {
         return hodServiceConfigBuilder()
-            .build();
+                .build();
     }
 
     @Bean
@@ -158,8 +160,8 @@ public class AppConfiguration {
     @Bean
     public HodServiceConfig hodServiceConfig() {
         return hodServiceConfigBuilder()
-            .setTokenProxyService(tokenProxyService())
-            .build();
+                .setTokenProxyService(tokenProxyService())
+                .build();
     }
 
     @Bean
@@ -183,8 +185,23 @@ public class AppConfiguration {
     }
 
     @Bean
+    public IndexFieldsService indexFieldsService() {
+        return new IndexFieldsServiceImpl(retrieveIndexFieldsService());
+    }
+
+    @Bean
+    public DatabasesService databasesService() {
+        return new DatabasesServiceImpl(resourcesService(), indexFieldsService());
+    }
+
+    @Bean
     public GetParametricValuesService getParametricValuesService() {
         return new GetParametricValuesServiceImpl(hodServiceConfig());
+    }
+
+    @Bean
+    public ParametricValuesService parametricValuesService() {
+        return new ParametricValuesServiceImpl(getParametricValuesService());
     }
 
     @Bean

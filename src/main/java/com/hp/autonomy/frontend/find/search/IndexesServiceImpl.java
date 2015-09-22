@@ -5,6 +5,9 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.databases.Database;
+import com.hp.autonomy.databases.DatabasesService;
+import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.configuration.FindConfig;
 import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
@@ -41,12 +44,10 @@ public class IndexesServiceImpl implements IndexesService {
     private ResourcesService resourcesService;
 
     @Autowired
-    private TokenProxyService tokenProxyService;
+    private IndexFieldsService indexFieldsService;
 
-    @Override
-    public Resources listIndexes() throws HodErrorException {
-        return listIndexes(tokenProxyService.getTokenProxy());
-    }
+    @Autowired
+    private DatabasesService databasesService;
 
     @Override
     public Resources listIndexes(final TokenProxy tokenProxy) throws HodErrorException {
@@ -77,31 +78,27 @@ public class IndexesServiceImpl implements IndexesService {
     }
 
     @Override
-    public List<ResourceIdentifier> listVisibleIndexes() throws HodErrorException {
+    public List<Database> listVisibleIndexes() throws HodErrorException {
         final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if(activeIndexes.isEmpty()) {
             final HodAuthentication auth = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
-
-            final Resources resources = listIndexes();
             final String domain = auth.getDomain();
 
-            final List<ResourceIdentifier> resourceIdentifiers = new ArrayList<>();
-
-            if (configService.getConfig().getIod().getPublicIndexesEnabled()) {
-                for (final Resource resource : resources.getPublicResources()) {
-                    resourceIdentifiers.add(new ResourceIdentifier(ResourceIdentifier.PUBLIC_INDEXES_DOMAIN, resource.getResource()));
-                }
-            }
-
-            for (final Resource resource : resources.getResources()) {
-                resourceIdentifiers.add(new ResourceIdentifier(domain, resource.getResource()));
-            }
-
-            return resourceIdentifiers;
+            return new ArrayList<>(databasesService.getDatabases(domain));
         }
         else {
-            return activeIndexes;
+            final List<Database> activeDatabases = new ArrayList<>();
+
+            for(final ResourceIdentifier index: activeIndexes) {
+                activeDatabases.add(new Database.Builder()
+                        .setDomain(index.getDomain())
+                        .setName(index.getName())
+                        .setIndexFields(indexFieldsService.getParametricFields(index))
+                        .build());
+            }
+
+            return activeDatabases;
         }
     }
 }

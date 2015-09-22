@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.databases.Database;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -14,11 +15,9 @@ import java.util.List;
 
 public interface IndexesService {
 
-    Resources listIndexes() throws HodErrorException;
-
     Resources listIndexes(TokenProxy tokenProxy) throws HodErrorException;
 
     List<ResourceIdentifier> listActiveIndexes();
 
-    List<ResourceIdentifier> listVisibleIndexes() throws HodErrorException;
+    List<Database> listVisibleIndexes() throws HodErrorException;
 }

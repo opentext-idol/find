@@ -330,6 +330,11 @@
             <version>0.3.0</version>
         </dependency>
         <dependency>
+            <groupId>com.hp.autonomy.hod</groupId>
+            <artifactId>java-parametric-databases</artifactId>
+            <version>0.2.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.hp.autonomy.frontend.view</groupId>
             <artifactId>view-proxy-components</artifactId>
             <version>0.2.0</version>
