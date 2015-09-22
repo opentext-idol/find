@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.configuration;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.HostAndPort;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.frontend.find.web.CacheNames;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.redis.RedisTokenRepository;
@@ -37,9 +38,7 @@ import redis.clients.jedis.Protocol;
 import redis.clients.util.Pool;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -129,10 +128,7 @@ public class RedisConfiguration extends CachingConfigurerSupport{
         cacheManager.setCachePrefix(new DefaultRedisCachePrefix(":cache:" + dispatcherProperties.getProperty("application.version") + ':'));
 
         cacheManager.setDefaultExpiration(30 * 60);
-
-        final Map<String, Long> cacheExpires = new HashMap<>();
-        // TODO: fill in cache expiration
-        cacheManager.setExpires(cacheExpires);
+        cacheManager.setExpires(CacheNames.CACHE_EXPIRES);
 
         return cacheManager;
     }

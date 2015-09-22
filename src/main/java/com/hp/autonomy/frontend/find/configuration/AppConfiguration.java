@@ -15,6 +15,8 @@ import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.find.parametricfields.CacheableIndexFieldsService;
+import com.hp.autonomy.frontend.find.parametricfields.CacheableParametricValuesService;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
@@ -171,7 +173,7 @@ public class AppConfiguration {
 
     @Bean
     public IndexFieldsService indexFieldsService() {
-        return new IndexFieldsServiceImpl(retrieveIndexFieldsService());
+        return new CacheableIndexFieldsService(new IndexFieldsServiceImpl(retrieveIndexFieldsService()));
     }
 
     @Bean
@@ -186,7 +188,7 @@ public class AppConfiguration {
 
     @Bean
     public ParametricValuesService parametricValuesService() {
-        return new ParametricValuesServiceImpl(getParametricValuesService());
+        return new CacheableParametricValuesService(new ParametricValuesServiceImpl(getParametricValuesService()));
     }
 
     @Bean

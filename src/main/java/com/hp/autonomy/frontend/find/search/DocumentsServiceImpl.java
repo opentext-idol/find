@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.frontend.find.FindQueryProfileService;
+import com.hp.autonomy.frontend.find.web.CacheNames;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
@@ -16,6 +17,7 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -31,11 +33,13 @@ public class DocumentsServiceImpl implements DocumentsService {
     private QueryTextIndexService<Documents> queryTextIndexService;
 
     @Override
+    @Cacheable(CacheNames.DOCUMENTS)
     public Documents queryTextIndex(final String text, final int maxResults, final Summary summary, final List<ResourceIdentifier> indexes, final String fieldText, final Sort sort, final DateTime minDate, final DateTime maxDate) throws HodErrorException {
         return queryTextIndex(text, maxResults, summary, indexes, fieldText, sort, minDate, maxDate, false);
     }
 
     @Override
+    @Cacheable(CacheNames.PROMOTED_DOCUMENTS)
     public Documents queryTextIndexForPromotions(final String text, final int maxResults, final Summary summary, final List<ResourceIdentifier> indexes, final String fieldText , final Sort sort, final DateTime minDate, final DateTime maxDate) throws HodErrorException {
         return queryTextIndex(text, maxResults, summary, indexes, fieldText, sort, minDate, maxDate, true);
     }
