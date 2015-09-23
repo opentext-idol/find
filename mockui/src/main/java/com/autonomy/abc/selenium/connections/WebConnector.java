@@ -8,21 +8,16 @@ import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WebConnector {
+public class WebConnector extends Connector {
     private String url;
-    private String name;
 
     public WebConnector(String url, String name) {
+        super(name);
         this.url = url;
-        this.name = name;
     }
 
     public String getUrl() {
         return url;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Wizard makeWizard(NewConnectionPage newConnectionPage) {

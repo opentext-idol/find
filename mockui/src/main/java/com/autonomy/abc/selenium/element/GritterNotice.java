@@ -24,9 +24,13 @@ public class GritterNotice extends AppElement {
         findElement(By.className("gritter-close")).click();
     }
 
-    public static ExpectedCondition<?> notificationAppears() {
-        // TODO: does this need "refreshed"?
-        return ExpectedConditions.refreshed(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("gritter-item")));
+    // TODO: will not work if there are already notifications
+    public static ExpectedCondition<WebElement> notificationAppears() {
+        return ExpectedConditions.visibilityOfElementLocated(By.className("gritter-item"));
+    }
+
+    public static ExpectedCondition<WebElement> notificationContaining(String text) {
+        return ExpectedConditions.visibilityOfElementLocated(By.xpath(".//*[contains(@class, 'gritter-item')]//*[contains(text(), '" + text + "')]/../.."));
     }
 
     public static ExpectedCondition<?> notificationsDisappear() {
