@@ -9,30 +9,23 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 import java.util.List;
 
-public class PromotionActionFactory {
-    private Application application;
-    private WebDriver driver;
-    private ElementFactory elementFactory;
-
-    public PromotionActionFactory(Application application, WebDriver driver) {
-        this.application = application;
-        this.driver = driver;
-        this.elementFactory = application.createElementFactory(driver);
+public class PromotionActionFactory extends ActionFactory {
+    public PromotionActionFactory(Application application, ElementFactory elementFactory) {
+        super(application, elementFactory);
     }
 
     public Action goToDetails(String title) {
         return new GoToDetailsAction(title);
     }
 
-    public Action delete(String title) {
+    public Action makeDelete(String title) {
         return new DeleteAction(title);
     }
 
-    public Action deleteAll() {
+    public Action makeDeleteAll() {
         return new DeleteAllAction();
     }
 
@@ -45,11 +38,11 @@ public class PromotionActionFactory {
 
         @Override
         public void apply() {
-            AppBody body = application.createAppBody(driver);
+            AppBody body = getApplication().createAppBody(getDriver());
             body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-            PromotionsPage promotionsPage = elementFactory.getPromotionsPage();
+            PromotionsPage promotionsPage = getElementFactory().getPromotionsPage();
             promotionsPage.getPromotionLinkWithTitleContaining(title).click();
-            elementFactory.getPromotionsDetailPage();
+            getElementFactory().getPromotionsDetailPage();
         }
     }
 
@@ -63,13 +56,13 @@ public class PromotionActionFactory {
         @Override
         public void apply() {
             new GoToDetailsAction(title).apply();
-            final PromotionsDetailPage promotionsDetailPage = elementFactory.getPromotionsDetailPage();
+            final PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
             final Dropdown editMenu = promotionsDetailPage.editMenu();
             editMenu.open();
             editMenu.getItem("Delete").click();
-            final ModalView deleteModal = ModalView.getVisibleModalView(driver);
+            final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
             deleteModal.findElement(By.cssSelector(".btn-danger")).click();
-            elementFactory.getPromotionsPage();
+            getElementFactory().getPromotionsPage();
         }
     }
 
@@ -78,9 +71,9 @@ public class PromotionActionFactory {
 
         @Override
         public void apply() {
-            AppBody body = application.createAppBody(driver);
+            AppBody body = getApplication().createAppBody(getDriver());
             body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-            List<String> titles = elementFactory.getPromotionsPage().getPromotionTitles();
+            List<String> titles = getElementFactory().getPromotionsPage().getPromotionTitles();
             for (String title : titles) {
                 new DeleteAction(title).apply();
             }

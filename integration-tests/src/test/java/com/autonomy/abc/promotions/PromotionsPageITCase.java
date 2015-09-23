@@ -2,7 +2,6 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.actions.ActionFactory;
 import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Wizard;
@@ -14,6 +13,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchActionFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	private PromotionsPage promotionsPage;
 	private CreateNewDynamicPromotionsPage dynamicPromotionsPage;
-	private ActionFactory actionFactory;
+	private SearchActionFactory searchActionFactory;
 	private PromotionActionFactory promotionActionFactory;
 
 	@Before
@@ -50,9 +50,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage = getElementFactory().getPromotionsPage();
 		// TODO: occasional stale element?
-		actionFactory = new ActionFactory(getApplication(), getElementFactory());
-		promotionActionFactory = new PromotionActionFactory(getApplication(), getDriver());
-		promotionActionFactory.deleteAll().apply();
+		searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+		promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
+		promotionActionFactory.makeDeleteAll().apply();
 	}
 
 	private List<String> setUpPromotion(Search search, int numberOfDocs, Promotion promotion) {
@@ -85,11 +85,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	private List<String> setUpCarsPromotion(int numberOfDocs) {
 //		final List<String> promotedDocTitles = promotionsPage.setUpANewMultiDocPromotion("English", "cars", "Sponsored", "wheels", 2, getConfig().getType().getName());
-		return setUpPromotion(actionFactory.createSearch("cars"), numberOfDocs, new SpotlightPromotion("wheels"));
+		return setUpPromotion(searchActionFactory.makeSearch("cars"), numberOfDocs, new SpotlightPromotion("wheels"));
 	}
 
 	private Search search(String searchTerm, String language) {
-		return actionFactory.createSearch(searchTerm).applyFilter(new LanguageFilter(language));
+		return searchActionFactory.makeSearch(searchTerm).applyFilter(new LanguageFilter(language));
 	}
 
 
@@ -262,7 +262,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String[] searchTerms = {"rabbit", "horse", "script"};
 		String[] triggers = {"bunny", "pony", "<script> document.body.innerHTML = '' </script>"};
 		for (int i=0; i<searchTerms.length; i++) {
-			setUpPromotion(actionFactory.createSearch(searchTerms[i]), new SpotlightPromotion(triggers[i]));
+			setUpPromotion(searchActionFactory.makeSearch(searchTerms[i]), new SpotlightPromotion(triggers[i]));
 			promotionsPage.backButton().click();
 		}
 
@@ -295,7 +295,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Ignore
 	@Test
 	public void testAddingLotsOfDocsToAPromotion() {
-		setUpPromotion(actionFactory.createSearch("sith"), 100, new SpotlightPromotion("darth sith"));
+		setUpPromotion(searchActionFactory.makeSearch("sith"), 100, new SpotlightPromotion("darth sith"));
 		assertThat(promotionsPage, promotionsList(hasSize(100)));
 	}
 
