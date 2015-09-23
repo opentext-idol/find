@@ -90,7 +90,9 @@ define([
 
             this.parametricView = new ParametricView({
                 queryModel: this.queryModel,
-                selectedParametricValues: this.selectedParametricValues
+                selectedParametricValues: this.selectedParametricValues,
+                indexesCollection: this.indexesCollection,
+                selectedIndexesCollection: this.selectedIndexesCollection,
             });
 
             // Left Collapsed Views
