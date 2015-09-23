@@ -28,7 +28,10 @@ define([
             this.listenTo(backboneQueryModel, 'change:queryText', function(model, text) {
                 this.$('.find-input').val(text); //when clicking one of the suggested search links
 
-                this.uiStateChange(text);
+                if(text.length) { // input has at least one non whitespace character
+                    this.expandedState();
+                }
+
             });
 
             this.inputView = new InputView({
@@ -44,7 +47,7 @@ define([
                     this.$('.find-input').val(text); //when clicking one of the suggested search links
                     this.queryModel.set('queryText', text);
                 } else {
-                    this.queryModel.set('queryText', ''); //when clicking the small 'find' logo
+                    this.queryModel.set('queryText', '');
                 }
             }, this);
         },
@@ -56,14 +59,6 @@ define([
             this.serviceView.setElement(this.$('.service-view-container')).render();
 
             this.reducedState();
-        },
-
-        uiStateChange: function(text) {
-            if(text.length) { // input has at least one non whitespace character
-                this.expandedState();
-            } else {
-                this.reducedState();
-            }
         },
 
         expandedState: function() {
