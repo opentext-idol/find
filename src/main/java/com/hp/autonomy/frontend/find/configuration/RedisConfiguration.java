@@ -9,16 +9,12 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.HostAndPort;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
 import com.hp.autonomy.frontend.find.web.CacheNames;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.redis.RedisTokenRepository;
-import com.hp.autonomy.hod.sso.HodAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.interceptor.AbstractCacheResolver;
-import org.springframework.cache.interceptor.CacheOperationInvocationContext;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -28,8 +24,6 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -37,7 +31,6 @@ import redis.clients.jedis.JedisSentinelPool;
 import redis.clients.jedis.Protocol;
 import redis.clients.util.Pool;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -147,32 +140,6 @@ public class RedisConfiguration extends CachingConfigurerSupport{
         final RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
         return template;
-    }
-
-    // TODO if this works we need to librarify it
-    public static class HodApplicationCacheResolver extends AbstractCacheResolver {
-        static final char SEPARATOR = ':';
-
-        @Override
-        protected Collection<String> getCacheNames(final CacheOperationInvocationContext<?> context) {
-            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            if (!(authentication instanceof HodAuthentication)) {
-                throw new IllegalStateException("There is no HOD authentication token in the security context holder");
-            }
-
-            final HodAuthentication hodAuthentication = (HodAuthentication) authentication;
-            final String applicationId = new ResourceIdentifier(hodAuthentication.getDomain(), hodAuthentication.getApplication()).toString();
-
-            final Set<String> contextCacheNames = context.getOperation().getCacheNames();
-            final Set<String> resolvedCacheNames = new HashSet<>();
-
-            for (final String cacheName : contextCacheNames) {
-                resolvedCacheNames.add(applicationId + SEPARATOR + cacheName);
-            }
-
-            return resolvedCacheNames;
-        }
     }
 
 }
