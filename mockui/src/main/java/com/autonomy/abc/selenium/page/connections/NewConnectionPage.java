@@ -43,4 +43,8 @@ public class NewConnectionPage extends SAASPageBase {
     public WebElement cancelButton() {
         return menuButton("Cancel");
     }
+
+    public void loadOrFadeWait() {
+        getPage().loadOrFadeWait();
+    }
 }
