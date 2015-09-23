@@ -38,8 +38,7 @@ import java.util.Set;
 @Configuration
 @Conditional(RedisCondition.class)
 @EnableRedisHttpSession
-@EnableCaching
-public class RedisConfiguration extends CachingConfigurerSupport{
+public class RedisConfiguration {
 
     @Autowired
     private ConfigService<FindConfig> configService;
@@ -113,7 +112,6 @@ public class RedisConfiguration extends CachingConfigurerSupport{
         return new RedisTokenRepository(pool);
     }
 
-    @Override
     @Bean
     public CacheManager cacheManager() {
         final RedisCacheManager cacheManager = new RedisCacheManager(cachingRedisTemplate());
@@ -124,15 +122,6 @@ public class RedisConfiguration extends CachingConfigurerSupport{
         cacheManager.setExpires(CacheNames.CACHE_EXPIRES);
 
         return cacheManager;
-    }
-
-    @Override
-    @Bean
-    public CacheResolver cacheResolver() {
-        final HodApplicationCacheResolver hodApplicationCacheResolver = new HodApplicationCacheResolver();
-        hodApplicationCacheResolver.setCacheManager(cacheManager());
-
-        return hodApplicationCacheResolver;
     }
 
     @Bean

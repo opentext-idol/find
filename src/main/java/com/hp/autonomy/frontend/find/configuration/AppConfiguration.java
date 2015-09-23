@@ -54,6 +54,10 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -61,13 +65,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Configuration
-public class AppConfiguration {
+@EnableCaching
+public class AppConfiguration extends CachingConfigurerSupport {
 
     @Autowired
     private FindConfigFileService configService;
 
     @Autowired
     private TokenRepository tokenRepository;
+
+    @Autowired
+    private CacheManager cacheManager;
 
     @Bean
     public IodConfigValidator iodConfigValidator() {
@@ -106,6 +114,15 @@ public class AppConfiguration {
         mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
 
         return mapper;
+    }
+
+    @Override
+    @Bean
+    public CacheResolver cacheResolver() {
+        final HodApplicationCacheResolver hodApplicationCacheResolver = new HodApplicationCacheResolver();
+        hodApplicationCacheResolver.setCacheManager(cacheManager);
+
+        return hodApplicationCacheResolver;
     }
 
     @Bean
