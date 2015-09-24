@@ -19,6 +19,7 @@ import com.hp.autonomy.frontend.find.parametricfields.CacheableIndexFieldsServic
 import com.hp.autonomy.frontend.find.parametricfields.CacheableParametricValuesService;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
+import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;

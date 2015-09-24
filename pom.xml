@@ -344,6 +344,11 @@
             <artifactId>redis-hod-token-repository</artifactId>
             <version>0.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.hod</groupId>
+            <artifactId>hod-spring-caching</artifactId>
+            <version>0.1.0</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

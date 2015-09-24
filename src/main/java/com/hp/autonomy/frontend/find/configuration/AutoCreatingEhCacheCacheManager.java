@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.configuration;
 
 import com.hp.autonomy.frontend.find.web.CacheNames;
+import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.cache.Cache;
 import org.springframework.cache.ehcache.EhCacheCache;
