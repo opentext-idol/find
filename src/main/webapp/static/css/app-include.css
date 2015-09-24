@@ -246,7 +246,7 @@ html, body {
 }
 
 .app-logo {
-    width: 80%;
+    width: 73%;
 }
 
 .find-logo {
@@ -397,7 +397,7 @@ input.find-input {
 }
 
 .reverse-animated-container .find-form {
-    width:80%;
+    width:72%;
     transition: all 1000ms ease;
     transition-property:width;
 }
