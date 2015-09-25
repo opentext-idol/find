@@ -7,6 +7,9 @@ package com.hp.autonomy.frontend.find.configuration;
 
 import com.hp.autonomy.hod.client.token.InMemoryTokenRepository;
 import com.hp.autonomy.hod.client.token.TokenRepository;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +37,32 @@ public class InMemoryConfiguration {
     @Bean
     public TokenRepository tokenRepository() {
         return new InMemoryTokenRepository();
+    }
+
+    @Bean
+    public CacheConfiguration defaultCacheConfiguration() {
+        return new CacheConfiguration()
+            .eternal(false)
+            .maxElementsInMemory(1000)
+            .overflowToDisk(false)
+            .diskPersistent(false)
+            .timeToIdleSeconds(0)
+            .timeToLiveSeconds(30 * 60)
+            .memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LRU);
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public net.sf.ehcache.CacheManager ehCacheManager() {
+        final net.sf.ehcache.config.Configuration configuration = new net.sf.ehcache.config.Configuration()
+            .defaultCache(defaultCacheConfiguration())
+            .updateCheck(false);
+
+        return new net.sf.ehcache.CacheManager(configuration);
+    }
+
+    @Bean
+    public CacheManager cacheManager() {
+        return new AutoCreatingEhCacheCacheManager(ehCacheManager(), defaultCacheConfiguration());
     }
 
 }

@@ -9,12 +9,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
-                         http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd
                          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
                          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
@@ -26,15 +24,11 @@
 
     <context:property-placeholder location="classpath:com/hp/autonomy/frontend/find/find.properties"/>
 
-    <ehcache:annotation-driven create-missing-caches="true"/>
-
-    <ehcache:config cache-manager="cacheManager">
-        <ehcache:evict-expired-elements interval="60" />
-    </ehcache:config>
-
     <util:constant id="ssoPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_PAGE"/>
     <util:constant id="ssoLogoutPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_LOGOUT_PAGE"/>
     <util:constant id="ssoAuthenticationUri" static-field="com.hp.autonomy.frontend.find.FindController.SSO_AUTHENTICATION_URI"/>
+
+    <util:properties id="dispatcherProperties" location="classpath:com/hp/autonomy/frontend/find/dispatcher.properties"/>
 
     <bean id="forbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
@@ -68,12 +62,12 @@
     </security:http>
 
     <bean id="defaultLoginAuthenticationProvider" class="com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider">
-        <constructor-arg ref="configFileService"/>
+        <constructor-arg ref="configService"/>
         <constructor-arg value="ROLE_DEFAULT"/>
     </bean>
 
     <bean id="singleUserAuthenticationProvider" class="com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider">
-        <constructor-arg ref="configFileService"/>
+        <constructor-arg ref="configService"/>
         <constructor-arg value="ROLE_ADMIN"/>
     </bean>
 
@@ -129,10 +123,6 @@
 
     <bean class="com.hp.autonomy.frontend.logging.ApplicationStartLogger"/>
 
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="/WEB-INF/ehcache.xml"/>
-    </bean>
-
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
         <property name="defaultLocale" value="en" />
     </bean>
@@ -160,40 +150,8 @@
         </property>
     </bean>
 
-
-
     <bean class="com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter" name="configEnvironmentVariableFilter"
           p:configPage="/configError"
-          p:configService-ref="configFileService"/>
+          p:configService-ref="configService"/>
 
-    <bean id="configFileService" class="com.hp.autonomy.frontend.find.configuration.FindConfigFileService"
-          p:configFileLocation="hp.find.home"
-          p:configFileName="config.json"
-          p:defaultConfigFile="/com/hp/autonomy/frontend/find/configuration/defaultConfigFile.json"
-          p:mapper-ref="contextObjectMapper"
-          p:textEncryptor-ref="org.jasypt.util.text.BasicTextEncryptor"
-          p:filterProvider-ref="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider"/>
-
-    <bean id="configurationFilter" class="com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter$SerializeExceptFilter">
-        <constructor-arg>
-            <set>
-                <value>productType</value>
-                <value>indexErrorMessage</value>
-                <value>enabled</value>
-                <value>plaintextPassword</value>
-                <value>currentPassword</value>
-            </set>
-        </constructor-arg>
-    </bean>
-
-    <bean class="com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider">
-        <constructor-arg>
-            <map>
-                <entry key="configurationFilter" value-ref="configurationFilter"/>
-            </map>
-        </constructor-arg>
-    </bean>
-
-    <bean class="org.jasypt.util.text.BasicTextEncryptor" p:password-ref="passwordFactory"/>
-    <bean id="passwordFactory" class="com.hp.autonomy.frontend.find.configuration.TextEncryptorPasswordFactory"/>
 </beans>

@@ -322,7 +322,7 @@
         <dependency>
             <groupId>com.hp.autonomy.hod</groupId>
             <artifactId>java-hod-client</artifactId>
-            <version>0.11.2</version>
+            <version>0.13.1</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.hod</groupId>
@@ -343,6 +343,11 @@
             <groupId>com.hp.autonomy.hod.redis</groupId>
             <artifactId>redis-hod-token-repository</artifactId>
             <version>0.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.hod</groupId>
+            <artifactId>hod-spring-caching</artifactId>
+            <version>0.1.0</version>
         </dependency>
 
         <dependency>
@@ -401,7 +406,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
-            <version>1.5.0.RELEASE</version>
+            <version>1.6.0.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.session</groupId>

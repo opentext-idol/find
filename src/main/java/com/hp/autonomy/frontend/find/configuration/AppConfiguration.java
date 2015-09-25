@@ -6,20 +6,20 @@
 package com.hp.autonomy.frontend.find.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.databases.DatabasesService;
 import com.hp.autonomy.databases.DatabasesServiceImpl;
 import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.fields.IndexFieldsServiceImpl;
 import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
-import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.find.parametricfields.CacheableIndexFieldsService;
+import com.hp.autonomy.frontend.find.parametricfields.CacheableParametricValuesService;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
+import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -55,6 +55,10 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -62,13 +66,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Configuration
-public class AppConfiguration {
+@EnableCaching
+public class AppConfiguration extends CachingConfigurerSupport {
 
     @Autowired
     private FindConfigFileService configService;
 
     @Autowired
     private TokenRepository tokenRepository;
+
+    @Autowired
+    private CacheManager cacheManager;
 
     @Bean
     public IodConfigValidator iodConfigValidator() {
@@ -109,16 +117,13 @@ public class AppConfiguration {
         return mapper;
     }
 
-    @Bean(name = "contextObjectMapper")
-    public ObjectMapper objectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
+    @Override
+    @Bean
+    public CacheResolver cacheResolver() {
+        final HodApplicationCacheResolver hodApplicationCacheResolver = new HodApplicationCacheResolver();
+        hodApplicationCacheResolver.setCacheManager(cacheManager);
 
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
-        mapper.addMixInAnnotations(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class);
-
-        return mapper;
+        return hodApplicationCacheResolver;
     }
 
     @Bean
@@ -186,7 +191,7 @@ public class AppConfiguration {
 
     @Bean
     public IndexFieldsService indexFieldsService() {
-        return new IndexFieldsServiceImpl(retrieveIndexFieldsService());
+        return new CacheableIndexFieldsService(new IndexFieldsServiceImpl(retrieveIndexFieldsService()));
     }
 
     @Bean
@@ -201,7 +206,7 @@ public class AppConfiguration {
 
     @Bean
     public ParametricValuesService parametricValuesService() {
-        return new ParametricValuesServiceImpl(getParametricValuesService());
+        return new CacheableParametricValuesService(new ParametricValuesServiceImpl(getParametricValuesService()));
     }
 
     @Bean

@@ -10,6 +10,7 @@ import com.hp.autonomy.databases.DatabasesService;
 import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.web.CacheNames;
 import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
 import com.hp.autonomy.hod.client.api.resource.Resource;
 import com.hp.autonomy.hod.client.api.resource.ResourceFlavour;
@@ -22,6 +23,7 @@ import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,7 @@ public class IndexesServiceImpl implements IndexesService {
     private DatabasesService databasesService;
 
     @Override
+    @Cacheable(CacheNames.INDEXES)
     public Resources listIndexes(final TokenProxy tokenProxy) throws HodErrorException {
         final Set<ResourceType> types = new HashSet<>();
         types.add(ResourceType.content);
@@ -78,6 +81,7 @@ public class IndexesServiceImpl implements IndexesService {
     }
 
     @Override
+    @Cacheable(value = CacheNames.VISIBLE_INDEXES, key = "#root.methodName")
     public List<Database> listVisibleIndexes() throws HodErrorException {
         final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
