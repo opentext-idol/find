@@ -25,7 +25,7 @@ public class CacheableParametricValuesService implements ParametricValuesService
     @Override
     @Cacheable(CacheNames.PARAMETRIC_VALUES)
     public Set<ParametricFieldName> getAllParametricValues(final ParametricRequest parametricRequest) throws HodErrorException {
-        return null;
+        return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 
 }
