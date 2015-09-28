@@ -18,10 +18,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
@@ -30,9 +28,10 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.*;
 
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.number.OrderingComparison.*;
 import static org.junit.Assert.*;
 
@@ -1099,7 +1098,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.sortByRelevance();
 		List<Float> weights = searchPage.getWeightsOnPage(5);
 
-        logger.info("Weight of 0: "+weights.get(0));
+        logger.info("Weight of 0: " + weights.get(0));
 
         for (int i = 0; i < weights.size() - 1; i++) {
             logger.info("Weight of "+(i+1)+": "+weights.get(i+1));
@@ -1228,5 +1227,92 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expandSubFilter(SearchBase.Filter.PARAMETRIC_VALUES);
 		Thread.sleep(20000);
 		assertFalse("Load indicator still visible after 20 seconds", searchPage.parametricValueLoadIndicator().isDisplayed());
+	}
+
+	@Test
+	public void testContentType(){
+		selectNewsEngIndex();
+		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
+
+		search("Alexis");
+
+		searchPage.openParametricValuesList();
+
+		int results = searchPage.filterByContentType("TEXT/PLAIN");
+
+		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
+
+		searchPage.loadOrFadeWait();
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.loadOrFadeWait();
+
+		assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
+
+		searchPage.forwardToLastPageButton().click();
+
+		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * 6;
+		resultsTotal += searchPage.visibleDocumentsCount();
+
+		assertThat(resultsTotal, is(results));
+	}
+
+	@Test
+	public void testAuthor(){
+		selectNewsEngIndex();
+		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
+
+		search("fruit");
+
+		String author = "RUGBYBWORLDCUP.COM";
+
+		searchPage.openParametricValuesList();
+
+		int results = searchPage.filterByAuthor(author);
+
+		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
+
+		searchPage.loadOrFadeWait();
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.loadOrFadeWait();
+
+		assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
+
+		searchPage.getSearchResult(1).click();
+
+		for(int i = 0; i < results; i++) {
+			assertThat(new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is(author.toLowerCase()));
+			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
+		}
+
+		getDriver().findElement(By.className("fa-close")).click();
+
+		searchPage.loadOrFadeWait();
+
+		searchPage.filterByAuthor(author); //'Unfilter'
+
+		searchPage.loadOrFadeWait();
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.loadOrFadeWait();
+
+		author = "YLEIS";
+
+		results = searchPage.filterByAuthor(author);
+
+		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
+
+		searchPage.loadOrFadeWait();
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.loadOrFadeWait();
+
+		assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
+
+		searchPage.getSearchResult(1).click();
+
+		for(int i = 0; i < results; i++) {
+			assertThat(new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is("Yleis"));
+			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
+		}
+
+		getDriver().findElement(By.className("fa-close")).click();
 	}
 }

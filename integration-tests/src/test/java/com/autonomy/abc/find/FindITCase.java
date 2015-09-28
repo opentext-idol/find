@@ -8,6 +8,8 @@ import com.autonomy.abc.selenium.find.Input;
 import com.autonomy.abc.selenium.find.Service;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
@@ -24,6 +26,7 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
@@ -56,6 +59,7 @@ public class FindITCase extends ABCTestBase {
     private PromotionsPage promotions;
     private List<String> browserHandles;
     private final String domain = "ce9f1f3d-a780-4793-8a6a-a74b12b7d1ae";
+    private final Matcher<String> noDocs = containsString("No results found");
 
     public FindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -648,6 +652,71 @@ public class FindITCase extends ABCTestBase {
                 assertThat(result.findElement(By.tagName("i")).getAttribute("class"), containsString(f.getFileIconString()));
             }
         }
+    }
+
+    @Test
+    public void testSynonyms() throws InterruptedException {
+        getDriver().switchTo().window(browserHandles.get(0));
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+        keywordsPage.deleteKeywords();
+
+        find.loadOrFadeWait();
+
+        getDriver().switchTo().window(browserHandles.get(1));
+        find.search("iuhdsafsaubfdja");
+
+        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        assertThat(service.getText(), noDocs); //TODO check error
+
+        find.search("Cat");
+        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        assertThat(service.getText(), not(noDocs));
+        String firstTitle = service.getSearchResultTitle(1).getText();
+
+        getDriver().switchTo().window(browserHandles.get(0));
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+
+        keywordsPage = getElementFactory().getKeywordsPage();
+        keywordsPage.createNewKeywordsButton().click();
+
+        CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+        createNewKeywordsPage.createSynonymGroup("cat iuhdsafsaubfdja","English");
+
+        getElementFactory().getSearchPage();
+
+        Thread.sleep(15000);
+
+        getDriver().switchTo().window(browserHandles.get(1));
+        find.search("iuhdsafsaubfdja");
+
+        assertThat(service.getText(), not(noDocs));
+        assertThat(service.getSearchResultTitle(1).getText(),is(firstTitle));
+    }
+
+    @Test
+    public void testBlacklist() throws InterruptedException {
+        find.search("Cat");
+
+        assertThat(service.getText(), not(noDocs));
+
+        find.search("Holder");
+
+        getDriver().switchTo().window(browserHandles.get(0));
+
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+
+        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+        keywordsPage.createNewKeywordsButton().click();
+
+        CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+        createNewKeywordsPage.createBlacklistedTerm("Cat","English");
+
+        getDriver().switchTo().window(browserHandles.get(1));
+
+        find.search("Cat");
+
+        assertThat(service.getText(), noDocs);
     }
 
     private enum Index {

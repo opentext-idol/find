@@ -29,6 +29,8 @@ public class Service extends AppElement {
         System.out.println(index.replace(" ", "%20"));
 
         findElement(By.cssSelector("[data-id='" + domain + ":" + index.replace(" ", "%20") + "']")).click();
+
+        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }
 
     public boolean cBoxFirstDocument() {

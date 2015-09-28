@@ -300,4 +300,36 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
 	}
 
+	private WebElement getContentTypeDiv() {
+		return findElement(By.cssSelector("[data-field='content_type']"));
+	}
+
+	/**
+	 *
+	 * @param contentType		String to filter by
+	 * @return					Number of results in filtered search
+	 */
+	public int filterByContentType(String contentType) {
+		WebElement li = getContentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "'"));
+		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
+		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
+		li.findElement(By.tagName("ins")).click();
+		return resultCount;
+	}
+
+	private WebElement getAuthorDiv(){
+		return findElement(By.cssSelector("[data-field='author']"));
+	}
+
+	public int filterByAuthor(String author) {
+		WebElement li = getAuthorDiv().findElement(By.cssSelector("[data-value='" + author + "']"));
+		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
+		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
+		li.findElement(By.tagName("ins")).click();
+		return resultCount;
+	}
+
+	public void openParametricValuesList() {
+		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
+	}
 }
