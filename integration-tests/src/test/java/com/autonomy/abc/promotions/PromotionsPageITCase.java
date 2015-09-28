@@ -41,9 +41,10 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	private PromotionsPage promotionsPage;
-	private CreateNewDynamicPromotionsPage dynamicPromotionsPage;
+	private SearchPage searchPage;
 	private SearchActionFactory searchActionFactory;
 	private PromotionActionFactory promotionActionFactory;
+
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -57,8 +58,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	private List<String> setUpPromotion(Search search, int numberOfDocs, Promotion promotion) {
 		List<String> promotedDocTitles = new ArrayList<>();
-		SearchPage searchPage = search.go();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		search.apply();
+		searchPage = getElementFactory().getSearchPage();
 
 		if (promotion instanceof DynamicPromotion) {
 			promotedDocTitles.add(searchPage.getSearchResult(1).getText());
@@ -471,7 +472,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testEditDynamicQuery() throws InterruptedException {
-		search("kitty", "French").go();
+		search("kitty", "French").apply();
 		SearchPage searchPage = getElementFactory().getSearchPage();
 		final String firstSearchResult = searchPage.getSearchResult(1).getText();
 		final String secondSearchResult = setUpPromotion(search("chat", "French"), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
@@ -480,7 +481,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.waitForTriggerUpdate();
 		promotionsPage.removeSearchTrigger("meow");
 		promotionsPage.waitForTriggerUpdate();
-		search("purrr", "French").go();
+		search("purrr", "French").apply();
 		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(secondSearchResult));
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
@@ -493,7 +494,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.editQueryText("kitty");
 		verifyThat(promotionsPage.getQueryText(), is("kitty"));
 
-		search("purrr", "French").go();
+		search("purrr", "French").apply();
 		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
 
 		getDriver().navigate().refresh();
@@ -540,7 +541,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String[] queries = {"boeuf", "frites", "orange"};
 		SearchPage searchPage;
 		for (final String query : queries) {
-			searchPage = search(query, "French").go();
+			search(query, "French").apply();
+			searchPage = getElementFactory().getSearchPage();
 			final int firstPageStated = searchPage.countSearchResults();
 			searchPage.forwardToLastPageButton().click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();

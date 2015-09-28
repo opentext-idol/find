@@ -49,8 +49,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     private PromotionActionFactory promotionActionFactory;
 
     private List<String> goToWizard(Search search, int numberOfDocs) {
-        searchPage = search.go();
-        searchPage.waitForSearchLoadIndicatorToDisappear();
+        search.apply();
+        searchPage = getElementFactory().getSearchPage();
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
         searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
@@ -495,7 +495,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage.promotionsBucketClose();
 
         for (final String spotlightType : Arrays.asList("Sponsored", "Hotwire", "Top Promotions")) {
-            searchPage = actionFactory.makeSearch("dog").go();
+            actionFactory.makeSearch("dog").apply();
+            searchPage = getElementFactory().getSearchPage();
             searchPage.createAPromotion();
 
             createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
