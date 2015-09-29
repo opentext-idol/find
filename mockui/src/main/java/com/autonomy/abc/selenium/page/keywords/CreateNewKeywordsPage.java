@@ -31,6 +31,10 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 				By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../..")));
 	}
 
+	public WebElement backButton() {
+		return new WebDriverWait(getDriver(),4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()[contains(.,'Back')]]")));
+	}
+
 	public enum KeywordType {
 		SYNONYM("Synonyms"),
 		BLACKLIST("Blacklisted Terms");
