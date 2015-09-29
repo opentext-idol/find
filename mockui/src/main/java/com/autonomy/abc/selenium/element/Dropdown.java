@@ -54,4 +54,9 @@ public class Dropdown {
         return menu.findElement(By.xpath(".//*[text()[contains(., '" + text + "')]]"));
     }
 
+    public void select(String text) {
+        open();
+        getItem(text).click();
+    }
+
 }

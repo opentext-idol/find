@@ -2,7 +2,6 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.actions.ActionFactory;
 import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -17,6 +16,7 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchActionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,12 +45,12 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     private PromotionsPage promotionsPage;
     private CreateNewPromotionsPage createPromotionsPage;
     private Wizard wizard;
-    private ActionFactory actionFactory;
+    private SearchActionFactory actionFactory;
     private PromotionActionFactory promotionActionFactory;
 
     private List<String> goToWizard(Search search, int numberOfDocs) {
-        searchPage = search.go();
-        searchPage.waitForSearchLoadIndicatorToDisappear();
+        search.apply();
+        searchPage = getElementFactory().getSearchPage();
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
         searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
@@ -64,22 +64,22 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        actionFactory = new ActionFactory(getApplication(), getElementFactory());
-        promotionActionFactory = new PromotionActionFactory(getApplication(), getDriver());
+        actionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+        promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
         // TODO: fix magic sleep
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        promotedDocTitle = goToWizard(actionFactory.createSearch("fox"), 1).get(0);
+        promotedDocTitle = goToWizard(actionFactory.makeSearch("fox"), 1).get(0);
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         wizard = new Wizard(createPromotionsPage);
     }
 
     @After
     public void cleanUp() {
-        promotionActionFactory.deleteAll().apply();
+        promotionActionFactory.makeDeleteAll().apply();
     }
 
     @Test
@@ -495,7 +495,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage.promotionsBucketClose();
 
         for (final String spotlightType : Arrays.asList("Sponsored", "Hotwire", "Top Promotions")) {
-            searchPage = actionFactory.createSearch("dog").go();
+            actionFactory.makeSearch("dog").apply();
+            searchPage = getElementFactory().getSearchPage();
             searchPage.createAPromotion();
 
             createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();

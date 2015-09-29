@@ -1,5 +1,9 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
+import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
@@ -48,7 +52,19 @@ public class HSOElementFactory extends ElementFactory {
         return new HSOCreateNewPromotionsPage(getDriver());
     }
 
-//    public FindPage getFindPage() {
-//        return new FindPage(getDriver());
-//    }
+    public ConnectionsPage getConnectionsPage() {
+        return ConnectionsPage.make(getDriver());
+    }
+
+    public NewConnectionPage getNewConnectionPage() {
+        return NewConnectionPage.make(getDriver());
+    }
+
+    public ConnectionsDetailPage getConnectionsDetailPage() {
+        return ConnectionsDetailPage.make(getDriver());
+    }
+
+    public FindPage getFindPage() {
+        return new FindPage(getDriver());
+    }
 }

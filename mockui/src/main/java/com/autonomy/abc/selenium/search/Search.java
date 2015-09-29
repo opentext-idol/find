@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.actions.Action;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -7,7 +8,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Search {
+public class Search implements Action {
     private String searchTerm;
     private AppBody body;
     private ElementFactory elementFactory;
@@ -24,14 +25,13 @@ public class Search {
         return this; // allows chaining
     }
 
-    public SearchPage go() {
+    public void apply() {
         body.getTopNavBar().search(searchTerm);
         SearchPage searchPage = elementFactory.getSearchPage();
         for (SearchFilter filter : searchFilters) {
             filter.apply(searchPage);
         }
         searchPage.waitForSearchLoadIndicatorToDisappear();
-        return searchPage;
     }
 
 }
