@@ -3,9 +3,9 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.PromotionActionFactory;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.element.Wizard;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
@@ -74,7 +74,6 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         }
         promotedDocTitle = goToWizard(actionFactory.makeSearch("fox"), 1).get(0);
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-        wizard = new Wizard(createPromotionsPage);
     }
 
     @After
@@ -83,53 +82,14 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     }
 
     @Test
-    public void testAddPinToPosition() {
-        verifyThat(createPromotionsPage.getCurrentStepTitle(), containsString("Promotion type"));
-        createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-        createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
-        createPromotionsPage.loadOrFadeWait();
-        verifyThat(createPromotionsPage.getCurrentStepTitle(), containsString("Promotion details"));
-        verifyThat(createPromotionsPage.positionInputValue(), equalTo(1));
-        verifyThat(createPromotionsPage.selectPositionMinusButton(), hasAttribute("disabled"));
-
-        createPromotionsPage.waitUntilClickableThenClick(createPromotionsPage.selectPositionPlusButton());
-        createPromotionsPage.loadOrFadeWait();
-        verifyThat(createPromotionsPage.positionInputValue(), equalTo(2));
-        verifyThat(createPromotionsPage.selectPositionMinusButton(), not(hasAttribute("disabled")));
-
-        createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
-        createPromotionsPage.loadOrFadeWait();
-        verifyThat(createPromotionsPage.getCurrentStepTitle(), containsString("Promotion triggers"));
-        verifyThat(createPromotionsPage, containsText("Select Promotion Triggers"));
-        verifyThat(createPromotionsPage.finishButton(), hasAttribute("disabled"));
-
-        createPromotionsPage.addSearchTrigger("animal");
-        verifyThat(createPromotionsPage.finishButton(), not(hasAttribute("disabled")));
-
-        finishPromotion();
-
-        searchPage = getElementFactory().getSearchPage();
-        searchPage.waitForSearchLoadIndicatorToDisappear();
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        promotionsPage.getPromotionLinkWithTitleContaining("animal").click();
-
-        new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
-
-        verifyThat(promotionsPage, containsText("animal"));
-//        verifyThat(promotionsPage.promotionPosition(), containsText("2"));
-
-    }
-
-    @Test
     public void testPinToPositionSetPosition() {
-        wizard.option("PIN_TO_POSITION").click();
-        wizard.continueButton().click();
-        wizard.loadOrFadeWait();
+        wizard = new PinToPositionPromotion(1, "whatever").makeWizard(createPromotionsPage);
+        wizard.getCurrentStep().apply();
+        wizard.next();
 
         createPromotionsPage.selectPositionPlusButton().click();
         verifyThat(createPromotionsPage.positionInputValue(), is(2));
-        verifyThat(wizard.continueButton(), not(hasAttribute(("disabled"))));
+        verifyThat(createPromotionsPage.continueButton(), not(hasAttribute(("disabled"))));
         verifyThat(createPromotionsPage.selectPositionMinusButton(), not(hasAttribute("disabled")));
 
         for (int i=0; i<4; i++) {
@@ -150,7 +110,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
             //try catch because chrome struggles to focus on this element
         }
 
-        wizard.cancelButton().click();
+        wizard.cancel();
         verifyThat(getDriver().getCurrentUrl(), not(containsString("create")));
     }
 
@@ -323,97 +283,23 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         verifyThat(promotionsPage.promotionPosition().getValue(), is("2"));
     }
 
-    @Test
-    public void testAddSpotlightSponsored() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
-        addSpotlightPromotion("Sponsored", "apples");
-    }
+    private void addSpotlightPromotion(final Promotion.SpotlightType spotlightType, final String searchTrigger) {
+        Promotion promotion = new SpotlightPromotion(spotlightType, searchTrigger);
 
-    @Test
-    public void testAddSpotlightHotwire() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
-        addSpotlightPromotion("Hotwire", "grapes");
-    }
-
-    @Test
-    public void testAddSpotlightTopPromotions() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
-        addSpotlightPromotion("Top Promotions", "oranges");
-    }
-
-    @Test
-    public void testHostedSpotlightPromotion() {
-        assumeThat(config.getType(), is(ApplicationType.HOSTED));
-
-        final String searchTrigger = "bananas";
-
-        verifyThat(wizard.getTitle(), is("Promotion type"));
-        verifyThat(wizard.continueButton(), hasAttribute("disabled"));
-        wizard.option("SPOTLIGHT").click();
-        verifyThat(wizard.continueButton(), not(hasAttribute("disabled")));
-
-        wizard.continueButton().click();
-        wizard.loadOrFadeWait();
-        verifyThat(wizard.getTitle(), is("Promotion triggers"));
-        verifyThat(wizard.finishButton(), hasAttribute("disabled"));
-
-        wizard.formInput().setAndSubmit(searchTrigger);
-        verifyThat(wizard.finishButton(), not(hasAttribute("disabled")));
-
-        finishPromotion();
-        searchPage.waitForLoad();
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
-
-        new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOf(promotionsPage.addMorePromotedItemsButton()));
-        verifyThat(promotionsPage, containsText("Spotlight for: " + searchTrigger));
-
-        promotionsPage.clickableSearchTrigger(searchTrigger).click();
-        searchPage.waitForLoad();
-        searchPage.waitForSearchLoadIndicatorToDisappear();
-        searchPage.loadOrFadeWait();
-
-        verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedDocTitle));
-
-        searchPage.modifiedResultsCheckBox().click();
-        searchPage.loadOrFadeWait();
-        verifyThat(searchPage, not(containsText(promotedDocTitle)));
-
-        searchPage.modifiedResultsCheckBox().click();
-        searchPage.loadOrFadeWait();
-        verifyThat(searchPage, containsText(promotedDocTitle));
-
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions"));
-        promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
-
-        verifyThat(promotionsPage, containsText("Spotlight for: " + searchTrigger));
-    }
-
-    private void addSpotlightPromotion(final String spotlightType, final String searchTrigger) {
-        verifyThat(wizard.getTitle(), is("Promotion type"));
-        verifyThat(wizard.continueButton(), hasAttribute("disabled"));
-        wizard.option("SPOTLIGHT").click();
-        verifyThat(wizard.continueButton(), not(hasAttribute("disabled")));
-
-        wizard.continueButton().click();
-        wizard.loadOrFadeWait();
-        verifyThat(wizard.getTitle(), is("Promotion details"));
-        verifyThat(wizard.continueButton(), hasAttribute("disabled"));
-
-        wizard.option(spotlightType).click();
-        verifyThat(wizard.continueButton(), not(hasAttribute("disabled")));
-
-        wizard.continueButton().click();
-        wizard.loadOrFadeWait();
-        verifyThat(wizard.getTitle(), is("Promotion triggers"));
-        verifyThat(wizard.finishButton(), hasAttribute("disabled"));
-
-        wizard.formInput().setAndSubmit(searchTrigger);
-        verifyThat(wizard.finishButton(), not(hasAttribute("disabled")));
-
-        finishPromotion();
+        wizard = promotion.makeWizard(createPromotionsPage);
+        for (int i=0; i<wizard.getSteps().size(); i++) {
+            verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
+            WebElement button;
+            if (wizard.onFinalStep()) {
+                button = createPromotionsPage.finishButton();
+            } else {
+                button = createPromotionsPage.continueButton();
+            }
+            verifyThat(button, hasAttribute("disabled"));
+            wizard.getCurrentStep().apply();
+            verifyThat(button, not(hasAttribute("disabled")));
+            wizard.next();
+        }
 
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
@@ -427,7 +313,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         promotionsPage.loadOrFadeWait();
 
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedDocTitle));
-        verifyThat(searchPage.getTopPromotedLinkButtonText(), is(spotlightType));
+        verifyThat(searchPage.getTopPromotedLinkButtonText(), is(spotlightType.getOption()));
 
         searchPage.modifiedResultsCheckBox().click();
         searchPage.loadOrFadeWait();
@@ -442,16 +328,76 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
 
         verifyThat(promotionsPage, containsText("Spotlight for: " + searchTrigger));
-        verifyThat(promotionsPage.spotlightButton(), containsText(spotlightType));
+        verifyThat(promotionsPage.spotlightButton(), containsText(spotlightType.getOption()));
+    }
+
+    @Test
+    public void testAddSpotlightSponsored() {
+        addSpotlightPromotion(Promotion.SpotlightType.SPONSORED, "apples");
+    }
+
+    @Test
+    public void testAddSpotlightHotwire() {
+        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
+        addSpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "grapes");
+    }
+
+    @Test
+    public void testAddSpotlightTopPromotions() {
+        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
+        addSpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "oranges");
+    }
+
+    @Test
+    public void testAddPinToPosition() {
+        final String searchTrigger = "animal";
+        final int position = 2;
+        wizard = new PinToPositionPromotion(position, searchTrigger).makeWizard(createPromotionsPage);
+
+        for (int i=0; i<wizard.getSteps().size(); i++) {
+            verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
+
+            WebElement button;
+            if (wizard.onFinalStep()) {
+                button = createPromotionsPage.finishButton();
+            } else {
+                button = createPromotionsPage.continueButton();
+            }
+
+            if (i == 1) {
+                verifyThat(createPromotionsPage.positionInputValue(), is(1));
+            } else {
+                verifyThat(button, hasAttribute("disabled"));
+            }
+            wizard.getCurrentStep().apply();
+            if (i == 1) {
+                verifyThat(createPromotionsPage.positionInputValue(), is(2));
+            }
+            verifyThat(button, not(hasAttribute("disabled")));
+            wizard.next();
+        }
+
+        searchPage = getElementFactory().getSearchPage();
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+        promotionsPage = getElementFactory().getPromotionsPage();
+        promotionsPage.getPromotionLinkWithTitleContaining("animal").click();
+
+        new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+
+        verifyThat(promotionsPage, containsText("animal"));
+//        verifyThat(promotionsPage.promotionPosition(), containsText("2"));
+
     }
 
     private void toggleAndCancel() {
         body.getTopNavBar().sideBarToggle();
-        wizard.cancelButton().click();
+        createPromotionsPage.cancelButton().click();
         verifyThat(getDriver().getCurrentUrl(), containsString("search/modified"));
         verifyThat(searchPage.promotedItemsCount(), is(1));
         body.getTopNavBar().sideBarToggle();
-        searchPage.promoteTheseItemsButton().click();
+        searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
+//        searchPage.promoteTheseItemsButton().click();
         createPromotionsPage.waitForLoad();
     }
 
@@ -460,35 +406,43 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         verifyThat(getDriver().getCurrentUrl(), endsWith("promotions/create"));
         toggleAndCancel();
         SpotlightPromotion spotlight = new SpotlightPromotion("whatever");
-        spotlight.doType(wizard);
+        wizard = spotlight.makeWizard(createPromotionsPage);
+        wizard.getCurrentStep().apply();
+        wizard.next();
         // TODO: refactor tests
         if (config.getType() == ApplicationType.ON_PREM) {
-            verifyThat(wizard.getTitle(), is("Promotion details"));
+            verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
             toggleAndCancel();
 
             for (final Promotion.SpotlightType spotlightType : Promotion.SpotlightType.values()) {
                 SpotlightPromotion promotion = new SpotlightPromotion(spotlightType, "whatever");
-                promotion.doType(wizard);
-                promotion.doSpotlightType(wizard);
-                verifyThat(wizard.getTitle(), is("Promotion triggers"));
+                wizard = promotion.makeWizard(createPromotionsPage);
+                wizard.getCurrentStep().apply();
+                wizard.next();
+                wizard.getCurrentStep().apply();
+                wizard.next();
+                verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
                 toggleAndCancel();
             }
 
             PinToPositionPromotion promotion = new PinToPositionPromotion(2, "whatever");
-            promotion.doType(wizard);
-            verifyThat(wizard.getTitle(), is("Promotion details"));
+            wizard = promotion.makeWizard(createPromotionsPage);
+            verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
             toggleAndCancel();
 
-            promotion.doType(wizard);
-            promotion.doPosition(wizard);
+            wizard = promotion.makeWizard(createPromotionsPage);
+            wizard.getCurrentStep().apply();
+            wizard.next();
+            wizard.getCurrentStep().apply();
+            wizard.next();
         }
-        verifyThat(wizard.getTitle(), is("Promotion triggers"));
+        verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
         toggleAndCancel();
     }
 
     @Test
     public void testNotificationsForPromotions() {
-        wizard.cancelButton().click();
+        createPromotionsPage.cancelButton().click();
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
         searchPage.searchResultCheckbox(1).click();

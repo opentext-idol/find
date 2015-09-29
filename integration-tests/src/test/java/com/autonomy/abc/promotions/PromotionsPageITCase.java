@@ -4,10 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.element.Wizard;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.promotions.CreateNewDynamicPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
@@ -58,22 +55,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	private List<String> setUpPromotion(Search search, int numberOfDocs, Promotion promotion) {
 		List<String> promotedDocTitles = new ArrayList<>();
-		search.apply();
-		searchPage = getElementFactory().getSearchPage();
-
-		if (promotion instanceof DynamicPromotion) {
-			promotedDocTitles.add(searchPage.getSearchResult(1).getText());
-			searchPage.promoteThisQueryButton().click();
-		} else {
-			searchPage.promoteTheseDocumentsButton().click();
-			promotedDocTitles = searchPage.addToBucket(numberOfDocs);
-			searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
-//			searchPage.promoteTheseItemsButton().click();
-		}
-
-		CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		promotion.doWizard(new Wizard(createNewPromotionsPage));
-
+		promotionActionFactory.makeCreatePromotion(promotion, search, numberOfDocs).apply();
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
 		promotionsPage = promotion.getDetailsPage(body, getElementFactory());
