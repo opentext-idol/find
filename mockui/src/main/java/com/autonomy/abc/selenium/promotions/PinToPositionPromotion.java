@@ -1,6 +1,9 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.element.Wizard;
+import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 
 public class PinToPositionPromotion extends Promotion {
     private final static Type TYPE = Type.PIN_TO_POSITION;
@@ -11,24 +14,17 @@ public class PinToPositionPromotion extends Promotion {
         this.position = position;
     }
 
-    public void doWizard(Wizard wizard) {
-        doType(wizard);
-        if (wizard.getTitle().equals("Promotion details")) {
-            doPosition(wizard);
-        }
-        doTriggers(wizard);
-    }
-
     @Override
-    public Type getType() {
-        return TYPE;
+    public Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
+        return new PinToPositionWizard((CreateNewPromotionsPage) createNewPromotionsBase);
     }
 
-    public void doPosition(Wizard wizard) {
-        for (int i=1; i<position; i++) {
-            wizard.button("plus").click();
+    private class PinToPositionWizard extends PromotionWizard {
+        public PinToPositionWizard(CreateNewPromotionsPage page) {
+            super(page);
+            add(new OptionWizardStep(page, "Promotion type", TYPE.getOption()));
+            add(new PinPositionStep(page, position));
+            add(new SearchTriggerStep(page, getTrigger()));
         }
-        wizard.continueButton().click();
-        wizard.loadOrFadeWait();
     }
 }

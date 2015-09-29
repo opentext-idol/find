@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.element.Wizard;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
+import com.autonomy.abc.selenium.page.promotions.*;
 
 // TODO: refactor using factories
 public class DynamicPromotion extends Promotion {
@@ -25,23 +25,24 @@ public class DynamicPromotion extends Promotion {
     }
 
     @Override
-    public SpotlightType getSpotlightType() {
-        return spotlightType;
-    }
-
-    @Override
-    public void doWizard(Wizard wizard) {
-        if (wizard.getTitle().equals("Spotlight type")) {
-            doSpotlightType(wizard);
-        } else {
-            doResults(wizard);
+    public com.autonomy.abc.selenium.actions.wizard.Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
+        if (createNewPromotionsBase instanceof HSOCreateNewPromotionsPage) {
+            return new DynamicPromotionsWizard((HSOCreateNewDynamicPromotionsPage) createNewPromotionsBase);
         }
-        doTriggers(wizard);
+        return new DynamicPromotionsWizard(createNewPromotionsBase);
     }
 
-    public void doResults(Wizard wizard) {
-        wizard.formInput().setValue(Integer.toString(numberOfResults));
-        wizard.continueButton().click();
-        wizard.loadOrFadeWait();
+    private class DynamicPromotionsWizard extends PromotionWizard {
+        public DynamicPromotionsWizard(HSOCreateNewDynamicPromotionsPage page) {
+            super(page);
+            add(new ResultsNumberStep(page, numberOfResults));
+            add(new SearchTriggerStep(page, getTrigger()));
+        }
+
+        public DynamicPromotionsWizard(CreateNewPromotionsBase page) {
+            super(page);
+            add(new OptionWizardStep(page, "Spotlight type", spotlightType.getOption()));
+            add(new SearchTriggerStep(page, getTrigger()));
+        }
     }
 }

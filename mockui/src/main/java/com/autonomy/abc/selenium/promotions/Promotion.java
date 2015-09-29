@@ -1,9 +1,10 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.element.Wizard;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -17,35 +18,6 @@ public abstract class Promotion {
 
     public String getTrigger() {
         return trigger;
-    }
-
-    public Type getType() {
-        return null;
-    };
-
-    public SpotlightType getSpotlightType() {
-        return null;
-    }
-
-    public abstract void doWizard(Wizard wizard);
-
-    // these steps are not always relevant, but often are
-    public void doType(Wizard wizard) {
-        wizard.option(getType().getOption()).click();
-        wizard.continueButton().click();
-        wizard.loadOrFadeWait();
-    }
-
-    public void doSpotlightType(Wizard wizard) {
-        wizard.option(getSpotlightType().getOption()).click();
-        wizard.continueButton().click();
-        wizard.loadOrFadeWait();
-    }
-
-    public void doTriggers(Wizard wizard) {
-        wizard.formInput().setAndSubmit(getTrigger());
-        wizard.finishButton().click();
-        wizard.loadOrFadeWait();
     }
 
     public PromotionsPage getDetailsPage(AppBody body, ElementFactory elementFactory) {
@@ -84,6 +56,33 @@ public abstract class Promotion {
 
         public String getOption() {
             return option;
+        }
+    }
+
+    public abstract Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase);
+
+    protected class PromotionWizard extends Wizard {
+        private CreateNewPromotionsBase page;
+
+        public PromotionWizard(CreateNewPromotionsBase createNewPromotionsBase) {
+            page = createNewPromotionsBase;
+        }
+
+        @Override
+        public void next() {
+            if (onFinalStep()) {
+                page.finishButton().click();
+            } else {
+                page.continueButton().click();
+                incrementStep();
+            }
+            page.loadOrFadeWait();
+        }
+
+        @Override
+        public void cancel() {
+            page.cancelButton().click();
+            page.loadOrFadeWait();
         }
     }
 
