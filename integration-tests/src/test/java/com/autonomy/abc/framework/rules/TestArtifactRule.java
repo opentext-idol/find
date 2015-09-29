@@ -25,12 +25,17 @@ public class TestArtifactRule extends TestWatcher {
         return new PageSourceSaver(test.getDriver());
     }
 
+    private String getBaseLocation(Description description) {
+        String[] splitName = description.getMethodName().split("\\[");
+        return ".output\\" + splitName[0] + "\\" + timestamp + '[' + splitName[splitName.length - 1];
+    }
+
     private String getPngLocation(Description description) {
-        return ".output\\" + description.getMethodName().split("\\[")[0] + "\\" + timestamp + ".png";
+        return getBaseLocation(description) + ".png";
     }
 
     private String getHtmlLocation(Description description) {
-        return ".output\\" + description.getMethodName().split("\\[")[0] + "\\" + timestamp + ".html";
+        return getBaseLocation(description) + ".html";
     }
 
     private void handle(Description description) {
