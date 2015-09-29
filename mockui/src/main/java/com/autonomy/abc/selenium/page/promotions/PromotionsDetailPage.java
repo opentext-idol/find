@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.promotions.Promotion;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -37,6 +38,22 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new InlineEdit(findElement(By.className("promotion-title-edit")), getDriver());
     }
 
+    public String getPromotionType() {
+        return findElement(By.cssSelector(".promotion-view-name")).getText();
+    }
+
+    public Dropdown spotlightTypeDropdown() {
+        return new Dropdown(findElement(By.className("promotion-view-name-dropdown")), getDriver());
+    }
+
+    public Editable pinPosition() {
+        return new InlineEdit(findElement(By.className("promotion-position-edit")), getDriver());
+    }
+
+    public String getLanguage() {
+        return findElement(By.className("promotion-language")).getText();
+    }
+
     public List<String> getTriggerList() {
         final List<String> triggers = new ArrayList<>();
         for (final WebElement trigger : findElements(TRIGGERS)) {
@@ -61,6 +78,10 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new FormInput(findElement(By.cssSelector(".promotion-match-terms [name='words']")), getDriver());
     }
 
+    public WebElement addMoreButton() {
+        return findElement(By.linkText("Add more"));
+    }
+
     public List<WebElement> promotedList() {
         return findElements(By.cssSelector(".promotion-list-container h3"));
     }
@@ -72,4 +93,13 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         }
         return docTitles;
     }
+
+    public WebElement promotedDocument(final String title) {
+        return findElement(By.cssSelector("ul.promoted-documents-list")).findElement(By.xpath(".//a[contains(text(), '" + title + "')]/../.."));
+    }
+
+    public Removable removablePromotedDocument(final String title) {
+        return new LabelBox(promotedDocument(title), getDriver());
+    }
+
 }
