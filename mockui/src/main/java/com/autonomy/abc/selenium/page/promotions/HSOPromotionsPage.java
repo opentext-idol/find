@@ -13,6 +13,8 @@ public class HSOPromotionsPage extends PromotionsPage {
         return findElement(By.linkText("Promote new document"));
     }
 
+    // use PromotionActionFactory instead
+    @Deprecated
     public void newStaticPromotion(String title, String content, String trigger){
         findElement(By.linkText("Promote new document")).click();
         loadOrFadeWait();
