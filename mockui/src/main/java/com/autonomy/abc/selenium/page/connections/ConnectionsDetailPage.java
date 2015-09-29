@@ -21,6 +21,10 @@ public class ConnectionsDetailPage extends SAASPageBase {
         return findElement(By.cssSelector(".toolbar .affix-element")).findElement(By.xpath(".//a[contains(text(), '" + text + "')]"));
     }
 
+    public WebElement backButton() {
+        return menuButton("Back");
+    }
+
     public WebElement deleteButton() {
         return menuButton("Delete");
     }

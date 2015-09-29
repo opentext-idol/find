@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -301,6 +302,14 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public int countPinToPositionLabels() {
 		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
+	}
+
+	public List<Checkbox> indexList() {
+		List<Checkbox> checkboxes = new ArrayList<>();
+		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
+			checkboxes.add(new Checkbox(element, getDriver()));
+		}
+		return checkboxes;
 	}
 
 }

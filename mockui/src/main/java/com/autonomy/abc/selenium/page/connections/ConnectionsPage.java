@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.page.connections;
 
+import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -10,6 +12,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 
 public class ConnectionsPage extends SAASPageBase {
+    private WebElement toolbar;
+
     private ConnectionsPage(final WebDriver driver) {
         super(driver);
     }
@@ -19,8 +23,23 @@ public class ConnectionsPage extends SAASPageBase {
         return new ConnectionsPage(driver);
     }
 
+    private WebElement toolbar() {
+        if (toolbar == null) {
+            toolbar = findElement(By.cssSelector(".affix-toolbar:not(.affix-clone)"));
+        }
+        return toolbar;
+    }
+
     public WebElement newConnectionButton() {
-        return findElement(By.cssSelector(".affix-toolbar:not(.affix-clone) #new-repo-btn"));
+        return toolbar().findElement(By.id("new-repo-btn"));
+    }
+
+    public FormInput connectionFilterBox() {
+        return new FormInput(toolbar().findElement(By.className(("keywords-search-filter"))), getDriver());
+    }
+
+    public Dropdown connectionFilterDropdown() {
+        return new Dropdown(toolbar().findElement(By.className("btn-group")), getDriver());
     }
 
     public List<WebElement> connectionsList() {
