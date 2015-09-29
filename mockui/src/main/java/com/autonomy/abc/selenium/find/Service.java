@@ -28,7 +28,11 @@ public class Service extends AppElement {
         System.out.println(domain);
         System.out.println(index.replace(" ", "%20"));
 
-        findElement(By.cssSelector("[data-id='" + domain + ":" + index.replace(" ", "%20") + "']")).click();
+        try {
+            findElement(By.cssSelector("[data-id='" + domain + ":" + index.replace(" ", "%20") + "']")).click();
+        } catch (Exception e) {
+            findElement(By.cssSelector("[data-id='PUBLIC_INDEXES:"+ index.replace(" ","%20") + "']")).click();
+        }
 
         waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }
@@ -45,6 +49,14 @@ public class Service extends AppElement {
 
     public WebElement viewBoxNextButton() {
         return getDriver().findElement(By.className("nextBtn"));
+    }
+
+    public WebElement viewBoxPrevButton(){
+        return getDriver().findElement(By.className("prevBtn"));
+    }
+
+    public WebElement colourBox(){
+        return getDriver().findElement(By.id("colorbox"));
     }
 
     public List<WebElement> getPromotions() {
