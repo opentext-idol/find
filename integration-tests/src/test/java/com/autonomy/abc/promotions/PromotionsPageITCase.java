@@ -105,7 +105,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testCorrectDocumentsInPromotion() {
 		List<String> promotedDocTitles = setUpCarsPromotion(2);
-		promotionsPage.backButton().click();
 		List<String> promotedList = promotionsPage.getPromotedList();
 		verifyThat(promotedDocTitles, everyItem(isIn(promotedList)));
 	}
@@ -113,7 +112,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testDeletePromotedDocuments() {
 		List<String> promotedDocTitles = setUpCarsPromotion(4);
-		promotionsPage.backButton().click();
 		int numberOfDocuments = promotionsPage.getPromotedList().size();
 		verifyThat(numberOfDocuments, is(4));
 
@@ -329,24 +327,24 @@ public class PromotionsPageITCase extends ABCTestBase {
 		}
 		assertThat(promotionsPage, promotionsList(hasSize(searches.length)));
 
-		List<String> promotedList = promotionsPage.getPromotedList();
-		for (int i = 0; i < promotedList.size() - 1; i++) {
-			verifyThat(promotedList.get(i).toLowerCase(), lessThanOrEqualTo(promotedList.get(i + 1).toLowerCase()));
+		List<String> promotionTitles = promotionsPage.getPromotionTitles();
+		for (int i = 0; i < promotionTitles.size() - 1; i++) {
+			verifyThat(promotionTitles.get(i).toLowerCase(), lessThanOrEqualTo(promotionTitles.get(i + 1).toLowerCase()));
 		}
 
-		promotionsPage.getPromotionLinkWithTitleContaining(promotedList.get(3)).click();
+		promotionsPage.getPromotionLinkWithTitleContaining(promotionTitles.get(3)).click();
 		promotionsPage.createNewTitle("aaa");
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.backButton().click();
 		promotionsPage.loadOrFadeWait();
 
-		final List<String> promotionsAgain = promotionsPage.getPromotedList();
+		final List<String> promotionsAgain = promotionsPage.getPromotionTitles();
 		for (int i = 0; i < promotionsAgain.size() - 1; i++) {
 			verifyThat(promotionsAgain.get(i).toLowerCase(), lessThanOrEqualTo(promotionsAgain.get(i + 1).toLowerCase()));
 		}
 
-		promotionsPage.getPromotionLinkWithTitleContaining(promotedList.get(3)).click();
-		promotionsPage.createNewTitle(promotedList.get(3));
+		promotionsPage.getPromotionLinkWithTitleContaining(promotionTitles.get(3)).click();
+		promotionsPage.createNewTitle(promotionTitles.get(3));
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.backButton().click();
 		promotionsPage.loadOrFadeWait();
@@ -361,9 +359,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
-		promotedList = promotionsPage.getPromotedList();
-		for (int i = 0; i < promotedList.size() - 1; i++) {
-			verifyThat(promotedList.get(i).toLowerCase(), lessThanOrEqualTo(promotedList.get(i + 1).toLowerCase()));
+		promotionTitles = promotionsPage.getPromotionTitles();
+		for (int i = 0; i < promotionTitles.size() - 1; i++) {
+			verifyThat(promotionTitles.get(i).toLowerCase(), lessThanOrEqualTo(promotionTitles.get(i + 1).toLowerCase()));
 		}
 
 		promotionsPage.getPromotionLinkWithTitleContaining("hound").click();

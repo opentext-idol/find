@@ -106,9 +106,10 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		loadOrFadeWait();
 	}
 
+	// TODO: move to promotion details
 	public List <String> getPromotedList() {
 		final List <String> docTitles = new ArrayList<>();
-		for (final WebElement docTitle : findElements(By.cssSelector(".promotion-list-container h3"))) {
+		for (final WebElement docTitle : findElements(By.cssSelector(".promoted-documents-list h3"))) {
 			docTitles.add(docTitle.getText());
 		}
 		return docTitles;
