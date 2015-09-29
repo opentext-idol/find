@@ -1,5 +1,8 @@
 package com.autonomy.abc.selenium.connections;
 
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
+import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+
 public abstract class Connector {
     protected String name;
 
@@ -18,4 +21,6 @@ public abstract class Connector {
     public String getDeleteNotification() {
         return "Deleting connection " + getName();
     }
+
+    public abstract Wizard makeWizard(NewConnectionPage newConnectionPage);
 }

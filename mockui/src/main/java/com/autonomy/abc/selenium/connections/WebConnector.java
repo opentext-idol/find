@@ -20,6 +20,7 @@ public class WebConnector extends Connector {
         return url;
     }
 
+    @Override
     public Wizard makeWizard(NewConnectionPage newConnectionPage) {
         return new WebConnectorWizard(newConnectionPage);
     }

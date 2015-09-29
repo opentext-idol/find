@@ -1,8 +1,12 @@
 package com.autonomy.abc.selenium.actions;
 
 import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.menu.SideNavBarTab;
+import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.search.Search;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 public abstract class ActionFactory {
@@ -24,5 +28,10 @@ public abstract class ActionFactory {
 
     protected ElementFactory getElementFactory() {
         return elementFactory;
+    }
+
+    protected void goToPage(NavBarTabId tab) {
+        AppBody body = application.createAppBody(getDriver());
+        body.getSideNavBar().switchPage(tab);
     }
 }
