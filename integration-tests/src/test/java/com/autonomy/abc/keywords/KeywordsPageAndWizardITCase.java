@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
+import com.autonomy.abc.selenium.page.HSOAppBody;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.util.AppElement.getParent;
 import static com.thoughtworks.selenium.SeleneseTestBase.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -1867,9 +1869,61 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
 		new WebDriverWait(getDriver(),30).until(new WaitForNotification("blacklist"));
-		assertThat(notifications.notificationNumber(1).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is(is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist"))));
-		assertThat(notifications.notificationNumber(2).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is(is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist"))));
+		assertThat(notifications.notificationNumber(1).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
+		assertThat(notifications.notificationNumber(2).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
 		assertThat(notifications.notificationNumber(1).getText(), not(notifications.notificationNumber(2).getText()));
+	}
+
+	@Test
+	public void testClickingOnNotifications() throws InterruptedException {
+		keywordsPage.createNewKeywordsButton().click();
+		CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+		createNewKeywordsPage.createSynonymGroup("a b c d", "English");
+		getElementFactory().getSearchPage();
+		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getElementFactory().getPromotionsPage();
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+
+		verifyThat(notifications.notificationNumber(1).getText(), is("Created a new synonym group containing: a, b, c, d"));
+
+		notifications.notificationNumber(1).click();
+
+		verifyThat(getDriver().getCurrentUrl(),containsString("keywords"));
+
+		if(!getDriver().getCurrentUrl().contains("keywords")){
+			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		}
+
+		keywordsPage = getElementFactory().getKeywordsPage();
+		keywordsPage.createNewKeywordsButton().click();
+		createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+		createNewKeywordsPage.createBlacklistedTerm("e", "English");
+		getElementFactory().getKeywordsPage();
+		body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+
+		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content")));
+
+		body = new HSOAppBody(getDriver());
+
+
+		new WebDriverWait(getDriver(),30).until(new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(WebDriver driver) {
+				return !driver.findElement(By.xpath("//nav[not(contains(@class, 'affix-clone'))]//*[@id='navbar-bell']/span")).getAttribute("class").contains("ng-hide");
+			}
+		});
+
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+
+		verifyThat(notifications.notificationNumber(1).getText(), is("Added \"e\" to the blacklist"));
+
+		notifications.notificationNumber(1).click();
+
+		verifyThat(getDriver().getCurrentUrl(),containsString("keywords"));
+
 	}
 
 	/**

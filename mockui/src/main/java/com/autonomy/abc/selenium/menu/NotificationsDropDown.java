@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 public class NotificationsDropDown extends AppElement {
 
     public NotificationsDropDown(WebDriver driver) {
-        super(driver.findElement(By.className("notification-list")), driver);
+        super(driver.findElement(By.cssSelector("nav:not(.affix-clone) .notification-list")), driver);
     }
 
     //TODO Even this may need to be abstracted - affix-element for Angular half
