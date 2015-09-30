@@ -236,14 +236,17 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		promotionsSearchFilter().sendKeys(Keys.BACK_SPACE);
 	}
 
+	@Deprecated
 	public Editable queryText() {
 		return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
 	}
 
+	@Deprecated
 	public String getQueryText() {
 		return queryText().getValue();
 	}
 
+	@Deprecated
 	public void editQueryText(final String newQueryText) {
 		queryText().setValueAndWait(newQueryText);
 	}

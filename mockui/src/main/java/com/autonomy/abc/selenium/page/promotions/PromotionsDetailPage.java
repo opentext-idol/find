@@ -2,6 +2,8 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.util.Predicates;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -32,6 +34,14 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public Dropdown editMenu() {
         return new Dropdown(findElement(By.className("extra-functions")), getDriver());
+    }
+
+    public void delete() {
+        final Dropdown editMenu = editMenu();
+        editMenu.open();
+        editMenu.getItem("Delete").click();
+        final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
+        deleteModal.findElement(By.cssSelector(".btn-danger")).click();
     }
 
     public Editable promotionTitle() {
@@ -78,6 +88,15 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new FormInput(findElement(By.cssSelector(".promotion-match-terms [name='words']")), getDriver());
     }
 
+    public void waitForTriggerRefresh() {
+        new WebDriverWait(getDriver(), 20).until(Predicates.invisibilityOfAllElementsLocated(By.cssSelector(".promotion-view-match-terms .term .fa-spin")));
+    }
+
+    public void addTrigger(String text) {
+        triggerAddBox().setAndSubmit(text);
+        waitForTriggerRefresh();
+    }
+
     public WebElement addMoreButton() {
         return findElement(By.linkText("Add more"));
     }
@@ -100,6 +119,10 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public Removable removablePromotedDocument(final String title) {
         return new LabelBox(promotedDocument(title), getDriver());
+    }
+
+    public Editable queryText() {
+        return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
     }
 
 }
