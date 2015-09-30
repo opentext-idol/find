@@ -16,7 +16,7 @@ public class Dropdown {
 
     public Dropdown(AppElement element) {
         this.element = element;
-        button = element.findElement(By.className("dropdown-toggle"));
+        button = element.findElement(By.cssSelector("[data-toggle=dropdown]"));
         menu = element.findElement(By.className("dropdown-menu"));
     }
 
@@ -57,6 +57,10 @@ public class Dropdown {
     public void select(String text) {
         open();
         getItem(text).click();
+    }
+
+    public String getValue() {
+        return button.getText();
     }
 
 }
