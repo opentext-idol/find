@@ -5,9 +5,8 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
+import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class Promotion {
     private String trigger;
@@ -20,12 +19,11 @@ public abstract class Promotion {
         return trigger;
     }
 
-    public PromotionsPage getDetailsPage(AppBody body, ElementFactory elementFactory) {
+    public PromotionsDetailPage getDetailsPage(AppBody body, ElementFactory elementFactory) {
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         PromotionsPage promotionsPage = elementFactory.getPromotionsPage();
         promotionsPage.getPromotionLinkWithTitleContaining(trigger).click();
-        new WebDriverWait(elementFactory.getDriver(), 10).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
-        return promotionsPage;
+        return elementFactory.getPromotionsDetailPage();
     }
 
     public enum Type {

@@ -5,10 +5,7 @@ import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.*;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -17,6 +14,7 @@ import com.autonomy.abc.selenium.search.Search;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PromotionActionFactory extends ActionFactory {
@@ -40,19 +38,6 @@ public class PromotionActionFactory extends ActionFactory {
         return new DeleteAllAction();
     }
 
-    public Action makeBeginPromotion(final Search search, final int numberOfDocs) {
-        return new Action() {
-            @Override
-            public void apply() {
-                search.apply();
-                SearchPage searchPage = getElementFactory().getSearchPage();
-                searchPage.promoteTheseDocumentsButton().click();
-                searchPage.addToBucket(numberOfDocs);
-                searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
-            }
-        };
-    }
-
     public Action makeCreateStaticPromotion(final StaticPromotion promotion) {
         return new Action() {
             @Override
@@ -66,33 +51,19 @@ public class PromotionActionFactory extends ActionFactory {
         };
     }
 
-    public Action makeCreatePromotion(final Promotion promotion, final Search search) {
-        if (promotion instanceof DynamicPromotion) {
-            return makeCreateDynamicPromotion((DynamicPromotion) promotion, search);
-        }
-        return makeCreatePromotion(promotion, search, 1);
-    }
-
-    public Action makeCreateDynamicPromotion(final DynamicPromotion promotion, final Search search) {
+    public Action makeCreatePromotion(final Promotion promotion, final Search search, final int numberOfDocs) {
         return new Action() {
             @Override
             public void apply() {
                 search.apply();
                 SearchPage searchPage = getElementFactory().getSearchPage();
-                searchPage.promoteThisQueryButton().click();
-                createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-                promotion.makeWizard(createNewPromotionsPage).apply();
-            }
-        };
-    }
-
-    public Action makeCreatePromotion(final Promotion promotion, final Search search, final int numberOfDocs) {
-        return new Action() {
-            @Override
-            public void apply() {
-                makeBeginPromotion(search, numberOfDocs).apply();
-                createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-                promotion.makeWizard(createNewPromotionsPage).apply();
+                if (promotion instanceof DynamicPromotion) {
+                    searchPage.promoteThisQueryButton().click();
+                } else {
+                    searchPage.promoteTheseDocumentsButton().click();
+                    searchPage.addToBucket(numberOfDocs);
+                    searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
+                }
             }
         };
     }
@@ -125,11 +96,7 @@ public class PromotionActionFactory extends ActionFactory {
         public void apply() {
             new GoToDetailsAction(title).apply();
             final PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-            final Dropdown editMenu = promotionsDetailPage.editMenu();
-            editMenu.open();
-            editMenu.getItem("Delete").click();
-            final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
-            deleteModal.findElement(By.cssSelector(".btn-danger")).click();
+            promotionsDetailPage.delete();
             getElementFactory().getPromotionsPage();
         }
     }

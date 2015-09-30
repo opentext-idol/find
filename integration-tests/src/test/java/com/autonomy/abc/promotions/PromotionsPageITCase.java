@@ -4,7 +4,11 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.element.Editable;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
@@ -15,11 +19,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -38,10 +39,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	private PromotionsPage promotionsPage;
-	private SearchPage searchPage;
+	private PromotionsDetailPage promotionsDetailPage;
 	private SearchActionFactory searchActionFactory;
 	private PromotionActionFactory promotionActionFactory;
-
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -53,12 +53,21 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionActionFactory.makeDeleteAll().apply();
 	}
 
+	// TODO: use promotionActionFactory, but need to be able to access
 	private List<String> setUpPromotion(Search search, int numberOfDocs, Promotion promotion) {
-		List<String> promotedDocTitles = new ArrayList<>();
-		promotionActionFactory.makeCreatePromotion(promotion, search, numberOfDocs).apply();
+		search.apply();
+		SearchPage searchPage = getElementFactory().getSearchPage();
+		searchPage.promoteTheseDocumentsButton().click();
+		List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
+		if (promotion instanceof DynamicPromotion) {
+			searchPage.promoteThisQueryButton().click();
+		} else {
+			searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
+		}
+		promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
-		promotionsPage = promotion.getDetailsPage(body, getElementFactory());
+		promotionsDetailPage = promotion.getDetailsPage(body, getElementFactory());
 		return promotedDocTitles;
 	}
 
@@ -75,6 +84,10 @@ public class PromotionsPageITCase extends ABCTestBase {
 		return searchActionFactory.makeSearch(searchTerm).applyFilter(new LanguageFilter(language));
 	}
 
+	private void goToDetails(String text) {
+		promotionsPage.getPromotionLinkWithTitleContaining(text).click();
+		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+	}
 
 	@Test
 	public void testNewPromotionButtonLink() {
@@ -87,22 +100,22 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testCorrectDocumentsInPromotion() {
 		List<String> promotedDocTitles = setUpCarsPromotion(2);
-		List<String> promotedList = promotionsPage.getPromotedList();
+		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
 		verifyThat(promotedDocTitles, everyItem(isIn(promotedList)));
 	}
 
 	@Test
 	public void testDeletePromotedDocuments() {
 		List<String> promotedDocTitles = setUpCarsPromotion(4);
-		int numberOfDocuments = promotionsPage.getPromotedList().size();
+		int numberOfDocuments = promotionsDetailPage.getPromotedTitles().size();
 		verifyThat(numberOfDocuments, is(4));
 
 		for (final String title : promotedDocTitles) {
-			promotionsPage.deleteDocument(title);
+			promotionsDetailPage.removablePromotedDocument(title).removeAndWait();
 			numberOfDocuments--;
 
 			if (numberOfDocuments == 1) {
-				assertThat(promotionsPage.getPromotedList(), hasSize(1));
+				assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
 				verifyThat("remove document button is not visible when a single document", promotionsPage, not(containsElement(By.className("remove-document-reference"))));
 				break;
 			}
@@ -113,16 +126,21 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testWhitespaceTrigger() {
 		setUpCarsPromotion(1);
 
-		promotionsPage.tryClickThenTryParentClick(promotionsPage.triggerAddButton());
+		FormInput triggerBox = promotionsDetailPage.triggerAddBox();
+		try {
+			triggerBox.setAndSubmit("");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		verifyThat(promotionsPage, triggerList(hasSize(1)));
 
-		promotionsPage.addSearchTrigger("trigger");
+		promotionsDetailPage.addTrigger("trigger");
 		verifyThat("added valid trigger", promotionsPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {"   ", " trigger", "\t"};
 		for (String trigger : invalidTriggers) {
-			promotionsPage.addSearchTrigger(trigger);
+			promotionsDetailPage.addTrigger(trigger);
 			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsPage, triggerList(hasSize(2)));
 		}
 	}
@@ -133,12 +151,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		verifyThat(promotionsPage, triggerList(hasSize(1)));
 
-		promotionsPage.addSearchTrigger("bag");
+		promotionsDetailPage.addTrigger("bag");
 		verifyThat("added valid trigger", promotionsPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {"\"bag", "bag\"", "\"bag\""};
 		for (String trigger : invalidTriggers) {
-			promotionsPage.addSearchTrigger(trigger);
+			promotionsDetailPage.addTrigger(trigger);
 			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsPage, triggerList(hasSize(2)));
 		}
 	}
@@ -148,17 +166,17 @@ public class PromotionsPageITCase extends ABCTestBase {
 		setUpCarsPromotion(1);
 		verifyThat(promotionsPage, triggerList(hasSize(1)));
 
-		promotionsPage.addSearchTrigger("France");
+		promotionsDetailPage.addTrigger("France");
 		verifyThat(promotionsPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {",Germany", "Ita,ly Spain", "Ireland, Belgium", "UK , Luxembourg"};
 		for (String trigger : invalidTriggers) {
-			promotionsPage.addSearchTrigger(trigger);
+			promotionsDetailPage.addTrigger(trigger);
 			verifyThat("'" + trigger + "' does not add a new trigger", promotionsPage, triggerList(hasSize(2)));
 			verifyThat("'" + trigger + "' produces an error message", promotionsPage, containsText("Terms may not contain commas. Separate words and phrases with whitespace."));
 		}
 
-		promotionsPage.addSearchTrigger("Greece Romania");
+		promotionsDetailPage.addTrigger("Greece Romania");
 		assertThat(promotionsPage, triggerList(hasSize(4)));
 		assertThat("error message no longer showing", promotionsPage, not(containsText("Terms may not contain commas. Separate words and phrases with whitespace.")));
 	}
@@ -167,7 +185,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testHTMLTrigger() {
 		setUpCarsPromotion(1);
 		final String trigger = "<h1>Hi</h1>";
-		promotionsPage.addSearchTrigger(trigger);
+		promotionsDetailPage.triggerAddBox().setAndSubmit(trigger);
 
 		assertThat("triggers are HTML escaped", promotionsPage, triggerList(hasItem(trigger)));
 	}
@@ -177,47 +195,45 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testAddRemoveTriggers() throws InterruptedException {
 		setUpCarsPromotion(1);
 
-		promotionsPage.addSearchTrigger("alpha");
-		promotionsPage.waitForTriggerUpdate();
-		promotionsPage.removeSearchTrigger("wheels");
-		promotionsPage.waitForTriggerUpdate();
+		promotionsDetailPage.addTrigger("alpha");
+		promotionsDetailPage.waitForTriggerRefresh();
+		promotionsDetailPage.trigger("wheels").removeAndWait();
 		verifyThat(promotionsPage, triggerList(hasSize(1)));
 
 		verifyThat(promotionsPage, triggerList(not(hasItem("wheels"))));
 
-		promotionsPage.addSearchTrigger("beta gamma delta");
-		promotionsPage.waitForTriggerUpdate();
-		promotionsPage.removeSearchTrigger("gamma");
-		promotionsPage.removeSearchTrigger("alpha");
-		promotionsPage.addSearchTrigger("epsilon");
-		promotionsPage.removeSearchTrigger("beta");
-		promotionsPage.waitForTriggerUpdate();
+		promotionsDetailPage.addTrigger("beta gamma delta");
+		promotionsDetailPage.trigger("gamma").removeAsync();
+		promotionsDetailPage.trigger("alpha").removeAsync();
+		promotionsDetailPage.addTrigger("epsilon");
+		promotionsDetailPage.trigger("beta").removeAsync();
+		promotionsDetailPage.waitForTriggerRefresh();
 
 		verifyThat(promotionsPage, triggerList(hasSize(2)));
 		verifyThat(promotionsPage, triggerList(not(hasItem("beta"))));
 		verifyThat(promotionsPage, triggerList(hasItem("epsilon")));
 
-		promotionsPage.removeSearchTrigger("epsilon");
-		promotionsPage.waitForTriggerUpdate();
+		promotionsDetailPage.trigger("epsilon").removeAndWait();
 		verifyThat(promotionsPage, not(containsElement(By.className("remove-word"))));
 	}
 
 	@Test
 	public void testBackButton() {
 		setUpCarsPromotion(1);
-		promotionsPage.backButton().click();
+		promotionsDetailPage.backButton().click();
 		assertThat("Back button redirects to main promotions page", getDriver().getCurrentUrl().endsWith("promotions"));
 	}
 
 	@Test
 	public void testEditPromotionName() throws InterruptedException {
 		setUpCarsPromotion(1);
-		verifyThat(promotionsPage.getPromotionTitle(), (is("Spotlight for: wheels")));
+		Editable title = promotionsDetailPage.promotionTitle();
+		verifyThat(title.getValue(), (is("Spotlight for: wheels")));
 
 		String[] newTitles = {"Fuzz", "<script> alert(\"hi\") </script>"};
 		for (String newTitle : newTitles) {
-			promotionsPage.createNewTitle(newTitle);
-			verifyThat(promotionsPage.getPromotionTitle(), (is(newTitle)));
+			title.setValueAndWait(newTitle);
+			verifyThat(title.getValue(), (is(newTitle)));
 		}
 	}
 
@@ -226,16 +242,17 @@ public class PromotionsPageITCase extends ABCTestBase {
 		// cannot edit promotion type for hosted
 		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
 		setUpCarsPromotion(1);
-		verifyThat(promotionsPage.getPromotionType(), is("Sponsored"));
+		verifyThat(promotionsDetailPage.getPromotionType(), is("Sponsored"));
 
-		promotionsPage.changeSpotlightType("Hotwire");
-		verifyThat(promotionsPage.getPromotionType(), is("Hotwire"));
+		Dropdown dropdown = promotionsDetailPage.spotlightTypeDropdown();
+		dropdown.select("Hotwire");
+		verifyThat(dropdown.getValue(), is("Hotwire"));
 
-		promotionsPage.changeSpotlightType("Top Promotions");
-		verifyThat(promotionsPage.getPromotionType(), is("Top Promotions"));
+		dropdown.select("Top Promotions");
+		verifyThat(dropdown.getValue(), is("Top Promotions"));
 
-		promotionsPage.changeSpotlightType("Sponsored");
-		verifyThat(promotionsPage.getPromotionType(), is("Sponsored"));
+		dropdown.select("Sponsored");
+		verifyThat(dropdown.getValue(), is("Sponsored"));
 	}
 
 	@Test
@@ -244,7 +261,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String[] triggers = {"bunny", "pony", "<script> document.body.innerHTML = '' </script>"};
 		for (int i=0; i<searchTerms.length; i++) {
 			setUpPromotion(searchActionFactory.makeSearch(searchTerms[i]), new SpotlightPromotion(triggers[i]));
-			promotionsPage.backButton().click();
+			promotionsDetailPage.backButton().click();
 		}
 
 		// "script" gets mangled
@@ -254,21 +271,18 @@ public class PromotionsPageITCase extends ABCTestBase {
 		}
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
-		promotionsPage.getPromotionLinkWithTitleContaining("bunny").click();
-		promotionsPage.deletePromotion();
+		promotionActionFactory.makeDelete("bunny").apply();
 
 		verifyThat("promotion 'pony' still exists", promotionsPage, promotionsList(hasItem(containsText("pony"))));
 		verifyThat("promotion 'script' still exists", promotionsPage, promotionsList(hasItem(containsText("script"))));
 		verifyThat("deleted promotion 'bunny'", promotionsPage, promotionsList(hasSize(2)));
 
-		promotionsPage.getPromotionLinkWithTitleContaining("script").click();
-		promotionsPage.deletePromotion();
+		promotionActionFactory.makeDelete("script").apply();
 
 		verifyThat("promotion 'pony' still exists", promotionsPage, promotionsList(hasItem(containsText("pony"))));
 		verifyThat("deleted promotion 'bunny'", promotionsPage, promotionsList(hasSize(1)));
 
-		promotionsPage.getPromotionLinkWithTitleContaining("pony").click();
-		promotionsPage.deletePromotion();
+		promotionActionFactory.makeDelete("pony").apply();
 
 		verifyThat("deleted promotion 'pony'", promotionsPage, promotionsList(hasSize(0)));
 	}
@@ -278,6 +292,13 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testAddingLotsOfDocsToAPromotion() {
 		setUpPromotion(searchActionFactory.makeSearch("sith"), 100, new SpotlightPromotion("darth sith"));
 		assertThat(promotionsPage, promotionsList(hasSize(100)));
+	}
+
+	private void renamePromotionContaining(String oldTitle, String newTitle) {
+		goToDetails(oldTitle);
+		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
+		promotionsDetailPage.backButton().click();
+		promotionsPage = getElementFactory().getPromotionsPage();
 	}
 
 	@Test
@@ -305,7 +326,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		for (int i = 0; i < searches.length; i++) {
 			setUpPromotion(searches[i], promotions[i]);
-			promotionsPage.backButton().click();
+			promotionsDetailPage.backButton().click();
 		}
 		assertThat(promotionsPage, promotionsList(hasSize(searches.length)));
 
@@ -314,22 +335,14 @@ public class PromotionsPageITCase extends ABCTestBase {
 			verifyThat(promotionTitles.get(i).toLowerCase(), lessThanOrEqualTo(promotionTitles.get(i + 1).toLowerCase()));
 		}
 
-		promotionsPage.getPromotionLinkWithTitleContaining(promotionTitles.get(3)).click();
-		promotionsPage.createNewTitle("aaa");
-		promotionsPage.loadOrFadeWait();
-		promotionsPage.backButton().click();
-		promotionsPage.loadOrFadeWait();
+		renamePromotionContaining(promotionTitles.get(3), "aaa");
 
 		final List<String> promotionsAgain = promotionsPage.getPromotionTitles();
 		for (int i = 0; i < promotionsAgain.size() - 1; i++) {
 			verifyThat(promotionsAgain.get(i).toLowerCase(), lessThanOrEqualTo(promotionsAgain.get(i + 1).toLowerCase()));
 		}
 
-		promotionsPage.getPromotionLinkWithTitleContaining(promotionTitles.get(3)).click();
-		promotionsPage.createNewTitle(promotionTitles.get(3));
-		promotionsPage.loadOrFadeWait();
-		promotionsPage.backButton().click();
-		promotionsPage.loadOrFadeWait();
+		renamePromotionContaining(promotionTitles.get(3), promotionTitles.get(3));
 
 		promotionsPage.promotionsSearchFilter().sendKeys("dog");
 		verifyThat(promotionsPage, promotionsList(hasSize(1)));
@@ -346,26 +359,20 @@ public class PromotionsPageITCase extends ABCTestBase {
 			verifyThat(promotionTitles.get(i).toLowerCase(), lessThanOrEqualTo(promotionTitles.get(i + 1).toLowerCase()));
 		}
 
-		promotionsPage.getPromotionLinkWithTitleContaining("hound").click();
-		promotionsPage.loadOrFadeWait();
-		promotionsPage.createNewTitle("hound");
-		verifyThat(promotionsPage.getPromotionTitle(), is("hound"));
-		promotionsPage.backButton().click();
+		renamePromotionContaining("hound", "hound");
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
-		promotionsPage.getPromotionLinkWithTitleContaining("hound").click();
-		promotionsPage.loadOrFadeWait();
-		promotionsPage.removeSearchTrigger("pooch");
-		promotionsPage.waitForTriggerUpdate();
+		goToDetails("pooch");
+		promotionsDetailPage.trigger("pooch").removeAndWait();
 		verifyThat(promotionsPage, triggerList(not(hasItem("pooch"))));
-		promotionsPage.backButton().click();
+		promotionsDetailPage.backButton().click();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
-		verifyThat(promotionsPage, promotionsList(hasSize(2)));
+		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
 		verifyThat(promotionsPage.promotionsCategoryFilterValue(), is("All Types"));
 
@@ -392,33 +399,26 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
 		verifyThat(promotionsPage, promotionsList(hasSize(2)));
 
-		promotionsPage.getPromotionLinkWithTitleContaining("lupo").click();
-		promotionsPage.loadOrFadeWait();
-		promotionsPage.removeSearchTrigger("wolf");
-		promotionsPage.waitForTriggerUpdate();
+		goToDetails("lupo");
+		promotionsDetailPage.trigger("wolf").removeAndWait();
 		verifyThat(promotionsPage, triggerList(not(hasItem("wolf"))));
-		promotionsPage.backButton().click();
+		promotionsDetailPage.backButton().click();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
 		verifyThat(promotionsPage, promotionsList(hasSize(2)));
 
-		promotionsPage.getPromotionLinkWithTitleContaining("lupo").click();
-		promotionsPage.loadOrFadeWait();
-		promotionsPage.createNewTitle("lupo");
-		verifyThat(promotionsPage.getPromotionTitle(), is("lupo"));
-		promotionsPage.backButton().click();
+		renamePromotionContaining("lupo", "lupo");
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
 		verifyThat(promotionsPage, promotionsList(hasSize(1)));
 
-		promotionsPage.getPromotionLinkWithTitleContaining("hond").click();
-		promotionsPage.loadOrFadeWait();
-		promotionsPage.addSearchTrigger("Rhodesian Ridgeback");
-		promotionsPage.waitForTriggerUpdate();
+		goToDetails("hond");
+		promotionsDetailPage.triggerAddBox().setAndSubmit("Rhodesian Ridgeback");
+		promotionsDetailPage.waitForTriggerRefresh();
 		verifyThat(promotionsPage, triggerList(hasItems("Rhodesian", "Ridgeback")));
-		promotionsPage.backButton().click();
+		promotionsDetailPage.backButton().click();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.selectPromotionsCategoryFilter("Dynamic Spotlight");
@@ -446,7 +446,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		for (int i=0; i<languages.length; i++) {
 			setUpPromotion(search(searchTerms[i], languages[i]), promotions[i]);
-			verifyThat(promotionsPage.getLanguage(), is(languages[i]));
+			verifyThat(promotionsDetailPage.getLanguage(), is(languages[i]));
 		}
 	}
 
@@ -457,22 +457,21 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final String firstSearchResult = searchPage.getSearchResult(1).getText();
 		final String secondSearchResult = setUpPromotion(search("chat", "French"), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
 
-		promotionsPage.addSearchTrigger("purrr");
-		promotionsPage.waitForTriggerUpdate();
-		promotionsPage.removeSearchTrigger("meow");
-		promotionsPage.waitForTriggerUpdate();
+		promotionsDetailPage.triggerAddBox().setAndSubmit("purrr");
+		promotionsDetailPage.trigger("meow").removeAndWait();
 		search("purrr", "French").apply();
 		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(secondSearchResult));
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage.selectPromotionsCategoryFilter("All Types");
-		promotionsPage.loadOrFadeWait();
-		promotionsPage.getPromotionLinkWithTitleContaining("meow").click();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(promotionsPage.backButton()));
-		verifyThat(promotionsPage.getQueryText(), is("chat"));
+//		promotionsPage.selectPromotionsCategoryFilter("All Types");
+//		promotionsPage.loadOrFadeWait();
+		goToDetails("meow");
 
-		promotionsPage.editQueryText("kitty");
-		verifyThat(promotionsPage.getQueryText(), is("kitty"));
+		Editable queryText = promotionsDetailPage.queryText();
+		verifyThat(queryText.getValue(), is("chat"));
+
+		queryText.setValueAndWait("kitty");
+		verifyThat(queryText.getValue(), is("kitty"));
 
 		search("purrr", "French").apply();
 		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
@@ -486,7 +485,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testPromotionCreationAndDeletionOnSecondWindow() {
 		setUpPromotion(search("chien", "French"), new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"));
 
-		promotionsPage.backButton().click();
+		promotionsDetailPage.backButton().click();
 		final String url = getDriver().getCurrentUrl();
 		final List<String> browserHandles = promotionsPage.createAndListWindowHandles();
 
@@ -502,13 +501,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));
 
 		getDriver().switchTo().window(browserHandles.get(0));
-		promotionsPage.deletePromotion();
+		promotionsDetailPage.delete();
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
 
-		secondPromotionsPage.getPromotionLinkWithTitleContaining("woof").click();
-		secondPromotionsPage.deletePromotion();
+		promotionActionFactory.makeDelete("woof").apply();
 
 		getDriver().switchTo().window(browserHandles.get(0));
 		verifyThat(promotionsPage, containsText("There are no promotions..."));
