@@ -37,7 +37,7 @@ import java.util.Set;
 @Service
 public class IndexesServiceImpl implements IndexesService {
 
-    private static final Set<ResourceFlavour> FLAVOURS_TO_REMOVE = EnumSet.of(ResourceFlavour.querymanipulation, ResourceFlavour.categorization);
+    private static final Set<ResourceFlavour> FLAVOURS_TO_REMOVE = ResourceFlavour.of(ResourceFlavour.QUERY_MANIPULATION, ResourceFlavour.CATEGORIZATION);
 
     @Autowired
     private ConfigService<FindConfig> configService;
@@ -55,7 +55,7 @@ public class IndexesServiceImpl implements IndexesService {
     @Cacheable(CacheNames.INDEXES)
     public Resources listIndexes(final TokenProxy tokenProxy) throws HodErrorException {
         final Set<ResourceType> types = new HashSet<>();
-        types.add(ResourceType.content);
+        types.add(ResourceType.CONTENT);
 
         final ListResourcesRequestBuilder params = new ListResourcesRequestBuilder()
                 .setTypes(types);
