@@ -121,6 +121,14 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new LabelBox(promotedDocument(title), getDriver());
     }
 
+    public Editable staticPromotedDocumentTitle() {
+        return new InlineEdit(findElement(By.className("static-promotion-title-edit")), getDriver());
+    }
+
+    public Editable staticPromotedDocumentContent() {
+        return new InlineEdit(findElement(By.className("static-promotion-content-edit")), getDriver());
+    }
+
     public Editable queryText() {
         return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
     }
