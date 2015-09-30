@@ -43,11 +43,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 
@@ -717,6 +719,39 @@ public class FindITCase extends ABCTestBase {
         find.search("Cat");
 
         assertThat(service.getText(), noDocs);
+    }
+
+    @Test
+    public void testSynonymGroups() throws InterruptedException {
+        getDriver().switchTo().window(browserHandles.get(0));
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+        keywordsPage.deleteKeywords();
+
+        keywordsPage.createNewKeywordsButton().click();
+
+        CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+        createNewKeywordsPage.createSynonymGroup("gazelle deer antelope", "English");
+
+        getElementFactory().getSearchPage();
+
+        getDriver().switchTo().window(browserHandles.get(1));
+        find.search("gazelle");
+
+        List<String> gazelleTitles = service.getResultTitles();
+
+        find.search("deer");
+
+        List<String> deerTitles = service.getResultTitles();
+
+        verifyThat(gazelleTitles,contains(deerTitles.toArray()));
+
+        find.search("antelope");
+
+        List<String> antelopeTitles = service.getResultTitles();
+
+        verifyThat(gazelleTitles,contains(antelopeTitles.toArray()));
+        verifyThat(deerTitles,contains(antelopeTitles.toArray()));
     }
 
     private enum Index {

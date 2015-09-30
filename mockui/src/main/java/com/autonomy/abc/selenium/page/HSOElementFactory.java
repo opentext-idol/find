@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
@@ -66,5 +67,10 @@ public class HSOElementFactory extends ElementFactory {
 
     public FindPage getFindPage() {
         return new FindPage(getDriver());
+    }
+
+
+    public AnalyticsPage getAnalyticsPage() {
+        return new AnalyticsPage(getDriver());
     }
 }
