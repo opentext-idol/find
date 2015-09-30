@@ -18,6 +18,11 @@ public class StaticPromotion extends Promotion {
     }
 
     @Override
+    public String getName() {
+        return "static";
+    }
+
+    @Override
     public Wizard makeWizard(CreateNewPromotionsBase newPromotionsBase) {
         return new StaticPromotionWizard((HSOCreateNewPromotionsPage) newPromotionsBase);
     }

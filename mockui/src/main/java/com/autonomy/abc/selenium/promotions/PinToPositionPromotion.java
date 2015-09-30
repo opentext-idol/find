@@ -14,6 +14,10 @@ public class PinToPositionPromotion extends Promotion {
         this.position = position;
     }
 
+    public String getName() {
+        return "pin to position";
+    }
+
     @Override
     public Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
         return new PinToPositionWizard((CreateNewPromotionsPage) createNewPromotionsBase);

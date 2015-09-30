@@ -19,6 +19,20 @@ public abstract class Promotion {
         return trigger;
     }
 
+    public abstract String getName();
+
+    public String getCreateNotification() {
+        return "Created a new " + getName() + " promotion";
+    }
+
+    public String getEditNotification() {
+        return "Edited a " + getName() + " promotion";
+    }
+
+    public String getDeleteNotification() {
+        return "Removed a " + getName() + " promotion";
+    }
+
     public PromotionsDetailPage getDetailsPage(AppBody body, ElementFactory elementFactory) {
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         PromotionsPage promotionsPage = elementFactory.getPromotionsPage();

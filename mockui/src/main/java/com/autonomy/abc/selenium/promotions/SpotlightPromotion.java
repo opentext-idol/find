@@ -15,6 +15,11 @@ public class SpotlightPromotion extends Promotion {
         this(SpotlightType.SPONSORED, trigger);
     }
 
+    @Override
+    public String getName() {
+        return "spotlight promotion";
+    }
+
     public SpotlightPromotion(SpotlightType type, String trigger) {
         super(trigger);
         spotlightType = type;

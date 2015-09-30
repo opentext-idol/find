@@ -25,6 +25,11 @@ public class DynamicPromotion extends Promotion {
     }
 
     @Override
+    public String getName() {
+        return "dynamic spotlight";
+    }
+
+    @Override
     public com.autonomy.abc.selenium.actions.wizard.Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
         if (createNewPromotionsBase instanceof HSOCreateNewPromotionsPage) {
             return new DynamicPromotionsWizard((HSOCreateNewDynamicPromotionsPage) createNewPromotionsBase);
