@@ -133,15 +133,15 @@ public class PromotionsPageITCase extends ABCTestBase {
 			e.printStackTrace();
 		}
 
-		verifyThat(promotionsPage, triggerList(hasSize(1)));
+		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
 
 		promotionsDetailPage.addTrigger("trigger");
-		verifyThat("added valid trigger", promotionsPage, triggerList(hasSize(2)));
+		verifyThat("added valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {"   ", " trigger", "\t"};
 		for (String trigger : invalidTriggers) {
 			promotionsDetailPage.addTrigger(trigger);
-			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsPage, triggerList(hasSize(2)));
+			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
 		}
 	}
 
@@ -149,35 +149,35 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testQuotesTrigger() throws InterruptedException {
 		setUpCarsPromotion(1);
 
-		verifyThat(promotionsPage, triggerList(hasSize(1)));
+		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
 
 		promotionsDetailPage.addTrigger("bag");
-		verifyThat("added valid trigger", promotionsPage, triggerList(hasSize(2)));
+		verifyThat("added valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {"\"bag", "bag\"", "\"bag\""};
 		for (String trigger : invalidTriggers) {
 			promotionsDetailPage.addTrigger(trigger);
-			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsPage, triggerList(hasSize(2)));
+			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
 		}
 	}
 
 	@Test
 	public void testCommasTrigger() {
 		setUpCarsPromotion(1);
-		verifyThat(promotionsPage, triggerList(hasSize(1)));
+		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
 
 		promotionsDetailPage.addTrigger("France");
-		verifyThat(promotionsPage, triggerList(hasSize(2)));
+		verifyThat(promotionsDetailPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {",Germany", "Ita,ly Spain", "Ireland, Belgium", "UK , Luxembourg"};
 		for (String trigger : invalidTriggers) {
 			promotionsDetailPage.addTrigger(trigger);
-			verifyThat("'" + trigger + "' does not add a new trigger", promotionsPage, triggerList(hasSize(2)));
+			verifyThat("'" + trigger + "' does not add a new trigger", promotionsDetailPage, triggerList(hasSize(2)));
 			verifyThat("'" + trigger + "' produces an error message", promotionsPage, containsText("Terms may not contain commas. Separate words and phrases with whitespace."));
 		}
 
 		promotionsDetailPage.addTrigger("Greece Romania");
-		assertThat(promotionsPage, triggerList(hasSize(4)));
+		assertThat(promotionsDetailPage, triggerList(hasSize(4)));
 		assertThat("error message no longer showing", promotionsPage, not(containsText("Terms may not contain commas. Separate words and phrases with whitespace.")));
 	}
 
@@ -187,7 +187,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final String trigger = "<h1>Hi</h1>";
 		promotionsDetailPage.triggerAddBox().setAndSubmit(trigger);
 
-		assertThat("triggers are HTML escaped", promotionsPage, triggerList(hasItem(trigger)));
+		assertThat("triggers are HTML escaped", promotionsDetailPage, triggerList(hasItem(trigger)));
 	}
 
 	// fails on-prem due to CCUK-2671
@@ -198,9 +198,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage.addTrigger("alpha");
 		promotionsDetailPage.waitForTriggerRefresh();
 		promotionsDetailPage.trigger("wheels").removeAndWait();
-		verifyThat(promotionsPage, triggerList(hasSize(1)));
+		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
 
-		verifyThat(promotionsPage, triggerList(not(hasItem("wheels"))));
+		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wheels"))));
 
 		promotionsDetailPage.addTrigger("beta gamma delta");
 		promotionsDetailPage.trigger("gamma").removeAsync();
@@ -209,9 +209,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage.trigger("beta").removeAsync();
 		promotionsDetailPage.waitForTriggerRefresh();
 
-		verifyThat(promotionsPage, triggerList(hasSize(2)));
-		verifyThat(promotionsPage, triggerList(not(hasItem("beta"))));
-		verifyThat(promotionsPage, triggerList(hasItem("epsilon")));
+		verifyThat(promotionsDetailPage, triggerList(hasSize(2)));
+		verifyThat(promotionsDetailPage, triggerList(not(hasItem("beta"))));
+		verifyThat(promotionsDetailPage, triggerList(hasItem("epsilon")));
 
 		promotionsDetailPage.trigger("epsilon").removeAndWait();
 		verifyThat(promotionsPage, not(containsElement(By.className("remove-word"))));
@@ -367,7 +367,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		goToDetails("pooch");
 		promotionsDetailPage.trigger("pooch").removeAndWait();
-		verifyThat(promotionsPage, triggerList(not(hasItem("pooch"))));
+		verifyThat(promotionsDetailPage, triggerList(not(hasItem("pooch"))));
 		promotionsDetailPage.backButton().click();
 
 		promotionsPage.clearPromotionsSearchFilter();
@@ -401,7 +401,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		goToDetails("lupo");
 		promotionsDetailPage.trigger("wolf").removeAndWait();
-		verifyThat(promotionsPage, triggerList(not(hasItem("wolf"))));
+		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wolf"))));
 		promotionsDetailPage.backButton().click();
 
 		promotionsPage.clearPromotionsSearchFilter();
@@ -417,7 +417,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		goToDetails("hond");
 		promotionsDetailPage.triggerAddBox().setAndSubmit("Rhodesian Ridgeback");
 		promotionsDetailPage.waitForTriggerRefresh();
-		verifyThat(promotionsPage, triggerList(hasItems("Rhodesian", "Ridgeback")));
+		verifyThat(promotionsDetailPage, triggerList(hasItems("Rhodesian", "Ridgeback")));
 		promotionsDetailPage.backButton().click();
 
 		promotionsPage.clearPromotionsSearchFilter();
