@@ -1,5 +1,5 @@
 package com.autonomy.abc.selenium.actions;
 
-public interface Action {
-    void apply();
+public interface Action<T> {
+    T apply();
 }

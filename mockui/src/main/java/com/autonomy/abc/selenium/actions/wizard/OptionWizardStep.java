@@ -20,7 +20,8 @@ public class OptionWizardStep implements WizardStep {
     }
 
     @Override
-    public void apply() {
+    public Object apply() {
         container.findElement(By.cssSelector("[data-option='" + option + "']")).click();
+        return null;
     }
 }

@@ -13,7 +13,9 @@ public class BlankWizardStep implements WizardStep {
     }
 
     @Override
-    public void apply() {}
+    public Object apply() {
+        return null;
+    }
 
     @Override
     public String toString() {

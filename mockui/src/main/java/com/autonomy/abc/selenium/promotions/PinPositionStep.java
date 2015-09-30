@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.promotions;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 
-public class PinPositionStep implements WizardStep {
+public class PinPositionStep implements WizardStep<Integer> {
     private CreateNewPromotionsPage page;
     private int position;
 
@@ -18,9 +18,10 @@ public class PinPositionStep implements WizardStep {
     }
 
     @Override
-    public void apply() {
+    public Integer apply() {
         for (int i=1; i<position; i++) {
             page.selectPositionPlusButton().click();
         }
+        return page.positionInputValue();
     }
 }

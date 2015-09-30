@@ -41,11 +41,12 @@ public abstract class Wizard implements Action {
 
     public abstract void cancel();
 
-    public void apply() {
+    public Object apply() {
         for (WizardStep wizardStep : steps) {
             wizardStep.apply();
             next();
         }
+        return null;
     }
 
 }

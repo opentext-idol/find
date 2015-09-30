@@ -18,7 +18,8 @@ public class ResultsNumberStep implements WizardStep {
     }
 
     @Override
-    public void apply() {
+    public Object apply() {
         page.dialInput().setValue(Integer.toString(count));
+        return null;
     }
 }

@@ -22,9 +22,10 @@ public class NewDocumentDetailsStep implements WizardStep {
     }
 
     @Override
-    public void apply() {
+    public Object apply() {
         page.documentTitle().setValue(docTitle);
         page.documentContent().setValue(docContent);
+        return null;
     }
 
     @Override

@@ -11,10 +11,7 @@ import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.Search;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
-import org.openqa.selenium.By;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PromotionActionFactory extends ActionFactory {
@@ -23,52 +20,55 @@ public class PromotionActionFactory extends ActionFactory {
 
     public PromotionActionFactory(Application application, ElementFactory elementFactory) {
         super(application, elementFactory);
-
     }
 
-    public Action goToDetails(String title) {
+    public Action<PromotionsDetailPage> goToDetails(String title) {
         return new GoToDetailsAction(title);
     }
 
-    public Action makeDelete(String title) {
+    public Action<PromotionsPage> makeDelete(String title) {
         return new DeleteAction(title);
     }
 
-    public Action makeDeleteAll() {
+    public Action<PromotionsPage> makeDeleteAll() {
         return new DeleteAllAction();
     }
 
-    public Action makeCreateStaticPromotion(final StaticPromotion promotion) {
-        return new Action() {
+    public Action<SearchPage> makeCreateStaticPromotion(final StaticPromotion promotion) {
+        return new Action<SearchPage>() {
             @Override
-            public void apply() {
+            public SearchPage apply() {
                 goToPage(NavBarTabId.PROMOTIONS);
                 promotionsPage = getElementFactory().getPromotionsPage();
                 ((HSOPromotionsPage) promotionsPage).staticPromotionButton().click();
                 createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
                 promotion.makeWizard(createNewPromotionsPage).apply();
+                return getElementFactory().getSearchPage();
             }
         };
     }
 
-    public Action makeCreatePromotion(final Promotion promotion, final Search search, final int numberOfDocs) {
-        return new Action() {
+    public Action<List<String>> makeCreatePromotion(final Promotion promotion, final Search search, final int numberOfDocs) {
+        return new Action<List<String>>() {
             @Override
-            public void apply() {
+            public List<String> apply() {
                 search.apply();
                 SearchPage searchPage = getElementFactory().getSearchPage();
+                searchPage.promoteTheseDocumentsButton().click();
+                List<String> promotedDocs = searchPage.addToBucket(numberOfDocs);
                 if (promotion instanceof DynamicPromotion) {
                     searchPage.promoteThisQueryButton().click();
                 } else {
-                    searchPage.promoteTheseDocumentsButton().click();
-                    searchPage.addToBucket(numberOfDocs);
                     searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
                 }
+                promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
+                getElementFactory().getSearchPage();
+                return promotedDocs;
             }
         };
     }
 
-    public class GoToDetailsAction implements Action {
+    public class GoToDetailsAction implements Action<PromotionsDetailPage> {
         private String title;
 
         private GoToDetailsAction(String title) {
@@ -76,16 +76,16 @@ public class PromotionActionFactory extends ActionFactory {
         }
 
         @Override
-        public void apply() {
+        public PromotionsDetailPage apply() {
             AppBody body = getApplication().createAppBody(getDriver());
             body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
             promotionsPage = getElementFactory().getPromotionsPage();
             promotionsPage.getPromotionLinkWithTitleContaining(title).click();
-            getElementFactory().getPromotionsDetailPage();
+            return getElementFactory().getPromotionsDetailPage();
         }
     }
 
-    public class DeleteAction implements Action {
+    public class DeleteAction implements Action<PromotionsPage> {
         private String title;
 
         private DeleteAction(String title) {
@@ -93,25 +93,27 @@ public class PromotionActionFactory extends ActionFactory {
         }
 
         @Override
-        public void apply() {
+        public PromotionsPage apply() {
             new GoToDetailsAction(title).apply();
             final PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
             promotionsDetailPage.delete();
-            getElementFactory().getPromotionsPage();
+            promotionsPage = getElementFactory().getPromotionsPage();
+            return promotionsPage;
         }
     }
 
-    public class DeleteAllAction implements Action {
+    public class DeleteAllAction implements Action<PromotionsPage> {
         private DeleteAllAction() {}
 
         @Override
-        public void apply() {
+        public PromotionsPage apply() {
             AppBody body = getApplication().createAppBody(getDriver());
             body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
             List<String> titles = getElementFactory().getPromotionsPage().getPromotionTitles();
             for (String title : titles) {
                 new DeleteAction(title).apply();
             }
+            return promotionsPage;
         }
     }
 }

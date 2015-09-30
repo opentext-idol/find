@@ -18,7 +18,8 @@ public class SearchTriggerStep implements WizardStep {
     }
 
     @Override
-    public void apply() {
+    public Object apply() {
         page.triggerBox().setAndSubmit(trigger);
+        return null;
     }
 }
