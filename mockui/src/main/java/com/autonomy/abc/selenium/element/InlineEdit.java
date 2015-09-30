@@ -27,7 +27,7 @@ public class InlineEdit implements Editable {
     public void setValueAsync(String value) {
         element.findElement(By.className("inline-edit-open-form")).click();
         waitForUpdate();
-        new FormInput(element.findElement(By.cssSelector(".inline-edit-form input")), element.getDriver()).setAndSubmit(value);
+        new FormInput(element.findElement(By.cssSelector(".inline-edit-form .form-control")), element.getDriver()).setAndSubmit(value);
     }
 
     @Override
