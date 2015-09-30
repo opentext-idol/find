@@ -10,7 +10,7 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
     }
 
     private FormInput dataInput(String attribute) {
-        return new FormInput(findElement(By.cssSelector("input[data-attribute='" + attribute + "']")), getDriver());
+        return new FormInput(findElement(By.cssSelector("[data-attribute='" + attribute + "']")), getDriver());
     }
 
     public FormInput documentTitle() {
