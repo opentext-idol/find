@@ -10,4 +10,6 @@ public interface Removable {
     void removeAndWait();
 
     void removeAndWait(int timeout);
+
+    void click();
 }

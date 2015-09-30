@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
@@ -43,6 +44,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     private SearchPage searchPage;
     private String promotedDocTitle;
     private PromotionsPage promotionsPage;
+    private PromotionsDetailPage promotionsDetailPage;
     private CreateNewPromotionsPage createPromotionsPage;
     private Wizard wizard;
     private SearchActionFactory actionFactory;
@@ -119,7 +121,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         createPromotionsPage.navigateToTriggers();
         assertThat("Wizard has not progressed to Select the position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
         assertThat("Trigger add button is not disabled when text box is empty", createPromotionsPage.isAttributePresent(createPromotionsPage.triggerAddButton(), "disabled"));
-        assertThat("Trigger add button is not disabled when text box is empty", !createPromotionsPage.isAttributePresent(createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER), "disabled"));
+        assertThat("Trigger add button is not disabled when text box is empty", !createPromotionsPage.isAttributePresent(createPromotionsPage.cancelButton(), "disabled"));
 
         createPromotionsPage.addSearchTrigger("animal");
         assertThat("Promote button is not enabled when a trigger is added", !createPromotionsPage.isAttributePresent(createPromotionsPage.finishButton(), "disabled"));
@@ -139,7 +141,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         assertThat("bushy search trigger not present", createPromotionsPage.getSearchTriggersList().contains("bushy"));
         assertThat("tail search trigger not removed", !createPromotionsPage.getSearchTriggersList().contains("tail"));
 
-        createPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.TRIGGER).click();
+        createPromotionsPage.cancelButton().click();
         assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("create"));
     }
 
@@ -229,7 +231,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     @Test
     public void testNonNumericEntryInPinToPosition() {
         createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-        createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
+        createPromotionsPage.continueButton().click();
         createPromotionsPage.loadOrFadeWait();
         createPromotionsPage.loadOrFadeWait();
         assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
@@ -251,7 +253,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
             createPromotionsPage.pinToPositionInput().sendKeys("bad");
             assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 2);
 
-            createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE));
+            createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton());
             createPromotionsPage.loadOrFadeWait();
             assertThat("Wizard has not progressed with a legitimate position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
         } catch (final WebDriverException e) {
@@ -273,14 +275,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         finishPromotion();
 
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        promotionsPage.getPromotionLinkWithTitleContaining("delta").click();
+        promotionActionFactory.goToDetails("delta").apply();
+        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
-
-        verifyThat(promotionsPage, containsText("delta"));
-        verifyThat(promotionsPage.promotionPosition().getValue(), is("2"));
+        verifyThat(promotionsDetailPage, containsText("delta"));
+        verifyThat(promotionsDetailPage.pinPosition().getValue(), is("2"));
     }
 
     private void addSpotlightPromotion(final Promotion.SpotlightType spotlightType, final String searchTrigger) {
@@ -302,15 +301,13 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         }
 
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
+        promotionActionFactory.goToDetails(searchTrigger).apply();
+        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 
-        new WebDriverWait(getDriver(),3).until(ExpectedConditions.visibilityOf(promotionsPage.addMorePromotedItemsButton()));
-        verifyThat(promotionsPage, containsText("Spotlight for: " + searchTrigger));
+        verifyThat(promotionsDetailPage, containsText("Spotlight for: " + searchTrigger));
 
-        promotionsPage.clickableSearchTrigger(searchTrigger).click();
-        promotionsPage.loadOrFadeWait();
+        promotionsDetailPage.trigger(searchTrigger).click();
+        searchPage = getElementFactory().getSearchPage();
 
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedDocTitle));
         verifyThat(searchPage.getTopPromotedLinkButtonText(), is(spotlightType.getOption()));
@@ -328,7 +325,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
 
         verifyThat(promotionsPage, containsText("Spotlight for: " + searchTrigger));
-        verifyThat(promotionsPage.spotlightButton(), containsText(spotlightType.getOption()));
+        verifyThat(promotionsDetailPage.spotlightTypeDropdown().getValue(), is(spotlightType.getOption()));
     }
 
     @Test
@@ -379,13 +376,10 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        promotionsPage.getPromotionLinkWithTitleContaining("animal").click();
+        promotionActionFactory.goToDetails("animal").apply();
+        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 
-        new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
-
-        verifyThat(promotionsPage, containsText("animal"));
+        verifyThat(promotionsDetailPage, containsText("animal"));
 //        verifyThat(promotionsPage.promotionPosition(), containsText("2"));
 
     }

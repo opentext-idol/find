@@ -43,4 +43,9 @@ public class LabelBox implements Removable {
         removeAsync();
         new WebDriverWait(element.getDriver(), timeout).until(ExpectedConditions.stalenessOf(element));
     }
+
+    @Override
+    public void click() {
+        element.click();
+    }
 }
