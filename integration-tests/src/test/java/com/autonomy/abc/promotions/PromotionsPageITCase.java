@@ -53,18 +53,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionActionFactory.makeDeleteAll().apply();
 	}
 
-	// TODO: use promotionActionFactory, but need to be able to access
 	private List<String> setUpPromotion(Search search, int numberOfDocs, Promotion promotion) {
-		search.apply();
-		SearchPage searchPage = getElementFactory().getSearchPage();
-		searchPage.promoteTheseDocumentsButton().click();
-		List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
-		if (promotion instanceof DynamicPromotion) {
-			searchPage.promoteThisQueryButton().click();
-		} else {
-			searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
-		}
-		promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
+		List<String> promotedDocTitles = promotionActionFactory.makeCreatePromotion(promotion, search, numberOfDocs).apply();
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
 		promotionsDetailPage = promotion.getDetailsPage(body, getElementFactory());
