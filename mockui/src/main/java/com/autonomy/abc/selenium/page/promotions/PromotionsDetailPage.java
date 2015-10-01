@@ -7,6 +7,7 @@ import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -86,6 +87,18 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public FormInput triggerAddBox() {
         return new FormInput(findElement(By.cssSelector(".promotion-match-terms [name='words']")), getDriver());
+    }
+
+    public WebElement triggerAddButton() {
+        return findElement(By.cssSelector(".promotion-match-terms [type='submit']"));
+    }
+
+    public String getTriggerError() {
+        try {
+            return findElement(By.className("help-block")).getText();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
     }
 
     public void waitForTriggerRefresh() {

@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
 public class SearchTriggerStep implements WizardStep {
     private CreateNewPromotionsBase page;
     private String trigger;
+    public static final String TITLE = "Promotion triggers";
 
     public SearchTriggerStep(CreateNewPromotionsBase page, String trigger) {
         this.page = page;
@@ -14,7 +15,7 @@ public class SearchTriggerStep implements WizardStep {
 
     @Override
     public String getTitle() {
-        return "Promotion triggers";
+        return TITLE;
     }
 
     @Override

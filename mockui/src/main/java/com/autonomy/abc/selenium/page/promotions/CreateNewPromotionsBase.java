@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -97,6 +98,14 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 
 	public WebElement triggerAddButton() {
 		return findElement(By.cssSelector(".trigger-words-form")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
+	}
+
+	public String getTriggerError() {
+		try {
+			return findElement(By.className("help-block")).getText();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 
 	public WebElement spotlightType(final String type ) {
