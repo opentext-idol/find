@@ -3,44 +3,49 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.PromotionActionFactory;
-import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
-import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
+import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
+import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 
 public class StaticPromotionsITCase extends ABCTestBase {
 
     private HSOPromotionsPage promotionsPage;
-    private HSOCreateNewPromotionsPage createPromotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
     private SearchPage searchPage;
     private PromotionActionFactory promotionActionFactory;
+    private final String title = "title";
+    private final String content = "content";
+    private final String trigger = "dog";
+    private final StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
     public StaticPromotionsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -52,10 +57,8 @@ public class StaticPromotionsITCase extends ABCTestBase {
         return (HSOElementFactory) super.getElementFactory();
     }
 
-    private StaticPromotion setUpStaticPromotion(String trigger) {
-        StaticPromotion promotion = new StaticPromotion("title", "content", trigger);
-        searchPage = promotionActionFactory.makeCreateStaticPromotion(promotion).apply();
-        return promotion;
+    public void goToDetails() {
+        promotionsDetailPage = promotionActionFactory.goToDetails(trigger).apply();
     }
 
     @Before
@@ -64,42 +67,12 @@ public class StaticPromotionsITCase extends ABCTestBase {
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         promotionsPage = getElementFactory().getPromotionsPage();
         promotionActionFactory.makeDeleteAll().apply();
-    }
-
-    @Test
-    public void testAddStaticPromotion() {
-        final String title = "static promotion";
-        final String content = "This is the body of my static promotion.";
-        final String trigger = "horse";
-        promotionsPage.staticPromotionButton().click();
-        createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-        Wizard wizard = new StaticPromotion(title, content, trigger).makeWizard(createPromotionsPage);
-
-        verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
-        verifyThat(createPromotionsPage.continueButton(), hasAttribute("disabled"));
-        createPromotionsPage.documentTitle().setValue(title);
-        verifyThat(createPromotionsPage.continueButton(), hasAttribute("disabled"));
-        createPromotionsPage.documentContent().setValue(content);
-        verifyThat(createPromotionsPage.continueButton(), not(hasAttribute("disabled")));
-        wizard.next();
-
-        verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
-        verifyThat(createPromotionsPage.continueButton(), not(hasAttribute("disabled")));
-        wizard.getCurrentStep().apply();
-        wizard.next();
-
-        verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
-        verifyThat(createPromotionsPage.finishButton(), hasAttribute("disabled"));
-        wizard.getCurrentStep().apply();
-        verifyThat(createPromotionsPage.finishButton(), not(hasAttribute("disabled")));
-        wizard.next();
+        searchPage = promotionActionFactory.makeCreateStaticPromotion(promotion).apply();
     }
 
     @Test
     public void testDeleteStaticPromotion() {
-        final String trigger = "deletepromotion";
-        final StaticPromotion promotion = setUpStaticPromotion(trigger);
-        promotionsDetailPage = promotionActionFactory.goToDetails(trigger).apply();
+        goToDetails();
         promotionsDetailPage.editMenu().select("Delete");
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         verifyThat(deleteModal, containsText(trigger));
@@ -111,7 +84,8 @@ public class StaticPromotionsITCase extends ABCTestBase {
         verifyThat("bottom right close button works", promotionsDetailPage.promotionTitle().getValue(), containsString(trigger));
 
         promotionsDetailPage.editMenu().select("Delete");
-        ModalView.getVisibleModalView(getDriver()).close();
+        ModalView modalView2 = ModalView.getVisibleModalView(getDriver());
+        modalView2.close();
         verifyThat("top right close button works", promotionsDetailPage.promotionTitle().getValue(), containsString(trigger));
 
         promotionsDetailPage.editMenu().select("Delete");
@@ -125,25 +99,20 @@ public class StaticPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testEditStaticPromotion() {
-        final String originalTitle = "apple";
-        final String originalContent = "banana cherry";
-        final String trigger = "fruit";
-        final StaticPromotion promotion = new StaticPromotion(originalTitle, originalContent, trigger);
-        promotionActionFactory.makeCreateStaticPromotion(promotion).apply();
-        promotionsDetailPage = promotionActionFactory.goToDetails(trigger).apply();
+        goToDetails();
 
-        Editable title = promotionsDetailPage.staticPromotedDocumentTitle();
-        final Editable content = promotionsDetailPage.staticPromotedDocumentContent();
-        verifyThat(title.getValue(), is(originalTitle));
-        verifyThat(content.getValue(), is(originalContent));
+        Editable editTitle = promotionsDetailPage.staticPromotedDocumentTitle();
+        final Editable editContent = promotionsDetailPage.staticPromotedDocumentContent();
+        verifyThat(editTitle.getValue(), is(title));
+        verifyThat(editContent.getValue(), is(content));
 
         final String secondTitle = "SOMETHING ELSE";
-        title.setValueAndWait(secondTitle);
-        verifyThat(title.getValue(), is(secondTitle));
-        verifyThat(content.getValue(), is(originalContent));
+        editTitle.setValueAndWait(secondTitle);
+        verifyThat(editTitle.getValue(), is(secondTitle));
+        verifyThat(editContent.getValue(), is(content));
         final String secondContent = "apple";
-        content.setValueAndWait(secondContent);
-        verifyThat(content.getValue(), is(secondContent));
+        editContent.setValueAndWait(secondContent);
+        verifyThat(editContent.getValue(), is(secondContent));
 
         getDriver().navigate().refresh();
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
@@ -152,9 +121,6 @@ public class StaticPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testStaticPromotionNotifications() {
-        final String trigger = "banana";
-        final StaticPromotion promotion = setUpStaticPromotion(trigger);
-
         WebElement created = null;
         try {
             created = new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationAppears());
@@ -181,5 +147,106 @@ public class StaticPromotionsITCase extends ABCTestBase {
         } catch (Exception e) {}
         verifyThat("delete notification appeared", deleted, not(nullValue()));
         verifyThat(deleted, containsText(promotion.getDeleteNotification()));
+    }
+
+    private void checkBadTriggers(String[] triggers, String errorSubstring) {
+        for (String trigger : triggers) {
+            promotionsDetailPage.addTrigger(trigger);
+            verifyThat("trigger '" + trigger + "' not added", promotionsDetailPage.getTriggerList(), hasSize(1));
+            verifyThat(promotionsDetailPage.getTriggerError(), containsString(errorSubstring));
+            verifyThat(promotionsDetailPage.triggerAddButton(), disabled());
+        }
+    }
+
+    // TODO: this same test should apply for promotions, create promotions, keywords and create keywords?
+    @Test
+    public void testInvalidTriggers() {
+        goToDetails();
+        final String[] duplicateTriggers = {
+                "dog",
+                " dog",
+                "dog ",
+                " dog  ",
+                "\"dog\""
+        };
+        final String[] quoteTriggers = {
+                "\"bad",
+                "bad\"",
+                "b\"ad",
+                "\"trigger with\" 3 quo\"tes"
+        };
+        final String[] commaTriggers = {
+                "comma,",
+                ",comma",
+                "com,ma",
+                ",,,,,,"
+        };
+        final String[] caseTriggers = {
+                "Dog",
+                "doG",
+                "DOG"
+        };
+        assertThat(promotionsDetailPage.getTriggerList(), hasSize(1));
+
+        checkBadTriggers(duplicateTriggers, Errors.Term.DUPLICATE_EXISTING);
+        checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
+        checkBadTriggers(commaTriggers, Errors.Term.COMMAS);
+        checkBadTriggers(caseTriggers, Errors.Term.CASE);
+
+        FormInput triggerBox = promotionsDetailPage.triggerAddBox();
+        WebElement addButton = promotionsDetailPage.triggerAddButton();
+
+        triggerBox.setValue("a");
+        verifyThat("error message is cleared", promotionsDetailPage.getTriggerError(), isEmptyOrNullString());
+        verifyThat(addButton, not(disabled()));
+
+        triggerBox.setValue("    ");
+        verifyThat("cannot add '     '", promotionsDetailPage.triggerAddButton(), disabled());
+        triggerBox.setValue("\t");
+        verifyThat("cannot add '\\t'", promotionsDetailPage.triggerAddButton(), disabled());
+        promotionsDetailPage.addTrigger("\"valid trigger\"");
+        verifyThat("can add valid trigger", promotionsDetailPage.getTriggerList(), hasSize(2));
+    }
+
+    @Test
+    public void testPromotionViewable() {
+        final String handle = getDriver().getWindowHandle();
+        searchPage.getPromotedResult(1).click();
+        DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+        verifyThat("document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
+
+        getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+        // these fail on Chrome - seems to be an issue with ChromeDriver
+        verifyThat(getDriver().findElement(By.cssSelector("h1")), containsText(title));
+        verifyThat(getDriver().findElement(By.cssSelector("p")), containsText(content));
+        getDriver().switchTo().window(handle);
+        documentViewer.close();
+    }
+
+    @Test
+    public void testPromotionFilter() {
+        goToDetails();
+        final String newTitle = "aaa";
+        final String newTrigger = "alternative";
+
+        promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
+        promotionsDetailPage.addTrigger(newTrigger);
+        promotionsDetailPage.trigger(trigger).removeAndWait();
+        verifyThat(promotionsDetailPage.getTriggerList(), hasSize(1));
+        promotionsDetailPage.backButton().click();
+
+        promotionsPage = getElementFactory().getPromotionsPage();
+        promotionsPage.selectPromotionsCategoryFilter("Spotlight");
+        verifyThat(promotionsPage.getPromotionTitles(), empty());
+        promotionsPage.selectPromotionsCategoryFilter("Static Promotion");
+        verifyThat(promotionsPage.getPromotionTitles(), not(empty()));
+
+        promotionsPage.promotionsSearchFilter().sendKeys(newTrigger);
+        verifyThat(promotionsPage.getPromotionTitles(), not(empty()));
+
+        promotionsPage.clearPromotionsSearchFilter();
+        promotionsPage.selectPromotionsCategoryFilter("All Types");
+        promotionsPage.promotionsSearchFilter().sendKeys(trigger);
+        verifyThat(promotionsPage.getPromotionTitles(), empty());
     }
 }
