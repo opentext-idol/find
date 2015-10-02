@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.page.search.SearchBase;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,8 +20,8 @@ public class IndexFilter implements SearchFilter {
     }
 
     @Override
-    public void apply(SearchPage searchPage) {
-        for (Checkbox checkbox : searchPage.indexList()) {
+    public void apply(SearchBase searchBase) {
+        for (Checkbox checkbox : searchBase.indexList()) {
             if (indexes.contains(checkbox.getName().trim())) {
                 checkbox.check();
             } else {

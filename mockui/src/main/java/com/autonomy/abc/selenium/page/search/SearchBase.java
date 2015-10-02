@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -498,6 +499,16 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 			leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());
 		}
 		return leadSynonyms;
+	}
+
+	public List<Checkbox> indexList() {
+		List<Checkbox> checkboxes = new ArrayList<>();
+		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
+			if (element.isDisplayed()) {
+				checkboxes.add(new Checkbox(element, getDriver()));
+			}
+		}
+		return checkboxes;
 	}
 
 	public enum Filter {

@@ -345,12 +345,4 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
 	}
 
-	public List<Checkbox> indexList() {
-		List<Checkbox> checkboxes = new ArrayList<>();
-		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
-			checkboxes.add(new Checkbox(element, getDriver()));
-		}
-		return checkboxes;
-	}
-
 }

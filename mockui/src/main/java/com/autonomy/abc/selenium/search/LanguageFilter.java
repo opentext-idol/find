@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.search;
 
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.page.search.SearchBase;
+import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +15,9 @@ public class LanguageFilter implements SearchFilter {
 
     // TODO: create via app-specific factory
     @Override
-    public void apply(SearchPage searchPage) {
+    public void apply(SearchBase searchBase) {
         logger.info("skipping language filter on hosted");
-//        searchPage.languageButton().click();
-//        searchPage.javascriptClick(searchPage.findElement(By.className("search-language")).findElement(By.linkText(language)));
+//        searchBase.languageButton().click();
+//        searchBase.javascriptClick(searchBase.findElement(By.className("search-language")).findElement(By.linkText(language)));
     }
 }
