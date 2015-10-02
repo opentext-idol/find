@@ -23,7 +23,7 @@ public class HSOElementFactory extends ElementFactory {
     }
 
     @Override
-    public PromotionsPage getPromotionsPage() {
+    public HSOPromotionsPage getPromotionsPage() {
         return new HSOPromotionsPage(getDriver());
     }
 
@@ -48,7 +48,7 @@ public class HSOElementFactory extends ElementFactory {
     }
 
     @Override
-    public CreateNewPromotionsPage getCreateNewPromotionsPage() {
+    public HSOCreateNewPromotionsPage getCreateNewPromotionsPage() {
         return new HSOCreateNewPromotionsPage(getDriver());
     }
 

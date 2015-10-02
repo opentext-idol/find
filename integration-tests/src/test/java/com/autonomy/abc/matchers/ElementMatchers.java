@@ -68,4 +68,25 @@ public class ElementMatchers {
             }
         };
     }
+
+    public static Matcher<? super WebElement> disabled() {
+        return new TypeSafeMatcher<WebElement>() {
+
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return item.getAttribute("disabled") != null;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("an element that is disabled");
+            }
+
+            @Override
+            public void describeMismatchSafely(final WebElement item, final Description description) {
+                description.appendText("element was ").appendText(item.toString());
+            }
+        };
+    }
+
 }

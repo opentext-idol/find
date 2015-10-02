@@ -1,8 +1,10 @@
 package com.autonomy.abc.selenium.page.promotions;
 
+import com.autonomy.abc.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,8 +19,9 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
 	}
 
+	@Deprecated
 	public WebElement continueButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.cssSelector(".next-step"));
+		return continueButton();
 	}
 
 	public String getCurrentStepTitle() {
@@ -43,13 +46,33 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		}
 	}
 
+	private WebElement getVisibleElement(By by) {
+		return new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.className("current-step"))).findElement(by);
+	}
+
+	public WebElement continueButton() {
+		return getVisibleElement(By.className("next-step"));
+	}
+
+	public WebElement finishButton() {
+		return getVisibleElement(By.className("finish-step"));
+	}
+
+	public WebElement cancelButton() {
+		return getVisibleElement(By.className("cancel-wizard"));
+	}
+
+	@Deprecated
 	public WebElement cancelButton(final WizardStep dataStep) {
-		return findElement(By.cssSelector("[data-step='" + dataStep.getTitle() + "']")).findElement(By.cssSelector(".cancel-wizard"));
+		return cancelButton();
+	}
+
+	public FormInput triggerBox() {
+		return new FormInput(findElement(By.cssSelector("input[name='words']")), getDriver());
 	}
 
 	public void addSearchTrigger(final String searchTrigger) {
-		findElement(By.cssSelector("input[name='words']")).clear();
-		findElement(By.cssSelector("input[name='words']")).sendKeys(searchTrigger);
+		triggerBox().setValue(searchTrigger);
 
 		try {
 			loadOrFadeWait();
@@ -77,8 +100,12 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		return findElement(By.cssSelector(".trigger-words-form")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
-	public WebElement finishButton() {
-		return findElement(By.cssSelector("[data-step='" + WizardStep.TRIGGER.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Finish')]"));
+	public String getTriggerError() {
+		try {
+			return findElement(By.className("help-block")).getText();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 
 	public WebElement spotlightType(final String type ) {
@@ -109,6 +136,6 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 
 	@Override
 	public void waitForLoad() {
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content")));
+		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("pd-wizard")));
 	}
 }

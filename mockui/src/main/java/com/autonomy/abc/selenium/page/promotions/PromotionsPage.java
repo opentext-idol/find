@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class PromotionsPage extends AppElement implements AppPage {
+	PromotionsDetailPage promotionsDetailPage;
 
 	public PromotionsPage(WebDriver driver) {
 		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))),driver);
@@ -34,7 +35,8 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return findElement(By.xpath(".//h3[contains(text(), '" + promotionTitleSubstring.replace("\"", "").split("\\s+")[0] + "')]/../../.."));
 	}
 
-	// TODO: move to Promotions
+	// use PromotionActionFactory.makeDeletePromotion(...)
+	@Deprecated
 	public void deletePromotion() {
 		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".extra-functions .dropdown-toggle"));
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
@@ -48,20 +50,14 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteExistingButton()));
 	}
 
-	public void schedulePromotion() {
-		final WebElement extraFunctionsDropdown = findElement(By.cssSelector(".extra-functions .dropdown-toggle"));
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(extraFunctionsDropdown));
-		extraFunctionsDropdown.click();
-
-		final WebElement scheduleButton = findElement(By.xpath(".//a[contains(text(), 'Schedule')]"));
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(scheduleButton));
-		scheduleButton.click();
-	}
-
+	// use PromotionsDetailPage.spotlightTypeDropdown()
+	@Deprecated
 	public WebElement spotlightButton() {
 		return findElement(By.cssSelector(".promotion-view-name-dropdown"));
 	}
 
+	// use PromotionsDetailPage.pinPosition()
+	@Deprecated
 	public Editable promotionPosition() {
 		return new InlineEdit(findElement(By.className("promotion-position-edit")), getDriver());
 	}
@@ -79,6 +75,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return promotionTitles;
 	}
 
+	@Deprecated
 	public void deleteAllPromotions() {
 		for (final WebElement promotion : promotionsList()) {
 			promotion.click();
@@ -87,6 +84,8 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		}
 	}
 
+	// use PromotionsDetailPage.getTriggerList()
+	@Deprecated
 	public List<String> getSearchTriggersList() {
 		final List<String> searchTriggerList = new ArrayList<>();
 		loadOrFadeWait();
@@ -98,6 +97,8 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return searchTriggerList;
 	}
 
+	// use PromotionsDetailPage.triggerAddBox()
+	@Deprecated
 	public void addSearchTrigger(final String searchTrigger) {
 		triggerTextBox().clear();
 		triggerTextBox().sendKeys(searchTrigger);
@@ -106,55 +107,79 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		loadOrFadeWait();
 	}
 
+	// use PromotionsDetailPage.getPromotedTitles()
+	@Deprecated
 	public List <String> getPromotedList() {
 		final List <String> docTitles = new ArrayList<>();
-		for (final WebElement docTitle : findElements(By.cssSelector(".promotion-list-container h3"))) {
+		for (final WebElement docTitle : findElements(By.cssSelector(".promoted-documents-list h3"))) {
 			docTitles.add(docTitle.getText());
 		}
 		return docTitles;
 	}
 
+	// use PromotionsDetailPage.triggerAddBox()
+	@Deprecated
 	public WebElement triggerTextBox() {
 		return findElement(By.cssSelector(".promotion-match-terms [name='words']"));
 	}
 
+	// use PromotionsDetailPage.triggerAddBox()
+	@Deprecated
 	public WebElement triggerAddButton() {
 		return findElement(By.cssSelector(".promotion-match-terms")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
+	// use PromotionsDetailPage.trigger()
+	@Deprecated
 	public void removeSearchTrigger(final String searchTrigger) {
 		loadOrFadeWait();
 		waitUntilClickableThenClick(triggerRemoveButton(searchTrigger));
 	}
 
+	// use PromotionsDetailPage.trigger()
+	@Deprecated
 	public WebElement clickableSearchTrigger(final String triggerName) {
 		return findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "']"));
 	}
 
+	// use PromotionsDetailPage.trigger()
+	@Deprecated
 	public WebElement triggerRemoveButton(final String triggerName) {
 		return findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "'] .remove-word"));
 	}
 
+	// use PromotionsDetailPage.backButton()
+	@Deprecated
 	public WebElement backButton() {
 		return findElement(By.xpath(".//a[text()[contains(., 'Back')]]"));
 	}
 
+	// use PromotionsDetailPage.promotionTitle()
+	@Deprecated
 	public String getPromotionTitle() {
 		return findElement(By.cssSelector(".promotion-title-edit span")).getText();
 	}
 
+	// use PromotionsDetailPage.promotionTitle()
+	@Deprecated
 	public Editable name() {
 		return new InlineEdit(findElement(By.className("promotion-title-edit")), getDriver());
 	}
 
+	// use PromotionsDetailPage.promotionTitle()
+	@Deprecated
 	public void createNewTitle(final String title) throws InterruptedException {
 		name().setValueAndWait(title);
 	}
 
+	// use PromotionDetailsPage.getPromotionType()
+	@Deprecated
 	public String getPromotionType() {
 		return findElement(By.cssSelector(".promotion-view-name")).getText();
 	}
 
+	// use PromotionDetailsPage.spotlightTypeDropdown()
+	@Deprecated
 	public void changeSpotlightType(final String promotionType) {
 		// clear notifications
 		new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationsDisappear());
@@ -163,85 +188,26 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		new WebDriverWait(getDriver(),3).until(GritterNotice.notificationAppears());
 	}
 
+	// use PromotionsDetailPage.promotedDocument(...)
+	@Deprecated
 	public WebElement promotedDocument(final String title) {
 		return findElement(By.xpath(".//ul[contains(@class, 'promoted-documents-list')]")).findElement(By.xpath(".//a[contains(text(), '" + title + "')]/../.."));
 	}
 
-	public String promotedDocumentSummary(final String title) {
-		return promotedDocument(title).findElement(By.cssSelector("p")).getText();
-	}
-
+	// use PromotionsDetailPage.removablePromotedDocument(...)
+	@Deprecated
 	public void deleteDocument(final String title) {
 		promotedDocument(title).findElement(By.cssSelector(".remove-document-reference.clickable")).click();
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".search-result-item .fa-spin")));
 	}
 
+	@Deprecated
 	public WebElement addMorePromotedItemsButton() {
 		return findElement(By.xpath(".//a[text()[contains(., 'Add More')]]"));
 
 	}
 
-		public List<String> getDynamicPromotedList(final boolean fullList) {
-			loadOrFadeWait();
-			final List<String> promotionsList = new ArrayList<>();
-
-			if (!fullList) {
-				promotionsList.addAll(getVisiblePromotionItems());
-			} else {
-				promotionsList.addAll(getVisiblePromotionItems());
-
-				if (promotionSummaryForwardButton().isDisplayed()) {
-					loadOrFadeWait();
-
-					javascriptClick(promotionSummaryForwardToEndButton());
-					loadOrFadeWait();
-					promotionsList.addAll(getVisiblePromotionItems());
-					final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
-
-					//starting at 1 because I add the results for the first page above
-					for (int i = 1; i < numberOfPages; i++) {
-						loadOrFadeWait();
-						javascriptClick(promotionSummaryBackButton());
-						loadOrFadeWait();
-						new WebDriverWait(getDriver(), 6).until(ExpectedConditions.visibilityOf(docLogo()));
-
-						promotionsList.addAll(getVisiblePromotionItems());
-					}
-				}
-			}
-
-			return promotionsList;
-	}
-
-	public WebElement promotionSummaryBackToStartButton() {
-		return getParent(findElement(By.cssSelector(".fa-angle-double-left")));
-	}
-
-	public WebElement promotionSummaryBackButton() {
-		return getParent(findElement(By.cssSelector(".fa-angle-left")));
-	}
-
-	public WebElement promotionSummaryForwardButton() {
-		return getParent(findElement(By.cssSelector(".fa-angle-right")));
-	}
-
-	public WebElement promotionSummaryForwardToEndButton() {
-		return getParent(findElement(By.cssSelector(".fa-angle-double-right")));
-	}
-	private List<String> getVisiblePromotionItems() {
-		final List<String> promotionsList = new LinkedList<>();
-
-		for (final WebElement promotionTitle : findElements(By.cssSelector(".query-search-results .search-results h3 a"))) {
-			promotionsList.add(promotionTitle.getText());
-		}
-
-		return promotionsList;
-	}
-
-	public WebElement docLogo() {
-		return findElement(By.cssSelector(".fa-file-o"));
-	}
-
+	@Deprecated
 	public String getLanguage() {
 		return findElement(By.cssSelector(".promotion-language")).getText();
 	}
@@ -270,14 +236,17 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		promotionsSearchFilter().sendKeys(Keys.BACK_SPACE);
 	}
 
+	@Deprecated
 	public Editable queryText() {
 		return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
 	}
 
+	@Deprecated
 	public String getQueryText() {
 		return queryText().getValue();
 	}
 
+	@Deprecated
 	public void editQueryText(final String newQueryText) {
 		queryText().setValueAndWait(newQueryText);
 	}

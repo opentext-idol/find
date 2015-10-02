@@ -11,6 +11,7 @@ public abstract class CreateNewDynamicPromotionsPage extends CreateNewPromotions
 		super(driver);
 	}
 
+	@Deprecated
 	public abstract void createDynamicPromotion(final String type, final String trigger);
 
 	public WebElement dial() {

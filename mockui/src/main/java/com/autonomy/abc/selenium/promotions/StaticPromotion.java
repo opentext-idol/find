@@ -1,6 +1,11 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.element.Wizard;
+
+import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
+import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
+
 
 public class StaticPromotion extends Promotion {
     private String title;
@@ -13,19 +18,21 @@ public class StaticPromotion extends Promotion {
     }
 
     @Override
-    public void doWizard(Wizard wizard) {
-        doDetails(wizard);
-        doLanguage(wizard);
-        doTriggers(wizard);
+    public String getName() {
+        return "static";
     }
 
-    private void doDetails(Wizard wizard) {
-        wizard.formInput().setValue(title);
-        wizard.textarea().setValue(content);
-        wizard.continueButton().click();
+    @Override
+    public Wizard makeWizard(CreateNewPromotionsBase newPromotionsBase) {
+        return new StaticPromotionWizard((HSOCreateNewPromotionsPage) newPromotionsBase);
     }
 
-    private void doLanguage(Wizard wizard) {
-        wizard.continueButton().click();
+    private class StaticPromotionWizard extends PromotionWizard {
+        public StaticPromotionWizard(HSOCreateNewPromotionsPage page) {
+            super(page);
+            add(new NewDocumentDetailsStep(page, title, content));
+            add(new BlankWizardStep("Language"));
+            add(new SearchTriggerStep(page, getTrigger()));
+        }
     }
 }

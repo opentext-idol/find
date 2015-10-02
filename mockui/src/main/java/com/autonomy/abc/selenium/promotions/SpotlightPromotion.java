@@ -1,7 +1,12 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.element.Wizard;
 
+import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
+import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
+
+// TODO: properly separate on-prem from hosted
 public class SpotlightPromotion extends Promotion {
     private final static Type TYPE = Type.SPOTLIGHT;
     private SpotlightType spotlightType;
@@ -10,25 +15,38 @@ public class SpotlightPromotion extends Promotion {
         this(SpotlightType.SPONSORED, trigger);
     }
 
+    @Override
+    public String getName() {
+        return "spotlight promotion";
+    }
+
     public SpotlightPromotion(SpotlightType type, String trigger) {
         super(trigger);
         spotlightType = type;
     }
 
-    public Type getType() {
-        return TYPE;
-    }
-
-    public SpotlightType getSpotlightType() {
-        return spotlightType;
-    }
-
-    public void doWizard(Wizard wizard) {
-        doType(wizard);
-        String title = wizard.getTitle();
-        if (wizard.getTitle().equals("Promotion details")) {
-            doSpotlightType(wizard);
+    public Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
+        if (createNewPromotionsBase instanceof HSOCreateNewPromotionsPage) {
+            return new SpotlightPromotionWizard(createNewPromotionsBase);
+        } else {
+            return new OPSpotlightPromotionWizard(createNewPromotionsBase);
         }
-        doTriggers(wizard);
+    }
+
+    private class SpotlightPromotionWizard extends PromotionWizard {
+        public SpotlightPromotionWizard(CreateNewPromotionsBase page) {
+            super(page);
+            add(new OptionWizardStep(page, "Promotion type", TYPE.getOption()));
+            add(new SearchTriggerStep(page, getTrigger()));
+        }
+    }
+
+    private class OPSpotlightPromotionWizard extends PromotionWizard {
+        public OPSpotlightPromotionWizard(CreateNewPromotionsBase page) {
+            super(page);
+            add(new OptionWizardStep(page, "Promotion type", TYPE.getOption()));
+            add(new OptionWizardStep(page, "Promotion details", spotlightType.getOption()));
+            add(new SearchTriggerStep(page, getTrigger()));
+        }
     }
 }

@@ -25,16 +25,17 @@ public class ConnectionActionFactory extends ActionFactory {
         this.elementFactory = (HSOElementFactory) elementFactory;
     }
 
-    public Action makeSetUpConnection(final Connector connector) {
-        return new Action() {
+    public Action<ConnectionsPage> makeSetUpConnection(final Connector connector) {
+        return new Action<ConnectionsPage>() {
             @Override
-            public void apply() {
+            public ConnectionsPage apply() {
                 goToPage(NavBarTabId.CONNECTIONS);
                 connectionsPage = elementFactory.getConnectionsPage();
                 connectionsPage.newConnectionButton().click();
                 newConnectionPage = elementFactory.getNewConnectionPage();
                 connector.makeWizard(newConnectionPage).apply();
                 new WebDriverWait(getDriver(), 300).until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
+                return connectionsPage;
             }
         };
     }
@@ -43,22 +44,23 @@ public class ConnectionActionFactory extends ActionFactory {
         return makeGoToDetails(connector.getName());
     }
 
-    public Action makeGoToDetails(final String name) {
-        return new Action() {
+    public Action<ConnectionsDetailPage> makeGoToDetails(final String name) {
+        return new Action<ConnectionsDetailPage>() {
             @Override
-            public void apply() {
+            public ConnectionsDetailPage apply() {
                 goToPage(NavBarTabId.CONNECTIONS);
                 connectionsPage = elementFactory.getConnectionsPage();
                 connectionsPage.connectionWithTitleContaining(name).click();
                 connectionsDetailPage = elementFactory.getConnectionsDetailPage();
+                return connectionsDetailPage;
             }
         };
     }
 
-    public Action makeDeleteConnection(final Connector connector) {
-        return new Action() {
+    public Action<ConnectionsPage> makeDeleteConnection(final Connector connector) {
+        return new Action<ConnectionsPage>() {
             @Override
-            public void apply() {
+            public ConnectionsPage apply() {
                 makeGoToDetails(connector).apply();
                 ConnectionsDetailPage connectionsDetailPage = elementFactory.getConnectionsDetailPage();
                 connectionsDetailPage.deleteButton().click();
@@ -70,6 +72,7 @@ public class ConnectionActionFactory extends ActionFactory {
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {}
+                return connectionsPage;
             }
         };
     }

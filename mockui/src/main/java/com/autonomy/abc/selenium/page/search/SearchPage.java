@@ -217,6 +217,14 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return promotionsList;
 	}
 
+	public List<WebElement> getPromotedResults() {
+		return findElements(By.cssSelector(".promotions-list h3"));
+	}
+
+	public WebElement getPromotedResult(int number) {
+		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ") h3")));
+	}
+
 	public List<String> getSearchResultTitles(int numberOfResults){
         List<String> titles = new ArrayList<>();
 

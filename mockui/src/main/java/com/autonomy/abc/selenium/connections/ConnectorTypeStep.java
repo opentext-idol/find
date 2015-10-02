@@ -21,9 +21,10 @@ public class ConnectorTypeStep implements WizardStep {
     }
 
     @Override
-    public void apply() {
+    public Object apply() {
         page.connectorUrl().setValue(url);
         page.connectorName().setValue(name);
+        return null;
     }
 
     @Override

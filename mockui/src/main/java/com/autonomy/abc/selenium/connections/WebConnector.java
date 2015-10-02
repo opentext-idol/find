@@ -2,11 +2,7 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
-import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class WebConnector extends Connector {
     private String url;
@@ -25,36 +21,26 @@ public class WebConnector extends Connector {
         return new WebConnectorWizard(newConnectionPage);
     }
 
-    private class WebConnectorWizard implements Wizard {
+    private class WebConnectorWizard extends Wizard {
         private NewConnectionPage page;
-        private List<WizardStep> wizardSteps = new ArrayList<>();
-        private int currentStep = 0;
 
         public WebConnectorWizard(NewConnectionPage newConnectionPage) {
+            super();
             page = newConnectionPage;
-            wizardSteps.add(new ConnectorTypeStep(page, url, name));
-            wizardSteps.add(new BlankWizardStep("Connector Configuration"));
-            wizardSteps.add(new BlankWizardStep("Index"));
-            wizardSteps.add(new BlankWizardStep("Complete"));
+            add(new ConnectorTypeStep(page, url, name));
+            add(new BlankWizardStep("Connector Configuration"));
+            add(new BlankWizardStep("Index"));
+            add(new BlankWizardStep("Complete"));
         }
 
-        @Override
-        public List<WizardStep> getSteps() {
-            return wizardSteps;
-        }
-
-        @Override
-        public WizardStep getCurrentStep() {
-            return wizardSteps.get(currentStep);
-        }
 
         @Override
         public void next() {
-            currentStep++;
-            if (currentStep < 4) {
-                page.nextButton().click();
-            } else {
+            if (onFinalStep()) {
                 page.finishButton().click();
+            } else {
+                page.nextButton().click();
+                incrementStep();
             }
             page.loadOrFadeWait();
         }
@@ -63,14 +49,6 @@ public class WebConnector extends Connector {
         public void cancel() {
             page.cancelButton().click();
             page.loadOrFadeWait();
-        }
-
-        @Override
-        public void apply() {
-            for (WizardStep wizardStep : wizardSteps) {
-                wizardStep.apply();
-                next();
-            }
         }
     }
 }

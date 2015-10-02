@@ -1,9 +1,13 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.util.Predicates;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -33,8 +37,32 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new Dropdown(findElement(By.className("extra-functions")), getDriver());
     }
 
+    public void delete() {
+        final Dropdown editMenu = editMenu();
+        editMenu.open();
+        editMenu.getItem("Delete").click();
+        final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
+        deleteModal.findElement(By.cssSelector(".btn-danger")).click();
+    }
+
     public Editable promotionTitle() {
         return new InlineEdit(findElement(By.className("promotion-title-edit")), getDriver());
+    }
+
+    public String getPromotionType() {
+        return findElement(By.cssSelector(".promotion-view-name")).getText();
+    }
+
+    public Dropdown spotlightTypeDropdown() {
+        return new Dropdown(findElement(By.className("promotion-view-name-dropdown")), getDriver());
+    }
+
+    public Editable pinPosition() {
+        return new InlineEdit(findElement(By.className("promotion-position-edit")), getDriver());
+    }
+
+    public String getLanguage() {
+        return findElement(By.className("promotion-language")).getText();
     }
 
     public List<String> getTriggerList() {
@@ -61,6 +89,31 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new FormInput(findElement(By.cssSelector(".promotion-match-terms [name='words']")), getDriver());
     }
 
+    public WebElement triggerAddButton() {
+        return findElement(By.cssSelector(".promotion-match-terms [type='submit']"));
+    }
+
+    public String getTriggerError() {
+        try {
+            return findElement(By.cssSelector(".promotion-match-terms .help-block")).getText();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    public void waitForTriggerRefresh() {
+        new WebDriverWait(getDriver(), 20).until(Predicates.invisibilityOfAllElementsLocated(By.cssSelector(".promotion-view-match-terms .term .fa-spin")));
+    }
+
+    public void addTrigger(String text) {
+        triggerAddBox().setAndSubmit(text);
+        waitForTriggerRefresh();
+    }
+
+    public WebElement addMoreButton() {
+        return findElement(By.linkText("Add more"));
+    }
+
     public List<WebElement> promotedList() {
         return findElements(By.cssSelector(".promotion-list-container h3"));
     }
@@ -72,4 +125,25 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         }
         return docTitles;
     }
+
+    public WebElement promotedDocument(final String title) {
+        return findElement(By.cssSelector("ul.promoted-documents-list")).findElement(By.xpath(".//a[contains(text(), '" + title + "')]/../.."));
+    }
+
+    public Removable removablePromotedDocument(final String title) {
+        return new LabelBox(promotedDocument(title), getDriver());
+    }
+
+    public Editable staticPromotedDocumentTitle() {
+        return new InlineEdit(findElement(By.className("static-promotion-title-edit")), getDriver());
+    }
+
+    public Editable staticPromotedDocumentContent() {
+        return new InlineEdit(findElement(By.className("static-promotion-content-edit")), getDriver());
+    }
+
+    public Editable queryText() {
+        return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
+    }
+
 }

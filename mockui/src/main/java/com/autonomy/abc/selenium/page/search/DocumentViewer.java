@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.NoSuchElementException;
+
 public class DocumentViewer extends AppElement implements AppPage {
     private DocumentViewer(WebDriver driver) {
         super(driver.findElement(By.id("colorbox")), driver);
@@ -56,16 +58,24 @@ public class DocumentViewer extends AppElement implements AppPage {
         return findElement(By.cssSelector("tr:nth-child(" + row + ") td.break-all")).getText();
     }
 
+    public String getField(String name) {
+        try {
+            return findElement(By.xpath(".//th[contains(text(), '" + name + "')]/../td")).getText();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
     public String getDomain() {
-        return getRowText(1);
+        return getField("Domain");
     }
 
     public String getIndex() {
-        return getRowText(2);
+        return getField("Index");
     }
 
     public String getReference() {
-        return getRowText(3);
+        return getField("Reference");
     }
 
     @Override

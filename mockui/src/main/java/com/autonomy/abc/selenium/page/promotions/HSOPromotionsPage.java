@@ -2,12 +2,19 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 public class HSOPromotionsPage extends PromotionsPage {
     public HSOPromotionsPage(WebDriver driver) {
         super(driver);
     }
 
+    public WebElement staticPromotionButton() {
+        return findElement(By.linkText("Promote new document"));
+    }
+
+    // use PromotionActionFactory instead
+    @Deprecated
     public void newStaticPromotion(String title, String content, String trigger){
         findElement(By.linkText("Promote new document")).click();
         loadOrFadeWait();
