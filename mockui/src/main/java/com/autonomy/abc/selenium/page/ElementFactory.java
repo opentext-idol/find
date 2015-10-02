@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.openqa.selenium.WebDriver;
@@ -29,6 +30,10 @@ public abstract class ElementFactory {
     public PromotionsDetailPage getPromotionsDetailPage() {
         return new PromotionsDetailPage(driver);
     };
+
+    public EditDocumentReferencesPage getEditDocumentReferencesPage() {
+        return EditDocumentReferencesPage.make(driver);
+    }
 
     public abstract KeywordsPage getKeywordsPage();
 
