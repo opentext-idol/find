@@ -95,7 +95,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public String getTriggerError() {
         try {
-            return findElement(By.className("help-block")).getText();
+            return findElement(By.cssSelector(".promotion-match-terms .help-block")).getText();
         } catch (NoSuchElementException e) {
             return null;
         }
