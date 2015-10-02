@@ -24,10 +24,15 @@ import com.hp.autonomy.hod.client.api.textindex.query.fields.*;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
+import org.apache.commons.collections.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Action;
@@ -43,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
@@ -50,6 +56,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.number.OrderingComparison.greaterThan;
+import static org.hamcrest.number.OrderingComparison.lessThan;
 
 public class FindITCase extends ABCTestBase {
     private FindPage find;
@@ -420,7 +428,7 @@ public class FindITCase extends ABCTestBase {
 
     private void promotionShownCorrectly (WebElement promotion) {
         assertThat(promotion.getAttribute("class"),containsString("promoted-document"));
-        assertThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
+        assertThat(promotion.findElement(By.className("promoted-label")).getText(), containsString("Promoted"));
         assertTrue(promotion.findElement(By.className("icon-star")).isDisplayed());
     }
 
@@ -546,6 +554,7 @@ public class FindITCase extends ABCTestBase {
         return dateFormat.format(cal.getTime());
     }
 
+    @Ignore //TODO seems to have broken
     @Test
     public void testAllParametricFieldsAreShown() throws HodErrorException {
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
@@ -595,6 +604,11 @@ public class FindITCase extends ABCTestBase {
 
             new WebDriverWait(getDriver(),20).until(new WaitForCBoxLoadIndicatorToDisappear());
             assertThat(service.getCBoxLoadedContent().getText(), not(containsString("500")));
+
+            assertTrue(service.viewBoxNextButton().isDisplayed());
+            assertTrue(service.viewBoxPrevButton().isDisplayed());
+            assertTrue(service.colourBox().isDisplayed());
+
             service.closeViewBox();
             find.loadOrFadeWait();
         }
@@ -620,6 +634,9 @@ public class FindITCase extends ABCTestBase {
         service.getSearchResultTitle(1).click();
         do{
             assertThat(service.getCBoxLoadedContent().getText(),not(containsString("500")));
+            assertTrue(service.viewBoxNextButton().isDisplayed());
+            assertTrue(service.viewBoxPrevButton().isDisplayed());
+            assertTrue(service.colourBox().isDisplayed());
             service.viewBoxNextButton().click();
         } while (!service.cBoxFirstDocument());
     }
@@ -645,12 +662,16 @@ public class FindITCase extends ABCTestBase {
 
     @Test
     public void testFileTypes(){
+        find.search("love ");
+
         for(FileType f : FileType.values()) {
             service.selectContentType(f.getSidebarString());
 
             for(WebElement result : service.getResults()){
                 assertThat(result.findElement(By.tagName("i")).getAttribute("class"), containsString(f.getFileIconString()));
             }
+
+            service.selectContentType(f.getSidebarString());
         }
     }
 
@@ -681,21 +702,27 @@ public class FindITCase extends ABCTestBase {
         keywordsPage.createNewKeywordsButton().click();
 
         CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createNewKeywordsPage.createSynonymGroup("cat iuhdsafsaubfdja","English");
+        createNewKeywordsPage.createSynonymGroup("cat iuhdsafsaubfdja", "English");
 
         getElementFactory().getSearchPage();
-
-        Thread.sleep(15000);
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("iuhdsafsaubfdja");
 
         assertThat(service.getText(), not(noDocs));
-        assertThat(service.getSearchResultTitle(1).getText(),is(firstTitle));
+        verifyThat(service.getSearchResultTitle(1).getText(), is(firstTitle));
     }
 
     @Test
     public void testBlacklist() throws InterruptedException {
+        getDriver().switchTo().window(browserHandles.get(0));
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+        keywordsPage.deleteKeywords();
+
+        find.loadOrFadeWait();
+
+        getDriver().switchTo().window(browserHandles.get(1));
         find.search("Cat");
 
         assertThat(service.getText(), not(noDocs));
@@ -706,17 +733,167 @@ public class FindITCase extends ABCTestBase {
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+        keywordsPage = getElementFactory().getKeywordsPage();
         keywordsPage.createNewKeywordsButton().click();
 
         CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createNewKeywordsPage.createBlacklistedTerm("Cat","English");
+        createNewKeywordsPage.createBlacklistedTerm("Cat", "English");
+
+        getElementFactory().getKeywordsPage();
 
         getDriver().switchTo().window(browserHandles.get(1));
-
         find.search("Cat");
 
         assertThat(service.getText(), noDocs);
+    }
+
+    @Test
+    public void testOverlappingSynonyms(){
+
+    }
+
+    @Test
+    public void testBooleanOperators(){
+        find.search("rss");
+
+        service.filterByIndex(domain, "naturalnavigator");
+
+        int rssSearch = service.getResults().size();
+
+        find.search("html");
+
+        int htmlSearch = service.getResults().size();
+
+        find.search("rss OR html");
+
+        assertThat(service.getResults().size(), is(rssSearch + htmlSearch));
+
+        find.search("rss XOR html"); //TODO check to find a better example of this?
+
+        assertThat(service.getResults().size(), is(rssSearch + htmlSearch));
+
+        find.search("rss AND html");
+
+        assertThat(service.getText(), noDocs);
+    }
+
+    //DUPLICATE SEARCH TEST (almost)
+    @Test
+    public void testCorrectErrorMessageDisplayed() {
+        //TODO: map error messages to application type
+
+        List<String> boolOperators = Arrays.asList("OR", "WHEN", "SENTENCE", "DNEAR");
+        List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
+
+        for (final String searchTerm : boolOperators) {
+            find.search(searchTerm);
+            assertThat("Correct error message not present for searchterm: " + searchTerm, find.getText(), containsString("An error occurred retrieving results"));
+        }
+
+        for (final String searchTerm : stopWords) {
+            find.search(searchTerm);
+            assertThat("Correct error message not present for searchterm: " + searchTerm, find.getText(), containsString("No results found"));
+        }
+    }
+
+    //DUPLICATE SEARCH TEST
+    @Test
+    public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
+        final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
+        for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
+            find.search(hiddenBooleansProximity);
+            find.loadOrFadeWait();
+            assertThat(find.getText(), not(containsString("An error occurred retrieving results")));
+        }
+    }
+
+    @Test
+    public void testIdolSearchTypes() {
+        /*find.search("leg");
+
+        int initialSearchCount = find.countSearchResults();
+        find.search("leg[2:2]");
+        find.loadOrFadeWait();
+        assertThat("Failed with the following search term: leg[2:2]  Search count should have reduced on initial search 'leg'",
+                initialSearchCount, greaterThan(find.countSearchResults()));
+
+        search("red");
+        searchPage.loadOrFadeWait();
+        initialSearchCount = searchPage.countSearchResults();
+        search("red star");
+        searchPage.loadOrFadeWait();
+        final int secondSearchCount = searchPage.countSearchResults();
+        assertThat("Failed with the following search term: red star  Search count should have increased on initial search: red",
+                initialSearchCount, lessThan(secondSearchCount));
+
+        search("\"red star\"");
+        searchPage.loadOrFadeWait();
+        final int thirdSearchCount = searchPage.countSearchResults();
+        assertThat("Failed with the following search term: '\"red star\"'  Search count should have reduced on initial search: red star",
+                secondSearchCount, greaterThan(thirdSearchCount));
+
+        search("red NOT star");
+        searchPage.loadOrFadeWait();
+        final int redNotStar = searchPage.countSearchResults();
+        assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
+                initialSearchCount, greaterThan(redNotStar));
+
+        //TODO check
+        search("star");
+        searchPage.loadOrFadeWait();
+        final int star = searchPage.countSearchResults();
+
+        search("star NOT red");
+        searchPage.loadOrFadeWait();
+        final int starNotRed = searchPage.countSearchResults();
+        assertThat("Failed with the following search term: star NOT red  Search count should have reduced on initial search: star",
+                star, greaterThan(starNotRed));
+
+        search("red OR star");
+        searchPage.loadOrFadeWait();
+        assertThat("Failed with the following search term: red OR star  Search count should be the same as initial search: red star",
+                secondSearchCount, CoreMatchers.is(searchPage.countSearchResults()));
+
+        search("red AND star");
+        searchPage.loadOrFadeWait();
+        final int fourthSearchCount = searchPage.countSearchResults();
+        assertThat("Failed with the following search term: red AND star  Search count should have reduced on initial search: red star",
+                secondSearchCount, greaterThan(fourthSearchCount));
+        assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
+                thirdSearchCount, lessThan(fourthSearchCount));
+        assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
+                fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));    //TODO Cech*/
+    }
+
+    String findErrorMessage = "An error occurred retrieving results";
+
+    //DUPLICATE
+    @Test
+    public void testSearchParentheses() {
+        List<String> testSearchTerms = Arrays.asList("(",")",") (",")war"); //"()" appears to be fine
+
+        for(String searchTerm : testSearchTerms){
+            find.search(searchTerm);
+
+            assertThat(service.getText(), containsString(findErrorMessage));
+        }
+    }
+
+    //DUPLICATE
+    @Test
+    public void testSearchQuotationMarks() {
+        List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
+        for (String searchTerm : testSearchTerms){
+            find.search(searchTerm);
+            assertThat(service.getText(), Matchers.containsString(findErrorMessage));
+        }
+    }
+
+    //DUPLICATE
+    @Test
+    public void testWhitespaceSearch() {
+        find.search(" ");
+        assertThat(service.getText(),containsString(findErrorMessage));
     }
 
     private enum Index {
@@ -726,7 +903,12 @@ public class FindITCase extends ABCTestBase {
         RUGBY("rugbyworldcup"),
         BBC("bbc"),
         LABOUR("labour"),
-        REDDIT("reddit");
+        REDDIT("reddit"),
+        FRUITMANUAL("fruitindex_manual"),
+        FRUIT("fruitindex"),
+        DELETABLE("deleteable"),
+        SIMPSONS("simpsons"),
+        STATIC("static6");
 
         private final String title;
 

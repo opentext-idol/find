@@ -15,7 +15,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
-//import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindPage;
 
 public class HSOElementFactory extends ElementFactory {
     public HSOElementFactory(final WebDriver driver) {
