@@ -20,7 +20,7 @@ public class LabelBox implements Removable {
 
     @Override
     public boolean isRemovable() {
-        return element.findElements(By.className("fa-times")).size() > 0;
+        return element.findElements(By.className("fa-close")).size() > 0;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class LabelBox implements Removable {
 
     @Override
     public void removeAsync() {
-        element.findElement(By.className("fa-times")).click();
+        element.findElement(By.className("fa-close")).click();
     }
 
     @Override
