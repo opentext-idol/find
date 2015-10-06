@@ -24,9 +24,6 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		return continueButton();
 	}
 
-	public WebElement continueButton(){
-		return findElement(By.cssSelector(".current-step .next-step"));
-	}
 
 	public String getCurrentStepTitle() {
 		return findElement(By.cssSelector(".current-step-pill .current-step-title")).getText();
