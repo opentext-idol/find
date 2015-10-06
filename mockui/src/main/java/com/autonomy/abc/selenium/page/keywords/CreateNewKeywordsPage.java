@@ -31,6 +31,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 				By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../..")));
 	}
 
+	@Deprecated // no longer exists
 	public WebElement backButton() {
 		return new WebDriverWait(getDriver(),4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()[contains(.,'Back')]]")));
 	}
