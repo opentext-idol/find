@@ -208,13 +208,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testBackButton() {
-		setUpCarsPromotion(1);
-		promotionsDetailPage.backButton().click();
-		assertThat("Back button redirects to main promotions page", getDriver().getCurrentUrl().endsWith("promotions"));
-	}
-
-	@Test
 	public void testEditPromotionName() throws InterruptedException {
 		setUpCarsPromotion(1);
 		Editable title = promotionsDetailPage.promotionTitle();
@@ -251,7 +244,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String[] triggers = {"bunny", "pony", "<script> document.body.innerHTML = '' </script>"};
 		for (int i=0; i<searchTerms.length; i++) {
 			setUpPromotion(searchActionFactory.makeSearch(searchTerms[i]), new SpotlightPromotion(triggers[i]));
-			promotionsDetailPage.backButton().click();
+			promotionsPage = promotionActionFactory.goToPromotions();
 		}
 
 		// "script" gets mangled
@@ -287,8 +280,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	private void renamePromotionContaining(String oldTitle, String newTitle) {
 		goToDetails(oldTitle);
 		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
-		promotionsDetailPage.backButton().click();
-		promotionsPage = getElementFactory().getPromotionsPage();
+		promotionsPage = promotionActionFactory.goToPromotions();
 	}
 
 	@Test
@@ -316,7 +308,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		for (int i = 0; i < searches.length; i++) {
 			setUpPromotion(searches[i], promotions[i]);
-			promotionsDetailPage.backButton().click();
+			promotionActionFactory.goToPromotions();
 		}
 		assertThat(promotionsPage, promotionsList(hasSize(searches.length)));
 
@@ -358,7 +350,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		goToDetails("pooch");
 		promotionsDetailPage.trigger("pooch").removeAndWait();
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("pooch"))));
-		promotionsDetailPage.backButton().click();
+		promotionActionFactory.goToPromotions();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
@@ -392,7 +384,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		goToDetails("lupo");
 		promotionsDetailPage.trigger("wolf").removeAndWait();
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wolf"))));
-		promotionsDetailPage.backButton().click();
+		promotionActionFactory.goToPromotions();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
@@ -408,7 +400,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage.triggerAddBox().setAndSubmit("Rhodesian Ridgeback");
 		promotionsDetailPage.waitForTriggerRefresh();
 		verifyThat(promotionsDetailPage, triggerList(hasItems("Rhodesian", "Ridgeback")));
-		promotionsDetailPage.backButton().click();
+		promotionActionFactory.goToPromotions();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.selectPromotionsCategoryFilter("Dynamic Spotlight");
@@ -475,7 +467,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testPromotionCreationAndDeletionOnSecondWindow() {
 		setUpPromotion(search("chien", "French"), new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"));
 
-		promotionsDetailPage.backButton().click();
+		promotionActionFactory.goToPromotions();
 		final String url = getDriver().getCurrentUrl();
 		final List<String> browserHandles = promotionsPage.createAndListWindowHandles();
 
@@ -491,7 +483,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));
 
 		getDriver().switchTo().window(browserHandles.get(0));
-		promotionsDetailPage.delete();
+
+		promotionActionFactory.makeDelete("friend").apply();
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
