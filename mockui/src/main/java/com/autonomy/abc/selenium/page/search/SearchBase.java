@@ -41,6 +41,11 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return getResultsBoxByTitle(docTitle);
 	}
 
+	public Checkbox searchCheckboxForTitle(final String docTitle) {
+		// TODO: not working (due to page caching?)
+		return new Checkbox(findElement(By.xpath(".//a[contains(text(), '" + docTitle + "')]/../../..")), getDriver());
+	}
+
 	public String getSearchResultTitle(final int searchResultNumber) {
 		return getSearchResult(searchResultNumber).getText();
 	}
@@ -133,7 +138,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
         LoggerFactory.getLogger(SearchBase.class).info(docTitle);
-        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + docTitle + "')]"));
+        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), " + cleanXpathString(docTitle) + ")]"));
 	}
 
     /**
