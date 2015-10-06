@@ -7,8 +7,17 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
         super(driver);
     }
 
+    @Deprecated
     @Override
     public void addSpotlightPromotion(final String promotionType, final String searchTrigger) {
+        // TODO: move this logic into a "SpotlightPromotion" object
+        promotionType("SPOTLIGHT").click();
+        continueButton(WizardStep.TYPE).click();
+        addSearchTrigger(searchTrigger);
+        finishButton().click();
+    }
+
+    public void addSpotlightPromotion(String searchTrigger) {
         // TODO: move this logic into a "SpotlightPromotion" object
         promotionType("SPOTLIGHT").click();
         continueButton(WizardStep.TYPE).click();

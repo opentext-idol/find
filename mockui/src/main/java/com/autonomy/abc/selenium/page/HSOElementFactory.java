@@ -5,6 +5,10 @@ import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
+import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
@@ -72,5 +76,21 @@ public class HSOElementFactory extends ElementFactory {
 
     public AnalyticsPage getAnalyticsPage() {
         return new AnalyticsPage(getDriver());
+    }
+
+    public IndexesPage getIndexesPage() {
+        return new IndexesPage(getDriver());
+    }
+
+    public CreateNewIndexPage getCreateNewIndexPage() {
+        return CreateNewIndexPage.make(getDriver());
+    }
+
+    public IndexesDetailPage getIndexesDetailPage() {
+        return IndexesDetailPage.make(getDriver());
+    }
+
+    public GettingStartedPage getGettingStartedPage() {
+        return new GettingStartedPage(getDriver());
     }
 }
