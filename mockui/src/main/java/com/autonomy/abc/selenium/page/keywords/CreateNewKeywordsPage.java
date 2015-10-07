@@ -31,6 +31,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 				By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../..")));
 	}
 
+	@Deprecated // no longer exists
 	public WebElement backButton() {
 		return new WebDriverWait(getDriver(),4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()[contains(.,'Back')]]")));
 	}
@@ -71,7 +72,8 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public WebElement continueWizardButton(final WizardStep dataType) {
-		return findElement(By.cssSelector("[data-step='" + dataType.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Continue')]"));
+//		return findElement(By.cssSelector("[data-step='" + dataType.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Continue')]"));
+		return getDriver().findElement(By.xpath("//*[@data-step='"+dataType.getTitle()+"']//button[contains(text(),'Continue')]"));
 	}
 
 	public WebElement addSynonymsButton() {
@@ -91,7 +93,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public WebElement finishWizardButton() {
-		return findElement(By.cssSelector(".current-step .finish-step"));
+		return findElement(By.cssSelector(".current-step .finish-step:not([disabled])"));
 	}
 
 	public void addSynonyms(final String synonyms) {

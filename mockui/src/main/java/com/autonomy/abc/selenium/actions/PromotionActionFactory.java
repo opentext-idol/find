@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.actions;
 
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
@@ -11,6 +12,9 @@ import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.Search;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
@@ -20,6 +24,12 @@ public class PromotionActionFactory extends ActionFactory {
 
     public PromotionActionFactory(Application application, ElementFactory elementFactory) {
         super(application, elementFactory);
+    }
+
+    public PromotionsPage goToPromotions() {
+        goToPage(NavBarTabId.PROMOTIONS);
+        promotionsPage = getElementFactory().getPromotionsPage();
+        return promotionsPage;
     }
 
     public Action<PromotionsDetailPage> goToDetails(String title) {
@@ -94,10 +104,12 @@ public class PromotionActionFactory extends ActionFactory {
 
         @Override
         public PromotionsPage apply() {
-            new GoToDetailsAction(title).apply();
-            final PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-            promotionsDetailPage.delete();
+            goToPage(NavBarTabId.PROMOTIONS);
             promotionsPage = getElementFactory().getPromotionsPage();
+            promotionsPage.promotionDeleteButton(title).click();
+            final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
+            deleteModal.findElement(By.cssSelector(".btn-danger")).click();
+            new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining("Removed a"));
             return promotionsPage;
         }
     }

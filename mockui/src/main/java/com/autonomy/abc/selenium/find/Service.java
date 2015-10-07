@@ -99,6 +99,16 @@ public class Service extends AppElement {
         return titles;
     }
 
+    public List<String> getResultTitles(int start, int end){
+        List<String> titles = new ArrayList<>();
+
+        for(int i = start; i <= end; i++){
+            titles.add(findElement(By.cssSelector("[data-rel=results]:nth-child("+i+"):not(.promoted-document) h4")).getText());
+        }
+
+        return titles;
+    }
+
     public WebElement getCBoxLoadedContent() {
         return getDriver().findElement(By.id("cboxLoadedContent"));
     }
@@ -109,6 +119,10 @@ public class Service extends AppElement {
 
     public WebElement getEndDateFilter() {
         return findElement(By.cssSelector(".results-filter-max-date input"));
+    }
+
+    public void filterByParametric(String header, String filter) {
+        findElement(By.cssSelector("[data-field='"+header.toLowerCase().replace(" ","_")+"'] [data-value='"+filter.toUpperCase()+"']"));
     }
 
     public enum DateEnum {

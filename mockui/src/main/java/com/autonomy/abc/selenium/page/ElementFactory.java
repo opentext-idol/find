@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;

@@ -30,7 +30,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement searchResultCheckbox(final int resultNumber) {
-		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(resultNumber) + ") .icheckbox_square-blue"));
+		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(resultNumber) + ") .icheckbox_square-blue")));
 	}
 
 	public WebElement getResultsBoxByTitle(final String docTitle) {
@@ -164,7 +164,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
         }
 
         //Find web element using trimmedTitle string. This will have a trailing space, and so you need to .trim() the String
-        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + trimmedTitle.trim() + "')]"));
+		return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + trimmedTitle.trim() + "')]"));
 	}
 
 	public WebElement getDatabasesList() {

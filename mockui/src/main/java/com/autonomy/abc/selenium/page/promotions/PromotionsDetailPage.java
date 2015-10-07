@@ -29,6 +29,8 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotion-match-terms")));
     }
 
+    // no longer exists, CSA-1619
+    @Deprecated
     public WebElement backButton() {
         return findElement(By.xpath(".//a[text()[contains(., 'Back')]]"));
     }
@@ -37,7 +39,9 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new Dropdown(findElement(By.className("extra-functions")), getDriver());
     }
 
+    @Deprecated
     public void delete() {
+        System.err.println("PromotionDetailsPage.delete no longer works, see CSA-1619");
         final Dropdown editMenu = editMenu();
         editMenu.open();
         editMenu.getItem("Delete").click();

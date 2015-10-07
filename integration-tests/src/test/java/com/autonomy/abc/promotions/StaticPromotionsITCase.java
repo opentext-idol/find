@@ -72,8 +72,8 @@ public class StaticPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testDeleteStaticPromotion() {
-        goToDetails();
-        promotionsDetailPage.editMenu().select("Delete");
+        promotionsPage = (HSOPromotionsPage) promotionActionFactory.goToPromotions();
+        promotionsPage.promotionDeleteButton(trigger).click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         verifyThat(deleteModal, containsText(trigger));
         WebElement cancelButton = deleteModal.findElement(By.className("btn-default"));
@@ -81,19 +81,19 @@ public class StaticPromotionsITCase extends ABCTestBase {
         cancelButton.click();
 
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(deleteModal));
-        verifyThat("bottom right close button works", promotionsDetailPage.promotionTitle().getValue(), containsString(trigger));
+        verifyThat("bottom right close button works", promotionsPage, promotionsList(hasItem(containsText(trigger))));
 
-        promotionsDetailPage.editMenu().select("Delete");
+        promotionsPage.promotionDeleteButton(trigger).click();
         ModalView modalView2 = ModalView.getVisibleModalView(getDriver());
         modalView2.close();
-        verifyThat("top right close button works", promotionsDetailPage.promotionTitle().getValue(), containsString(trigger));
+        verifyThat("top right close button works", promotionsPage, promotionsList(hasItem(containsText(trigger))));
 
-        promotionsDetailPage.editMenu().select("Delete");
+        promotionsPage.promotionDeleteButton(trigger).click();
         final ModalView thirdDeleteModal = ModalView.getVisibleModalView(getDriver());
         final WebElement deleteButton = thirdDeleteModal.findElement(By.cssSelector(".btn-danger"));
         verifyThat(deleteButton, containsText("Delete"));
         deleteButton.click();
-        promotionsPage = getElementFactory().getPromotionsPage();
+        new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining(promotion.getDeleteNotification()));
         verifyThat(promotionsPage, promotionsList(not(hasItem(containsText(trigger)))));
     }
 
@@ -140,7 +140,7 @@ public class StaticPromotionsITCase extends ABCTestBase {
         verifyThat(edited, containsText(promotion.getEditNotification()));
 
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(edited));
-        promotionsDetailPage.delete();
+        promotionActionFactory.makeDelete(trigger).apply();
         WebElement deleted = null;
         try {
             deleted = new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationAppears());
@@ -233,9 +233,8 @@ public class StaticPromotionsITCase extends ABCTestBase {
         promotionsDetailPage.addTrigger(newTrigger);
         promotionsDetailPage.trigger(trigger).removeAndWait();
         verifyThat(promotionsDetailPage.getTriggerList(), hasSize(1));
-        promotionsDetailPage.backButton().click();
+        promotionsPage = (HSOPromotionsPage) promotionActionFactory.goToPromotions();
 
-        promotionsPage = getElementFactory().getPromotionsPage();
         promotionsPage.selectPromotionsCategoryFilter("Spotlight");
         verifyThat(promotionsPage.getPromotionTitles(), empty());
         promotionsPage.selectPromotionsCategoryFilter("Static Promotion");
