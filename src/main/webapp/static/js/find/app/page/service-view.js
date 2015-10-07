@@ -35,7 +35,7 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
 
-            this.datesFilterModel = new DatesFilterModel({queryModel: this.queryModel});
+            this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
 
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();

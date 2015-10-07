@@ -23,7 +23,7 @@ define([
             dateRange: null
         },
 
-        initialize: function(options) {
+        initialize: function(attributes, options) {
             this.queryModel = options.queryModel;
 
             this.listenTo(this, 'change', function() {
@@ -59,6 +59,9 @@ define([
         },
 
         setMinDate: function(date) {
+            // library gives us false which would trigger a change event
+            date = date || undefined;
+
             this.customMinDate = date;
 
             this.set({
@@ -69,6 +72,9 @@ define([
         },
 
         setMaxDate: function(date) {
+            // library gives us false which would trigger a change event
+            date = date || undefined;
+
             this.customMaxDate = date;
 
             this.set({

@@ -12,8 +12,8 @@ define([
             queryText: '',
             indexes: [],
             fieldText: null,
-            minDate: null,
-            maxDate: null,
+            minDate: undefined,
+            maxDate: undefined,
             sort: Sort.relevance
         },
 

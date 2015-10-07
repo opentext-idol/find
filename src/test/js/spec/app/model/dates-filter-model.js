@@ -10,7 +10,7 @@ define([
 
             this.queryModel = new Backbone.Model();
 
-            this.datesFilterModel = new DatesFilterModel({queryModel: this.queryModel});
+            this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
         });
 
         describe('calling setDateRange with weeks', function() {
