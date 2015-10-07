@@ -89,7 +89,22 @@ public class IndexesServiceImpl implements IndexesService {
             final HodAuthentication auth = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
             final String domain = auth.getDomain();
 
-            return new ArrayList<>(databasesService.getDatabases(domain));
+            final Set<Database> validDatabases;
+            final Set<Database> allDatabases = databasesService.getDatabases(domain);
+
+            if (configService.getConfig().getIod().getPublicIndexesEnabled()) {
+                validDatabases = allDatabases;
+            } else {
+                validDatabases = new HashSet<>();
+
+                for (final Database database : allDatabases) {
+                    if (!database.isPublic()) {
+                        validDatabases.add(database);
+                    }
+                }
+            }
+
+            return new ArrayList<>(validDatabases);
         }
         else {
             final List<Database> activeDatabases = new ArrayList<>();
