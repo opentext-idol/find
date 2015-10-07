@@ -1,7 +1,7 @@
 <ul class="list-unstyled">
     <% collection.map(function(model) { %>
         <li>
-            <h5><%- model.get('title') %></h5>
+            <h5 class="break-all"><%- model.get('title') %></h5>
             <p><%- model.get('summary').trim().substring(0, 100) + '...' %></p>
         </li>
     <% }); %>
