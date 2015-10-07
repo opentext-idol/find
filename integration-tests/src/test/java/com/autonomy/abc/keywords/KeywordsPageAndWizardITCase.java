@@ -1829,19 +1829,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testKeywordCreateWizardBackButton(){
-		keywordsPage.createNewKeywordsButton().click();
-		CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.loadOrFadeWait();
-		createNewKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM, new WebDriverWait(getDriver(), 10)).click();
-		createNewKeywordsPage.loadOrFadeWait();
-		createNewKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
-		createNewKeywordsPage.loadOrFadeWait();
-		createNewKeywordsPage.backButton().click();
-		assertThat(getDriver().getCurrentUrl(), containsString("create"));
-	}
-
-	@Test
 	public void testSynonymNotificationText() throws InterruptedException {
 		String synonymOne = "Flesh";
 		String synonymTwo = "Meat";

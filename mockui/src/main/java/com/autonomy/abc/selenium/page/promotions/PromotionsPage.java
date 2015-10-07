@@ -35,6 +35,10 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return findElement(By.xpath(".//h3[contains(text(), '" + promotionTitleSubstring.replace("\"", "").split("\\s+")[0] + "')]/../../.."));
 	}
 
+	public WebElement promotionDeleteButton(final String title) {
+		return getPromotionLinkWithTitleContaining(title).findElement(By.cssSelector(".promotion-delete"));
+	}
+
 	// use PromotionActionFactory.makeDeletePromotion(...)
 	@Deprecated
 	public void deletePromotion() {
