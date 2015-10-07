@@ -10,7 +10,7 @@ define([
     'bootstrap-datetimepicker'
 ], function(Backbone, moment, i18n, DatesFilterModel, ListView, template, datepicker, dateItemTemplate) {
 
-    var DATES_DISPLAY_FORMAT = 'YYYY/MM/DD hh:mm';
+    var DATES_DISPLAY_FORMAT = 'YYYY/MM/DD HH:mm';
 
     return Backbone.View.extend({
         template: _.template(template),
