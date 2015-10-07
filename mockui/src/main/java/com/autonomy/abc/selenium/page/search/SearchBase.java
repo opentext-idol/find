@@ -42,8 +42,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public Checkbox searchCheckboxForTitle(final String docTitle) {
-		// TODO: not working (due to page caching?)
-		return new Checkbox(findElement(By.xpath(".//a[contains(text(), '" + docTitle + "')]/../../..")), getDriver());
+		return new Checkbox(findElement(By.cssSelector(".search-page-contents")).findElement(By.xpath(".//a[contains(text(), '" + docTitle + "')]/../../..")), getDriver());
 	}
 
 	public String getSearchResultTitle(final int searchResultNumber) {

@@ -161,7 +161,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         verifyThat(editReferencesPage.saveButton(), containsText("Save"));
     }
 
-    @Test //TODO
+    @Test
     public void testEditDocumentReferencesCancel() {
         String originalDoc = setUpPromotion("house", "home", 1).get(0);
 
@@ -281,5 +281,27 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         verifyThat(promotionsDetailPage.getPromotedTitles(), hasItem(newPromotedDoc));
         verifyThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
+    }
+
+
+    @Test
+    public void testDeletedDocumentsRemainDeleted() {
+        setUpPromotion("dog", "woof bark", 8);
+        final List<String> bucketList = editReferencesPage.promotionsBucketList();
+        verifyThat(bucketList, hasSize(8));
+
+        for (int i = 0; i < 4; i++) {
+            editReferencesPage.deleteDocFromWithinBucket(bucketList.get(i));
+            verifyThat(editReferencesPage.promotionsBucketList(), hasSize(7 - i));
+        }
+
+        editReferencesPage.saveButton().click();
+        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        final List<String> promotionsList = promotionsDetailPage.getPromotedTitles();
+
+        for (int i = 0; i < 4; i++) {
+            verifyThat(promotionsList, not(hasItem(bucketList.get(i))));
+            verifyThat(promotionsList, hasItem(bucketList.get(i + 4)));
+        }
     }
 }
