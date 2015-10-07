@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -38,6 +39,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public WebElement searchResultCheckbox(final String docTitle) {
 		return getResultsBoxByTitle(docTitle);
+	}
+
+	public Checkbox searchCheckboxForTitle(final String docTitle) {
+		return new Checkbox(findElement(By.cssSelector(".search-page-contents")).findElement(By.xpath(".//a[contains(text(), '" + docTitle + "')]/../../..")), getDriver());
 	}
 
 	public String getSearchResultTitle(final int searchResultNumber) {
@@ -132,7 +137,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
         LoggerFactory.getLogger(SearchBase.class).info(docTitle);
-        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + docTitle + "')]"));
+        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), " + cleanXpathString(docTitle) + ")]"));
 	}
 
     /**
@@ -498,6 +503,16 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 			leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());
 		}
 		return leadSynonyms;
+	}
+
+	public List<Checkbox> indexList() {
+		List<Checkbox> checkboxes = new ArrayList<>();
+		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
+			if (element.isDisplayed()) {
+				checkboxes.add(new Checkbox(element, getDriver()));
+			}
+		}
+		return checkboxes;
 	}
 
 	public enum Filter {

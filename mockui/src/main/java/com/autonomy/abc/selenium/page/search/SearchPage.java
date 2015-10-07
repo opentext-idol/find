@@ -24,7 +24,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	@Override
 	public void waitForLoad() {
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("search-page-contents")));
+		// there can be multiple search-page-contents (some invisible) due to e.g. edit document references
+		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-page-contents")));
 	}
 
 	public WebElement modifiedResultsCheckBox() {
@@ -343,14 +344,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void openParametricValuesList() {
 		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
-	}
-
-	public List<Checkbox> indexList() {
-		List<Checkbox> checkboxes = new ArrayList<>();
-		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
-			checkboxes.add(new Checkbox(element, getDriver()));
-		}
-		return checkboxes;
 	}
 
 }

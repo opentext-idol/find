@@ -115,11 +115,11 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public WebElement addMoreButton() {
-        return findElement(By.linkText("Add more"));
+        return findElement(By.className("add-more-promoted-documents"));
     }
 
     public List<WebElement> promotedList() {
-        return findElements(By.cssSelector(".promotion-list-container h3"));
+        return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
     }
 
     public List<String> getPromotedTitles() {

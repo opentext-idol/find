@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.page.promotions.*;
 
 // TODO: refactor using factories
@@ -30,10 +31,7 @@ public class DynamicPromotion extends Promotion {
     }
 
     @Override
-    public com.autonomy.abc.selenium.actions.wizard.Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
-        if (createNewPromotionsBase instanceof HSOCreateNewPromotionsPage) {
-            return new DynamicPromotionsWizard((HSOCreateNewDynamicPromotionsPage) createNewPromotionsBase);
-        }
+    public Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
         return new DynamicPromotionsWizard(createNewPromotionsBase);
     }
 
