@@ -84,6 +84,12 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		waitForRefreshIconToDisappear();
 	}
 
+	public void deleteSynonym(String synonym, WebElement synonymGroup){
+		LoggerFactory.getLogger(KeywordsBase.class).info("Deleting '"+synonym+"'");
+		getSynonymIcon(synonym,synonymGroup).click();
+		waitForRefreshIconToDisappear();
+	}
+
 	public List<String> getSynonymGroupSynonyms(final String leadSynonym) {
 		loadOrFadeWait();
 		final List<WebElement> synonyms = synonymGroup(leadSynonym).findElements(By.cssSelector("li span span"));
@@ -110,6 +116,10 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 
 	public WebElement getSynonymIcon(final String synonym){
 		return findElement(By.xpath("//span[text()='"+synonym+"']/../i"));
+	}
+
+	public WebElement getSynonymIcon(final String synonym, WebElement synonymGroup){
+		return synonymGroup.findElement(By.xpath(".//span[text()='"+synonym+"']/../i"));
 	}
 
 	public boolean areAnyKeywordsDisabled() {

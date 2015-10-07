@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.HSOAppBody;
+import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -113,15 +114,16 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		if(getConfig().getType() == ApplicationType.ON_PREM) {
 			createKeywordsPage.selectLanguage("French");
 			assertEquals("French", createKeywordsPage.languagesSelectBox().getText());
-			createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
-			createKeywordsPage.loadOrFadeWait();
-			assertThat("Finish button should be disabled until synonyms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 		} else {
 			LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class).warn("Cannot select language for synonyms yet");
 		}
 
 		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 		createKeywordsPage.loadOrFadeWait();
+		assertThat("Finish button should be disabled until synonyms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+
+//		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+//		createKeywordsPage.loadOrFadeWait();
 
 		createKeywordsPage.addSynonymsTextBox().clear();
 		assertThat("Finish button should be disabled until synonyms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
@@ -138,7 +140,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 		assertEquals(4, createKeywordsPage.countKeywords());
 
-		createKeywordsPage.finishWizardButton().click();
+		createKeywordsPage.enabledFinishWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		searchPage = getElementFactory().getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
@@ -146,8 +148,11 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.selectLanguage("French");
 
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.selectNewsEngIndex();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+
+		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+			searchPage.selectNewsEngIndex();
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+		}
 
 		searchPage.waitForDocLogo();
 		final List<String> searchTerms = searchPage.getSearchTermsList();
@@ -242,7 +247,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 		assertEquals(4, createKeywordsPage.countKeywords());
 
-		createKeywordsPage.finishWizardButton().click();
+		createKeywordsPage.enabledFinishWizardButton().click();
 
 		new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		final List<String> blacklistTerms = keywordsPage.getBlacklistedTerms();
@@ -286,7 +291,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 		assertThat("Blacklist terms are still visible", keywordsPage.getBlacklistedTerms().size() == 0);
-		assertThat("A synonym list on row 2 is not visible", keywordsPage.synonymList(1).isDisplayed());
+		assertThat("A synonym list on row 2 is not visible", keywordsPage.synonymList(1).isDisplayed(), is(Boolean.FALSE));
 		assertThat("Synonym group dog not visible", keywordsPage.getSynonymGroupSynonyms("dog"), hasItems("hound", "canine"));
 		assertThat("Synonym group hound not visible", keywordsPage.getSynonymGroupSynonyms("hound"), hasItems("dog", "canine"));
 		assertThat("Synonym group canine not visible", keywordsPage.getSynonymGroupSynonyms("canine"), hasItems("dog", "hound"));
@@ -363,41 +368,41 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertEquals(8, keywordsPage.countKeywords());
 		assertEquals(4, keywordsPage.getSynonymGroupSynonyms("burgundy").size());
 		assertEquals(4, keywordsPage.getSynonymGroupSynonyms("merlot").size());
-		assertEquals(2, keywordsPage.countSynonymGroupsWithLeadSynonym("wine"));
+		assertEquals(2, keywordsPage.countSynonymGroupsWithSynonym("wine"));
 
 		keywordsPage.deleteSynonym("bordeaux", "shiraz");
 		assertEquals(2, keywordsPage.countSynonymLists());
 		assertEquals(7, keywordsPage.countKeywords());
 		assertEquals(3, keywordsPage.getSynonymGroupSynonyms("merlot").size());
 		assertEquals(4, keywordsPage.getSynonymGroupSynonyms("scarlet").size());
-		assertEquals(2, keywordsPage.countSynonymGroupsWithLeadSynonym("wine"));
+		assertEquals(2, keywordsPage.countSynonymGroupsWithSynonym("wine"));
 
 		keywordsPage.deleteSynonym("burgundy", "red");
 		assertEquals(2, keywordsPage.countSynonymLists());
 		assertEquals(6, keywordsPage.countKeywords());
 		assertEquals(3, keywordsPage.getSynonymGroupSynonyms("merlot").size());
 		assertEquals(3, keywordsPage.getSynonymGroupSynonyms("scarlet").size());
-		assertEquals(2, keywordsPage.countSynonymGroupsWithLeadSynonym("wine"));
+		assertEquals(2, keywordsPage.countSynonymGroupsWithSynonym("wine"));
 
-		keywordsPage.deleteSynonym("wine", "red");
+		keywordsPage.deleteSynonym("wine", keywordsPage.getSynonymGroup("red"));
 		assertEquals(2, keywordsPage.countSynonymLists());
 		assertEquals(5, keywordsPage.countKeywords());
 		assertEquals(3, keywordsPage.getSynonymGroupSynonyms("merlot").size());
 		assertEquals(2, keywordsPage.getSynonymGroupSynonyms("scarlet").size());
-		assertEquals(1, keywordsPage.countSynonymGroupsWithLeadSynonym("wine"));
+		assertEquals(1, keywordsPage.countSynonymGroupsWithSynonym("wine"));
 
 		keywordsPage.deleteSynonym("shiraz", "wine");
 		assertEquals(2, keywordsPage.countSynonymLists());
 		assertEquals(4, keywordsPage.countKeywords());
 		assertEquals(2, keywordsPage.getSynonymGroupSynonyms("merlot").size());
 		assertEquals(2, keywordsPage.getSynonymGroupSynonyms("scarlet").size());
-		assertEquals(1, keywordsPage.countSynonymGroupsWithLeadSynonym("wine"));
+		assertEquals(1, keywordsPage.countSynonymGroupsWithSynonym("wine"));
 
 		keywordsPage.deleteSynonym("scarlet", "red");
 		assertEquals(1, keywordsPage.countSynonymLists());
 		assertEquals(2, keywordsPage.countKeywords());
 		assertEquals(2, keywordsPage.getSynonymGroupSynonyms("merlot").size());
-		assertEquals(1, keywordsPage.countSynonymGroupsWithLeadSynonym("wine"));
+		assertEquals(1, keywordsPage.countSynonymGroupsWithSynonym("wine"));
 
 		keywordsPage.deleteSynonym("wine", "merlot");
 		assertEquals(0, keywordsPage.countSynonymLists());
@@ -684,7 +689,8 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			keywordsPage.loadOrFadeWait();
 			keywordsPage.searchFilterTextBox().click();
 			assertThat("there should be four synonyms in a group. Offending term is " + badSynonym, keywordsPage.getSynonymGroupSynonyms("one").size() == 4);
-			assertEquals(4, keywordsPage.countSynonymLists());
+			assertEquals(1, keywordsPage.countSynonymLists());
+			assertEquals(4, keywordsPage.countKeywords());
 		}
 
 		int synonymGroupSize = 4;
@@ -694,7 +700,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			assertThat(keywordsPage.getSynonymGroupSynonyms("three"), hasItem(operatorSynonym.toLowerCase()));
 
 			assertEquals(++synonymGroupSize, keywordsPage.getSynonymGroupSynonyms("three").size());
-			assertEquals(synonymGroupSize,keywordsPage.countSynonymLists());
+			assertEquals(1,keywordsPage.countSynonymLists());
 		}
 	}
 
@@ -732,8 +738,8 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat(keywordsPage.getSynonymGroupSynonyms("three"), hasItem("four and five"));
 	}
 
-	//TODO
 	//Notification should drop down on creation of new keywords
+	//CSA-1447
 	@Test
 	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
 		keywordsPage.createNewKeywordsButton().click();
@@ -819,7 +825,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl(),containsString("keyword"));
 	}
 
-
+	//CSA-1521
 	//Blacklisted terms can be created on the searchpage. This link has often broken
 	@Test
 	public void testCreateBlacklistedTermFromSearchPage() throws InterruptedException {
@@ -828,8 +834,11 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 		searchPage.selectLanguage("French");
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.selectNewsEngIndex();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+
+		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+			searchPage.selectNewsEngIndex();
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+		}
 
 		assertThat("No results for search noir", searchPage.waitForDocLogo().isDisplayed());
 		assertThat("No add to blacklist link displayed", searchPage.blacklistLink().isDisplayed());
@@ -848,7 +857,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertEquals(1, createKeywordsPage.countKeywords(KeywordsPage.KeywordsFilter.BLACKLIST));
 		assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
 
-		createKeywordsPage.finishWizardButton().click();
+		createKeywordsPage.enabledFinishWizardButton().click();
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		assertThat("Blacklisted term not added", keywordsPage.getBlacklistedTerms().contains("noir"));
 	}
@@ -859,8 +868,11 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		body.getTopNavBar().search("rouge");
 		searchPage = getElementFactory().getSearchPage();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.selectNewsEngIndex();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+
+		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+			searchPage.selectNewsEngIndex();
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+		}
 
 		searchPage.selectLanguage("French");
 
@@ -891,7 +903,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("keywords list does not include term 'red'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("red"));
 		assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-		createKeywordsPage.finishWizardButton().click();
+		createKeywordsPage.enabledFinishWizardButton().click();
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();
@@ -913,8 +925,11 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		body.getTopNavBar().search("lodge dodge podge");
 		searchPage = getElementFactory().getSearchPage();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.selectNewsEngIndex();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+
+		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+			searchPage.selectNewsEngIndex();
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+		}
 
 		searchPage.selectLanguage("English");
 
@@ -929,9 +944,9 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("link not directing to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
 		assertEquals(3, createKeywordsPage.countKeywords(KeywordsPage.KeywordsFilter.SYNONYMS));
 		assertThat("Wrong prospective blacklisted terms added", createKeywordsPage.getProspectiveKeywordsList(), hasItems("lodge", "dodge", "podge"));
-		assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+		assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.enabledFinishWizardButton(), "disabled"));
 
-		createKeywordsPage.finishWizardButton().click();
+		createKeywordsPage.enabledFinishWizardButton().click();
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();
@@ -1069,7 +1084,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
 			assertThat(synonym + " synonym group not complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
 			assertEquals(1, searchPage.countSynonymLists());
-			assertEquals(3, createKeywordsPage.countKeywords());
+			assertEquals(3, searchPage.countKeywords());
 		}
 
 		searchPage.addSynonymToGroup("kodiak", "grizzly");
@@ -1078,10 +1093,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym), containsItems(synonymListBears));
 			assertThat("kodiak not included in synonym group " + synonym, searchPage.getSynonymGroupSynonyms(synonym),hasItem("kodiak"));
 			assertEquals(1, searchPage.countSynonymLists());
-			assertEquals(4, createKeywordsPage.countKeywords());
+			assertEquals(4, searchPage.countKeywords());
 		}
 
-		searchPage.deleteSynonym("bigbear", "brownbear");
+		searchPage.deleteSynonym("bigbear");
 		searchPage.loadOrFadeWait();
 		synonymListBears = Arrays.asList("grizzly", "brownbear");
 		for (final String synonym : synonymListBears) {
@@ -1089,7 +1104,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			assertThat("bigbear not deleted from group " + synonym, searchPage.getSynonymGroupSynonyms(synonym),not(hasItem("bigbear")));
 			assertThat("kodiak not included in synonym group " + synonym, searchPage.getSynonymGroupSynonyms(synonym),hasItem("kodiak"));
 			assertEquals(1, searchPage.countSynonymLists());
-			assertEquals(3, createKeywordsPage.countKeywords());
+			assertEquals(3, searchPage.countKeywords());
 		}
 
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
@@ -1097,13 +1112,13 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.selectLanguage("English");
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 		assertEquals(1, keywordsPage.countSynonymLists());
-		assertEquals(3, createKeywordsPage.countKeywords());
+		assertEquals(3, keywordsPage.countKeywords());
 
 		synonymListBears = Arrays.asList("grizzly", "brownbear", "kodiak");
 		for (final String synonym : synonymListBears) {
 			assertThat(synonym + " group incomplete", keywordsPage.getSynonymGroupSynonyms(synonym), containsItems(synonymListBears));
-			assertEquals(1, keywordsPage.getSynonymGroupSynonyms(synonym).size());
-			assertEquals(3, createKeywordsPage.countKeywords());
+			assertEquals(1, keywordsPage.countSynonymLists());
+			assertEquals(3, keywordsPage.countKeywords());
 			assertThat("bigbear not deleted from group " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym), not(hasItem("bigbear")));
 		}
 	}
@@ -1120,7 +1135,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.blacklistLink().click();
 		try {
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			createKeywordsPage.finishWizardButton().click();
+			createKeywordsPage.enabledFinishWizardButton().click();
 		} catch (final NoSuchElementException e) {
 			fail("blacklist link on search page has not navigated to the wizard");
 		}
@@ -1204,7 +1219,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
 			assertThat("New synonym has not been added to the group", keywordsPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode", "lodging", "residence"));
 
-			keywordsPage.deleteAllSynonyms();
+			keywordsPage.deleteKeywords();
 			keywordsPage.loadOrFadeWait();
 
 			(new WebDriverWait(getDriver(),10)).until(new ExpectedCondition<Boolean>() {
@@ -1229,8 +1244,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			searchPage = getElementFactory().getSearchPage();
 			body.getTopNavBar().search("house");
 
-			//searchPage.selectLanguage("English", getConfig().getType().getName());
-			(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for synonyms yet");
+			searchPage.selectLanguage("English");
 
 			assertEquals(1, searchPage.countSynonymLists());
 			assertEquals(5, createKeywordsPage.countKeywords());
@@ -1259,15 +1273,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
 			assertThat("Synonyms have not been removed from the group", keywordsPage.getSynonymGroupSynonyms("house"), hasItems("home", "house"));
 
-			keywordsPage.deleteAllSynonyms();
+			keywordsPage.deleteKeywords();		//TODO get deleteAllSynonyms to work again
 			keywordsPage.loadOrFadeWait();
 
-			//Wait until the synonyms are deleted
-			(new WebDriverWait(getDriver(),10)).until(new ExpectedCondition<Boolean>() {
-				public Boolean apply(WebDriver driver) {
-					return keywordsPage.countSynonymLists() == 0;
-				}
-			});
+			keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 
 			assertEquals(0, keywordsPage.countSynonymLists());
 		} finally {
@@ -1316,9 +1325,8 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			wait.until(ExpectedConditions.visibilityOf(getElementFactory().getKeywordsPage()));
 		} else {
 			wait.until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
+			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		}
-
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
 		keywordsPage.selectLanguage("Georgian");
@@ -1331,7 +1339,8 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		keywordsPage.selectLanguage("Croatian");
 		assertEquals(0, keywordsPage.getBlacklistedTerms().size());
-		assertEquals(3, keywordsPage.countSynonymLists());
+		assertEquals(1, keywordsPage.countSynonymLists());
+		assertEquals(3, keywordsPage.countKeywords());
 	}
 
 	@Test
@@ -1341,19 +1350,19 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.createSynonymGroup("road rue strasse", "French");
 		body.getTopNavBar().search("Korea");
 		searchPage = getElementFactory().getSearchPage();
-		searchPage.selectLanguage("Chinese", getConfig().getType().getName());
+		searchPage.selectLanguage("Chinese");
 		searchPage.createSynonymsLink().click();
 		searchPage.loadOrFadeWait();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.addSynonyms("한국");
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.finishWizardButton())).click();
+		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
 		body.getTopNavBar().search("Korea");
-		searchPage.selectLanguage("Chinese", getConfig().getType().getName());
+		searchPage.selectLanguage("Chinese");
 		assertEquals("wrong number of synonym lists displayed", 1, searchPage.countSynonymLists());
 
-		searchPage.selectLanguage("French", getConfig().getType().getName());
+		searchPage.selectLanguage("French");
 		assertEquals("wrong number of synonym lists displayed", 0, searchPage.countSynonymLists());
 
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
@@ -1363,7 +1372,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("synonym assigned to wrong language", keywordsPage.getText(), not(containsString("한국")));
 
 		keywordsPage.selectLanguage("Chinese");
-		assertEquals("wrong number of synonym lists displayed", 2, keywordsPage.countSynonymLists());
+		assertEquals("wrong number of synonym lists displayed", 1, keywordsPage.countSynonymLists());
 		assertThat("synonym not assigned to correct language", keywordsPage.getText(), containsString("한국"));
 	}
 
@@ -1544,6 +1553,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 	@Test
 	//CCUK-3243
+	//TODO file ticket - Says it has deleted both synonyms but only one has
 	public void testQuickSynonymDelete() throws InterruptedException {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -1553,13 +1563,13 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 		keywordsPage.loadOrFadeWait();
 
-		//keywordsPage.selectLanguage("German");
-		(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for synonyms yet");
+		keywordsPage.selectLanguage("German");
 
 		try {
 			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"));
 			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string", "strung"));
 		} catch (final WebDriverException w) {
+			System.out.println(w);
 			fail("Unable to delete a synonym quickly");
 		}
 		Thread.sleep(15000);
@@ -1803,7 +1813,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			});
 
 			keywordsPage.loadOrFadeWait();
-			assertEquals(1, keywordsPage.countSynonymGroupsWithLeadSynonym(hiddenBooleansProximity.toLowerCase()));
+			assertEquals(1, keywordsPage.countSynonymGroupsWithSynonym(hiddenBooleansProximity.toLowerCase()));
 		}
 	}
 
@@ -1900,20 +1910,23 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createNewKeywordsPage.createBlacklistedTerm("e", "English");
 		getElementFactory().getKeywordsPage();
-		body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content")));
+		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+			body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
-		body = new HSOAppBody(getDriver());
+			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
+			body = new HSOAppBody(getDriver());
 
+			new WebDriverWait(getDriver(), 30).until(new ExpectedCondition<Boolean>() {
 
-		new WebDriverWait(getDriver(),30).until(new ExpectedCondition<Boolean>() {
-
-			@Override
-			public Boolean apply(WebDriver driver) {
-				return !driver.findElement(By.xpath("//nav[not(contains(@class, 'affix-clone'))]//*[@id='navbar-bell']/span")).getAttribute("class").contains("ng-hide");
-			}
-		});
+				@Override
+				public Boolean apply(WebDriver driver) {
+					return !driver.findElement(By.xpath("//nav[not(contains(@class, 'affix-clone'))]//*[@id='navbar-bell']/span")).getAttribute("class").contains("ng-hide");
+				}
+			});
+		} else {
+			body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		}
 
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
