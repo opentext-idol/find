@@ -77,11 +77,21 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 
 	@Deprecated
 	public void deleteAllPromotions() {
-		for (final WebElement promotion : promotionsList()) {
-			promotion.click();
-			deletePromotion();
+		List<WebElement> promotions = promotionsList();
+
+		for(WebElement promotion : promotions){
+			promotion.findElement(By.className("promotion-delete")).click();
+			loadOrFadeWait();
+			getDriver().findElement(By.className("modal-action-button")).click();
 			loadOrFadeWait();
 		}
+
+		new WebDriverWait(getDriver(),promotions.size() * 10).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				return findElements(By.className("promotion-delete")).size() == 0;
+			}
+		});
 	}
 
 	// use PromotionsDetailPage.getTriggerList()
