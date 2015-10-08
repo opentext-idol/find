@@ -1348,15 +1348,16 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createSynonymGroup("road rue strasse", "French");
-		body.getTopNavBar().search("Korea");
 		searchPage = getElementFactory().getSearchPage();
+		body.getTopNavBar().search("Korea");
 		searchPage.selectLanguage("Chinese");
+		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.createSynonymsLink().click();
 		searchPage.loadOrFadeWait();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.addSynonyms("한국");
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		searchPage = getElementFactory().getSearchPage();
 
 		body.getTopNavBar().search("Korea");
 		searchPage.selectLanguage("Chinese");
