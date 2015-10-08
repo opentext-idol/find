@@ -93,6 +93,10 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public WebElement finishWizardButton() {
+		return findElement(By.cssSelector(".current-step .finish-step"));
+	}
+
+	public WebElement enabledFinishWizardButton() {
 		return findElement(By.cssSelector(".current-step .finish-step:not([disabled])"));
 	}
 
