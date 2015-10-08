@@ -74,6 +74,7 @@ public abstract class KeywordsPage extends KeywordsBase {
                     if(!cross.getAttribute("class").contains("fa-spin")) {
                         cross.click();
                     }
+
                 }
 
                 waitForRefreshIconToDisappear();
@@ -112,6 +113,10 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElements(By.cssSelector(".keywords-list .remove-keyword")).size();
     }
 
+    public WebElement getSynonymGroup(String synonym) {
+        return getSynonymIcon(synonym).findElement(By.xpath(".//../../.."));
+    }
+
     public enum KeywordsFilter {
         ALL_TYPES("All Types"),
         BLACKLIST("Blacklist"),
@@ -129,8 +134,13 @@ public abstract class KeywordsPage extends KeywordsBase {
 
     }
 
+    @Deprecated
     public int countSynonymGroupsWithLeadSynonym(final String synonym) {
         return findElement(By.cssSelector(".keywords-list")).findElements(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']")).size();
+    }
+
+    public int countSynonymGroupsWithSynonym(final String synonym) {
+        return findElement(By.cssSelector(".keywords-container .keywords-list")).findElements(By.xpath(".//ul[contains(@class,'keywords-sub-list')]/li[@data-term='"+synonym+"']")).size();
     }
 
     public WebElement searchFilterTextBox() {

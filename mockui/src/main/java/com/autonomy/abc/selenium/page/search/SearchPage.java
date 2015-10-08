@@ -5,6 +5,7 @@ import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -346,4 +347,26 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
 	}
 
+	public List<Checkbox> indexList() {
+		List<Checkbox> checkboxes = new ArrayList<>();
+		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
+			checkboxes.add(new Checkbox(element, getDriver()));
+		}
+		return checkboxes;
+	}
+
+	public int countKeywords() {
+		return findElements(By.cssSelector(".search-synonyms-keywords .remove-keyword")).size();
+	}
+
+	public void deleteSynonym(String synonym) throws InterruptedException {
+		LoggerFactory.getLogger(SearchPage.class).info("Deleting '" + synonym + "'");
+		getSynonymIcon(synonym).click();
+		waitForRefreshIconToDisappear();
+	}
+
+	@Override
+	public WebElement getSynonymIcon(String synonym) {
+		return findElement(By.xpath("//div[@data-pagename='search']//span[text()='"+synonym+"']/../i"));
+	}
 }
