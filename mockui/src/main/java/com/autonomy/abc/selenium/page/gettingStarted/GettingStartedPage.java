@@ -26,6 +26,7 @@ public class GettingStartedPage extends AppElement implements AppPage {
     public void addSiteToIndex(String url){
         WebElement inputBox = addURLInput();
         inputBox.sendKeys(url);
+        loadOrFadeWait();
         inputBox.findElement(By.xpath(".//..//i")).click();
     }
 }
