@@ -54,6 +54,23 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		new WebDriverWait(getDriver(), 60).until(ExpectedConditions.visibilityOf(promoteExistingButton()));
 	}
 
+	@Deprecated
+	public void deletePromotion(String promotionContains){
+		deletePromotion(getPromotionLinkWithTitleContaining(promotionContains));
+	}
+
+	@Deprecated
+	private void deletePromotion(WebElement promotion){
+		promotion.findElement(By.className("promotion-delete")).click();
+		loadOrFadeWait();
+		modalClick();
+		loadOrFadeWait();
+	}
+
+	private void modalClick() {
+		getDriver().findElement(By.className("modal-action-button")).click();
+	}
+
 	// use PromotionsDetailPage.spotlightTypeDropdown()
 	@Deprecated
 	public WebElement spotlightButton() {
@@ -84,10 +101,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		List<WebElement> promotions = promotionsList();
 
 		for(WebElement promotion : promotions){
-			promotion.findElement(By.className("promotion-delete")).click();
-			loadOrFadeWait();
-			getDriver().findElement(By.className("modal-action-button")).click();
-			loadOrFadeWait();
+			deletePromotion(promotion);
 		}
 
 		new WebDriverWait(getDriver(),promotions.size() * 10).until(new ExpectedCondition<Boolean>() {

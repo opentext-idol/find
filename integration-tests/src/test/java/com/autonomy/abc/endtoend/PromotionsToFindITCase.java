@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import org.apache.xpath.operations.Bool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -117,7 +118,7 @@ public class PromotionsToFindITCase extends ABCTestBase {
 
         service.filterByIndex(domain, "reddit");
 
-        service.filterByParametric("person_profession", "FOOTBALL PLAYER");
+        service.filterByParametric("Source Connector", "SIMPSONSARCHIVE");
 
         verifyPinToPosition(promotionTitles, 6, 10);
 
@@ -129,7 +130,14 @@ public class PromotionsToFindITCase extends ABCTestBase {
         List<String> spotlightPromotionTitles = searchPage.createAMultiDocumentPromotion(2);
         createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         createNewPromotionsPage.addSpotlightPromotion("", searchTrigger);
-        getElementFactory().getSearchPage();
+
+        final SearchPage finalSearchPage = getElementFactory().getSearchPage();
+        new WebDriverWait(getDriver(),30).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return finalSearchPage.getPromotedResults().size() != 0;
+            }
+        });
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search(searchTrigger);
@@ -161,8 +169,7 @@ public class PromotionsToFindITCase extends ABCTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         promotionsPage = getElementFactory().getPromotionsPage();
-        promotionsPage.getPromotionLinkWithTitleContaining("Spotlight for: " + searchTrigger).click();
-        promotionsPage.deletePromotion();
+        promotionsPage.deletePromotion("Spotlight for: " + searchTrigger);
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("Other");
