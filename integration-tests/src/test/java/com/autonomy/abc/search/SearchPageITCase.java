@@ -515,10 +515,8 @@ public class SearchPageITCase extends ABCTestBase {
 		}
 	}
 
-    //TODO think it may be to do with the language thing
 	@Test
 	public void testViewFromBucketLabel() throws InterruptedException {
-
         search("جيمس");
 		searchPage.selectLanguage("Arabic", getConfig().getType().getName());
         languageWarn();
@@ -660,7 +658,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextInput().sendKeys("WILD{*" + lastWordInTitle + "}:DRETITLE");
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));	//TODO this should really be assertThat but it really doesn't like it for some reason
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
 		assertThat("Field text edit button not visible", searchPage.fieldTextEditButton().isDisplayed());
@@ -705,7 +703,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));	//TODO this should really be assertThat but it really doesn't like it for some reason
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
 		assertEquals(firstSearchResult, searchPage.getSearchResultTitle(1));
 
 		searchPage.fieldTextEditButton().click();
@@ -714,7 +712,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));	//TODO this should really be assertThat but it really doesn't like it for some reason
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
 		assertEquals(secondSearchResult, searchPage.getSearchResultTitle(1));
 	}
 
@@ -784,7 +782,6 @@ public class SearchPageITCase extends ABCTestBase {
         assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
 				initialSearchCount, greaterThan(redNotStar));
 
-        //TODO check
         search("star");
         searchPage.loadOrFadeWait();
         final int star = searchPage.countSearchResults();
@@ -808,7 +805,7 @@ public class SearchPageITCase extends ABCTestBase {
         assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
 				thirdSearchCount, lessThan(fourthSearchCount));
 		assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
-				fourthSearchCount + redNotStar + starNotRed, is(secondSearchCount));    //TODO Cech
+				fourthSearchCount + redNotStar + starNotRed, is(secondSearchCount));
 	}
 
     //TODO
@@ -831,7 +828,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.getDocLogo(1,new WebDriverWait(getDriver(),10));
         searchPage.loadOrFadeWait();
 		assertEquals(2, searchPage.getPromotionSummarySize());
-		assertEquals(2, searchPage.getPromotionSummaryLabels().size());     //TODO
+		assertEquals(2, searchPage.getPromotionSummaryLabels().size());
 
 		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
 		searchPage.showFieldTextOptions();
@@ -1190,7 +1187,6 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
 //        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-//            //TODO add data to default index?
 //			selectNewsEngIndex();
 //        }
 

@@ -38,10 +38,6 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.junit.Assert.assertEquals;
 
-/*
- TODO synonym lists now only show up once; THEREFORE need to check that a) there are the proper amount of synonym groups AND b) THAT THOSE SYNONYM GROUPS HAVE THE CORRECT NUMBER OF SYNONYMS
- TODO TEST COLOURS
- */
 public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public KeywordsPageAndWizardITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -1682,8 +1678,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteSynonym("ef", "ef");
 		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
 
-		keywordsPage.deleteAllBlacklistedTerms();
-		keywordsPage.deleteAllSynonyms();
+		keywordsPage.deleteKeywords();
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
@@ -1727,7 +1722,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		for (final String synonym : synonyms) {
 			keywordsPage.getSynonymIcon(synonym, synonym).click();
 
-			//TODO
 			if(getParent(getParent(getParent(keywordsPage.getSynonymIcon(synonym)))).findElements(By.tagName("li")).size() > 2){
 				assertEquals("Too many synonyms are disabled on synonym delete", 1, keywordsPage.countRefreshIcons());
 			} else {
