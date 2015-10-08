@@ -369,4 +369,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	public WebElement getSynonymIcon(String synonym) {
 		return findElement(By.xpath("//div[@data-pagename='search']//span[text()='"+synonym+"']/../i"));
 	}
+
+	public List<String> getPromotedDocumentTitles(){
+		List<String> titles = new ArrayList<>();
+		for(WebElement promotion : getPromotedResults()){
+			titles.add(promotion.findElement(By.tagName("h3")).getText());
+		}
+		return titles;
+	}
 }
