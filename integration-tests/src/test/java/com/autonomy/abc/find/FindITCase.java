@@ -92,6 +92,7 @@ public class FindITCase extends ABCTestBase {
         String searchTerm = "Fred is a chimpanzee";
         find.search(searchTerm);
         assertThat(input.getSearchTerm(), is(searchTerm));
+        assertThat(service.getText().toLowerCase(),not(containsString("error")));
     }
 
     @Test
@@ -892,6 +893,14 @@ public class FindITCase extends ABCTestBase {
     public void testWhitespaceSearch() {
         find.search(" ");
         assertThat(service.getText(),containsString(findErrorMessage));
+    }
+
+    @Test
+    //CSA-1577
+    public void testClickingCustomDateFilterDoesNotRefreshResults(){
+        find.search("O Captain! My Captain!");
+        service.filterByDate(Service.DateEnum.CUSTOM);
+        assertThat(service.getResultsDiv().getText(),not(containsString("Loading")));
     }
 
     private enum Index {

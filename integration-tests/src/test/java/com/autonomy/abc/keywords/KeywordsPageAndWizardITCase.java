@@ -3,6 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.HSOAppBody;
@@ -1847,7 +1848,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
 		new WebDriverWait(getDriver(),30).until(new WaitForNotification("Created a new synonym group containing: "));
-		assertThat(notifications.notificationNumber(1).getText(),is("Created a new synonym group containing: " + synonyms[0].toLowerCase() + ", " + synonyms[1].toLowerCase() + ", " + synonyms[2].toLowerCase()));
+		assertThat(notifications.notificationNumber(1).getText(), is("Created a new synonym group containing: " + synonyms[0].toLowerCase() + ", " + synonyms[1].toLowerCase() + ", " + synonyms[2].toLowerCase()));
 	}
 
 	@Test
@@ -1958,7 +1959,19 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 
 		//Make sure some results show up for terms within the synonym group
-		assertThat(searchPage.visibleDocumentsCount(),not(0));
+		assertThat(searchPage.visibleDocumentsCount(), not(0));
+	}
+
+	@Test
+	//CSA-1440
+	public void testNavigatingAwayBeforeKeywordAdded() throws InterruptedException {
+		keywordsPage.createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm("Jeff", "English");
+		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+
+		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));
+
+		assertThat(getDriver().getCurrentUrl(),containsString("promotions"));
 	}
 
 }
