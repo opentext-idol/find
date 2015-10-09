@@ -1897,7 +1897,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
 			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-			body = new HSOAppBody(getDriver());
+			body = getBody();
 
 			new WebDriverWait(getDriver(), 30).until(new ExpectedCondition<Boolean>() {
 

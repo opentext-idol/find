@@ -41,7 +41,7 @@ public class QuickSetUpITCase extends ABCTestBase {
         getElementFactory().getPromotionsPage().deleteAllPromotions();
 
         body.getSideNavBar().switchPage(NavBarTabId.GETTING_STARTED);
-        body = new HSOAppBody(getDriver());
+        body = getBody();
         gettingStarted = ((HSOElementFactory) getElementFactory()).getGettingStartedPage();
     }
 
@@ -53,7 +53,7 @@ public class QuickSetUpITCase extends ABCTestBase {
 
         body.getTopNavBar().search(site);
         SearchPage searchPage = getElementFactory().getSearchPage();
-        body = new HSOAppBody(getDriver()); //TODO change these
+        body = getBody();
 
         //Check promoting the correct document
         searchPage.selectAllIndexes();

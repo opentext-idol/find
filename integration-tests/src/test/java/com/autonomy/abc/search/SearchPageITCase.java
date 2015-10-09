@@ -70,7 +70,7 @@ public class SearchPageITCase extends ABCTestBase {
         }
 	}
 
-    //TODO move this to SearchBase (and refactor code)
+	//TODO move this to SearchBase (and refactor code)
     private void selectNewsEngIndex() {
 		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
 			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
@@ -1132,7 +1132,7 @@ public class SearchPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		getDriver().navigate().refresh();
-		body = new HSOAppBody(getDriver());
+		body = getBody();
 		final String newSearchText = body.getTopNavBar().getSearchBarText();
 		assertEquals("search bar should be blank on refresh of a page that isn't the search page", newSearchText, searchText);
 	}

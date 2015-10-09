@@ -38,7 +38,7 @@ public class AnalyticsITCase extends ABCTestBase {
     public void setUp(){
         body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-        body = new HSOAppBody(getDriver());
+        body = getBody();
     }
 
     @Test
@@ -52,7 +52,7 @@ public class AnalyticsITCase extends ABCTestBase {
         body.getTopNavBar().search(mostPopular.getTerm());
 
         getElementFactory().getSearchPage();
-        body = new HSOAppBody(getDriver());
+        body = getBody();
 
         body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
@@ -69,7 +69,7 @@ public class AnalyticsITCase extends ABCTestBase {
 
         getElementFactory().getSearchPage();
 
-        body = new HSOAppBody(getDriver());
+        body = getBody();
 
         body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
@@ -99,7 +99,7 @@ public class AnalyticsITCase extends ABCTestBase {
 
         getDriver().navigate().refresh();
 
-        body = new HSOAppBody(getDriver());
+        body = getBody();
         analytics = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
 
         assertThat(analytics.getMostPopularSearchTerm().getSearchCount(),is(mostPopularSearchCount + 1));

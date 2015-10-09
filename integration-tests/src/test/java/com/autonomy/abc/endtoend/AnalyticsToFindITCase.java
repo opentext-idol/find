@@ -67,7 +67,7 @@ public class AnalyticsToFindITCase extends ABCTestBase {
         body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
         AnalyticsPage analyticsPage = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-        body = new HSOAppBody(getDriver());
+        body = getBody();
 
         Term zeroSearch = analyticsPage.getMostPopularZeroSearchTerm();
         Term nonZero = analyticsPage.getMostPopularNonZeroSearchTerm();
@@ -82,7 +82,7 @@ public class AnalyticsToFindITCase extends ABCTestBase {
 
 //        navigateToPromotionsAndDelete();
 
-        body = new HSOAppBody(getDriver());
+        body = getBody();
 
         body.getTopNavBar().search(searchTerm);
         SearchPage searchPage = getElementFactory().getSearchPage();

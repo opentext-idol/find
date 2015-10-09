@@ -41,7 +41,7 @@ public class IndexSetUpITCase extends ABCTestBase {
     @Before
     public void setUp(){
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        body = new HSOAppBody(getDriver());
+        body = getBody();
         indexes = ((HSOElementFactory) getElementFactory()).getIndexesPage();
 
         indexName = UUID.randomUUID().toString().replace('-','a');
@@ -79,7 +79,7 @@ public class IndexSetUpITCase extends ABCTestBase {
 
         body.getTopNavBar().search("*");
 
-        body = new HSOAppBody(getDriver());
+        body = getBody();
 
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
