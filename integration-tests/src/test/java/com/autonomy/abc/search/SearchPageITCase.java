@@ -20,6 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import java.util.*;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.number.OrderingComparison.*;
 import static org.junit.Assert.*;
@@ -68,9 +70,11 @@ public class SearchPageITCase extends ABCTestBase {
         }
 	}
 
-    //TODO move this to SearchBase (and refactor code)
+	//TODO move this to SearchBase (and refactor code)
     private void selectNewsEngIndex() {
-        new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
+		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
+		}
     }
 
 	private void search(String searchTerm){
@@ -246,7 +250,7 @@ public class SearchPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage = getElementFactory().getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining("boat").click();
-        assertThat(promotionsPage.getText(),containsString("Trigger terms"));
+        assertThat(promotionsPage.getText(), containsString("Trigger terms"));
  		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
 
 		promotionsPage.clickableSearchTrigger("boat").click();
@@ -270,14 +274,14 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat("Back to start button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class"),containsString("disabled"));
 		assertThat("Back button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class"),containsString("disabled"));
-		assertThat("Forward button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"),not(containsString("disabled")));
+		assertThat("Forward button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"), not(containsString("disabled")));
 		assertThat("Forward to end button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"), not(containsString("disabled")));
 
 		searchPage.promotionSummaryForwardButton().click();
 		searchPage.waitForPromotionsLoadIndicatorToDisappear();
 		assertThat("Back to start button should be enabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class"), not(containsString("disabled")));
 		assertThat("Back button should be enabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Forward button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"),not(containsString("disabled")));
+		assertThat("Forward button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"), not(containsString("disabled")));
 		assertThat("Forward to end button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"), not(containsString("disabled")));
 
 		searchPage.promotionSummaryForwardButton().click();
@@ -286,7 +290,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 		assertThat("Back to start button should be enabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class"),not(containsString("disabled")));
 		assertThat("Back button should be enabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class"), not(containsString("disabled")));
-		assertThat("Forward button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"),containsString("disabled"));
+		assertThat("Forward button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"), containsString("disabled"));
         assertThat("Forward to end button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"), containsString("disabled"));
 
 		searchPage.promotionSummaryBackButton().click();
@@ -299,13 +303,13 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.promotionSummaryForwardToEndButton().click();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Forward to end button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"),containsString("disabled"));
+		assertThat("Forward to end button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"), containsString("disabled"));
 
 		searchPage.promotionSummaryBackToStartButton().click();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 		assertThat("Back button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class"),containsString("disabled"));
 
-		body.getSideNavBar().getTab(NavBarTabId.PROMOTIONS).click();
+		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage.deleteAllPromotions();
 	}
 
@@ -342,7 +346,7 @@ public class SearchPageITCase extends ABCTestBase {
                 searchPage.getText(),not(containsString("All search terms are blacklisted")));
 	}
 
-    String searchErrorMessage = "an error occurred executing the search action";
+    String searchErrorMessage = "An error occurred executing the search action";
     String correctErrorMessageNotShown = "Correct error message not shown";
 
 	@Test
@@ -511,10 +515,8 @@ public class SearchPageITCase extends ABCTestBase {
 		}
 	}
 
-    //TODO think it may be to do with the language thing
 	@Test
 	public void testViewFromBucketLabel() throws InterruptedException {
-
         search("جيمس");
 		searchPage.selectLanguage("Arabic", getConfig().getType().getName());
         languageWarn();
@@ -656,7 +658,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextInput().sendKeys("WILD{*" + lastWordInTitle + "}:DRETITLE");
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));	//TODO this should really be assertThat but it really doesn't like it for some reason
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
 		assertThat("Field text edit button not visible", searchPage.fieldTextEditButton().isDisplayed());
@@ -701,7 +703,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));	//TODO this should really be assertThat but it really doesn't like it for some reason
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
 		assertEquals(firstSearchResult, searchPage.getSearchResultTitle(1));
 
 		searchPage.fieldTextEditButton().click();
@@ -710,7 +712,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));	//TODO this should really be assertThat but it really doesn't like it for some reason
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
 		assertEquals(secondSearchResult, searchPage.getSearchResultTitle(1));
 	}
 
@@ -780,7 +782,6 @@ public class SearchPageITCase extends ABCTestBase {
         assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
 				initialSearchCount, greaterThan(redNotStar));
 
-        //TODO check
         search("star");
         searchPage.loadOrFadeWait();
         final int star = searchPage.countSearchResults();
@@ -804,7 +805,7 @@ public class SearchPageITCase extends ABCTestBase {
         assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
 				thirdSearchCount, lessThan(fourthSearchCount));
 		assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
-				fourthSearchCount + redNotStar + starNotRed, is(secondSearchCount));    //TODO Cech
+				fourthSearchCount + redNotStar + starNotRed, is(secondSearchCount));
 	}
 
     //TODO
@@ -827,7 +828,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.getDocLogo(1,new WebDriverWait(getDriver(),10));
         searchPage.loadOrFadeWait();
 		assertEquals(2, searchPage.getPromotionSummarySize());
-		assertEquals(2, searchPage.getPromotionSummaryLabels().size());     //TODO
+		assertEquals(2, searchPage.getPromotionSummaryLabels().size());
 
 		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
 		searchPage.showFieldTextOptions();
@@ -858,8 +859,7 @@ public class SearchPageITCase extends ABCTestBase {
 		promotionsPage.deleteAllPromotions();
 
 		search("horse");
-//		searchPage.selectLanguage("English", getConfig().getType().getName());
-        languageWarn();
+		searchPage.selectLanguage("English");
 
 		final List<String> promotedDocs = searchPage.createAMultiDocumentPromotion(2);
 		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
@@ -881,7 +881,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.loadOrFadeWait();
 
 		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
-		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
+		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));	//TODO Seems like this shouldn't be visible
 		assertEquals("Wrong number of results displayed", 2, searchPage.countSearchResults());
 		assertEquals("Wrong number of pin to position labels displayed", 2, searchPage.countPinToPositionLabels());
 
@@ -984,22 +984,23 @@ public class SearchPageITCase extends ABCTestBase {
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(date);
 		searchPage.closeFromDatePicker();
-		assertEquals("Document should still be displayed", firstResult, searchPage.getSearchResultTitle(1));
+		assertThat("Document should still be displayed", searchPage.getSearchResultTitle(1), is(firstResult));
 
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, 1));
 		searchPage.closeFromDatePicker();
 
-		assertEquals("Document should not be visible. Date filter not working", firstResult, not(searchPage.getSearchResultTitle(1)));
+		assertThat("Document should not be visible. Date filter not working", searchPage.getSearchResultTitle(1), not(firstResult));
 
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
 		searchPage.closeFromDatePicker();
-		assertEquals("Document should be visible. Date filter not working", firstResult, not(searchPage.getSearchResultTitle(1)));
+		assertThat("Document should be visible. Date filter not working", searchPage.getSearchResultTitle(1), is(firstResult));
 	}
 
+	//TODO - doesn't seem to be functioning properly
 	@Test
 	public void testUntilDateFilter() throws ParseException {
 //		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
@@ -1131,7 +1132,7 @@ public class SearchPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		getDriver().navigate().refresh();
-		body = new HSOAppBody(getDriver());
+		body = getBody();
 		final String newSearchText = body.getTopNavBar().getSearchBarText();
 		assertEquals("search bar should be blank on refresh of a page that isn't the search page", newSearchText, searchText);
 	}
@@ -1169,23 +1170,23 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> englishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
-		searchPage.selectLanguage("French", getConfig().getType().getName());
+		searchPage.selectLanguage("French");
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> frenchConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
-		assertEquals("Concepts should be different in different languages", englishConcepts, not(frenchConcepts));
 
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
+
+		searchPage.selectLanguage("English");
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> secondEnglishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
-		assertEquals("Related concepts have changed on second search of same query text", englishConcepts, secondEnglishConcepts);
+		assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
 	}
 
 	@Test
 	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
 //        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-//            //TODO add data to default index?
 //			selectNewsEngIndex();
 //        }
 
@@ -1200,6 +1201,7 @@ public class SearchPageITCase extends ABCTestBase {
 		getDriver().navigate().to(illegitimateUrl);
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
+		//TODO failing here wrongly
         assertEquals("Page should still have results", searchPage.getText(), not(containsString("No results found...")));
         assertEquals("Page should not have thrown an error",searchPage.getText(), not(containsString(havenErrorMessage)));
         assertEquals("Page number should not have changed", currentPage, searchPage.getCurrentPageNumber());
@@ -1222,6 +1224,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	//TODO parametric values aren't working - file ticket
 	public void testParametricValuesLoads() throws InterruptedException {
 		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
 		searchPage.expandSubFilter(SearchBase.Filter.PARAMETRIC_VALUES);
@@ -1231,12 +1234,23 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testContentType(){
-		selectNewsEngIndex();
-		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
+		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+			selectNewsEngIndex();
+			searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
+		}
 
 		search("Alexis");
 
 		searchPage.openParametricValuesList();
+		searchPage.loadOrFadeWait();
+		new WebDriverWait(getDriver(),30)
+				.withMessage("Waiting for parametric values list to load")
+				.until(new ExpectedCondition<Boolean>() {
+					@Override
+					public Boolean apply(WebDriver driver) {
+						return !searchPage.parametricValueLoadIndicator().isDisplayed();
+					}
+				});
 
 		int results = searchPage.filterByContentType("TEXT/PLAIN");
 
@@ -1254,65 +1268,5 @@ public class SearchPageITCase extends ABCTestBase {
 		resultsTotal += searchPage.visibleDocumentsCount();
 
 		assertThat(resultsTotal, is(results));
-	}
-
-	@Test
-	public void testAuthor(){
-		selectNewsEngIndex();
-		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
-
-		search("fruit");
-
-		String author = "RUGBYBWORLDCUP.COM";
-
-		searchPage.openParametricValuesList();
-
-		int results = searchPage.filterByAuthor(author);
-
-		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
-
-		searchPage.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
-
-		assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
-
-		searchPage.getSearchResult(1).click();
-
-		for(int i = 0; i < results; i++) {
-			assertThat(new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is(author.toLowerCase()));
-			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
-		}
-
-		getDriver().findElement(By.className("fa-close")).click();
-
-		searchPage.loadOrFadeWait();
-
-		searchPage.filterByAuthor(author); //'Unfilter'
-
-		searchPage.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
-
-		author = "YLEIS";
-
-		results = searchPage.filterByAuthor(author);
-
-		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
-
-		searchPage.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
-
-		assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
-
-		searchPage.getSearchResult(1).click();
-
-		for(int i = 0; i < results; i++) {
-			assertThat(new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is("Yleis"));
-			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
-		}
-
-		getDriver().findElement(By.className("fa-close")).click();
 	}
 }

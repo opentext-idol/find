@@ -18,7 +18,7 @@ public class AbcHasLoggedIn implements HasLoggedIn {
     @Override
     public boolean hasLoggedIn() {
         try {
-            new WebDriverWait(driver, 30).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("navbar-static-top")));
+            new WebDriverWait(driver, 60).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("navbar-static-top")));
         } catch (final TimeoutException e) {
             return false;
         }

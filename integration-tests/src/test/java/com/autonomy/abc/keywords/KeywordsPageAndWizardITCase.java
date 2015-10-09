@@ -3,6 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.HSOAppBody;
@@ -38,10 +39,6 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.junit.Assert.assertEquals;
 
-/*
- TODO synonym lists now only show up once; THEREFORE need to check that a) there are the proper amount of synonym groups AND b) THAT THOSE SYNONYM GROUPS HAVE THE CORRECT NUMBER OF SYNONYMS
- TODO TEST COLOURS
- */
 public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public KeywordsPageAndWizardITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -1348,15 +1345,16 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createSynonymGroup("road rue strasse", "French");
-		body.getTopNavBar().search("Korea");
 		searchPage = getElementFactory().getSearchPage();
+		body.getTopNavBar().search("Korea");
 		searchPage.selectLanguage("Chinese");
+		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.createSynonymsLink().click();
 		searchPage.loadOrFadeWait();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.addSynonyms("한국");
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		searchPage = getElementFactory().getSearchPage();
 
 		body.getTopNavBar().search("Korea");
 		searchPage.selectLanguage("Chinese");
@@ -1681,8 +1679,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.deleteSynonym("ef", "ef");
 		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
 
-		keywordsPage.deleteAllBlacklistedTerms();
-		keywordsPage.deleteAllSynonyms();
+		keywordsPage.deleteKeywords();
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
@@ -1726,7 +1723,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		for (final String synonym : synonyms) {
 			keywordsPage.getSynonymIcon(synonym, synonym).click();
 
-			//TODO
 			if(getParent(getParent(getParent(keywordsPage.getSynonymIcon(synonym)))).findElements(By.tagName("li")).size() > 2){
 				assertEquals("Too many synonyms are disabled on synonym delete", 1, keywordsPage.countRefreshIcons());
 			} else {
@@ -1852,7 +1848,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
 		new WebDriverWait(getDriver(),30).until(new WaitForNotification("Created a new synonym group containing: "));
-		assertThat(notifications.notificationNumber(1).getText(),is("Created a new synonym group containing: " + synonyms[0].toLowerCase() + ", " + synonyms[1].toLowerCase() + ", " + synonyms[2].toLowerCase()));
+		assertThat(notifications.notificationNumber(1).getText(), is("Created a new synonym group containing: " + synonyms[0].toLowerCase() + ", " + synonyms[1].toLowerCase() + ", " + synonyms[2].toLowerCase()));
 	}
 
 	@Test
@@ -1902,7 +1898,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
 			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-			body = new HSOAppBody(getDriver());
+			body = getBody();
 
 			new WebDriverWait(getDriver(), 30).until(new ExpectedCondition<Boolean>() {
 
@@ -1963,7 +1959,19 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 
 		//Make sure some results show up for terms within the synonym group
-		assertThat(searchPage.visibleDocumentsCount(),not(0));
+		assertThat(searchPage.visibleDocumentsCount(), not(0));
+	}
+
+	@Test
+	//CSA-1440
+	public void testNavigatingAwayBeforeKeywordAdded() throws InterruptedException {
+		keywordsPage.createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm("Jeff", "English");
+		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+
+		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));
+
+		assertThat(getDriver().getCurrentUrl(),containsString("promotions"));
 	}
 
 }

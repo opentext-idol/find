@@ -92,6 +92,7 @@ public class FindITCase extends ABCTestBase {
         String searchTerm = "Fred is a chimpanzee";
         find.search(searchTerm);
         assertThat(input.getSearchTerm(), is(searchTerm));
+        assertThat(service.getText().toLowerCase(),not(containsString("error")));
     }
 
     @Test
@@ -240,7 +241,6 @@ public class FindITCase extends ABCTestBase {
 
     }
 
-    //TODO delete promotion
     @Test
     public void testPinToPosition(){
         String searchTerm = "red";
@@ -688,7 +688,7 @@ public class FindITCase extends ABCTestBase {
         find.search("iuhdsafsaubfdja");
 
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        assertThat(service.getText(), noDocs); //TODO check error
+        assertThat(service.getText(), noDocs);
 
         find.search("Cat");
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
@@ -838,7 +838,6 @@ public class FindITCase extends ABCTestBase {
         assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
                 initialSearchCount, greaterThan(redNotStar));
 
-        //TODO check
         search("star");
         searchPage.loadOrFadeWait();
         final int star = searchPage.countSearchResults();
@@ -862,7 +861,7 @@ public class FindITCase extends ABCTestBase {
         assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
                 thirdSearchCount, lessThan(fourthSearchCount));
         assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
-                fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));    //TODO Cech*/
+                fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));  */
     }
 
     String findErrorMessage = "An error occurred retrieving results";
@@ -894,6 +893,14 @@ public class FindITCase extends ABCTestBase {
     public void testWhitespaceSearch() {
         find.search(" ");
         assertThat(service.getText(),containsString(findErrorMessage));
+    }
+
+    @Test
+    //CSA-1577
+    public void testClickingCustomDateFilterDoesNotRefreshResults(){
+        find.search("O Captain! My Captain!");
+        service.filterByDate(Service.DateEnum.CUSTOM);
+        assertThat(service.getResultsDiv().getText(),not(containsString("Loading")));
     }
 
     private enum Index {

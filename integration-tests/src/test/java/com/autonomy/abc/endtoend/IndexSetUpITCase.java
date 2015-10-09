@@ -41,20 +41,11 @@ public class IndexSetUpITCase extends ABCTestBase {
     @Before
     public void setUp(){
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        body = new HSOAppBody(getDriver());
+        body = getBody();
         indexes = ((HSOElementFactory) getElementFactory()).getIndexesPage();
 
         indexName = UUID.randomUUID().toString().replace('-','a');
         LoggerFactory.getLogger(IndexSetUpITCase.class).info("Index Name: "+indexName);
-
-//        for(WebElement index : indexes.getIndexes()){
-//            if(index.findElement(By.xpath(".//*[contains(@class,'listItemTitle')]")).getText().length() == indexName.length()){
-//                //TODO DELETE INDEXES!!
-//
-//                indexes = ((HSOElementFactory) getElementFactory()).getIndexesPage();
-//            }
-//        }
-
     }
 
     @Test
@@ -88,7 +79,7 @@ public class IndexSetUpITCase extends ABCTestBase {
 
         body.getTopNavBar().search("*");
 
-        body = new HSOAppBody(getDriver());
+        body = getBody();
 
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
@@ -114,10 +105,6 @@ public class IndexSetUpITCase extends ABCTestBase {
 
     @After
     public void tearDown(){
-//        String indexURL = "https://search.dev.idolondemand.com/search/#/index/"+indexName;
-//        if(!getDriver().getCurrentUrl().equals(indexURL)){
-//            getDriver().navigate().to(indexURL);
-//        }
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         getElementFactory().getPromotionsPage().deleteAllPromotions();
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);

@@ -115,11 +115,11 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	}
 
 	public WebElement getSynonymIcon(final String synonym){
-		return findElement(By.xpath("//span[text()='"+synonym+"']/../i"));
+		return findElement(By.xpath("//span[text()='"+synonym.toLowerCase()+"']/../i"));
 	}
 
 	public WebElement getSynonymIcon(final String synonym, WebElement synonymGroup){
-		return synonymGroup.findElement(By.xpath(".//span[text()='"+synonym+"']/../i"));
+		return synonymGroup.findElement(By.xpath(".//span[text()='" + synonym.toLowerCase()+"']/../i"));
 	}
 
 	public boolean areAnyKeywordsDisabled() {

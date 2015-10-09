@@ -30,6 +30,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
@@ -66,7 +67,7 @@ public class AnalyticsToFindITCase extends ABCTestBase {
         body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
         AnalyticsPage analyticsPage = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-        body = new HSOAppBody(getDriver());
+        body = getBody();
 
         Term zeroSearch = analyticsPage.getMostPopularZeroSearchTerm();
         Term nonZero = analyticsPage.getMostPopularNonZeroSearchTerm();
@@ -81,7 +82,7 @@ public class AnalyticsToFindITCase extends ABCTestBase {
 
 //        navigateToPromotionsAndDelete();
 
-        body = new HSOAppBody(getDriver());
+        body = getBody();
 
         body.getTopNavBar().search(searchTerm);
         SearchPage searchPage = getElementFactory().getSearchPage();
@@ -107,7 +108,7 @@ public class AnalyticsToFindITCase extends ABCTestBase {
 
         List<String> findPromotions = service.getPromotionsTitles();
 
-        verifyThat(findPromotions.size(), is(0));
+        verifyThat(findPromotions.size(), not(0));
         verifyThat(findPromotions, containsInAnyOrder(createdPromotions.toArray()));
         verifyThat(service.getResultTitles(), contains(triggerResults.toArray()));
 
