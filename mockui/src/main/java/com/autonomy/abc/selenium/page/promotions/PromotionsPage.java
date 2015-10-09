@@ -104,7 +104,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 			deletePromotion(promotion);
 		}
 
-		new WebDriverWait(getDriver(),promotions.size() * 10).until(new ExpectedCondition<Boolean>() {
+		new WebDriverWait(getDriver(),Math.max(promotions.size() * 10,30)).until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				return findElements(By.className("promotion-delete")).size() == 0;

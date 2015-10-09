@@ -17,11 +17,17 @@ public class AnalyticsPage extends AppElement implements AppPage {
 
     public AnalyticsPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
+        waitForLoad();
     }
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content")));
+        new WebDriverWait(getDriver(),45).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return driver.findElements(By.className("loadingIconSmall")).size() == 0;
+            }
+        });
     }
 
     private WebElement getPopularTermContainer(){
