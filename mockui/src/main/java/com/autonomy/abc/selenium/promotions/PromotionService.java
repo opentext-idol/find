@@ -51,6 +51,12 @@ public class PromotionService {
         return promotion.getDetailsPage(getBody(), getElementFactory());
     }
 
+    public PromotionsDetailPage goToDetails(String title) {
+        goToPromotions();
+        promotionsPage.getPromotionLinkWithTitleContaining(title).click();
+        return getElementFactory().getPromotionsDetailPage();
+    }
+
     public List<String> setUpPromotion(Promotion promotion, Search search, int numberOfDocs) {
         SearchPage searchPage = search.apply();
         searchPage.promoteTheseDocumentsButton().click();
