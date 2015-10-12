@@ -236,7 +236,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	@Override
 	public WebElement synonymInGroup(final String synonym){
-		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[@data-term='" + synonym + "']"));
+		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[@data-term='" + synonym.toLowerCase() + "']"));
 	}
 
 	public int countSynonymLists() {
