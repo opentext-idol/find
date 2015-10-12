@@ -30,6 +30,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.hamcrest.number.OrderingComparison;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -55,7 +56,9 @@ import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 
@@ -92,7 +95,7 @@ public class FindITCase extends ABCTestBase {
         String searchTerm = "Fred is a chimpanzee";
         find.search(searchTerm);
         assertThat(input.getSearchTerm(), is(searchTerm));
-        assertThat(service.getText().toLowerCase(),not(containsString("error")));
+        assertThat(service.getText().toLowerCase(), not(containsString("error")));
     }
 
     @Test
@@ -753,28 +756,53 @@ public class FindITCase extends ABCTestBase {
     }
 
     @Test
-    public void testBooleanOperators(){
-        find.search("rss");
+    public void testBooleanOperatorsProperlyMate(){
+        String termOne = "musketeers";
+        String termTwo = "\"dearly departed\"";
 
-        service.filterByIndex(domain, "naturalnavigator");
+        find.search(termOne);
+        List<String> musketeersSearchResults = service.getResultTitles();
+        int numberOfMusketeersResults = musketeersSearchResults.size();
 
-        int rssSearch = service.getResults().size();
+        find.search(termTwo);
+        List<String> dearlyDepartedSearchResults = service.getResultTitles();
+        int numberOfDearlyDepartedResults = dearlyDepartedSearchResults.size();
 
-        find.search("html");
+        find.search(termOne + " AND " + termTwo);
+        List<String> andResults = service.getResultTitles();
+        int numberOfAndResults = andResults.size();
 
-        int htmlSearch = service.getResults().size();
+        assertThat(numberOfMusketeersResults,greaterThanOrEqualTo(numberOfAndResults));
+        assertThat(numberOfDearlyDepartedResults, greaterThanOrEqualTo(numberOfAndResults));
+        String[] andResultsArray = andResults.toArray(new String[andResults.size()]);
+        assertThat(musketeersSearchResults, hasItems(andResultsArray));
+        assertThat(dearlyDepartedSearchResults,hasItems(andResultsArray));
 
-        find.search("rss OR html");
+        find.search(termOne + " OR " + termTwo);
+        List<String> orResults = service.getResultTitles();
+        Set<String> concatenatedResults = new HashSet<String>(ListUtils.union(musketeersSearchResults,dearlyDepartedSearchResults));
+        assertThat(orResults.size(), is(concatenatedResults.size()));
+        assertThat(orResults, containsInAnyOrder(concatenatedResults.toArray()));
 
-        assertThat(service.getResults().size(), is(rssSearch + htmlSearch));
+        find.search(termOne + " XOR " + termTwo);
+        List<String> xorResults = service.getResultTitles();
+        concatenatedResults.removeAll(andResults);
+        assertThat(xorResults.size(), is(concatenatedResults.size()));
+        assertThat(xorResults, containsInAnyOrder(concatenatedResults.toArray()));
 
-        find.search("rss XOR html"); //TODO check to find a better example of this?
+        find.search(termOne + " NOT " + termTwo);
+        List<String> notTermTwo = service.getResultTitles();
+        Set<String> t1NotT2 = new HashSet<>(concatenatedResults);
+        t1NotT2.removeAll(dearlyDepartedSearchResults);
+        assertThat(notTermTwo.size(), is(t1NotT2.size()));
+        assertThat(notTermTwo, containsInAnyOrder(t1NotT2.toArray()));
 
-        assertThat(service.getResults().size(), is(rssSearch + htmlSearch));
-
-        find.search("rss AND html");
-
-        assertThat(service.getText(), noDocs);
+        find.search(termTwo + " NOT " + termOne);
+        List<String> notTermOne = service.getResultTitles();
+        Set<String> t2NotT1 = new HashSet<>(concatenatedResults);
+        t2NotT1.removeAll(musketeersSearchResults);
+        assertThat(notTermOne.size(), is(t2NotT1.size()));
+        assertThat(notTermOne,containsInAnyOrder(t2NotT1.toArray()));
     }
 
     //DUPLICATE SEARCH TEST (almost)
