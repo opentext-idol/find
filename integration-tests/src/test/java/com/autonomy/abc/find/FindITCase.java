@@ -10,9 +10,6 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
@@ -27,13 +24,10 @@ import com.hp.autonomy.hod.client.api.textindex.query.fields.*;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import org.apache.commons.collections.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -52,15 +46,12 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.lessThan;
 
 public class FindITCase extends ABCTestBase {
     private FindPage find;
@@ -309,8 +300,8 @@ public class FindITCase extends ABCTestBase {
 
             List<String> findPromotions = service.getPromotionsTitles();
 
-            assertNotEquals(0, findPromotions.size());
-            assertThat(findPromotions, containsInAnyOrder(createdPromotions.toArray()));
+            assertThat(findPromotions, not(empty()));
+            assertThat(createdPromotions, everyItem(isIn(findPromotions)));
 
             for(WebElement promotion : service.getPromotions()){
                 promotionShownCorrectly(promotion);
@@ -366,7 +357,7 @@ public class FindITCase extends ABCTestBase {
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
 
-            assertThat(service.getPromotionsTitles(),containsInAnyOrder(promotedDocumentTitles.toArray()));
+            verifyThat(promotedDocumentTitles, everyItem(isIn(service.getPromotionsTitles())));
 
             for(WebElement promotion : service.getPromotions()){
                 promotionShownCorrectly(promotion);
