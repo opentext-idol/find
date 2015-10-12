@@ -21,6 +21,10 @@ public abstract class Wizard implements Action {
         return steps;
     }
 
+    protected void setSteps(List<WizardStep> steps) {
+        this.steps = steps;
+    }
+
     protected void add(WizardStep wizardStep) {
         steps.add(wizardStep);
     }
