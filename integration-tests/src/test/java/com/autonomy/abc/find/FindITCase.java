@@ -15,6 +15,9 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -68,6 +71,8 @@ public class FindITCase extends ABCTestBase {
     private List<String> browserHandles;
     private final String domain = "ce9f1f3d-a780-4793-8a6a-a74b12b7d1ae";
     private final Matcher<String> noDocs = containsString("No results found");
+    private PromotionService promotionService;
+    private SearchActionFactory searchActionFactory;
 
     public FindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -75,6 +80,9 @@ public class FindITCase extends ABCTestBase {
 
     @Before
     public void setUp(){
+        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+
         promotions = getElementFactory().getPromotionsPage();
 
         browserHandles = promotions.createAndListWindowHandles();
@@ -243,26 +251,16 @@ public class FindITCase extends ABCTestBase {
     //TODO delete promotion
     @Test
     public void testPinToPosition(){
-        String searchTerm = "red";
+        Search search = searchActionFactory.makeSearch("red");
         String trigger = "mate";
+        PinToPositionPromotion promotion = new PinToPositionPromotion(1, trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
 
         navigateToPromotionsAndDelete();
 
         try {
-            body.getTopNavBar().search(searchTerm);
-            SearchPage searchPage = getElementFactory().getSearchPage();
-            String documentTitle = searchPage.createAPromotion();
-            CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-            createNewPromotionsPage.pinToPosition().click();
-            createNewPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
-            createNewPromotionsPage.loadOrFadeWait();
-            createNewPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
-            createNewPromotionsPage.loadOrFadeWait();
-            createNewPromotionsPage.addSearchTrigger(trigger);
-            createNewPromotionsPage.finishButton().click();
-            getElementFactory().getSearchPage(); //Wait for search page
+            String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
@@ -275,29 +273,16 @@ public class FindITCase extends ABCTestBase {
 
     @Test
     public void testPinToPositionThree(){
-        String searchTerm = "red";
+        Search search = searchActionFactory.makeSearch("red");
         String trigger = "mate";
+        PinToPositionPromotion promotion = new PinToPositionPromotion(3, trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
 
         navigateToPromotionsAndDelete();
 
         try {
-            body.getTopNavBar().search(searchTerm);
-            SearchPage searchPage = getElementFactory().getSearchPage();
-            String documentTitle = searchPage.createAPromotion();
-            CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-            createNewPromotionsPage.pinToPosition().click();
-            createNewPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
-            createNewPromotionsPage.loadOrFadeWait();
-            WebElement plus = createNewPromotionsPage.findElement(By.cssSelector(".current-step .plus"));
-            plus.click();
-            plus.click();
-            createNewPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
-            createNewPromotionsPage.loadOrFadeWait();
-            createNewPromotionsPage.addSearchTrigger(trigger);
-            createNewPromotionsPage.finishButton().click();
-            getElementFactory().getSearchPage(); //Wait for search page
+            String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
@@ -315,20 +300,16 @@ public class FindITCase extends ABCTestBase {
 
     @Test
     public void testSpotlightPromotions(){
-        String searchTerm = "Proper";
+        Search search = searchActionFactory.makeSearch("Proper");
         String trigger = "Prim";
+        SpotlightPromotion spotlight = new SpotlightPromotion(trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
 
         navigateToPromotionsAndDelete();
 
         try {
-            body.getTopNavBar().search(searchTerm);
-            SearchPage searchPage = getElementFactory().getSearchPage();
-            List<String> createdPromotions = searchPage.createAMultiDocumentPromotion(3);
-            CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-            createNewPromotionsPage.addSpotlightPromotion("Spotlight", trigger);
-            getElementFactory().getSearchPage(); //Wait for search page
+            List<String> createdPromotions = promotionService.setUpPromotion(spotlight, search, 3);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
@@ -352,14 +333,14 @@ public class FindITCase extends ABCTestBase {
         String title = "TITLE";
         String content = "CONTENT";
         String trigger = "LOVE";
+        StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
 
         navigateToPromotionsAndDelete();
 
         try {
-            ((HSOPromotionsPage) getElementFactory().getPromotionsPage()).newStaticPromotion(title, content, trigger);
-            getElementFactory().getSearchPage(); //Wait to be navigated to SP
+            ((HSOPromotionService) promotionService).setUpStaticPromotion(promotion);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
