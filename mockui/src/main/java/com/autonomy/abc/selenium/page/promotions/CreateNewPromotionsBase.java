@@ -1,6 +1,9 @@
 package com.autonomy.abc.selenium.page.promotions;
 
+import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.promotions.DynamicPromotion;
+import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -11,6 +14,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class CreateNewPromotionsBase extends AppElement implements AppPage {
@@ -111,6 +115,14 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 
 	public WebElement spotlightType(final String type ) {
 		return getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
+	}
+
+	// "visited" by the promotion
+	public List<com.autonomy.abc.selenium.actions.wizard.WizardStep> getDynamicWizardSteps(DynamicPromotion promotion) {
+		return Arrays.asList(
+				new OptionWizardStep(this, "Spotlight type", promotion.getSpotlightType().getOption()),
+				new SearchTriggerStep(this, promotion.getTrigger())
+		);
 	}
 
 	/*

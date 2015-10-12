@@ -36,7 +36,11 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement promotionDeleteButton(final String title) {
-		return getPromotionLinkWithTitleContaining(title).findElement(By.cssSelector(".promotion-delete"));
+		return promotionDeleteButton(getPromotionLinkWithTitleContaining(title));
+	}
+
+	public WebElement promotionDeleteButton(final WebElement promotion) {
+		return promotion.findElement(By.className("promotion-delete"));
 	}
 
 	// use PromotionActionFactory.makeDeletePromotion(...)

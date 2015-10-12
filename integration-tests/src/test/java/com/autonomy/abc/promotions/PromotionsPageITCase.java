@@ -2,7 +2,6 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
@@ -41,7 +40,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	private PromotionsPage promotionsPage;
 	private PromotionsDetailPage promotionsDetailPage;
 	private SearchActionFactory searchActionFactory;
-	private PromotionActionFactory promotionActionFactory;
+	private PromotionService promotionService;
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -49,12 +48,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage = getElementFactory().getPromotionsPage();
 		// TODO: occasional stale element?
 		searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-		promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
-		promotionActionFactory.makeDeleteAll().apply();
+		promotionService = getApplication().createPromotionService(getElementFactory());
+		promotionService.deleteAll();
 	}
 
 	private List<String> setUpPromotion(Search search, int numberOfDocs, Promotion promotion) {
-		List<String> promotedDocTitles = promotionActionFactory.makeCreatePromotion(promotion, search, numberOfDocs).apply();
+		List<String> promotedDocTitles = promotionService.setUpPromotion(promotion, search, numberOfDocs);
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
 		promotionsDetailPage = promotion.getDetailsPage(body, getElementFactory());
@@ -244,7 +243,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String[] triggers = {"bunny", "pony", "<script> document.body.innerHTML = '' </script>"};
 		for (int i=0; i<searchTerms.length; i++) {
 			setUpPromotion(searchActionFactory.makeSearch(searchTerms[i]), new SpotlightPromotion(triggers[i]));
-			promotionsPage = promotionActionFactory.goToPromotions();
+			promotionsPage = promotionService.goToPromotions();
 		}
 
 		// "script" gets mangled
@@ -254,18 +253,18 @@ public class PromotionsPageITCase extends ABCTestBase {
 		}
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
-		promotionActionFactory.makeDelete("bunny").apply();
+		promotionService.delete("bunny");
 
 		verifyThat("promotion 'pony' still exists", promotionsPage, promotionsList(hasItem(containsText("pony"))));
 		verifyThat("promotion 'script' still exists", promotionsPage, promotionsList(hasItem(containsText("script"))));
 		verifyThat("deleted promotion 'bunny'", promotionsPage, promotionsList(hasSize(2)));
 
-		promotionActionFactory.makeDelete("script").apply();
+		promotionService.delete("script");
 
 		verifyThat("promotion 'pony' still exists", promotionsPage, promotionsList(hasItem(containsText("pony"))));
 		verifyThat("deleted promotion 'bunny'", promotionsPage, promotionsList(hasSize(1)));
 
-		promotionActionFactory.makeDelete("pony").apply();
+		promotionService.delete("pony");
 
 		verifyThat("deleted promotion 'pony'", promotionsPage, promotionsList(hasSize(0)));
 	}
@@ -280,7 +279,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	private void renamePromotionContaining(String oldTitle, String newTitle) {
 		goToDetails(oldTitle);
 		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
-		promotionsPage = promotionActionFactory.goToPromotions();
+		promotionsPage = promotionService.goToPromotions();
 	}
 
 	@Test
@@ -308,7 +307,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		for (int i = 0; i < searches.length; i++) {
 			setUpPromotion(searches[i], promotions[i]);
-			promotionActionFactory.goToPromotions();
+			promotionService.goToPromotions();
 		}
 		assertThat(promotionsPage, promotionsList(hasSize(searches.length)));
 
@@ -350,7 +349,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		goToDetails("pooch");
 		promotionsDetailPage.trigger("pooch").removeAndWait();
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("pooch"))));
-		promotionActionFactory.goToPromotions();
+		promotionService.goToPromotions();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
@@ -384,7 +383,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		goToDetails("lupo");
 		promotionsDetailPage.trigger("wolf").removeAndWait();
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wolf"))));
-		promotionActionFactory.goToPromotions();
+		promotionService.goToPromotions();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
@@ -400,7 +399,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage.triggerAddBox().setAndSubmit("Rhodesian Ridgeback");
 		promotionsDetailPage.waitForTriggerRefresh();
 		verifyThat(promotionsDetailPage, triggerList(hasItems("Rhodesian", "Ridgeback")));
-		promotionActionFactory.goToPromotions();
+		promotionService.goToPromotions();
 
 		promotionsPage.clearPromotionsSearchFilter();
 		promotionsPage.selectPromotionsCategoryFilter("Dynamic Spotlight");
@@ -440,6 +439,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final String secondSearchResult = setUpPromotion(search("chat", "French"), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
 
 		promotionsDetailPage.triggerAddBox().setAndSubmit("purrr");
+		promotionsDetailPage.waitForTriggerRefresh();
 		promotionsDetailPage.trigger("meow").removeAndWait();
 		search("purrr", "French").apply();
 		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(secondSearchResult));
@@ -467,7 +467,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testPromotionCreationAndDeletionOnSecondWindow() {
 		setUpPromotion(search("chien", "French"), new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"));
 
-		promotionActionFactory.goToPromotions();
+		promotionService.goToPromotions();
 		final String url = getDriver().getCurrentUrl();
 		final List<String> browserHandles = promotionsPage.createAndListWindowHandles();
 
@@ -484,12 +484,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		getDriver().switchTo().window(browserHandles.get(0));
 
-		promotionActionFactory.makeDelete("friend").apply();
+		promotionService.delete("friend");
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
 
-		promotionActionFactory.makeDelete("woof").apply();
+		promotionService.delete("woof");
 
 		getDriver().switchTo().window(browserHandles.get(0));
 		verifyThat(promotionsPage, containsText("There are no promotions..."));

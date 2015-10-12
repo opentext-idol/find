@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.page.promotions.*;
 
@@ -30,22 +29,25 @@ public class DynamicPromotion extends Promotion {
         return "dynamic spotlight";
     }
 
+    public int getNumberOfResults() {
+        return numberOfResults;
+    }
+
+    public SpotlightType getSpotlightType() {
+        return spotlightType;
+    }
+
     @Override
     public Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
         return new DynamicPromotionsWizard(createNewPromotionsBase);
     }
 
     private class DynamicPromotionsWizard extends PromotionWizard {
-        public DynamicPromotionsWizard(HSOCreateNewDynamicPromotionsPage page) {
-            super(page);
-            add(new ResultsNumberStep(page, numberOfResults));
-            add(new SearchTriggerStep(page, getTrigger()));
-        }
-
         public DynamicPromotionsWizard(CreateNewPromotionsBase page) {
             super(page);
-            add(new OptionWizardStep(page, "Spotlight type", spotlightType.getOption()));
-            add(new SearchTriggerStep(page, getTrigger()));
+            // steps are app-specific, so are set using the dynamic type of the page
+            // but also need to get (app-specific) info related to the promotion
+            setSteps(page.getDynamicWizardSteps(DynamicPromotion.this));
         }
     }
 }
