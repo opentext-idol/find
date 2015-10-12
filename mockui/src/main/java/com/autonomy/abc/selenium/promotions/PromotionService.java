@@ -74,9 +74,8 @@ public class PromotionService {
         return promotionsPage;
     }
 
-    private WebElement deleteNoWait(String title) {
-        goToPromotions();
-        WebElement deleteButton = promotionsPage.promotionDeleteButton(title);
+    private WebElement deleteNoWait(WebElement element) {
+        WebElement deleteButton = promotionsPage.promotionDeleteButton(element);
         deleteButton.click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         deleteModal.findElement(By.cssSelector(".btn-danger")).click();
@@ -85,21 +84,23 @@ public class PromotionService {
     }
 
     public PromotionsPage delete(String title) {
-        WebElement deleteButton = deleteNoWait(title);
+        WebElement deleteButton = deleteNoWait(promotionsPage.getPromotionLinkWithTitleContaining(title));
         new WebDriverWait(getDriver(), 20).until(ExpectedConditions.stalenessOf(deleteButton));
         return promotionsPage;
     }
 
     public PromotionsPage deleteAll() {
         goToPromotions();
-        List<String> promotionTitles = promotionsPage.getPromotionTitles();
-        for (String title : promotionTitles) {
-            deleteNoWait(title);
+        // TODO: possible stale element? refresh promotionsList, or select using int?
+        // (multiple promotions may have the same title)
+        List<WebElement> promotionsList = promotionsPage.promotionsList();
+        for (WebElement promotion : promotionsList) {
+            deleteNoWait(promotion);
         }
-        new WebDriverWait(getDriver(), 10*(promotionTitles.size() + 1 )).until(new ExpectedCondition<Boolean>() {
+        new WebDriverWait(getDriver(), 10*(promotionsList.size() + 1 )).until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver input) {
-                return promotionsPage.getPromotionTitles().isEmpty();
+                return promotionsPage.promotionsList().isEmpty();
             }
         });
         return promotionsPage;
