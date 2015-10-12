@@ -13,6 +13,12 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
         return new FormInput(findElement(By.cssSelector("[data-attribute='" + attribute + "']")), getDriver());
     }
 
+    // for dynamic promotions
+    public FormInput dialInput() {
+        return new FormInput(findElement(By.cssSelector("input.dial")), getDriver());
+    }
+
+    // for static promotions
     public FormInput documentTitle() {
         return dataInput("staticTitle");
     }

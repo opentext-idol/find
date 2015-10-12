@@ -36,7 +36,7 @@ public class DynamicPromotion extends Promotion {
     }
 
     private class DynamicPromotionsWizard extends PromotionWizard {
-        public DynamicPromotionsWizard(HSOCreateNewDynamicPromotionsPage page) {
+        public DynamicPromotionsWizard(HSOCreateNewPromotionsPage page) {
             super(page);
             add(new ResultsNumberStep(page, numberOfResults));
             add(new SearchTriggerStep(page, getTrigger()));
