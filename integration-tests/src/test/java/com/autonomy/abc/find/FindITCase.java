@@ -257,7 +257,7 @@ public class FindITCase extends ABCTestBase {
 
         getDriver().switchTo().window(browserHandles.get(0));
 
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try {
             String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
@@ -267,7 +267,7 @@ public class FindITCase extends ABCTestBase {
             assertThat(service.getSearchResultTitle(1).getText(), is(documentTitle));
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
     }
 
@@ -278,8 +278,7 @@ public class FindITCase extends ABCTestBase {
         PinToPositionPromotion promotion = new PinToPositionPromotion(3, trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
-
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try {
             String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
@@ -289,13 +288,8 @@ public class FindITCase extends ABCTestBase {
             assertThat(service.getSearchResultTitle(3).getText(), is(documentTitle));
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
-    }
-
-    private void navigateToPromotionsAndDelete(){
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        getElementFactory().getPromotionsPage().deleteAllPromotions();
     }
 
     @Test
@@ -305,8 +299,7 @@ public class FindITCase extends ABCTestBase {
         SpotlightPromotion spotlight = new SpotlightPromotion(trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
-
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try {
             List<String> createdPromotions = promotionService.setUpPromotion(spotlight, search, 3);
@@ -324,7 +317,7 @@ public class FindITCase extends ABCTestBase {
             }
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
     }
 
@@ -336,8 +329,7 @@ public class FindITCase extends ABCTestBase {
         StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
-
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try {
             ((HSOPromotionService) promotionService).setUpStaticPromotion(promotion);
@@ -353,7 +345,7 @@ public class FindITCase extends ABCTestBase {
             promotionShownCorrectly(staticPromotion);
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
     }
 
@@ -362,35 +354,14 @@ public class FindITCase extends ABCTestBase {
     public void testDynamicPromotions(){
         int resultsToPromote = 13;
         String trigger = "Rugby";
+        DynamicPromotion dynamicPromotion = new DynamicPromotion(resultsToPromote, trigger);
+        Search search = searchActionFactory.makeSearch("kittens");
 
         getDriver().switchTo().window(browserHandles.get(0));
-
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try{
-            body.getTopNavBar().search("kittens");
-            SearchPage searchPage = getElementFactory().getSearchPage();
-
-            List<String> promotedDocumentTitles = searchPage.getSearchResultTitles(resultsToPromote);
-
-            searchPage.findElement(By.className("dynamic-promotions-button")).click();
-            find.loadOrFadeWait();
-            WebElement dial = getDriver().findElement(By.className("dial"));
-            dial.click();
-            dial.sendKeys(Keys.RIGHT,
-                    Keys.BACK_SPACE,
-                    Keys.BACK_SPACE,
-                    Keys.NUMPAD1,
-                    Keys.NUMPAD3);
-            System.out.println(dial.getAttribute("value"));
-            getDriver().findElement(By.cssSelector(".current-step .next-step")).click();
-            find.loadOrFadeWait();
-            getDriver().findElement(By.cssSelector(".input-group input")).sendKeys(trigger);
-            getDriver().findElement(By.cssSelector(".current-step .input-group .btn")).click();
-            find.loadOrFadeWait();
-            getDriver().findElement(By.cssSelector(".current-step .finish-step")).click();
-
-            getElementFactory().getSearchPage();
+            List<String> promotedDocumentTitles = promotionService.setUpPromotion(dynamicPromotion, search, resultsToPromote);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
@@ -403,7 +374,7 @@ public class FindITCase extends ABCTestBase {
 
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
     }
 
