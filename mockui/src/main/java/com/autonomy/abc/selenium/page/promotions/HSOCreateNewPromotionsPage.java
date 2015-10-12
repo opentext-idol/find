@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.promotions.ResultsNumberStep;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,8 +22,10 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
     }
 
     // for dynamic promotions
-    public FormInput dialInput() {
-        return new FormInput(findElement(By.cssSelector("input.dial")), getDriver());
+    public void setDialValue(int value) {
+        WebElement dialInput = findElement(By.cssSelector("input.dial"));
+        // .clear() does not work properly due to validation
+        dialInput.sendKeys("\b\b" + Integer.toString(value));
     }
 
     @Override
