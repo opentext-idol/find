@@ -46,7 +46,7 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
     public void addSpotlightPromotion(final String promotionType, final String searchTrigger) {
         // TODO: move this logic into a "SpotlightPromotion" object
         promotionType("SPOTLIGHT").click();
-        continueButton(WizardStep.TYPE).click();
+        continueButton().click();
         addSearchTrigger(searchTrigger);
         finishButton().click();
     }

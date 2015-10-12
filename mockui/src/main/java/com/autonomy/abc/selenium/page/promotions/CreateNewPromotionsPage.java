@@ -27,12 +27,13 @@ public abstract class CreateNewPromotionsPage extends CreateNewPromotionsBase {
 		return Integer.parseInt(findElement(By.cssSelector(".position")).getText());
 	}
 
+	@Deprecated
 	public void navigateToTriggers() {
 		pinToPosition().click();
-		continueButton(WizardStep.TYPE).click();
+		continueButton().click();
 		loadOrFadeWait();
 		selectPositionPlusButton().click();
-		continueButton(WizardStep.PROMOTION_TYPE).click();
+		continueButton().click();
 		loadOrFadeWait();
 	}
 
