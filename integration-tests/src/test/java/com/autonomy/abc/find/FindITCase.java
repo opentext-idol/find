@@ -24,6 +24,7 @@ import com.hp.autonomy.hod.client.api.textindex.query.fields.*;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
+import org.apache.commons.collections.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.Matcher;
@@ -52,8 +53,8 @@ import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
@@ -726,7 +727,7 @@ public class FindITCase extends ABCTestBase {
 
         find.search(termOne + " OR " + termTwo);
         List<String> orResults = service.getResultTitles();
-        Set<String> concatenatedResults = new HashSet<String>(ListUtils.union(musketeersSearchResults,dearlyDepartedSearchResults));
+        Set<String> concatenatedResults = new HashSet<String>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
         assertThat(orResults.size(), is(concatenatedResults.size()));
         assertThat(orResults, containsInAnyOrder(concatenatedResults.toArray()));
 
