@@ -4,7 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.connections.ConnectionActionFactory;
+import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -39,7 +39,7 @@ public class ConnectionsToFind extends ABCTestBase {
     }
 
 
-    private ConnectionActionFactory connectionActionFactory;
+    private ConnectionService connectionService;
     private SearchActionFactory searchActionFactory;
     private PromotionActionFactory promotionActionFactory;
 
@@ -54,14 +54,14 @@ public class ConnectionsToFind extends ABCTestBase {
 
     @Before
     public void setUp(){
-        connectionActionFactory = new ConnectionActionFactory(getApplication(), getElementFactory());
+        connectionService = new ConnectionService(getApplication(), getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
         promotionActionFactory = new PromotionActionFactory(getApplication(),getElementFactory());
     }
 
     @Test
     public void testConnectionsToFind() throws InterruptedException {
-        connectionActionFactory.makeSetUpConnection(connector).apply();
+        connectionService.setUpConnection(connector);
         Search search = searchActionFactory.makeSearch(searchTerm);
         search.applyFilter(new IndexFilter(indexName));
         search.apply();
@@ -85,7 +85,7 @@ public class ConnectionsToFind extends ABCTestBase {
 
         assertPromotedItemsForEverySynonym();
 
-        connectionActionFactory.makeDeleteConnection(connector).apply();
+        connectionService.deleteConnection(connector);
 
         assertPromotedItemsForEverySynonym();
 
