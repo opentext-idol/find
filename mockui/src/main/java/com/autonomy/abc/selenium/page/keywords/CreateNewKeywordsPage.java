@@ -143,7 +143,6 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
 		(new WebDriverWait(getDriver(),10)).until(ExpectedConditions.elementToBeClickable(finishWizardButton())).click();
-		Thread.sleep(5000);
 	}
 
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) throws InterruptedException {
@@ -154,9 +153,6 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		addBlacklistedTerm(blacklistedTerm);
 		loadOrFadeWait();
 		finishWizardButton().click();
-		//new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle")));
-		Thread.sleep(5000); //TODO This isn't a great way to do it - but it's being used in createSynonymGroup, and the commented
-								//out line above doesn't seem to be working
 	}
 
 	private void addBlacklistedTerm(final String blacklistedTerm) {
