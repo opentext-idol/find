@@ -247,6 +247,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.enabledFinishWizardButton().click();
 
 		new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
+		Thread.sleep(5000); //Ensure all blacklist terms have shown up
 		final List<String> blacklistTerms = keywordsPage.getBlacklistedTerms();
 		createKeywordsPage.loadOrFadeWait();
 		assertThat(blacklistTerms, hasItems("danger", "warning", "beware", "scary"));
@@ -443,6 +444,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
 		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TRIGGERS).click();
+		createKeywordsPage.loadOrFadeWait();
 		assertThat("Cancel button redirects to wrong page", getDriver().getCurrentUrl(), endsWith("keywords"));
 		assertEquals("Wrong number of blacklisted terms", 1, keywordsPage.getBlacklistedTerms().size());
 	}
@@ -742,11 +744,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("orange", "English");
-		body.getTopNavBar().waitForGritterToClear();
+		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationAppears());
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		notifications = body.getTopNavBar().getNotifications();
-
 		body.getTopNavBar().notificationsDropdown();
 		assertThat(notifications.notificationNumber(1).getText(), containsString("Added \"orange\" to the blacklist"));
 
