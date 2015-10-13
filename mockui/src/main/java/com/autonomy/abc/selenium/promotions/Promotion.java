@@ -33,13 +33,6 @@ public abstract class Promotion {
         return "Removed a " + getName() + " promotion";
     }
 
-    public PromotionsDetailPage getDetailsPage(AppBody body, ElementFactory elementFactory) {
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        PromotionsPage promotionsPage = elementFactory.getPromotionsPage();
-        promotionsPage.getPromotionLinkWithTitleContaining(trigger).click();
-        return elementFactory.getPromotionsDetailPage();
-    }
-
     public enum Type {
         SPOTLIGHT("SPOTLIGHT"),
         PIN_TO_POSITION("PIN_TO_POSITION");

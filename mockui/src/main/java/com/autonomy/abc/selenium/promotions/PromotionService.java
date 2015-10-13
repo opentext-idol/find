@@ -48,7 +48,7 @@ public class PromotionService {
     }
 
     public PromotionsDetailPage goToDetails(Promotion promotion) {
-        return promotion.getDetailsPage(getBody(), getElementFactory());
+        return goToDetails(promotion.getTrigger());
     }
 
     public PromotionsDetailPage goToDetails(String title) {

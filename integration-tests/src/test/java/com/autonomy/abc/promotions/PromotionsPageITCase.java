@@ -56,7 +56,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		List<String> promotedDocTitles = promotionService.setUpPromotion(promotion, search, numberOfDocs);
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
-		promotionsDetailPage = promotion.getDetailsPage(body, getElementFactory());
+		promotionsDetailPage = promotionService.goToDetails(promotion);
 		return promotedDocTitles;
 	}
 
@@ -71,11 +71,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	private Search search(String searchTerm, String language) {
 		return searchActionFactory.makeSearch(searchTerm).applyFilter(new LanguageFilter(language));
-	}
-
-	private void goToDetails(String text) {
-		promotionsPage.getPromotionLinkWithTitleContaining(text).click();
-		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 	}
 
 	@Test
@@ -277,7 +272,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	private void renamePromotionContaining(String oldTitle, String newTitle) {
-		goToDetails(oldTitle);
+		promotionsDetailPage = promotionService.goToDetails(oldTitle);
 		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
 		promotionsPage = promotionService.goToPromotions();
 	}
@@ -346,7 +341,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
-		goToDetails("pooch");
+		promotionsDetailPage = promotionService.goToDetails("pooch");
 		promotionsDetailPage.trigger("pooch").removeAndWait();
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("pooch"))));
 		promotionService.goToPromotions();
@@ -380,7 +375,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
 		verifyThat(promotionsPage, promotionsList(hasSize(2)));
 
-		goToDetails("lupo");
+		promotionsDetailPage = promotionService.goToDetails("lupo");
 		promotionsDetailPage.trigger("wolf").removeAndWait();
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wolf"))));
 		promotionService.goToPromotions();
@@ -395,7 +390,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
 		verifyThat(promotionsPage, promotionsList(hasSize(1)));
 
-		goToDetails("hond");
+		promotionsDetailPage = promotionService.goToDetails("hond");
 		promotionsDetailPage.triggerAddBox().setAndSubmit("Rhodesian Ridgeback");
 		promotionsDetailPage.waitForTriggerRefresh();
 		verifyThat(promotionsDetailPage, triggerList(hasItems("Rhodesian", "Ridgeback")));
@@ -447,7 +442,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 //		promotionsPage.selectPromotionsCategoryFilter("All Types");
 //		promotionsPage.loadOrFadeWait();
-		goToDetails("meow");
+		promotionsDetailPage = promotionService.goToDetails("meow");
 
 		Editable queryText = promotionsDetailPage.queryText();
 		verifyThat(queryText.getValue(), is("chat"));
