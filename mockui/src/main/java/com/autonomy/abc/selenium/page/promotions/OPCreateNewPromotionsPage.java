@@ -10,10 +10,10 @@ public class OPCreateNewPromotionsPage extends CreateNewPromotionsPage {
     @Override
     public void addSpotlightPromotion(String promotionType, String searchTrigger) {
         promotionType("SPOTLIGHT").click();
-        continueButton(WizardStep.TYPE).click();
+        continueButton().click();
         loadOrFadeWait();
         promotionType(promotionType).click();
-        continueButton(WizardStep.PROMOTION_TYPE).click();
+        continueButton().click();
         loadOrFadeWait();
         addSearchTrigger(searchTrigger);
         finishButton().click();

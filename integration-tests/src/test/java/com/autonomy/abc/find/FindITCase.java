@@ -10,11 +10,11 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -24,13 +24,10 @@ import com.hp.autonomy.hod.client.api.textindex.query.fields.*;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import org.apache.commons.collections.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -49,15 +46,12 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.lessThan;
 
 public class FindITCase extends ABCTestBase {
     private FindPage find;
@@ -68,6 +62,8 @@ public class FindITCase extends ABCTestBase {
     private List<String> browserHandles;
     private final String domain = "ce9f1f3d-a780-4793-8a6a-a74b12b7d1ae";
     private final Matcher<String> noDocs = containsString("No results found");
+    private PromotionService promotionService;
+    private SearchActionFactory searchActionFactory;
 
     public FindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -75,6 +71,9 @@ public class FindITCase extends ABCTestBase {
 
     @Before
     public void setUp(){
+        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+
         promotions = getElementFactory().getPromotionsPage();
 
         browserHandles = promotions.createAndListWindowHandles();
@@ -243,107 +242,73 @@ public class FindITCase extends ABCTestBase {
 
     @Test
     public void testPinToPosition(){
-        String searchTerm = "red";
+        Search search = searchActionFactory.makeSearch("red");
         String trigger = "mate";
+        PinToPositionPromotion promotion = new PinToPositionPromotion(1, trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
 
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try {
-            body.getTopNavBar().search(searchTerm);
-            SearchPage searchPage = getElementFactory().getSearchPage();
-            String documentTitle = searchPage.createAPromotion();
-            CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-            createNewPromotionsPage.pinToPosition().click();
-            createNewPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
-            createNewPromotionsPage.loadOrFadeWait();
-            createNewPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
-            createNewPromotionsPage.loadOrFadeWait();
-            createNewPromotionsPage.addSearchTrigger(trigger);
-            createNewPromotionsPage.finishButton().click();
-            getElementFactory().getSearchPage(); //Wait for search page
+            String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
             assertThat(service.getSearchResultTitle(1).getText(), is(documentTitle));
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
     }
 
     @Test
     public void testPinToPositionThree(){
-        String searchTerm = "red";
+        Search search = searchActionFactory.makeSearch("red");
         String trigger = "mate";
+        PinToPositionPromotion promotion = new PinToPositionPromotion(3, trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
-
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try {
-            body.getTopNavBar().search(searchTerm);
-            SearchPage searchPage = getElementFactory().getSearchPage();
-            String documentTitle = searchPage.createAPromotion();
-            CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-            createNewPromotionsPage.pinToPosition().click();
-            createNewPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.TYPE).click();
-            createNewPromotionsPage.loadOrFadeWait();
-            WebElement plus = createNewPromotionsPage.findElement(By.cssSelector(".current-step .plus"));
-            plus.click();
-            plus.click();
-            createNewPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
-            createNewPromotionsPage.loadOrFadeWait();
-            createNewPromotionsPage.addSearchTrigger(trigger);
-            createNewPromotionsPage.finishButton().click();
-            getElementFactory().getSearchPage(); //Wait for search page
+            String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
             assertThat(service.getSearchResultTitle(3).getText(), is(documentTitle));
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
-    }
-
-    private void navigateToPromotionsAndDelete(){
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        getElementFactory().getPromotionsPage().deleteAllPromotions();
     }
 
     @Test
     public void testSpotlightPromotions(){
-        String searchTerm = "Proper";
+        Search search = searchActionFactory.makeSearch("Proper");
         String trigger = "Prim";
+        SpotlightPromotion spotlight = new SpotlightPromotion(trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
-
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try {
-            body.getTopNavBar().search(searchTerm);
-            SearchPage searchPage = getElementFactory().getSearchPage();
-            List<String> createdPromotions = searchPage.createAMultiDocumentPromotion(3);
-            CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-            createNewPromotionsPage.addSpotlightPromotion("Spotlight", trigger);
-            getElementFactory().getSearchPage(); //Wait for search page
+            List<String> createdPromotions = promotionService.setUpPromotion(spotlight, search, 3);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
 
             List<String> findPromotions = service.getPromotionsTitles();
 
-            assertNotEquals(0, findPromotions.size());
-            assertThat(findPromotions, containsInAnyOrder(createdPromotions.toArray()));
+            assertThat(findPromotions, not(empty()));
+            assertThat(createdPromotions, everyItem(isIn(findPromotions)));
 
             for(WebElement promotion : service.getPromotions()){
                 promotionShownCorrectly(promotion);
             }
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
     }
 
@@ -352,14 +317,13 @@ public class FindITCase extends ABCTestBase {
         String title = "TITLE";
         String content = "CONTENT";
         String trigger = "LOVE";
+        StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
         getDriver().switchTo().window(browserHandles.get(0));
-
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try {
-            ((HSOPromotionsPage) getElementFactory().getPromotionsPage()).newStaticPromotion(title, content, trigger);
-            getElementFactory().getSearchPage(); //Wait to be navigated to SP
+            ((HSOPromotionService) promotionService).setUpStaticPromotion(promotion);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
@@ -372,7 +336,7 @@ public class FindITCase extends ABCTestBase {
             promotionShownCorrectly(staticPromotion);
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
     }
 
@@ -381,40 +345,19 @@ public class FindITCase extends ABCTestBase {
     public void testDynamicPromotions(){
         int resultsToPromote = 13;
         String trigger = "Rugby";
+        DynamicPromotion dynamicPromotion = new DynamicPromotion(resultsToPromote, trigger);
+        Search search = searchActionFactory.makeSearch("kittens");
 
         getDriver().switchTo().window(browserHandles.get(0));
-
-        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         try{
-            body.getTopNavBar().search("kittens");
-            SearchPage searchPage = getElementFactory().getSearchPage();
-
-            List<String> promotedDocumentTitles = searchPage.getSearchResultTitles(resultsToPromote);
-
-            searchPage.findElement(By.className("dynamic-promotions-button")).click();
-            find.loadOrFadeWait();
-            WebElement dial = getDriver().findElement(By.className("dial"));
-            dial.click();
-            dial.sendKeys(Keys.RIGHT,
-                    Keys.BACK_SPACE,
-                    Keys.BACK_SPACE,
-                    Keys.NUMPAD1,
-                    Keys.NUMPAD3);
-            System.out.println(dial.getAttribute("value"));
-            getDriver().findElement(By.cssSelector(".current-step .next-step")).click();
-            find.loadOrFadeWait();
-            getDriver().findElement(By.cssSelector(".input-group input")).sendKeys(trigger);
-            getDriver().findElement(By.cssSelector(".current-step .input-group .btn")).click();
-            find.loadOrFadeWait();
-            getDriver().findElement(By.cssSelector(".current-step .finish-step")).click();
-
-            getElementFactory().getSearchPage();
+            List<String> promotedDocumentTitles = promotionService.setUpPromotion(dynamicPromotion, search, resultsToPromote);
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
 
-            assertThat(service.getPromotionsTitles(),containsInAnyOrder(promotedDocumentTitles.toArray()));
+            verifyThat(promotedDocumentTitles, everyItem(isIn(service.getPromotionsTitles())));
 
             for(WebElement promotion : service.getPromotions()){
                 promotionShownCorrectly(promotion);
@@ -422,7 +365,7 @@ public class FindITCase extends ABCTestBase {
 
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
-            navigateToPromotionsAndDelete();
+            promotionService.deleteAll();
         }
     }
 

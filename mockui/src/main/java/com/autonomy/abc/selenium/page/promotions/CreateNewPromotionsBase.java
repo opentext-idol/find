@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
+import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
@@ -23,32 +24,8 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
 	}
 
-	@Deprecated
-	public WebElement continueButton(final WizardStep dataStep) {
-		return continueButton();
-	}
-
-
 	public String getCurrentStepTitle() {
 		return findElement(By.cssSelector(".current-step-pill .current-step-title")).getText();
-	}
-
-	public enum WizardStep {
-		TYPE("type"),
-		PROMOTION_TYPE("promotionType"),
-		RESULTS("results"),
-		TRIGGER("triggers");
-
-
-		private final String title;
-
-		WizardStep(final String title) {
-			this.title = title;
-		}
-
-		public String getTitle() {
-			return title;
-		}
 	}
 
 	private WebElement getVisibleElement(By by) {
@@ -65,11 +42,6 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 
 	public WebElement cancelButton() {
 		return getVisibleElement(By.className("cancel-wizard"));
-	}
-
-	@Deprecated
-	public WebElement cancelButton(final WizardStep dataStep) {
-		return cancelButton();
 	}
 
 	public FormInput triggerBox() {
@@ -118,7 +90,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}
 
 	// "visited" by the promotion
-	public List<com.autonomy.abc.selenium.actions.wizard.WizardStep> getDynamicWizardSteps(DynamicPromotion promotion) {
+	public List<WizardStep> getDynamicWizardSteps(DynamicPromotion promotion) {
 		return Arrays.asList(
 				new OptionWizardStep(this, "Spotlight type", promotion.getSpotlightType().getOption()),
 				new SearchTriggerStep(this, promotion.getTrigger())
