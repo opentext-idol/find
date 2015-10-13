@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.LanguageFilter;
@@ -28,6 +29,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsElement;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
 import static com.autonomy.abc.matchers.PromotionsMatchers.triggerList;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
@@ -56,7 +58,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		List<String> promotedDocTitles = promotionService.setUpPromotion(promotion, search, numberOfDocs);
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
-		promotionsDetailPage = promotion.getDetailsPage(body, getElementFactory());
+		promotionsDetailPage = promotionService.goToDetails(promotion);
 		return promotedDocTitles;
 	}
 
@@ -71,11 +73,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	private Search search(String searchTerm, String language) {
 		return searchActionFactory.makeSearch(searchTerm).applyFilter(new LanguageFilter(language));
-	}
-
-	private void goToDetails(String text) {
-		promotionsPage.getPromotionLinkWithTitleContaining(text).click();
-		promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 	}
 
 	@Test
@@ -277,7 +274,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	private void renamePromotionContaining(String oldTitle, String newTitle) {
-		goToDetails(oldTitle);
+		promotionsDetailPage = promotionService.goToDetails(oldTitle);
 		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
 		promotionsPage = promotionService.goToPromotions();
 	}
@@ -346,7 +343,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
-		goToDetails("pooch");
+		promotionsDetailPage = promotionService.goToDetails("pooch");
 		promotionsDetailPage.trigger("pooch").removeAndWait();
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("pooch"))));
 		promotionService.goToPromotions();
@@ -380,7 +377,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
 		verifyThat(promotionsPage, promotionsList(hasSize(2)));
 
-		goToDetails("lupo");
+		promotionsDetailPage = promotionService.goToDetails("lupo");
 		promotionsDetailPage.trigger("wolf").removeAndWait();
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wolf"))));
 		promotionService.goToPromotions();
@@ -395,7 +392,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
 		verifyThat(promotionsPage, promotionsList(hasSize(1)));
 
-		goToDetails("hond");
+		promotionsDetailPage = promotionService.goToDetails("hond");
 		promotionsDetailPage.triggerAddBox().setAndSubmit("Rhodesian Ridgeback");
 		promotionsDetailPage.waitForTriggerRefresh();
 		verifyThat(promotionsDetailPage, triggerList(hasItems("Rhodesian", "Ridgeback")));
@@ -447,7 +444,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 //		promotionsPage.selectPromotionsCategoryFilter("All Types");
 //		promotionsPage.loadOrFadeWait();
-		goToDetails("meow");
+		promotionsDetailPage = promotionService.goToDetails("meow");
 
 		Editable queryText = promotionsDetailPage.queryText();
 		verifyThat(queryText.getValue(), is("chat"));
@@ -514,5 +511,51 @@ public class PromotionsPageITCase extends ABCTestBase {
 			verifyThat("count is the same across pages for " + query, firstPageStated, is(lastPageStated));
 			verifyThat("count is correct for " + query, lastPageStated, is(listedCount));
 		}
+	}
+
+	// fails on Chrome - seems to be an issue with ChromeDriver
+	@Test
+	public void testSpotlightViewable() {
+		List<String> promotedDocs = setUpCarsPromotion(3);
+		SearchPage searchPage = searchActionFactory.makeSearch("wheels").apply();
+		final String handle = getDriver().getWindowHandle();
+
+		WebElement promotedResult = searchPage.getPromotedResult(1);
+		String firstTitle = promotedResult.getText();
+		String secondTitle = searchPage.getPromotedResult(2).getText();
+		verifyThat(firstTitle, isIn(promotedDocs));
+		promotedResult.click();
+		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+		verifyThat("first document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
+		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+		verifyThat("first document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+
+		getDriver().switchTo().window(handle);
+		documentViewer.next();
+
+		verifyThat(secondTitle, isIn(promotedDocs));
+		verifyThat("second document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
+		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+		verifyThat("second document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+
+		getDriver().switchTo().window(handle);
+		documentViewer.previous();
+		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+		verifyThat("first document loads again", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+
+		getDriver().switchTo().window(handle);
+		documentViewer.close();
+
+		searchPage.showMorePromotions();
+		promotedResult = searchPage.getPromotedResult(3);
+		String thirdTitle = promotedResult.getText();
+		verifyThat(thirdTitle, isIn(promotedDocs));
+
+		promotedResult.click();
+		documentViewer = DocumentViewer.make(getDriver());
+		verifyThat("third document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
+		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+		verifyThat("third document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+		getDriver().switchTo().window(handle);
 	}
 }
