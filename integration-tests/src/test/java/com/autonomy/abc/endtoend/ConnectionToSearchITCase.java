@@ -3,7 +3,7 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.connections.ConnectionActionFactory;
+import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -15,7 +15,6 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +22,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.*;
@@ -33,7 +31,7 @@ public class ConnectionToSearchITCase extends ABCTestBase {
     private ConnectionsPage connectionsPage;
     private ConnectionsDetailPage connectionsDetailPage;
     private SearchPage searchPage;
-    private ConnectionActionFactory connectionActionFactory;
+    private ConnectionService connectionService;
     private SearchActionFactory searchActionFactory;
     private HSOElementFactory elementFactory;
 
@@ -49,13 +47,13 @@ public class ConnectionToSearchITCase extends ABCTestBase {
     @Before
     public void setUp() {
         elementFactory = (HSOElementFactory) getElementFactory();
-        connectionActionFactory = new ConnectionActionFactory(getApplication(), getElementFactory());
+        connectionService = new ConnectionService(getApplication(), getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
     }
 
     @Test
     public void testConnectionToSearch() {
-        connectionActionFactory.makeSetUpConnection(connector).apply();
+        connectionService.setUpConnection(connector);
         Search search = searchActionFactory.makeSearch(searchTerm);
         search.applyFilter(new IndexFilter(indexName));
         search.apply();
@@ -72,11 +70,10 @@ public class ConnectionToSearchITCase extends ABCTestBase {
         getDriver().switchTo().window(handle);
         documentViewer.close();
 
-        connectionActionFactory.makeGoToDetails(connector).apply();
-        connectionsDetailPage = elementFactory.getConnectionsDetailPage();
+        connectionsDetailPage = connectionService.goToDetails(connector);
         connectionsDetailPage.backButton().click();
-
         connectionsPage = elementFactory.getConnectionsPage();
+
         FormInput input = connectionsPage.connectionFilterBox();
         Dropdown dropdown = connectionsPage.connectionFilterDropdown();
         input.setValue(connector.getName());
@@ -90,6 +87,6 @@ public class ConnectionToSearchITCase extends ABCTestBase {
 
     @After
     public void tearDown() {
-        connectionActionFactory.makeDeleteConnection(connector).apply();
+        connectionService.deleteConnection(connector);
     }
 }
