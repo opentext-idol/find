@@ -12,4 +12,6 @@ public interface Removable {
     void removeAndWait(int timeout);
 
     void click();
+
+    String getText();
 }
