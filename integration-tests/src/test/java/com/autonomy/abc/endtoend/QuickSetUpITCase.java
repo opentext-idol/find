@@ -92,6 +92,9 @@ public class QuickSetUpITCase extends ABCTestBase {
     }
 
     @After
-    public void tearDown(){}
+    public void tearDown(){
+        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+        getElementFactory().getPromotionsPage().deleteAllPromotions();
+    }
 
 }

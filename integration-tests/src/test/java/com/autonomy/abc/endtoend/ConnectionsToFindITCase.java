@@ -33,8 +33,8 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 
-public class ConnectionsToFind extends ABCTestBase {
-    public ConnectionsToFind(TestConfig config, String browser, ApplicationType type, Platform platform) {
+public class ConnectionsToFindITCase extends ABCTestBase {
+    public ConnectionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
     }
 

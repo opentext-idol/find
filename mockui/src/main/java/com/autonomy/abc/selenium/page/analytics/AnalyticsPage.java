@@ -83,6 +83,14 @@ public class AnalyticsPage extends AppElement implements AppPage {
         return getPopularTermContainer().findElements(By.className("list-group-item"));
     }
 
+    public void reversePromotionSort() {
+        reverseSort(getPromotionsContainer());
+    }
+
+    private void reverseSort(WebElement container){
+        container.findElement(By.xpath(".//*[contains(text(),'Count')]")).click();
+    }
+
     private class WaitUntilLoadingFinished implements ExpectedCondition {
         WebElement container;
 
