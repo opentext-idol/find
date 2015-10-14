@@ -49,4 +49,9 @@ public class LabelBox implements Removable {
     public void click() {
         element.click();
     }
+
+    @Override
+    public String getText(){
+        return element.getText();
+    }
 }

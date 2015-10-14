@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import javafx.geometry.Side;
@@ -96,6 +97,7 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		assertThat("After page refresh there should still be 5 notifications in the drop down", notifications.countNotifications(), is(5));
 	}
 
+	//Fails because of CSA-1542
 	@Test
 	public void testNotificationsOverTwoWindows() throws InterruptedException {
 		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
@@ -158,12 +160,9 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 			}
 
 			getDriver().switchTo().window(browserHandles.get(1));
-			new PromotionActionFactory(getApplication(), getElementFactory())
-					.makeCreatePromotion(
-							new SpotlightPromotion("wheels"),
-							new SearchActionFactory(getApplication(), getElementFactory()).makeSearch("cars"),
-							3)
-					.apply();
+
+			PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+			promotionService.setUpPromotion(new SpotlightPromotion("wheels"), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch("cars"), 3);
 
 			new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationAppears());
 			topNavBarWindowTwo.notificationsDropdown();
@@ -179,6 +178,23 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 			notifications = topNavBar.getNotifications();
 			assertThat(notifications.countNotifications(), is(3));
 			assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
+
+			int notificationsCount = 3;
+			for(int i = 0; i < 6; i += 2) {
+				getDriver().switchTo().window(browserHandles.get(1));
+				body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+				getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
+				getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(i + " " + (i + 1), "English");
+				getElementFactory().getSearchPage();
+				new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
+				bodyWindowTwo.getTopNavBar().notificationsDropdown();
+				assertThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
+				notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
+
+				getDriver().switchTo().window(browserHandles.get(0));
+				assertThat(notifications.countNotifications(), is(Math.min(notificationsCount, 5)));
+				assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
+			}
 		} finally {
 			getDriver().switchTo().window(browserHandles.get(1));
 

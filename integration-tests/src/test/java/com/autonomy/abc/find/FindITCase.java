@@ -703,7 +703,7 @@ public class FindITCase extends ABCTestBase {
     }
 
     @Test
-    public void testBooleanOperatorsProperlyMate(){
+    public void testBooleanOperators(){
         String termOne = "musketeers";
         String termTwo = "\"dearly departed\"";
 

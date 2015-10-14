@@ -142,7 +142,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		loadOrFadeWait();
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
-		(new WebDriverWait(getDriver(),10)).until(ExpectedConditions.elementToBeClickable(finishWizardButton())).click();
+		(new WebDriverWait(getDriver(),10)).until(ExpectedConditions.elementToBeClickable(enabledFinishWizardButton())).click();
 	}
 
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) throws InterruptedException {
@@ -152,7 +152,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		loadOrFadeWait();
 		addBlacklistedTerm(blacklistedTerm);
 		loadOrFadeWait();
-		finishWizardButton().click();
+		enabledFinishWizardButton().click();
 	}
 
 	private void addBlacklistedTerm(final String blacklistedTerm) {

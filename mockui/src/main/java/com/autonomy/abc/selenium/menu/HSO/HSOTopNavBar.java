@@ -20,8 +20,6 @@ public class HSOTopNavBar extends TopNavBar {
 
     public void notificationsDropdown() {
         //I think the notification dropdown changes with every new notification, so need to use getDriver()
-//        javascriptClick(getDriver().findElement(By.cssSelector("nav:not(.affix-clone) .count-info")));
         getDriver().findElement(By.cssSelector("nav:not(.affix-clone) .count-info")).click();
-//        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("nav:not(.affix-clone) .notification-list")));
     }
 }

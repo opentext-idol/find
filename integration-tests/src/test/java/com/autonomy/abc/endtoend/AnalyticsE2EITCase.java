@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -34,6 +36,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
+//CSA-1572
 public class AnalyticsE2EITCase extends ABCTestBase {
 
     private AnalyticsPage analyticsPage;
@@ -86,7 +89,7 @@ public class AnalyticsE2EITCase extends ABCTestBase {
 
     @Test
     public void testAnalytics() throws InterruptedException {
-        Pair<Term,Term> synonymTuple = new ImmutablePair<>(analyticsPage.getMostPopularSearchTerm(),analyticsPage.getMostPopularNonZeroSearchTerm());
+        Pair<Term,Term> synonymTuple = new ImmutablePair<>(analyticsPage.getMostPopularNonZeroSearchTerm(),analyticsPage.getMostPopularZeroSearchTerm());
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
@@ -117,7 +120,9 @@ public class AnalyticsE2EITCase extends ABCTestBase {
 
         PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 
-        String[] newTriggers = {"Happy","Sad"};
+        body = getBody();
+
+        List<String> newTriggers = Arrays.asList("Happy","Sad");
         List<String> existingTriggers = promotionsDetailPage.getTriggerList();
         List<String> promotedDocuments = promotionsDetailPage.getPromotedTitles();
 
@@ -126,17 +131,23 @@ public class AnalyticsE2EITCase extends ABCTestBase {
         }
 
         for(Removable trigger : promotionsDetailPage.triggers()){
-            trigger.click();
+            if(!newTriggers.contains(trigger.getText())) {
+                trigger.removeAndWait();
+            }
         }
 
         for(String trigger : newTriggers){
-            searchActionFactory.makeSearch(trigger).apply();
-            assertThat(getElementFactory().getSearchPage().getPromotedDocumentTitles(), hasItems(promotedDocuments.toArray(new String[promotedDocuments.size()])));
+            body.getTopNavBar().search(trigger);
+            searchPage = getElementFactory().getSearchPage();
+            searchPage.waitForPromotionsLoadIndicatorToDisappear();
+            assertThat(searchPage.getPromotedDocumentTitles(), hasItems(promotedDocuments.toArray(new String[promotedDocuments.size()])));
         }
 
         for(String trigger : existingTriggers){
-            searchActionFactory.makeSearch(trigger).apply();
-            assertThat(getElementFactory().getSearchPage().getPromotedDocumentTitles(), not(hasItems(promotedDocuments.toArray(new String[promotedDocuments.size()]))));
+            body.getTopNavBar().search(trigger);
+            searchPage = getElementFactory().getSearchPage();
+            searchPage.waitForSearchLoadIndicatorToDisappear();
+            assertThat(searchPage.getPromotedDocumentTitles(), not(hasItems(promotedDocuments.toArray(new String[promotedDocuments.size()]))));
         }
 
     }
