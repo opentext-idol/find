@@ -29,7 +29,9 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 
 public class NotificationsDropDownITCase extends ABCTestBase{
@@ -203,6 +205,42 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 			body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 			getElementFactory().getPromotionsPage().deleteAllPromotions();
 		}
+	}
+
+	@Test
+	public void testSynonymNotifications() throws InterruptedException {
+		String synonymOne = "Brock".toLowerCase();
+		String synonymTwo = "Lesnar".toLowerCase();
+		String synonymNotificationText = "Created a new synonym group containing: "+synonymOne+", "+synonymTwo;
+
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymOne + " " + synonymTwo, "English");
+		getElementFactory().getSearchPage();
+		new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(synonymNotificationText));
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+		assertThat(notifications.notificationNumber(1).getText(),is(synonymNotificationText));
+	}
+
+	@Test
+	public void testBlacklistNotifications() throws InterruptedException {
+		String blacklistOne = "Rollins".toLowerCase();
+		String blacklistTwo = "Seth".toLowerCase();
+		String blacklistNotificationText = "Added \"placeholder\" to the blacklist";
+
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+		keywordsPage.deleteKeywords();
+		keywordsPage.createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm(blacklistOne + " " + blacklistTwo, "English");
+		getElementFactory().getKeywordsPage();
+		new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(blacklistNotificationText.replace("placeholder", blacklistOne)));
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+		assertThat(notifications.notificationNumber(1).getText(), anyOf(is(blacklistNotificationText.replace("placeholder",blacklistOne)),is(blacklistNotificationText.replace("placeholder",blacklistTwo))));
+		assertThat(notifications.notificationNumber(2).getText(), anyOf(is(blacklistNotificationText.replace("placeholder",blacklistOne)),is(blacklistNotificationText.replace("placeholder",blacklistTwo))));
+		assertThat(notifications.notificationNumber(2).getText(), not(is(notifications.notificationNumber(1).getText())));
 	}
 
 	private void newBody(){
