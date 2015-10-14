@@ -20,10 +20,5 @@ public abstract class Application {
         return new PromotionService(this, elementFactory);
     }
 
-    // TODO: this still does not allow complete separation
-    public static Application ofType(ApplicationType type) {
-        return (type == ApplicationType.HOSTED) ? new HSOApplication() : new OPApplication();
-    };
-    
     public abstract ApplicationType getType();
 }

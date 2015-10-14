@@ -6,10 +6,9 @@ import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.ApplicationType;
-//import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.page.*;
-//import com.autonomy.abc.selenium.util.ImplicitWaits;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +19,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +34,14 @@ public class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
 	private final static Set<String> USER_BROWSERS;
 	private final static Set<ApplicationType> APPLICATION_TYPES;
+	// application should really be a final instance variable, but this would require changing the constructor of every ITCase
+	private final static Application APPLICATION;
 	// testState is used by Rules/StatementHandlers
 	private final TestState testState = TestState.get();
 
 	public final TestConfig config;
 	public final String browser;
 	private final Platform platform;
-	private final Application application;
 	private final ApplicationType type;
 	private WebDriver driver;
 	// TODO: use getBody() instead
@@ -53,6 +52,7 @@ public class ABCTestBase {
 		final String[] allBrowsers = {"firefox", "internet explorer", "chrome"};
 		final String browserProperty = System.getProperty("com.autonomy.browsers");
 		final String applicationTypeProperty = System.getProperty("com.autonomy.applicationType");
+		final String applicationProperty = System.getProperty("com.autonomy.applicationClass");
 
 		if (browserProperty == null) {
 			USER_BROWSERS = new HashSet<>(Arrays.asList(allBrowsers));
@@ -66,17 +66,34 @@ public class ABCTestBase {
 			}
 		}
 
-		if (applicationTypeProperty == null) {
-			APPLICATION_TYPES = EnumSet.allOf(ApplicationType.class);
-		} else {
-			APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
+		if (applicationProperty == null) {
+			// TODO: should instead throw IllegalStateException
+			APPLICATION = new HSOApplication();
+			if (applicationTypeProperty == null) {
+				APPLICATION_TYPES = EnumSet.allOf(ApplicationType.class);
+			} else {
+				APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
 
-			for (final ApplicationType applicationType : ApplicationType.values()) {
-				if (applicationTypeProperty.contains(applicationType.getName())) {
-					APPLICATION_TYPES.add(applicationType);
+				for (final ApplicationType applicationType : ApplicationType.values()) {
+					if (applicationTypeProperty.contains(applicationType.getName())) {
+						APPLICATION_TYPES.add(applicationType);
+					}
 				}
 			}
+		} else {
+			try {
+				APPLICATION = (Application) Class.forName(applicationProperty).newInstance();
+			} catch (InstantiationException e) {
+				throw new IllegalStateException(e);
+			} catch (IllegalAccessException e) {
+				throw new IllegalStateException(e);
+			} catch (ClassNotFoundException e) {
+				throw new IllegalStateException(e);
+			}
+			APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
+			APPLICATION_TYPES.add(APPLICATION.getType());
 		}
+
 	}
 
 	public ABCTestBase(final TestConfig config, final String browser, final ApplicationType type, final Platform platform) {
@@ -84,7 +101,6 @@ public class ABCTestBase {
 		this.browser = browser;
 		this.platform = platform;
 		this.type = type;
-		this.application = Application.ofType(type);
 	}
 
 	@Parameterized.Parameters
@@ -127,10 +143,10 @@ public class ABCTestBase {
 		getDriver().manage().window().maximize();
 
 		// no side/top bar until logged in
-		body = application.createAppBody(driver, null, null);
-		elementFactory = application.createElementFactory(driver);
+		body = getApplication().createAppBody(driver, null, null);
+		elementFactory = getApplication().createElementFactory(driver);
 		try {
-			elementFactory.getLoginPage().loginWith(application.createCredentials());
+			elementFactory.getLoginPage().loginWith(getApplication().createCredentials());
 			// now has side/top bar
 			body = getBody();
 		} catch (Exception e) {
@@ -153,7 +169,7 @@ public class ABCTestBase {
 	}
 
 	public Application getApplication() {
-		return application;
+		return APPLICATION;
 	}
 
 	public ElementFactory getElementFactory() {
@@ -161,6 +177,6 @@ public class ABCTestBase {
 	}
 
 	public AppBody getBody() {
-		return application.createAppBody(driver);
+		return getApplication().createAppBody(driver);
 	}
 }
