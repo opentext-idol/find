@@ -36,4 +36,9 @@ public class HSOApplication extends Application {
     public HSOPromotionService createPromotionService(ElementFactory elementFactory) {
         return new HSOPromotionService(this, elementFactory);
     }
+
+    @Override
+    public ApplicationType getType() {
+        return ApplicationType.HOSTED;
+    }
 }

@@ -24,4 +24,6 @@ public abstract class Application {
     public static Application ofType(ApplicationType type) {
         return (type == ApplicationType.HOSTED) ? new HSOApplication() : new OPApplication();
     };
+    
+    public abstract ApplicationType getType();
 }
