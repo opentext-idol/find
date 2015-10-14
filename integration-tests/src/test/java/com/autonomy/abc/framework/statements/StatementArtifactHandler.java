@@ -18,12 +18,16 @@ public class StatementArtifactHandler implements StatementHandler {
         pageSourceSaver = new PageSourceSaver(test.getDriver());
     }
 
+    private String getBaseLocation(TestStatement testStatement) {              String[] splitName = testStatement.getMethodName().split("\\[");
+        return ".output/" + splitName[0] + '/' + timestamp + '[' + splitName[splitName.length-1] + "_" + testStatement.getNumber();
+    }
+
     private String getPngLocation(TestStatement testStatement) {
-        return ".output\\" + testStatement.getMethodName().split("\\[")[0] + "\\" + timestamp + "_"+testStatement.getNumber()+".png";
+        return getBaseLocation(testStatement) + ".png";
     }
 
     private String getHtmlLocation(TestStatement testStatement) {
-        return ".output\\" + testStatement.getMethodName().split("\\[")[0] + "\\" + timestamp + "_"+testStatement.getNumber()+".html";
+        return getBaseLocation(testStatement) + ".html";
     }
 
     @Override
