@@ -12,6 +12,8 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.*;
@@ -216,7 +218,8 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
 		getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymOne + " " + synonymTwo, "English");
-		checkNotification(synonymNotificationText);
+		getElementFactory().getSearchPage();
+		checkForNotification(synonymNotificationText);
 	}
 
 	@Test
@@ -248,7 +251,8 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
 
 		ps.setUpPromotion(new SpotlightPromotion(promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
-		checkNotification(promotionNotificationText);
+		getElementFactory().getSearchPage();
+		checkForNotification(promotionNotificationText);
 	}
 
 	@Test
@@ -261,7 +265,8 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		String promotionNotificationText = "Created a new pin to position promotion: Pin to Position for: "+promotionTrigger;
 
 		ps.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition,promotionTrigger),new SearchActionFactory(getApplication(),getElementFactory()).makeSearch(search),2);
-		checkNotification(promotionNotificationText);
+		getElementFactory().getSearchPage();
+		checkForNotification(promotionNotificationText);
 	}
 
 	@Test
@@ -274,7 +279,8 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
 
 		ps.setUpPromotion(new DynamicPromotion(numberOfResults,promotionTrigger),new SearchActionFactory(getApplication(),getElementFactory()).makeSearch(search),2);
-		checkNotification(promotionNotificationText);
+		getElementFactory().getSearchPage();
+		checkForNotification(promotionNotificationText);
 	}
 
 	@Test
@@ -286,12 +292,57 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		String promotionTrigger = "sadness";
 		String promotionNotificationText = "Created a new static promotion: Static Promotion for: "+promotionTrigger;
 
-		ps.setUpStaticPromotion(new StaticPromotion(docTitle,docContent,promotionTrigger));
-		checkNotification(promotionNotificationText);
+		ps.setUpStaticPromotion(new StaticPromotion(docTitle, docContent, promotionTrigger));
+		getElementFactory().getSearchPage();
+		checkForNotification(promotionNotificationText);
 	}
 
-	private void checkNotification(String notificationText) {
+	@Test
+	public void testCreateIndexNotifications(){
+		body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+		IndexesPage indexes = ((HSOElementFactory) getElementFactory()).getIndexesPage();
+
+		String indexName = "danye west";
+		String indexCreationNotification = "Created a new index: "+indexName;
+
+		indexes.newIndexButton().click();
+		CreateNewIndexPage createNewIndexPage = ((HSOElementFactory) getElementFactory()).getCreateNewIndexPage();
+		createNewIndexPage.inputIndexName(indexName);
+		createNewIndexPage.nextButton().click();
+		createNewIndexPage.loadOrFadeWait();
+		createNewIndexPage.nextButton().click();
+		createNewIndexPage.loadOrFadeWait();
+		createNewIndexPage.finishButton().click();
+		
+		new WebDriverWait(getDriver(),15).until(GritterNotice.notificationContaining(indexCreationNotification));
+		checkForNotification(indexCreationNotification);
+	}
+
+	@Test
+	public void testDeletingSynonyms() throws InterruptedException {
+		String synonymOne = "Dean".toLowerCase();
+		String synonymTwo = "Ambrose".toLowerCase();
+		String synonymThree = "Shield".toLowerCase();
+
+		//Have to add synonyms first before deleting them
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymOne + " " + synonymTwo + " " + synonymThree, "English");
 		getElementFactory().getSearchPage();
+
+		//Now try deleting
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage = getElementFactory().getKeywordsPage();
+		String removeSynonymOneNotification = "Removed \""+synonymOne+"\" from a synonym group";
+		keywordsPage.deleteSynonym(synonymOne, synonymOne);
+		checkForNotification(removeSynonymOneNotification);
+		body.getTopNavBar().notificationsDropdown(); //Close notifications dropdown
+		String removeSynonymGroupNotification = "Removed a synonym group";
+		keywordsPage.deleteSynonym(synonymTwo, synonymTwo);
+		checkForNotification(removeSynonymGroupNotification);
+	}
+
+	private void checkForNotification(String notificationText) {
 		new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining(notificationText));
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
