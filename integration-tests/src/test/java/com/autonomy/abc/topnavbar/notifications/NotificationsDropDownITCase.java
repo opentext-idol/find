@@ -14,8 +14,8 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.promotions.PromotionService;
-import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import javafx.geometry.Side;
 import org.apache.xpath.compiler.Keywords;
@@ -216,11 +216,7 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
 		getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymOne + " " + synonymTwo, "English");
-		getElementFactory().getSearchPage();
-		new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(synonymNotificationText));
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
-		assertThat(notifications.notificationNumber(1).getText(),is(synonymNotificationText));
+		checkNotification(synonymNotificationText);
 	}
 
 	@Test
@@ -238,9 +234,68 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(blacklistNotificationText.replace("placeholder", blacklistOne)));
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
-		assertThat(notifications.notificationNumber(1).getText(), anyOf(is(blacklistNotificationText.replace("placeholder",blacklistOne)),is(blacklistNotificationText.replace("placeholder",blacklistTwo))));
-		assertThat(notifications.notificationNumber(2).getText(), anyOf(is(blacklistNotificationText.replace("placeholder",blacklistOne)),is(blacklistNotificationText.replace("placeholder",blacklistTwo))));
+		assertThat(notifications.notificationNumber(1).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
+		assertThat(notifications.notificationNumber(2).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
 		assertThat(notifications.notificationNumber(2).getText(), not(is(notifications.notificationNumber(1).getText())));
+	}
+
+	@Test
+	public void testSpotlightPromotionNotifications(){
+		PromotionService ps = getApplication().createPromotionService(getElementFactory());
+
+		String promotionTrigger = "Maggle";
+		String search = "Cole";
+		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
+
+		ps.setUpPromotion(new SpotlightPromotion(promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		checkNotification(promotionNotificationText);
+	}
+
+	@Test
+	public void testPinToPositionPromotionNotifications(){
+		PromotionService ps = getApplication().createPromotionService(getElementFactory());
+
+		int pinToPositionPosition = 1;
+		String promotionTrigger = "Ziggler";
+		String search = "Cena";
+		String promotionNotificationText = "Created a new pin to position promotion: Pin to Position for: "+promotionTrigger;
+
+		ps.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition,promotionTrigger),new SearchActionFactory(getApplication(),getElementFactory()).makeSearch(search),2);
+		checkNotification(promotionNotificationText);
+	}
+
+	@Test
+	public void testDynamicPromotionNotifications(){
+		PromotionService ps = getApplication().createPromotionService(getElementFactory());
+
+		int numberOfResults = 10;
+		String promotionTrigger = "Wyatt";
+		String search = "Lawler";
+		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
+
+		ps.setUpPromotion(new DynamicPromotion(numberOfResults,promotionTrigger),new SearchActionFactory(getApplication(),getElementFactory()).makeSearch(search),2);
+		checkNotification(promotionNotificationText);
+	}
+
+	@Test
+	public void testStaticPromotionNotifications(){
+		HSOPromotionService ps = (HSOPromotionService) getApplication().createPromotionService(getElementFactory());
+
+		String docTitle = "TITLE";
+		String docContent = "CONTENT";
+		String promotionTrigger = "sadness";
+		String promotionNotificationText = "Created a new static promotion: Static Promotion for: "+promotionTrigger;
+
+		ps.setUpStaticPromotion(new StaticPromotion(docTitle,docContent,promotionTrigger));
+		checkNotification(promotionNotificationText);
+	}
+
+	private void checkNotification(String notificationText) {
+		getElementFactory().getSearchPage();
+		new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining(notificationText));
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+		assertThat(notifications.notificationNumber(1).getText(),is(notificationText));
 	}
 
 	private void newBody(){
