@@ -97,6 +97,7 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		assertThat("After page refresh there should still be 5 notifications in the drop down", notifications.countNotifications(), is(5));
 	}
 
+	//Fails because of CSA-1542
 	@Test
 	public void testNotificationsOverTwoWindows() throws InterruptedException {
 		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
