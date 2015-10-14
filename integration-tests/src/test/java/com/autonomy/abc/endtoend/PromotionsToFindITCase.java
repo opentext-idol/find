@@ -31,6 +31,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.core.Is.is;
 
+//CSA-1566
 public class PromotionsToFindITCase extends ABCTestBase {
 
     public PromotionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
@@ -175,7 +176,9 @@ public class PromotionsToFindITCase extends ABCTestBase {
         find.search("Other");
         find.search(searchTrigger);
 
-        verifyThat(service.getPromotionsTitles().isEmpty(),is(Boolean.TRUE));
+        verifyThat(service.getPromotionsTitles().isEmpty(), is(Boolean.TRUE));
+
+        LoggerFactory.getLogger(PromotionsToFindITCase.class).info("TEST FINISHED");
     }
 
     private void pinToPosition(String searchTrigger, int position) {

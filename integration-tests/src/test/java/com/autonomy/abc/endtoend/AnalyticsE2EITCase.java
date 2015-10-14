@@ -36,6 +36,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
+//CSA-1572
 public class AnalyticsE2EITCase extends ABCTestBase {
 
     private AnalyticsPage analyticsPage;

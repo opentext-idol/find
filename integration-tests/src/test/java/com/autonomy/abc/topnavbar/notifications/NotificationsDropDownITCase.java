@@ -179,6 +179,8 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 			notifications = topNavBar.getNotifications();
 			assertThat(notifications.countNotifications(), is(3));
 			assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
+
+			//TODO have six notification 'events' to ensure that they behave properly with the full number of notifications (+1)
 		} finally {
 			getDriver().switchTo().window(browserHandles.get(1));
 
