@@ -1,11 +1,14 @@
 package com.hp.autonomy.frontend.find.parametricfields;
 
+import com.hp.autonomy.frontend.find.FindQueryProfileService;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.parametricvalues.ParametricFieldName;
 import com.hp.autonomy.parametricvalues.ParametricRequest;
 import com.hp.autonomy.parametricvalues.ParametricValuesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +24,9 @@ public class ParametricValuesController {
     @Autowired
     private ParametricValuesService parametricValuesService;
 
+    @Autowired
+    private FindQueryProfileService findQueryProfileService;
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Set<ParametricFieldName> getParametricValues(
@@ -29,8 +35,16 @@ public class ParametricValuesController {
             @RequestParam("queryText") final String queryText,
             @RequestParam("fieldText") final String fieldText
     ) throws HodErrorException {
+        final String queryProfileName = findQueryProfileService.getQueryProfile();
+        final HodAuthentication authentication = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
+
         final ParametricRequest parametricRequest = new ParametricRequest.Builder()
-                .setDatabases(databases).setFieldNames(fieldNames).setQuery(queryText).setFieldText(fieldText).build();
+                .setQueryProfile(new ResourceIdentifier(authentication.getApplication().getDomain(), queryProfileName))
+                .setDatabases(databases)
+                .setFieldNames(fieldNames)
+                .setQuery(queryText)
+                .setFieldText(fieldText)
+                .build();
 
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
