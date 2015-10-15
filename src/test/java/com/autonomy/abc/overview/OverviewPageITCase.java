@@ -163,7 +163,7 @@ public class OverviewPageITCase extends ABCTestBase{
 			if (!searchPage.getText().contains("An error occurred executing the search action")) {
 				assertThat("page title incorrect", searchPage.title().contains(linkText));
 				assertThat("page title incorrect", searchPage.title().contains(extraSynonym));
-				assertThat("no search results displayed", searchPage.docLogo().isDisplayed());
+				assertThat("no search results displayed", searchPage.getDocLogo(1).isDisplayed());
 				assertThat("you searched for section incorrect", searchPage.youSearchedFor().containsAll(Arrays.asList(linkText, extraSynonym)));
 				assertEquals(2, searchPage.countSynonymLists());
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText).contains(extraSynonym));
@@ -172,7 +172,7 @@ public class OverviewPageITCase extends ABCTestBase{
 				final String searchResultTitle = searchPage.getSearchResultTitle(1);
 				topNavBar.search(linkText);
 				assertThat("page title incorrect", searchPage.title().contains(linkText));
-				assertThat("no search results displayed", searchPage.docLogo().isDisplayed());
+				assertThat("no search results displayed", searchPage.getDocLogo(1).isDisplayed());
 				assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
 				assertEquals(1, searchPage.countSynonymLists());
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText).contains(extraSynonym));
