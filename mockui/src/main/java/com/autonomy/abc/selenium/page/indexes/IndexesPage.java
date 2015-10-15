@@ -31,6 +31,17 @@ public class IndexesPage extends AppElement implements AppPage {
         return findElement(By.xpath("//div[contains(@class,'hpebox-content')]//*[text()[contains(.,'" + indexName + "')]]"));
     }
 
+    public void deleteIndex(String indexName){
+        findIndex(indexName).findElement(By.xpath("//../../../..//button")).click();
+        loadOrFadeWait();
+        modalClick();
+        loadOrFadeWait();
+    }
+
+    private void modalClick() {
+        getDriver().findElement(By.className("modal-action-button")).click();
+    }
+
     public List<WebElement> getIndexes() {
         return findElements(By.xpath("//*[contains(@ng-repeat,'index')]"));
     }
