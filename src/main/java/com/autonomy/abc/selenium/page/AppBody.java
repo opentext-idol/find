@@ -4,9 +4,6 @@ import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.promotions.CreateNewDynamicPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -25,26 +22,6 @@ public class AppBody extends AppElement {
 
 		this.topNavBar = new TopNavBar(driver);
 		this.sideNavBar = new SideNavBar(driver);
-	}
-
-    @Deprecated
-	public PromotionsPage getPromotionsPage() {
-		return null;
-	}
-
-    @Deprecated
-	public SearchPage getSearchPage() {
-		return null;
-	}
-
-    @Deprecated
-	public CreateNewPromotionsPage getCreateNewPromotionsPage() {
-		return null;
-	}
-
-    @Deprecated
-	public CreateNewDynamicPromotionsPage getCreateNewDynamicPromotionsPage() {
-		return null;
 	}
 
 	public TopNavBar getTopNavBar() {
