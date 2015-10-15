@@ -1,12 +1,8 @@
 package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
-import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.AppPage;
-import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -52,16 +48,4 @@ public class AboutPage extends AppElement implements AppPage {
 		findElement(By.cssSelector(".dataTables_filter [type='search']")).sendKeys(searchTerm);
 	}
 
-	public static class Placeholder extends AbstractMainPagePlaceholder<AboutPage> {
-
-		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {
-			super(body, sideNavBar, topNavBar, "about", NavBarTabId.ABOUT_PAGE, false);
-		}
-
-		@Override
-		protected AboutPage convertToActualType(final WebElement element) {
-			return new AboutPage(topNavBar, element);
-		}
-
-	}
 }

@@ -2,12 +2,8 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.ModalView;
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
-import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.AppPage;
-import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -121,16 +117,4 @@ public class UsersPage extends AppElement implements AppPage {
 		getUserRow(userName).findElement(By.cssSelector(".editable-submit")).click();
 	}
 
-	public static class Placeholder extends AbstractMainPagePlaceholder<UsersPage> {
-
-		public Placeholder(final AppBody body, final SideNavBar mainTabBar, final TopNavBar topNavBar) {
-			super(body, mainTabBar, topNavBar, "users", NavBarTabId.USERS_PAGE, false);
-		}
-
-		@Override
-		protected UsersPage convertToActualType(final WebElement element) {
-			return new UsersPage(topNavBar, element);
-		}
-
-	}
 }

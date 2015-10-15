@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.AppPage;
-import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -140,19 +139,6 @@ public class SettingsPage extends AppElement implements AppPage {
 		public String getTitle() {
 			return title;
 		}
-	}
-
-	public static class Placeholder extends AbstractMainPagePlaceholder<SettingsPage> {
-
-		public Placeholder(final AppBody body, final SideNavBar mainTabBar, final TopNavBar topNavBar) {
-			super(body, mainTabBar, topNavBar, "settings", NavBarTabId.SETTINGS, false);
-		}
-
-		@Override
-		protected SettingsPage convertToActualType(final WebElement element) {
-			return new SettingsPage(topNavBar, element);
-		}
-
 	}
 
 }

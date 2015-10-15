@@ -2,12 +2,8 @@ package com.autonomy.abc.selenium.page.overview;
 
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.AppPage;
-import com.autonomy.abc.selenium.util.AbstractMainPagePlaceholder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -80,16 +76,4 @@ public class OverviewPage extends AppElement implements AppPage {
 		return getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.xpath(".//*[@value='" + timePeriod + "']/.."));
 	}
 
-	public static class Placeholder extends AbstractMainPagePlaceholder<OverviewPage> {
-
-		public Placeholder(final AppBody body, final SideNavBar sideNavBar, final TopNavBar topNavBar) {
-			super(body, sideNavBar, topNavBar, "overview", NavBarTabId.OVERVIEW, false);
-		}
-
-		@Override
-		protected OverviewPage convertToActualType(final WebElement element) {
-			return new OverviewPage(navBar, element);
-		}
-
-	}
 }
