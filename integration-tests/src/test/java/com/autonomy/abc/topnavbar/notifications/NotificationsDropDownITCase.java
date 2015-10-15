@@ -316,11 +316,19 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		createNewIndexPage.loadOrFadeWait();
 		createNewIndexPage.finishButton().click();
 
-		//TODO delete
+		try {
+			((HSOElementFactory) getElementFactory()).getIndexesPage();
+			new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(indexCreationNotification));
+
+			checkForNotification(indexCreationNotification);
+		} finally {
+			body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+			((HSOElementFactory) getElementFactory()).getIndexesPage().deleteIndex(indexName);
+		}
 	}
 
 	@Test
-	public void testDeletingSynonyms() throws InterruptedException {
+	public void testDeletingSynonymsNotifications() throws InterruptedException {
 		String synonymOne = "Dean".toLowerCase();
 		String synonymTwo = "Ambrose".toLowerCase();
 		String synonymThree = "Shield".toLowerCase();
@@ -344,7 +352,7 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 	}
 
 	@Test
-	public void testDeletingBlacklist() throws InterruptedException {
+	public void testDeletingBlacklistNotifications() throws InterruptedException {
 		String blacklistOne = "Rollins".toLowerCase();
 		String blacklistTwo = "Seth".toLowerCase();
 		String blacklistNotificationText = "Removed \"placeholder\" from the blacklist";
@@ -365,28 +373,21 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 	}
 
 	@Test
-	public void testConnectorsCreation(){
+	public void testConnectorsCreationNotifications(){
 		String connectorName = "lc";
 
 		String creatingNotification = "Creating a new connection: " + connectorName;
 		String createdNotification = "Created a new connection: " + connectorName;
 		String startedNotification = "Connection " + connectorName + " started";
-		String finishedNotification = "Connection "+ connectorName + "has finished running";
+		String finishedNotification = "Connection "+ connectorName + " has finished running";
 
 		WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName);
 
 		ConnectionService cs = new ConnectionService(getApplication(),getElementFactory());
-		cs.setUpConnection(connector);
+		cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
 
 		try {
 			((HSOElementFactory) getElementFactory()).getConnectionsPage();
-
-			new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(creatingNotification));
-
-			new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(createdNotification));
-			new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(startedNotification));
-
-			new WebDriverWait(getDriver(), 60).until(GritterNotice.notificationContaining(finishedNotification));
 
 			body.getTopNavBar().notificationsDropdown();
 			notifications = body.getTopNavBar().getNotifications();
@@ -398,6 +399,26 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 		} finally {
 			cs.deleteConnection(connector);
 		}
+	}
+
+	@Test
+	public void testConnectorsDeletionNotifications(){
+		String connectorName = "deathcabyoucutie";
+		WebConnector connector = new WebConnector("http://deathcabforcutie.com/",connectorName);
+
+		String deletingNotification = "Deleting connection " + connectorName;
+		String successfulNotification = "Connection " + connectorName + " successfully removed";
+
+		ConnectionService cs = new ConnectionService(getApplication(),getElementFactory());
+		cs.setUpConnection(connector);
+
+		cs.deleteConnection(connector);		//Because of the thread.Sleep() within no need to wait for the notifications
+
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+
+		assertThat(notifications.notificationNumber(1).getText(),is(successfulNotification));
+		assertThat(notifications.notificationNumber(2).getText(),is(deletingNotification));
 	}
 
 	private void checkForNotification(String notificationText) {
