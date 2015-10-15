@@ -24,6 +24,8 @@ import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
+import com.hp.autonomy.hod.client.api.authentication.EntityType;
+import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.queryprofile.QueryProfileService;
 import com.hp.autonomy.hod.client.api.queryprofile.QueryProfileServiceImpl;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
@@ -42,6 +44,7 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarServiceI
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServiceImpl;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
+import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
@@ -140,14 +143,16 @@ public class AppConfiguration extends CachingConfigurerSupport {
         return builder.build();
     }
 
-    private HodServiceConfig.Builder hodServiceConfigBuilder() {
-        return new HodServiceConfig.Builder(System.getProperty("find.iod.api", "https://api.idolondemand.com"))
+    private HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder() {
+        final String endpoint = System.getProperty("find.iod.api", "https://api.havenondemand.com");
+
+        return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
                 .setHttpClient(httpClient())
                 .setTokenRepository(tokenRepository);
     }
 
     @Bean
-    public HodServiceConfig initialHodServiceConfig() {
+    public HodServiceConfig<EntityType.Combined, TokenType.Simple> initialHodServiceConfig() {
         return hodServiceConfigBuilder()
                 .build();
     }
@@ -158,12 +163,12 @@ public class AppConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public TokenProxyService tokenProxyService() {
+    public TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService() {
         return new SpringSecurityTokenProxyService();
     }
 
     @Bean
-    public HodServiceConfig hodServiceConfig() {
+    public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig() {
         return hodServiceConfigBuilder()
                 .setTokenProxyService(tokenProxyService())
                 .build();
@@ -230,8 +235,12 @@ public class AppConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public UnboundTokenService unboundTokenService() {
-        return new UnboundTokenServiceImpl(authenticationService(), configService);
+    public UnboundTokenService<TokenType.HmacSha1> unboundTokenService() {
+        try {
+            return new UnboundTokenServiceImpl(authenticationService(), configService);
+        } catch (final HodErrorException e) {
+            throw new RuntimeException("Exception creating UnboundTokenService", e);
+        }
     }
 
     @Bean

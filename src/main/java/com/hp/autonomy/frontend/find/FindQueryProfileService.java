@@ -4,8 +4,10 @@
  */
 package com.hp.autonomy.frontend.find;
 
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+
 public interface FindQueryProfileService {
 
-    String getQueryProfile();
+    ResourceIdentifier getQueryProfile();
 
 }

@@ -75,6 +75,7 @@
         <constructor-arg ref="tokenRepository"/>
         <constructor-arg value="ROLE_PUBLIC"/>
         <constructor-arg ref="authenticationService"/>
+        <constructor-arg ref="unboundTokenService"/>
     </bean>
 
     <bean id="loginSuccessHandler" class="com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler">

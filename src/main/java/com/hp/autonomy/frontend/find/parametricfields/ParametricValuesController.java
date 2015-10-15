@@ -35,11 +35,8 @@ public class ParametricValuesController {
             @RequestParam("queryText") final String queryText,
             @RequestParam("fieldText") final String fieldText
     ) throws HodErrorException {
-        final String queryProfileName = findQueryProfileService.getQueryProfile();
-        final HodAuthentication authentication = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
-
         final ParametricRequest parametricRequest = new ParametricRequest.Builder()
-                .setQueryProfile(new ResourceIdentifier(authentication.getApplication().getDomain(), queryProfileName))
+                .setQueryProfile(findQueryProfileService.getQueryProfile())
                 .setDatabases(databases)
                 .setFieldNames(fieldNames)
                 .setQuery(queryText)

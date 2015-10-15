@@ -11,6 +11,7 @@ import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.web.CacheNames;
+import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
 import com.hp.autonomy.hod.client.api.resource.Resource;
 import com.hp.autonomy.hod.client.api.resource.ResourceFlavour;
@@ -20,7 +21,6 @@ import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,7 +28,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -53,7 +52,7 @@ public class IndexesServiceImpl implements IndexesService {
 
     @Override
     @Cacheable(CacheNames.INDEXES)
-    public Resources listIndexes(final TokenProxy tokenProxy) throws HodErrorException {
+    public Resources listIndexes(final TokenProxy<?, TokenType.Simple> tokenProxy) throws HodErrorException {
         final Set<ResourceType> types = new HashSet<>();
         types.add(ResourceType.CONTENT);
 
@@ -87,7 +86,7 @@ public class IndexesServiceImpl implements IndexesService {
 
         if(activeIndexes.isEmpty()) {
             final HodAuthentication auth = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
-            final String domain = auth.getDomain();
+            final String domain = auth.getApplication().getDomain();
 
             final Set<Database> validDatabases;
             final Set<Database> allDatabases = databasesService.getDatabases(domain);

@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
@@ -14,6 +13,7 @@ import com.hp.autonomy.frontend.configuration.ValidationResult;
 import com.hp.autonomy.frontend.find.search.IndexesService;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
+import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.resource.Resources;
@@ -33,10 +33,10 @@ public class IodConfig implements ConfigurationComponent {
     private final String apiKey;
     private final String application;
     private final String domain;
-    private final List<JsonResourceIdentifier> activeIndexes;
+    private final List<ResourceIdentifier> activeIndexes;
     private final Boolean publicIndexesEnabled;
 
-    private IodConfig(final String apiKey, final String application, final String domain, final List<JsonResourceIdentifier> activeIndexes, final Boolean publicIndexesEnabled) {
+    private IodConfig(final String apiKey, final String application, final String domain, final List<ResourceIdentifier> activeIndexes, final Boolean publicIndexesEnabled) {
         this.apiKey = apiKey;
         this.application = application;
         this.domain = domain;
@@ -45,7 +45,7 @@ public class IodConfig implements ConfigurationComponent {
     }
 
     public List<ResourceIdentifier> getActiveIndexes() {
-        return new ArrayList<ResourceIdentifier>(activeIndexes);
+        return new ArrayList<>(activeIndexes);
     }
 
     @Override
@@ -68,7 +68,12 @@ public class IodConfig implements ConfigurationComponent {
                 return new ValidationResult<>(false, "Domain is blank");
             }
 
-            final TokenProxy tokenProxy = authenticationService.authenticateApplication(new ApiKey(apiKey), application, domain, TokenType.simple);
+            final TokenProxy<EntityType.Application, TokenType.Simple> tokenProxy = authenticationService.authenticateApplication(
+                    new ApiKey(apiKey),
+                    application,
+                    domain,
+                    TokenType.Simple.INSTANCE
+            );
 
             final Resources indexes = indexesService.listIndexes(tokenProxy);
             final List<ResourceIdentifier> activeIndexes = indexesService.listActiveIndexes();
@@ -102,7 +107,7 @@ public class IodConfig implements ConfigurationComponent {
         private String apiKey;
         private String application;
         private String domain;
-        private List<JsonResourceIdentifier> activeIndexes;
+        private List<ResourceIdentifier> activeIndexes;
         private Boolean publicIndexesEnabled;
 
         public IodConfig build() {
@@ -119,14 +124,5 @@ public class IodConfig implements ConfigurationComponent {
             this.indexes = indexes;
             this.activeIndexes = activeIndexes;
         }
-    }
-
-    // TODO: remove this once we've released the version of the Hod client with JSON annotations on ResourceIdentifier
-    private static class JsonResourceIdentifier extends ResourceIdentifier {
-
-        public JsonResourceIdentifier(@JsonProperty("domain") final String domain, @JsonProperty("name") final String name) {
-            super(domain, name);
-        }
-
     }
 }
