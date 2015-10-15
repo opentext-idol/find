@@ -1,6 +1,10 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.framework.*;
+import com.autonomy.abc.framework.TestState;
+import com.autonomy.abc.framework.rules.StateHelperRule;
+import com.autonomy.abc.framework.rules.TestArtifactRule;
+import com.autonomy.abc.framework.statements.StatementArtifactHandler;
+import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
@@ -42,7 +46,9 @@ public abstract class ABCTestBase {
 	private final ApplicationType type;
 	private WebDriver driver;
 	public AppBody body;
+    @Deprecated
 	protected SideNavBar navBar;
+    @Deprecated
 	protected TopNavBar topNavBar;
 	private String loginName;
 
