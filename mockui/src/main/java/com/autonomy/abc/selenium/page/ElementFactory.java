@@ -20,10 +20,6 @@ public abstract class ElementFactory {
         this.driver = driver;
     }
 
-    public static ElementFactory from(ApplicationType applicationType, WebDriver driver){
-        return (applicationType == applicationType.HOSTED) ? new HSOElementFactory(driver) : new OPElementFactory(driver);
-    }
-
     public abstract PromotionsPage getPromotionsPage();
 
     public abstract CreateNewPromotionsPage getCreateNewPromotionsPage();

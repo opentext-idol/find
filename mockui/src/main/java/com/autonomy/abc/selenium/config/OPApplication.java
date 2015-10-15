@@ -29,4 +29,9 @@ public class OPApplication extends Application {
     public AuthProvider createCredentials() {
         return new OPAccount("richard", "q");
     }
+
+    @Override
+    public ApplicationType getType() {
+        return ApplicationType.ON_PREM;
+    }
 }
