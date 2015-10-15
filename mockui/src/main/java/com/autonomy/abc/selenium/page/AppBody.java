@@ -22,4 +22,6 @@ public abstract class AppBody {
     public void navigateTo(String s){
         driver.get(s);
     }
+
+    public abstract void logout();
 }
