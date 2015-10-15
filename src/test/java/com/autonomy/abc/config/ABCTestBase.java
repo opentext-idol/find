@@ -6,12 +6,12 @@ import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.OPApplication;
 import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
-import com.autonomy.abc.selenium.page.login.ApiKey;
-import com.autonomy.abc.selenium.page.login.LoginHostedPage;
+import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.*;
 import org.junit.rules.RuleChain;
@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.*;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeThat;
 
 
 @Ignore
@@ -52,6 +54,9 @@ public abstract class ABCTestBase {
     @Deprecated
 	protected TopNavBar topNavBar;
 	private String loginName;
+
+    private OPElementFactory elementFactory;
+    private OPApplication application;
 
 	static {
 		final String[] allBrowsers = {"firefox", "internet explorer", "chrome"};
@@ -92,7 +97,7 @@ public abstract class ABCTestBase {
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final Collection<ApplicationType> applicationType = Arrays.asList(ApplicationType.HOSTED, ApplicationType.ON_PREM);
+		final Collection<ApplicationType> applicationType = Arrays.asList(ApplicationType.ON_PREM);
 		return parameters(applicationType);
 	}
 
@@ -130,15 +135,14 @@ public abstract class ABCTestBase {
 		driver.get(config.getWebappUrl());
 		getDriver().manage().window().maximize();
 
-		if (config.getType() == ApplicationType.ON_PREM) {
-			abcOnPremiseLogin("richard", "q");
-		} else {
-			abcHostedLogin(System.getProperty("com.autonomy.apiKey"));
-		}
+		abcOnPremiseLogin("richard", "q");
 
 		body = new AppBody(driver);
 		navBar = new SideNavBar(driver);
 		topNavBar = new TopNavBar(driver);
+
+        application = new OPApplication();
+        elementFactory = (OPElementFactory) getApplication().createElementFactory(driver);
 	}
 
 	@After
@@ -172,14 +176,12 @@ public abstract class ABCTestBase {
 		new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top-blue")));
 	}
 
-	public void abcHostedLogin(final String apiKey) {
-		LoginHostedPage loginHostedPage = new LoginHostedPage(driver);
-        loginHostedPage.loginWith(new ApiKey(apiKey));
-		try {
-			new WebDriverWait(getDriver(), Timeouts.LOGIN_SUBMITTED).until(ExpectedConditions.visibilityOfElementLocated(By.className("navbar-static-top-blue")));
-		} catch (final TimeoutException t) {
-			fail("Login timed out");
-		}
-	}
+    public OPElementFactory getElementFactory() {
+        return elementFactory;
+    }
+
+    public OPApplication getApplication() {
+        return application;
+    }
 }
 
