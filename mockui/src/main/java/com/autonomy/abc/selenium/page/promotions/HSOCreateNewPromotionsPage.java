@@ -22,10 +22,13 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
     }
 
     // for dynamic promotions
+    public WebElement dial() {
+        return findElement(By.cssSelector("input.dial"));
+    }
+
     public void setDialValue(int value) {
-        WebElement dialInput = findElement(By.cssSelector("input.dial"));
         // .clear() does not work properly due to validation
-        dialInput.sendKeys("\b\b" + Integer.toString(value));
+        dial().sendKeys("\b\b" + Integer.toString(value));
     }
 
     @Override
