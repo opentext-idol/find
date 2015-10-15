@@ -32,7 +32,7 @@ public class IndexesPage extends AppElement implements AppPage {
     }
 
     public void deleteIndex(String indexName){
-        findIndex(indexName).findElement(By.xpath("//../../../..//button")).click();
+        findIndex(indexName).findElement(By.xpath(".//../../../..//button")).click();
         loadOrFadeWait();
         modalClick();
         loadOrFadeWait();

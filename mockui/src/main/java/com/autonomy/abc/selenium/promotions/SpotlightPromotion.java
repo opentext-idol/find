@@ -17,7 +17,7 @@ public class SpotlightPromotion extends Promotion {
 
     @Override
     public String getName() {
-        return "spotlight promotion";
+        return "spotlight";
     }
 
     public SpotlightPromotion(SpotlightType type, String trigger) {

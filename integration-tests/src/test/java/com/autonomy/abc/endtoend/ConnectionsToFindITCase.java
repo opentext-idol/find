@@ -122,9 +122,5 @@ public class ConnectionsToFindITCase extends ABCTestBase {
     @After
     public void tearDown(){
         connectionService.deleteConnection(connector);
-
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage index = ((HSOElementFactory) getElementFactory()).getIndexesPage();
-        index.deleteIndex(indexName);
     }
 }
