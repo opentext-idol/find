@@ -4,6 +4,8 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
@@ -12,10 +14,12 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.promotions.PromotionService;
-import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import javafx.geometry.Side;
 import org.apache.xpath.compiler.Keywords;
@@ -29,7 +33,9 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 
 public class NotificationsDropDownITCase extends ABCTestBase{
@@ -203,6 +209,223 @@ public class NotificationsDropDownITCase extends ABCTestBase{
 			body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 			getElementFactory().getPromotionsPage().deleteAllPromotions();
 		}
+	}
+
+	@Test
+	public void testSynonymNotifications() throws InterruptedException {
+		String synonymOne = "Brock".toLowerCase();
+		String synonymTwo = "Lesnar".toLowerCase();
+		String synonymNotificationText = "Created a new synonym group containing: "+synonymOne+", "+synonymTwo;
+
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymOne + " " + synonymTwo, "English");
+		getElementFactory().getSearchPage();
+		checkForNotification(synonymNotificationText);
+	}
+
+	@Test
+	public void testBlacklistNotifications() throws InterruptedException {
+		String blacklistOne = "Rollins".toLowerCase();
+		String blacklistTwo = "Seth".toLowerCase();
+		String blacklistNotificationText = "Added \"placeholder\" to the blacklist";
+
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+		keywordsPage.deleteKeywords();
+		keywordsPage.createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm(blacklistOne + " " + blacklistTwo, "English");
+		getElementFactory().getKeywordsPage();
+		new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(blacklistNotificationText.replace("placeholder", blacklistOne)));
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+		assertThat(notifications.notificationNumber(1).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
+		assertThat(notifications.notificationNumber(2).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
+		assertThat(notifications.notificationNumber(2).getText(), not(is(notifications.notificationNumber(1).getText())));
+	}
+
+	@Test
+	public void testSpotlightPromotionNotifications(){
+		PromotionService ps = getApplication().createPromotionService(getElementFactory());
+
+		String promotionTrigger = "Maggle";
+		String search = "Cole";
+		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
+
+		ps.setUpPromotion(new SpotlightPromotion(promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		getElementFactory().getSearchPage();
+		checkForNotification(promotionNotificationText);
+	}
+
+	@Test
+	public void testPinToPositionPromotionNotifications(){
+		PromotionService ps = getApplication().createPromotionService(getElementFactory());
+
+		int pinToPositionPosition = 1;
+		String promotionTrigger = "Ziggler";
+		String search = "Cena";
+		String promotionNotificationText = "Created a new pin to position promotion: Pin to Position for: "+promotionTrigger;
+
+		ps.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		getElementFactory().getSearchPage();
+		checkForNotification(promotionNotificationText);
+	}
+
+	@Test
+	public void testDynamicPromotionNotifications(){
+		PromotionService ps = getApplication().createPromotionService(getElementFactory());
+
+		int numberOfResults = 10;
+		String promotionTrigger = "Wyatt";
+		String search = "Lawler";
+		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
+
+		ps.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		getElementFactory().getSearchPage();
+		checkForNotification(promotionNotificationText);
+	}
+
+	@Test
+	public void testStaticPromotionNotifications(){
+		HSOPromotionService ps = (HSOPromotionService) getApplication().createPromotionService(getElementFactory());
+
+		String docTitle = "TITLE";
+		String docContent = "CONTENT";
+		String promotionTrigger = "sadness";
+		String promotionNotificationText = "Created a new static promotion: Static Promotion for: "+promotionTrigger;
+
+		ps.setUpStaticPromotion(new StaticPromotion(docTitle, docContent, promotionTrigger));
+		getElementFactory().getSearchPage();
+		checkForNotification(promotionNotificationText);
+	}
+
+	@Test
+	public void testCreateIndexNotifications(){
+		body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+		IndexesPage indexes = ((HSOElementFactory) getElementFactory()).getIndexesPage();
+
+		String indexName = "danye west";
+		String indexCreationNotification = "Created a new index: "+indexName;
+
+		indexes.newIndexButton().click();
+		CreateNewIndexPage createNewIndexPage = ((HSOElementFactory) getElementFactory()).getCreateNewIndexPage();
+		createNewIndexPage.inputIndexName(indexName);
+		createNewIndexPage.nextButton().click();
+		createNewIndexPage.loadOrFadeWait();
+		createNewIndexPage.nextButton().click();
+		createNewIndexPage.loadOrFadeWait();
+		createNewIndexPage.finishButton().click();
+
+		try {
+			((HSOElementFactory) getElementFactory()).getIndexesPage();
+			new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(indexCreationNotification));
+
+			checkForNotification(indexCreationNotification);
+		} finally {
+			body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+			((HSOElementFactory) getElementFactory()).getIndexesPage().deleteIndex(indexName);
+		}
+	}
+
+	@Test
+	public void testDeletingSynonymsNotifications() throws InterruptedException {
+		String synonymOne = "Dean".toLowerCase();
+		String synonymTwo = "Ambrose".toLowerCase();
+		String synonymThree = "Shield".toLowerCase();
+
+		//Have to add synonyms first before deleting them
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymOne + " " + synonymTwo + " " + synonymThree, "English");
+		getElementFactory().getSearchPage();
+
+		//Now try deleting
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage = getElementFactory().getKeywordsPage();
+		String removeSynonymOneNotification = "Removed \""+synonymOne+"\" from a synonym group";
+		keywordsPage.deleteSynonym(synonymOne, synonymOne);
+		checkForNotification(removeSynonymOneNotification);
+		body.getTopNavBar().notificationsDropdown(); //Close notifications dropdown
+		String removeSynonymGroupNotification = "Removed a synonym group";
+		keywordsPage.deleteSynonym(synonymTwo, synonymTwo);
+		checkForNotification(removeSynonymGroupNotification);
+	}
+
+	@Test
+	public void testDeletingBlacklistNotifications() throws InterruptedException {
+		String blacklistOne = "Rollins".toLowerCase();
+		String blacklistTwo = "Seth".toLowerCase();
+		String blacklistNotificationText = "Removed \"placeholder\" from the blacklist";
+
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+		keywordsPage.deleteKeywords();
+		keywordsPage.createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm(blacklistOne + " " + blacklistTwo, "English");
+
+		keywordsPage = getElementFactory().getKeywordsPage();
+		keywordsPage.deleteBlacklistedTerm(blacklistOne);		//The gritter happens during this phase so cannot wait to check if gritter is okay afterward
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+		assertThat(notifications.notificationNumber(1).getText(), is(blacklistNotificationText.replace("placeholder", blacklistOne)));
+		keywordsPage.deleteBlacklistedTerm(blacklistTwo);
+		assertThat(notifications.notificationNumber(1).getText(), is(blacklistNotificationText.replace("placeholder", blacklistTwo)));
+	}
+
+	@Test
+	public void testConnectorsCreationNotifications(){
+		String connectorName = "lc";
+
+		String creatingNotification = "Creating a new connection: " + connectorName;
+		String createdNotification = "Created a new connection: " + connectorName;
+		String startedNotification = "Connection " + connectorName + " started";
+		String finishedNotification = "Connection "+ connectorName + " has finished running";
+
+		WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName);
+
+		ConnectionService cs = new ConnectionService(getApplication(),getElementFactory());
+		cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
+
+		try {
+			((HSOElementFactory) getElementFactory()).getConnectionsPage();
+
+			body.getTopNavBar().notificationsDropdown();
+			notifications = body.getTopNavBar().getNotifications();
+
+			assertThat(notifications.notificationNumber(1).getText(), is(finishedNotification));
+			assertThat(notifications.notificationNumber(2).getText(), is(startedNotification));
+			assertThat(notifications.notificationNumber(3).getText(), is(createdNotification));
+			assertThat(notifications.notificationNumber(4).getText(), is(creatingNotification));
+		} finally {
+			cs.deleteConnection(connector);
+		}
+	}
+
+	@Test
+	public void testConnectorsDeletionNotifications(){
+		String connectorName = "deathcabyoucutie";
+		WebConnector connector = new WebConnector("http://deathcabforcutie.com/",connectorName);
+
+		String deletingNotification = "Deleting connection " + connectorName;
+		String successfulNotification = "Connection " + connectorName + " successfully removed";
+
+		ConnectionService cs = new ConnectionService(getApplication(),getElementFactory());
+		cs.setUpConnection(connector);
+
+		cs.deleteConnection(connector);		//Because of the thread.Sleep() within no need to wait for the notifications
+
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+
+		assertThat(notifications.notificationNumber(1).getText(),is(successfulNotification));
+		assertThat(notifications.notificationNumber(2).getText(),is(deletingNotification));
+	}
+
+	private void checkForNotification(String notificationText) {
+		new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining(notificationText));
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+		assertThat(notifications.notificationNumber(1).getText(),is(notificationText));
 	}
 
 	private void newBody(){

@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -119,5 +120,11 @@ public class ConnectionsToFindITCase extends ABCTestBase {
     }
 
     @After
-    public void tearDown(){}
+    public void tearDown(){
+        connectionService.deleteConnection(connector);
+
+        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        IndexesPage index = ((HSOElementFactory) getElementFactory()).getIndexesPage();
+        index.deleteIndex(indexName);
+    }
 }
