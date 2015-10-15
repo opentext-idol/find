@@ -41,7 +41,7 @@ public class TopNavBar extends TabBar {
 		findElement(By.cssSelector("[name='top-search']")).sendKeys(searchTerm);
 		findElement(By.cssSelector("[name='top-search']")).sendKeys(Keys.RETURN);
 		loadOrFadeWait();
-		new AppBody(getDriver()).getSearchPage().waitForSearchLoadIndicatorToDisappear();
+//		new AppBody(getDriver()).getSearchPage().waitForSearchLoadIndicatorToDisappear();
 	}
 
 	public void sideBarToggle() {
