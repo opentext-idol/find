@@ -1,7 +1,7 @@
 package com.autonomy.abc.overview;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.config.ApplicationType;
+import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;

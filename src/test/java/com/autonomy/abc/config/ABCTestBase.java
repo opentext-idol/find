@@ -5,6 +5,7 @@ import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
+import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;

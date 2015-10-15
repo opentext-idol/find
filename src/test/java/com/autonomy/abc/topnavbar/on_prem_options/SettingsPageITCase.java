@@ -1,7 +1,7 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.config.ApplicationType;
+import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.HostAndPorts;
 import com.autonomy.abc.selenium.element.ModalView;
