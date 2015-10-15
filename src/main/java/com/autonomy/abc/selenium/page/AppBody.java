@@ -68,54 +68,67 @@ public class AppBody extends AppElement {
 		this.editReferences = new EditDocumentReferencesPage.Placeholder(topNavBar);
 	}
 
+    @Deprecated
 	public OverviewPage getOverviewPage() {
 		return overviewPage.$page();
 	}
 
+    @Deprecated
 	public PromotionsPage getPromotionsPage() {
 		return promotionsPage.$page();
 	}
 
+    @Deprecated
 	public KeywordsPage getKeywordsPage() {
 		return keywordsPage.$keywordsPage(getDriver().findElement(By.cssSelector(".keywords-container")));
 	}
 
+    @Deprecated
 	public AboutPage getAboutPage() {
 		return aboutPage.$topNavBarDropDownPage();
 	}
 
+    @Deprecated
 	public UsersPage getUsersPage() {
 		return usersPage.$topNavBarDropDownPage();
 	}
 
+    @Deprecated
 	public SettingsPage getSettingsPage() {
 		return settingsPage.$topNavBarDropDownPage();
 	}
 
+    @Deprecated
 	public SearchPage getSearchPage() {
 		return searchPage.$searchPage(getParent(getParent(getParent(getDriver().findElement(By.cssSelector(".search-control-column"))))));
 	}
 
+    @Deprecated
 	public CreateNewPromotionsPage getCreateNewPromotionsPage() {
 		return createPromotionsPage.$createNewPromotionsPage(getDriver().findElement(By.cssSelector(".pd-wizard")));
 	}
 
+    @Deprecated
 	public CreateNewDynamicPromotionsPage getCreateNewDynamicPromotionsPage() {
 		return dynamicPromotionsPage.$createNewDynamicPromotionsPage(getDriver().findElement(By.cssSelector(".pd-wizard")));
 	}
 
+    @Deprecated
 	public SchedulePage getSchedulePage() {
 		return schedulePage.$schedulePage(getDriver().findElement(By.cssSelector(".pd-wizard")));
 	}
 
+    @Deprecated
 	public CreateNewKeywordsPage getCreateKeywordsPage() {
 		return createKeywordsPage.$createNewKeywordsPage(getDriver().findElement(By.cssSelector(".pd-wizard")));
 	}
 
+    @Deprecated
 	public LoginOnPremisePage getLoginOnPremisePage() {
 		return loginOnPremPage.$loginPage(getDriver().findElement(By.cssSelector(".loginscreen")));
 	}
 
+    @Deprecated
 	public LoginHostedPage getLoginHostedPage() {
 		return new LoginHostedPage(this, getDriver());
 	}
@@ -128,19 +141,23 @@ public class AppBody extends AppElement {
 		return sideNavBar;
 	}
 
+    @Deprecated
 	public NotificationsDropDown getNotifications() {
 		return notifications.$notificationsDropDown(findElement(By.cssSelector(".notification-list")));
 	}
 
+    @Deprecated
 	public EditDocumentReferencesPage getEditDocumentReferencesPage() {
 		return editReferences.$editReferences(findElement(By.cssSelector("[style='display: block;'] .main-page-contents.search-page-contents")));
 	}
 
+    @Deprecated
 	public void logout() {
 		topNavBar.findElement(By.cssSelector(".fa-cog")).click();
 		topNavBar.findElement(By.xpath(".//a[text()=' Logout']")).click();
 	}
 
+    @Deprecated
 	public DatePicker getDatePicker() {
 		return new DatePicker(this, getDriver());
 	}
