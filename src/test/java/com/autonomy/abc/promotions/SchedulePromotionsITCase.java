@@ -144,7 +144,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		topNavBar.search("magic");
 		topNavBar.loadOrFadeWait();
-		searchPage = body.getSearchPage();
+		searchPage = getElementFactory().getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
 		assertThat("promotions aren't scheduled to be shown now", !searchPage.isPromotionsBoxVisible());
 
@@ -152,7 +152,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		promotionsPage.getPromotionLinkWithTitleContaining("magic").click();
 		promotionsPage.schedulePromotion();
 		promotionsPage.loadOrFadeWait();
-		schedulePage = body.getSchedulePage();
+		schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		schedulePage.alwaysActive().click();
 		schedulePage.finishButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		schedulePage.loadOrFadeWait();
@@ -161,7 +161,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		topNavBar.search("magic");
 		topNavBar.loadOrFadeWait();
-		searchPage = body.getSearchPage();
+		searchPage = getElementFactory().getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
 		assertThat("promotions are scheduled to be shown now", searchPage.isPromotionsBoxVisible());
 	}
@@ -172,7 +172,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		promotionsPage.schedulePromotion();
 
 		try {
-			schedulePage = body.getSchedulePage();
+			schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -265,14 +265,14 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		topNavBar.search("chips");
 		topNavBar.loadOrFadeWait();
-		searchPage = body.getSearchPage();
+		searchPage = getElementFactory().getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
 		assertThat("promotions aren't scheduled to be shown now", !searchPage.isPromotionsBoxVisible());
 
 		navBar.switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage.getPromotionLinkWithTitleContaining("chips").click();
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		schedulePage.loadOrFadeWait();
 		assertThat("Schedule should be selected due to prepopulated schedule", schedulePage.schedule().getAttribute("class").contains("progressive-disclosure-selection"));
 
@@ -315,7 +315,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		topNavBar.search("chips");
 		topNavBar.loadOrFadeWait();
-		searchPage = body.getSearchPage();
+		searchPage = getElementFactory().getSearchPage();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.docLogo()));
 		assertThat("promotions are scheduled to be shown now but are not visible", searchPage.isPromotionsBoxVisible());
 	}
@@ -325,7 +325,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		promotionsPage.setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4, getConfig().getType().getName());
 		promotionsPage.schedulePromotion();
 		try {
-			schedulePage = body.getSchedulePage();
+			schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -346,7 +346,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		promotionsPage.setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4, getConfig().getType().getName());
 		promotionsPage.schedulePromotion();
 		try {
-			schedulePage = body.getSchedulePage();
+			schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -395,7 +395,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		promotionsPage.setUpANewMultiDocPromotion("Kazakh", "Қазақстан", "Sponsored", "Kaz", 5, getConfig().getType().getName());
 		promotionsPage.schedulePromotion();
 		try {
-			schedulePage = body.getSchedulePage();
+			schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -451,7 +451,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		promotionsPage.setUpANewMultiDocPromotion("Korean", "한국", "Hotwire", "Korea", 4, getConfig().getType().getName());
 		promotionsPage.schedulePromotion();
 		try {
-			schedulePage = body.getSchedulePage();
+			schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -463,7 +463,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		promotionsPage.schedulePromotion();
 		promotionsPage.loadOrFadeWait();
-		schedulePage = body.getSchedulePage();
+		schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		assertThat("Due to pre-population 'schedule' should be pre-selected", schedulePage.schedule().getAttribute("class").contains("progressive-disclosure-selection"));
 
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
@@ -491,7 +491,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 		promotionsPage.schedulePromotion();
 		try {
-			schedulePage = body.getSchedulePage();
+			schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
@@ -508,7 +508,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		schedulePage.navigateWizardAndSetEndDate(DateUtils.addDays(schedulePage.getTodayDate(), 4));
 
 		availableFrequencies = schedulePage.getAvailableFrequencies();
@@ -525,7 +525,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		schedulePage.navigateWizardAndSetEndDate(DateUtils.addWeeks(schedulePage.getTodayDate(), 2));
 
 		availableFrequencies = schedulePage.getAvailableFrequencies();
@@ -542,7 +542,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		schedulePage.navigateWizardAndSetEndDate(DateUtils.addMonths(schedulePage.getTodayDate(), 1));
 
 		availableFrequencies = schedulePage.getAvailableFrequencies();
@@ -559,7 +559,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		schedulePage.finishButton(SchedulePage.WizardStep.FINAL).click();
 		promotionsPage.loadOrFadeWait();
 		promotionsPage.schedulePromotion();
-		schedulePage = body.getSchedulePage();
+		schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		schedulePage.loadOrFadeWait();
 		schedulePage.schedule().click();
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
