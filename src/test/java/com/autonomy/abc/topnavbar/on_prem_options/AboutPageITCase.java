@@ -32,7 +32,7 @@ public class AboutPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		aboutPage = body.getAboutPage();
+		aboutPage = (AboutPage) getElementFactory().getAboutPage();
 	}
 
 	@Test

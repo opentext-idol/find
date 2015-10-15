@@ -44,7 +44,7 @@ public class SettingsPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() {
-		settingsPage = body.getSettingsPage();
+		settingsPage = (SettingsPage) getElementFactory().getSettingsPage();
 	}
 
 	@Test

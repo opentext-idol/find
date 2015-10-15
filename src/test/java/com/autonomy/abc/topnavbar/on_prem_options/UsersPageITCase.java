@@ -6,7 +6,8 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.ModalView;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.page.login.LoginOnPremisePage;
+import com.autonomy.abc.selenium.page.login.OPAccount;
+import com.autonomy.abc.selenium.page.login.OPLoginPage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		usersPage = body.getUsersPage();
+		usersPage = (UsersPage) getElementFactory().getUsersPage();
 		usersPage.deleteOtherUsers();
 	}
 
@@ -255,10 +256,10 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Norman").getText().equals("None"));
 
 		body.logout();
-		LoginOnPremisePage loginPage = body.getLoginOnPremisePage();
-		loginPage.login("Norman", "n");
-		loginPage = body.getLoginOnPremisePage();
-		assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your username and password."));
+		OPLoginPage loginPage = getElementFactory().getLoginPage();
+		loginPage.loginWith(new OPAccount("Norman", "n"));
+		loginPage = getElementFactory().getLoginPage();
+        assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your username and password."));
         assertThat("URL wrong",getDriver().getCurrentUrl(),containsString("login"));
 	}
 

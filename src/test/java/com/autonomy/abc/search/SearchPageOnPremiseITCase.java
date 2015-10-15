@@ -41,7 +41,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase {
 	public void setUp() throws MalformedURLException {
 		topNavBar = body.getTopNavBar();
 		topNavBar.search("example");
-		searchPage = body.getSearchPage();
+		searchPage = getElementFactory().getSearchPage();
 	}
 
 

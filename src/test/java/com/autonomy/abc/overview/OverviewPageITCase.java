@@ -41,7 +41,7 @@ public class OverviewPageITCase extends ABCTestBase{
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		overviewPage = body.getOverviewPage();
+		overviewPage = (OverviewPage) getElementFactory().getOverviewPage();
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class OverviewPageITCase extends ABCTestBase{
 					if (tableRowLink.isDisplayed()) {
 						final String searchTerm = tableRowLink.getText();
 						tableRowLink.click();
-						final SearchPage searchPage = body.getSearchPage();
+						final SearchPage searchPage = getElementFactory().getSearchPage();
 						new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 						assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl().contains("search/modified/" + searchTerm));
 						assertThat(searchTerm + " Title incorrect", searchPage.title().contains("Results for " + searchTerm));
@@ -130,7 +130,7 @@ public class OverviewPageITCase extends ABCTestBase{
 	@Test
 	public void testZeroHitTermsLinks() throws UnsupportedEncodingException, InterruptedException {
         navBar.switchPage(NavBarTabId.KEYWORDS);
-        final KeywordsPage keywordsPage = body.getKeywordsPage();
+        final KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.deleteAllBlacklistedTerms();
 		navBar.switchPage(NavBarTabId.OVERVIEW);
@@ -142,7 +142,7 @@ public class OverviewPageITCase extends ABCTestBase{
 			final String linkText = tableLink.getText();
 			tableLink.click();
 
-            final CreateNewKeywordsPage createNewKeywordsPage = body.getCreateKeywordsPage();
+            final CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
 			assertThat("Have not linked to synonyms wizard", createNewKeywordsPage.getText().contains("Select synonyms"));
 			assertEquals(1, createNewKeywordsPage.countKeywords());
@@ -157,7 +157,7 @@ public class OverviewPageITCase extends ABCTestBase{
 
 			createNewKeywordsPage.finishWizardButton().click();
 
-			final SearchPage searchPage = body.getSearchPage();
+			final SearchPage searchPage = getElementFactory().getSearchPage();
 			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
 			if (!searchPage.getText().contains("An error occurred executing the search action")) {

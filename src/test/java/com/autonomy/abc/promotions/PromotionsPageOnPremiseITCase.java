@@ -46,7 +46,7 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws MalformedURLException {
 		topNavBar = body.getTopNavBar();
-		promotionsPage = body.getPromotionsPage();
+		promotionsPage = getElementFactory().getPromotionsPage();
 		promotionsPage.deleteAllPromotions();
 	}
 
@@ -173,7 +173,7 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 
 		promotionsPage.addFieldText("MATCH{Richard}:NAME");
 		topNavBar.search("Ming");
-		searchPage = body.getSearchPage();
+		searchPage = getElementFactory().getSearchPage();
 		assertThat("Promoted Document should not be visible", !searchPage.promotionsSummary().isDisplayed());
 
 		searchPage.expandFilter(SearchBase.Filter.FIELD_TEXT);

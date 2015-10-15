@@ -5,10 +5,14 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.promotions.CreateNewDynamicPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.*;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.DynamicPromotion;
+import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.search.LanguageFilter;
+import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchActionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -33,15 +37,20 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 	private SearchPage searchPage;
 	private PromotionsPage promotionsPage;
 	private TopNavBar topNavBar;
-	private CreateNewDynamicPromotionsPage dynamicPromotionsPage;
+	private CreateNewPromotionsPage dynamicPromotionsPage;
+    private PromotionService promotionService;
+    private SearchActionFactory searchActionFactory;
 
 	@Before
 	public void setUp() {
-		promotionsPage = body.getPromotionsPage();
-		promotionsPage.deleteAllPromotions();
+        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+
+		promotionsPage = getElementFactory().getPromotionsPage();
+		promotionService.deleteAll();
 		topNavBar = body.getTopNavBar();
 		topNavBar.search("fox");
-		searchPage = body.getSearchPage();
+		searchPage = getElementFactory().getSearchPage();
 	}
 
 	@Test
@@ -52,7 +61,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		final String firstDocTitle = searchPage.getSearchResultTitle(1);
 		searchPage.promoteThisQueryButton().click();
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("promotions/create-dynamic/"));
 		assertThat("Wrong stage of wizard", dynamicPromotionsPage.spotlightType("Hotwire").isDisplayed());
@@ -64,7 +73,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.loadOrFadeWait();
 
 		if (getConfig().getType().equals(ApplicationType.HOSTED)) {
-			assertThat("Wrong wizard step displayed, dial not present", dynamicPromotionsPage.dial().isDisplayed());
+			assertThat("Wrong wizard step displayed, dial not present", ((HSOCreateNewPromotionsPage) dynamicPromotionsPage).dial().isDisplayed());
 			assertThat("Wrong wizard step displayed, wrong title", dynamicPromotionsPage.getCurrentStepTitle().contains("Results number"));
 			dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.RESULTS).click();
 			dynamicPromotionsPage.loadOrFadeWait();
@@ -116,7 +125,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -159,7 +168,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -193,7 +202,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -234,7 +243,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -275,7 +284,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -299,7 +308,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		topNavBar.sideBarToggle();
 		dynamicPromotionsPage.cancelButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
@@ -308,7 +317,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		assertFalse("\"undefined\" returned as query text when wizard cancelled", searchPage.searchTitle().getText().contains("undefined"));
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -325,7 +334,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		assertFalse("\"undefined\" returned as query text when wizard cancelled", searchPage.searchTitle().getText().contains("undefined"));
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Top Promotions").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -361,7 +370,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		final String firstDocTitle = searchPage.getSearchResultTitle(1);
 		searchPage.promoteThisQueryButton().click();
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.loadOrFadeWait();
 		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("promotions/create-dynamic/"));
 		assertThat("Wrong stage of wizard", dynamicPromotionsPage.spotlightType(promotionType).isDisplayed());
@@ -406,7 +415,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Sponsored").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -432,7 +441,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		dynamicPromotionsPage.spotlightType("Hotwire").click();
 		dynamicPromotionsPage.continueButton(CreateNewPromotionsBase.WizardStep.PROMOTION_TYPE).click();
 		dynamicPromotionsPage.loadOrFadeWait();
@@ -453,26 +462,25 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 	@Test
 	public void testDuplicateQueryAndTriggerDifferentSpotlightType() {
-		topNavBar.search("berlin");
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+        Search search = searchActionFactory.makeSearch("berlin");
+        searchPage = search.apply();
 		int promotionResultsCount = searchPage.countSearchResults();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
-		dynamicPromotionsPage.createDynamicPromotion("Sponsored", "Ida", getConfig().getType().getName());
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "Ida"), search, 1);
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		assertThat("promotions aren't labelled as Sponsored", searchPage.promotionsLabel().getText().equals("Sponsored"));
 
-		topNavBar.search("berlin");
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		search.apply();
 		promotionResultsCount = promotionResultsCount + searchPage.countSearchResults();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
-		dynamicPromotionsPage.createDynamicPromotion("Hotwire", "Ida", getConfig().getType().getName());
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "Ida"), search, 1);
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
 		final List<String> promotionLabels = searchPage.getPromotionSummaryLabels();
@@ -483,14 +491,14 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 	@Test
 	public void testNumberOfDocumentsPromotedOnPromotionsPage() {
-		topNavBar.search("wors");
-		searchPage.selectLanguage("Afrikaans", getConfig().getType().getName());
+        Search search = searchActionFactory.makeSearch("wors").applyFilter(new LanguageFilter("Afrikaans"));
+        searchPage = search.apply();
 		final int promotionResultsCount = searchPage.countSearchResults();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
-		dynamicPromotionsPage.createDynamicPromotion("Top Promotions", "sausage", getConfig().getType().getName());
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "sausage"), search, 1);
 
 		try {
 			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
@@ -507,13 +515,14 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 	@Test
 	public void testDeletedPromotionIsDeleted() {
-		topNavBar.search("Ulster");
-		searchPage.selectLanguage("French", getConfig().getType().getName());
+        Search search = searchActionFactory.makeSearch("Ulster").applyFilter(new LanguageFilter("French"));
+
+        searchPage = search.apply();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
-		dynamicPromotionsPage.createDynamicPromotion("Top Promotions", "home", getConfig().getType().getName());
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "home"), search, 1);
 
 		try {
 			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
@@ -537,13 +546,9 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 	@Test
 	public void testPromotionLanguage() {
-		topNavBar.search("میں");
-		searchPage.selectLanguage("Urdu", getConfig().getType().getName());
-		searchPage.promoteThisQueryButton().click();
-		searchPage.loadOrFadeWait();
-
-		dynamicPromotionsPage = body.getCreateNewDynamicPromotionsPage();
-		dynamicPromotionsPage.createDynamicPromotion("Top Promotions", "phrase", getConfig().getType().getName());
+        Search search = searchActionFactory.makeSearch("میں").applyFilter(new LanguageFilter("Urdu"));
+        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "phrase"), search, 1);
+        searchPage = getElementFactory().getSearchPage();
 
 		try {
 			new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));

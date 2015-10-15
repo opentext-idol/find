@@ -45,7 +45,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws MalformedURLException {
 		topNavBar = body.getTopNavBar();
-		promotionsPage = body.getPromotionsPage();
+		promotionsPage = getElementFactory().getPromotionsPage();
 		promotionsPage.deleteAllPromotions();
 	}
 
@@ -55,7 +55,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		promotionsPage.schedulePromotion();
 
 		try {
-			schedulePage = body.getSchedulePage();
+			schedulePage = (SchedulePage) getElementFactory().getSchedulePage();
 		} catch (final NoSuchElementException e) {
 			fail("Schedule Page has not loaded");
 		}
