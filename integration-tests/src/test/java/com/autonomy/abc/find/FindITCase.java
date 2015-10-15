@@ -878,6 +878,25 @@ public class FindITCase extends ABCTestBase {
         assertThat(service.getResultsDiv().getText(),not(containsString("Loading")));
     }
 
+    @Test
+    public void testSearchResultsAreHighlighted(){
+        String searchTerm = "Tiger";
+
+        find.search(searchTerm);
+
+        for(WebElement tigerElement : getDriver().findElements(By.xpath("//*[not(self::h4) and contains(text(),'"+searchTerm+"')]"))){
+            if(tigerElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+                verifyThat(tigerElement.getText(), containsString(searchTerm));
+            }
+            verifyThat(tigerElement.getTagName(), is("a"));
+            verifyThat(tigerElement.getAttribute("class"), is("query-text"));
+
+            WebElement parent = tigerElement.findElement(By.xpath(".//.."));
+            verifyThat(parent.getTagName(),is("span"));
+            verifyThat(parent.getAttribute("class"), containsString("label"));
+        }
+    }
+
     private enum Index {
         DEFAULT("default_index"),
         NATURALNAVIGATOR("naturalnavigator"),
