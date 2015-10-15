@@ -8,6 +8,8 @@ import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.config.HSOApplication;
+import com.autonomy.abc.selenium.menu.SideNavBar;
+import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.*;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.After;
@@ -30,7 +32,7 @@ import static org.junit.Assert.fail;
 
 @Ignore
 @RunWith(Parameterized.class)
-public class ABCTestBase {
+public abstract class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
 	private final static Set<String> USER_BROWSERS;
 	private final static Set<ApplicationType> APPLICATION_TYPES;
@@ -47,6 +49,13 @@ public class ABCTestBase {
 	// TODO: use getBody() instead
 	public AppBody body;
 	private ElementFactory elementFactory;
+
+	// TODO: remove
+	// only used for compatibility with on-prem tests that have not yet been updated
+	@Deprecated
+	protected SideNavBar sideNavBar;
+	@Deprecated
+	protected TopNavBar navBar;
 
 	static {
 		final String[] allBrowsers = {"firefox", "internet explorer", "chrome"};
@@ -83,11 +92,7 @@ public class ABCTestBase {
 		} else {
 			try {
 				APPLICATION = (Application) Class.forName(applicationProperty).newInstance();
-			} catch (InstantiationException e) {
-				throw new IllegalStateException(e);
-			} catch (IllegalAccessException e) {
-				throw new IllegalStateException(e);
-			} catch (ClassNotFoundException e) {
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				throw new IllegalStateException(e);
 			}
 			APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
@@ -153,6 +158,8 @@ public class ABCTestBase {
 			LOGGER.error("Unable to login");
 			fail("Unable to login");
 		}
+		sideNavBar = body.getSideNavBar();
+		navBar = body.getTopNavBar();
 	}
 
 	@After
