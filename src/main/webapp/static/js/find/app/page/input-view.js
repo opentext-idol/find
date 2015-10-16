@@ -9,9 +9,18 @@ define([
         template: _.template(template),
 
         events: {
-            'keyup .find-input': _.debounce(function() {
+            'keyup .find-input': _.debounce(function(e) {
                 var findInput = this.$('.find-input').val();
-                this.queryModel.refresh(findInput);
+
+                // Keycode 13 is Enter, so where the user wants to refresh the search
+                // we call refresh. In all other cases, if the chain of keyup events
+                // did not result in the query text changing we are protected from
+                // rerunning the search by backbone.
+                if (e.which === 13) {
+                    this.queryModel.refresh(findInput);
+                } else {
+                    this.queryModel.set('queryText', findInput);
+                }
             }, 500),
             'submit .find-form': function(e) {
                 e.preventDefault();
