@@ -1,6 +1,6 @@
 package com.autonomy.abc.search;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.OPTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -20,7 +20,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class SearchPageOnPremiseITCase extends ABCTestBase {
+public class SearchPageOnPremiseITCase extends OPTestBase {
 	public SearchPageOnPremiseITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
 	}

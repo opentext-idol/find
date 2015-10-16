@@ -1,6 +1,6 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.OPTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
@@ -16,7 +16,7 @@ import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class AboutPageITCase extends ABCTestBase {
+public class AboutPageITCase extends OPTestBase {
 
 	public AboutPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);

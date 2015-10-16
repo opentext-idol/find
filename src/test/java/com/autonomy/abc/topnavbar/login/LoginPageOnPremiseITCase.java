@@ -1,6 +1,6 @@
 package com.autonomy.abc.topnavbar.login;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.OPTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class LoginPageOnPremiseITCase extends ABCTestBase {
+public class LoginPageOnPremiseITCase extends OPTestBase {
 
 	public LoginPageOnPremiseITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);

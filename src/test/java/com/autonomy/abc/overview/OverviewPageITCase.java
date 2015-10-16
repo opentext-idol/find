@@ -1,6 +1,6 @@
 package com.autonomy.abc.overview;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.OPTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -25,7 +25,7 @@ import static com.thoughtworks.selenium.SeleneseTestBase.assertEquals;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class OverviewPageITCase extends ABCTestBase{
+public class OverviewPageITCase extends OPTestBase {
 
 	public OverviewPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
