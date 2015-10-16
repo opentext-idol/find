@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.element;
 
-import com.autonomy.abc.selenium.AppElement;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

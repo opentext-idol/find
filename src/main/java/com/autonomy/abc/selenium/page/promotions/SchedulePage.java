@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.page.promotions;
 
-import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.DatePicker;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.apache.commons.lang3.time.DateUtils;
 import org.openqa.selenium.By;
