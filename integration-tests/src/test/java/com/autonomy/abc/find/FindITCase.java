@@ -879,21 +879,44 @@ public class FindITCase extends ABCTestBase {
     }
 
     @Test
-    public void testSearchResultsAreHighlighted(){
+    public void testSearchTermHighlightedInResults(){
         String searchTerm = "Tiger";
 
         find.search(searchTerm);
 
-        for(WebElement tigerElement : getDriver().findElements(By.xpath("//*[not(self::h4) and contains(text(),'"+searchTerm+"')]"))){
-            if(tigerElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-                verifyThat(tigerElement.getText(), containsString(searchTerm));
+        for(WebElement searchElement : getDriver().findElements(By.xpath("//*[not(self::h4) and contains(text(),'"+searchTerm+"')]"))){
+            if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+                verifyThat(searchElement.getText(), containsString(searchTerm));
             }
-            verifyThat(tigerElement.getTagName(), is("a"));
-            verifyThat(tigerElement.getAttribute("class"), is("query-text"));
+            verifyThat(searchElement.getTagName(), is("a"));
+            verifyThat(searchElement.getAttribute("class"), is("query-text"));
 
-            WebElement parent = tigerElement.findElement(By.xpath(".//.."));
+            WebElement parent = searchElement.findElement(By.xpath(".//.."));
             verifyThat(parent.getTagName(),is("span"));
             verifyThat(parent.getAttribute("class"), containsString("label"));
+        }
+
+        //TODO what happens when more than one word search term
+    }
+
+    @Test
+    //TODO
+    public void testRelatedConceptsHighlightedInResults(){
+        find.search("Tiger");
+
+        for(WebElement relatedConceptLink : service.getRelatedConcepts().findElements(By.tagName("a"))){
+            String relatedConcept = relatedConceptLink.getText();
+            for(WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'"+relatedConcept+"')]"))){
+                if(relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+                    verifyThat(relatedConceptElement.getText(), containsString(relatedConcept));
+                }
+                verifyThat(relatedConceptElement.getTagName(), is("a"));
+                verifyThat(relatedConceptElement.getAttribute("class"), is("query-text"));
+
+                WebElement parent = relatedConceptElement.findElement(By.xpath(".//.."));
+                verifyThat(parent.getTagName(),is("span"));
+                verifyThat(parent.getAttribute("class"), containsString("label"));
+            }
         }
     }
 
