@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium;
 
-import com.autonomy.abc.selenium.util.AbstractWebElementPlaceholder;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -267,20 +266,7 @@ public class AppElement implements WebElement {
 		return getDriver().findElements(By.cssSelector(".modal[aria-hidden='false']")).size() > 0;
 	}
 
-	public static class Placeholder extends AbstractWebElementPlaceholder<AppElement> {
-
-		public Placeholder(final AppElement ancestor, final By by) {
-			super(ancestor, by);
-		}
-
-
-		@Override
-		protected AppElement convertToActualType(final WebElement element) {
-			return new AppElement(element, getDriver());
-		}
-	}
-
-	// scroll methods: currently only do vertical scroll.
+    // scroll methods: currently only do vertical scroll.
 	public void scrollIntoView() {
 		scrollIntoView(this, getDriver());
 	}
