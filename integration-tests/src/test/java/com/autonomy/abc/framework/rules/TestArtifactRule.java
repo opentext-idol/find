@@ -27,7 +27,7 @@ public class TestArtifactRule extends TestWatcher {
 
     private String getBaseLocation(Description description) {
         String[] splitName = description.getMethodName().split("\\[");
-        return ".output\\" + splitName[0] + "\\" + timestamp + '[' + splitName[splitName.length - 1];
+        return ".output/" + splitName[0] + '/' + timestamp + '[' + splitName[splitName.length - 1];
     }
 
     private String getPngLocation(Description description) {

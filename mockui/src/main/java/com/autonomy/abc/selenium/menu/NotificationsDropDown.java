@@ -17,7 +17,6 @@ public class NotificationsDropDown extends AppElement {
     //TODO Even this may need to be abstracted - affix-element for Angular half
     //      Although it won't matter if the right Notifications Dropdown is given?
     public WebElement notificationNumber(final int index) {
-//        return findElement(By.cssSelector("li li:nth-child(" + (index * 2 - 1) + ") a div"));
         return findElement(By.cssSelector("li:nth-child(" + (index * 2 - 1) + ") a .notification-message"));
     }
 

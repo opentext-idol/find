@@ -30,6 +30,7 @@ import java.util.UUID;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.core.Is.is;
 
+//CSA-1564
 public class IndexSetUpITCase extends ABCTestBase {
     public IndexSetUpITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);

@@ -373,7 +373,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	public List<String> getPromotedDocumentTitles(){
 		List<String> titles = new ArrayList<>();
 		for(WebElement promotion : getPromotedResults()){
-			titles.add(promotion.findElement(By.tagName("h3")).getText());
+			titles.add(promotion.getText());
 		}
 		return titles;
 	}

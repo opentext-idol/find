@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
+//CSA-1563
 public class QuickSetUpITCase extends ABCTestBase {
 
     public QuickSetUpITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {

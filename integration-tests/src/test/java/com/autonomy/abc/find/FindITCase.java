@@ -703,7 +703,7 @@ public class FindITCase extends ABCTestBase {
     }
 
     @Test
-    public void testBooleanOperatorsProperlyMate(){
+    public void testBooleanOperators(){
         String termOne = "musketeers";
         String termTwo = "\"dearly departed\"";
 
@@ -782,9 +782,9 @@ public class FindITCase extends ABCTestBase {
         }
     }
 
-    @Test
+    /*@Test
     public void testIdolSearchTypes() {
-        /*find.search("leg");
+        find.search("leg");
 
         int initialSearchCount = find.countSearchResults();
         find.search("leg[2:2]");
@@ -836,8 +836,8 @@ public class FindITCase extends ABCTestBase {
         assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
                 thirdSearchCount, lessThan(fourthSearchCount));
         assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
-                fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));  */
-    }
+                fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));
+    }*/
 
     String findErrorMessage = "An error occurred retrieving results";
 
@@ -876,6 +876,67 @@ public class FindITCase extends ABCTestBase {
         find.search("O Captain! My Captain!");
         service.filterByDate(Service.DateEnum.CUSTOM);
         assertThat(service.getResultsDiv().getText(),not(containsString("Loading")));
+    }
+
+    @Test
+    public void testSearchTermHighlightedInResults(){
+        String searchTerm = "Tiger";
+
+        find.search(searchTerm);
+
+        for(WebElement searchElement : getDriver().findElements(By.xpath("//*[not(self::h4) and contains(text(),'"+searchTerm+"')]"))){
+            if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+                verifyThat(searchElement.getText(), containsString(searchTerm));
+            }
+            verifyThat(searchElement.getTagName(), is("a"));
+            verifyThat(searchElement.getAttribute("class"), is("query-text"));
+
+            WebElement parent = searchElement.findElement(By.xpath(".//.."));
+            verifyThat(parent.getTagName(),is("span"));
+            verifyThat(parent.getAttribute("class"), containsString("label"));
+        }
+
+        //TODO what happens when more than one word search term
+    }
+
+    @Test
+    public void testRelatedConceptsHighlightedInResults(){
+        find.search("Tiger");
+
+        for(WebElement relatedConceptLink : service.getRelatedConcepts().findElements(By.tagName("a"))){
+            String relatedConcept = relatedConceptLink.getText();
+            for(WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'"+relatedConcept+"')]"))){
+                if(relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+                    verifyThat(relatedConceptElement.getText(), containsString(relatedConcept));
+                }
+                verifyThat(relatedConceptElement.getTagName(), is("a"));
+                verifyThat(relatedConceptElement.getAttribute("class"), is("query-text"));
+
+                WebElement parent = relatedConceptElement.findElement(By.xpath(".//.."));
+                verifyThat(parent.getTagName(),is("span"));
+                verifyThat(parent.getAttribute("class"), containsString("label"));
+            }
+        }
+    }
+
+    @Test
+    public void testSimilarDocumentsShowUp(){
+        find.search("Doe");
+
+        for (WebElement similarResultLink : service.getSimilarResultLinks()){
+            new Actions(getDriver()).moveByOffset(-50,-50).build().perform();
+            service.loadOrFadeWait();
+            similarResultLink.click();
+
+            WebElement popover = service.getPopover();
+
+            new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover,"Loading")));
+
+            for(WebElement similarResult : popover.findElements(By.tagName("li"))){
+                assertThat(similarResult.findElement(By.tagName("h5")).getText(),not(isEmptyString()));
+                assertThat(similarResult.findElement(By.tagName("p")).getText(),not(isEmptyString()));
+            }
+        }
     }
 
     private enum Index {
