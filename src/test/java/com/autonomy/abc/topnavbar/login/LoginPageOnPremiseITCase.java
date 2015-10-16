@@ -3,6 +3,7 @@ package com.autonomy.abc.topnavbar.login;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
@@ -39,6 +40,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 
     // TODO: abstract and put in OPTopNavBar
     private void goToUsersPage() {
+        TopNavBar topNavBar = body.getTopNavBar();
         topNavBar.findElement(By.cssSelector(".fa-cog")).click();
         topNavBar.findElement(By.cssSelector("li[data-pagename='users'] a")).click();
         usersPage = (UsersPage) getElementFactory().getUsersPage();

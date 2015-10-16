@@ -3,7 +3,7 @@ package com.autonomy.abc.overview;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
+import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.overview.OverviewPage;
@@ -93,7 +93,7 @@ public class OverviewPageITCase extends ABCTestBase{
 						assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl().contains("search/modified/" + searchTerm));
 						assertThat(searchTerm + " Title incorrect", searchPage.title().contains("Results for " + searchTerm));
 
-						navBar.switchPage(NavBarTabId.OVERVIEW);
+						body.getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
 					}
 				}
 			} else {
@@ -129,11 +129,11 @@ public class OverviewPageITCase extends ABCTestBase{
 
 	@Test
 	public void testZeroHitTermsLinks() throws UnsupportedEncodingException, InterruptedException {
-        navBar.switchPage(NavBarTabId.KEYWORDS);
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         final KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.deleteAllSynonyms();
 		keywordsPage.deleteAllBlacklistedTerms();
-		navBar.switchPage(NavBarTabId.OVERVIEW);
+		body.getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
 		String extraSynonym = "apple";
 
 		final List<WebElement> tableLinks = overviewPage.getWidget(OverviewPage.Widget.ZERO_HIT_TERMS).findElements(By.cssSelector(".table a"));
@@ -170,7 +170,7 @@ public class OverviewPageITCase extends ABCTestBase{
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(extraSynonym).contains(linkText));
 
 				final String searchResultTitle = searchPage.getSearchResultTitle(1);
-				topNavBar.search(linkText);
+                body.getTopNavBar().search(linkText);
 				assertThat("page title incorrect", searchPage.title().contains(linkText));
 				assertThat("no search results displayed", searchPage.getDocLogo(1).isDisplayed());
 				assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
@@ -182,7 +182,7 @@ public class OverviewPageITCase extends ABCTestBase{
 				System.out.println(linkText + " returns a search error as part of a synonym group");
 			}
 
-			navBar.switchPage(NavBarTabId.OVERVIEW);
+			body.getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
 		}
 	}
 
