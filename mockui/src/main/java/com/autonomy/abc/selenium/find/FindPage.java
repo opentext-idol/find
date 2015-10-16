@@ -33,7 +33,6 @@ public class FindPage extends SearchBase implements AppPage {
     public void search(String searchTerm){
         input.clear();
         input.sendKeys(searchTerm);
-        service.refreshContainers();
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
     }
 

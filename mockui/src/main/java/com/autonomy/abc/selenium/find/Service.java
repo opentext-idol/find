@@ -12,10 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Service extends AppElement {
-    private WebElement left;
-    private WebElement center;
-    private WebElement right;
-
     public Service(WebDriver driver) {
         super(driver.findElement(By.className("service-view-container")), driver);
     }
@@ -166,13 +162,6 @@ public class Service extends AppElement {
     private WebElement getContentTypeContainer(){
         return getParametricContainer(ParametricContainers.CONTENTTYPE);
     }
-
-    public void refreshContainers(){
-        left = getDriver().findElement(By.className("left-side-container"));
-        center = getDriver().findElement(By.className("middle-container"));
-        right = getDriver().findElement(By.className("right-side-container"));
-    }
-
 
     public void selectContentType(String contentType){
         waitForSearchLoadIndicatorToDisappear(Service.Container.LEFT);
