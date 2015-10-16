@@ -7,9 +7,6 @@ import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.OPApplication;
-import com.autonomy.abc.selenium.config.Timeouts;
-import com.autonomy.abc.selenium.menubar.SideNavBar;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.OPAppBody;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
@@ -20,7 +17,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -29,11 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.*;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeThat;
-
 
 @Ignore
 @RunWith(Parameterized.class)
@@ -49,10 +40,6 @@ public abstract class ABCTestBase {
 	private final ApplicationType type;
 	private WebDriver driver;
 	public OPAppBody body;
-    @Deprecated
-	protected SideNavBar navBar;
-    @Deprecated
-	protected TopNavBar topNavBar;
 	private String loginName;
 
     private OPElementFactory elementFactory;
@@ -138,8 +125,6 @@ public abstract class ABCTestBase {
 		abcOnPremiseLogin("richard", "q");
 
 		body = new OPAppBody(driver);
-		navBar = new SideNavBar(driver);
-		topNavBar = new TopNavBar(driver);
 
         application = new OPApplication();
         elementFactory = (OPElementFactory) getApplication().createElementFactory(driver);
