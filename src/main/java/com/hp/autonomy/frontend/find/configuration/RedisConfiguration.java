@@ -9,8 +9,9 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.HostAndPort;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
 import com.hp.autonomy.frontend.find.web.CacheNames;
-import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.redis.RedisTokenRepository;
+import com.hp.autonomy.hod.redis.RedisTokenRepositoryConfig;
+import com.hp.autonomy.hod.redis.RedisTokenRepositorySentinelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -22,11 +23,6 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisSentinelPool;
-import redis.clients.jedis.Protocol;
-import redis.clients.util.Pool;
 
 import java.util.HashSet;
 import java.util.Properties;
@@ -73,40 +69,33 @@ public class RedisConfiguration {
         return connectionFactory;
     }
 
-    @Bean
-    public TokenRepository tokenRepository() {
+    @Bean(destroyMethod = "destroy")
+    public RedisTokenRepository tokenRepository() {
         final RedisConfig redisConfig = configService.getConfig().getRedis();
-        final JedisConnectionFactory jedisConnectionFactory = redisConnectionFactory();
         final Integer database = redisConfig.getDatabase();
-
-        final Pool<Jedis> pool;
 
         if(redisConfig.getSentinels().isEmpty()) {
             final HostAndPort address = redisConfig.getAddress();
 
-            if (database != null) {
-                pool = new JedisPool(jedisConnectionFactory.getPoolConfig(), address.getHost(), address.getPort(), Protocol.DEFAULT_TIMEOUT, null, database);
-            }
-            else {
-                pool = new JedisPool(jedisConnectionFactory.getPoolConfig(), address.getHost(), address.getPort());
-            }
+            return new RedisTokenRepository(new RedisTokenRepositoryConfig.Builder()
+                .setHost(address.getHost())
+                .setPort(address.getPort())
+                .setDatabase(database)
+                .build());
         }
         else {
-            final Set<String> sentinels = new HashSet<>();
+            final Set<RedisTokenRepositorySentinelConfig.HostAndPort> sentinels = new HashSet<>();
 
             for(final HostAndPort hostAndPort : redisConfig.getSentinels()) {
-                sentinels.add(hostAndPort.getHost() + ':' + hostAndPort.getPort());
+                sentinels.add(new RedisTokenRepositorySentinelConfig.HostAndPort(hostAndPort.getHost(), hostAndPort.getPort()));
             }
 
-            if (database != null) {
-                pool = new JedisSentinelPool(redisConfig.getMasterName(), sentinels, jedisConnectionFactory.getPoolConfig(), Protocol.DEFAULT_TIMEOUT, null, database);
-            }
-            else {
-                pool = new JedisSentinelPool(redisConfig.getMasterName(), sentinels, jedisConnectionFactory.getPoolConfig());
-            }
+            return new RedisTokenRepository(new RedisTokenRepositorySentinelConfig.Builder()
+                .setHostsAndPorts(sentinels)
+                .setMasterName(redisConfig.getMasterName())
+                .setDatabase(database)
+                .build());
         }
-
-        return new RedisTokenRepository(pool);
     }
 
     @Bean
