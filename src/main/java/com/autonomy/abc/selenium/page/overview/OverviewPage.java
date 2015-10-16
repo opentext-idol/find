@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.page.overview;
 
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.page.AppPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,9 +19,6 @@ public class OverviewPage extends AppElement implements AppPage {
         OverviewPage.waitForLoad(driver);
         return new OverviewPage(driver);
     }
-
-	@Override
-	public void navigateToPage() { getDriver().get("overview"); }
 
 	public int searchTermSearchCount(final String searchTerm) {
 		return Integer.parseInt(getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[3]")).getText());
@@ -83,6 +80,7 @@ public class OverviewPage extends AppElement implements AppPage {
 		return getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.xpath(".//*[@value='" + timePeriod + "']/.."));
 	}
 
+    @Override
     public void waitForLoad() {
         waitForLoad(getDriver());
     }

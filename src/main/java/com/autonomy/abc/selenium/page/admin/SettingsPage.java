@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.ModalView;
-import com.autonomy.abc.selenium.page.AppPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,9 +19,6 @@ public class SettingsPage extends AppElement implements AppPage {
         SettingsPage.waitForLoad(driver);
         return new SettingsPage(driver);
     }
-
-    @Override
-	public void navigateToPage() { getDriver().get("settings"); }
 
 	public void saveChangesClick() {
 		loadOrFadeWait();
@@ -144,6 +141,7 @@ public class SettingsPage extends AppElement implements AppPage {
 
     }
 
+    @Override
     public void waitForLoad() {
         waitForLoad(getDriver());
     }

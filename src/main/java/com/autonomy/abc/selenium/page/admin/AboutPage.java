@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.page.AppPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -18,9 +18,6 @@ public class AboutPage extends AppElement implements AppPage {
         AboutPage.waitForLoad(driver);
         return new AboutPage(driver);
     }
-
-	@Override
-	public void navigateToPage() { getDriver().get("about"); }
 
 	public void setTableSize(final String tableSize) {
 		findElement(By.cssSelector("[name='DataTables_Table_0_length'] option[value='" + tableSize + "']")).click();
@@ -55,6 +52,7 @@ public class AboutPage extends AppElement implements AppPage {
 		findElement(By.cssSelector(".dataTables_filter [type='search']")).sendKeys(searchTerm);
 	}
 
+    @Override
     public void waitForLoad() {
         waitForLoad(getDriver());
     }

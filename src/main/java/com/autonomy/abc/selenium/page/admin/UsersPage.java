@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.ModalView;
-import com.autonomy.abc.selenium.page.AppPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,9 +19,6 @@ public class UsersPage extends AppElement implements AppPage {
         UsersPage.waitForLoad(driver);
         return new UsersPage(driver);
     }
-
-    @Override
-	public void navigateToPage() { getDriver().get("users"); }
 
 	public WebElement createUserButton() {
 		return findElement(By.xpath(".//button[contains(text(), 'Create User')]"));
@@ -124,6 +121,7 @@ public class UsersPage extends AppElement implements AppPage {
 		getUserRow(userName).findElement(By.cssSelector(".editable-submit")).click();
 	}
 
+    @Override
     public void waitForLoad() {
         waitForLoad(getDriver());
     }

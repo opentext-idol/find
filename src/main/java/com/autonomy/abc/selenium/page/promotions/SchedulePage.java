@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.page.AppPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.apache.commons.lang3.time.DateUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -26,11 +26,6 @@ public class SchedulePage extends AppElement implements AppPage {
         SchedulePage.waitForLoad(driver);
         return new SchedulePage(driver);
     }
-
-	@Override
-	public void navigateToPage()  {
-		getDriver().get("promotions/schedule");
-	}
 
 	public WebElement alwaysActive() {
 		return getParent(findElement(By.xpath(".//h4[contains(text(), 'Always active')]")));
@@ -211,6 +206,7 @@ public class SchedulePage extends AppElement implements AppPage {
 		}
 	}
 
+    @Override
     public void waitForLoad() {
         waitForLoad(getDriver());
     }
