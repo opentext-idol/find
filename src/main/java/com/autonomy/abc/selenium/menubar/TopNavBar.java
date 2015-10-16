@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.menubar;
 
-import com.autonomy.abc.selenium.page.AppBody;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;

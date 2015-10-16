@@ -2,10 +2,7 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.ModalView;
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
-import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
