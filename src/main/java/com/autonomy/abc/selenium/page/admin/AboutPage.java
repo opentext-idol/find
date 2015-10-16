@@ -1,16 +1,23 @@
 package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AboutPage extends AppElement implements AppPage {
 
-	public AboutPage(final TopNavBar topNavBar, final WebElement $el) {
-		super($el, topNavBar.getDriver());
-	}
+    private AboutPage(final WebDriver driver) {
+        super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
+    }
+
+    public static AboutPage make(final WebDriver driver) {
+        AboutPage.waitForLoad(driver);
+        return new AboutPage(driver);
+    }
 
 	@Override
 	public void navigateToPage() { getDriver().get("about"); }
@@ -47,5 +54,13 @@ public class AboutPage extends AppElement implements AppPage {
 		findElement(By.cssSelector(".dataTables_filter [type='search']")).clear();
 		findElement(By.cssSelector(".dataTables_filter [type='search']")).sendKeys(searchTerm);
 	}
+
+    public void waitForLoad() {
+        waitForLoad(getDriver());
+    }
+
+    public static void waitForLoad(final WebDriver driver) {
+        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h5[text()='FOSS Acknowledgements']")));
+    }
 
 }

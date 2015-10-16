@@ -2,16 +2,23 @@ package com.autonomy.abc.selenium.page.overview;
 
 
 import com.autonomy.abc.selenium.AppElement;
-import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.page.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OverviewPage extends AppElement implements AppPage {
 
-	public OverviewPage(final SideNavBar sideNavBar, final WebElement $el) {
-		super($el, sideNavBar.getDriver());
-	}
+    private OverviewPage(final WebDriver driver) {
+        super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
+    }
+
+    public static OverviewPage make(final WebDriver driver) {
+        OverviewPage.waitForLoad(driver);
+        return new OverviewPage(driver);
+    }
 
 	@Override
 	public void navigateToPage() { getDriver().get("overview"); }
@@ -76,4 +83,11 @@ public class OverviewPage extends AppElement implements AppPage {
 		return getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.xpath(".//*[@value='" + timePeriod + "']/.."));
 	}
 
+    public void waitForLoad() {
+        waitForLoad(getDriver());
+    }
+
+    public static void waitForLoad(final WebDriver driver) {
+        new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h5[text()='Zero Hit Terms']")));
+    }
 }

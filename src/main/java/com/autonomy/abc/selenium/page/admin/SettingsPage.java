@@ -2,20 +2,25 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.ModalView;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SettingsPage extends AppElement implements AppPage {
 
-	public SettingsPage(final TopNavBar topNavBar, final WebElement $el) {
-		super($el, topNavBar.getDriver());
-	}
+    private SettingsPage(final WebDriver driver) {
+        super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
+    }
 
-	@Override
+    public static SettingsPage make(final WebDriver driver) {
+        SettingsPage.waitForLoad(driver);
+        return new SettingsPage(driver);
+    }
+
+    @Override
 	public void navigateToPage() { getDriver().get("settings"); }
 
 	public void saveChangesClick() {
@@ -136,7 +141,16 @@ public class SettingsPage extends AppElement implements AppPage {
 		public String getTitle() {
 			return title;
 		}
-	}
+
+    }
+
+    public void waitForLoad() {
+        waitForLoad(getDriver());
+    }
+
+    private static void waitForLoad(WebDriver driver) {
+        new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".settings-control")));
+    }
 
 }
 

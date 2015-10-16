@@ -2,18 +2,25 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.ModalView;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class UsersPage extends AppElement implements AppPage {
 
-	public UsersPage(final TopNavBar topNavBar, final WebElement $el) {
-		super($el, topNavBar.getDriver());
-	}
+    private UsersPage(final WebDriver driver) {
+        super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
+    }
 
-	@Override
+    public static UsersPage make(final WebDriver driver) {
+        UsersPage.waitForLoad(driver);
+        return new UsersPage(driver);
+    }
+
+    @Override
 	public void navigateToPage() { getDriver().get("users"); }
 
 	public WebElement createUserButton() {
@@ -117,4 +124,11 @@ public class UsersPage extends AppElement implements AppPage {
 		getUserRow(userName).findElement(By.cssSelector(".editable-submit")).click();
 	}
 
+    public void waitForLoad() {
+        waitForLoad(getDriver());
+    }
+
+    private static void waitForLoad(WebDriver driver) {
+        new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".users-table")));
+    }
 }

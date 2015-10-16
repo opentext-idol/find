@@ -2,10 +2,10 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.AppElement;
 import com.autonomy.abc.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.AppPage;
 import org.apache.commons.lang3.time.DateUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -18,10 +18,14 @@ import java.util.List;
 
 public class SchedulePage extends AppElement implements AppPage {
 
+    private SchedulePage(final WebDriver driver) {
+        super(driver.findElement(By.cssSelector(".pd-wizard")), driver);
+    }
 
-	public SchedulePage(final TopNavBar topNavBar, final WebElement $el) {
-		super($el, topNavBar.getDriver());
-	}
+    public static SchedulePage make(final WebDriver driver) {
+        SchedulePage.waitForLoad(driver);
+        return new SchedulePage(driver);
+    }
 
 	@Override
 	public void navigateToPage()  {
@@ -207,16 +211,12 @@ public class SchedulePage extends AppElement implements AppPage {
 		}
 	}
 
-	public static class Placeholder {
+    public void waitForLoad() {
+        waitForLoad(getDriver());
+    }
 
-		private final TopNavBar topNavBar;
+    public static void waitForLoad(final WebDriver driver) {
+        new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".pd-wizard .current-step-pill")));
+    }
 
-		public Placeholder(final TopNavBar topNavBar) {
-			this.topNavBar = topNavBar;
-		}
-
-		public SchedulePage $schedulePage(final WebElement element) {
-			return new SchedulePage(topNavBar, element);
-		}
-	}
 }
