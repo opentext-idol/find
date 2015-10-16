@@ -3,7 +3,6 @@ package com.autonomy.abc.topnavbar.login;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
@@ -38,10 +37,16 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	private OPLoginPage loginPage;
 	private UsersPage usersPage;
 
+    // TODO: abstract and put in OPTopNavBar
+    private void goToUsersPage() {
+        topNavBar.findElement(By.cssSelector(".fa-cog")).click();
+        topNavBar.findElement(By.cssSelector("li[data-pagename='users'] a")).click();
+        usersPage = (UsersPage) getElementFactory().getUsersPage();
+    }
+
 	@Before
 	public void setUp() {
-		topNavBar.switchPage(NavBarTabId.USERS_PAGE);
-		usersPage = (UsersPage) getElementFactory().getUsersPage();
+        goToUsersPage();
 		usersPage.deleteOtherUsers();
 		usersPage.createUserButton().click();
 		assertTrue("Create user modal has not opened", usersPage.isModalShowing());
@@ -119,12 +124,12 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testLogoutNoAccessViaUrl() {
 		getDriver().get(config.getWebappUrl() + "overview");
-		body.loadOrFadeWait();
+		usersPage.loadOrFadeWait();
 		assertFalse(getDriver().getCurrentUrl().contains("overview"));
 		assertTrue(getDriver().getCurrentUrl().contains("login"));
 
 		getDriver().get(config.getWebappUrl() + "keywords");
-		body.loadOrFadeWait();
+		usersPage.loadOrFadeWait();
 		assertFalse(getDriver().getCurrentUrl().contains("keywords"));
 		assertTrue(getDriver().getCurrentUrl().contains("login"));
 	}
@@ -132,7 +137,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testDefaultLoginDisabled() {
 		getDriver().get(config.getWebappUrl().substring(0, config.getWebappUrl().length() - 2) + "login?defaultLogin=admin");
-		body.loadOrFadeWait();
+		usersPage.loadOrFadeWait();
 		loginPage = getElementFactory().getLoginPage();
 		verifyThat(loginPage.usernameInput(), not(hasAttribute("readonly")));
 		assertFalse(getDriver().getCurrentUrl().contains("defaultLogin"));

@@ -4,7 +4,6 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menubar.NavBarTabId;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.promotions.*;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
@@ -36,7 +35,6 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 	private SearchPage searchPage;
 	private PromotionsPage promotionsPage;
-	private TopNavBar topNavBar;
 	private CreateNewPromotionsPage dynamicPromotionsPage;
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
@@ -48,9 +46,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		promotionsPage = getElementFactory().getPromotionsPage();
 		promotionService.deleteAll();
-		topNavBar = body.getTopNavBar();
-		topNavBar.search("fox");
-		searchPage = getElementFactory().getSearchPage();
+        searchPage = searchActionFactory.makeSearch("fox").apply();
 	}
 
 	@Test

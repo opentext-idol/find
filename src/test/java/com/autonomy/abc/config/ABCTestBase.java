@@ -10,7 +10,7 @@ import com.autonomy.abc.selenium.config.OPApplication;
 import com.autonomy.abc.selenium.config.Timeouts;
 import com.autonomy.abc.selenium.menubar.SideNavBar;
 import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.page.OPAppBody;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.junit.*;
@@ -48,7 +48,7 @@ public abstract class ABCTestBase {
 	private final Platform platform;
 	private final ApplicationType type;
 	private WebDriver driver;
-	public AppBody body;
+	public OPAppBody body;
     @Deprecated
 	protected SideNavBar navBar;
     @Deprecated
@@ -137,7 +137,7 @@ public abstract class ABCTestBase {
 
 		abcOnPremiseLogin("richard", "q");
 
-		body = new AppBody(driver);
+		body = new OPAppBody(driver);
 		navBar = new SideNavBar(driver);
 		topNavBar = new TopNavBar(driver);
 

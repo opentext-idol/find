@@ -4,7 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.ModalView;
-import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.page.OPAppBody;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
@@ -268,7 +268,7 @@ public class UsersPageITCase extends ABCTestBase {
 		String baseUrl = config.getWebappUrl();
 		baseUrl = baseUrl.replace("/p/","/config");
 		getDriver().get(baseUrl);
-		body.loadOrFadeWait();
+		usersPage.loadOrFadeWait();
 		assertTrue("Users are not allowed to access the config page", getDriver().findElement(By.cssSelector("body")).getText().contains("Authentication Failed"));
 	}
 
@@ -285,12 +285,12 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 
 		getDriver().get(config.getWebappUrl() + "settings");
-		body.loadOrFadeWait();
+		usersPage.loadOrFadeWait();
 		assertFalse(getDriver().getCurrentUrl().contains("settings"));
 		Assert.assertTrue(getDriver().getCurrentUrl().contains("overview"));
 
 		getDriver().get(config.getWebappUrl() + "users");
-		body.loadOrFadeWait();
+		usersPage.loadOrFadeWait();
 		assertFalse(getDriver().getCurrentUrl().contains("users"));
 		Assert.assertTrue(getDriver().getCurrentUrl().contains("overview"));
 	}
@@ -312,7 +312,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.loadOrFadeWait();
 		Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
 
-		body = new AppBody(getDriver());
+		body = new OPAppBody(getDriver());
 		body.logout();
 
 		abcOnPremiseLogin("richard", "q");

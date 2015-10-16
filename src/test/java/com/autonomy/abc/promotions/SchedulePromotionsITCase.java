@@ -4,11 +4,10 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.SchedulePage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.PromotionService;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,18 +34,18 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	public SchedulePromotionsITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
 	}
-	private TopNavBar topNavBar;
 	private PromotionsPage promotionsPage;
 	private SearchPage searchPage;
 	private SchedulePage schedulePage;
 	private DatePicker datePicker;
 	private final Pattern pattern = Pattern.compile("\\s+");
+    private PromotionService promotionService;
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		topNavBar = body.getTopNavBar();
-		promotionsPage = getElementFactory().getPromotionsPage();
-		promotionsPage.deleteAllPromotions();
+        promotionService = getApplication().createPromotionService(getElementFactory());
+
+		promotionsPage = promotionService.deleteAll();
 	}
 
 	@Test

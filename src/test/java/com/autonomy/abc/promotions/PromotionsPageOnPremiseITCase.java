@@ -4,11 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
-import com.autonomy.abc.selenium.menubar.NavBarTabId;
-import com.autonomy.abc.selenium.menubar.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.SchedulePage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -39,7 +35,6 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 		super(config, browser, appType, platform);
 	}
 
-	private TopNavBar topNavBar;
 	private OPPromotionsPage promotionsPage;
 	private SearchPage searchPage;
 	private SchedulePage schedulePage;
@@ -53,7 +48,6 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-		topNavBar = body.getTopNavBar();
 		promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
 	}
 
