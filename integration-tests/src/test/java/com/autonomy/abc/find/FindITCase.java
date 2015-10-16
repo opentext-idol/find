@@ -782,9 +782,9 @@ public class FindITCase extends ABCTestBase {
         }
     }
 
-    @Test
+    /*@Test
     public void testIdolSearchTypes() {
-        /*find.search("leg");
+        find.search("leg");
 
         int initialSearchCount = find.countSearchResults();
         find.search("leg[2:2]");
@@ -836,8 +836,8 @@ public class FindITCase extends ABCTestBase {
         assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
                 thirdSearchCount, lessThan(fourthSearchCount));
         assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
-                fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));  */
-    }
+                fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));
+    }*/
 
     String findErrorMessage = "An error occurred retrieving results";
 
@@ -900,7 +900,6 @@ public class FindITCase extends ABCTestBase {
     }
 
     @Test
-    //TODO
     public void testRelatedConceptsHighlightedInResults(){
         find.search("Tiger");
 
@@ -916,6 +915,26 @@ public class FindITCase extends ABCTestBase {
                 WebElement parent = relatedConceptElement.findElement(By.xpath(".//.."));
                 verifyThat(parent.getTagName(),is("span"));
                 verifyThat(parent.getAttribute("class"), containsString("label"));
+            }
+        }
+    }
+
+    @Test
+    public void testSimilarDocumentsShowUp(){
+        find.search("Doe");
+
+        for (WebElement similarResultLink : service.getSimilarResultLinks()){
+            new Actions(getDriver()).moveByOffset(-50,-50).build().perform();
+            service.loadOrFadeWait();
+            similarResultLink.click();
+
+            WebElement popover = service.getPopover();
+
+            new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover,"Loading")));
+
+            for(WebElement similarResult : popover.findElements(By.tagName("li"))){
+                assertThat(similarResult.findElement(By.tagName("h5")).getText(),not(isEmptyString()));
+                assertThat(similarResult.findElement(By.tagName("p")).getText(),not(isEmptyString()));
             }
         }
     }
