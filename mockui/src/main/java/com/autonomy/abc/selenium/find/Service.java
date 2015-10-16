@@ -125,6 +125,14 @@ public class Service extends AppElement {
         findElement(By.cssSelector("[data-field='"+header.toLowerCase().replace(" ","_")+"'] [data-value='"+filter.toUpperCase()+"']"));
     }
 
+    public List<WebElement> getSimilarResultLinks() {
+        return findElements(By.className("similar-documents-trigger"));
+    }
+
+    public WebElement getPopover() {
+        return findElement(By.className("popover"));
+    }
+
     public enum DateEnum {
         WEEK,
         MONTH,

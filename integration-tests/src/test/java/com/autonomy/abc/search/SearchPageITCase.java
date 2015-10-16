@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,10 +31,12 @@ import java.text.ParseException;
 import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.number.OrderingComparison.*;
 import static org.junit.Assert.*;
 
@@ -1036,7 +1039,7 @@ public class SearchPageITCase extends ABCTestBase {
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, 1));
 		searchPage.closeUntilDatePicker();
-		assertEquals("Document should be visible. Date filter not working", firstResult,searchPage.getSearchResultTitle(1));
+		assertEquals("Document should be visible. Date filter not working", firstResult, searchPage.getSearchResultTitle(1));
 	}
 
 	@Test
@@ -1203,7 +1206,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.waitForSearchLoadIndicatorToDisappear();
 		//TODO failing here wrongly
         assertEquals("Page should still have results", searchPage.getText(), not(containsString("No results found...")));
-        assertEquals("Page should not have thrown an error",searchPage.getText(), not(containsString(havenErrorMessage)));
+        assertEquals("Page should not have thrown an error", searchPage.getText(), not(containsString(havenErrorMessage)));
         assertEquals("Page number should not have changed", currentPage, searchPage.getCurrentPageNumber());
 		assertEquals("Url should have reverted to original url", url, getDriver().getCurrentUrl());
 		assertFalse("Error message should not be showing", searchPage.isErrorMessageShowing());
@@ -1268,5 +1271,27 @@ public class SearchPageITCase extends ABCTestBase {
 		resultsTotal += searchPage.visibleDocumentsCount();
 
 		assertThat(resultsTotal, is(results));
+	}
+
+	@Test
+	public void testSearchTermHighlightedInResults() {
+		String searchTerm = "Tiger";
+
+		search(searchTerm);
+
+		for(int i = 0; i < 3; i++) {
+			for (WebElement searchElement : getDriver().findElements(By.xpath("//div[contains(@class,'search-results-view')]//p//*[contains(text(),'" + searchTerm + "')]"))) {
+				if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+					verifyThat(searchElement.getText(), CoreMatchers.containsString(searchTerm));
+				}
+				verifyThat(searchElement.getTagName(), is("a"));
+				verifyThat(searchElement.getAttribute("class"), is("query-text"));
+
+				WebElement parent = searchElement.findElement(By.xpath(".//.."));
+				verifyThat(parent.getTagName(), is("span"));
+				verifyThat(parent.getAttribute("class"), CoreMatchers.containsString("label"));
+			}
+			searchPage.forwardPageButton().click();
+		}
 	}
 }
