@@ -7,7 +7,8 @@ public enum NavBarTabId {
     INDEXES("Indexes"),
     PROMOTIONS("Promotions"),
     KEYWORDS("Keywords"),
-    GETTING_STARTED("Getting Started");
+    GETTING_STARTED("Getting Started"),
+    USER_MGMT("User Management");
 
     private final String tabName;
 

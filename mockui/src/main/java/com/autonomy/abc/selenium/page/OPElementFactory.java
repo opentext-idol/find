@@ -52,10 +52,6 @@ public class OPElementFactory extends ElementFactory {
         return null;
     }
 
-    public AppPage getUsersPage() {
-        return null;
-    }
-
     public AppPage getAboutPage() {
         return null;
     }
