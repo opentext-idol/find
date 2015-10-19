@@ -17,19 +17,19 @@ public abstract class OPTestBase extends ABCTestBase {
 	private String loginName;
 
     private OPElementFactory elementFactory;
-    private OPApplication application;
+    private final OPApplication application;
 
 	public OPTestBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
 		super(config, browser, type, platform);
+        this.application = (OPApplication) super.getApplication();
 	}
 
 	@Override
 	@Before
 	public void baseSetUp() throws MalformedURLException {
-		super.baseSetUp();
-		this.application = (OPApplication) super.getApplication();
-		this.elementFactory = (OPElementFactory) super.getElementFactory();
-	}
+        super.baseSetUp();
+        this.elementFactory = (OPElementFactory) super.getElementFactory();
+    }
 
 	private void setLoginName(final String loginName) {
 		this.loginName = loginName;
