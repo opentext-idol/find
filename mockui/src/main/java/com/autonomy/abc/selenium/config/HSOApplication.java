@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOAppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.users.HSOUserService;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.ApiKey;
 import org.openqa.selenium.WebDriver;
@@ -40,5 +41,10 @@ public class HSOApplication extends Application {
     @Override
     public ApplicationType getType() {
         return ApplicationType.HOSTED;
+    }
+
+    @Override
+    public HSOUserService createUserService(ElementFactory elementFactory){
+        return new HSOUserService(this,elementFactory);
     }
 }

@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.OPAppBody;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
+import com.autonomy.abc.selenium.users.UserService;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.junit.Assert;
@@ -37,15 +38,15 @@ public class UsersPageITCase extends ABCTestBase {
 
 	private UsersPage usersPage;
 
-	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
-		return parameters(applicationTypes);
-	}
+//	@Parameterized.Parameters
+//	public static Iterable<Object[]> parameters() throws MalformedURLException {
+//		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
+//		return parameters(applicationTypes);
+//	}
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		usersPage = (UsersPage) getElementFactory().getUsersPage();
+		usersPage = getElementFactory().getUsersPage();
 		usersPage.deleteOtherUsers();
 	}
 
@@ -221,6 +222,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 //		body.logout();
 //		abcOnPremiseLogin("James", "b");
+		getElementFactory().getLoginPage().loginWith(getApplication().createCredentials());
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 	}
@@ -280,8 +282,9 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.createNewUser("James", "b", "User");
 		usersPage.closeModal();
 
-//		body.logout();
-//		abcOnPremiseLogin("James", "b");
+		body.getTopNavBar().logOut();
+		UserService us = getApplication().createUserService(getElementFactory());
+		abcOnPremiseLogin("James", "b");
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 
@@ -302,7 +305,7 @@ public class UsersPageITCase extends ABCTestBase {
 		assertTrue("Create user modal is not showing", usersPage.isModalShowing());
 		usersPage.createNewUser("James", "b", "User");
 		usersPage.closeModal();
-//		body.logout();
+		body.getTopNavBar().logOut();
 
 //		abcOnPremiseLogin("James", "b");
 		usersPage.loadOrFadeWait();
@@ -314,7 +317,7 @@ public class UsersPageITCase extends ABCTestBase {
 		Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
 
 		body = new OPAppBody(getDriver());
-//		body.logout();
+		body.getTopNavBar().logOut();
 
 //		abcOnPremiseLogin("richard", "q");
 		usersPage.loadOrFadeWait();
