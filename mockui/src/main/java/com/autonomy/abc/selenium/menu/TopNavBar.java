@@ -17,6 +17,7 @@ public abstract class TopNavBar extends AppElement {
 
     public abstract NotificationsDropDown getNotifications();
     public abstract void notificationsDropdown();
+    public abstract void logOut();
 
     public void sideBarToggle() {
         getDriver().findElement(By.className("navbar-minimize")).click();
@@ -24,15 +25,11 @@ public abstract class TopNavBar extends AppElement {
 
 
     public void search(String searchTerm) {
-//        WebElement topSearch = new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[name='top-search']")));
         WebElement topSearch = searchBox();
 
         topSearch.clear();
         topSearch.sendKeys(searchTerm);
-//        topSearch.sendKeys(Keys.RETURN);
         topSearch.sendKeys(Keys.ENTER);
-
-        //new AppBody(getDriver()).getSearchPage().waitForSearchLoadIndicatorToDisappear();
     }
 
     public WebElement searchBox() {
