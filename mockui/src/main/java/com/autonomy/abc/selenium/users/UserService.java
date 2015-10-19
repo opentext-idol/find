@@ -40,4 +40,5 @@ public abstract class UserService {
 
     public abstract void goToUsers();
     public abstract void login(User user);
+    public abstract UsersPage createUser(User user);
 }

@@ -18,4 +18,16 @@ public class OPUserService extends UserService {
         topNavBar.findElement(By.cssSelector("li[data-pagename='users'] a")).click();
         setUsersPage(getElementFactory().getUsersPage());
     }
+
+    @Override
+    public void login(User user) {
+
+    }
+
+    @Override
+    public UsersPage createUser(User user) {
+        goToUsers();
+        getUsersPage().createNewUser(user.getName(),user.getPassword(),user.getAccessLevel().toString());
+        return null;
+    }
 }
