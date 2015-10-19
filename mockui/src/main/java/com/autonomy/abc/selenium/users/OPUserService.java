@@ -16,10 +16,11 @@ public class OPUserService extends UserService {
     }
 
     @Override
-    public void goToUsers() {
+    public UsersPage goToUsers() {
         getBody().getTopNavBar().findElement(By.cssSelector(".dropdown-toggle .fa-cog")).click();
         getBody().getTopNavBar().findElement(By.cssSelector("li[data-pagename='users'] a")).click();
         setUsersPage(getElementFactory().getUsersPage());
+        return getUsersPage();
     }
 
     @Override
@@ -31,6 +32,6 @@ public class OPUserService extends UserService {
     public UsersPage createUser(User user) {
         goToUsers();
         getUsersPage().createNewUser(user.getUsername(),user.getPassword(),user.getAccessLevel().toString());
-        return null;
+        return getUsersPage();
     }
 }

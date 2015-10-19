@@ -10,21 +10,16 @@ public abstract class UserService {
 
     private final Application application;
     private final ElementFactory elementFactory;
-
-    public UsersPage getUsersPage() {
-        return usersPage;
-    }
-
-    public void setUsersPage(UsersPage usersPage) {
-        this.usersPage = usersPage;
-    }
-
     private UsersPage usersPage;
 
     public UserService(Application application, ElementFactory elementFactory) {
         this.application = application;
         this.elementFactory = elementFactory;
     }
+
+    public abstract UsersPage goToUsers();
+    public abstract void login(User user);
+    public abstract UsersPage createUser(User user);
 
     protected WebDriver getDriver() {
         return getElementFactory().getDriver();
@@ -38,11 +33,15 @@ public abstract class UserService {
         return application.createAppBody(getDriver());
     }
 
-    public abstract void goToUsers();
-    public abstract void login(User user);
-    public abstract UsersPage createUser(User user);
-
-    public Application getApplication() {
+    protected Application getApplication() {
         return application;
+    }
+
+    public UsersPage getUsersPage() {
+        return usersPage;
+    }
+
+    public void setUsersPage(UsersPage usersPage) {
+        this.usersPage = usersPage;
     }
 }
