@@ -1,8 +1,10 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.config.OPTestBase;
+import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +18,7 @@ import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class AboutPageITCase extends OPTestBase {
+public class AboutPageITCase extends ABCTestBase {
 
 	public AboutPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -28,6 +30,11 @@ public class AboutPageITCase extends OPTestBase {
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
 		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
+	}
+
+	@Override
+	public OPElementFactory getElementFactory() {
+		return (OPElementFactory) super.getElementFactory();
 	}
 
 	@Before

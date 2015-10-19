@@ -1,9 +1,10 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
-import com.autonomy.abc.config.OPTestBase;
+import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.HostAndPorts;
+import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -26,7 +27,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class SettingsPageITCase extends OPTestBase {
+public class SettingsPageITCase extends ABCTestBase {
 
 	public SettingsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -40,6 +41,11 @@ public class SettingsPageITCase extends OPTestBase {
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
 		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
+	}
+
+	@Override
+	public OPElementFactory getElementFactory() {
+		return (OPElementFactory) super.getElementFactory();
 	}
 
 	@Before
@@ -230,7 +236,7 @@ public class SettingsPageITCase extends OPTestBase {
 	private final static Map<SettingsPage.Panel, HostAndPorts> HOSTS_AND_PORTS;
 
 	static {
-		try (InputStream inputStream = SettingsPage.class.getResourceAsStream(System.getProperty("testConfig.location"))) {
+		try (InputStream inputStream = SettingsPageITCase.class.getClassLoader().getResourceAsStream(System.getProperty("testConfig.location"))) {
 			final ObjectMapper mapper = new ObjectMapper();
 			HOSTS_AND_PORTS = mapper.readValue(inputStream, Panels.class).getServers();
 		} catch (final IOException e) {

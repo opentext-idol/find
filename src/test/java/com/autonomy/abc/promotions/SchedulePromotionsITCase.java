@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.OPTestBase;
+import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class SchedulePromotionsITCase extends OPTestBase {
+public class SchedulePromotionsITCase extends ABCTestBase {
 
 	public SchedulePromotionsITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);

@@ -1,9 +1,10 @@
 package com.autonomy.abc.overview;
 
-import com.autonomy.abc.config.OPTestBase;
+import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.overview.OverviewPage;
@@ -25,7 +26,7 @@ import static com.thoughtworks.selenium.SeleneseTestBase.assertEquals;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class OverviewPageITCase extends OPTestBase {
+public class OverviewPageITCase extends ABCTestBase {
 
 	public OverviewPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -37,6 +38,11 @@ public class OverviewPageITCase extends OPTestBase {
 	public static Iterable<Object[]> parameters() throws MalformedURLException {
 		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
+	}
+
+	@Override
+	public OPElementFactory getElementFactory() {
+		return (OPElementFactory) super.getElementFactory();
 	}
 
 	@Before

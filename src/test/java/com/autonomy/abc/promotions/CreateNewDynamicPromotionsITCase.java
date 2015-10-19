@@ -1,6 +1,6 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.OPTestBase;
+import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -28,7 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
-public class CreateNewDynamicPromotionsITCase extends OPTestBase {
+public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 	public CreateNewDynamicPromotionsITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -46,8 +46,7 @@ public class CreateNewDynamicPromotionsITCase extends OPTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-		promotionsPage = getElementFactory().getPromotionsPage();
-		promotionService.deleteAll();
+		promotionsPage = promotionService.deleteAll();
         searchPage = searchActionFactory.makeSearch("fox").apply();
 	}
 
