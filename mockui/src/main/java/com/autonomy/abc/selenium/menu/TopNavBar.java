@@ -15,14 +15,20 @@ public abstract class TopNavBar extends AppElement {
         super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top:not(.affix-clone)"))), driver);
     }
 
-    public abstract NotificationsDropDown getNotifications();
-    public abstract void notificationsDropdown();
     public abstract void logOut();
 
     public void sideBarToggle() {
         getDriver().findElement(By.className("navbar-minimize")).click();
     }
 
+    public NotificationsDropDown getNotifications(){
+        return new NotificationsDropDown(getDriver());
+    }
+
+    //TODO still overridden in HSOTopNavBar
+    public void notificationsDropdown(){
+        getDriver().findElement(By.cssSelector("nav:not(.affix-clone) .count-info")).click();
+    }
 
     public void search(String searchTerm) {
         WebElement topSearch = searchBox();

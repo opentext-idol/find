@@ -37,7 +37,7 @@ public class User {
     }
 
     public enum AccessLevel {
-        ADMIN("Admin"), USER("User");
+        ADMIN("Admin"), USER("User"), NONE("None");
 
         private String accessLevel;
 

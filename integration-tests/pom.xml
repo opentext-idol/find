@@ -45,6 +45,9 @@
 
     <profiles>
         <profile>
+            <id>
+                onprem
+            </id>
             <activation>
                 <property>
                     <name>com.autonomy.applicationType</name>

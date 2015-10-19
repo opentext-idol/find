@@ -23,8 +23,8 @@ import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
 
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -38,9 +38,13 @@ public class UsersPageITCase extends ABCTestBase {
 	}
 
 	private UsersPage usersPage;
-
+	private UserService userService;
+	
 	@Before
-	public void setUp() throws MalformedURLException {
+	public void setUp() throws MalformedURLException, InterruptedException {
+		Thread.sleep(5000);
+		userService = getApplication().createUserService(getElementFactory());
+		userService.goToUsers();
 		usersPage = getElementFactory().getUsersPage();
 		usersPage.deleteOtherUsers();
 	}
@@ -217,7 +221,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 		body.getTopNavBar().logOut();
 		UserService us = getApplication().createUserService(getElementFactory());
-		us.login(new User("James", "b", "email"));
+		userService.login(new User("James", "b", "email"));
 		getElementFactory().getLoginPage().loginWith(getApplication().createCredentials());
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
@@ -234,7 +238,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 		body.getTopNavBar().logOut();
 		UserService us = getApplication().createUserService(getElementFactory());
-		us.login(new User("James", "d","email"));
+		userService.login(new User("James", "d","email"));
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 	}
@@ -259,7 +263,7 @@ public class UsersPageITCase extends ABCTestBase {
 		LoginPage loginPage = getElementFactory().getLoginPage();
 		loginPage.loginWith(new OPAccount("Norman", "n"));
 		loginPage = getElementFactory().getLoginPage();
-//        assertThat("Wrong/no error message displayed", loginPage.getText().contains("Please check your username and password."));	//TODO
+        assertThat("Wrong/no error message displayed", getDriver().findElement(By.xpath("//*")).getText(),containsString("Please check your username and password."));
         assertThat("URL wrong",getDriver().getCurrentUrl(),containsString("login"));
 	}
 
@@ -281,7 +285,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 		body.getTopNavBar().logOut();
 		UserService us = getApplication().createUserService(getElementFactory());
-		us.login(new User("James", "b","email"));
+		userService.login(new User("James", "b","email"));
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 
@@ -305,7 +309,7 @@ public class UsersPageITCase extends ABCTestBase {
 		body.getTopNavBar().logOut();
 
 		UserService us = getApplication().createUserService(getElementFactory());
-		us.login(new User("James", "b", "email"));
+		userService.login(new User("James", "b", "email"));
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 
@@ -317,7 +321,7 @@ public class UsersPageITCase extends ABCTestBase {
 		body = new OPAppBody(getDriver());
 		body.getTopNavBar().logOut();
 
-		us.login(new User("Richard", "q","email"));
+		userService.login(new User("Richard", "q","email"));
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 

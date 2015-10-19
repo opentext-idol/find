@@ -5,6 +5,9 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OPUserService extends UserService {
     public OPUserService(Application application, ElementFactory elementFactory) {
@@ -13,9 +16,8 @@ public class OPUserService extends UserService {
 
     @Override
     public void goToUsers() {
-        TopNavBar topNavBar = getBody().getTopNavBar();
-        topNavBar.findElement(By.cssSelector(".fa-cog")).click();
-        topNavBar.findElement(By.cssSelector("li[data-pagename='users'] a")).click();
+        getBody().getTopNavBar().findElement(By.cssSelector(".dropdown-toggle .fa-cog")).click();
+        getBody().getTopNavBar().findElement(By.cssSelector("li[data-pagename='users'] a")).click();
         setUsersPage(getElementFactory().getUsersPage());
     }
 
