@@ -1,20 +1,20 @@
 package com.autonomy.abc.selenium.users;
 
 public class User {
-    private final String name;
+    private final String username;
     private final String email;
     private String password;
     private AccessLevel accessLevel;
 
-    public User(String name, String password, String email, AccessLevel accessLevel){
-        this.name = name;
+    public User(String username, String password, String email, AccessLevel accessLevel){
+        this.username = username;
         this.email = email;
         this.password = password;
         this.accessLevel = accessLevel;
     }
 
-    public User(String name, String password, String email){
-        this.name = name;
+    public User(String username, String password, String email){
+        this.username = username;
         this.email = email;
         this.password = password;
         accessLevel = AccessLevel.USER;
@@ -32,8 +32,8 @@ public class User {
         return password;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public enum AccessLevel {

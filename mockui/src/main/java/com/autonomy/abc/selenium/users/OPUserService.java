@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.page.login.OPAccount;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -23,13 +24,13 @@ public class OPUserService extends UserService {
 
     @Override
     public void login(User user) {
-
+        getElementFactory().getLoginPage().loginWith(new OPAccount(user.getUsername(),user.getPassword()));
     }
 
     @Override
     public UsersPage createUser(User user) {
         goToUsers();
-        getUsersPage().createNewUser(user.getName(),user.getPassword(),user.getAccessLevel().toString());
+        getUsersPage().createNewUser(user.getUsername(),user.getPassword(),user.getAccessLevel().toString());
         return null;
     }
 }
