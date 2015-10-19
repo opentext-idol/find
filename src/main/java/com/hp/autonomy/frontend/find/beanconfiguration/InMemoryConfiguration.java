@@ -3,8 +3,9 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.configuration;
+package com.hp.autonomy.frontend.find.beanconfiguration;
 
+import com.hp.autonomy.frontend.find.configuration.AutoCreatingEhCacheCacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.springframework.cache.CacheManager;

@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.configuration;
+package com.hp.autonomy.frontend.find.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.databases.DatabasesService;
@@ -15,6 +15,10 @@ import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.find.configuration.AuthenticationMixins;
+import com.hp.autonomy.frontend.find.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.configuration.FindConfigFileService;
+import com.hp.autonomy.frontend.find.configuration.IodConfigValidator;
 import com.hp.autonomy.frontend.find.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.parametricfields.CacheableParametricValuesService;
 import com.hp.autonomy.frontend.view.hod.HodViewService;

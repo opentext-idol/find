@@ -3,15 +3,13 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.configuration;
+package com.hp.autonomy.frontend.find.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.HostAndPort;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.frontend.find.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.web.CacheNames;
-import com.hp.autonomy.hod.redis.RedisTokenRepository;
-import com.hp.autonomy.hod.redis.RedisTokenRepositoryConfig;
-import com.hp.autonomy.hod.redis.RedisTokenRepositorySentinelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -24,9 +22,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 @Configuration
 @Conditional(RedisCondition.class)

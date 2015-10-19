@@ -3,11 +3,10 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.configuration;
+package com.hp.autonomy.frontend.find.beanconfiguration;
 
-public class IdolCondition extends AbstractBackendCondition {
-
-    public IdolCondition() {
-        super(BackendConfig.IDOL);
+public class HodCondition extends AbstractBackendCondition {
+    protected HodCondition() {
+        super(BackendConfig.HAVEN_ON_DEMAND);
     }
 }
