@@ -5,23 +5,19 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.OPAppBody;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.users.UserService;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.UnhandledAlertException;
 
 import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.Collections;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -76,6 +72,7 @@ public class UsersPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	@Ignore
 	public void testWontDeleteSelf() {
 		//TODO don't have a login name on HSO
 //		assertThat("Delete button not disabled", usersPage.isAttributePresent((usersPage.getUserRow(getLoginName()).findElement(By.cssSelector("button"))), "disabled"));
@@ -222,7 +219,6 @@ public class UsersPageITCase extends ABCTestBase {
 		body.getTopNavBar().logOut();
 		UserService us = getApplication().createUserService(getElementFactory());
 		userService.login(new User("James", "b", "email"));
-		getElementFactory().getLoginPage().loginWith(getApplication().createCredentials());
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 	}
@@ -237,8 +233,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.changePassword("James", "d");
 
 		body.getTopNavBar().logOut();
-		UserService us = getApplication().createUserService(getElementFactory());
-		userService.login(new User("James", "d","email"));
+		userService.login(new User("James", "d", "email"));
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 	}
@@ -260,9 +255,8 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat("User type incorrect: Type change not cancelled", usersPage.getTableUserTypeLink("Norman").getText().equals("None"));
 
 		body.getTopNavBar().logOut();
-		LoginPage loginPage = getElementFactory().getLoginPage();
-		loginPage.loginWith(new OPAccount("Norman", "n"));
-		loginPage = getElementFactory().getLoginPage();
+		userService.login(new User("Norman", "n", "email"));
+		getElementFactory().getLoginPage();
         assertThat("Wrong/no error message displayed", getDriver().findElement(By.xpath("//*")).getText(),containsString("Please check your username and password."));
         assertThat("URL wrong",getDriver().getCurrentUrl(),containsString("login"));
 	}
@@ -284,8 +278,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.closeModal();
 
 		body.getTopNavBar().logOut();
-		UserService us = getApplication().createUserService(getElementFactory());
-		userService.login(new User("James", "b","email"));
+		userService.login(new User("James", "b", "email"));
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 
@@ -308,7 +301,6 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.closeModal();
 		body.getTopNavBar().logOut();
 
-		UserService us = getApplication().createUserService(getElementFactory());
 		userService.login(new User("James", "b", "email"));
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
@@ -321,7 +313,7 @@ public class UsersPageITCase extends ABCTestBase {
 		body = new OPAppBody(getDriver());
 		body.getTopNavBar().logOut();
 
-		userService.login(new User("Richard", "q","email"));
+		userService.login(new User("Richard", "q", "email"));
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 
