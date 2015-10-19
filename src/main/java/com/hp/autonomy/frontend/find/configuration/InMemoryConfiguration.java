@@ -5,8 +5,6 @@
 
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.hp.autonomy.hod.client.token.InMemoryTokenRepository;
-import com.hp.autonomy.hod.client.token.TokenRepository;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.springframework.cache.CacheManager;
@@ -32,11 +30,6 @@ public class InMemoryConfiguration {
     @Conditional(InMemoryCondition.class)
     public SessionRepository<ExpiringSession> sessionRepository() {
         return new MapSessionRepository();
-    }
-
-    @Bean
-    public TokenRepository tokenRepository() {
-        return new InMemoryTokenRepository();
     }
 
     @Bean

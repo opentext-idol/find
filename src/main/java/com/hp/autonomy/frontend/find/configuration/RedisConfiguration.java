@@ -69,35 +69,6 @@ public class RedisConfiguration {
         return connectionFactory;
     }
 
-    @Bean(destroyMethod = "destroy")
-    public RedisTokenRepository tokenRepository() {
-        final RedisConfig redisConfig = configService.getConfig().getRedis();
-        final Integer database = redisConfig.getDatabase();
-
-        if(redisConfig.getSentinels().isEmpty()) {
-            final HostAndPort address = redisConfig.getAddress();
-
-            return new RedisTokenRepository(new RedisTokenRepositoryConfig.Builder()
-                .setHost(address.getHost())
-                .setPort(address.getPort())
-                .setDatabase(database)
-                .build());
-        }
-        else {
-            final Set<RedisTokenRepositorySentinelConfig.HostAndPort> sentinels = new HashSet<>();
-
-            for(final HostAndPort hostAndPort : redisConfig.getSentinels()) {
-                sentinels.add(new RedisTokenRepositorySentinelConfig.HostAndPort(hostAndPort.getHost(), hostAndPort.getPort()));
-            }
-
-            return new RedisTokenRepository(new RedisTokenRepositorySentinelConfig.Builder()
-                .setHostsAndPorts(sentinels)
-                .setMasterName(redisConfig.getMasterName())
-                .setDatabase(database)
-                .build());
-        }
-    }
-
     @Bean
     public CacheManager cacheManager() {
         final RedisCacheManager cacheManager = new RedisCacheManager(cachingRedisTemplate());
