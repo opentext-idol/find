@@ -1,7 +1,11 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.page.admin.AboutPage;
+import com.autonomy.abc.selenium.page.admin.SettingsPage;
+import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.keywords.*;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
+import com.autonomy.abc.selenium.page.overview.OverviewPage;
 import com.autonomy.abc.selenium.page.promotions.*;
 import com.autonomy.abc.selenium.page.search.OPSearchPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -43,25 +47,24 @@ public class OPElementFactory extends ElementFactory {
         return new OPSearchPage(getDriver());
     }
 
-    // TODO: move these pages once OPElementFactory is in P4
-    public AppPage getOverviewPage() {
-        return null;
+    public OverviewPage getOverviewPage() {
+        return OverviewPage.make(getDriver());
     }
 
-    public AppPage getSchedulePage() {
-        return null;
+    public SchedulePage getSchedulePage() {
+        return SchedulePage.make(getDriver());
     }
 
-    public AppPage getUsersPage() {
-        return null;
+    public UsersPage getUsersPage() {
+        return UsersPage.make(getDriver());
     }
 
-    public AppPage getAboutPage() {
-        return null;
+    public AboutPage getAboutPage() {
+        return AboutPage.make(getDriver());
     }
 
-    public AppPage getSettingsPage() {
-        return null;
+    public SettingsPage getSettingsPage() {
+        return SettingsPage.make(getDriver());
     }
 
 }
