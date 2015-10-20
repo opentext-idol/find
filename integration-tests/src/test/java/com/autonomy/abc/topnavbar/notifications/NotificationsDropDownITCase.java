@@ -32,6 +32,9 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 
+/*
+ *   IMPORTANT - HOSTED ALLOWS CAPITALS IN PROMOTION TITLES/TRIGGERS WHILE OP DOESN'T (hence the .toLowerCase() everywhere so I don't forget
+ */
 public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	public NotificationsDropDownITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -238,8 +241,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	public void testSpotlightPromotionNotifications(){
 		PromotionService ps = getApplication().createPromotionService(getElementFactory());
 
-		String promotionTrigger = "Maggle";
-		String search = "Cole";
+		String promotionTrigger = "Maggle".toLowerCase();
+		String search = "Cole".toLowerCase();
 		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
 
 		ps.setUpPromotion(new SpotlightPromotion(promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
