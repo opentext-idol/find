@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
@@ -49,8 +50,11 @@ public class SettingsPageITCase extends ABCTestBase {
 	}
 
 	@Before
-	public void setUp() {
-		settingsPage = (SettingsPage) getElementFactory().getSettingsPage();
+	public void setUp() throws InterruptedException {
+        Thread.sleep(5000);
+        body.getTopNavBar().findElement(By.className("fa-cog")).click();
+        body.getTopNavBar().findElement(By.xpath(".//*[contains(text(),'Settings')]")).click();
+        settingsPage = getElementFactory().getSettingsPage();
 	}
 
 	@Test
