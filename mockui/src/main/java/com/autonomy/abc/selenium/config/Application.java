@@ -25,4 +25,7 @@ public abstract class Application {
 
     public abstract ApplicationType getType();
 
+    public static Application ofType(ApplicationType type) {
+        return type.makeApplication();
+    }
 }

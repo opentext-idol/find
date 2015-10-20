@@ -14,4 +14,9 @@ public class HSOAppBody extends AppBody {
     public HSOAppBody(WebDriver driver, TopNavBar topNavBar, SideNavBar sideNavBar) {
         super(driver, topNavBar, sideNavBar);
     }
+
+    @Override
+    public void logout() {
+        System.out.println("Cannot logout on hosted");
+    }
 }

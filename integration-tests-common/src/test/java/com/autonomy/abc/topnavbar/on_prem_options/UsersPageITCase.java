@@ -3,7 +3,6 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.page.OPAppBody;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.users.UserService;
@@ -302,6 +301,7 @@ public class UsersPageITCase extends ABCTestBase {
 		body.getTopNavBar().logOut();
 
 		userService.login(new User("James", "b", "email"));
+		body = getBody();
 		usersPage.loadOrFadeWait();
 		assertThat("Login not successful", getDriver().getCurrentUrl().endsWith("overview"));
 
@@ -310,7 +310,6 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.loadOrFadeWait();
 		Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
 
-		body = new OPAppBody(getDriver());
 		body.getTopNavBar().logOut();
 
 		userService.login(new User("Richard", "q", "email"));

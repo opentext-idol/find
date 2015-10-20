@@ -36,15 +36,14 @@ public abstract class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
 	private final static Set<String> USER_BROWSERS;
 	private final static Set<ApplicationType> APPLICATION_TYPES;
-	// application should really be a final instance variable, but this would require changing the constructor of every ITCase
-	private final static Application APPLICATION;
 	// testState is used by Rules/StatementHandlers
 	private final TestState testState = TestState.get();
-
 	public final TestConfig config;
+
 	public final String browser;
 	private final Platform platform;
 	private final ApplicationType type;
+	private final Application application;
 	private WebDriver driver;
 	// TODO: use getBody() instead
 	public AppBody body;
@@ -61,7 +60,6 @@ public abstract class ABCTestBase {
 		final String[] allBrowsers = {"firefox", "internet explorer", "chrome"};
 		final String browserProperty = System.getProperty("com.autonomy.browsers");
 		final String applicationTypeProperty = System.getProperty("com.autonomy.applicationType");
-		final String applicationProperty = System.getProperty("com.autonomy.applicationClass");
 
 		if (browserProperty == null) {
 			USER_BROWSERS = new HashSet<>(Arrays.asList(allBrowsers));
@@ -75,30 +73,17 @@ public abstract class ABCTestBase {
 			}
 		}
 
-		if (applicationProperty == null) {
-			// TODO: should instead throw IllegalStateException
-			APPLICATION = new HSOApplication();
-			if (applicationTypeProperty == null) {
-				APPLICATION_TYPES = EnumSet.allOf(ApplicationType.class);
-			} else {
-				APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
+		if (applicationTypeProperty == null) {
+			APPLICATION_TYPES = EnumSet.allOf(ApplicationType.class);
+		} else {
+			APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
 
-				for (final ApplicationType applicationType : ApplicationType.values()) {
-					if (applicationTypeProperty.contains(applicationType.getName())) {
-						APPLICATION_TYPES.add(applicationType);
-					}
+			for (final ApplicationType applicationType : ApplicationType.values()) {
+				if (applicationTypeProperty.contains(applicationType.getName())) {
+					APPLICATION_TYPES.add(applicationType);
 				}
 			}
-		} else {
-			try {
-				APPLICATION = (Application) Class.forName(applicationProperty).newInstance();
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				throw new IllegalStateException(e);
-			}
-			APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
-			APPLICATION_TYPES.add(APPLICATION.getType());
 		}
-
 	}
 
 	public ABCTestBase(final TestConfig config, final String browser, final ApplicationType type, final Platform platform) {
@@ -106,6 +91,7 @@ public abstract class ABCTestBase {
 		this.browser = browser;
 		this.platform = platform;
 		this.type = type;
+		this.application = Application.ofType(type);
 	}
 
 	@Parameterized.Parameters
@@ -176,7 +162,7 @@ public abstract class ABCTestBase {
 	}
 
 	public Application getApplication() {
-		return APPLICATION;
+		return application;
 	}
 
 	public ElementFactory getElementFactory() {
