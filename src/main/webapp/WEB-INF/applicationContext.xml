@@ -18,6 +18,7 @@
 
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="com.hp.autonomy.frontend">
+        <context:exclude-filter type="assignable" expression="com.hp.autonomy.frontend.find.beanconfiguration.DispatcherServletConfiguration"/>
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
         <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
     </context:component-scan>
@@ -143,19 +144,6 @@
         <qualifier value="application"/>
         <property name="singleton" value="true"/>
         <property name="location" value="classpath:com/hp/autonomy/frontend/find/find.properties"/>
-    </bean>
-
-    <bean name="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
-        <property name="converters">
-            <set>
-                <bean class="com.hp.autonomy.frontend.find.converter.StringToResourceIdentifierConverter"/>
-            </set>
-        </property>
-        <property name="formatters">
-            <set>
-                <bean class="org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory"/>
-            </set>
-        </property>
     </bean>
 
     <bean class="com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter" name="configEnvironmentVariableFilter"
