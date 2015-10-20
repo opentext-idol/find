@@ -27,7 +27,8 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
+        Thread.sleep(5000);
         topNavBar = body.getTopNavBar();
         sideNavBar = body.getSideNavBar();
         notifications = topNavBar.getNotifications();

@@ -272,11 +272,11 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		PromotionService ps = getApplication().createPromotionService(getElementFactory());
 
 		int pinToPositionPosition = 1;
-		String promotionTrigger = "Ziggler";
-		String search = "Cena";
+		String promotionTrigger = "Ziggler".toLowerCase();
+		String search = "Cena".toLowerCase();
 		String promotionNotificationText = "Created a new pin to position promotion: Pin to Position for: "+promotionTrigger;
 
-		ps.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		ps.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
 		try {
 			getElementFactory().getSearchPage();
 			checkForNotification(promotionNotificationText);
@@ -290,13 +290,13 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		PromotionService ps = getApplication().createPromotionService(getElementFactory());
 
 		int pinToPositionPosition = 1;
-		String promotionTrigger = "Ziggler";
-		String search = "Cena";
+		String promotionTrigger = "Ziggler".toLowerCase();
+		String search = "Cena".toLowerCase();
 		String promotionNotificationText = "Removed a pin to position promotion";
 
 		PinToPositionPromotion ptpp = new PinToPositionPromotion(pinToPositionPosition,promotionTrigger);
 
-		ps.setUpPromotion(ptpp, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		ps.setUpPromotion(ptpp, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
 		ps.delete(ptpp);
 
 		checkForNotification(promotionNotificationText);
@@ -307,11 +307,11 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		PromotionService ps = getApplication().createPromotionService(getElementFactory());
 
 		int numberOfResults = 10;
-		String promotionTrigger = "Wyatt";
-		String search = "Lawler";
+		String promotionTrigger = "Wyatt".toLowerCase();
+		String search = "Lawler".toLowerCase();
 		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
 
-		ps.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		ps.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
 		try {
 			getElementFactory().getSearchPage();
 			checkForNotification(promotionNotificationText);
@@ -325,13 +325,13 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		PromotionService ps = getApplication().createPromotionService(getElementFactory());
 
 		int numberOfResults = 10;
-		String promotionTrigger = "Wyatt";
-		String search = "Lawler";
+		String promotionTrigger = "Wyatt".toLowerCase();
+		String search = "Lawler".toLowerCase();
 		String promotionNotificationText = "Removed a dynamic spotlight promotion";
 
 		DynamicPromotion dynamic = new DynamicPromotion(numberOfResults, promotionTrigger);
 
-		ps.setUpPromotion(dynamic, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		ps.setUpPromotion(dynamic, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
 		ps.delete(dynamic);
 
 		checkForNotification(promotionNotificationText);
