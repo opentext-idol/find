@@ -3,12 +3,13 @@ package com.autonomy.abc.topnavbar.login;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.menu.TopNavBar;
+import com.autonomy.abc.selenium.menu.OP.OPTopNavBar;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
@@ -44,16 +45,14 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 		return (OPElementFactory) super.getElementFactory();
 	}
 
-    // TODO: abstract and put in OPTopNavBar
     private void goToUsersPage() {
-        TopNavBar topNavBar = body.getTopNavBar();
-        topNavBar.findElement(By.cssSelector(".fa-cog")).click();
-        topNavBar.findElement(By.cssSelector("li[data-pagename='users'] a")).click();
-        usersPage = (UsersPage) getElementFactory().getUsersPage();
+        ((OPTopNavBar) getBody().getTopNavBar()).goToUsersPage();
+        usersPage = getElementFactory().getUsersPage();
     }
 
 	@Before
-	public void setUp() {
+	public void setUp() throws InterruptedException {
+        Thread.sleep(5000);
         goToUsersPage();
 		usersPage.deleteOtherUsers();
 		usersPage.createUserButton().click();
@@ -119,6 +118,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
         }
     }
 
+    @Ignore //Do not have the correct txt file
 	@Test
 	public void testSQLInjection() throws IOException {
 		for (final String password : loadTextFileLineByLineIntoList("C://dev//res//sqlInj.txt")) {

@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.HostAndPorts;
+import com.autonomy.abc.selenium.menu.OP.OPTopNavBar;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,9 +53,8 @@ public class SettingsPageITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws InterruptedException {
         Thread.sleep(5000);
-        body.getTopNavBar().findElement(By.className("fa-cog")).click();
-        body.getTopNavBar().findElement(By.xpath(".//*[contains(text(),'Settings')]")).click();
-        settingsPage = getElementFactory().getSettingsPage();
+		((OPTopNavBar) body.getTopNavBar()).goToSettingsPage();
+		settingsPage = getElementFactory().getSettingsPage();
 	}
 
 	@Test

@@ -3,7 +3,7 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.menu.OP.OPTopNavBar;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
 import org.junit.Before;
@@ -38,8 +38,10 @@ public class AboutPageITCase extends ABCTestBase {
 	}
 
 	@Before
-	public void setUp() throws MalformedURLException {
-		aboutPage = (AboutPage) getElementFactory().getAboutPage();
+	public void setUp() throws MalformedURLException, InterruptedException {
+        Thread.sleep(5000);
+        ((OPTopNavBar) body.getTopNavBar()).goToAboutPage();
+		aboutPage = getElementFactory().getAboutPage();
 	}
 
 	@Test
