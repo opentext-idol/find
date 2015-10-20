@@ -7,31 +7,18 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+
                          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
                          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-    <!-- Scans the classpath of this application for @Components to deploy as beans -->
-    <context:component-scan base-package="com.hp.autonomy.frontend">
-        <context:exclude-filter type="assignable" expression="com.hp.autonomy.frontend.find.beanconfiguration.DispatcherServletConfiguration"/>
-        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-        <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
-    </context:component-scan>
-
-    <context:property-placeholder location="classpath:com/hp/autonomy/frontend/find/find.properties"/>
 
     <util:constant id="ssoPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_PAGE"/>
     <util:constant id="ssoLogoutPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_LOGOUT_PAGE"/>
     <util:constant id="ssoAuthenticationUri" static-field="com.hp.autonomy.frontend.find.FindController.SSO_AUTHENTICATION_URI"/>
     <util:constant id="usernameMetadataKey" static-field="com.hp.autonomy.frontend.find.authentication.HavenSearchUserMetadata.USERNAME"/>
     <util:constant id="hsodMetadataTypes" static-field="com.hp.autonomy.frontend.find.authentication.HavenSearchUserMetadata.METADATA_TYPES"/>
-
-    <util:properties id="dispatcherProperties" location="classpath:com/hp/autonomy/frontend/find/dispatcher.properties"/>
 
     <bean id="forbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
@@ -129,25 +116,5 @@
         <!--<security:authentication-provider ref="singleUserAuthenticationProvider"/>-->
         <security:authentication-provider ref="hodAuthenticationProvider"/>
     </security:authentication-manager>
-
-    <bean class="com.hp.autonomy.frontend.logging.ApplicationStartLogger"/>
-
-    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-        <property name="defaultLocale" value="en" />
-    </bean>
-
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename" value="com.hp.autonomy.frontend.find.i18n"/>
-    </bean>
-
-    <bean id="propertiesLookup" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <qualifier value="application"/>
-        <property name="singleton" value="true"/>
-        <property name="location" value="classpath:com/hp/autonomy/frontend/find/find.properties"/>
-    </bean>
-
-    <bean class="com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter" name="configEnvironmentVariableFilter"
-          p:configPage="/configError"
-          p:configService-ref="configService"/>
 
 </beans>
