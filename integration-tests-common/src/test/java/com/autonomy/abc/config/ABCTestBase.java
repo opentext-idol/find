@@ -138,6 +138,8 @@ public abstract class ABCTestBase {
 		elementFactory = getApplication().createElementFactory(driver);
 		try {
 			elementFactory.getLoginPage().loginWith(getApplication().createCredentials());
+			//Wait for page to load
+			Thread.sleep(2000);
 			// now has side/top bar
 			body = getBody();
 		} catch (Exception e) {
