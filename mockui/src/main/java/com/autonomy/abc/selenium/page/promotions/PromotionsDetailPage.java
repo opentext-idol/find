@@ -12,6 +12,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,15 +120,36 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public List<WebElement> promotedList() {
-        return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
+//        return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
+        return new WebDriverWait(getDriver(),10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".query-search-results div:not(.hide)>h3")));
     }
 
     public List<String> getPromotedTitles() {
         final List<String> docTitles = new ArrayList<>();
-        for (final WebElement docTitle : promotedList()) {
-            docTitles.add(docTitle.getText());
-        }
+
+        do {
+            for (final WebElement docTitle : promotedList()) {
+                docTitles.add(docTitle.getText());
+            }
+        } while(clickForwardButton());
+
         return docTitles;
+    }
+
+    private WebElement forwardButton(){
+        return findElement(By.cssSelector(".query-search-results .fa-angle-right"));
+    }
+
+    private boolean clickForwardButton(){
+        WebElement forward = forwardButton();
+
+        if(!forward.findElement(By.xpath(".//../..")).getAttribute("class").contains("disabled")) {
+            forwardButton().click();
+            loadOrFadeWait();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public WebElement promotedDocument(final String title) {

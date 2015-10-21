@@ -33,11 +33,12 @@ public class PromotionActionFactory extends ActionFactory {
         };
     }
 
-    public Action<PromotionsPage> makeDelete(final String title) {
-        return new Action<PromotionsPage>() {
+    public Action<Object> makeDelete(final String title) {
+        return new Action<Object>() {
             @Override
-            public PromotionsPage apply() {
-                return promotionService.delete(title);
+            public Object apply() {
+                promotionService.delete(title);
+                return null;
             }
         };
     }
