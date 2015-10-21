@@ -256,11 +256,11 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement fieldTextEditButton() {
-		return findElement(By.cssSelector(".current-field-text-container")).findElement(By.xpath(".//button[contains(text(), 'Edit')]"));
+		return findElement(By.cssSelector(".current-field-text-container .edit-field-text"));
 	}
 
 	public WebElement fieldTextRemoveButton() {
-		return findElement(By.cssSelector(".current-field-text-container")).findElement(By.xpath(".//button[contains(text(), 'Remove')]"));
+		return findElement(By.cssSelector(".current-field-text-container .remove-field-text"));
 	}
 
 	public void clearFieldText() {
