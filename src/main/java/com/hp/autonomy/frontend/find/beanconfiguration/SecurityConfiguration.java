@@ -13,6 +13,7 @@ import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthentic
 import com.hp.autonomy.frontend.find.FindController;
 import com.hp.autonomy.frontend.find.authentication.HavenSearchUserMetadata;
 import com.hp.autonomy.frontend.find.authentication.HsodUsernameResolver;
+import com.hp.autonomy.frontend.find.web.HodLogoutSuccessHandler;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
@@ -107,7 +108,7 @@ public class SecurityConfiguration {
 
             final LogoutSuccessHandler logoutSuccessHandler = new HodTokenLogoutSuccessHandler(FindController.SSO_LOGOUT_PAGE, tokenRepository);
 
-            http.regexMatcher("/public/.*|/sso|/authenticate-sso|/api/authentication/.*")
+            http.regexMatcher("/public/.*|/sso|/authenticate-sso|/api/authentication/.*|/logout")
                 .csrf()
                     .disable()
                 .exceptionHandling()
@@ -137,6 +138,9 @@ public class SecurityConfiguration {
         @Autowired
         private ConfigService<? extends AuthenticationConfig<?>> configService;
 
+        @Autowired
+        private TokenRepository tokenRepository;
+
         @SuppressWarnings("ProhibitedExceptionDeclared")
         @Override
         protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -151,15 +155,18 @@ public class SecurityConfiguration {
 
             http.regexMatcher("/p/.*|/config/.*|/authenticate|/logout")
                 .authorizeRequests()
-                .antMatchers("/p/**").hasRole("ADMIN")
-                .antMatchers("/config/**").hasRole("DEFAULT")
-                .and()
-                .formLogin()
-                .loginPage("/loginPage")
-                .loginProcessingUrl("/authenticate")
-                .successHandler(loginSuccessHandler)
-                .failureUrl("/loginPage?error=auth")
+                    .antMatchers("/p/**").hasRole("ADMIN")
+                    .antMatchers("/config/**").hasRole("DEFAULT")
                     .and()
+                .formLogin()
+                    .loginPage("/loginPage")
+                    .loginProcessingUrl("/authenticate")
+                    .successHandler(loginSuccessHandler)
+                    .failureUrl("/loginPage?error=auth")
+                    .and()
+                .logout()
+                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(FindController.SSO_LOGOUT_PAGE, tokenRepository), "/public/"))
+                .and()
                 .csrf()
                     .disable();
         }
