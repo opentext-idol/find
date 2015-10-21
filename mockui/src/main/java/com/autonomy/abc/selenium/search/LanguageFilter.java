@@ -16,8 +16,11 @@ public class LanguageFilter implements SearchFilter {
     // TODO: create via app-specific factory
     @Override
     public void apply(SearchBase searchBase) {
-        logger.info("skipping language filter on hosted");
-//        searchBase.languageButton().click();
-//        searchBase.javascriptClick(searchBase.findElement(By.className("search-language")).findElement(By.linkText(language)));
+        try {
+            searchBase.languageButton().click();
+            searchBase.javascriptClick(searchBase.findElement(By.className("search-language")).findElement(By.linkText(language)));
+        } catch (Exception e) {
+            logger.info("language not found");
+        }
     }
 }

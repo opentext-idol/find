@@ -59,6 +59,7 @@ public class TestConfig {
 				options.addArguments("--start-maximized");
                 // avoids "Disable developer mode extensions" popup
                 options.addArguments("--disable-extensions");
+				options.addArguments("--disable-popup-blocking");
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 				break;
 			case "opera":
