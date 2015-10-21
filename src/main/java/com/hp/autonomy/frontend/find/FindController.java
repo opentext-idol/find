@@ -30,6 +30,7 @@ import java.util.Map;
 @Controller
 public class FindController {
 
+    // TODO: move this to a Hod specific controller
     public static final String SSO_PAGE = "/sso";
     public static final String SSO_AUTHENTICATION_URI = "/authenticate-sso";
     public static final String SSO_LOGOUT_PAGE = "/sso-logout";

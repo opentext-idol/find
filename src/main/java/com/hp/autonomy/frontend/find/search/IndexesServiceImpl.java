@@ -51,7 +51,7 @@ public class IndexesServiceImpl implements IndexesService {
     private DatabasesService databasesService;
 
     @Override
-    @Cacheable(CacheNames.INDEXES)
+    @Cacheable(CacheNames.INDEXES)  // TODO: the caching here doesn't work from the settings page
     public Resources listIndexes(final TokenProxy<?, TokenType.Simple> tokenProxy) throws HodErrorException {
         final Set<ResourceType> types = new HashSet<>();
         types.add(ResourceType.CONTENT);
