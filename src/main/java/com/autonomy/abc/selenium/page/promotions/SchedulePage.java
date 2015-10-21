@@ -163,7 +163,6 @@ public class SchedulePage extends AppElement implements AppPage {
 		finalDateTextBoxButton().click();
 		finishButton(WizardStep.FINAL).click();
 		loadOrFadeWait();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(getDriver().findElement(By.cssSelector("[data-route='promotions']"))));
 	}
 
 	public List<String> getAvailableFrequencies() {

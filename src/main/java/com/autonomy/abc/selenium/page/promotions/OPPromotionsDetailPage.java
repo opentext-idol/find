@@ -51,4 +51,8 @@ public class OPPromotionsDetailPage extends PromotionsDetailPage {
             return null;
         }
     }
+
+    public void schedulePromotion(){
+        new WebDriverWait(getDriver(),30).until(ExpectedConditions.elementToBeClickable(findElement(By.className("promotion-view-schedule")))).click();
+    }
 }
