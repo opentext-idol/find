@@ -26,11 +26,12 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
+public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
-	public CreateNewDynamicPromotionsITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+	public CreateNewDynamicPromotionsOnPremiseITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
 	}
 
@@ -42,7 +43,8 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     private SearchActionFactory searchActionFactory;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws InterruptedException {
+		Thread.sleep(5000);
         promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
@@ -246,7 +248,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.addSearchTrigger(searchTrigger);
 
 		final WebElement span = dynamicPromotionsPage.findElement(By.cssSelector(".trigger-words-form .term"));
-		assertThat("HTML was not escaped", span.getText().equals(searchTrigger));
+		assertThat("HTML was not escaped", span.getText(), is(searchTrigger.toLowerCase()));		//Triggers are always lower case
 	}
 
 	@Test
@@ -389,8 +391,6 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 		dynamicPromotionsPage.spotlightType("Hotwire").click();
 		dynamicPromotionsPage.continueButton().click();
 		dynamicPromotionsPage.loadOrFadeWait();
-		dynamicPromotionsPage.continueButton().click();
-		dynamicPromotionsPage.loadOrFadeWait();
 
 		dynamicPromotionsPage.addSearchTrigger("cat");
 		assertEquals(dynamicPromotionsPage.getSearchTriggersList().size(), 1);
@@ -474,8 +474,8 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
 		assertThat("No promoted items displayed", searchPage.getPromotionSummarySize() != 0);
 
-
-		promotionsPage = promotionService.delete("home");
+		promotionsPage = promotionService.goToPromotions();
+		promotionService.delete("home");
 		assertThat("promotion should be deleted", promotionsPage.promotionsList().size() == 0);
 
         searchPage = searchActionFactory.makeSearch("home").applyFilter(new LanguageFilter("French")).apply();
