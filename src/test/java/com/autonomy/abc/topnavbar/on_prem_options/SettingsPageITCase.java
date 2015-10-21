@@ -4,7 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.HostAndPorts;
-import com.autonomy.abc.selenium.menu.OP.OPTopNavBar;
+import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
