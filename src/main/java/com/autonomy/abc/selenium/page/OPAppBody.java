@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.page;
 
-import com.autonomy.abc.selenium.menu.OP.OPTopNavBar;
+import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.openqa.selenium.By;
