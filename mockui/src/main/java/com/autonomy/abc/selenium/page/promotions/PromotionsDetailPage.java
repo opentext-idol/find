@@ -120,8 +120,24 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public List<WebElement> promotedList() {
-//        return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
+        return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
+    }
+
+    public List<WebElement> dynamicPromotedList(){
         return new WebDriverWait(getDriver(),10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".query-search-results div:not(.hide)>h3")));
+
+    }
+
+    public List<String> getDynamicPromotedTitles(){
+        final List<String> docTitles = new ArrayList<>();
+
+        do {
+            for (final WebElement docTitle : dynamicPromotedList()) {
+                docTitles.add(docTitle.getText());
+            }
+        } while(clickForwardButton());
+
+        return docTitles;
     }
 
     public List<String> getPromotedTitles() {
