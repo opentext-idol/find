@@ -33,7 +33,7 @@ To run all tests from command line:
 - Start the Selenium server as outlined above
 - Run the following in cmd (but with your own API key)
 ```sh
-mvn clean verify -DtestConfig.location="/config.json" -Dcom.autonomy.hubUrl="http://localhost:4444/wd/hub" -Dcom.autonomy.abcHostedUrl="http://search.dev.idolondemand.com/searchoptimizer" -Dcom.autonomy.apiKey=YOUR_API_KEY -Dcom.autonomy.applicationType="Hosted" -Dcom.autonomy.browsers="chrome"
+mvn clean verify -DtestConfig.location="config.json" -Dcom.autonomy.hubUrl="http://localhost:4444/wd/hub" -Dcom.autonomy.abcHostedUrl="http://search.dev.idolondemand.com/searchoptimizer" -Dcom.autonomy.apiKey=YOUR_API_KEY -Dcom.autonomy.applicationType="Hosted" -Dcom.autonomy.browsers="chrome"
 ```
 *TODO: config.json is only used for on-premise, should be removed at some point*
 
@@ -48,10 +48,14 @@ Specific elements should be constructed as `AppElement`s, but passed around as `
 -	`AppPage`: represents a page, subclasses must implement `waitforLoad()` - this will be called in the constructor.
 It should involve some kind of `WebDriverWait` for something that only appears on that specific page.
 This ensures the page is fully loaded, so that `findElement` does not fail, and to minimise the risk of `StaleElementException`s.
+In practice, it is often necessary to wait *before* calling `new`, so many `AppPage`s instead have a static factory method `make`.
 
-*TODO: Currently AppPage is an interface, but since every concrete Page IS-A AppElement, surely AppPage IS-A AppElement?
-Technically a page HAS-A AppElement, but tests currently use many methods (findElement, getDriver, getText) directly on an AppPage.
-Methods would have to be copied over, so IS-A is more convenient?*
+There are classes representing the objects in the application, e.g. `Promotion` and `User`.
+There are also `Service`s in the mock UI, which are facades for performing complicated actions that may navigate through several pages, e.g. `PromotionService.setUpPromotion`. `SearchActionFactory` is currently an exception to this rule - performing a search and waiting for the results to load before applying each filter is cumbersome.
+
+*TODO: should search filters instead be decorators around a search object? i.e. new LanguageFilterSearch("English", new Search(...))*
+
+For elements on a page, there are several utility classes such as `FormInput` or `Checkbox` that represent common bootstrap elements and avoid creating repetitive (and therefore fragile) getters/setters for similar elements. It also means that if the behaviour of an element changes (e.g. from a checkbox to a numeric input) the test will need to be rewritten - *this is a good thing!*
 
 ## Abstraction
 Since some pages are shared between hosted and on-premise, pages should be created via an Abstract Factory:
@@ -62,7 +66,7 @@ An `AppElement` on an `AppPage` should generally be constructed via a getter (`B
 
 This has the advantages that:
 - tests can be written for both apps by passing around `ElementFactory` and `PromotionsPage` polymorphically
-- tests can still be written for a specific app using the explicit `HSOElementFactory` to use the hosted-specific method `getIndexesPage` (when it exists)
+- tests can still be written for a specific app using the explicit `HSOElementFactory` to use the hosted-specific method `getIndexesPage`
 - enforces separation of shared and app-specific tests
 - `ElementFactory` is an abstract class, so `KeywordsPage` (identical in both) can be concrete (no need for redundant `HSOKeywordsPage`)
 - minimises code duplication, e.g. any shared promotions behaviour can be put in `PromotionsPage` instead of the concrete subclasses
@@ -73,7 +77,16 @@ Disadvantages:
 - more complex structure to understand
 - slightly harder to find things (e.g. is `promotionsCategoryFilterButton` in `PromotionsPage` or `HSOPromotionsPage`?)
 
-*TODO: Currently the specific ElementFactory is constructed via a static method*
+As of 20/10/2015 the on-premise specific parts have been removed from git, the only remaining overlap is `ApplicationType`, intentionally left behind so that tests can do an in-line check of the application type for simple assertions (e.g. check if a button exists on hosted, but not on on-premise).
+
+## Naming Conventions
+There are several naming conventions used - most are not there for any specific reason, but consistent naming structure helps readability.
+- Any class that is only relevant to on-premise is prefixed with `OP`, similarly `HSO` is used for hosted. Anything that applies specifically to the SAAS half (due to slight inconsistencies between halves) is prefixed with `SAAS`.
+- "get" should be omitted when returning an element (`WebElement`, `Checkbox` etc.), as in `KeywordsPage.createNewKeywordsButton()`. Other getters that return a calculated value (such as a `String` or `int`) should include "get", as in `PromotionsPage.getPromotionTitles()`. This convention avoids possible confusion with return types without complicated method names (otherwise would need `getPromotionTitleStrings` to avoid confusion with `getPromotionTitleWebElements`)
+- Factory methods start with `make` or `create`. Since the word "create" is used in the app itself (as in "Create new promotion"), `make` is usually preferred to avoid confusion.
+- The exception to the previous rule is `ElementFactory`, which uses `get` (`elementFactory.getKeywordsPage`) for backwards compatibility (it used to cache pages for speed, but this leads to `StaleElementException`s on hosted).
+- When constructing an `AppPage`, it is often necessary to wait *before* calling `new`, so many `AppPage`s instead have a static factory method `make(WebDriver)`. Typically `make` and `waitForLoad` both call the static method `Page.waitForLoad(WebDriver)`.
+- Test *files* end in `ITCase.java` in order to be recognised by the plugin that runs the tests. Test *methods* start with `test` but this is purely convention.
 
 ## JUnit Test Framework
 Since IntelliJ and Failsafe both rely on built-in JUnit runners, we do not have a custom test runner.
@@ -104,3 +117,6 @@ For example, *verify* that there are 5 promotions in the promotions list, but *a
 
 Beware of `StaleElementException`! Every time you navigate to a new page, any previous `AppPage` objects will now be stale.
 `AppBody` will go stale when switching between Angular/Backbone sides of the hosted app.
+
+A test should very rarely need to call `findElement` directly, as it leads to fragile tests. Even if it is only used once, it likely belongs in the mock UI.
+A mock UI page should *never* need to construct another page or access the nav bars, this likely belongs in a helper object (`Service`) instead.

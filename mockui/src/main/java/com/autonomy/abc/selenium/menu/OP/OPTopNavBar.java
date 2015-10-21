@@ -14,7 +14,30 @@ public class OPTopNavBar extends TopNavBar {
 
     @Override
     public void logOut() {
-        findElement(By.cssSelector(".dropdown-toggle .fa-cog")).click();
+        clickCog();
         new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOfElementLocated(By.className("navigation-logout"))).click();
+    }
+
+    private void clickCog(){
+        findElement(By.className("fa-cog")).click();
+    }
+
+    private void clickDropdown(String page){
+       findElement(By.xpath(".//*[contains(text(),'"+page+"')]")).click();
+    }
+
+    public void goToAboutPage(){
+        clickCog();
+        clickDropdown("About");
+    }
+
+    public void goToSettingsPage(){
+        clickCog();
+        clickDropdown("Settings");
+    }
+
+    public void goToUsersPage(){
+        clickCog();
+        clickDropdown("Users");
     }
 }
