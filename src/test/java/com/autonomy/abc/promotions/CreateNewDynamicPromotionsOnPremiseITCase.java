@@ -452,7 +452,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		assertEquals(promotionResultsCount, searchPage.promotionsSummaryList(true).size());
 
         promotionsDetailPage = promotionService.goToDetails("sausage");
-		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(promotionResultsCount));
+		assertThat(promotionsDetailPage.getDynamicPromotedTitles(), hasSize(promotionResultsCount));
 	}
 
 	@Test
