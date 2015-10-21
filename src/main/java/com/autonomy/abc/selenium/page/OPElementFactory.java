@@ -8,11 +8,9 @@ import com.autonomy.abc.selenium.page.login.OPLoginPage;
 import com.autonomy.abc.selenium.page.overview.OverviewPage;
 import com.autonomy.abc.selenium.page.promotions.*;
 import com.autonomy.abc.selenium.page.search.OPSearchPage;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 public class OPElementFactory extends ElementFactory {
-    // TODO: replace HSOs with OPs
     public OPElementFactory(final WebDriver driver) {
         super(driver);
     }
@@ -25,6 +23,11 @@ public class OPElementFactory extends ElementFactory {
     @Override
     public OPLoginPage getLoginPage() {
         return new OPLoginPage(getDriver());
+    }
+
+    @Override
+    public OPPromotionsDetailPage getPromotionsDetailPage() {
+        return new OPPromotionsDetailPage(getDriver());
     }
 
     @Override
@@ -66,5 +69,4 @@ public class OPElementFactory extends ElementFactory {
     public SettingsPage getSettingsPage() {
         return SettingsPage.make(getDriver());
     }
-
 }
