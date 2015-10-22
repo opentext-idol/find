@@ -28,12 +28,6 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         super(config, browser, appType, platform);
     }
 
-    private NotificationsDropDown notifications;
-    private KeywordsPage keywordsPage;
-    private CreateNewKeywordsPage createNewKeywordsPage;
-    private TopNavBar topNavBar;
-    private SideNavBar sideNavBar;
-
     @Test
     public void testStaticPromotionNotifications(){
         HSOPromotionService ps = (HSOPromotionService) getApplication().createPromotionService(getElementFactory());
