@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -416,7 +417,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "Ida"), search, 1);
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-		assertThat("promotions aren't labelled as Sponsored", searchPage.promotionsLabel().getText().equals("Sponsored"));
+		assertThat("promotions aren't labelled as Sponsored", searchPage.promotionsLabel().getText(), is("Sponsored"));
 
 		search.apply();
 		promotionResultsCount = promotionResultsCount + searchPage.countSearchResults();
@@ -427,9 +428,9 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "Ida"), search, 1);
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-		final List<String> promotionLabels = searchPage.getPromotionSummaryLabels();
-		assertThat("No Hotwire labels in promotions summary", promotionLabels.contains("Hotwire"));
-		assertThat("No Sponsored labels in promotions summary", promotionLabels.contains("Sponsored"));
+		final List<String> promotionLabels = searchPage.getPromotionLabels();
+		assertThat("No Hotwire labels in promotions summary", promotionLabels, hasItem("Hotwire"));
+		assertThat("No Sponsored labels in promotions summary", promotionLabels, hasItem("Sponsored"));
 		assertEquals(promotionResultsCount, searchPage.promotionsSummaryList(true).size());
 	}
 
