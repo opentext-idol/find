@@ -24,10 +24,15 @@ public class InlineEdit implements Editable {
     }
 
     @Override
+    public WebElement editButton() {
+        return element.findElement(By.className("inline-edit-open-form"));
+    }
+
+    @Override
     public void setValueAsync(String value) {
-        element.findElement(By.className("inline-edit-open-form")).click();
-        waitForUpdate();
-        new FormInput(element.findElement(By.cssSelector(".inline-edit-form .form-control")), element.getDriver()).setAndSubmit(value);
+        editButton().click();
+        WebElement formInput = new WebDriverWait(element.getDriver(), 10).until(ExpectedConditions.visibilityOf(element.findElement(By.cssSelector(".inline-edit-form .form-control"))));
+        new FormInput(formInput, element.getDriver()).setAndSubmit(value);
     }
 
     @Override
