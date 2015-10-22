@@ -29,8 +29,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.hamcrest.number.OrderingComparison;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -57,8 +55,6 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.lessThan;
 
 public class FindITCase extends ABCTestBase {
     private FindPage find;

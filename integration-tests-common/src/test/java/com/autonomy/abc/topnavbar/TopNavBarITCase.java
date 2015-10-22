@@ -7,14 +7,11 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collection;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TopNavBarITCase extends ABCTestBase {
 	public TopNavBarITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {

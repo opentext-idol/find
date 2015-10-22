@@ -11,7 +11,6 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import org.apache.xpath.operations.Bool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
