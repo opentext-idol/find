@@ -256,8 +256,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
     @Test
     public void testCheckboxUpdatesWithBucketDelete() {
-        setUpPromotion("marshmallow", "white fluffy", 4);
-        editDocumentSearch("marshmallow");
+        setUpPromotion("fred", "white fluffy", 4);
+        editDocumentSearch("fred");
         final List<String> bucketList = editReferencesPage.promotionsBucketList();
         verifyThat(bucketList, hasSize(4));
 

@@ -1178,7 +1178,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		for (final String synonym : synonymListCars) {
 			body.getTopNavBar().search(synonym);
 
-			searchPage.selectLanguage("Swahili", getConfig().getType().getName());
+			searchPage.selectLanguage("Swahili");
 
 			assertEquals(1, searchPage.countSynonymLists());
 			assertEquals(3, createKeywordsPage.countKeywords());
@@ -1581,16 +1581,16 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		String blacklistUrl = getConfig().getWebappUrl() + "/p/keywords/create/blacklisted/English/";
 		String synonymsUrl = getConfig().getWebappUrl() + "/p/keywords/create/synonyms/English/";
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			blacklistUrl = getConfig().getWebappUrl() + "/p/keywords/create/blacklisted/englishUTF8/";
-			synonymsUrl = getConfig().getWebappUrl() + "/p/keywords/create/synonyms/englishUTF8/";
+			blacklistUrl = getConfig().getWebappUrl() + "keywords/create/blacklisted/englishUTF8/";
+			synonymsUrl = getConfig().getWebappUrl() + "keywords/create/synonyms/englishUTF8/";
 		}
 		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {
-			getDriver().get(blacklistUrl.concat(forbidden));
+			getDriver().get(blacklistUrl + forbidden);
 			keywordsPage.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem("(")));
 
-			getDriver().get(synonymsUrl.concat(forbidden));
+			getDriver().get(synonymsUrl + forbidden);
 			keywordsPage.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem("(")));

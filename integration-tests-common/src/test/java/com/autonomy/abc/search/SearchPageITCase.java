@@ -757,7 +757,7 @@ public class SearchPageITCase extends ABCTestBase {
 
         search("leg");
 
-        searchPage.selectLanguage("English", getConfig().getType().getName());
+        searchPage.selectLanguage("English");
 		languageWarn();
 
         int initialSearchCount = searchPage.countSearchResults();

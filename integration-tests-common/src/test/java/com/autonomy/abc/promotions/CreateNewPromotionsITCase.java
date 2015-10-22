@@ -320,6 +320,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         verifyThat(searchPage, containsText(promotedDocTitle));
 
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+        promotionsPage = getElementFactory().getPromotionsPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions"));
         promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
 
@@ -454,7 +455,9 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
             body.getTopNavBar().notificationsDropdown();
             final NotificationsDropDown notifications = body.getTopNavBar().getNotifications();
 //            body.getTopNavBar().loadOrFadeWait();
-            verifyThat(notifications.notificationNumber(1), containsText("Created a new spotlight promotion: Spotlight for: MyFirstNotification" + spotlightType.replaceAll("\\s+", "")));
+            //Match regardless of case
+            verifyThat(notifications.notificationNumber(1).getText().toLowerCase(),
+                    containsString(("Created a new spotlight promotion: Spotlight for: MyFirstNotification" + spotlightType.replaceAll("\\s+", "")).toLowerCase()));
 
             // TODO: CSA-893
 //            notifications.notificationNumber(1).click();

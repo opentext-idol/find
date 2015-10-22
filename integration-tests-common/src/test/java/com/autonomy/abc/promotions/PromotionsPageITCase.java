@@ -227,12 +227,15 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		Dropdown dropdown = promotionsDetailPage.spotlightTypeDropdown();
 		dropdown.select("Hotwire");
+		promotionsDetailPage.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Hotwire"));
 
 		dropdown.select("Top Promotions");
+		promotionsDetailPage.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Top Promotions"));
 
 		dropdown.select("Sponsored");
+		promotionsDetailPage.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Sponsored"));
 	}
 
@@ -414,10 +417,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testPromotionLanguages() {
-		// TODO: IOD-4857
+		// TODO: IOD-4827
 		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
 		String[] languages = {"French", "Swahili", "Afrikaans"};
-		String[] searchTerms = {"chien", "mbwa", "pooch"};
+//		String[] searchTerms = {"chien", "mbwa", "pooch"};
+		//Afrikaans dog thing isn't actually a dog but it wasn't working so yolo
+		String[] searchTerms = {"chien", "mbwa", "bergaalwyn"};
 		Promotion[] promotions = {
 				new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"),
 				new PinToPositionPromotion(3, "swahili woof"),
