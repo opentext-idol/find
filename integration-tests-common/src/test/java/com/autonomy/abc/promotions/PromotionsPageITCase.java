@@ -18,7 +18,9 @@ import com.autonomy.abc.selenium.search.SearchActionFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
 import java.util.List;
