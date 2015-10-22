@@ -77,4 +77,14 @@ public class OPPromotionsDetailPage extends PromotionsDetailPage {
     public void schedulePromotion(){
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.elementToBeClickable(findElement(By.className("promotion-view-schedule")))).click();
     }
+
+    @Override
+    public FormInput triggerAddBox(){
+        return new FormInput(findElement(By.cssSelector(".promotion-match-terms-editor input")),getDriver());
+    }
+
+    @Override
+    public WebElement triggerAddButton() {
+        return findElement(By.cssSelector(".promotion-match-terms-editor [type='submit']"));
+    }
 }
