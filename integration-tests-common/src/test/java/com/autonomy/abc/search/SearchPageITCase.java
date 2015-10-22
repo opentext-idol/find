@@ -617,7 +617,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testSearchAlternateScriptToSelectedLanguage() {
 		for (final String language : Arrays.asList("French", "English", "Arabic", "Urdu", "Hindi", "Chinese")) {
-			searchPage.selectLanguage(language, getConfig().getType().getName());
+			searchPage.selectLanguage(language);
 
 			for (final String script : Arrays.asList("निर्वाण", "العربية", "עברית", "сценарий", "latin", "ελληνικά", "ქართული", "བོད་ཡིག")) {
 				search(script);
@@ -822,8 +822,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		search("darth");
 
-//        searchPage.selectLanguage("English", getConfig().getType().getName());
-		languageWarn();
+        searchPage.selectLanguage("English");
 
         searchPage.createAMultiDocumentPromotion(2);
 		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
@@ -949,7 +948,7 @@ public class SearchPageITCase extends ABCTestBase {
             }
 
         } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            searchPage.selectLanguage("English", getConfig().getType().getName());
+            searchPage.selectLanguage("English");
             for (final String searchTerm : boolOperators) {
                 search(searchTerm);
                 assertThat("Correct error message not present for searchterm: " + searchTerm + searchPage.getText(), searchPage.getText(), containsString("An error occurred executing the search action"));
