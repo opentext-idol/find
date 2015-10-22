@@ -43,10 +43,7 @@ public class InlineEdit implements Editable {
 
     @Override
     public void waitForUpdate() {
-        element.loadOrFadeWait();
-        new WebDriverWait(element.getDriver(), 30).until(ExpectedConditions.visibilityOf(editButton()));
-        // becomes "visible" slightly before it really is
-        element.loadOrFadeWait();
+        new WebDriverWait(element.getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-refresh")));
     }
 
     @Override
