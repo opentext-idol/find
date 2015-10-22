@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -255,11 +256,12 @@ public class SearchPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage = getElementFactory().getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining("boat").click();
-        assertThat(promotionsPage.getText(), containsString("Trigger terms"));
- 		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+		PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        assertThat(promotionsDetailPage.getText(), containsString("Trigger terms"));
+ 		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(promotionsDetailPage.triggerAddButton()));
 
-		promotionsPage.clickableSearchTrigger("boat").click();
-		promotionsPage.loadOrFadeWait();
+		promotionsDetailPage.trigger("boat").click();
+		promotionsDetailPage.loadOrFadeWait();
 
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         searchPage.waitForPromotionsLoadIndicatorToDisappear();

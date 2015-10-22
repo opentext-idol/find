@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -172,7 +173,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testHTMLTrigger() {
 		setUpCarsPromotion(1);
-		final String trigger = "<h1>Hi</h1>";
+		final String trigger = "<h1>hi</h1>";
 		promotionsDetailPage.triggerAddBox().setAndSubmit(trigger);
 
 		assertThat("triggers are HTML escaped", promotionsDetailPage, triggerList(hasItem(trigger)));
@@ -487,13 +488,13 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));
 
 		getDriver().switchTo().window(browserHandles.get(0));
-
+		promotionService.goToPromotions();
 		promotionService.delete("friend");
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
-
-		promotionService.delete("woof");
+//		promotionService.delete("woof");
+		secondPromotionsPage.deletePromotion("woof");
 
 		getDriver().switchTo().window(browserHandles.get(0));
 		verifyThat(promotionsPage, containsText("There are no promotions..."));

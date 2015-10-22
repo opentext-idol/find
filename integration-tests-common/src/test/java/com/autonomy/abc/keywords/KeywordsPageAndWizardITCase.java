@@ -1171,7 +1171,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		final List<String> synonymListCars = Arrays.asList("car", "auto", "motor");
-		createKeywordsPage.createSynonymGroup(StringUtils.join(synonymListCars, ' '), "English");
+		createKeywordsPage.createSynonymGroup(StringUtils.join(synonymListCars, ' '), "Swahili");
 
 		searchPage = getElementFactory().getSearchPage();
 
@@ -1539,8 +1539,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 
-		//keywordsPage.selectLanguage("Kazakh");
-		(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for keywords yet");
+		keywordsPage.selectLanguage("Kazakh");
 
 		keywordsPage.synonymGroupPlusButton("бір").click();
 		assertTrue(keywordsPage.synonymGroupTextBox("бір").isDisplayed());
