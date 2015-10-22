@@ -169,11 +169,7 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
         Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "ming");
         String fieldText = "RANGE{.,01/01/2010}:DREDATE";
         FieldTextFilter filter = new FieldTextFilter(fieldText);
-        Search search = searchActionFactory.makeSearch("flash");//.applyFilter(filter);
-		searchPage = search.apply();
-		filter.apply(searchPage);
-		filter.clear(searchPage);
-		filter.clear(searchPage);
+        Search search = searchActionFactory.makeSearch("flash").applyFilter(filter);
 
 		promotionService.setUpPromotion(promotion, search, 1);
         promotionsDetailPage = promotionService.goToDetails(promotion);
@@ -181,6 +177,7 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 		promotionsDetailPage.addFieldText(fieldText);
 		verifyNotDisplayed("ming");
 
+        // filter is cached on search page
 		filter.clear(searchPage);
 		verifyThat(searchPage.promotionsSummary(), displayed());
 	}
