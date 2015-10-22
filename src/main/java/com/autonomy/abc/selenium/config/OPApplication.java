@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.OPAppBody;
 import com.autonomy.abc.selenium.page.OPElementFactory;
+import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.users.OPUserService;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.autonomy.abc.selenium.page.login.OPAccount;
@@ -30,6 +31,11 @@ public class OPApplication extends Application {
     @Override
     public AuthProvider createCredentials() {
         return new OPAccount("richard", "q");
+    }
+
+    @Override
+    public OPPromotionService createPromotionService(ElementFactory elementFactory) {
+        return new OPPromotionService(this, elementFactory);
     }
 
     @Override

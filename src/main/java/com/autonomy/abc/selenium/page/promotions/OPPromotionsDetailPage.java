@@ -33,15 +33,37 @@ public class OPPromotionsDetailPage extends PromotionsDetailPage {
         return new LabelBox(fieldTextContainer);
     }
 
-    public WebElement fieldTextRemoveButton() {
-        return getParent(findElement(By.cssSelector(".promotion-field-text .fa-remove")));
-    }
-
     public void addFieldText(final String fieldText) {
         fieldTextAddButton().click();
         loadOrFadeWait();
         fieldTextInput().setAndSubmit(fieldText);
-        new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(fieldTextRemoveButton()));
+        waitForFieldTextToUpdate();
+    }
+
+    public void removeFieldText() {
+        removableFieldText().removeAsync();
+        waitForFieldTextToUpdate();
+    }
+
+    public void updateFieldText(final String newText) {
+        editableFieldText().setValueAsync(newText);
+        waitForFieldTextToUpdate();
+    }
+
+    public void closeInputBox() {
+        fieldTextContainer.findElement(By.xpath("../h5")).click();
+    }
+
+    // must do this after changing field text directly
+    public void waitForFieldTextToUpdate() {
+        editableFieldText().waitForUpdate();
+        // sleep since update spinner disappears once request has
+        // finished sending, not once actually loaded
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getFieldTextError() {
