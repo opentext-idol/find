@@ -220,7 +220,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     @Test
     public void testHTMLTrigger() {
         createPromotionsPage.navigateToTriggers();
-        final String searchTrigger = "<h1>Hey</h1>";
+        final String searchTrigger = "<h1>hey</h1>";
         createPromotionsPage.addSearchTrigger(searchTrigger);
 
         final WebElement span = createPromotionsPage.findElement(By.cssSelector(".trigger-words-form .term"));

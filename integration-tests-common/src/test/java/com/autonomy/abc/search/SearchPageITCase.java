@@ -1208,12 +1208,12 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
 		//TODO failing here wrongly
-        assertEquals("Page should still have results", searchPage.getText(), not(containsString("No results found...")));
-        assertEquals("Page should not have thrown an error", searchPage.getText(), not(containsString(havenErrorMessage)));
-        assertEquals("Page number should not have changed", currentPage, searchPage.getCurrentPageNumber());
-		assertEquals("Url should have reverted to original url", url, getDriver().getCurrentUrl());
-		assertFalse("Error message should not be showing", searchPage.isErrorMessageShowing());
-		assertEquals("Search results have changed on last page", docTitle, searchPage.getSearchResultTitle(1));
+        assertThat("Page should still have results", searchPage.getText(), not(containsString("No results found...")));
+		assertThat("Page should not have thrown an error", searchPage.getText(), not(containsString(havenErrorMessage)));
+		assertThat("Page number should not have changed", currentPage, is(searchPage.getCurrentPageNumber()));
+		assertThat("Url should have reverted to original url", url, is(getDriver().getCurrentUrl()));
+		assertThat("Error message should not be showing", searchPage.isErrorMessageShowing(), is(false));
+		assertThat("Search results have changed on last page", docTitle, is(searchPage.getSearchResultTitle(1)));
 	}
 
 	@Test

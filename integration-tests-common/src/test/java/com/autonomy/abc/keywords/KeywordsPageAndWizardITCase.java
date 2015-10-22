@@ -1817,7 +1817,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		String phrase = "the quick brown fox jumps over the lazy dog";
 		body.getTopNavBar().search(phrase);
 		searchPage = getElementFactory().getSearchPage();
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.selectLanguage("English");
 
 		searchPage.createSynonymsLink().click();
 
@@ -1830,7 +1830,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		assertThat(prospectiveKeywords, containsItems(wordsInPhrase));
 		assertThat(prospectiveKeywords, not(hasItem("the")));
-		assertEquals(wordsInPhrase.size(),prospectiveKeywords.size());
+		assertThat(wordsInPhrase.size(),is(prospectiveKeywords.size()));
 	}
 
 	@Test
