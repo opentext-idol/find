@@ -1171,14 +1171,14 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		final List<String> synonymListCars = Arrays.asList("car", "auto", "motor");
-		createKeywordsPage.createSynonymGroup(StringUtils.join(synonymListCars, ' '), "English");
+		createKeywordsPage.createSynonymGroup(StringUtils.join(synonymListCars, ' '), "Swahili");
 
 		searchPage = getElementFactory().getSearchPage();
 
 		for (final String synonym : synonymListCars) {
 			body.getTopNavBar().search(synonym);
 
-			searchPage.selectLanguage("Swahili", getConfig().getType().getName());
+			searchPage.selectLanguage("Swahili");
 
 			assertEquals(1, searchPage.countSynonymLists());
 			assertEquals(3, createKeywordsPage.countKeywords());
@@ -1539,8 +1539,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 
-		//keywordsPage.selectLanguage("Kazakh");
-		(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for keywords yet");
+		keywordsPage.selectLanguage("Kazakh");
 
 		keywordsPage.synonymGroupPlusButton("бір").click();
 		assertTrue(keywordsPage.synonymGroupTextBox("бір").isDisplayed());
@@ -1581,16 +1580,16 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		String blacklistUrl = getConfig().getWebappUrl() + "/p/keywords/create/blacklisted/English/";
 		String synonymsUrl = getConfig().getWebappUrl() + "/p/keywords/create/synonyms/English/";
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			blacklistUrl = getConfig().getWebappUrl() + "/p/keywords/create/blacklisted/englishUTF8/";
-			synonymsUrl = getConfig().getWebappUrl() + "/p/keywords/create/synonyms/englishUTF8/";
+			blacklistUrl = getConfig().getWebappUrl() + "keywords/create/blacklisted/englishUTF8/";
+			synonymsUrl = getConfig().getWebappUrl() + "keywords/create/synonyms/englishUTF8/";
 		}
 		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {
-			getDriver().get(blacklistUrl.concat(forbidden));
+			getDriver().get(blacklistUrl + forbidden);
 			keywordsPage.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem("(")));
 
-			getDriver().get(synonymsUrl.concat(forbidden));
+			getDriver().get(synonymsUrl + forbidden);
 			keywordsPage.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem("(")));
@@ -1818,7 +1817,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		String phrase = "the quick brown fox jumps over the lazy dog";
 		body.getTopNavBar().search(phrase);
 		searchPage = getElementFactory().getSearchPage();
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.selectLanguage("English");
 
 		searchPage.createSynonymsLink().click();
 
@@ -1831,7 +1830,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		assertThat(prospectiveKeywords, containsItems(wordsInPhrase));
 		assertThat(prospectiveKeywords, not(hasItem("the")));
-		assertEquals(wordsInPhrase.size(),prospectiveKeywords.size());
+		assertThat(wordsInPhrase.size(),is(prospectiveKeywords.size()));
 	}
 
 	@Test

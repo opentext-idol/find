@@ -40,7 +40,7 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
     }
 
     public WebElement cancelButton() {
-        return findElement(By.xpath(".//a[contains(text(), 'Cancel')]"));
+        return findElement(By.xpath(".//*[contains(text(), 'Cancel')]"));
     }
 
     private static void waitForLoad(WebDriver driver) {

@@ -157,13 +157,15 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     private boolean clickForwardButton(){
-        WebElement forward = forwardButton();
-
-        if(!forward.findElement(By.xpath(".//../..")).getAttribute("class").contains("disabled")) {
-            forwardButton().click();
-            loadOrFadeWait();
-            return true;
-        } else {
+        try {
+            if(!forwardButton().findElement(By.xpath(".//../..")).getAttribute("class").contains("disabled")) {
+                forwardButton().click();
+                loadOrFadeWait();
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
             return false;
         }
     }

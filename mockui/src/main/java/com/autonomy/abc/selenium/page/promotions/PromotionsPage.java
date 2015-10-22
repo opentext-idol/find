@@ -65,10 +65,12 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 
 	@Deprecated
 	private void deletePromotion(WebElement promotion){
-		promotion.findElement(By.className("promotion-delete")).click();
+		WebElement deleteButton = promotion.findElement(By.className("promotion-delete"));
+		deleteButton.click();
 		loadOrFadeWait();
 		modalClick();
 		loadOrFadeWait();
+		new WebDriverWait(getDriver(),20).until(ExpectedConditions.stalenessOf(deleteButton));
 	}
 
 	private void modalClick() {

@@ -72,7 +72,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     @Test
     public void testNoMixUpBetweenSearchBucketAndEditPromotionsBucket() {
         final List<String> originalPromotedDocs = setUpPromotion("luke", "jedi goodGuy", 8);
-        editReferencesPage.backPageButton().click();
+        editReferencesPage.cancelButton().click();
         final List<String>  promotedDocs = promotionsDetailPage.getPromotedTitles();
         verifyThat(promotedDocs.size(), is(originalPromotedDocs.size()));
 
@@ -143,7 +143,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
     @Test
     public void testRefreshEditPromotionPage() throws InterruptedException {
-        setUpPromotion("Luke", "Jedi Master", 1);
+        setUpPromotion("Luke", "jedi master", 1);
 
         getDriver().navigate().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
@@ -154,7 +154,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
     @Test
     public void testErrorMessageOnStartUpEditReferencesPage() {
-        setUpPromotion("Luke", "Jedi Master", 1);
+        setUpPromotion("Luke", "jedi master", 1);
 
         verifyThat(editReferencesPage, not(containsText("An unknown error occurred executing the search action")));
         verifyThat(editReferencesPage, containsText("Search for new items to promote"));
@@ -256,8 +256,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
     @Test
     public void testCheckboxUpdatesWithBucketDelete() {
-        setUpPromotion("marshmallow", "white fluffy", 4);
-        editDocumentSearch("marshmallow");
+        setUpPromotion("fred", "white fluffy", 4);
+        editDocumentSearch("fred");
         final List<String> bucketList = editReferencesPage.promotionsBucketList();
         verifyThat(bucketList, hasSize(4));
 

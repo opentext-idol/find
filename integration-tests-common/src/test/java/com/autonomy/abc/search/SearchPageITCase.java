@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -255,11 +256,12 @@ public class SearchPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage = getElementFactory().getPromotionsPage();
 		promotionsPage.getPromotionLinkWithTitleContaining("boat").click();
-        assertThat(promotionsPage.getText(), containsString("Trigger terms"));
- 		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(promotionsPage.triggerAddButton()));
+		PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        assertThat(promotionsDetailPage.getText(), containsString("Trigger terms"));
+ 		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(promotionsDetailPage.triggerAddButton()));
 
-		promotionsPage.clickableSearchTrigger("boat").click();
-		promotionsPage.loadOrFadeWait();
+		promotionsDetailPage.trigger("boat").click();
+		promotionsDetailPage.loadOrFadeWait();
 
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
@@ -617,7 +619,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testSearchAlternateScriptToSelectedLanguage() {
 		for (final String language : Arrays.asList("French", "English", "Arabic", "Urdu", "Hindi", "Chinese")) {
-			searchPage.selectLanguage(language, getConfig().getType().getName());
+			searchPage.selectLanguage(language);
 
 			for (final String script : Arrays.asList("निर्वाण", "العربية", "עברית", "сценарий", "latin", "ελληνικά", "ქართული", "བོད་ཡིག")) {
 				search(script);
@@ -757,7 +759,7 @@ public class SearchPageITCase extends ABCTestBase {
 
         search("leg");
 
-        searchPage.selectLanguage("English", getConfig().getType().getName());
+        searchPage.selectLanguage("English");
 		languageWarn();
 
         int initialSearchCount = searchPage.countSearchResults();
@@ -822,8 +824,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		search("darth");
 
-//        searchPage.selectLanguage("English", getConfig().getType().getName());
-		languageWarn();
+        searchPage.selectLanguage("English");
 
         searchPage.createAMultiDocumentPromotion(2);
 		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
@@ -949,7 +950,7 @@ public class SearchPageITCase extends ABCTestBase {
             }
 
         } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            searchPage.selectLanguage("English", getConfig().getType().getName());
+            searchPage.selectLanguage("English");
             for (final String searchTerm : boolOperators) {
                 search(searchTerm);
                 assertThat("Correct error message not present for searchterm: " + searchTerm + searchPage.getText(), searchPage.getText(), containsString("An error occurred executing the search action"));
@@ -1207,12 +1208,12 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
 		//TODO failing here wrongly
-        assertEquals("Page should still have results", searchPage.getText(), not(containsString("No results found...")));
-        assertEquals("Page should not have thrown an error", searchPage.getText(), not(containsString(havenErrorMessage)));
-        assertEquals("Page number should not have changed", currentPage, searchPage.getCurrentPageNumber());
-		assertEquals("Url should have reverted to original url", url, getDriver().getCurrentUrl());
-		assertFalse("Error message should not be showing", searchPage.isErrorMessageShowing());
-		assertEquals("Search results have changed on last page", docTitle, searchPage.getSearchResultTitle(1));
+        assertThat("Page should still have results", searchPage.getText(), not(containsString("No results found...")));
+		assertThat("Page should not have thrown an error", searchPage.getText(), not(containsString(havenErrorMessage)));
+		assertThat("Page number should not have changed", currentPage, is(searchPage.getCurrentPageNumber()));
+		assertThat("Url should have reverted to original url", url, is(getDriver().getCurrentUrl()));
+		assertThat("Error message should not be showing", searchPage.isErrorMessageShowing(), is(false));
+		assertThat("Search results have changed on last page", docTitle, is(searchPage.getSearchResultTitle(1)));
 	}
 
 	@Test

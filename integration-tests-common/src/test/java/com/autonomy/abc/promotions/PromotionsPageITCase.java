@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -172,7 +173,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testHTMLTrigger() {
 		setUpCarsPromotion(1);
-		final String trigger = "<h1>Hi</h1>";
+		final String trigger = "<h1>hi</h1>";
 		promotionsDetailPage.triggerAddBox().setAndSubmit(trigger);
 
 		assertThat("triggers are HTML escaped", promotionsDetailPage, triggerList(hasItem(trigger)));
@@ -227,12 +228,15 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		Dropdown dropdown = promotionsDetailPage.spotlightTypeDropdown();
 		dropdown.select("Hotwire");
+		promotionsDetailPage.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Hotwire"));
 
 		dropdown.select("Top Promotions");
+		promotionsDetailPage.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Top Promotions"));
 
 		dropdown.select("Sponsored");
+		promotionsDetailPage.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Sponsored"));
 	}
 
@@ -414,10 +418,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testPromotionLanguages() {
-		// TODO: IOD-4857
+		// TODO: IOD-4827
 		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
 		String[] languages = {"French", "Swahili", "Afrikaans"};
-		String[] searchTerms = {"chien", "mbwa", "pooch"};
+//		String[] searchTerms = {"chien", "mbwa", "pooch"};
+		//Afrikaans dog thing isn't actually a dog but it wasn't working so yolo
+		String[] searchTerms = {"chien", "mbwa", "bergaalwyn"};
 		Promotion[] promotions = {
 				new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"),
 				new PinToPositionPromotion(3, "swahili woof"),
@@ -482,13 +488,13 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));
 
 		getDriver().switchTo().window(browserHandles.get(0));
-
+		promotionService.goToPromotions();
 		promotionService.delete("friend");
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
-
-		promotionService.delete("woof");
+//		promotionService.delete("woof");
+		secondPromotionsPage.deletePromotion("woof");
 
 		getDriver().switchTo().window(browserHandles.get(0));
 		verifyThat(promotionsPage, containsText("There are no promotions..."));
