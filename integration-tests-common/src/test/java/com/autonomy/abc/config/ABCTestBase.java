@@ -137,9 +137,7 @@ public abstract class ABCTestBase {
 		elementFactory = getApplication().createElementFactory(driver);
 	}
 
-	@Before
-	public void baseSetUp() throws MalformedURLException {
-		regularSetUp();
+	protected void tryLogIn(){
 		try {
 			elementFactory.getLoginPage().loginWith(getApplication().createCredentials());
 			//Wait for page to load
@@ -150,6 +148,12 @@ public abstract class ABCTestBase {
 			LOGGER.error("Unable to login");
 			fail("Unable to login");
 		}
+	}
+
+	@Before
+	public void baseSetUp() throws MalformedURLException {
+		regularSetUp();
+		tryLogIn();
 		sideNavBar = body.getSideNavBar();
 		navBar = body.getTopNavBar();
 	}
