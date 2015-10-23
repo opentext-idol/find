@@ -17,7 +17,7 @@ public class HPPassport implements AuthProvider {
     }
 
     private WebElement hpPassportButton(){
-        return driver.findElement(By.linkText("Passport"));
+        return driver.findElement(By.linkText("HP Passport"));
     }
 
     private WebElement usernameBox(){
