@@ -11,9 +11,9 @@ public class Twitter implements AuthProvider {
     private final String password;
     private WebDriver driver;
 
-    public Twitter(String username, String password){
-        this.username = username;
-        this.password = password;
+    public Twitter(){
+        this.username = System.getProperty("com.autonomy.username");
+        this.password = System.getProperty("com.autonomy.password");
     }
 
     private WebElement twitterButton(){

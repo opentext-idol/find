@@ -9,8 +9,8 @@ public class OpenID implements AuthProvider {
     private final String url;
     private WebDriver driver;
 
-    public OpenID(String url){
-        this.url = url;
+    public OpenID(){
+        this.url = System.getProperty("com.autonomy.url");
     }
 
     private WebElement openIDButton(){

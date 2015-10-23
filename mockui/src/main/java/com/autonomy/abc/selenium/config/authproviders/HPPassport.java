@@ -11,9 +11,9 @@ public class HPPassport implements AuthProvider {
     private final String password;
     private WebDriver driver;
 
-    public HPPassport(String username,String password){
-        this.username = username;
-        this.password = password;
+    public HPPassport(){
+        this.username = System.getProperty("com.autonomy.username");
+        this.password = System.getProperty("com.autonomy.password");
     }
 
     private WebElement hpPassportButton(){

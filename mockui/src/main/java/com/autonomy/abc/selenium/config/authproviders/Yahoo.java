@@ -10,9 +10,9 @@ public class Yahoo implements AuthProvider {
     private final String password;
     private WebDriver driver;
 
-    public Yahoo(String email, String password){
-        this.email = email;
-        this.password = password;
+    public Yahoo(){
+        this.email = System.getProperty("com.autonomy.username");
+        this.password = System.getProperty("com.autonomy.password");
     }
 
     private WebElement yahooButton(){
