@@ -5,39 +5,38 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class Twitter implements AuthProvider {
-
-    private final String username;
+public class Facebook implements AuthProvider {
+    private final String email;
     private final String password;
     private WebDriver driver;
 
-    public Twitter(String username, String password){
-        this.username = username;
+    public Facebook(String email, String password){
+        this.email = email;
         this.password = password;
     }
 
     private WebElement twitterButton(){
-        return driver.findElement(By.linkText("Twitter"));
+        return driver.findElement(By.linkText("Facebook"));
     }
 
     private WebElement usernameBox(){
-        return driver.findElement(By.id("username_or_email"));
+        return driver.findElement(By.id("email"));
     }
 
     private WebElement passwordBox(){
-        return driver.findElement(By.id("password"));
+        return driver.findElement(By.id("pass"));
     }
 
-    private WebElement signInBtn(){
-        return driver.findElement(By.id("allow"));
+    private WebElement logInBtn(){
+        return driver.findElement(By.id("u_0_2"));
     }
 
     @Override
     public void login(WebDriver driver) {
         this.driver = driver;
         twitterButton().click();
-        usernameBox().sendKeys(username);
+        usernameBox().sendKeys(email);
         passwordBox().sendKeys(password);
-        signInBtn().click();
+        logInBtn().click();
     }
 }

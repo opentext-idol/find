@@ -28,7 +28,7 @@ public class HPPassport implements AuthProvider {
         return driver.findElement(By.id("hp-passport_password"));
     }
 
-    private WebElement submitBtn(){
+    private WebElement signInBtn(){
         return driver.findElement(By.id("hp-passport_submit"));
     }
 
@@ -38,6 +38,6 @@ public class HPPassport implements AuthProvider {
         hpPassportButton().click();
         usernameBox().sendKeys(username);
         passwordBox().sendKeys(password);
-        submitBtn().click();
+        signInBtn().click();
     }
 }
