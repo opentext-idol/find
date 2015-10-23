@@ -5,37 +5,37 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class Twitter implements AuthProvider {
+public class HPPassport implements AuthProvider {
 
     private final String username;
     private final String password;
     private WebDriver driver;
 
-    public Twitter(String username, String password){
+    public HPPassport(String username,String password){
         this.username = username;
         this.password = password;
     }
 
-    private WebElement twitterButton(){
-        return driver.findElement(By.linkText("Twitter"));
+    private WebElement hpPassportButton(){
+        return driver.findElement(By.linkText("Passport"));
     }
 
     private WebElement usernameBox(){
-        return driver.findElement(By.id("username_or_email"));
+        return driver.findElement(By.id("hp-passport_username"));
     }
 
     private WebElement passwordBox(){
-        return driver.findElement(By.id("password"));
+        return driver.findElement(By.id("hp-passport_password"));
     }
 
     private WebElement submitBtn(){
-        return driver.findElement(By.id("allow"));
+        return driver.findElement(By.id("hp-passport_submit"));
     }
 
     @Override
     public void login(WebDriver driver) {
         this.driver = driver;
-        twitterButton().click();
+        hpPassportButton().click();
         usernameBox().sendKeys(username);
         passwordBox().sendKeys(password);
         submitBtn().click();
