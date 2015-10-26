@@ -1,78 +1,90 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.Browser;
+import com.autonomy.abc.selenium.users.User;
+import org.junit.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class TestConfig {
+	private final static File DEFAULT_CONFIG_LOCATION = new File("../config/default.json");
+	private final static File USER_CONFIG_LOCATION = new File(System.getProperty("com.autonomy.configFile"));
 
+	private final JsonConfig jsonConfig;
 	private final int index;
 	private final ApplicationType type;
 	private final URL url;
+	private final Platform platform;
+	private final Browser browser;
 
-	public TestConfig(final int index, final ApplicationType type) throws MalformedURLException {
+	private TestConfig(final int index, final JsonConfig config) {
+		this.jsonConfig = config;
 		this.index = index;
-		this.type = type;
-		this.url = new URL(System.getProperty("com.autonomy.hubUrl"));
+		this.type = jsonConfig.getAppType();
+		this.url = jsonConfig.getHubUrl();
+		this.platform = Platform.WINDOWS;
+		this.browser = jsonConfig.getBrowsers().get(index);
 	}
 
 	public String getWebappUrl() {
-		if (this.getType() == ApplicationType.ON_PREM) {
-			return System.getProperty("com.autonomy.abcOnPremiseUrl");
-		} else {
-			return System.getProperty("com.autonomy.abcHostedUrl");
-		}
+		return jsonConfig.getWebappUrl().toString();
+	}
+
+	public User getDefaultUser() {
+		return jsonConfig.getDefaultUser();
+	}
+
+	public Browser getBrowser() {
+		return browser;
+	}
+
+	public Platform getPlatform() {
+		return platform;
 	}
 
 	public int getIndex() {
 		return index;
 	}
 
-	public ApplicationType getType() {return type; }
+	public ApplicationType getType() {
+		return type;
+	}
 
-	public WebDriver createWebDriver(final String browser, final Platform platform) {
-		final DesiredCapabilities capabilities;
-		final LoggingPreferences logPrefs = new LoggingPreferences();
-		logPrefs.enable(LogType.BROWSER, Level.ALL);
+	public WebDriver createWebDriver(final Platform platform) {
+		return browser.createWebDriver(url, platform);
+	}
 
-		switch (browser) {
-			case "firefox":
-				capabilities = DesiredCapabilities.firefox();
-				break;
-			case "internet explorer":
-				capabilities = DesiredCapabilities.internetExplorer();
-				break;
-			case "chrome":
-				capabilities = DesiredCapabilities.chrome();
-				final ChromeOptions options = new ChromeOptions();
-				options.addArguments("--lang=en_GB");
-				options.addArguments("--start-maximized");
-                // avoids "Disable developer mode extensions" popup
-                options.addArguments("--disable-extensions");
-				options.addArguments("--disable-popup-blocking");
-				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-				break;
-			case "opera":
-				capabilities = DesiredCapabilities.opera();
-				break;
-			default:
-				throw new IllegalArgumentException("bad value for parameter browser: " + browser);
+	public static List<Object[]> readConfigs(final Collection<ApplicationType> applicationTypes) throws IOException {
+		List<Object[]> configs = new ArrayList<>();
+		JsonConfig defaultConfig = JsonConfig.readFile(DEFAULT_CONFIG_LOCATION);
+		JsonConfig userSpecifiedConfig = JsonConfig.readFile(USER_CONFIG_LOCATION);
+		JsonConfig jsonConfig = defaultConfig.overrideUsing(userSpecifiedConfig);
+		System.out.println(defaultConfig);
+		System.out.println(userSpecifiedConfig);
+		System.out.println(jsonConfig);
+
+
+		if (applicationTypes.contains(jsonConfig.getAppType())) {
+			for (int i = 0; i < jsonConfig.getBrowsers().size(); i++) {
+				TestConfig config = new TestConfig(i, jsonConfig);
+				// for compatibility
+				configs.add(new Object[]{
+						config,
+						config.getBrowser().toString(),
+						config.getType(),
+						config.getPlatform()
+				});
+			}
 		}
-
-		capabilities.setBrowserName(browser);
-		capabilities.setPlatform(platform);
-		capabilities.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
-		return new RemoteWebDriver(this.url, capabilities);
+		return configs;
 	}
 
 }

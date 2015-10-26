@@ -7,6 +7,7 @@ import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.Browser;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
@@ -25,6 +26,7 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
 
@@ -34,13 +36,11 @@ import static org.junit.Assert.fail;
 @RunWith(Parameterized.class)
 public abstract class ABCTestBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
-	private final static Set<String> USER_BROWSERS;
-	private final static Set<ApplicationType> APPLICATION_TYPES;
 	// testState is used by Rules/StatementHandlers
 	private final TestState testState = TestState.get();
 	public final TestConfig config;
 
-	public final String browser;
+	public final Browser browser;
 	private final Platform platform;
 	private final ApplicationType type;
 	private final Application application;
@@ -56,66 +56,27 @@ public abstract class ABCTestBase {
 	@Deprecated
 	protected TopNavBar navBar;
 
-	static {
-		final String[] allBrowsers = {"firefox", "internet explorer", "chrome"};
-		final String browserProperty = System.getProperty("com.autonomy.browsers");
-		final String applicationTypeProperty = System.getProperty("com.autonomy.applicationType");
-
-		if (browserProperty == null) {
-			USER_BROWSERS = new HashSet<>(Arrays.asList(allBrowsers));
-		} else {
-			USER_BROWSERS = new HashSet<>();
-
-			for (final String browser : allBrowsers) {
-				if (browserProperty.contains(browser)) {
-					USER_BROWSERS.add(browser);
-				}
-			}
-		}
-
-		if (applicationTypeProperty == null) {
-			APPLICATION_TYPES = EnumSet.allOf(ApplicationType.class);
-		} else {
-			APPLICATION_TYPES = EnumSet.noneOf(ApplicationType.class);
-
-			for (final ApplicationType applicationType : ApplicationType.values()) {
-				if (applicationTypeProperty.contains(applicationType.getName())) {
-					APPLICATION_TYPES.add(applicationType);
-				}
-			}
-		}
+	// TODO: replace with single argument constructor
+	public ABCTestBase(final TestConfig config, final String browser, final ApplicationType type, final Platform platform) {
+		this(config);
 	}
 
-	public ABCTestBase(final TestConfig config, final String browser, final ApplicationType type, final Platform platform) {
+	public ABCTestBase(final TestConfig config) {
 		this.config = config;
-		this.browser = browser;
-		this.platform = platform;
-		this.type = type;
+		this.browser = config.getBrowser();
+		this.platform = config.getPlatform();
+		this.type = config.getType();
 		this.application = Application.ofType(type);
 	}
 
 	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final Collection<ApplicationType> applicationType = Arrays.asList(ApplicationType.HOSTED, ApplicationType.ON_PREM);
+	public static Iterable<Object[]> parameters() throws IOException {
+		final List<ApplicationType> applicationType = Arrays.asList(ApplicationType.HOSTED, ApplicationType.ON_PREM);
 		return parameters(applicationType);
 	}
 
-	protected static List<Object[]> parameters(final Iterable<ApplicationType> applicationTypes) throws MalformedURLException {
-		final List<Object[]> output = new ArrayList<>();
-
-		for (final ApplicationType type : applicationTypes) {
-			if (APPLICATION_TYPES.contains(type)) {
-				for (final String browser : USER_BROWSERS) {
-					output.add(new Object[]{
-							new TestConfig(output.size(), type),
-							browser,
-							type,
-							Platform.WINDOWS
-					});
-				}
-			}
-		}
-		return output;
+	protected static List<Object[]> parameters(final Collection<ApplicationType> applicationTypes) throws IOException {
+		return TestConfig.readConfigs(applicationTypes);
 	}
 	// StateHelperRule.finished() calls WebDriver.quit so must be the last thing called
 	@Rule
@@ -124,7 +85,7 @@ public abstract class ABCTestBase {
 	@Before
 	public void baseSetUp() throws MalformedURLException {
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
-		driver = config.createWebDriver(browser, platform);
+		driver = config.createWebDriver(platform);
 		ImplicitWaits.setImplicitWait(driver);
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));

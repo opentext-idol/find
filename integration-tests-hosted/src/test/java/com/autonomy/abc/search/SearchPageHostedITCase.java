@@ -17,6 +17,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +36,7 @@ public class SearchPageHostedITCase extends ABCTestBase {
 	private TopNavBar topNavBar;
 
 	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws MalformedURLException {
+	public static Iterable<Object[]> parameters() throws IOException {
 		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.HOSTED);
 		return parameters(applicationTypes);
 	}
