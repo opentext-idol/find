@@ -39,11 +39,11 @@ public class JsonConfig {
     }
 
     public static JsonConfig readFile(File jsonFile) throws IOException {
-        return new JsonConfig(new ObjectMapper().readTree(jsonFile));
+        return (jsonFile == null) ? null : new JsonConfig(new ObjectMapper().readTree(jsonFile));
     }
 
     public JsonConfig overrideUsing(JsonConfig overrides) throws IOException {
-        return new JsonConfig(overrides, this);
+        return (overrides == null) ? this : new JsonConfig(overrides, this);
     }
 
     public URL getHubUrl() {

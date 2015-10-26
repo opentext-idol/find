@@ -3,7 +3,6 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.Browser;
 import com.autonomy.abc.selenium.users.User;
-import org.junit.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 
@@ -16,7 +15,12 @@ import java.util.List;
 
 public class TestConfig {
 	private final static File DEFAULT_CONFIG_LOCATION = new File("../config/default.json");
-	private final static File USER_CONFIG_LOCATION = new File(System.getProperty("com.autonomy.configFile"));
+	private final static File USER_CONFIG_LOCATION;
+
+	static {
+		String configFile = System.getProperty("com.autonomy.configFile");
+		USER_CONFIG_LOCATION = (configFile == null) ? null : new File(configFile);
+	}
 
 	private final JsonConfig jsonConfig;
 	private final int index;
@@ -67,9 +71,6 @@ public class TestConfig {
 		JsonConfig defaultConfig = JsonConfig.readFile(DEFAULT_CONFIG_LOCATION);
 		JsonConfig userSpecifiedConfig = JsonConfig.readFile(USER_CONFIG_LOCATION);
 		JsonConfig jsonConfig = defaultConfig.overrideUsing(userSpecifiedConfig);
-		System.out.println(defaultConfig);
-		System.out.println(userSpecifiedConfig);
-		System.out.println(jsonConfig);
 
 
 		if (applicationTypes.contains(jsonConfig.getAppType())) {
