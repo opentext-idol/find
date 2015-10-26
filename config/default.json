@@ -1,0 +1,18 @@
+{
+  "app": {
+    "type": "Hosted",
+    "url": "http://search.preview.havenapps.io"
+  },
+  "selenium": {
+    "browsers": ["chrome"],
+    "url": "http://localhost:4444/wd/hub"
+  },
+  "users": {
+    "default": {
+      "accessLevel": "Admin",
+      "auth": "Google",
+      "username": "hodtestqa401@gmail.com",
+      "password": "qoxntlozubjaamyszerfk"
+    }
+  }
+}
