@@ -82,8 +82,7 @@ public abstract class ABCTestBase {
 	@Rule
 	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this)).around(new TestArtifactRule(this));
 
-	@Before
-	public void baseSetUp() throws MalformedURLException {
+	protected void regularSetUp(){
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
 		driver = config.createWebDriver(platform);
 		ImplicitWaits.setImplicitWait(driver);
@@ -97,6 +96,9 @@ public abstract class ABCTestBase {
 		// no side/top bar until logged in
 		body = getApplication().createAppBody(driver, null, null);
 		elementFactory = getApplication().createElementFactory(driver);
+	}
+
+	protected void tryLogIn(){
 		try {
 			elementFactory.getLoginPage().loginWith(getApplication().createCredentials());
 			//Wait for page to load
@@ -107,6 +109,12 @@ public abstract class ABCTestBase {
 			LOGGER.error("Unable to login");
 			fail("Unable to login");
 		}
+	}
+
+	@Before
+	public void baseSetUp() throws MalformedURLException {
+		regularSetUp();
+		tryLogIn();
 		sideNavBar = body.getSideNavBar();
 		navBar = body.getTopNavBar();
 	}
