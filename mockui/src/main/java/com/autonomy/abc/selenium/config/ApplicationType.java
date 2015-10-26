@@ -27,4 +27,8 @@ public enum ApplicationType {
 			throw new IllegalStateException("Could not create Application object - check that the correct mockui package is included in the POM", e);
 		}
 	}
+
+	public static ApplicationType fromString(String type) {
+		return type.toLowerCase().equals("hosted") ? HOSTED : ON_PREM;
+	}
 }
