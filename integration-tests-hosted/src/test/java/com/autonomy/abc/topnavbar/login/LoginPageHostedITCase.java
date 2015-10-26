@@ -54,7 +54,7 @@ public class LoginPageHostedITCase extends ABCTestBase {
     @Test
     public void testFacebookLogin(){
         setLoginType("facebook");
-        setUsernameAndPassword("", "");
+        setUsernameAndPassword("matthew.williamson@hpe.com", "vdPAuTGU");
         tryLogIn();
     }
 
