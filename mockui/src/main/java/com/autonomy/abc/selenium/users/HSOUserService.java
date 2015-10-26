@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 
-public class HSOUserService extends  UserService {
+public class HSOUserService extends UserService<User<?>> {
     public HSOUserService(Application application, ElementFactory elementFactory) {
         super(application, elementFactory);
     }
@@ -18,12 +18,7 @@ public class HSOUserService extends  UserService {
     }
 
     @Override
-    public void login(User user) {
-        getElementFactory().getLoginPage().loginWith(getApplication().createCredentials());
-    }
-
-    @Override
-    public UsersPage createUser(User user) {
+    public UsersPage createUser(User<?> user) {
         return null;
     }
 }

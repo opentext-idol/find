@@ -1,10 +1,13 @@
 package com.autonomy.abc.selenium.users;
 
-public class User {
+import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+
+public class User<T extends AuthProvider> {
     private final String username;
     private final String email;
     private String password;
     private AccessLevel accessLevel;
+    private T authProvider;
 
     public User(String username, String password, String email, AccessLevel accessLevel){
         this.username = username;
@@ -17,7 +20,18 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-        accessLevel = AccessLevel.USER;
+        this.accessLevel = AccessLevel.USER;
+    }
+
+    public User(T provider, String email, AccessLevel accessLevel) {
+        this.authProvider = provider;
+        this.username = null;
+        this.email = email;
+        this.accessLevel = accessLevel;
+    }
+
+    public User(T provider, String email) {
+        this(provider, email, AccessLevel.USER);
     }
 
     public AccessLevel getAccessLevel() {
@@ -28,12 +42,8 @@ public class User {
         return email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getUsername() {
-        return username;
+    public T getAuthProvider() {
+        return authProvider;
     }
 
     public enum AccessLevel {
@@ -49,5 +59,21 @@ public class User {
         public String toString() {
             return accessLevel;
         }
+
+        public static AccessLevel fromString(String name) {
+            switch (name.toLowerCase()) {
+                case "admin":
+                    return ADMIN;
+                case "user":
+                    return USER;
+                default:
+                    return NONE;
+            }
+        }
     }
+
+    public String toString() {
+        return "User<" + username + ">";
+    }
+
 }

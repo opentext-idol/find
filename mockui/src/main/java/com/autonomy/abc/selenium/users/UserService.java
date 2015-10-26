@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import org.openqa.selenium.WebDriver;
 
-public abstract class UserService {
+public abstract class UserService<T extends User<?>> {
 
     private final Application application;
     private final ElementFactory elementFactory;
@@ -18,8 +18,12 @@ public abstract class UserService {
     }
 
     public abstract UsersPage goToUsers();
-    public abstract void login(User user);
-    public abstract UsersPage createUser(User user);
+
+    public abstract UsersPage createUser(T user);
+
+    public void login(T user) {
+        getElementFactory().getLoginPage().loginWith(user.getAuthProvider());
+    }
 
     protected WebDriver getDriver() {
         return getElementFactory().getDriver();
