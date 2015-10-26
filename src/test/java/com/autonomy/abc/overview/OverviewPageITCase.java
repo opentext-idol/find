@@ -18,8 +18,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.util.*;
 
 import static com.thoughtworks.selenium.SeleneseTestBase.assertEquals;
@@ -35,7 +35,7 @@ public class OverviewPageITCase extends ABCTestBase {
 	private OverviewPage overviewPage;
 
 	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws MalformedURLException {
+	public static Iterable<Object[]> parameters() throws IOException {
 		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
 	}
@@ -46,8 +46,8 @@ public class OverviewPageITCase extends ABCTestBase {
 	}
 
 	@Before
-	public void setUp() throws MalformedURLException {
-		overviewPage = (OverviewPage) getElementFactory().getOverviewPage();
+	public void setUp() {
+		overviewPage = getElementFactory().getOverviewPage();
 	}
 
 	@Test

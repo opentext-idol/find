@@ -20,7 +20,6 @@ import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.*;
 
 import static junit.framework.TestCase.assertEquals;
@@ -39,7 +38,7 @@ public class SettingsPageITCase extends ABCTestBase {
 	private final static EnumSet<SettingsPage.Panel> SERVER_PANELS = EnumSet.of(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.CONTENT, SettingsPage.Panel.QMS, SettingsPage.Panel.QMS_AGENTSTORE, SettingsPage.Panel.STATSSERVER, SettingsPage.Panel.VIEW);
 
 	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws MalformedURLException {
+	public static Iterable<Object[]> parameters() throws IOException {
 		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
 	}

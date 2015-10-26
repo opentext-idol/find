@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -27,7 +27,7 @@ public class AboutPageITCase extends ABCTestBase {
 	private AboutPage aboutPage;
 
 	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws MalformedURLException {
+	public static Iterable<Object[]> parameters() throws IOException {
 		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
 	}
@@ -38,7 +38,7 @@ public class AboutPageITCase extends ABCTestBase {
 	}
 
 	@Before
-	public void setUp() throws MalformedURLException, InterruptedException {
+	public void setUp() throws InterruptedException {
         Thread.sleep(5000);
         ((OPTopNavBar) body.getTopNavBar()).goToAboutPage();
 		aboutPage = getElementFactory().getAboutPage();

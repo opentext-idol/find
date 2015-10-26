@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -29,13 +29,13 @@ public class SearchPageOnPremiseITCase extends ABCTestBase {
     private SearchActionFactory searchActionFactory;
 
 	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws MalformedURLException {
+	public static Iterable<Object[]> parameters() throws IOException {
 		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
 		return parameters(applicationTypes);
 	}
 
 	@Before
-	public void setUp() throws MalformedURLException {
+	public void setUp() {
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 		searchPage = searchActionFactory.makeSearch("example").apply();
 	}
