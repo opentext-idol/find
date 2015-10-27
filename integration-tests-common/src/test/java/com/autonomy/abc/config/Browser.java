@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.config;
+package com.autonomy.abc.config;
 
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
