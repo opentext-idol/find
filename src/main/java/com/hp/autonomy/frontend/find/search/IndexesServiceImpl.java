@@ -86,7 +86,7 @@ public class IndexesServiceImpl implements IndexesService {
 
         if(activeIndexes.isEmpty()) {
             final HodAuthentication auth = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
-            final String domain = auth.getApplication().getDomain();
+            final String domain = auth.getPrincipal().getApplication().getDomain();
 
             final Set<Database> validDatabases;
             final Set<Database> allDatabases = databasesService.getDatabases(domain);

@@ -22,7 +22,7 @@ public class SystemPropertyFindQueryProfileService implements FindQueryProfileSe
      */
     @Override
     public ResourceIdentifier getQueryProfile() {
-        final String domain = ((HodAuthentication) SecurityContextHolder.getContext().getAuthentication()).getApplication().getDomain();
+        final String domain = ((HodAuthentication) SecurityContextHolder.getContext().getAuthentication()).getPrincipal().getApplication().getDomain();
         return new ResourceIdentifier(domain, QUERY_PROFILE_NAME);
     }
 }

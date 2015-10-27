@@ -63,7 +63,7 @@ public class HodViewController extends AbstractViewController {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
 
-        final String domain = ((HodAuthentication) SecurityContextHolder.getContext().getAuthentication()).getApplication().getDomain();
+        final String domain = ((HodAuthentication) SecurityContextHolder.getContext().getAuthentication()).getPrincipal().getApplication().getDomain();
 
         final String queryProfileName = findQueryProfileService.getQueryProfile().getName();
         final QueryProfile queryProfile = queryProfileService.retrieveQueryProfile(queryProfileName);
