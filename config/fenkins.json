@@ -1,0 +1,18 @@
+{
+  "app": {
+    "type": "On Premise",
+    "url": "http://searchoptimizer-test-01.hpswlabs.hp.com:8080/searchoptimizer/p/"
+  },
+  "selenium": {
+    "browsers": ["chrome", "firefox", "internet explorer"],
+    "url": "http://10.2.112.233:4444/wd/hub"
+  },
+  "users": {
+    "default": {
+      "accessLevel": "Admin",
+      "auth": "OPAccount",
+      "username": "richard",
+      "password": "q"
+    }
+  }
+}

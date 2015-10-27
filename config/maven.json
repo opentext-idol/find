@@ -1,0 +1,18 @@
+{
+  "app": {
+    "type": "Hosted",
+    "url": "${config.app.url}"
+  },
+  "selenium": {
+    "browsers": ["${config.selenium.browser}"],
+    "url": "${config.selenium.url}"
+  },
+  "users": {
+    "default": {
+      "accessLevel": "Admin",
+      "auth": "Google",
+      "username": "hodtestqa401@gmail.com",
+      "password": "qoxntlozubjaamyszerfk"
+    }
+  }
+}
