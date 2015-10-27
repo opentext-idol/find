@@ -14,6 +14,14 @@
         <version>1.0.1</version>
     </parent>
 
+    <!-- specify defaults -->
+    <properties>
+        <build.config.location>target/config/maven.json</build.config.location>
+        <config.selenium.url>http://localhost:4444/wd/hub</config.selenium.url>
+        <config.selenium.browser>chrome</config.selenium.browser>
+        <config.app.url>http://search.preview.havenapps.io</config.app.url>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -39,21 +47,50 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <systemPropertyVariables>
+                        <com.autonomy.baseConfig>${build.config.location}</com.autonomy.baseConfig>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/config</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../config</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
-            <id>
-                onprem
-            </id>
+            <id>onprem</id>
             <activation>
                 <property>
                     <name>com.autonomy.applicationType</name>
                     <value>On Premise</value>
                 </property>
             </activation>
+            <properties>
+                <build.config.location>target/config/onprem.json</build.config.location>
+                <!-- "testConfig" lists IDOL server setup for SettingsPageITCase -->
+                <testConfig.location>config.json</testConfig.location>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
@@ -62,6 +99,33 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>hod-jenkins</id>
+            <activation>
+                <property>
+                    <name>com.autonomy.hubUrl</name>
+                    <value>http://16.46.34.8:4444/wd/hub</value>
+                </property>
+            </activation>
+            <properties>
+                <config.selenium.url>http://16.46.34.8:4444/wd/hub</config.selenium.url>
+            </properties>
+        </profile>
+        <profile>
+            <id>fenkins</id>
+            <activation>
+                <property>
+                    <name>com.autonomy.hubUrl</name>
+                    <value>http://10.2.112.233:4444/wd/hub</value>
+                </property>
+            </activation>
+            <properties>
+                <build.config.location>target/config/fenkins.json</build.config.location>
+                <!-- "testConfig" lists IDOL server setup for SettingsPageITCase -->
+                <testConfig.location>config.json</testConfig.location>
+            </properties>
+        </profile>
+
     </profiles>
 
     <dependencies>
