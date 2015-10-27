@@ -30,7 +30,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement searchResultCheckbox(final int resultNumber) {
-		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(resultNumber) + ") .icheckbox_square-blue")));
+		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
 	public WebElement getResultsBoxByTitle(final String docTitle) {
@@ -81,19 +81,19 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement backToFirstPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.xpath(".//i[contains(@class, 'fa-angle-double-left')]")));
+		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous-chapter")));
 	}
 
 	public WebElement backPageButton() {
-		return findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.xpath(".//i[contains(@class, 'fa-angle-left')]/.."));
+		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous")));
 	}
 
 	public WebElement forwardToLastPageButton() {
-		return findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.xpath(".//i[contains(@class, 'fa-angle-double-right')]/.."));
+		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next-chapter")));
 	}
 
 	public WebElement forwardPageButton() {
-		return findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.xpath(".//i[contains(@class, 'fa-angle-right')]/.."));
+		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-chevron-right")));
 	}
 
 	public boolean isPageActive(final int pageNumber) {
@@ -108,7 +108,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		loadOrFadeWait();
 //		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
 		waitForSearchLoadIndicatorToDisappear();
-		return Integer.parseInt(findElement(By.cssSelector(".pagination-nav.centre li.active span")).getText());
+		return Integer.parseInt(findElement(By.cssSelector(".btn-nav.active")).getText());
 	}
 
 	public boolean isBackToFirstPageButtonDisabled() {
@@ -365,6 +365,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return bucketDocTitles;
 	}
 
+	protected List<WebElement> bucketListWebElements(final WebElement element){
+		return element.findElements(By.cssSelector(".promotions-bucket-document"));
+	}
+
 	public void openFromDatePicker() {
 		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
 		loadOrFadeWait();
@@ -407,8 +411,9 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return DATE_FORMAT.parse(dateString.split(", ")[1]);
 	}
 
+	//TODO is this actually what it's looking for?
 	public String getResultsForText() {
-		return getDriver().findElement(By.cssSelector(".heading strong")).getText();
+		return getDriver().findElement(By.cssSelector(".heading b")).getText();
 	}
 
 	public int countRelatedConcepts() {
