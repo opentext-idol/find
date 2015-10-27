@@ -5,12 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.autonomy.frontend</groupId>
-        <artifactId>master</artifactId>
-        <version>1.0.1</version>
+        <groupId>com.hp.autonomy.frontend.havensearch</groupId>
+        <artifactId>integration-tests-parent</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.hp.autonomy.frontend.havensearch</groupId>
     <artifactId>integration-tests-hosted</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
@@ -40,69 +39,8 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.havensearch</groupId>
             <artifactId>integration-tests-common</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.2-SNAPSHOT</version>
             <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.havensearch</groupId>
-            <artifactId>mockui</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.selenium</groupId>
-            <artifactId>selenium-utils</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.autonomy</groupId>
-            <artifactId>NonAciNG</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.2</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>2.43.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.0.9</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>java-hod-client</artifactId>
-            <version>0.12.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>java-parametric-databases</artifactId>
-            <version>0.2.0</version>
         </dependency>
     </dependencies>
 </project>
