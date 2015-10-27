@@ -58,7 +58,7 @@ public class AboutPage extends AppElement implements AppPage {
     }
 
     public static void waitForLoad(final WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h5[text()='FOSS Acknowledgements']")));
+        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='FOSS Acknowledgements']")));
     }
 
 }

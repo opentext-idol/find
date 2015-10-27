@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.keywords;
+ package com.autonomy.abc.selenium.page.keywords;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -29,7 +29,7 @@ public class OPKeywordsPage extends KeywordsPage {
 
     @Override
     public void selectLanguage(String language)  {
-        if (!getSelectedLanguage().equals(language)) {
+        if (!getSelectedLanguage().equals(language.toUpperCase())) {
             loadOrFadeWait();
             getParent(selectLanguageButton()).click();
             loadOrFadeWait();

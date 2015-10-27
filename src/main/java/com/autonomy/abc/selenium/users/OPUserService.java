@@ -17,7 +17,7 @@ public class OPUserService extends UserService {
 
     @Override
     public UsersPage goToUsers() {
-        getBody().getTopNavBar().findElement(By.cssSelector(".dropdown-toggle .fa-cog")).click();
+        getBody().getTopNavBar().findElement(By.cssSelector(".dropdown-toggle .hp-settings")).click();
         getBody().getTopNavBar().findElement(By.cssSelector("li[data-pagename='users'] a")).click();
         setUsersPage(getElementFactory().getUsersPage());
         return getUsersPage();

@@ -18,7 +18,7 @@ public class OPTopNavBar extends TopNavBar {
     }
 
     private void clickCog(){
-        findElement(By.className("fa-cog")).click();
+        findElement(By.className("hp-settings")).click();
     }
 
     private void clickDropdown(String page){

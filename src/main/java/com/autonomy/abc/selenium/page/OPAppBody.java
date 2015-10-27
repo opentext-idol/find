@@ -17,7 +17,7 @@ public class OPAppBody extends AppBody {
 
     @Override
     public void logout() {
-        getTopNavBar().findElement(By.cssSelector(".fa-cog")).click();
-        getTopNavBar().findElement(By.xpath(".//a[text()='Logout']")).click();
+        getTopNavBar().findElement(By.cssSelector(".hp-settings")).click();
+        getTopNavBar().findElement(By.xpath(".//a[text()=' Logout']")).click();
     }
 }
