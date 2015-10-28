@@ -1,4 +1,4 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;

@@ -1,4 +1,4 @@
-package com.autonomy.abc.config;
+package com.autonomy.abc.selenium.config;
 
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.*;

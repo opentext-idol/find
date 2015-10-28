@@ -21,6 +21,8 @@ public abstract class Application {
 
     public abstract UserService createUserService(ElementFactory elementFactory);
 
+    public abstract UserConfigParser getUserConfigParser();
+
     public abstract ApplicationType getType();
 
     public static Application ofType(ApplicationType type) {

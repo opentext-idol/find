@@ -1,6 +1,8 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +24,8 @@ public class JsonConfig {
         this.selenium = new SeleniumConfig(node.path("selenium"));
 
         // user config is app-specific, must initialise after app
-        UserConfigParser userConfigParser = getUserConfigParser();
+        Application application = Application.ofType(getAppType());
+        UserConfigParser userConfigParser = application.getUserConfigParser();
         this.users = new HashMap<>();
         Iterator<Map.Entry<String, JsonNode>> iterator = node.path("users").fields();
         while (iterator.hasNext()) {
@@ -128,21 +131,6 @@ public class JsonConfig {
         public String toString() {
             return "{browsers=" + browsers + ", url=" + url + "}";
         }
-    }
-
-    private UserConfigParser getUserConfigParser() {
-        String className;
-        if (this.getAppType().equals(ApplicationType.HOSTED)) {
-            className = "com.autonomy.abc.config.HSOUserConfigParser";
-        } else {
-            className = "com.autonomy.abc.config.OPUserConfigParser";
-        }
-        try {
-            return (UserConfigParser) Class.forName(className).newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            throw new IllegalStateException("Could not create UserConfigParser object - check that the correct integration-tests package is included in the POM", e);
-        }
-
     }
 
     // helper methods

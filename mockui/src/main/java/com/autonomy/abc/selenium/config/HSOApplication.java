@@ -32,12 +32,17 @@ public class HSOApplication extends Application {
     }
 
     @Override
-    public ApplicationType getType() {
-        return ApplicationType.HOSTED;
+    public HSOUserService createUserService(ElementFactory elementFactory){
+        return new HSOUserService(this,elementFactory);
     }
 
     @Override
-    public HSOUserService createUserService(ElementFactory elementFactory){
-        return new HSOUserService(this,elementFactory);
+    public UserConfigParser getUserConfigParser() {
+        return new HSOUserConfigParser();
+    }
+
+    @Override
+    public ApplicationType getType() {
+        return ApplicationType.HOSTED;
     }
 }
