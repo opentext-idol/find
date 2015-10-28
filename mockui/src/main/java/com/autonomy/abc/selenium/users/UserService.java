@@ -19,7 +19,7 @@ public abstract class UserService {
 
     public abstract UsersPage goToUsers();
 
-    public abstract UsersPage createUser(User user);
+    public abstract User createNewUser(NewUser newUser, User.Role role);
 
     public void login(User user) {
         getElementFactory().getLoginPage().loginWith(user.getAuthProvider());

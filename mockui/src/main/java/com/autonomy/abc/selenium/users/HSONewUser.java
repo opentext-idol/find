@@ -5,10 +5,7 @@ import com.autonomy.abc.selenium.page.admin.UsersPage;
 // TODO: CSA-1663
 public class HSONewUser implements NewUser {
     @Override
-    public User convertToUser() {
+    public User signUpAs(User.Role role, UsersPage usersPage) {
         return null;
     }
-
-    @Override
-    public void signup(UsersPage usersPage) { }
 }
