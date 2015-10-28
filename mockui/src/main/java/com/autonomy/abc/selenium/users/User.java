@@ -2,56 +2,61 @@ package com.autonomy.abc.selenium.users;
 
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 
-public class User<T extends AuthProvider> {
+public class User {
     private final String username;
-    private final String email;
+    private String email;
     private String password;
-    private AccessLevel accessLevel;
-    private T authProvider;
+    private Role role;
+    private AuthProvider authProvider;
 
-    public User(String username, String password, String email, AccessLevel accessLevel){
+    public User(String username, String password, String email, Role role){
         this.username = username;
         this.email = email;
         this.password = password;
-        this.accessLevel = accessLevel;
+        this.role = role;
     }
 
     public User(String username, String password, String email){
         this.username = username;
         this.email = email;
         this.password = password;
-        this.accessLevel = AccessLevel.USER;
+        this.role = Role.USER;
     }
 
-    public User(T provider, String email, AccessLevel accessLevel) {
+    public User(AuthProvider provider, String username, Role role) {
         this.authProvider = provider;
-        this.username = null;
-        this.email = email;
-        this.accessLevel = accessLevel;
+        this.username = username;
+        this.role = role;
     }
 
-    public User(T provider, String email) {
-        this(provider, email, AccessLevel.USER);
+    public User(AuthProvider provider, String username) {
+        this(provider, username, Role.USER);
     }
 
-    public AccessLevel getAccessLevel() {
-        return accessLevel;
+    public Role getRole() {
+        return role;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public T getAuthProvider() {
+    public String getUsername() {
+        return username;
+    }
+
+    public AuthProvider getAuthProvider() {
         return authProvider;
     }
 
-    public enum AccessLevel {
+    public enum Role {
         ADMIN("Admin"), USER("User"), NONE("None");
+
+        private static final Role DEFAULT = USER;
 
         private String accessLevel;
 
-        AccessLevel(String al){
+        Role(String al){
             accessLevel = al;
         }
 
@@ -60,20 +65,25 @@ public class User<T extends AuthProvider> {
             return accessLevel;
         }
 
-        public static AccessLevel fromString(String name) {
+        public static Role fromString(String name) {
+            if (name == null) {
+                return DEFAULT;
+            }
             switch (name.toLowerCase()) {
                 case "admin":
                     return ADMIN;
                 case "user":
                     return USER;
-                default:
+                case "none":
                     return NONE;
+                default:
+                    return DEFAULT;
             }
         }
     }
 
     public String toString() {
-        return "User<" + username + ">";
+        return "User<" + authProvider + '|' + role + '>';
     }
 
 }

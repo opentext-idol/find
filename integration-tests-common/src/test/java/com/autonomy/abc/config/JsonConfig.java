@@ -127,21 +127,21 @@ public class JsonConfig {
     }
 
     public static class UserConfig {
-        private final User.AccessLevel accessLevel;
         private final String auth;
         private final String username;
         private final String password;
         private final String email;
         private final User user;
+        private final User.Role role;
 
         private UserConfig(JsonNode userNode) {
-            accessLevel = User.AccessLevel.fromString(userNode.path("accessLevel").asText());
             auth = userNode.path("auth").asText();
             username = userNode.path("username").asText();
             password = userNode.path("password").asText();
             email = userNode.path("email").asText();
             // TODO: use auth
-            user = new User(username, password, email, accessLevel);
+            role = User.Role.fromString(userNode.path("role").asText());
+            role = new User(username, password, email, role);
         }
 
         public User getUser() {
