@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -128,7 +129,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		assertEquals(searchPage.getSelectedLanguage(), "French");
 		assertThat("Wrong search performed", searchPage.searchTitle().getText().equals("bunny rabbit"));
 		assertEquals(searchPage.promotionsSummaryList(false).get(0), firstDocTitle);
-		assertEquals(searchPage.promotionsLabel().getText(), "Top Promotions");
+		assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase("Top Promotions"));
 	}
 
 	@Test
@@ -353,7 +354,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		assertEquals(searchPage.getSelectedLanguage(), language);
 		assertThat("Wrong search performed", searchPage.searchTitle().getText().contains(trigger));
 		assertEquals(searchPage.promotionsSummaryList(false).get(0), firstDocTitle);
-		assertEquals(searchPage.promotionsLabel().getText(), promotionType);
+		assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase(promotionType));
 	}
 
 	@Test
@@ -417,7 +418,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "Ida"), search, 1);
 
 		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-		assertThat("promotions aren't labelled as Sponsored", searchPage.promotionsLabel().getText(), is("Sponsored"));
+		assertThat("promotions aren't labelled as Sponsored", searchPage.promotionsLabel().getText(), equalToIgnoringCase("Sponsored"));
 
 		search.apply();
 		promotionResultsCount = promotionResultsCount + searchPage.countSearchResults();
