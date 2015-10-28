@@ -9,8 +9,7 @@
   },
   "users": {
     "default": {
-      "accessLevel": "Admin",
-      "auth": "OPAccount",
+      "role": "Admin",
       "username": "richard",
       "password": "q"
     }

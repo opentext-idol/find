@@ -12,18 +12,22 @@ import java.net.URL;
 import java.util.*;
 
 public class JsonConfig {
+
     private final AppConfig app;
     private final SeleniumConfig selenium;
-    private final Map<String, UserConfig> users;
+    private final Map<String, User> users;
 
     private JsonConfig(JsonNode node) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
         this.selenium = new SeleniumConfig(node.path("selenium"));
+
+        // user config is app-specific, must initialise after app
+        UserConfigParser userConfigParser = getUserConfigParser();
         this.users = new HashMap<>();
         Iterator<Map.Entry<String, JsonNode>> iterator = node.path("users").fields();
         while (iterator.hasNext()) {
-            Map.Entry<String, JsonNode> user = iterator.next();
-            users.put(user.getKey(), new UserConfig(user.getValue()));
+            Map.Entry<String, JsonNode> userEntry = iterator.next();
+            users.put(userEntry.getKey(), userConfigParser.parseUser(userEntry.getValue()));
         }
     }
 
@@ -62,7 +66,7 @@ public class JsonConfig {
     }
 
     public User getUser(String name) {
-        return this.users.get(name).getUser();
+        return this.users.get(name);
     }
 
     public ApplicationType getAppType() {
@@ -126,31 +130,17 @@ public class JsonConfig {
         }
     }
 
-    public static class UserConfig {
-        private final String auth;
-        private final String username;
-        private final String password;
-        private final String email;
-        private final User user;
-        private final User.Role role;
-
-        private UserConfig(JsonNode userNode) {
-            auth = userNode.path("auth").asText();
-            username = userNode.path("username").asText();
-            password = userNode.path("password").asText();
-            email = userNode.path("email").asText();
-            // TODO: use auth
-            role = User.Role.fromString(userNode.path("role").asText());
-            role = new User(username, password, email, role);
+    private UserConfigParser getUserConfigParser() {
+        String className;
+        if (this.getAppType().equals(ApplicationType.HOSTED)) {
+            className = "com.autonomy.abc.config.HSOUserConfigParser";
+        } else {
+            className = "com.autonomy.abc.config.OPUserConfigParser";
         }
-
-        public User getUser() {
-            return user;
-        }
-
-        @Override
-        public String toString() {
-            return getUser().toString();
+        try {
+            return (UserConfigParser) Class.forName(className).newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            throw new IllegalStateException("Could not create UserConfigParser object - check that the correct integration-tests package is included in the POM", e);
         }
 
     }
