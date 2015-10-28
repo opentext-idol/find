@@ -68,6 +68,8 @@ define([
             this.$('.service-view-container').show();
             this.$('.app-logo').hide();
             $('.find-navbar').addClass('visible');
+            $('.find-banner').addClass('hidden');
+            $('.hp-logo-footer').removeClass('visible');
 
             vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
@@ -79,6 +81,8 @@ define([
             this.$('.service-view-container').hide();
             this.$('.app-logo').show();
             $('.find-navbar').removeClass('visible');
+            $('.find-banner').removeClass('hidden');
+            $('.hp-logo-footer').addClass('visible');
 
             vent.navigate('find/search', {trigger: false});
         }
