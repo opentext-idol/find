@@ -6,7 +6,6 @@ import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.users.UserService;
-import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import org.openqa.selenium.WebDriver;
 
 public abstract class Application {
@@ -15,7 +14,6 @@ public abstract class Application {
     public abstract AppBody createAppBody(WebDriver driver, TopNavBar topNavBar, SideNavBar sideNavBar);
 
     public abstract ElementFactory createElementFactory(WebDriver driver);
-    public abstract AuthProvider createCredentials();
 
     public PromotionService createPromotionService(ElementFactory elementFactory) {
         return new PromotionService(this, elementFactory);

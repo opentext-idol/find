@@ -99,7 +99,7 @@ public abstract class ABCTestBase {
 
 	protected void tryLogIn(){
 		try {
-			elementFactory.getLoginPage().loginWith(getApplication().createCredentials());
+			elementFactory.getLoginPage().loginWith(config.getDefaultUser().getAuthProvider());
 			//Wait for page to load
 			Thread.sleep(2000);
 			// now has side/top bar
