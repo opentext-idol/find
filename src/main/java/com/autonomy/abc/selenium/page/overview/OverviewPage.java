@@ -65,7 +65,7 @@ public class OverviewPage extends AppElement implements AppPage {
 	}
 
 	public WebElement getWidget(final Widget widgetHeadingText) {
-		return findElement(By.xpath(".//h5[contains(text(), \"" + widgetHeadingText.toString() + "\")]/../.."));
+		return findElement(By.xpath(".//h3[contains(text(), \"" + widgetHeadingText.toString() + "\")]/../.."));
 	}
 
 	public WebElement zeroHitLastWeekButton() {
@@ -86,6 +86,6 @@ public class OverviewPage extends AppElement implements AppPage {
     }
 
     public static void waitForLoad(final WebDriver driver) {
-        new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h5[text()='Zero Hit Terms']")));
+        new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='Zero Hit Terms']")));
     }
 }
