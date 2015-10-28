@@ -1,5 +1,6 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,6 +19,11 @@ public class HSOUserConfigParser implements UserConfigParser {
         User.Role role = User.Role.fromString(userNode.path("role").asText());
 
         return new User(provider, username, role);
+    }
+
+    @Override
+    public NewUser parseNewUser(JsonNode newUserNode) {
+        return null;
     }
 
 }
