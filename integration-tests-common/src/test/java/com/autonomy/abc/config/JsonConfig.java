@@ -3,6 +3,7 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.UserConfigParser;
+import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,7 @@ public class JsonConfig {
     private final AppConfig app;
     private final SeleniumConfig selenium;
     private final Map<String, User> users;
+    private final Map<String, NewUser> newUsers;
 
     private JsonConfig(JsonNode node) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
@@ -32,6 +34,13 @@ public class JsonConfig {
             Map.Entry<String, JsonNode> userEntry = iterator.next();
             users.put(userEntry.getKey(), userConfigParser.parseUser(userEntry.getValue()));
         }
+
+        this.newUsers = new HashMap<>();
+        iterator = node.path("newusers").fields();
+        while (iterator.hasNext()) {
+            Map.Entry<String, JsonNode> newUserEntry = iterator.next();
+            newUsers.put(newUserEntry.getKey(), userConfigParser.parseNewUser(newUserEntry.getValue()));
+        }
     }
 
     private JsonConfig(JsonConfig overrides, JsonConfig defaults) {
@@ -41,6 +50,11 @@ public class JsonConfig {
         users.putAll(defaults.users);
         if (overrides.users != null) {
             users.putAll(overrides.users);
+        }
+        newUsers = new HashMap<>();
+        newUsers.putAll(defaults.newUsers);
+        if (overrides.newUsers != null) {
+            newUsers.putAll(overrides.newUsers);
         }
     }
 
@@ -70,6 +84,10 @@ public class JsonConfig {
 
     public User getUser(String name) {
         return this.users.get(name);
+    }
+
+    public NewUser getNewUser(String name) {
+        return this.newUsers.get(name);
     }
 
     public ApplicationType getAppType() {
@@ -145,6 +163,6 @@ public class JsonConfig {
     @Override
     public String toString() {
         return "{app=" + app + ", selenium="
-                + selenium + ", users=" + users + "}";
+                + selenium + ", users=" + users + ", newusers=" + newUsers + "}";
     }
 }

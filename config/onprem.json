@@ -11,10 +11,21 @@
     "default": {
       "role": "Admin",
       "username": "richard",
-      "auth": {
-        "username": "richard",
-        "password": "q"
-      }
+      "password": "q"
+    }
+  },
+  "newusers": {
+    "james": {
+      "username": "james",
+      "password": "bond"
+    },
+    "john": {
+      "username": "john",
+      "password": "lennon"
+    },
+    "bob": {
+      "username": "bob",
+      "password": "marley"
     }
   }
 }

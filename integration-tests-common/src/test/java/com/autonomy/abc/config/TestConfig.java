@@ -1,6 +1,7 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -56,6 +57,10 @@ public class TestConfig {
 
 	public User getDefaultUser() {
 		return jsonConfig.getDefaultUser();
+	}
+
+	public NewUser getNewUser(String name) {
+		return jsonConfig.getNewUser(name);
 	}
 
 	public Browser getBrowser() {
