@@ -74,6 +74,10 @@ public class JsonConfig {
         return this.app.url;
     }
 
+    public URL getFindUrl() {
+        return this.app.findUrl;
+    }
+
     public List<Browser> getBrowsers() {
         return this.selenium.browsers;
     }
@@ -97,16 +101,19 @@ public class JsonConfig {
     public static class AppConfig {
         private final ApplicationType type;
         private final URL url;
+        private final URL findUrl;
 
         private AppConfig(JsonNode node) throws MalformedURLException {
             String typeString = node.path("type").asText();
             type = (typeString.isEmpty() ? null : ApplicationType.fromString(typeString));
             url = getUrlOrNull(node.path("url"));
+            findUrl = getUrlOrNull(node.path("find"));
         }
 
         private AppConfig(AppConfig overrides, AppConfig defaults) {
             type = override(defaults.type, overrides.type);
             url = override(defaults.url, overrides.url);
+            findUrl = override(defaults.findUrl, overrides.findUrl);
         }
 
         private AppConfig overrideUsing(AppConfig overrides) {
@@ -114,7 +121,7 @@ public class JsonConfig {
         }
         @Override
         public String toString() {
-            return "{type=" + type + ", url=" + url + "}";
+            return "{type=" + type + ", url=" + url + ", find=" + findUrl + "}";
         }
 
     }

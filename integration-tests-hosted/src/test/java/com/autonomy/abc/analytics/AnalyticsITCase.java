@@ -88,7 +88,7 @@ public class AnalyticsITCase extends ABCTestBase {
         List<String> browserHandles = analytics.createAndListWindowHandles();
 
         getDriver().switchTo().window(browserHandles.get(1));
-        getDriver().get("https://find.dev.idolondemand.com/");
+        getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
         FindPage find = ((HSOElementFactory) getElementFactory()).getFindPage();
 

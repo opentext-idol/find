@@ -55,6 +55,10 @@ public class TestConfig {
 		return jsonConfig.getWebappUrl().toString();
 	}
 
+	public String getFindUrl() {
+		return jsonConfig.getFindUrl().toString();
+	}
+
 	public User getDefaultUser() {
 		return jsonConfig.getDefaultUser();
 	}

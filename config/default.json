@@ -1,7 +1,8 @@
 {
   "app": {
     "type": "Hosted",
-    "url": "http://search.preview.havenapps.io"
+    "url": "http://search.preview.havenapps.io",
+    "find": "http://find.preview.havenapps.io"
   },
   "selenium": {
     "browsers": ["chrome"],

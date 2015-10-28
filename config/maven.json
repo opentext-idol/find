@@ -1,7 +1,8 @@
 {
   "app": {
     "type": "Hosted",
-    "url": "${config.app.url}"
+    "url": "http://search.${config.app.env}.havenapps.io",
+    "find": "http://find.${config.app.env}.havenapps.io"
   },
   "selenium": {
     "browsers": ["${config.selenium.browser}"],

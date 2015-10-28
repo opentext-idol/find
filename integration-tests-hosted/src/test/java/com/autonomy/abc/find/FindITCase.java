@@ -82,7 +82,7 @@ public class FindITCase extends ABCTestBase {
         browserHandles = promotions.createAndListWindowHandles();
 
         getDriver().switchTo().window(browserHandles.get(1));
-        getDriver().get("https://find.dev.idolondemand.com/");
+        getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
         find = ((HSOElementFactory) getElementFactory()).getFindPage();
         input = find.getInput();
