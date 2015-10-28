@@ -171,7 +171,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	public List<String> getProspectiveKeywordsList() {
 		final List<String> keywordsList = new ArrayList<>();
 
-		for (final WebElement word : findElement(By.cssSelector("[data-branch='synonyms']")).findElements(By.xpath(".//i[contains(@class, 'remove-word')]/.."))) {
+		for(final WebElement word : findElements(By.xpath(".//i[contains(@class, 'remove-word')]/.."))) {
 			keywordsList.add(word.getText());
 		}
 
