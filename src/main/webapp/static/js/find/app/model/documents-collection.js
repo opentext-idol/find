@@ -4,11 +4,10 @@
  */
 
 define([
-    'backbone',
     'find/app/model/find-base-collection',
     'find/app/model/document-model',
     'underscore'
-], function(Backbone, FindBaseCollection, DocumentModel, _) {
+], function(FindBaseCollection, DocumentModel, _) {
 
     return FindBaseCollection.extend({
         model: DocumentModel,

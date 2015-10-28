@@ -4,11 +4,12 @@
  */
 
 define([
-    'find/app/model/find-base-collection'
-], function(FindBaseCollection) {
+    'find/app/model/find-base-collection',
+    'find/app/model/document-model'
+], function(FindBaseCollection, DocumentModel) {
 
     return FindBaseCollection.extend({
-
+        model: DocumentModel,
         url: '../api/public/search/query-text-index/promotions',
 
         initialize: function(models, options) {
