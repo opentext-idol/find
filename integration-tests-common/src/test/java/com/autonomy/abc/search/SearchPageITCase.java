@@ -214,8 +214,8 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testPaginationAndBackButton() {
 		search("safe");
 		searchPage.forwardToLastPageButton().click();
-		assertThat("Forward to last page button is not disabled", AppElement.getParent(searchPage.forwardToLastPageButton()).getAttribute("class"),containsString("disabled"));
-		assertThat("Forward a page button is not disabled", AppElement.getParent(searchPage.forwardPageButton()).getAttribute("class"),containsString("disabled"));
+		assertThat("Forward to last page button is not disabled", searchPage.forwardToLastPageButton().getAttribute("class"),containsString("disabled"));
+		assertThat("Forward a page button is not disabled", searchPage.forwardPageButton().getAttribute("class"),containsString("disabled"));
 		final int lastPage = searchPage.getCurrentPageNumber();
 
 		getDriver().navigate().back();
