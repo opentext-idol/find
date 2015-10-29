@@ -108,6 +108,10 @@ html, body {
     height: 100%;
 }
 
+.bold {
+    font-weight: 600 !important;
+}
+
 .no-box-shadow {
     box-shadow: none !important;
 }
@@ -394,6 +398,14 @@ input.find-input {
     z-index: 9999;
 }
 
+/* username */
+.username {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* fancy animation */
 .animated-container {
     position: absolute;
@@ -595,7 +607,6 @@ a.entity-to-summary {
     right: 20px;
     z-index: 1000;
     font-size: 18px;
-    cursor: pointer;
 }
 
 .find-navbar .dropdown-toggle {
@@ -800,7 +811,8 @@ input:-moz-placeholder::before {
 }
 
 .not-clickable {
-    cursor: auto;
+    cursor: default;
+    pointer-events: none;
 }
 
 /* Indexes View */

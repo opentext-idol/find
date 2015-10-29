@@ -27,11 +27,15 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template());
+            this.$el.html(this.template(this.getTemplateParameters()));
 
             this.pages.render();
 
             this.$('.content').append(this.pages.el);
+        },
+
+        getTemplateParameters: function() {
+            return {};
         }
     });
 });

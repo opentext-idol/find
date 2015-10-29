@@ -1,9 +1,11 @@
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%--
   ~ Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
   ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
   --%>
+
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <spring:eval expression="@dispatcherProperties['application.version']" var="applicationVersion"/>
 
@@ -20,6 +22,7 @@
         <![endif]-->
         <link rel="stylesheet" type="text/css" href="../static-${applicationVersion}/css/app.css"/>
 
+        <script type="application/json" id="config-json"><c:out value="${configJson}" escapeXml="false"/></script>
         <script type="text/javascript" src="../static-${applicationVersion}/bower_components/requirejs/require.js" data-main="../static-${applicationVersion}/js/public.js"></script>
     </head>
     <body>

@@ -43,6 +43,8 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarServiceImpl;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServiceImpl;
+import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
+import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersServiceImpl;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
@@ -160,6 +162,11 @@ public class AppConfiguration extends CachingConfigurerSupport {
     @Bean
     public AuthenticationService authenticationService() {
         return new AuthenticationServiceImpl(initialHodServiceConfig());
+    }
+
+    @Bean
+    public UserStoreUsersService userStoreUsersService() {
+        return new UserStoreUsersServiceImpl(hodServiceConfig());
     }
 
     @Bean

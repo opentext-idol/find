@@ -15,6 +15,7 @@ import com.hp.autonomy.frontend.find.web.ErrorController;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,6 +34,7 @@ public class FindController {
     public static final String SSO_AUTHENTICATION_URI = "/authenticate-sso";
     public static final String SSO_LOGOUT_PAGE = "/sso-logout";
     private static final String HOD_ENDPOINT = System.getProperty("find.iod.api");
+    public static final String PUBLIC_PATH = "/public/";
 
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
@@ -51,8 +53,20 @@ public class FindController {
             response.sendRedirect(contextPath + "/loginPage");
         }
         else {
-            response.sendRedirect(contextPath + "/public/");
+            response.sendRedirect(contextPath + PUBLIC_PATH);
         }
+    }
+
+    @RequestMapping(value = PUBLIC_PATH, method = RequestMethod.GET)
+    public ModelAndView userName() throws JsonProcessingException, HodErrorException {
+        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final Map<String, Object> config = new HashMap<>();
+        config.put("username", username);
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put("configJson", convertToJson(config));
+
+        return new ModelAndView("public", attributes);
     }
 
     @RequestMapping(value = SSO_PAGE, method = RequestMethod.GET)
@@ -67,7 +81,7 @@ public class FindController {
         ssoConfig.put("ssoEntryPage", SSO_PAGE);
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("configJson", contextObjectMapper.writeValueAsString(ssoConfig));
+        attributes.put("configJson", convertToJson(ssoConfig));
 
         return new ModelAndView("sso", attributes);
     }
@@ -80,5 +94,9 @@ public class FindController {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("configJson", contextObjectMapper.writeValueAsString(ssoConfig));
         return new ModelAndView("sso-logout", attributes);
+    }
+
+    private String convertToJson(final Object object) throws JsonProcessingException {
+        return contextObjectMapper.writeValueAsString(object).replace("</", "<\\/");
     }
 }

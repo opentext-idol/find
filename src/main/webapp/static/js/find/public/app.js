@@ -6,9 +6,10 @@
 define([
     'find/app/base-app',
     'find/app/util/logout',
+    'find/app/configuration',
     'find/public/pages',
     'text!find/templates/app/app.html'
-], function(BaseApp, logout, Pages, template) {
+], function(BaseApp, logout, configuration, Pages, template) {
     return BaseApp.extend({
 
         template: _.template(template),
@@ -25,6 +26,12 @@ define([
             this.pages = new Pages();
 
             BaseApp.prototype.initialize.apply(this, arguments);
+        },
+
+        getTemplateParameters: function() {
+            return {
+                username: configuration().username
+            };
         }
     });
 });

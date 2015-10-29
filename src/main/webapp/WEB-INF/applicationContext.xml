@@ -27,6 +27,8 @@
     <util:constant id="ssoPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_PAGE"/>
     <util:constant id="ssoLogoutPage" static-field="com.hp.autonomy.frontend.find.FindController.SSO_LOGOUT_PAGE"/>
     <util:constant id="ssoAuthenticationUri" static-field="com.hp.autonomy.frontend.find.FindController.SSO_AUTHENTICATION_URI"/>
+    <util:constant id="usernameMetadataKey" static-field="com.hp.autonomy.frontend.find.authentication.HavenSearchUserMetadata.USERNAME"/>
+    <util:constant id="hsodMetadataTypes" static-field="com.hp.autonomy.frontend.find.authentication.HavenSearchUserMetadata.METADATA_TYPES"/>
 
     <util:properties id="dispatcherProperties" location="classpath:com/hp/autonomy/frontend/find/dispatcher.properties"/>
 
@@ -71,11 +73,16 @@
         <constructor-arg value="ROLE_ADMIN"/>
     </bean>
 
+    <bean id="hsodUsernameResolver" class="com.hp.autonomy.frontend.find.authentication.HsodUsernameResolver"/>
+
     <bean id="hodAuthenticationProvider" class="com.hp.autonomy.hod.sso.HodAuthenticationProvider">
         <constructor-arg ref="tokenRepository"/>
         <constructor-arg value="ROLE_PUBLIC"/>
         <constructor-arg ref="authenticationService"/>
         <constructor-arg ref="unboundTokenService"/>
+        <constructor-arg ref="userStoreUsersService"/>
+        <constructor-arg ref="hsodMetadataTypes"/>
+        <constructor-arg ref="hsodUsernameResolver"/>
     </bean>
 
     <bean id="loginSuccessHandler" class="com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler">

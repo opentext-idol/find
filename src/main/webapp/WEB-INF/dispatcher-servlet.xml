@@ -35,7 +35,6 @@
     <mvc:resources mapping="/static-#{dispatcherProperties['application.version']}/**" location="/static/"/>
 
     <mvc:view-controller path="/p/" view-name="private"/>
-    <mvc:view-controller path="/public/" view-name="public"/>
     <mvc:view-controller path="/config/" view-name="config"/>
     <mvc:view-controller path="/login" view-name="login"/>
     <mvc:view-controller path="/configError" view-name="configError"/>
