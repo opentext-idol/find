@@ -39,15 +39,15 @@ public abstract class SearchPage extends SearchBase implements AppPage {
     }
 
 	public WebElement searchTitle() {
-		return getDriver().findElement(By.cssSelector(".heading > strong"));
+		return getDriver().findElement(By.cssSelector(".heading > b"));
 	}
 
 	public WebElement promoteTheseDocumentsButton() {
-		return findElement(By.xpath(".//button[contains(text(), 'Promote these documents')]"));
+		return findElement(By.xpath(".//button[contains(text(), 'Promote documents')]"));
 	}
 
 	public WebElement promoteTheseItemsButton() {
-		return findElement(By.xpath(".//*[contains(text(), 'Promote these items')]"));
+		return findElement(By.xpath(".//*[contains(text(), 'Promote items')]"));
 	}
 
 	public void promotionsBucketClose() {
@@ -138,19 +138,19 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public WebElement promotionSummaryBackToStartButton() {
-		return getParent(findElement(By.cssSelector(".fa-angle-double-left")));
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
 	}
 
 	public WebElement promotionSummaryBackButton() {
-		return getParent(findElement(By.cssSelector(".fa-angle-left")));
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
 	}
 
 	public WebElement promotionSummaryForwardButton() {
-		return getParent(findElement(By.cssSelector(".fa-angle-right")));
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-chevron-right")));
 	}
 
 	public WebElement promotionSummaryForwardToEndButton() {
-		return getParent(findElement(By.cssSelector(".fa-angle-double-right")));
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
 	}
 
 	public List<String> getSearchTermsList() {
@@ -173,7 +173,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
     }
 
 	public WebElement promoteThisQueryButton() {
-		return findElement(By.xpath(".//button[contains(text(), 'Promote this query')]"));
+		//The space is deliberate!
+		return findElement(By.xpath("//button[text()=' Promote query']"));
 	}
 
 	public List<String> promotionsSummaryList(final boolean fullList) {
