@@ -135,6 +135,7 @@ public abstract class ABCTestBase {
 		if(!new AbcHasLoggedIn(getDriver()).hasLoggedIn()){
 			fail("Failed to log in");
 		}
+		body = getBody();
 	}
 
 	@After
