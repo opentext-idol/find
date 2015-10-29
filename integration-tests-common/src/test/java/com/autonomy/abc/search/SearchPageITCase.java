@@ -20,6 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -214,15 +216,15 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testPaginationAndBackButton() {
 		search("safe");
 		searchPage.forwardToLastPageButton().click();
-		assertThat("Forward to last page button is not disabled", AppElement.getParent(searchPage.forwardToLastPageButton()).getAttribute("class"),containsString("disabled"));
-		assertThat("Forward a page button is not disabled", AppElement.getParent(searchPage.forwardPageButton()).getAttribute("class"),containsString("disabled"));
+		assertThat("Forward to last page button is not disabled", searchPage.forwardToLastPageButton().getAttribute("class"),containsString("disabled"));
+		assertThat("Forward a page button is not disabled", searchPage.forwardPageButton().getAttribute("class"),containsString("disabled"));
 		final int lastPage = searchPage.getCurrentPageNumber();
 
 		getDriver().navigate().back();
 		assertThat("Back button has not brought the user back to the first page", searchPage.getCurrentPageNumber(),is(1));
 
 		getDriver().navigate().forward();
-		assertThat("Forward button has not brought the user back to the last page", searchPage.getCurrentPageNumber(),is(lastPage));
+		assertThat("Forward button has not brought the user back to the last page", searchPage.getCurrentPageNumber(), is(lastPage));
 	}
 
 	@Test
@@ -231,7 +233,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(1));
-		assertThat("File in bucket description does not match file added", searchPage.getSearchResultTitle(1),is(searchPage.bucketDocumentTitle(1)));
+		assertThat("File in bucket description does not match file added", searchPage.getSearchResultTitle(1), equalToIgnoringCase(searchPage.bucketDocumentTitle(1)));
 	}
 
 	@Test
@@ -240,7 +242,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.promoteTheseItemsButton().click();
-		assertThat("Create new promotions page not open", getDriver().getCurrentUrl(),endsWith("promotions/create"));
+		assertThat("Create new promotions page not open", getDriver().getCurrentUrl(), endsWith("promotions/create"));
 	}
 
 	@Test
@@ -279,26 +281,26 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.showMorePromotions();
 		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize(), is(5));
 
-		assertThat("Back to start button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class"),containsString("disabled"));
-		assertThat("Back button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class"),containsString("disabled"));
-		assertThat("Forward button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"), not(containsString("disabled")));
-		assertThat("Forward to end button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"), not(containsString("disabled")));
+		assertThat("Back to start button should be disabled", searchPage.promotionSummaryBackToStartButton().getAttribute("class"),containsString("disabled"));
+		assertThat("Back button should be disabled", searchPage.promotionSummaryBackButton().getAttribute("class"),containsString("disabled"));
+		assertThat("Forward button should be enabled", searchPage.promotionSummaryForwardButton().getAttribute("class"), not(containsString("disabled")));
+		assertThat("Forward to end button should be enabled", searchPage.promotionSummaryForwardToEndButton().getAttribute("class"), not(containsString("disabled")));
 
 		searchPage.promotionSummaryForwardButton().click();
 		searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Back to start button should be enabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class"), not(containsString("disabled")));
-		assertThat("Back button should be enabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Forward button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"), not(containsString("disabled")));
-		assertThat("Forward to end button should be enabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"), not(containsString("disabled")));
+		assertThat("Back to start button should be enabled", searchPage.promotionSummaryBackToStartButton().getAttribute("class"), not(containsString("disabled")));
+		assertThat("Back button should be enabled", searchPage.promotionSummaryBackButton().getAttribute("class"),not(containsString("disabled")));
+		assertThat("Forward button should be enabled", searchPage.promotionSummaryForwardButton().getAttribute("class"), not(containsString("disabled")));
+		assertThat("Forward to end button should be enabled", searchPage.promotionSummaryForwardToEndButton().getAttribute("class"), not(containsString("disabled")));
 
 		searchPage.promotionSummaryForwardButton().click();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 		searchPage.promotionSummaryForwardButton().click();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Back to start button should be enabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Back button should be enabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class"), not(containsString("disabled")));
-		assertThat("Forward button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardButton()).getAttribute("class"), containsString("disabled"));
-        assertThat("Forward to end button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"), containsString("disabled"));
+		assertThat("Back to start button should be enabled", searchPage.promotionSummaryBackToStartButton().getAttribute("class"),not(containsString("disabled")));
+		assertThat("Back button should be enabled", searchPage.promotionSummaryBackButton().getAttribute("class"), not(containsString("disabled")));
+		assertThat("Forward button should be disabled", searchPage.promotionSummaryForwardButton().getAttribute("class"), containsString("disabled"));
+        assertThat("Forward to end button should be disabled", searchPage.promotionSummaryForwardToEndButton().getAttribute("class"), containsString("disabled"));
 
 		searchPage.promotionSummaryBackButton().click();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
@@ -306,15 +308,15 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 		searchPage.promotionSummaryBackButton().click();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Back to start button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackToStartButton()).getAttribute("class"), containsString("disabled"));
+		assertThat("Back to start button should be disabled", searchPage.promotionSummaryBackToStartButton().getAttribute("class"), containsString("disabled"));
 
 		searchPage.promotionSummaryForwardToEndButton().click();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Forward to end button should be disabled", AppElement.getParent(searchPage.promotionSummaryForwardToEndButton()).getAttribute("class"), containsString("disabled"));
+		assertThat("Forward to end button should be disabled", searchPage.promotionSummaryForwardToEndButton().getAttribute("class"), containsString("disabled"));
 
 		searchPage.promotionSummaryBackToStartButton().click();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Back button should be disabled", AppElement.getParent(searchPage.promotionSummaryBackButton()).getAttribute("class"),containsString("disabled"));
+		assertThat("Back button should be disabled", searchPage.promotionSummaryBackButton().getAttribute("class"),containsString("disabled"));
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		promotionsPage.deleteAllPromotions();
@@ -326,24 +328,24 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.searchResultCheckbox(2).click();
-		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(),is(2));
+		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(), is(2));
 
 		search("bull");
-		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(),is(2));
+		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(), is(2));
 		searchPage.searchResultCheckbox(1).click();
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(),is(3));
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(3));
 
 		search("cow");
-		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(),is(3));
+		assertThat("Promoted items count should equal 2", searchPage.promotedItemsCount(), is(3));
 
 		search("bull");
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(),is(3));
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(3));
 
 		searchPage.searchResultCheckbox(1).click();
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(),is(2));
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(2));
 
 		search("cow");
-		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(),is(2));
+		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(2));
 	}
 
 	@Test
@@ -451,22 +453,27 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.searchResultCheckbox(4).click();
 
 		final List<String> bucketList = searchPage.promotionsBucketList();
+		final List<WebElement> bucketListElements = searchPage.promotionsBucketWebElements();
 		assertThat("There should be four documents in the bucket", bucketList.size(),is(4));
 		assertThat("promote button not displayed when bucket has documents", searchPage.promoteTheseDocumentsButton().isDisplayed());
 
-		for (final String bucketDocTitle : bucketList) {
-			final int docIndex = bucketList.indexOf(bucketDocTitle);
-			assertFalse("The document title appears as blank within the bucket for document titled " + searchPage.getSearchResult(bucketList.indexOf(bucketDocTitle) + 1).getText(), bucketDocTitle.equals(""));
-			searchPage.deleteDocFromWithinBucket(bucketDocTitle);
-			assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(docIndex + 1).isSelected());
-			assertThat("Document not removed from bucket", searchPage.promotionsBucketList(),not(hasItem(bucketDocTitle)));
-			assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(3 - docIndex));
+//		for (final String bucketDocTitle : bucketList) {
+//			final int docIndex = bucketList.indexOf(bucketDocTitle);
+//			assertFalse("The document title appears as blank within the bucket for document titled " + searchPage.getSearchResult(bucketList.indexOf(bucketDocTitle) + 1).getText(), bucketDocTitle.equals(""));
+//			searchPage.deleteDocFromWithinBucket(bucketDocTitle);
+//			assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(docIndex + 1).isSelected());
+//			assertThat("Document not removed from bucket", searchPage.promotionsBucketList(),not(hasItem(bucketDocTitle)));
+//			assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(3 - docIndex));
+//		}
+
+		for (final WebElement bucketDoc : bucketListElements) {
+			bucketDoc.findElement(By.cssSelector("i:nth-child(2)")).click();
 		}
 
 		assertThat("promote button should be disabled when bucket has no documents", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 
 		search("tooth");
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(0));
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(), is(0));
 
 		searchPage.searchResultCheckbox(5).click();
 		final List<String> docTitles = new ArrayList<>();
@@ -476,13 +483,19 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.searchResultCheckbox(3).click();
 		docTitles.add(searchPage.getSearchResultTitle(3));
 
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(2));
-		assertThat("", searchPage.promotionsBucketList().containsAll(docTitles));
+		final List<String> bucketListNew = searchPage.promotionsBucketList();
+		assertThat("Wrong number of documents in the bucket", bucketListNew.size(),is(2));
+//		assertThat("", searchPage.promotionsBucketList().containsAll(docTitles));
+		assertThat(bucketListNew.size(),is(docTitles.size()));
+
+		for(String docTitle : docTitles){
+			assertThat(bucketListNew,hasItem(docTitle.toUpperCase()));
+		}
 
 		searchPage.deleteDocFromWithinBucket(docTitles.get(1));
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(1));
-		assertThat("Document should still be in the bucket", searchPage.promotionsBucketList(),hasItem(docTitles.get(0)));
-		assertThat("Document should no longer be in the bucket", searchPage.promotionsBucketList(),not(hasItem(docTitles.get(1))));
+		assertThat("Document should still be in the bucket", searchPage.promotionsBucketList(),hasItem(docTitles.get(0).toUpperCase()));
+		assertThat("Document should no longer be in the bucket", searchPage.promotionsBucketList(),not(hasItem(docTitles.get(1).toUpperCase())));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(3).isSelected());
 
 		searchPage.javascriptClick(searchPage.backPageButton());
@@ -525,8 +538,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testViewFromBucketLabel() throws InterruptedException {
         search("جيمس");
-		searchPage.selectLanguage("Arabic", getConfig().getType().getName());
-        languageWarn();
+		searchPage.selectLanguage("Arabic");
         logger.warn("Using Trimmed Titles");
 
         search("Engineer");
@@ -564,7 +576,7 @@ public class SearchPageITCase extends ABCTestBase {
 		search("1");
 
 		for (final String language : Arrays.asList("English", "Afrikaans", "French", "Arabic", "Urdu", "Hindi", "Chinese", "Swahili")) {
-			searchPage.selectLanguage(language, getConfig().getType().getName());
+			searchPage.selectLanguage(language);
 			assertEquals(language, searchPage.getSelectedLanguage());
 
 			searchPage.waitForSearchLoadIndicatorToDisappear();
@@ -577,7 +589,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testBucketEmptiesWhenLanguageChangedInURL() {
 		search("arc");
-		searchPage.selectLanguage("French", getConfig().getType().getName());
+		searchPage.selectLanguage("French");
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.promoteTheseDocumentsButton().click();
 
@@ -598,7 +610,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testLanguageDisabledWhenBucketOpened() {
 		//This test currently fails because language dropdown is not disabled when the promotions bucket is open
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.selectLanguage("English");
 		search("al");
 		searchPage.loadOrFadeWait();
 		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
@@ -606,13 +618,13 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		assertEquals("There should be one document in the bucket", 1, searchPage.promotionsBucketList().size());
-		searchPage.selectLanguage("French", getConfig().getType().getName());
+		searchPage.selectLanguage("French");
 		assertFalse("The promotions bucket should close when the language is changed", searchPage.promotionsBucket().isDisplayed());
 
 		searchPage.promoteTheseDocumentsButton().click();
 		assertEquals("There should be no documents in the bucket after changing language", 0, searchPage.promotionsBucketList().size());
 
-		searchPage.selectLanguage("English", getConfig().getType().getName());
+		searchPage.selectLanguage("English");
 		assertFalse("The promotions bucket should close when the language is changed", searchPage.promotionsBucket().isDisplayed());
 	}
 
@@ -634,10 +646,9 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testFieldTextFilter() {
 		search("war");
-//		searchPage.selectLanguage("English", getConfig().getType().getName());
-        languageWarn();
-//		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-        indexesWarn();
+		searchPage.selectLanguage("English");
+		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+//        indexesWarn();
         final String searchResultTitle = searchPage.getSearchResultTitle(1);
 		final String lastWordInTitle = searchPage.getLastWord(searchResultTitle);
 		int comparisonIndex = 0;
@@ -690,7 +701,7 @@ public class SearchPageITCase extends ABCTestBase {
 		search("boer");
 
         if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            searchPage.selectLanguage("Afrikaans", getConfig().getType().getName());
+            searchPage.selectLanguage("Afrikaans");
         } else {
             languageWarn();
         }
@@ -760,7 +771,6 @@ public class SearchPageITCase extends ABCTestBase {
         search("leg");
 
         searchPage.selectLanguage("English");
-		languageWarn();
 
         int initialSearchCount = searchPage.countSearchResults();
 		search("leg[2:2]");
@@ -918,8 +928,7 @@ public class SearchPageITCase extends ABCTestBase {
 //            selectNewsEngIndex();
 //        }
 
-//		searchPage.selectLanguage("English", getConfig().getType().getName());
-        languageWarn();
+		searchPage.selectLanguage("English");
 		for (final String query : Arrays.asList("dog", "chips", "dinosaur", "melon", "art")) {
 			logger.info("String = '" + query + "'");
 			search(query);
@@ -1235,7 +1244,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
 		searchPage.expandSubFilter(SearchBase.Filter.PARAMETRIC_VALUES);
 		Thread.sleep(20000);
-		assertFalse("Load indicator still visible after 20 seconds", searchPage.parametricValueLoadIndicator().isDisplayed());
+		assertThat("Load indicator still visible after 20 seconds", searchPage.parametricValueLoadIndicator().isDisplayed(), is(false));
 	}
 
 	@Test
@@ -1249,14 +1258,19 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.openParametricValuesList();
 		searchPage.loadOrFadeWait();
-		new WebDriverWait(getDriver(),30)
-				.withMessage("Waiting for parametric values list to load")
-				.until(new ExpectedCondition<Boolean>() {
-					@Override
-					public Boolean apply(WebDriver driver) {
-						return !searchPage.parametricValueLoadIndicator().isDisplayed();
-					}
-				});
+
+		try {
+			new WebDriverWait(getDriver(), 30)
+					.withMessage("Waiting for parametric values list to load")
+					.until(new ExpectedCondition<Boolean>() {
+						@Override
+						public Boolean apply(WebDriver driver) {
+							return !searchPage.parametricValueLoadIndicator().isDisplayed();
+						}
+					});
+		} catch (TimeoutException e) {
+			fail("Parametric values did not load");
+		}
 
 		int results = searchPage.filterByContentType("TEXT/PLAIN");
 

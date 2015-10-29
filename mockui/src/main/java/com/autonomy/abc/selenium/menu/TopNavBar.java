@@ -12,7 +12,7 @@ public abstract class TopNavBar extends AppElement {
     private WebElement searchbox;
 
     public TopNavBar(WebDriver driver) {
-        super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top:not(.affix-clone)"))), driver);
+        super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top"))), driver);
     }
 
     public abstract void logOut();

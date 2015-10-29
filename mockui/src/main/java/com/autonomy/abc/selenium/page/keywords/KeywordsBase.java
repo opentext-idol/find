@@ -67,7 +67,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	}
 
 	public WebElement synonymGroupPlusButton(final String synonymGroupLead) {
-		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".fa-plus"));
+		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".hp-add"));
 	}
 
 	public WebElement synonymGroupTickButton(final String synonymGroupLead) {

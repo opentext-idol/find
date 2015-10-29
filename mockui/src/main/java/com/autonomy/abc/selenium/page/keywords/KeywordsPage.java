@@ -23,11 +23,11 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public WebElement createNewKeywordsButton() {
-        return findElement(By.xpath(".//a[contains(text(), 'Create new keywords')]"));
+        return findElement(By.xpath(".//a[contains(text(), 'New')]"));
     }
 
     public WebElement createNewKeywordsButton(WebDriverWait wait) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//a[contains(text(), 'Create new keywords')]")));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//a[contains(text(), 'New')]")));
     }
 
     @Deprecated

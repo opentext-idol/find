@@ -34,6 +34,7 @@ import static com.hp.autonomy.frontend.selenium.util.AppElement.getParent;
 import static com.thoughtworks.selenium.SeleneseTestBase.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.junit.Assert.assertEquals;
@@ -109,7 +110,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		if(getConfig().getType() == ApplicationType.ON_PREM) {
 			createKeywordsPage.selectLanguage("French");
-			assertEquals("French", createKeywordsPage.languagesSelectBox().getText());
+			assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("French"));
 		} else {
 			LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class).warn("Cannot select language for synonyms yet");
 		}
@@ -212,10 +213,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		if(getConfig().getType() == ApplicationType.ON_PREM) {
 			createKeywordsPage.selectLanguage("Swahili");
-			assertEquals("Swahili", createKeywordsPage.languagesSelectBox().getText());
+			assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("Swahili"));
 
 			createKeywordsPage.selectLanguage("English");
-			assertEquals("English", createKeywordsPage.languagesSelectBox().getText());
+			assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("English"));
 		} else {
 			(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
 		}
@@ -826,7 +827,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	//Blacklisted terms can be created on the searchpage. This link has often broken
 	@Test
 	public void testCreateBlacklistedTermFromSearchPage() throws InterruptedException {
-		keywordsPage.deleteAllBlacklistedTerms();
 		body.getTopNavBar().search("noir");
 		searchPage = getElementFactory().getSearchPage();
 		searchPage.selectLanguage("French");
@@ -847,6 +847,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		assertThat("link not directing to blacklist wizard", createKeywordsPage.getText(), containsString("Select terms to blacklist"));
 		assertEquals(1, createKeywordsPage.countKeywords(KeywordsPage.KeywordsFilter.BLACKLIST));
+		//TODO getProspectiveKeywordsList only looks for synonyms!
 		assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
 
 		createKeywordsPage.addBlacklistedTextBox().sendKeys("noir");
@@ -1140,7 +1141,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.selectLanguageButton();	//Wait for select Language button
 
 		if(getConfig().getType().equals(ApplicationType.ON_PREM)){
-			assertEquals("Blacklist has been created in the wrong language", "Arabic", keywordsPage.getSelectedLanguage());
+			assertThat("Blacklist has been created in the wrong language", keywordsPage.getSelectedLanguage(), equalToIgnoringCase("Arabic"));
 		}
 
 		keywordsPage.loadOrFadeWait();
