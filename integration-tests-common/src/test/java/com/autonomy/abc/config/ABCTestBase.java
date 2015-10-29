@@ -11,7 +11,9 @@ import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
+import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -20,8 +22,11 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,9 +118,23 @@ public abstract class ABCTestBase {
 	@Before
 	public void baseSetUp() throws MalformedURLException {
 		regularSetUp();
-		tryLogIn();
+		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
+			tryLogIn();
+		} else {
+			workaroundLogIn();
+		}
 		sideNavBar = body.getSideNavBar();
 		navBar = body.getTopNavBar();
+	}
+
+	private void workaroundLogIn() {
+		getDriver().get("https://www.preview.havenondemand.com/login.html");
+		config.getUser("hp_passport").getAuthProvider().login(getDriver());
+		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("navbar-inner")));
+		getDriver().get(config.getWebappUrl());
+		if(!new AbcHasLoggedIn(getDriver()).hasLoggedIn()){
+			fail("Failed to log in");
+		}
 	}
 
 	@After

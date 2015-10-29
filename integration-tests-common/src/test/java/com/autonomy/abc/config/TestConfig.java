@@ -63,6 +63,10 @@ public class TestConfig {
 		return jsonConfig.getDefaultUser();
 	}
 
+	public User getUser(String user){
+		return jsonConfig.getUser(user);
+	}
+
 	public NewUser getNewUser(String name) {
 		return jsonConfig.getNewUser(name);
 	}
