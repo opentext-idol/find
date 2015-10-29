@@ -83,7 +83,7 @@ public class TestConfig {
 		return type;
 	}
 
-	public WebDriver createWebDriver(final Platform platform) {
+	public WebDriver createWebDriver() {
 		return browser.createWebDriver(url, platform);
 	}
 
