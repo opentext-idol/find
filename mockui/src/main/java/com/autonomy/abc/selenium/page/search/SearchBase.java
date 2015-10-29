@@ -93,7 +93,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement forwardPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-chevron-right")));
+		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next")));
 	}
 
 	public boolean isPageActive(final int pageNumber) {

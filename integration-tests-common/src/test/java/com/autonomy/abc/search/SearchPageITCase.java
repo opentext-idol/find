@@ -20,6 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -1256,14 +1258,19 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.openParametricValuesList();
 		searchPage.loadOrFadeWait();
-		new WebDriverWait(getDriver(),30)
-				.withMessage("Waiting for parametric values list to load")
-				.until(new ExpectedCondition<Boolean>() {
-					@Override
-					public Boolean apply(WebDriver driver) {
-						return !searchPage.parametricValueLoadIndicator().isDisplayed();
-					}
-				});
+
+		try {
+			new WebDriverWait(getDriver(), 30)
+					.withMessage("Waiting for parametric values list to load")
+					.until(new ExpectedCondition<Boolean>() {
+						@Override
+						public Boolean apply(WebDriver driver) {
+							return !searchPage.parametricValueLoadIndicator().isDisplayed();
+						}
+					});
+		} catch (TimeoutException e) {
+			fail("Parametric values did not load");
+		}
 
 		int results = searchPage.filterByContentType("TEXT/PLAIN");
 
