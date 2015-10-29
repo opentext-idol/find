@@ -1,0 +1,58 @@
+{
+  "app": {
+    "type": "Hosted",
+    "url": "http://search.${config.app.env}.havenapps.io",
+    "find": "http://find.${config.app.env}.havenapps.io"
+  },
+  "selenium": {
+    "browsers": ["${config.selenium.browser}"],
+    "url": "${config.selenium.url}"
+  },
+  "users": {
+    "default": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
+    },
+    "twitter": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Twitter",
+        "username": "hodtesting",
+        "password": "5cUdPhYM"
+      }
+    },
+    "facebook": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Facebook",
+        "email": "matthew.williamson@hpe.com",
+        "password": "vdPAuTGU"
+      }
+    },
+    "hp_passport": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "HP Passport",
+        "username": "hodtest",
+        "password": "Z@s=5rYbw6MEx]?X"
+      }
+    },
+    "yahoo": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Yahoo",
+        "username": "hodtest",
+        "password": "@\\S^*9hnT\"6pg9y^"
+      }
+    }
+  }
+}

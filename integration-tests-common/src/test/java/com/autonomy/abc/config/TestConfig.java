@@ -1,78 +1,112 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.users.NewUser;
+import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class TestConfig {
+	private final static File BASE_CONFIG_LOCATION;
+	private final static File USER_CONFIG_LOCATION;
+	private final static Logger LOGGER = LoggerFactory.getLogger(TestConfig.class);
 
+	static {
+		String baseConfig = System.getProperty("com.autonomy.baseConfig");
+		if (baseConfig == null) {
+			// running in IDE
+			BASE_CONFIG_LOCATION = new File("../config/default.json");
+		} else {
+			// running via mvn, or specified config
+			BASE_CONFIG_LOCATION = new File(baseConfig);
+		}
+		LOGGER.info("Using base config " + BASE_CONFIG_LOCATION);
+		String configFile = System.getProperty("com.autonomy.configFile");
+		USER_CONFIG_LOCATION = (configFile == null) ? null : new File(configFile);
+		LOGGER.info("...overridden by " + USER_CONFIG_LOCATION);
+	}
+
+	private final JsonConfig jsonConfig;
 	private final int index;
 	private final ApplicationType type;
 	private final URL url;
+	private final Platform platform;
+	private final Browser browser;
 
-	public TestConfig(final int index, final ApplicationType type) throws MalformedURLException {
+	private TestConfig(final int index, final JsonConfig config) {
+		this.jsonConfig = config;
 		this.index = index;
-		this.type = type;
-		this.url = new URL(System.getProperty("com.autonomy.hubUrl"));
+		this.type = jsonConfig.getAppType();
+		this.url = jsonConfig.getHubUrl();
+		this.platform = Platform.WINDOWS;
+		this.browser = jsonConfig.getBrowsers().get(index);
 	}
 
 	public String getWebappUrl() {
-		if (this.getType() == ApplicationType.ON_PREM) {
-			return System.getProperty("com.autonomy.abcOnPremiseUrl");
-		} else {
-			return System.getProperty("com.autonomy.abcHostedUrl");
-		}
+		return jsonConfig.getWebappUrl().toString();
+	}
+
+	public String getFindUrl() {
+		return jsonConfig.getFindUrl().toString();
+	}
+
+	public User getDefaultUser() {
+		return jsonConfig.getDefaultUser();
+	}
+
+	public NewUser getNewUser(String name) {
+		return jsonConfig.getNewUser(name);
+	}
+
+	public Browser getBrowser() {
+		return browser;
+	}
+
+	public Platform getPlatform() {
+		return platform;
 	}
 
 	public int getIndex() {
 		return index;
 	}
 
-	public ApplicationType getType() {return type; }
+	public ApplicationType getType() {
+		return type;
+	}
 
-	public WebDriver createWebDriver(final String browser, final Platform platform) {
-		final DesiredCapabilities capabilities;
-		final LoggingPreferences logPrefs = new LoggingPreferences();
-		logPrefs.enable(LogType.BROWSER, Level.ALL);
+	public WebDriver createWebDriver(final Platform platform) {
+		return browser.createWebDriver(url, platform);
+	}
 
-		switch (browser) {
-			case "firefox":
-				capabilities = DesiredCapabilities.firefox();
-				break;
-			case "internet explorer":
-				capabilities = DesiredCapabilities.internetExplorer();
-				break;
-			case "chrome":
-				capabilities = DesiredCapabilities.chrome();
-				final ChromeOptions options = new ChromeOptions();
-				options.addArguments("--lang=en_GB");
-				options.addArguments("--start-maximized");
-                // avoids "Disable developer mode extensions" popup
-                options.addArguments("--disable-extensions");
-				options.addArguments("--disable-popup-blocking");
-				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-				break;
-			case "opera":
-				capabilities = DesiredCapabilities.opera();
-				break;
-			default:
-				throw new IllegalArgumentException("bad value for parameter browser: " + browser);
+	public static List<Object[]> readConfigs(final Collection<ApplicationType> applicationTypes) throws IOException {
+		List<Object[]> configs = new ArrayList<>();
+		JsonConfig defaultConfig = JsonConfig.readFile(BASE_CONFIG_LOCATION);
+		JsonConfig userSpecifiedConfig = JsonConfig.readFile(USER_CONFIG_LOCATION);
+		JsonConfig jsonConfig = defaultConfig.overrideUsing(userSpecifiedConfig);
+		LOGGER.info("Effective config: " + jsonConfig);
+
+		if (applicationTypes.contains(jsonConfig.getAppType())) {
+			for (int i = 0; i < jsonConfig.getBrowsers().size(); i++) {
+				TestConfig config = new TestConfig(i, jsonConfig);
+				// for compatibility
+				configs.add(new Object[]{
+						config,
+						config.getBrowser().toString(),
+						config.getType(),
+						config.getPlatform()
+				});
+			}
 		}
-
-		capabilities.setBrowserName(browser);
-		capabilities.setPlatform(platform);
-		capabilities.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
-		return new RemoteWebDriver(this.url, capabilities);
+		return configs;
 	}
 
 }

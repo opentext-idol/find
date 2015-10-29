@@ -25,12 +25,6 @@ public class TopNavBarITCase extends ABCTestBase {
 		topNavBar = body.getTopNavBar();
 	}
 
-	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws MalformedURLException {
-		final Collection<ApplicationType> applicationTypes = Arrays.asList(ApplicationType.HOSTED, ApplicationType.ON_PREM);
-		return parameters(applicationTypes);
-	}
-
 	@Test
 	public void testSideNavBarMinimize() {
 		/*topNavBar.sideBarToggle();

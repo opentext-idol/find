@@ -1,0 +1,31 @@
+{
+  "app": {
+    "type": "On Premise",
+    "url": "http://searchoptimizer-test-01.hpswlabs.hp.com:8080/searchoptimizer/p/"
+  },
+  "selenium": {
+    "browsers": ["chrome"],
+    "url": "http://localhost:4444/wd/hub"
+  },
+  "users": {
+    "default": {
+      "role": "Admin",
+      "username": "richard",
+      "password": "q"
+    }
+  },
+  "newusers": {
+    "james": {
+      "username": "james",
+      "password": "bond"
+    },
+    "john": {
+      "username": "john",
+      "password": "lennon"
+    },
+    "bob": {
+      "username": "bob",
+      "password": "marley"
+    }
+  }
+}
