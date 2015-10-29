@@ -83,7 +83,7 @@ public abstract class ABCTestBase {
 
 	protected void regularSetUp(){
 		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
-		driver = config.createWebDriver(platform);
+		driver = config.createWebDriver();
 		ImplicitWaits.setImplicitWait(driver);
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));

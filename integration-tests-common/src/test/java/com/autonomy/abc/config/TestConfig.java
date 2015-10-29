@@ -17,7 +17,7 @@ import java.util.List;
 
 public class TestConfig {
 	private final static File BASE_CONFIG_LOCATION;
-	private final static File USER_CONFIG_LOCATION;
+	private final static File OVERRIDE_CONFIG_LOCATION;
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestConfig.class);
 
 	static {
@@ -31,8 +31,8 @@ public class TestConfig {
 		}
 		LOGGER.info("Using base config " + BASE_CONFIG_LOCATION);
 		String configFile = System.getProperty("com.autonomy.configFile");
-		USER_CONFIG_LOCATION = (configFile == null) ? null : new File(configFile);
-		LOGGER.info("...overridden by " + USER_CONFIG_LOCATION);
+		OVERRIDE_CONFIG_LOCATION = (configFile == null) ? null : new File(configFile);
+		LOGGER.info("...overridden by " + OVERRIDE_CONFIG_LOCATION);
 	}
 
 	private final JsonConfig jsonConfig;
@@ -83,14 +83,14 @@ public class TestConfig {
 		return type;
 	}
 
-	public WebDriver createWebDriver(final Platform platform) {
+	public WebDriver createWebDriver() {
 		return browser.createWebDriver(url, platform);
 	}
 
 	public static List<Object[]> readConfigs(final Collection<ApplicationType> applicationTypes) throws IOException {
 		List<Object[]> configs = new ArrayList<>();
 		JsonConfig defaultConfig = JsonConfig.readFile(BASE_CONFIG_LOCATION);
-		JsonConfig userSpecifiedConfig = JsonConfig.readFile(USER_CONFIG_LOCATION);
+		JsonConfig userSpecifiedConfig = JsonConfig.readFile(OVERRIDE_CONFIG_LOCATION);
 		JsonConfig jsonConfig = defaultConfig.overrideUsing(userSpecifiedConfig);
 		LOGGER.info("Effective config: " + jsonConfig);
 
