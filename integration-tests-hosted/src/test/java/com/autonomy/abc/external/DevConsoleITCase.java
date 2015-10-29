@@ -3,6 +3,7 @@ package com.autonomy.abc.external;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
@@ -33,6 +34,7 @@ public class DevConsoleITCase extends ABCTestBase {
         assertThat(getDriver().getCurrentUrl(), containsString("search.preview.havenapps.io"));
     }
 
+    @Test
     public void testLaunchFind() throws InterruptedException {
         button("Find").click();
         Thread.sleep(2000);
@@ -40,6 +42,8 @@ public class DevConsoleITCase extends ABCTestBase {
         assertThat(getDriver().getCurrentUrl(),containsString("find.preview.havenapps.io"));
     }
 
+    @Test
+    @Ignore
     public void testSignUp(){}
 
     private WebElement button(String button){
