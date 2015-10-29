@@ -5,14 +5,21 @@
 
 define([
     'find/app/base-app',
+    'find/app/util/logout',
     'find/public/pages',
     'text!find/templates/app/app.html'
-], function(BaseApp, Pages, template) {
+], function(BaseApp, logout, Pages, template) {
     return BaseApp.extend({
 
         template: _.template(template),
 
         defaultRoute: 'find/search',
+
+        events: {
+            'click .navigation-logout': function() {
+                logout('../logout');
+            }
+        },
 
         initialize: function() {
             this.pages = new Pages();

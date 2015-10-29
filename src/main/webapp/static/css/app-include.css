@@ -584,9 +584,7 @@ a.entity-to-summary {
         height:25px;
         font-size: 24px;
     }
-    .drop-lists {
-        top: 8px;
-    }
+
     form.form-search:before {
         top:9px;
     }
@@ -594,11 +592,19 @@ a.entity-to-summary {
 
 .drop-list {
     position: absolute;
-    top: 5px;
+    right: 20px;
     z-index: 1000;
-    font-size: 22px;
-    cursor:pointer;
-    color:lightgrey;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.find-navbar .dropdown-toggle {
+    color: #fff !important;
+}
+
+.find-navbar .dropdown-toggle:hover,
+.find-navbar .open .dropdown-toggle {
+    color: #23527c !important;
 }
 
 .list-indexes {
@@ -650,6 +656,7 @@ input:-moz-placeholder::before {
 .find-navbar {
     border-bottom: 3px solid #425563;
     background-color: #425563;
+    color: #fff;
     opacity: 0;
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
@@ -790,6 +797,10 @@ input:-moz-placeholder::before {
 
 .clickable {
     cursor: pointer;
+}
+
+.not-clickable {
+    cursor: auto;
 }
 
 /* Indexes View */
