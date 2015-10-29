@@ -115,7 +115,8 @@
                 </property>
             </activation>
             <properties>
-                <build.config.location>target/config/fenkins.json</build.config.location>
+                <build.config.location>target/config/onprem.json</build.config.location>
+                <com.autonomy.configFile>target/config/fenkins.json</com.autonomy.configFile>
                 <!-- "testConfig" lists IDOL server setup for SettingsPageITCase -->
                 <testConfig.location>config.json</testConfig.location>
             </properties>
