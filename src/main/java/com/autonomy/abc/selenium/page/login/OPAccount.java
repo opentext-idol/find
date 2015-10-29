@@ -25,4 +25,9 @@ public class OPAccount implements AuthProvider {
         passwordField.sendKeys(password);
         passwordField.submit();
     }
+
+    @Override
+    public String toString() {
+        return "OPAccount:" + username;
+    }
 }
