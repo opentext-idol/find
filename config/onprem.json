@@ -27,5 +27,42 @@
       "username": "bob",
       "password": "marley"
     }
+  },
+  "servers": {
+    "COMMUNITY": {
+      "name": "Community",
+      "host": "localhost",
+      "port": 9030
+    },
+    "CONTENT": {
+      "name": "Content",
+      "host": "localhost",
+      "port": 9000
+    },
+    "QMS": {
+      "name": "QMS",
+      "host": "localhost",
+      "port": 16000
+    },
+    "LOCALE": {
+      "name": "Locale",
+      "host": null,
+      "port": null
+    },
+    "QMS_AGENTSTORE": {
+      "name": "QMS Agentstore",
+      "host": "localhost",
+      "port": 9050
+    },
+    "STATSSERVER": {
+      "name": "IDOL StatsServer",
+      "host": "localhost",
+      "port": 19870
+    },
+    "VIEW": {
+      "name": "View",
+      "host": "localhost",
+      "port": 9080
+    }
   }
 }
