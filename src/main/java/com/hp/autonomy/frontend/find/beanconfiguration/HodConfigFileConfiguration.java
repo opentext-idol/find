@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
-import com.hp.autonomy.frontend.find.configuration.AuthenticationMixins;
+import com.hp.autonomy.frontend.find.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.configuration.HodFindConfigFileService;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class HodConfigFileConfiguration {
 
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
+        mapper.addMixInAnnotations(Authentication.class, HodAuthenticationMixins.class);
         mapper.addMixInAnnotations(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class);
 
         return mapper;

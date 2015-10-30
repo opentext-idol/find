@@ -15,7 +15,7 @@ import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
-import com.hp.autonomy.frontend.find.configuration.AuthenticationMixins;
+import com.hp.autonomy.frontend.find.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.configuration.HodFindConfigFileService;
 import com.hp.autonomy.frontend.find.configuration.IodConfigValidator;
@@ -94,7 +94,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     public ObjectMapper dispatcherObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper();
 
-        mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
+        mapper.addMixInAnnotations(Authentication.class, HodAuthenticationMixins.class);
 
         return mapper;
     }
