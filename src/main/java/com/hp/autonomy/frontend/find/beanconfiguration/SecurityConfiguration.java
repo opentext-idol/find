@@ -68,6 +68,15 @@ public class SecurityConfiguration {
     }
 
     @Configuration
+    @Conditional(IdolCondition.class)
+    @Order(99)
+    public static class IdolSecurity extends WebSecurityConfigurerAdapter {
+
+
+
+    }
+
+    @Configuration
     @Conditional(HodCondition.class)
     @Order(99)
     public static class HodSecurity extends WebSecurityConfigurerAdapter {

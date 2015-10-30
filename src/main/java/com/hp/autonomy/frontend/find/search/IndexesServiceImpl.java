@@ -9,7 +9,7 @@ import com.hp.autonomy.databases.Database;
 import com.hp.autonomy.databases.DatabasesService;
 import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.web.CacheNames;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
@@ -39,7 +39,7 @@ public class IndexesServiceImpl implements IndexesService {
     private static final Set<ResourceFlavour> FLAVOURS_TO_REMOVE = ResourceFlavour.of(ResourceFlavour.QUERY_MANIPULATION, ResourceFlavour.CATEGORIZATION);
 
     @Autowired
-    private ConfigService<FindConfig> configService;
+    private ConfigService<HodFindConfig> configService;
 
     @Autowired
     private ResourcesService resourcesService;

@@ -27,18 +27,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ConfigurationController {
 
     @Autowired
-    private ConfigFileService<FindConfig> configService;
+    private ConfigFileService<HodFindConfig> configService;
 
 	@RequestMapping(value = "/config", method = RequestMethod.GET)
     @ResponseBody
-    public ConfigResponse<FindConfig> config() {
+    public ConfigResponse<HodFindConfig> config() {
         return configService.getConfigResponse();
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @RequestMapping(value = "/config", method = {RequestMethod.POST, RequestMethod.PUT})
 	@ResponseBody
-    public ResponseEntity<?> saveConfig(@RequestBody final ConfigResponse<FindConfig> configResponse) throws Exception {
+    public ResponseEntity<?> saveConfig(@RequestBody final ConfigResponse<HodFindConfig> configResponse) throws Exception {
         try {
             log.info(Markers.AUDIT, "REQUESTED CHANGE APPLICATION CONFIGURATION");
             configService.updateConfig(configResponse.getConfig());

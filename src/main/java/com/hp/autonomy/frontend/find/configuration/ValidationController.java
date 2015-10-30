@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ValidationController {
 
     @Autowired
-    private ValidationService<FindConfig> validationService;
+    private ValidationService<HodFindConfig> validationService;
 
     @RequestMapping(value = "/config-validation", method = {RequestMethod.POST, RequestMethod.PUT})
     @ResponseBody
-    public ValidationResults validConfig(@RequestBody final FindConfig config){
+    public ValidationResults validConfig(@RequestBody final HodFindConfig config){
         return validationService.validateConfig(config);
     }
 }

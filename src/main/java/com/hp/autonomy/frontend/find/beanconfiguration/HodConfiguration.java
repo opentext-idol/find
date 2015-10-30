@@ -16,8 +16,8 @@ import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
 import com.hp.autonomy.frontend.find.configuration.AuthenticationMixins;
-import com.hp.autonomy.frontend.find.configuration.FindConfig;
-import com.hp.autonomy.frontend.find.configuration.FindConfigFileService;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfigFileService;
 import com.hp.autonomy.frontend.find.configuration.IodConfigValidator;
 import com.hp.autonomy.frontend.find.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.parametricfields.CacheableParametricValuesService;
@@ -88,7 +88,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     private CacheManager cacheManager;
 
     @Autowired
-    private FindConfigFileService configService;
+    private HodFindConfigFileService configService;
 
     @Bean(name = "dispatcherObjectMapper")
     public ObjectMapper dispatcherObjectMapper() {
@@ -113,8 +113,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public ValidationService<FindConfig> validationService() {
-        final ValidationServiceImpl<FindConfig> validationService = new ValidationServiceImpl<>();
+    public ValidationService<HodFindConfig> validationService() {
+        final ValidationServiceImpl<HodFindConfig> validationService = new ValidationServiceImpl<>();
 
         // The type annotation here is required to make it compile
         //noinspection Convert2Diamond

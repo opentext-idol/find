@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.HostAndPort;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
-import com.hp.autonomy.frontend.find.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.web.CacheNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -30,7 +30,7 @@ import java.util.Properties;
 public class RedisConfiguration {
 
     @Autowired
-    private ConfigService<FindConfig> configService;
+    private ConfigService<HodFindConfig> configService;
 
     @Autowired
     private Properties dispatcherProperties;

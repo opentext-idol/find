@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.HostAndPort;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
-import com.hp.autonomy.frontend.find.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.hod.redis.RedisTokenRepository;
 import com.hp.autonomy.hod.redis.RedisTokenRepositoryConfig;
 import com.hp.autonomy.hod.redis.RedisTokenRepositorySentinelConfig;
@@ -25,7 +25,7 @@ import java.util.Set;
 public class RedisHodConfiguration {
 
     @Autowired
-    private ConfigService<FindConfig> configService;
+    private ConfigService<HodFindConfig> configService;
 
     @Bean(destroyMethod = "destroy")
     public RedisTokenRepository tokenRepository() {

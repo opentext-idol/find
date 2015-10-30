@@ -12,7 +12,7 @@ import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.find.configuration.AuthenticationMixins;
-import com.hp.autonomy.frontend.find.configuration.FindConfigFileService;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfigFileService;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,8 +30,8 @@ public class HodConfigFileConfiguration {
     private FilterProvider filterProvider;
 
     @Bean
-    public FindConfigFileService configService() {
-        final FindConfigFileService configService = new FindConfigFileService();
+    public HodFindConfigFileService configService() {
+        final HodFindConfigFileService configService = new HodFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
         configService.setDefaultConfigFile("/com/hp/autonomy/frontend/find/configuration/defaultHodConfigFile.json");
