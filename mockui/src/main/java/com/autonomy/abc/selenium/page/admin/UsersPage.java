@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.page.admin;
 
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.Role;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -49,7 +49,7 @@ public class UsersPage extends AppElement implements AppPage {
 		passwordConfirmElement.sendKeys(passwordConfirm);
 	}
 
-	public void selectRole(User.Role role) {
+	public void selectRole(Role role) {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + role + "']")).click();
 	}
 

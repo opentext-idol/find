@@ -18,7 +18,7 @@ public class HSOUserService extends UserService {
     }
 
     @Override
-    public User createNewUser(NewUser newUser, User.Role role) {
+    public User createNewUser(NewUser newUser, Role role) {
         return null;
     }
 }
