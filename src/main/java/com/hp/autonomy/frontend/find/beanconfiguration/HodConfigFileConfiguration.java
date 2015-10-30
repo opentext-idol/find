@@ -34,7 +34,7 @@ public class HodConfigFileConfiguration {
         final FindConfigFileService configService = new FindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
-        configService.setDefaultConfigFile("/com/hp/autonomy/frontend/find/configuration/defaultConfigFile.json");
+        configService.setDefaultConfigFile("/com/hp/autonomy/frontend/find/configuration/defaultHodConfigFile.json");
         configService.setMapper(objectMapper());
         configService.setTextEncryptor(textEncryptor);
         configService.setFilterProvider(filterProvider);
