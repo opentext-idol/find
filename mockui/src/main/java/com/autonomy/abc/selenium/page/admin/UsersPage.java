@@ -1,7 +1,11 @@
 package com.autonomy.abc.selenium.page.admin;
 
+import com.autonomy.abc.selenium.element.PasswordBox;
+import com.autonomy.abc.selenium.users.NewUser;
+import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -9,6 +13,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsersPage extends AppElement implements AppPage {
 
@@ -49,7 +56,7 @@ public class UsersPage extends AppElement implements AppPage {
 		passwordConfirmElement.sendKeys(passwordConfirm);
 	}
 
-	public void selectRole(User.Role role) {
+	public void selectRole(Role role) {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + role + "']")).click();
 	}
 
@@ -67,6 +74,7 @@ public class UsersPage extends AppElement implements AppPage {
 		loadOrFadeWait();
 	}
 
+	// TODO: move to UserService.deleteOtherUsers()?
 	public void deleteOtherUsers() {
 		for (final WebElement deleteButton : getTable().findElements(By.cssSelector("button"))) {
 			if (!isAttributePresent(deleteButton, "disabled")) {
@@ -83,6 +91,7 @@ public class UsersPage extends AppElement implements AppPage {
 		return getTable().findElements(By.cssSelector("tbody tr")).size();
 	}
 
+	// TODO: move to UserService.deleteUser(User)?
 	public void deleteUser(final String userName) {
 		loadOrFadeWait();
 		deleteButton(userName).click();
@@ -99,24 +108,77 @@ public class UsersPage extends AppElement implements AppPage {
 		return findElement(By.cssSelector("#users-current-admins"));
 	}
 
+	@Deprecated
 	public WebElement getTableUserTypeLink(final String userName) {
 		return getUserRow(userName).findElement(By.cssSelector(".role"));
+	}
+
+	public List<String> getUsernames() {
+		List<String> usernames = new ArrayList<>();
+		for (WebElement element : getTable().findElements(By.cssSelector("tbody .user"))) {
+			usernames.add(element.getText().trim());
+		}
+		return usernames;
+	}
+
+	public Role getRoleOf(User user) {
+		return Role.fromString(getTableUserTypeLink(user.getUsername()).getText());
+	}
+
+	public WebElement passwordLinkFor(User user) {
+		return getTableUserPasswordLink(user.getUsername());
+	}
+
+	public PasswordBox passwordBoxFor(User user) {
+		return new PasswordBox(getTableUserPasswordBox(user.getUsername()), getDriver());
+	}
+
+	public WebElement roleLinkFor(User user) {
+		return getTableUserTypeLink(user.getUsername());
+	}
+
+	public void setRoleValueFor(User user, Role newRole) {
+		selectTableUserType(user.getUsername(), newRole.toString());
+	}
+
+	public void cancelPendingEditFor(User user) {
+		getUserRow(user.getUsername()).findElement(By.cssSelector(".editable-cancel")).click();
+	}
+
+	public void submitPendingEditFor(User user) {
+		getUserRow(user.getUsername()).findElement(By.cssSelector(".editable-submit")).click();
+	}
+
+	public void changeRole(User user, Role newRole) {
+		roleLinkFor(user).click();
+		setRoleValueFor(user, newRole);
+		submitPendingEditFor(user);
+	}
+
+	public User changeAuth(User user, NewUser replacementAuth) {
+		return replacementAuth.replaceAuthFor(user, this);
 	}
 
 	public void selectTableUserType(final String userName, final String type) {
 		getUserRow(userName).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
 	}
 
+	@Deprecated
 	public WebElement getTableUserPasswordLink(final String userName) {
 		return getUserRow(userName).findElement(By.cssSelector(".pw"));
 	}
 
+	@Deprecated
 	public WebElement getTableUserPasswordBox(final String userName) {
-		return getUserRow(userName).findElement(By.cssSelector("[type='password']"));
+		return getUserRow(userName).findElement(By.cssSelector("td:nth-child(2)"));
 	}
 
 	public WebElement getUserRow(final String userName) {
 		return findElement(By.xpath(".//span[contains(text(), '" + userName + "')]/../.."));
+	}
+
+	public WebElement rowFor(final User user) {
+		return getUserRow(user.getUsername());
 	}
 
 	public void changePassword(final String userName, final String newPassword) {

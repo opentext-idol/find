@@ -26,6 +26,7 @@ public class JsonConfig {
         this.selenium = new SeleniumConfig(node.path("selenium"));
 
         // user config is app-specific, must initialise after app
+        // (this means that currently the app type must be specified in both configs) TODO: expose override constructor/factory
         Application application = Application.ofType(getAppType());
         UserConfigParser userConfigParser = application.getUserConfigParser();
         this.users = new HashMap<>();

@@ -12,8 +12,8 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
+import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
-import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -52,6 +52,7 @@ public abstract class ABCTestBase {
 	// TODO: use getBody() instead
 	public AppBody body;
 	private ElementFactory elementFactory;
+	private User currentUser;
 
 	// TODO: remove
 	// only used for compatibility with on-prem tests that have not yet been updated
@@ -104,7 +105,7 @@ public abstract class ABCTestBase {
 
 	protected void tryLogIn(){
 		try {
-			elementFactory.getLoginPage().loginWith(config.getDefaultUser().getAuthProvider());
+			loginAs(config.getDefaultUser());
 			//Wait for page to load
 			Thread.sleep(2000);
 			// now has side/top bar
@@ -127,9 +128,11 @@ public abstract class ABCTestBase {
 		navBar = body.getTopNavBar();
 	}
 
+	// log in via dev console while the HSOD SSO page is broken
 	private void workaroundLogIn() {
+		currentUser = config.getUser("hp_passport");
 		getDriver().get("https://www.preview.havenondemand.com/login.html");
-		config.getUser("hp_passport").getAuthProvider().login(getDriver());
+		currentUser.getAuthProvider().login(getDriver());
 		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("navbar-inner")));
 		getDriver().get(config.getWebappUrl());
 		if(!new AbcHasLoggedIn(getDriver()).hasLoggedIn()){
@@ -161,5 +164,19 @@ public abstract class ABCTestBase {
 
 	public AppBody getBody() {
 		return getApplication().createAppBody(driver);
+	}
+
+	protected void loginAs(User user) {
+		getElementFactory().getLoginPage().loginWith(user.getAuthProvider());
+		currentUser = user;
+	}
+
+	protected void logout() {
+		getBody().logout();
+		currentUser = null;
+	}
+
+	protected User getCurrentUser() {
+		return currentUser;
 	}
 }

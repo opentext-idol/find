@@ -19,11 +19,7 @@ public abstract class UserService {
 
     public abstract UsersPage goToUsers();
 
-    public abstract User createNewUser(NewUser newUser, User.Role role);
-
-    public void login(User user) {
-        getElementFactory().getLoginPage().loginWith(user.getAuthProvider());
-    }
+    public abstract User createNewUser(NewUser newUser, Role role);
 
     protected WebDriver getDriver() {
         return getElementFactory().getDriver();

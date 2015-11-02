@@ -3,6 +3,8 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
@@ -111,6 +113,10 @@ public class TestConfig {
 			}
 		}
 		return configs;
+	}
+
+	public static JsonNode getRawBaseConfig() throws IOException {
+		return new ObjectMapper().readTree(BASE_CONFIG_LOCATION);
 	}
 
 }
