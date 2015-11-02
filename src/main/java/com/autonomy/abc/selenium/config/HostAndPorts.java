@@ -14,7 +14,7 @@ public class HostAndPorts {
 	private final String name;
 
 	private HostAndPorts(final Builder builder) {
-		this.protocol = builder.protocol;
+		this.protocol = (builder.protocol) == null ? "http" : builder.protocol;
 		this.host = builder.host;
 		this.port = builder.port;
 		this.name = builder.name;
@@ -67,7 +67,7 @@ public class HostAndPorts {
 			return this;
 		}
 
-		public Builder setCommonName(final String name) {
+		public Builder setName(final String name) {
 			this.name = name;
 			return this;
 		}
@@ -76,5 +76,10 @@ public class HostAndPorts {
 			return new HostAndPorts(this);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return name + " @ " + getUrl();
+    }
 }
 

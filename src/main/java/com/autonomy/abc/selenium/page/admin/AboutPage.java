@@ -52,6 +52,11 @@ public class AboutPage extends AppElement implements AppPage {
 		findElement(By.cssSelector(".dataTables_filter [type='search']")).sendKeys(searchTerm);
 	}
 
+    // 1-based index
+    public WebElement libraryName(int index) {
+        return findElement(By.cssSelector(".dataTables_wrapper tbody tr:nth-of-type(" + index + ") a"));
+    }
+
     @Override
     public void waitForLoad() {
         waitForLoad(getDriver());
