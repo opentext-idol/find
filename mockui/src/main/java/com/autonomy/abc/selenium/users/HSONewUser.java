@@ -8,4 +8,9 @@ public class HSONewUser implements NewUser {
     public User signUpAs(Role role, UsersPage usersPage) {
         return null;
     }
+
+    @Override
+    public User replaceAuthFor(User user, UsersPage usersPage) {
+        return null;
+    }
 }
