@@ -13,7 +13,7 @@ public class OPNewUser implements NewUser {
     }
 
     @Override
-    public User signUpAs(User.Role role, UsersPage usersPage) {
+    public User signUpAs(Role role, UsersPage usersPage) {
         usersPage.addUsername(username);
         usersPage.addAndConfirmPassword(password, password);
         usersPage.selectRole(role);
@@ -21,6 +21,12 @@ public class OPNewUser implements NewUser {
         usersPage.loadOrFadeWait();
         OPAccount auth = new OPAccount(username, password);
         return new User(auth, username, role);
+    }
+
+    @Override
+    public User replaceAuthFor(User user, UsersPage usersPage) {
+        usersPage.passwordBoxFor(user).setValueAndWait(password);
+        return new User(new OPAccount(user.getUsername(), password), user.getUsername(), user.getRole());
     }
 
     @Override

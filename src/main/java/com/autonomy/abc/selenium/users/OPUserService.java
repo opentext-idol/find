@@ -19,7 +19,7 @@ public class OPUserService extends UserService {
     }
 
     @Override
-    public User createNewUser(NewUser newUser, User.Role role) {
+    public User createNewUser(NewUser newUser, Role role) {
         UsersPage usersPage = goToUsers();
         usersPage.createButton().click();
         User user = newUser.signUpAs(role, usersPage);
