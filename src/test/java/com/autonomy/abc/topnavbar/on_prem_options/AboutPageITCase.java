@@ -9,14 +9,15 @@ import com.autonomy.abc.selenium.page.admin.AboutPage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+
 
 public class AboutPageITCase extends ABCTestBase {
 
@@ -39,7 +40,6 @@ public class AboutPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-        Thread.sleep(5000);
         ((OPTopNavBar) body.getTopNavBar()).goToAboutPage();
 		aboutPage = getElementFactory().getAboutPage();
 	}
@@ -47,19 +47,19 @@ public class AboutPageITCase extends ABCTestBase {
 	@Test
 	public void testTableNavigation() {
 		aboutPage.setTableSize("10");
-		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 10 of"));
-		assertThat("Page 1 should be active" , aboutPage.isPageinateNumberActive(1));
-		assertThat("Page 2 should not be active" , !aboutPage.isPageinateNumberActive(2));
-		assertThat("Page 3 should not be active" , !aboutPage.isPageinateNumberActive(3));
-		assertThat("Previous button is not disabled", aboutPage.isPreviousDisabled());
+		assertThat(aboutPage, containsText("Showing 1 to 10 of"));
+		assertThat("page 1 is active" , aboutPage.isPageinateNumberActive(1));
+		assertThat("page 2 is not active" , !aboutPage.isPageinateNumberActive(2));
+		assertThat("page 3 is not active" , !aboutPage.isPageinateNumberActive(3));
+		assertThat("previous button is disabled", aboutPage.isPreviousDisabled());
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 1; i < 4; i++) {
 			aboutPage.nextButton().click();
-			assertThat("Previous button is not enabled", !aboutPage.isPreviousDisabled());
+			assertThat("Previous button is enabled on page " + i, !aboutPage.isPreviousDisabled());
 		}
 
-		assertThat("Next button is not disabled", aboutPage.isNextDisabled());
-		assertThat("Page 1 should not be active" , !aboutPage.isPageinateNumberActive(1));
+		assertThat("next button is disabled", aboutPage.isNextDisabled());
+		assertThat("page 1 should not be active" , !aboutPage.isPageinateNumberActive(1));
 		assertThat("Page 2 should not be active" , !aboutPage.isPageinateNumberActive(2));
 		assertThat("Page 3 should be active" , aboutPage.isPageinateNumberActive(3));
 
@@ -75,19 +75,19 @@ public class AboutPageITCase extends ABCTestBase {
 	@Test
 	public void testTableSize() {
 		aboutPage.setTableSize("10");
-		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 10 of"));
+		assertThat(aboutPage, containsText("Showing 1 to 10 of"));
 
 		aboutPage.setTableSize("25");
-		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 21 of"));
+        assertThat(aboutPage, containsText("Showing 1 to 21 of"));
 
 		aboutPage.setTableSize("10");
-		assertThat("Wrong size", aboutPage.getText().contains("Showing 1 to 10 of"));
+        assertThat(aboutPage, containsText("Showing 1 to 10 of"));
 	}
 
 	@Test
 	public void testSearchTable() {
 		aboutPage.searchInSearchBox("store");
-		assertThat("search has not returned correct result", aboutPage.findElement(By.cssSelector(".dataTables_wrapper tbody a")).getText().contains("store"));
+		assertThat(aboutPage.libraryName(1), containsText("store"));
 	}
 
 }

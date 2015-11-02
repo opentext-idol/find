@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class LoginPageOnPremiseITCase extends ABCTestBase {
 
@@ -56,7 +56,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
         goToUsersPage();
 		usersPage.deleteOtherUsers();
 		usersPage.createUserButton().click();
-		assertTrue("Create user modal has not opened", usersPage.isModalShowing());
+		assertThat(usersPage, modalIsDisplayed());
 		usersPage.createNewUser("admin", "qwerty", "Admin");
 		usersPage.closeModal();
 		body.logout();
@@ -133,13 +133,13 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	public void testLogoutNoAccessViaUrl() {
 		getDriver().get(config.getWebappUrl() + "overview");
 		usersPage.loadOrFadeWait();
-		assertFalse(getDriver().getCurrentUrl().contains("overview"));
-		assertTrue(getDriver().getCurrentUrl().contains("login"));
+		assertThat(getDriver().getCurrentUrl(), containsString("overview"));
+		assertThat(getDriver().getCurrentUrl(), containsString("login"));
 
 		getDriver().get(config.getWebappUrl() + "keywords");
 		usersPage.loadOrFadeWait();
-		assertFalse(getDriver().getCurrentUrl().contains("keywords"));
-		assertTrue(getDriver().getCurrentUrl().contains("login"));
+		assertThat(getDriver().getCurrentUrl(), not(containsString("keywords")));
+		assertThat(getDriver().getCurrentUrl(), containsString("login"));
 	}
 
 	@Test
@@ -148,6 +148,6 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 		usersPage.loadOrFadeWait();
 		loginPage = getElementFactory().getLoginPage();
 		verifyThat(loginPage.usernameInput(), not(hasAttribute("readonly")));
-		assertFalse(getDriver().getCurrentUrl().contains("defaultLogin"));
+		assertThat(getDriver().getCurrentUrl(), containsString("defaultLogin"));
 	}
 }

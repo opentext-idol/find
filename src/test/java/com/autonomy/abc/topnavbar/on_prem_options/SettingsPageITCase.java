@@ -7,9 +7,8 @@ import com.autonomy.abc.selenium.config.HostAndPorts;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.After;
 import org.junit.Before;
@@ -19,23 +18,31 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 
 public class SettingsPageITCase extends ABCTestBase {
+	private final static Map<SettingsPage.Panel, HostAndPorts> HOSTS_AND_PORTS;
+	private final static EnumSet<SettingsPage.Panel> SERVER_PANELS = EnumSet.of(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.CONTENT, SettingsPage.Panel.QMS, SettingsPage.Panel.QMS_AGENTSTORE, SettingsPage.Panel.STATSSERVER, SettingsPage.Panel.VIEW);
+
+	private SettingsPage settingsPage;
+
+	static {
+		try {
+			HOSTS_AND_PORTS = new ObjectMapper().convertValue(TestConfig.getRawBaseConfig().path("servers"), new TypeReference<Map<SettingsPage.Panel, HostAndPorts>>() {});
+			System.out.println(HOSTS_AND_PORTS);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
 	public SettingsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
 	}
-
-	private SettingsPage settingsPage;
-
-	private final static EnumSet<SettingsPage.Panel> SERVER_PANELS = EnumSet.of(SettingsPage.Panel.COMMUNITY, SettingsPage.Panel.CONTENT, SettingsPage.Panel.QMS, SettingsPage.Panel.QMS_AGENTSTORE, SettingsPage.Panel.STATSSERVER, SettingsPage.Panel.VIEW);
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws IOException {
@@ -50,7 +57,6 @@ public class SettingsPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-        Thread.sleep(5000);
 		((OPTopNavBar) body.getTopNavBar()).goToSettingsPage();
 		settingsPage = getElementFactory().getSettingsPage();
 	}
@@ -98,7 +104,7 @@ public class SettingsPageITCase extends ABCTestBase {
 		for (final SettingsPage.Panel panel : SettingsPage.Panel.values()) {
 			if (panel.equals(SettingsPage.Panel.LOCALE)) continue;
 
-			assertTrue(settingsPage.getPanelWithName(panel.getTitle()).isDisplayed());
+			assertThat(settingsPage.getPanelWithName(panel.getTitle()), displayed());
 		}
 	}
 
@@ -121,7 +127,7 @@ public class SettingsPageITCase extends ABCTestBase {
 			finalPortValues.put(settingsPanel, Integer.parseInt(settingsPage.portBox(settingsPanel).getAttribute("value")));
 		}
 
-		assertEquals(originalPortValues, finalPortValues);
+		assertThat(originalPortValues, is(finalPortValues));
 	}
 
 	@Test
@@ -144,7 +150,7 @@ public class SettingsPageITCase extends ABCTestBase {
 			finalHostNames.put(settingsPanel, settingsPage.hostBox(settingsPanel).getAttribute("value"));
 		}
 
-		assertEquals(originalHostNames, finalHostNames);
+		assertThat(originalHostNames, is(finalHostNames));
 	}
 
 	@Test
@@ -165,7 +171,7 @@ public class SettingsPageITCase extends ABCTestBase {
 			finalProtocol.put(settingsPanel, settingsPage.protocolBox(settingsPanel.getTitle()).getAttribute("value"));
 		}
 
-		assertEquals(originalProtocol, finalProtocol);
+		assertThat(originalProtocol, is(finalProtocol));
 	}
 
 	@Test
@@ -235,41 +241,4 @@ public class SettingsPageITCase extends ABCTestBase {
 		settingsPage.saveChanges();
 	}
 
-	private final static Map<SettingsPage.Panel, HostAndPorts> HOSTS_AND_PORTS;
-
-	static {
-		try (InputStream inputStream = SettingsPageITCase.class.getClassLoader().getResourceAsStream(System.getProperty("testConfig.location"))) {
-			final ObjectMapper mapper = new ObjectMapper();
-			HOSTS_AND_PORTS = mapper.readValue(inputStream, Panels.class).getServers();
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@JsonDeserialize(builder = Panels.Builder.class)
-	static class Panels {
-		private final Map<SettingsPage.Panel, HostAndPorts> servers;
-
-		public Panels(final Panels.Builder builder) {
-			this.servers = builder.servers;
-		}
-
-		public Map<SettingsPage.Panel, HostAndPorts> getServers() {
-			return servers;
-		}
-
-		@JsonPOJOBuilder(withPrefix = "set")
-		static class Builder {
-			private Map<SettingsPage.Panel, HostAndPorts> servers;
-
-			public Panels.Builder setServers(final EnumMap<SettingsPage.Panel, HostAndPorts> servers) {
-				this.servers = servers;
-				return this;
-			}
-
-			public Panels build() {
-				return new Panels(this);
-			}
-		}
-	}
 }
