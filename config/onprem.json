@@ -26,6 +26,10 @@
     "bob": {
       "username": "bob",
       "password": "marley"
+    },
+    "testAddDuplicateUser_james": {
+      "username": "james",
+      "password": "giantPeach"
     }
   },
   "servers": {
