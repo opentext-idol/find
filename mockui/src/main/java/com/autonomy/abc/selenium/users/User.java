@@ -4,24 +4,8 @@ import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 
 public class User {
     private final String username;
-    private String email;
-    private String password;
-    private Role role;
-    private AuthProvider authProvider;
-
-    public User(String username, String password, String email, Role role){
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    public User(String username, String password, String email){
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = Role.USER;
-    }
+    private final Role role;
+    private final AuthProvider authProvider;
 
     public User(AuthProvider provider, String username, Role role) {
         this.authProvider = provider;
@@ -35,10 +19,6 @@ public class User {
 
     public Role getRole() {
         return role;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public String getUsername() {
