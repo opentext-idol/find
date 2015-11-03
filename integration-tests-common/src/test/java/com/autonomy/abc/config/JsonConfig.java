@@ -63,6 +63,10 @@ public class JsonConfig {
         return (jsonFile == null) ? null : new JsonConfig(new ObjectMapper().readTree(jsonFile));
     }
 
+    public static JsonConfig fromURL(URL url) throws IOException {
+        return (url == null) ? null : new JsonConfig(new ObjectMapper().readTree(url));
+    }
+
     public JsonConfig overrideUsing(JsonConfig overrides) throws IOException {
         return (overrides == null) ? this : new JsonConfig(overrides, this);
     }
