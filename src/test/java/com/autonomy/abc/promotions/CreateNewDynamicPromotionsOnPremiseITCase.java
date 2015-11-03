@@ -46,7 +46,6 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-		Thread.sleep(5000);
         promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 

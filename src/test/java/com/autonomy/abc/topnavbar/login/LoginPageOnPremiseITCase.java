@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
+import com.autonomy.abc.selenium.users.UserService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,21 +46,17 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 		return (OPElementFactory) super.getElementFactory();
 	}
 
-    private void goToUsersPage() {
-        ((OPTopNavBar) getBody().getTopNavBar()).goToUsersPage();
-        usersPage = getElementFactory().getUsersPage();
-    }
 
 	@Before
 	public void setUp() throws InterruptedException {
-        Thread.sleep(5000);
-        goToUsersPage();
+        UserService userService = getApplication().createUserService(getElementFactory());
+        usersPage = userService.goToUsers();
 		usersPage.deleteOtherUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 		usersPage.createNewUser("admin", "qwerty", "Admin");
 		usersPage.closeModal();
-		body.logout();
+		logout();
 		loginPage = getElementFactory().getLoginPage();
 	}
 
@@ -133,7 +130,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	public void testLogoutNoAccessViaUrl() {
 		getDriver().get(config.getWebappUrl() + "overview");
 		usersPage.loadOrFadeWait();
-		assertThat(getDriver().getCurrentUrl(), containsString("overview"));
+		assertThat(getDriver().getCurrentUrl(), not(containsString("overview")));
 		assertThat(getDriver().getCurrentUrl(), containsString("login"));
 
 		getDriver().get(config.getWebappUrl() + "keywords");
