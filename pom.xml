@@ -23,7 +23,8 @@
 
     <!-- specify defaults -->
     <properties>
-        <build.config.location>target/config/maven.json</build.config.location>
+        <build.config.location>maven.json</build.config.location>
+        <build.config.override/>
         <config.selenium.url>http://localhost:4444/wd/hub</config.selenium.url>
         <config.selenium.browser>chrome</config.selenium.browser>
         <config.app.env>preview</config.app.env>
@@ -45,29 +46,10 @@
                 <configuration>
                     <systemPropertyVariables>
                         <com.autonomy.baseConfig>${build.config.location}</com.autonomy.baseConfig>
+                        <com.autonomy.configFile>${build.config.override}</com.autonomy.configFile>
+                        <com.autonomy.mavenFlag>true</com.autonomy.mavenFlag>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/config</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>../config</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -82,9 +64,7 @@
                 </property>
             </activation>
             <properties>
-                <build.config.location>target/config/onprem.json</build.config.location>
-                <!-- "testConfig" lists IDOL server setup for SettingsPageITCase -->
-                <testConfig.location>config.json</testConfig.location>
+                <build.config.location>onprem.json</build.config.location>
             </properties>
             <dependencies>
                 <dependency>
@@ -115,10 +95,8 @@
                 </property>
             </activation>
             <properties>
-                <build.config.location>target/config/onprem.json</build.config.location>
-                <com.autonomy.configFile>target/config/fenkins.json</com.autonomy.configFile>
-                <!-- "testConfig" lists IDOL server setup for SettingsPageITCase -->
-                <testConfig.location>config.json</testConfig.location>
+                <build.config.location>onprem.json</build.config.location>
+                <build.config.override>fenkins.json</build.config.override>
             </properties>
         </profile>
 
