@@ -7,8 +7,6 @@ import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.menu.SideNavBar;
-import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
@@ -121,8 +119,8 @@ public abstract class ABCTestBase {
 
 	// log in via dev console while the HSOD SSO page is broken
 	private void workaroundLogIn() {
-		currentUser = config.getUser("hp_passport");
-		getDriver().get("https://www.preview.havenondemand.com/login.html");
+		currentUser = config.getUser("twitter");
+		getDriver().get("https://www.int.havenondemand.com/login.html");
 		currentUser.getAuthProvider().login(getDriver());
 		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("navbar-inner")));
 		getDriver().get(config.getWebappUrl());

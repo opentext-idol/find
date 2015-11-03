@@ -1,8 +1,8 @@
 {
   "app": {
     "type": "Hosted",
-    "url": "http://search.preview.havenapps.io",
-    "find": "http://find.preview.havenapps.io"
+    "url": "http://search.dev.idolondemand.com",
+    "find": "http://find.dev.idolondemand.com"
   },
   "selenium": {
     "browsers": ["chrome"],
