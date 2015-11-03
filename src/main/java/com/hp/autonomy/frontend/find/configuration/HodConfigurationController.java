@@ -9,10 +9,12 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.configuration.ConfigValidationException;
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.logging.Markers;
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,12 +26,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping({"/api/useradmin/config", "/api/config/config"})
 @Slf4j
-public class ConfigurationController {
+@Conditional(HodCondition.class) // TODO have a think about this (maybe make it a generic type and instantiate in config class)
+public class HodConfigurationController {
 
     @Autowired
     private ConfigFileService<HodFindConfig> configService;
 
-	@RequestMapping(value = "/config", method = RequestMethod.GET)
+    @RequestMapping(value = "/config", method = RequestMethod.GET)
     @ResponseBody
     public ConfigResponse<HodFindConfig> config() {
         return configService.getConfigResponse();
@@ -37,17 +40,17 @@ public class ConfigurationController {
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @RequestMapping(value = "/config", method = {RequestMethod.POST, RequestMethod.PUT})
-	@ResponseBody
+    @ResponseBody
     public ResponseEntity<?> saveConfig(@RequestBody final ConfigResponse<HodFindConfig> configResponse) throws Exception {
         try {
             log.info(Markers.AUDIT, "REQUESTED CHANGE APPLICATION CONFIGURATION");
             configService.updateConfig(configResponse.getConfig());
             log.info(Markers.AUDIT, "CHANGED APPLICATION CONFIGURATION");
             return new ResponseEntity<>(configService.getConfigResponse(), HttpStatus.OK);
-        } catch (ConfigException ce) {
+        } catch (final ConfigException ce) {
             log.info(Markers.AUDIT, "CHANGE APPLICATION CONFIGURATION FAILED");
             return new ResponseEntity<>(Collections.singletonMap("exception", ce.getMessage()), HttpStatus.NOT_ACCEPTABLE);
-        } catch (ConfigValidationException cve) {
+        } catch (final ConfigValidationException cve) {
             log.info(Markers.AUDIT, "CHANGE APPLICATION CONFIGURATION FAILED");
             return new ResponseEntity<>(Collections.singletonMap("validation", cve.getValidationErrors()), HttpStatus.NOT_ACCEPTABLE);
         }

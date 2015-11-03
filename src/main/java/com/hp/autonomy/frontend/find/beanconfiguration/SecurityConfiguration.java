@@ -10,7 +10,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider;
-import com.hp.autonomy.frontend.find.FindController;
+import com.hp.autonomy.frontend.find.HodFindController;
 import com.hp.autonomy.frontend.find.authentication.HavenSearchUserMetadata;
 import com.hp.autonomy.frontend.find.authentication.HsodUsernameResolver;
 import com.hp.autonomy.frontend.find.web.HodLogoutSuccessHandler;
@@ -110,12 +110,12 @@ public class SecurityConfiguration {
         @SuppressWarnings("ProhibitedExceptionDeclared")
         @Override
         protected void configure(final HttpSecurity http) throws Exception {
-            final AuthenticationEntryPoint ssoEntryPoint = new SsoAuthenticationEntryPoint(FindController.SSO_PAGE);
+            final AuthenticationEntryPoint ssoEntryPoint = new SsoAuthenticationEntryPoint(HodFindController.SSO_PAGE);
 
-            final SsoAuthenticationFilter ssoAuthenticationFilter = new SsoAuthenticationFilter(FindController.SSO_AUTHENTICATION_URI);
+            final SsoAuthenticationFilter ssoAuthenticationFilter = new SsoAuthenticationFilter(HodFindController.SSO_AUTHENTICATION_URI);
             ssoAuthenticationFilter.setAuthenticationManager(authenticationManager());
 
-            final LogoutSuccessHandler logoutSuccessHandler = new HodTokenLogoutSuccessHandler(FindController.SSO_LOGOUT_PAGE, tokenRepository);
+            final LogoutSuccessHandler logoutSuccessHandler = new HodTokenLogoutSuccessHandler(HodFindController.SSO_LOGOUT_PAGE, tokenRepository);
 
             http.regexMatcher("/public/.*|/sso|/authenticate-sso|/api/authentication/.*|/logout")
                 .csrf()
@@ -174,7 +174,7 @@ public class SecurityConfiguration {
                     .failureUrl("/loginPage?error=auth")
                     .and()
                 .logout()
-                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(FindController.SSO_LOGOUT_PAGE, tokenRepository), "/public/"))
+                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(HodFindController.SSO_LOGOUT_PAGE, tokenRepository), "/public/"))
                 .and()
                 .csrf()
                     .disable();

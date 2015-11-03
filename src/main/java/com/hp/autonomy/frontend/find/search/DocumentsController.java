@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
@@ -12,6 +13,7 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/public/search/query-text-index")
+@Conditional(HodCondition.class) // TODO remove this
 public class DocumentsController {
 
     @Autowired

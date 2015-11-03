@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter;
-import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.configuration.TextEncryptorPasswordFactory;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
 import org.jasypt.util.text.BasicTextEncryptor;
@@ -50,7 +49,7 @@ import java.util.Set;
 public class AppConfiguration {
 
     @Autowired
-    private ConfigService<HodFindConfig> configService;
+    private ConfigService<?> configService;
 
     @Bean
     public TextEncryptor textEncryptor() {

@@ -6,8 +6,10 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.databases.Database;
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
+@Conditional(HodCondition.class) // TODO remove this
 public class ListIndexesController {
 
     @Autowired

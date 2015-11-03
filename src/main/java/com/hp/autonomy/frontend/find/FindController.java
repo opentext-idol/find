@@ -27,21 +27,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
-public class FindController {
+public abstract class FindController {
 
-    // TODO: move this to a Hod specific controller
-    public static final String SSO_PAGE = "/sso";
-    public static final String SSO_AUTHENTICATION_URI = "/authenticate-sso";
-    public static final String SSO_LOGOUT_PAGE = "/sso-logout";
-    private static final String HOD_ENDPOINT = System.getProperty("find.iod.api");
     public static final String PUBLIC_PATH = "/public/";
 
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
-
-    @Autowired
-    private HodAuthenticationRequestService hodAuthenticationRequestService;
 
     @Autowired
     private ObjectMapper contextObjectMapper;
@@ -70,34 +61,7 @@ public class FindController {
         return new ModelAndView("public", attributes);
     }
 
-    @RequestMapping(value = SSO_PAGE, method = RequestMethod.GET)
-    public ModelAndView sso() throws JsonProcessingException, HodErrorException {
-        final Map<String, Object> ssoConfig = new HashMap<>();
-        ssoConfig.put("authenticatePath", SSO_AUTHENTICATION_URI);
-        ssoConfig.put("combinedRequestApi", HodCombinedRequestController.COMBINED_REQUEST);
-        ssoConfig.put("errorPage", ErrorController.CLIENT_AUTHENTICATION_ERROR);
-        ssoConfig.put("listApplicationRequest", hodAuthenticationRequestService.getListApplicationRequest());
-        ssoConfig.put("listApplicationRequestApi", HodCombinedRequestController.LIST_APPLICATION_REQUEST);
-        ssoConfig.put("ssoPage", System.getProperty("find.hod.sso", "https://www.idolondemand.com/sso.html"));
-        ssoConfig.put("ssoEntryPage", SSO_PAGE);
-
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("configJson", convertToJson(ssoConfig));
-
-        return new ModelAndView("sso", attributes);
-    }
-
-    @RequestMapping(value = SSO_LOGOUT_PAGE, method = RequestMethod.GET)
-    public ModelAndView ssoLogoutPage() throws JsonProcessingException {
-        final Map<String, Object> ssoConfig = new HashMap<>();
-        ssoConfig.put("endpoint", HOD_ENDPOINT);
-
-        final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("configJson", contextObjectMapper.writeValueAsString(ssoConfig));
-        return new ModelAndView("sso-logout", attributes);
-    }
-
-    private String convertToJson(final Object object) throws JsonProcessingException {
+    protected String convertToJson(final Object object) throws JsonProcessingException {
         return contextObjectMapper.writeValueAsString(object).replace("</", "<\\/");
     }
 }

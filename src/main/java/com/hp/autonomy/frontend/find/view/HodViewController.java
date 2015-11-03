@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.view;
 
 import com.hp.autonomy.frontend.find.FindQueryProfileService;
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,7 @@ import java.util.Locale;
 @Controller
 @RequestMapping({"/api/public/view"})
 @Slf4j
+@Conditional(HodCondition.class)
 public class HodViewController extends AbstractViewController {
 
     @Autowired

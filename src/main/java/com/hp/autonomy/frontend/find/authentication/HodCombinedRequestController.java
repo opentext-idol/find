@@ -5,16 +5,19 @@
 
 package com.hp.autonomy.frontend.find.authentication;
 
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.authentication.SignedRequest;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Conditional(HodCondition.class)
 public class HodCombinedRequestController {
 
     public static final String COMBINED_REQUEST = "/api/authentication/combined-request";
