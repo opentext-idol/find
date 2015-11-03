@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.promotions;
 
+import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
@@ -32,7 +33,7 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
     }
 
     @Override
-    public List<com.autonomy.abc.selenium.actions.wizard.WizardStep> getDynamicWizardSteps(DynamicPromotion promotion) {
+    public List<WizardStep> getWizardSteps(DynamicPromotion promotion) {
         return Arrays.asList(
             new ResultsNumberStep(this, promotion.getNumberOfResults()),
             new SearchTriggerStep(this, promotion.getTrigger())

@@ -90,7 +90,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}
 
 	// "visited" by the promotion
-	public List<WizardStep> getDynamicWizardSteps(DynamicPromotion promotion) {
+	public List<WizardStep> getWizardSteps(DynamicPromotion promotion) {
 		return Arrays.asList(
 				new OptionWizardStep(this, "Spotlight type", promotion.getSpotlightType().getOption()),
 				new SearchTriggerStep(this, promotion.getTrigger())
