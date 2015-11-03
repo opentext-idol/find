@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.find.configuration.CommunityAciService;
 import com.hp.autonomy.frontend.find.configuration.ContentAciService;
-import com.hp.autonomy.frontend.find.configuration.FindIdolConfigFileService;
+import com.hp.autonomy.frontend.find.configuration.IdolFindConfigFileService;
 import org.apache.http.client.HttpClient;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -34,8 +34,8 @@ public class IdolConfiguration {
     private FilterProvider filterProvider;
 
     @Bean
-    public FindIdolConfigFileService configFileService() {
-        final FindIdolConfigFileService configService = new FindIdolConfigFileService();
+    public IdolFindConfigFileService configFileService() {
+        final IdolFindConfigFileService configService = new IdolFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
         configService.setDefaultConfigFile("/com/hp/autonomy/frontend/find/configuration/defaultIdolConfigFile.json");

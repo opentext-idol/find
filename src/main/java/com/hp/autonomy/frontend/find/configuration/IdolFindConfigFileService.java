@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.configuration;
 
 import com.hp.autonomy.frontend.configuration.AbstractAuthenticatingConfigFileService;
 
-public class FindIdolConfigFileService extends AbstractAuthenticatingConfigFileService<IdolFindConfig> {
+public class IdolFindConfigFileService extends AbstractAuthenticatingConfigFileService<IdolFindConfig> {
     @Override
     public void postInitialise(final IdolFindConfig config) throws Exception {
 
