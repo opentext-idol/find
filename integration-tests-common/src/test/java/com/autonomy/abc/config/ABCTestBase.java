@@ -54,13 +54,6 @@ public abstract class ABCTestBase {
 	private ElementFactory elementFactory;
 	private User currentUser;
 
-	// TODO: remove
-	// only used for compatibility with on-prem tests that have not yet been updated
-	@Deprecated
-	protected SideNavBar sideNavBar;
-	@Deprecated
-	protected TopNavBar navBar;
-
 	// TODO: replace with single argument constructor
 	public ABCTestBase(final TestConfig config, final String browser, final ApplicationType type, final Platform platform) {
 		this(config);
@@ -124,8 +117,6 @@ public abstract class ABCTestBase {
 		} else {
 			workaroundLogIn();
 		}
-		sideNavBar = body.getSideNavBar();
-		navBar = body.getTopNavBar();
 	}
 
 	// log in via dev console while the HSOD SSO page is broken

@@ -67,12 +67,6 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     public void setUp() {
         actionFactory = new SearchActionFactory(getApplication(), getElementFactory());
         promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
-        // TODO: fix magic sleep
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         promotedDocTitle = goToWizard(actionFactory.makeSearch("fox"), 1).get(0);
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
     }
