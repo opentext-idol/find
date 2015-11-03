@@ -3,9 +3,7 @@ package com.autonomy.abc.selenium.page.promotions;
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.promotions.DynamicPromotion;
-import com.autonomy.abc.selenium.promotions.ResultsNumberStep;
-import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
+import com.autonomy.abc.selenium.promotions.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,6 +18,14 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
 
     private FormInput dataInput(String attribute) {
         return new FormInput(findElement(By.cssSelector("[data-attribute='" + attribute + "']")), getDriver());
+    }
+
+    @Override
+    public List<WizardStep> getWizardSteps(SpotlightPromotion promotion) {
+        return Arrays.asList(
+            new OptionWizardStep(this, "Promotion type", Promotion.Type.SPOTLIGHT.getOption()),
+            new SearchTriggerStep(this, promotion.getTrigger())
+        );
     }
 
     // for dynamic promotions
