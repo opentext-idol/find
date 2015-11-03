@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -90,12 +91,14 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}
 
 	// "visited" by the promotion
-	public List<WizardStep> getDynamicWizardSteps(DynamicPromotion promotion) {
+	public List<WizardStep> getWizardSteps(DynamicPromotion promotion) {
 		return Arrays.asList(
 				new OptionWizardStep(this, "Spotlight type", promotion.getSpotlightType().getOption()),
 				new SearchTriggerStep(this, promotion.getTrigger())
 		);
 	}
+
+	public abstract List<WizardStep> getWizardSteps(SpotlightPromotion promotion);
 
 	/*
 	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger, final String type) {

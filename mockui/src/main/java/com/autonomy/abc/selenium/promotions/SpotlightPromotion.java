@@ -1,12 +1,8 @@
 package com.autonomy.abc.selenium.promotions;
 
-
-import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
-import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 
-// TODO: properly separate on-prem from hosted
 public class SpotlightPromotion extends Promotion {
     private final static Type TYPE = Type.SPOTLIGHT;
     private SpotlightType spotlightType;
@@ -25,28 +21,22 @@ public class SpotlightPromotion extends Promotion {
         spotlightType = type;
     }
 
+    public String getTypeOption() {
+        return TYPE.getOption();
+    }
+
+    public String getSpotlightTypeOption() {
+        return spotlightType.getOption();
+    }
+
     public Wizard makeWizard(CreateNewPromotionsBase createNewPromotionsBase) {
-        if (createNewPromotionsBase instanceof HSOCreateNewPromotionsPage) {
-            return new SpotlightPromotionWizard(createNewPromotionsBase);
-        } else {
-            return new OPSpotlightPromotionWizard(createNewPromotionsBase);
-        }
+        return new SpotlightPromotionWizard(createNewPromotionsBase);
     }
 
     private class SpotlightPromotionWizard extends PromotionWizard {
         public SpotlightPromotionWizard(CreateNewPromotionsBase page) {
             super(page);
-            add(new OptionWizardStep(page, "Promotion type", TYPE.getOption()));
-            add(new SearchTriggerStep(page, getTrigger()));
-        }
-    }
-
-    private class OPSpotlightPromotionWizard extends PromotionWizard {
-        public OPSpotlightPromotionWizard(CreateNewPromotionsBase page) {
-            super(page);
-            add(new OptionWizardStep(page, "Promotion type", TYPE.getOption()));
-            add(new OptionWizardStep(page, "Promotion details", spotlightType.getOption()));
-            add(new SearchTriggerStep(page, getTrigger()));
+            setSteps(page.getWizardSteps(SpotlightPromotion.this));
         }
     }
 }

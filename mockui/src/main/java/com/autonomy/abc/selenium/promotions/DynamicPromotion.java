@@ -47,7 +47,7 @@ public class DynamicPromotion extends Promotion {
             super(page);
             // steps are app-specific, so are set using the dynamic type of the page
             // but also need to get (app-specific) info related to the promotion
-            setSteps(page.getDynamicWizardSteps(DynamicPromotion.this));
+            setSteps(page.getWizardSteps(DynamicPromotion.this));
         }
     }
 }
