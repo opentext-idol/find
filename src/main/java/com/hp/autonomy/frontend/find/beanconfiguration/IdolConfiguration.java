@@ -5,15 +5,21 @@
 
 package com.hp.autonomy.frontend.find.beanconfiguration;
 
+import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
+import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.configuration.CommunityAciService;
 import com.hp.autonomy.frontend.find.configuration.ContentAciService;
+import com.hp.autonomy.frontend.find.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.configuration.IdolFindConfigFileService;
+import com.hp.autonomy.user.UserService;
+import com.hp.autonomy.user.UserServiceImpl;
 import org.apache.http.client.HttpClient;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -34,7 +40,7 @@ public class IdolConfiguration {
     private FilterProvider filterProvider;
 
     @Bean
-    public IdolFindConfigFileService configFileService() {
+    public ConfigService<IdolFindConfig> configFileService() {
         final IdolFindConfigFileService configService = new IdolFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
@@ -81,6 +87,16 @@ public class IdolConfiguration {
             .setMaxConnTotal(5)
             .setDefaultSocketConfig(socketConfig)
             .build();
+    }
+
+    @Bean
+    public IdolAnnotationsProcessorFactory processorFactory() {
+        return new IdolAnnotationsProcessorFactoryImpl();
+    }
+
+    @Bean
+    public UserService userService() {
+        return new UserServiceImpl(configFileService(), aciService(), processorFactory());
     }
 
     @Bean

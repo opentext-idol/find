@@ -5,11 +5,17 @@
 
 package com.hp.autonomy.frontend.find.beanconfiguration;
 
+import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
+import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpleAuthorityMapper;
+import com.hp.autonomy.frontend.configuration.authentication.Role;
+import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider;
+import com.hp.autonomy.frontend.find.FindController;
 import com.hp.autonomy.frontend.find.HodFindController;
 import com.hp.autonomy.frontend.find.authentication.HavenSearchUserMetadata;
 import com.hp.autonomy.frontend.find.authentication.HsodUsernameResolver;
@@ -23,6 +29,7 @@ import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
 import com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint;
 import com.hp.autonomy.hod.sso.SsoAuthenticationFilter;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
+import com.hp.autonomy.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -34,12 +41,21 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
+    public static final String USER_ROLE = "PUBLIC";
+    public static final String ADMIN_ROLE = "ADMIN";
+    public static final String CONFIG_ROLE = "DEFAULT";
 
     @Configuration
     public static class AppSecurity extends WebSecurityConfigurerAdapter {
@@ -54,9 +70,9 @@ public class SecurityConfiguration {
         protected void configure(final HttpSecurity http) throws Exception {
             http
                 .authorizeRequests()
-                    .antMatchers("/api/public/**").hasRole("PUBLIC")
-                    .antMatchers("/api/useradmin/**").hasRole("ADMIN")
-                    .antMatchers("/api/config/**").hasRole("DEFAULT")
+                    .antMatchers("/api/public/**").hasRole(USER_ROLE)
+                    .antMatchers("/api/useradmin/**").hasRole(ADMIN_ROLE)
+                    .antMatchers("/api/config/**").hasRole(CONFIG_ROLE)
                     .and()
                 .csrf()
                     .disable()
@@ -72,8 +88,84 @@ public class SecurityConfiguration {
     @Order(99)
     public static class IdolSecurity extends WebSecurityConfigurerAdapter {
 
+        public static final String IDOL_USER_ROLE = "FindUser";
+        public static final String IDOL_ADMIN_ROLE = "FindAdmin";
 
+        @Autowired
+        private ConfigService<? extends AuthenticationConfig<?>> configService;
 
+        @Autowired
+        private UserService userService;
+
+        @SuppressWarnings("ProhibitedExceptionDeclared")
+        @Override
+        protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+            auth
+                .authenticationProvider(new DefaultLoginAuthenticationProvider(configService, CONFIG_ROLE))
+                .authenticationProvider(communityAuthenticationProvider());
+        }
+
+        @Override
+        protected void configure(final HttpSecurity http) throws Exception {
+            final AuthenticationSuccessHandler successHandler = new LoginSuccessHandler(role(CONFIG_ROLE), "/config", FindController.PUBLIC_PATH);
+
+            http
+                .csrf()
+                    .disable()
+                .logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login")
+                    .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .loginProcessingUrl("/authenticate")
+                    .successHandler(successHandler)
+                    .failureUrl("/loginPage?error=auth")
+                    .and()
+                .authorizeRequests()
+                    .antMatchers(FindController.PUBLIC_PATH + "/**").hasAnyRole(ADMIN_ROLE, USER_ROLE)
+                    .antMatchers("/api/public/**").hasAnyRole(ADMIN_ROLE, USER_ROLE)
+                    .antMatchers("/api/config/**").hasRole(CONFIG_ROLE)
+                    .antMatchers("/config/**").hasRole(CONFIG_ROLE)
+                    .antMatchers("/api/admin/**").hasRole(ADMIN_ROLE)
+                    .anyRequest().permitAll()
+                    .and()
+                .headers()
+                    .defaultsDisabled()
+                    .frameOptions()
+                        .sameOrigin();
+        }
+
+        private CommunityAuthenticationProvider communityAuthenticationProvider() {
+            final Role user = new Role.Builder()
+                .setName(IDOL_USER_ROLE)
+                .setPrivileges(Collections.singleton("login"))
+                .build();
+
+            final Role admin = new Role.Builder()
+                .setName(IDOL_ADMIN_ROLE)
+                .setParent(Collections.singleton(user))
+                .build();
+
+            final Map<String, String> rolesMap = ImmutableMap.<String, String>builder()
+                .put(IDOL_USER_ROLE, role(USER_ROLE))
+                .put(IDOL_ADMIN_ROLE, role(ADMIN_ROLE))
+                .build();
+
+            final Roles roles = new Roles(Arrays.asList(admin, user));
+
+            return new CommunityAuthenticationProvider(
+                configService,
+                userService,
+                roles,
+                Collections.singleton("login"),
+                new OneToOneOrZeroSimpleAuthorityMapper(rolesMap)
+            );
+        }
+
+        private String role(final String applicationRole) {
+            return "ROLE_" + applicationRole;
+        }
     }
 
     @Configuration
