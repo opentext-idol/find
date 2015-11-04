@@ -20,6 +20,22 @@ public class NewConnectionPage extends SAASPageBase {
         return new NewConnectionPage(driver);
     }
 
+    public AppElement webConnectorType() {
+        return new AppElement(findElement(By.id("web_cloud")), getDriver());
+    }
+
+    public AppElement filesystemConnectorType() {
+        return new AppElement(findElement(By.id("filesystem_onsite")), getDriver());
+    }
+
+    public AppElement sharepointConnectorType() {
+        return new AppElement(findElement(By.id("sharepoint_onsite")), getDriver());
+    }
+
+    public AppElement dropboxConnectorType() {
+        return new AppElement(findElement(By.id("dropbox_cloud")), getDriver());
+    }
+
     public FormInput connectorUrl() {
         return new FormInput(findElement(By.name("connectorUrl")), getDriver());
     }
