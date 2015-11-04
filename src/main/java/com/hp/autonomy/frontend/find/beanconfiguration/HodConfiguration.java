@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.configuration;
+package com.hp.autonomy.frontend.find.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.databases.DatabasesService;
@@ -15,6 +15,10 @@ import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.find.configuration.HodAuthenticationMixins;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfigFileService;
+import com.hp.autonomy.frontend.find.configuration.IodConfigValidator;
 import com.hp.autonomy.frontend.find.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.parametricfields.CacheableParametricValuesService;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
@@ -59,23 +63,23 @@ import com.hp.autonomy.parametricvalues.ParametricValuesServiceImpl;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
 @Configuration
+@Conditional({HodCondition.class})
 @EnableCaching
-public class AppConfiguration extends CachingConfigurerSupport {
-
-    @Autowired
-    private FindConfigFileService configService;
+public class HodConfiguration extends CachingConfigurerSupport {
 
     @Autowired
     private TokenRepository tokenRepository;
@@ -83,9 +87,16 @@ public class AppConfiguration extends CachingConfigurerSupport {
     @Autowired
     private CacheManager cacheManager;
 
-    @Bean
-    public IodConfigValidator iodConfigValidator() {
-        return new IodConfigValidator();
+    @Autowired
+    private HodFindConfigFileService configService;
+
+    @Bean(name = "dispatcherObjectMapper")
+    public ObjectMapper dispatcherObjectMapper() {
+        final ObjectMapper mapper = new ObjectMapper();
+
+        mapper.addMixInAnnotations(Authentication.class, HodAuthenticationMixins.class);
+
+        return mapper;
     }
 
     @Bean
@@ -97,29 +108,25 @@ public class AppConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public ValidationService<FindConfig> validationService() {
-        final ValidationServiceImpl<FindConfig> validationService = new ValidationServiceImpl<>();
+    public IodConfigValidator iodConfigValidator() {
+        return new IodConfigValidator();
+    }
+
+    @Bean
+    public ValidationService<HodFindConfig> validationService() {
+        final ValidationServiceImpl<HodFindConfig> validationService = new ValidationServiceImpl<>();
 
         // The type annotation here is required to make it compile
         //noinspection Convert2Diamond
         validationService.setValidators(new HashSet<Validator<?>>(Arrays.asList(
-                singleUserAuthenticationValidator(),
-                iodConfigValidator()
+            singleUserAuthenticationValidator(),
+            iodConfigValidator()
         )));
 
         // fix circular dependency
         configService.setValidationService(validationService);
 
         return validationService;
-    }
-
-    @Bean(name = "dispatcherObjectMapper")
-    public ObjectMapper dispatcherObjectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
-
-        mapper.addMixInAnnotations(Authentication.class, AuthenticationMixins.class);
-
-        return mapper;
     }
 
     @Override
@@ -149,24 +156,19 @@ public class AppConfiguration extends CachingConfigurerSupport {
         final String endpoint = System.getProperty("find.iod.api", "https://api.havenondemand.com");
 
         return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
-                .setHttpClient(httpClient())
-                .setTokenRepository(tokenRepository);
+            .setHttpClient(httpClient())
+            .setTokenRepository(tokenRepository);
     }
 
     @Bean
     public HodServiceConfig<EntityType.Combined, TokenType.Simple> initialHodServiceConfig() {
         return hodServiceConfigBuilder()
-                .build();
+            .build();
     }
 
     @Bean
     public AuthenticationService authenticationService() {
         return new AuthenticationServiceImpl(initialHodServiceConfig());
-    }
-
-    @Bean
-    public UserStoreUsersService userStoreUsersService() {
-        return new UserStoreUsersServiceImpl(hodServiceConfig());
     }
 
     @Bean
@@ -177,8 +179,8 @@ public class AppConfiguration extends CachingConfigurerSupport {
     @Bean
     public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig() {
         return hodServiceConfigBuilder()
-                .setTokenProxyService(tokenProxyService())
-                .build();
+            .setTokenProxyService(tokenProxyService())
+            .build();
     }
 
     @Bean
@@ -246,7 +248,7 @@ public class AppConfiguration extends CachingConfigurerSupport {
         try {
             return new UnboundTokenServiceImpl(authenticationService(), configService);
         } catch (final HodErrorException e) {
-            throw new RuntimeException("Exception creating UnboundTokenService", e);
+            throw new BeanInitializationException("Exception creating UnboundTokenService", e);
         }
     }
 
@@ -259,4 +261,10 @@ public class AppConfiguration extends CachingConfigurerSupport {
     public FindSimilarService<Documents> findSimilarService() {
         return FindSimilarServiceImpl.documentsService(hodServiceConfig());
     }
+
+    @Bean
+    public UserStoreUsersService userStoreUsersService() {
+        return new UserStoreUsersServiceImpl(hodServiceConfig());
+    }
+
 }

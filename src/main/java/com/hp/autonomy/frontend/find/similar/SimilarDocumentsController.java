@@ -5,10 +5,12 @@
 
 package com.hp.autonomy.frontend.find.similar;
 
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Document;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/public/search/similar-documents")
+@Conditional(HodCondition.class) // TODO remove this
 public class SimilarDocumentsController {
     @Autowired
     private SimilarDocumentsService similarDocumentsService;

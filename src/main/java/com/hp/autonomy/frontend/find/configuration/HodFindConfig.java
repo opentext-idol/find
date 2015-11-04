@@ -23,17 +23,17 @@ import org.jasypt.util.text.TextEncryptor;
 
 import java.util.Set;
 
-@JsonDeserialize(builder = FindConfig.Builder.class)
+@JsonDeserialize(builder = HodFindConfig.Builder.class)
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class FindConfig extends AbstractConfig<FindConfig> implements AuthenticationConfig<FindConfig>, PasswordsConfig<FindConfig>, HodSsoConfig {
+public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, PasswordsConfig<HodFindConfig>, HodSsoConfig {
 
     private final Authentication<?> login;
     private final IodConfig iod;
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
 
-    private FindConfig(final Builder builder) {
+    private HodFindConfig(final Builder builder) {
         this.login = builder.login;
         this.iod = builder.iod;
         this.allowedOrigins = builder.allowedOrigins;
@@ -41,7 +41,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     }
 
     @Override
-    public FindConfig merge(final FindConfig config) {
+    public HodFindConfig merge(final HodFindConfig config) {
         if(config != null) {
             final Builder builder = new Builder();
 
@@ -58,7 +58,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     }
 
     @Override
-    public FindConfig withoutDefaultLogin() {
+    public HodFindConfig withoutDefaultLogin() {
         final Builder builder = new Builder(this);
 
         builder.login = builder.login.withoutDefaultLogin();
@@ -67,7 +67,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     }
 
     @Override
-    public FindConfig generateDefaultLogin() {
+    public HodFindConfig generateDefaultLogin() {
         final Builder builder = new Builder(this);
 
         builder.login = builder.login.generateDefaultLogin();
@@ -76,7 +76,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     }
 
     @Override
-    public FindConfig withHashedPasswords() {
+    public HodFindConfig withHashedPasswords() {
         final Builder builder = new Builder(this);
 
         builder.login = builder.login.withHashedPasswords();
@@ -92,7 +92,7 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     }
 
     @Override
-    public FindConfig withoutPasswords() {
+    public HodFindConfig withoutPasswords() {
         final Builder builder = new Builder(this);
 
         builder.login = login.withoutPasswords();
@@ -101,12 +101,12 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
     }
 
     @Override
-    public FindConfig withEncryptedPasswords(final TextEncryptor encryptor) {
+    public HodFindConfig withEncryptedPasswords(final TextEncryptor encryptor) {
         return this;
     }
 
     @Override
-    public FindConfig withDecryptedPasswords(final TextEncryptor encryptor) {
+    public HodFindConfig withDecryptedPasswords(final TextEncryptor encryptor) {
         return this;
     }
 
@@ -134,15 +134,15 @@ public class FindConfig extends AbstractConfig<FindConfig> implements Authentica
 
         public Builder() {}
 
-        public Builder(final FindConfig config) {
+        public Builder(final HodFindConfig config) {
             this.login = config.login;
             this.iod = config.iod;
             this.allowedOrigins = config.allowedOrigins;
             this.redis = config.redis;
         }
 
-        public FindConfig build() {
-            return new FindConfig(this);
+        public HodFindConfig build() {
+            return new HodFindConfig(this);
         }
     }
 }

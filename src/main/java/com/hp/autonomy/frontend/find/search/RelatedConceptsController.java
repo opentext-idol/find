@@ -5,10 +5,12 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/public/search/find-related-concepts")
+@Conditional(HodCondition.class) // TODO remove this
 public class RelatedConceptsController {
 
     @Autowired

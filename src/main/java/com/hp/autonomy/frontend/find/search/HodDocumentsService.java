@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.frontend.find.FindQueryProfileService;
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.find.web.CacheNames;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
@@ -18,13 +19,15 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class DocumentsServiceImpl implements DocumentsService {
+@Conditional(HodCondition.class)
+public class HodDocumentsService implements DocumentsService {
 
     @Autowired
     private FindQueryProfileService findQueryProfileService;

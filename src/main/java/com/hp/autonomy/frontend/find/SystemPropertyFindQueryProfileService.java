@@ -4,12 +4,15 @@
  */
 package com.hp.autonomy.frontend.find;
 
+import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.sso.HodAuthentication;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Conditional(HodCondition.class)
 public class SystemPropertyFindQueryProfileService implements FindQueryProfileService {
 
     private static final String DEFAULT_QUERY_PROFILE_NAME = "search_default_profile";

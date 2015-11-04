@@ -311,8 +311,18 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
+            <artifactId>configuration-idol</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-authentication</artifactId>
-            <version>0.1.0</version>
+            <version>0.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.user</groupId>
+            <artifactId>idol-user-service</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
@@ -348,6 +358,17 @@
             <groupId>com.hp.autonomy.hod</groupId>
             <artifactId>hod-spring-caching</artifactId>
             <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hp.autonomy.aci.client</groupId>
+            <artifactId>aci-api</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.aci.client</groupId>
+            <artifactId>aci-annotations-processor</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
