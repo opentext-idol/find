@@ -148,11 +148,11 @@ define([
                 this.clearLoadingSpinner();
             });
 
-            this.listenTo(this.promotionsCollection, 'error', function () {
+            this.listenTo(this.promotionsCollection, 'error', function (collection, xhr) {
                 this.promotionsFinished = true;
                 this.clearLoadingSpinner();
 
-                this.$('.main-results-content .promotions').append(this.messageTemplate({message: i18n["search.error.promotions"]}));
+                this.$('.main-results-content .promotions').append(this.errorMessage(i18n["search.error.promotions"], xhr));
             });
 
             /*main results content*/
@@ -175,11 +175,11 @@ define([
                 }
             });
 
-            this.listenTo(this.documentsCollection, 'error', function () {
+            this.listenTo(this.documentsCollection, 'error', function (collection, xhr) {
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
 
-                this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.error.results"]}));
+                this.$('.main-results-content .results').append(this.errorMessage(i18n["search.error.results"], xhr));
             });
 
             this.listenTo(this.entityCollection, 'reset', function() {
@@ -397,6 +397,18 @@ define([
                     }
                 }, this)
             });
+        },
+
+        errorMessage: function(serviceErrorMessage, xhr) {
+            var messageTemplate;
+
+            if (xhr.responseJSON && i18n["hod.error." + xhr.responseJSON.hodErrorCode]) {
+                messageTemplate = this.messageTemplate({message: serviceErrorMessage + ': ' + i18n["hod.error." + xhr.responseJSON.hodErrorCode]});
+            } else {
+                messageTemplate = this.messageTemplate({message: serviceErrorMessage});
+            }
+
+            return messageTemplate;
         }
     });
 });

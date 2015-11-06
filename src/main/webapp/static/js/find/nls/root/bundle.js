@@ -18,6 +18,8 @@ define([
         'app.from': 'From',
         'app.until': 'Until',
         'datepicker.language': 'en',
+        'hod.error.INVALID_QUERY_TEXT': 'Invalid query text',
+        'hod.error.NO_IGNORE_SPECIALS': 'Invalid use of special tokens',
         'footer.click-to-hide': 'Collapse footer',
         'footer.click-to-show': 'Show more\u2026',
         'login.defaultLogin': 'Details for the default login can be found in your config.json file',
