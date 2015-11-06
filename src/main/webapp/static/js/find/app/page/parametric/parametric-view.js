@@ -79,23 +79,27 @@ define([
                     .uniq()
                     .value();
 
-                this.parametricCollection.fetch({
-                    data: {
-                        databases: this.queryModel.get('indexes'),
-                        fieldNames: fieldNames,
-                        queryText: this.queryModel.get('queryText'),
-                        fieldText: this.queryModel.get('fieldText')
-                    },
-                    error: _.bind(function(collection, xhr) {
-                        if (xhr.status !== 0) {
-                            // The request was not aborted, so there isn't another request in flight
-                            this.model.set({error: true, processing: false});
-                        }
-                    }, this),
-                    success: _.bind(function() {
-                        this.model.set({processing: false});
-                    }, this)
-                });
+                if(_.isEmpty(fieldNames)) {
+                    this.model.set('processing', false);
+                } else {
+                    this.parametricCollection.fetch({
+                        data: {
+                            databases: this.queryModel.get('indexes'),
+                            fieldNames: fieldNames,
+                            queryText: this.queryModel.get('queryText'),
+                            fieldText: this.queryModel.get('fieldText')
+                        },
+                        error: _.bind(function (collection, xhr) {
+                            if (xhr.status !== 0) {
+                                // The request was not aborted, so there isn't another request in flight
+                                this.model.set({error: true, processing: false});
+                            }
+                        }, this),
+                        success: _.bind(function () {
+                            this.model.set({processing: false});
+                        }, this)
+                    });
+                }
             }
 
             this.listenTo(this.queryModel, 'refresh', fetch);

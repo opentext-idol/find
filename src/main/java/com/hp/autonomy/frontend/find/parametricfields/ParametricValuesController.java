@@ -32,7 +32,7 @@ public class ParametricValuesController {
     @ResponseBody
     public Set<ParametricFieldName> getParametricValues(
             @RequestParam("databases") final Set<ResourceIdentifier> databases,
-            @RequestParam("fieldNames") final Set<String> fieldNames,
+            @RequestParam(value = "fieldNames", required = false) final Set<String> fieldNames,
             @RequestParam("queryText") final String queryText,
             @RequestParam("fieldText") final String fieldText
     ) throws HodErrorException {
