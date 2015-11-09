@@ -108,7 +108,7 @@ public abstract class ABCTestBase {
 	}
 
 	@Before
-	public void baseSetUp() throws MalformedURLException {
+	public void baseSetUp() throws MalformedURLException, InterruptedException {
 		regularSetUp();
 		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
 			tryLogIn();
@@ -118,12 +118,13 @@ public abstract class ABCTestBase {
 	}
 
 	// log in via dev console while the HSOD SSO page is broken
-	private void workaroundLogIn() {
+	private void workaroundLogIn() throws InterruptedException {
 		currentUser = config.getUser("twitter");
 		currentUser.getAuthProvider().login(getDriver());
 		if(!new AbcHasLoggedIn(getDriver()).hasLoggedIn()){
 			fail("Failed to log in");
 		}
+		Thread.sleep(5000);
 		body = getBody();
 	}
 

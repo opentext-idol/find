@@ -51,11 +51,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			System.out.println("Initial thread.sleep failed");
-		}
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.waitForRefreshIconToDisappear();
