@@ -81,7 +81,7 @@ public class SearchPageITCase extends ABCTestBase {
 	//TODO move this to SearchBase (and refactor code)
     private void selectNewsEngIndex() {
 		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
+			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()[contains(.,'news_eng')]]"))).click();
 		}
     }
 
