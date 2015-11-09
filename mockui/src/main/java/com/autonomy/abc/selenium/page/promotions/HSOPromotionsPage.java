@@ -10,7 +10,7 @@ public class HSOPromotionsPage extends PromotionsPage {
     }
 
     public WebElement staticPromotionButton() {
-        return findElement(By.linkText("Promote new document"));
+        return findElement(By.linkText("NEW"));
     }
 
     // use PromotionActionFactory instead

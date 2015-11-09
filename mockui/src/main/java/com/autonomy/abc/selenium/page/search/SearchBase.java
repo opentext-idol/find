@@ -452,7 +452,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return findElement(By.cssSelector(".promotions .search-result-title")).getText();
 	}
 
-	public String getTopPromotedLinkButtonText() {
+	public String getTopPromotedSpotlightType() {
 		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
 	}
 

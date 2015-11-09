@@ -15,13 +15,13 @@ import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.Errors;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -162,12 +162,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 		for (String trigger : invalidTriggers) {
 			promotionsDetailPage.addTrigger(trigger);
 			verifyThat("'" + trigger + "' does not add a new trigger", promotionsDetailPage, triggerList(hasSize(2)));
-			verifyThat("'" + trigger + "' produces an error message", promotionsPage, containsText("Terms may not contain commas. Separate words and phrases with whitespace."));
+			verifyThat("'" + trigger + "' produces an error message", promotionsPage, containsText(Errors.Term.COMMAS));
 		}
 
 		promotionsDetailPage.addTrigger("Greece Romania");
 		assertThat(promotionsDetailPage, triggerList(hasSize(4)));
-		assertThat("error message no longer showing", promotionsPage, not(containsText("Terms may not contain commas. Separate words and phrases with whitespace.")));
+		assertThat("error message no longer showing", promotionsPage, not(containsText(Errors.Term.COMMAS)));
 	}
 
 	@Test
@@ -265,7 +265,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionService.delete("script");
 
 		verifyThat("promotion 'pony' still exists", promotionsPage, promotionsList(hasItem(containsText("pony"))));
-		verifyThat("deleted promotion 'bunny'", promotionsPage, promotionsList(hasSize(1)));
+		verifyThat("deleted promotion 'script'", promotionsPage, promotionsList(hasSize(1)));
 
 		promotionService.delete("pony");
 
@@ -287,17 +287,29 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testPromotionFilter() throws InterruptedException {
-//		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
-
-		Search[] searches = {
-				search("chien", "French"),
-				search("الكلب", "Arabic"),
-				search("dog", "English"),
-				search("mbwa", "Swahili"),
-				search("mbwa", "Swahili"),
-				search("hond", "Afrikaans"),
-				search("hond", "Afrikaans"),
-		};
+		// hosted does not have foreign content indexed
+		Search[] searches;
+		if (config.getType().equals(ApplicationType.ON_PREM)) {
+			searches = new Search[]{
+					search("chien", "French"),
+					search("الكلب", "Arabic"),
+					search("dog", "English"),
+					search("mbwa", "Swahili"),
+					search("mbwa", "Swahili"),
+					search("hond", "Afrikaans"),
+					search("hond", "Afrikaans")
+			};
+		} else {
+			searches = new Search[]{
+					search("marge", "English"),
+					search("homer", "English"),
+					search("dog", "English"),
+					search("bart", "English"),
+					search("bart", "English"),
+					search("lisa", "English"),
+					search("lisa", "English")
+			};
+		}
 		Promotion[] promotions = {
 				new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"),
 				new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "dog chien"),
@@ -358,11 +370,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
-		verifyThat(promotionsPage.promotionsCategoryFilterValue(), is("All Types"));
+		verifyThat(promotionsPage.promotionsCategoryFilterValue(), equalToIgnoringCase("All Types"));
 
 		promotionsPage.selectPromotionsCategoryFilter("Spotlight");
 		promotionsPage.clearPromotionsSearchFilter();
-		verifyThat(promotionsPage.promotionsCategoryFilterValue(), is("Spotlight"));
+		verifyThat(promotionsPage.promotionsCategoryFilterValue(), equalToIgnoringCase("Spotlight"));
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
 		promotionsPage.promotionsSearchFilter().sendKeys("woof");
@@ -370,7 +382,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionsPage.selectPromotionsCategoryFilter("Pin to Position");
 		promotionsPage.clearPromotionsSearchFilter();
-		verifyThat(promotionsPage.promotionsCategoryFilterValue(), is("Pin to Position"));
+		verifyThat(promotionsPage.promotionsCategoryFilterValue(), equalToIgnoringCase("Pin to Position"));
 		verifyThat(promotionsPage, promotionsList(hasSize(2)));
 
 		promotionsPage.promotionsSearchFilter().sendKeys("woof");
@@ -401,7 +413,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage = promotionService.goToDetails("hond");
 		promotionsDetailPage.triggerAddBox().setAndSubmit("Rhodesian Ridgeback");
 		promotionsDetailPage.waitForTriggerRefresh();
-		verifyThat(promotionsDetailPage, triggerList(hasItems("Rhodesian", "Ridgeback")));
+		verifyThat(promotionsDetailPage, triggerList(hasItems("rhodesian", "ridgeback")));
 		promotionService.goToPromotions();
 
 		promotionsPage.clearPromotionsSearchFilter();
@@ -502,19 +514,19 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testCountSearchResultsWithPinToPositionInjected() {
-		setUpPromotion(search("Lyon", "French"), new PinToPositionPromotion(13, "boeuf frites orange"));
+		setUpPromotion(search("donut", "English"), new PinToPositionPromotion(13, "round tasty snack"));
 
-		String[] queries = {"boeuf", "frites", "orange"};
+		String[] queries = {"round", "tasty", "snack"};
 		SearchPage searchPage;
 		for (final String query : queries) {
-			search(query, "French").apply();
+			search(query, "English").apply();
 			searchPage = getElementFactory().getSearchPage();
 			final int firstPageStated = searchPage.countSearchResults();
 			searchPage.forwardToLastPageButton().click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 			final int numberOfPages = searchPage.getCurrentPageNumber();
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
-			final int listedCount = (numberOfPages - 1) * searchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
+			final int listedCount = (numberOfPages - 1) * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
 			final int lastPageStated = searchPage.countSearchResults();
 			verifyThat("count is the same across pages for " + query, firstPageStated, is(lastPageStated));
 			verifyThat("count is correct for " + query, lastPageStated, is(listedCount));

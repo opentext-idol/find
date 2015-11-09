@@ -2,8 +2,8 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -28,11 +29,9 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
+import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 
@@ -41,7 +40,7 @@ public class StaticPromotionsITCase extends ABCTestBase {
     private HSOPromotionsPage promotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
     private SearchPage searchPage;
-    private PromotionActionFactory promotionActionFactory;
+    private HSOPromotionService promotionService;
     private final String title = "title";
     private final String content = "content";
     private final String trigger = "dog";
@@ -53,31 +52,36 @@ public class StaticPromotionsITCase extends ABCTestBase {
     }
 
     @Override
+    public HSOApplication getApplication() {
+        return (HSOApplication) super.getApplication();
+    }
+
+    @Override
     public HSOElementFactory getElementFactory() {
         return (HSOElementFactory) super.getElementFactory();
     }
 
     public void goToDetails() {
-        promotionsDetailPage = promotionActionFactory.goToDetails(trigger).apply();
+        promotionsDetailPage = promotionService.goToDetails(trigger);
     }
 
     @Before
     public void setUp() {
-        promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
+        promotionService = getApplication().createPromotionService(getElementFactory());
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         promotionsPage = getElementFactory().getPromotionsPage();
-        promotionActionFactory.makeDeleteAll().apply();
-        searchPage = promotionActionFactory.makeCreateStaticPromotion(promotion).apply();
+        promotionService.deleteAll();
+        searchPage = promotionService.setUpStaticPromotion(promotion);
     }
 
     @Test
     public void testDeleteStaticPromotion() {
-        promotionsPage = (HSOPromotionsPage) promotionActionFactory.goToPromotions();
+        promotionsPage = promotionService.goToPromotions();
         promotionsPage.promotionDeleteButton(trigger).click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         verifyThat(deleteModal, containsText(trigger));
         WebElement cancelButton = deleteModal.findElement(By.className("btn-default"));
-        verifyThat(cancelButton, containsText("Close"));
+        verifyThat(cancelButton, hasTextThat(equalToIgnoringCase("Close")));
         cancelButton.click();
 
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(deleteModal));
@@ -91,7 +95,7 @@ public class StaticPromotionsITCase extends ABCTestBase {
         promotionsPage.promotionDeleteButton(trigger).click();
         final ModalView thirdDeleteModal = ModalView.getVisibleModalView(getDriver());
         final WebElement deleteButton = thirdDeleteModal.findElement(By.cssSelector(".btn-danger"));
-        verifyThat(deleteButton, containsText("Delete"));
+        verifyThat(deleteButton, hasTextThat(equalToIgnoringCase("Delete")));
         deleteButton.click();
         new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining(promotion.getDeleteNotification()));
         verifyThat(promotionsPage, promotionsList(not(hasItem(containsText(trigger)))));
@@ -121,41 +125,26 @@ public class StaticPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testStaticPromotionNotifications() {
-        WebElement created = null;
-        try {
-            created = new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationAppears());
-        } catch (Exception e) {}
-        verifyThat("creation notification appeared", created, not(nullValue()));
-        verifyThat(created, containsText(promotion.getCreateNotification()));
+        verifyNotification("create", promotion.getCreateNotification());
 
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(created));
-        promotionsDetailPage = promotionActionFactory.goToDetails(trigger).apply();
+        promotionsDetailPage = promotionService.goToDetails(promotion);
         promotionsDetailPage.staticPromotedDocumentTitle().setValueAndWait("different");
+        verifyNotification("edit", promotion.getEditNotification());
 
-        WebElement edited = null;
-        try {
-            edited = new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationAppears());
-        } catch (Exception e) {}
-        verifyThat("edit notification appeared", edited, not(nullValue()));
-        verifyThat(edited, containsText(promotion.getEditNotification()));
-
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(edited));
-        promotionActionFactory.makeDelete(trigger).apply();
-        WebElement deleted = null;
-        try {
-            deleted = new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationAppears());
-        } catch (Exception e) {}
-        verifyThat("delete notification appeared", deleted, not(nullValue()));
-        verifyThat(deleted, containsText(promotion.getDeleteNotification()));
+        promotionService.delete(promotion);
+        verifyNotification("delete", promotion.getDeleteNotification());
     }
 
-    private void checkBadTriggers(String[] triggers, String errorSubstring) {
-        for (String trigger : triggers) {
-            promotionsDetailPage.addTrigger(trigger);
-            verifyThat("trigger '" + trigger + "' not added", promotionsDetailPage.getTriggerList(), hasSize(1));
-            verifyThat(promotionsDetailPage.getTriggerError(), containsString(errorSubstring));
-            verifyThat(promotionsDetailPage.triggerAddButton(), disabled());
+    private void verifyNotification(String notificationType, String notificationText) {
+        WebElement notification = null;
+        try {
+            notification = new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationAppears());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        verifyThat(notificationType + " notification appeared", notification, not(nullValue()));
+        verifyThat(notification, containsText(notificationText));
+        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(notification));
     }
 
     // TODO: this same test should apply for promotions, create promotions, keywords and create keywords?
@@ -208,6 +197,15 @@ public class StaticPromotionsITCase extends ABCTestBase {
         verifyThat("can add valid trigger", promotionsDetailPage.getTriggerList(), hasSize(2));
     }
 
+    private void checkBadTriggers(String[] triggers, String errorSubstring) {
+        for (String trigger : triggers) {
+            promotionsDetailPage.addTrigger(trigger);
+            verifyThat("trigger '" + trigger + "' not added", promotionsDetailPage.getTriggerList(), hasSize(1));
+            verifyThat(promotionsDetailPage.getTriggerError(), containsString(errorSubstring));
+            verifyThat(promotionsDetailPage.triggerAddButton(), disabled());
+        }
+    }
+
     @Test
     public void testPromotionViewable() {
         final String handle = getDriver().getWindowHandle();
@@ -233,7 +231,7 @@ public class StaticPromotionsITCase extends ABCTestBase {
         promotionsDetailPage.addTrigger(newTrigger);
         promotionsDetailPage.trigger(trigger).removeAndWait();
         verifyThat(promotionsDetailPage.getTriggerList(), hasSize(1));
-        promotionsPage = (HSOPromotionsPage) promotionActionFactory.goToPromotions();
+        promotionsPage = promotionService.goToPromotions();
 
         promotionsPage.selectPromotionsCategoryFilter("Spotlight");
         verifyThat(promotionsPage.getPromotionTitles(), empty());

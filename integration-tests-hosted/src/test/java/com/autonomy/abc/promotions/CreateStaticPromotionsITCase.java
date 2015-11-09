@@ -2,7 +2,6 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -11,12 +10,14 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.util.Errors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
@@ -35,7 +36,7 @@ public class CreateStaticPromotionsITCase extends ABCTestBase {
     private HSOPromotionsPage promotionsPage;
     private HSOCreateNewPromotionsPage createPromotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
-    private PromotionActionFactory promotionActionFactory;
+    private PromotionService promotionService;
     private Wizard wizard;
 
     public CreateStaticPromotionsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
@@ -63,12 +64,12 @@ public class CreateStaticPromotionsITCase extends ABCTestBase {
         promotionsPage = getElementFactory().getPromotionsPage();
         promotionsPage.staticPromotionButton().click();
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-        promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
+        promotionService = getApplication().createPromotionService(getElementFactory());
     }
 
     @After
     public void tearDown() {
-//        promotionActionFactory.makeDeleteAll().apply();
+        promotionService.deleteAll();
     }
 
     @Test
@@ -85,7 +86,8 @@ public class CreateStaticPromotionsITCase extends ABCTestBase {
         verifyThat(continueButton, disabled());
         createPromotionsPage.documentContent().setValue(content);
         verifyThat(continueButton, not(disabled()));
-        createPromotionsPage.documentTitle().setValue("");
+        // cannot just clear as this does not trigger correct JS event
+        createPromotionsPage.documentTitle().setValue("a" + Keys.BACK_SPACE);
         verifyThat(continueButton, disabled());
         createPromotionsPage.documentTitle().setValue(title);
         wizard.next();
@@ -101,6 +103,8 @@ public class CreateStaticPromotionsITCase extends ABCTestBase {
         wizard.getCurrentStep().apply();
         verifyThat(createPromotionsPage.finishButton(), not(disabled()));
         wizard.next();
+
+        getElementFactory().getSearchPage();
     }
 
     private void checkBadTriggers(String[] triggers, String errorSubstring) {
@@ -183,9 +187,8 @@ public class CreateStaticPromotionsITCase extends ABCTestBase {
         wizard.next();
         getElementFactory().getSearchPage();
 
-        promotionActionFactory.goToDetails("delta").apply();
-        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-        assertThat("loaded details page", promotionsDetailPage.promotionTitle().getValue(), containsString("delta  "));
+        promotionsDetailPage = promotionService.goToDetails("delta");
+        assertThat("loaded details page", promotionsDetailPage.promotionTitle().getValue(), containsString("delta"));
 
         List<String> triggers = promotionsDetailPage.getTriggerList();
         verifyThat(triggers, hasSize(2));
