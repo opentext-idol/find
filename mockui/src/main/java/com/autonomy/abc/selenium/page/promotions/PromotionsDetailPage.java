@@ -19,6 +19,7 @@ import java.util.List;
 
 public class PromotionsDetailPage extends AppElement implements AppPage {
     private final static By TRIGGERS = By.cssSelector(".promotion-view-match-terms .term");
+    private WebElement triggerEditor;
 
     public PromotionsDetailPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
@@ -28,12 +29,6 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     @Override
     public void waitForLoad() {
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotion-match-terms")));
-    }
-
-    // no longer exists, CSA-1619
-    @Deprecated
-    public WebElement backButton() {
-        return findElement(By.xpath(".//a[text()[contains(., 'Back')]]"));
     }
 
     public Dropdown editMenu() {
@@ -91,19 +86,26 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public FormInput triggerAddBox() {
-        return new FormInput(findElement(By.cssSelector(".promotion-match-terms-editor input")),getDriver());
+        return new FormInput(triggerEditor().findElement(By.cssSelector("[name='words']")), getDriver());
     }
 
     public WebElement triggerAddButton() {
-        return findElement(By.cssSelector(".promotion-match-terms-editor [type='submit']"));
+        return triggerEditor().findElement(By.cssSelector("[type='submit']"));
     }
 
     public String getTriggerError() {
         try {
-            return findElement(By.cssSelector(".promotion-match-terms .help-block")).getText();
+            return triggerEditor().findElement(By.cssSelector(".help-block")).getText();
         } catch (NoSuchElementException e) {
             return null;
         }
+    }
+
+    private WebElement triggerEditor() {
+        if (triggerEditor == null) {
+            triggerEditor = findElement(By.cssSelector(".promotion-match-terms-editor"));
+        }
+        return triggerEditor;
     }
 
     public void waitForTriggerRefresh() {
