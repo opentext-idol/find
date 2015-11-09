@@ -29,12 +29,14 @@ import java.util.Set;
 public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, PasswordsConfig<HodFindConfig>, HodSsoConfig {
 
     private final Authentication<?> login;
+    private final HsodConfig hsod;
     private final IodConfig iod;
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
 
     private HodFindConfig(final Builder builder) {
         this.login = builder.login;
+        this.hsod = builder.hsod;
         this.iod = builder.iod;
         this.allowedOrigins = builder.allowedOrigins;
         this.redis = builder.redis;
@@ -46,6 +48,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             final Builder builder = new Builder();
 
             builder.setLogin(this.login == null ? config.login : this.login.merge(config.login));
+            builder.setHsod(this.hsod == null ? config.hsod : this.hsod.merge(hsod));
             builder.setIod(this.iod == null ? config.iod : this.iod.merge(config.iod));
             builder.setAllowedOrigins(this.allowedOrigins == null ? config.allowedOrigins : this.allowedOrigins);
             builder.setRedis(this.redis == null ? config.redis : this.redis.merge(config.redis));
@@ -128,6 +131,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     public static class Builder {
 
         private Authentication<?> login;
+        private HsodConfig hsod;
         private IodConfig iod;
         private Set<String> allowedOrigins;
         private RedisConfig redis;
@@ -136,6 +140,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
 
         public Builder(final HodFindConfig config) {
             this.login = config.login;
+            this.hsod = config.hsod;
             this.iod = config.iod;
             this.allowedOrigins = config.allowedOrigins;
             this.redis = config.redis;

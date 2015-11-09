@@ -7,8 +7,10 @@ package com.hp.autonomy.frontend.find;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.authentication.HodCombinedRequestController;
 import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.web.ErrorController;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
@@ -35,6 +37,9 @@ public class HodFindController extends FindController {
     private HodAuthenticationRequestService hodAuthenticationRequestService;
 
     @Autowired
+    private ConfigService<?> configService;
+
+    @Autowired
     private ObjectMapper contextObjectMapper;
 
     @RequestMapping(value = SSO_PAGE, method = RequestMethod.GET)
@@ -56,8 +61,11 @@ public class HodFindController extends FindController {
 
     @RequestMapping(value = SSO_LOGOUT_PAGE, method = RequestMethod.GET)
     public ModelAndView ssoLogoutPage() throws JsonProcessingException {
+        final HodFindConfig hodFindConfig = (HodFindConfig) configService.getConfig();
+
         final Map<String, Object> ssoConfig = new HashMap<>();
         ssoConfig.put("endpoint", HOD_ENDPOINT);
+        ssoConfig.put("redirectUrl", hodFindConfig.getHsod().getLandingPageUrl());
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("configJson", contextObjectMapper.writeValueAsString(ssoConfig));

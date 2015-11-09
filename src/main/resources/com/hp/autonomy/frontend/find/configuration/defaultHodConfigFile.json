@@ -7,6 +7,9 @@
         },
         "name": "SingleUserAuthentication"
     },
+    "hsod": {
+        "landingPageUrl": "https://search.int.havenondemand.com"
+    },
     "iod": {
         "apiKey": "",
         "application": "",

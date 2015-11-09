@@ -15,8 +15,5 @@
     <script src="${staticPath}/bower_components/hp-autonomy-hod-sso-js/src/js/authenticate-combined.js"></script>
     <script src="${staticPath}/bower_components/hp-autonomy-hod-sso-js/src/js/logout-sso.js"></script>
 </head>
-<body>
-    <h1>PLACEHOLDER</h1>
-    <p>You have been logged out of Haven OnDemand.</p>
-</body>
+<body></body>
 </html>
