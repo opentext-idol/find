@@ -22,7 +22,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	}
 
 	public WebElement promoteExistingButton() {
-		return findElement(By.xpath(".//a[text()[contains(., 'Promote existing documents')]]"));
+		return findElement(By.linkText("PROMOTE DOCUMENTS"));
 	}
 
 	public WebElement getPromotionLinkWithTitleContaining(final String promotionTitleSubstring) {

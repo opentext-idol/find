@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
-import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -10,17 +9,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PromotionsDetailPage extends AppElement implements AppPage {
-    private final static By TRIGGERS = By.cssSelector(".promotion-view-match-terms .term");
-    private WebElement triggerEditor;
-
     public PromotionsDetailPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
         waitForLoad();
@@ -67,7 +63,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public List<String> getTriggerList() {
         final List<String> triggers = new ArrayList<>();
-        for (final WebElement trigger : findElements(TRIGGERS)) {
+        for (final WebElement trigger : triggerElements()) {
             triggers.add(trigger.getAttribute("data-id"));
         }
         return triggers;
@@ -75,10 +71,14 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public List<Removable> triggers() {
         final List<Removable> triggers = new ArrayList<>();
-        for (final WebElement trigger : findElements(By.cssSelector(".promotion-view-match-terms .term"))) {
+        for (final WebElement trigger : triggerElements()) {
             triggers.add(new LabelBox(trigger, getDriver()));
         }
         return triggers;
+    }
+
+    private List<WebElement> triggerElements() {
+        return findElements(By.cssSelector(".promotion-view-match-terms .term"));
     }
 
     public Removable trigger(final String triggerName) {
@@ -102,10 +102,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     private WebElement triggerEditor() {
-        if (triggerEditor == null) {
-            triggerEditor = findElement(By.cssSelector(".promotion-match-terms-editor"));
-        }
-        return triggerEditor;
+        return findElement(By.cssSelector(".promotion-match-terms-editor"));
     }
 
     public void waitForTriggerRefresh() {
@@ -146,12 +143,23 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         final List<String> docTitles = new ArrayList<>();
 
         do {
+            waitForPromotedTitlesToLoad();
             for (final WebElement docTitle : promotedList()) {
                 docTitles.add(docTitle.getText());
             }
         } while(clickForwardButton());
 
         return docTitles;
+    }
+
+    private void waitForPromotedTitlesToLoad() {
+        new WebDriverWait(getDriver(), 20).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver input) {
+                List<WebElement> docs = input.findElements(By.cssSelector(".promoted-documents-list h3"));
+                return docs.isEmpty() || !docs.get(0).getText().contains("Unknown Document");
+            }
+        });
     }
 
     private WebElement forwardButton(){
