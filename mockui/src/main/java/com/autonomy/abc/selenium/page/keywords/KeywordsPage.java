@@ -23,7 +23,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public WebElement createNewKeywordsButton() {
-        return findElement(By.xpath(".//a[contains(text(), 'New')]"));
+        return findElement(By.xpath(".//div[contains(@class,'keywords-controls')]//a[contains(text(), 'New')]"));
     }
 
     public WebElement createNewKeywordsButton(WebDriverWait wait) {
