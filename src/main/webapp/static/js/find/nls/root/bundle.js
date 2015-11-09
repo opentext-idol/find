@@ -18,7 +18,7 @@ define([
         'app.from': 'From',
         'app.until': 'Until',
         'datepicker.language': 'en',
-        'hod.error.INVALID_QUERY_TEXT': 'Invalid query text',
+        'hod.error.INVALID_QUERY_TEXT': 'All terms were invalid, through being stopwords, too short, or incorrectly formatted',
         'hod.error.NO_IGNORE_SPECIALS': 'Invalid use of special tokens',
         'footer.click-to-hide': 'Collapse footer',
         'footer.click-to-show': 'Show more\u2026',
