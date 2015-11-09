@@ -81,7 +81,7 @@ public class SearchPageITCase extends ABCTestBase {
 	//TODO move this to SearchBase (and refactor code)
     private void selectNewsEngIndex() {
 		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
+			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()[contains(.,'news_eng')]]"))).click();
 		}
     }
 
@@ -648,7 +648,6 @@ public class SearchPageITCase extends ABCTestBase {
 		search("war");
 		searchPage.selectLanguage("English");
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-//        indexesWarn();
         final String searchResultTitle = searchPage.getSearchResultTitle(1);
 		final String lastWordInTitle = searchPage.getLastWord(searchResultTitle);
 		int comparisonIndex = 0;
@@ -700,14 +699,9 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testEditFieldText() {
 		search("boer");
 
-        if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            searchPage.selectLanguage("Afrikaans");
-        } else {
-            languageWarn();
-        }
+		searchPage.selectLanguage("Afrikaans");
 
         searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-//        indexesWarn();
         searchPage.showFieldTextOptions();
 		searchPage.clearFieldText();
 
@@ -733,14 +727,6 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
 		assertEquals(secondSearchResult, searchPage.getSearchResultTitle(1));
 	}
-
-    private void indexesWarn() {
-        logger.warn("Some indexes don't work, only using news_eng and default");
-    }
-
-    private void languageWarn() {
-        logger.warn("Languages not implemented; using English instead");
-    }
 
     @Test
 	public void testFieldTextInputDisappearsOnOutsideClick() {
@@ -947,10 +933,9 @@ public class SearchPageITCase extends ABCTestBase {
 
         List<String> boolOperators = Arrays.asList("OR", "WHEN", "SENTENCE", "DNEAR");
         List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
+		searchPage.selectLanguage("English");
 
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-            languageWarn();
-
             List<String> allTerms = ListUtils.union(boolOperators,stopWords);
 
             for (final String searchTerm : allTerms) {
@@ -959,7 +944,6 @@ public class SearchPageITCase extends ABCTestBase {
             }
 
         } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            searchPage.selectLanguage("English");
             for (final String searchTerm : boolOperators) {
                 search(searchTerm);
                 assertThat("Correct error message not present for searchterm: " + searchTerm + searchPage.getText(), searchPage.getText(), containsString("An error occurred executing the search action"));
@@ -1201,10 +1185,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
-//        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-//			selectNewsEngIndex();
-//        }
-
         search("nice");
 		searchPage.forwardToLastPageButton().click();
 		searchPage.waitForSearchLoadIndicatorToDisappear();

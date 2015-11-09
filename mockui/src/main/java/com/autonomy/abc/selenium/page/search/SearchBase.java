@@ -323,7 +323,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	public void selectNewsEngIndex() {
 		//TODO click the filter dropdown
 		findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()[contains(.,'news_eng')]]"))).click();
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear() {
