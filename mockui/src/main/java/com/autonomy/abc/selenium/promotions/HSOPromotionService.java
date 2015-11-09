@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 
 public class HSOPromotionService extends PromotionService {
@@ -22,8 +23,13 @@ public class HSOPromotionService extends PromotionService {
         return elementFactory;
     }
 
+    @Override
+    public HSOPromotionsPage goToPromotions() {
+        return (HSOPromotionsPage) super.goToPromotions();
+    }
+
     public SearchPage setUpStaticPromotion(StaticPromotion promotion) {
-        promotionsPage = (HSOPromotionsPage) goToPromotions();
+        promotionsPage = goToPromotions();
         promotionsPage.staticPromotionButton().click();
         createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         promotion.makeWizard(createNewPromotionsPage).apply();

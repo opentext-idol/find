@@ -6,6 +6,7 @@ public class Errors {
         public static final String DUPLICATED = "is duplicated";
         public static final String QUOTES = "Terms have an odd number of quotes";
         public static final String COMMAS = "Terms may not contain commas";
-        public static final String CASE = "is a case variant of";
+        // triggers are converted toLowerCase, but this may change again
+        public static final String CASE = DUPLICATE_EXISTING;
     }
 }
