@@ -20,11 +20,8 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,6 +112,7 @@ public abstract class ABCTestBase {
 		} else {
 			workaroundLogIn();
 		}
+		getElementFactory().getPromotionsPage();
 	}
 
 	// log in via dev console while the HSOD SSO page is broken
