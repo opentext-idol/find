@@ -33,7 +33,7 @@ public class ScheduleStepITCase extends ABCTestBase {
 
         connectionsPage.newConnectionButton().click();
 
-        AppElement webConnectorTypeBtn = newConnectionPage.webConnectorType();
+        AppElement webConnectorTypeBtn = newConnectionPage.webConnectorType(elementFactory.getDriver());
         FormInput connectorUrl = newConnectionPage.connectorUrl();
         FormInput connectorName = newConnectionPage.connectorName();
 

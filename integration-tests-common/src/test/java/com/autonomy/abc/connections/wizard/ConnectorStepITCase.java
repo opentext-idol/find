@@ -51,10 +51,10 @@ public class ConnectorStepITCase extends ABCTestBase {
 
         connectionsPage.newConnectionButton().click();
 
-        webConnectorTypeBtn = newConnectionPage.webConnectorType();
-        filesystemConnectorTypeBtn = newConnectionPage.filesystemConnectorType();
-        sharepointConnectorTypeBtn = newConnectionPage.sharepointConnectorType();
-        dropboxConnectorTypeBtn = newConnectionPage.dropboxConnectorType();
+        webConnectorTypeBtn = newConnectionPage.webConnectorType(elementFactory.getDriver());
+        filesystemConnectorTypeBtn = newConnectionPage.filesystemConnectorType(elementFactory.getDriver());
+        sharepointConnectorTypeBtn = newConnectionPage.sharepointConnectorType(elementFactory.getDriver());
+        dropboxConnectorTypeBtn = newConnectionPage.dropboxConnectorType(elementFactory.getDriver());
 
     }
 
