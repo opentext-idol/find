@@ -648,7 +648,6 @@ public class SearchPageITCase extends ABCTestBase {
 		search("war");
 		searchPage.selectLanguage("English");
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-//        indexesWarn();
         final String searchResultTitle = searchPage.getSearchResultTitle(1);
 		final String lastWordInTitle = searchPage.getLastWord(searchResultTitle);
 		int comparisonIndex = 0;
@@ -1201,10 +1200,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
-//        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-//			selectNewsEngIndex();
-//        }
-
         search("nice");
 		searchPage.forwardToLastPageButton().click();
 		searchPage.waitForSearchLoadIndicatorToDisappear();

@@ -67,7 +67,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		promoteTheseDocumentsButton().click();
 		loadOrFadeWait();
 		List<String> promotedDocTitles = addToBucket(numberOfDocs);
-		promoteTheseItemsButton().click();
+		scrollIntoViewAndClick(promoteTheseItemsButton());
 		loadOrFadeWait();
 		return promotedDocTitles;
 	}
@@ -146,7 +146,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public WebElement promotionSummaryForwardButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-chevron-right")));
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
 	}
 
 	public WebElement promotionSummaryForwardToEndButton() {

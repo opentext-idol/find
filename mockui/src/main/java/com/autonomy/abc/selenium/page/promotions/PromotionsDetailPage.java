@@ -91,11 +91,11 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public FormInput triggerAddBox() {
-        return new FormInput(findElement(By.cssSelector(".promotion-match-terms [name='words']")), getDriver());
+        return new FormInput(findElement(By.cssSelector(".promotion-match-terms-editor input")),getDriver());
     }
 
     public WebElement triggerAddButton() {
-        return findElement(By.cssSelector(".promotion-match-terms [type='submit']"));
+        return findElement(By.cssSelector(".promotion-match-terms-editor [type='submit']"));
     }
 
     public String getTriggerError() {
