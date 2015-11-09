@@ -120,11 +120,7 @@ public abstract class ABCTestBase {
 	// log in via dev console while the HSOD SSO page is broken
 	private void workaroundLogIn() {
 		currentUser = config.getUser("twitter");
-		getDriver().get("https://www.int.havenondemand.com/login.html");
 		currentUser.getAuthProvider().login(getDriver());
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("navbar-inner")));
-		// begin from promotions as analytics page is slow to load (and some tests assume this)
-		getDriver().get(config.getWebappUrl() + "/searchoptimizer/p/");
 		if(!new AbcHasLoggedIn(getDriver()).hasLoggedIn()){
 			fail("Failed to log in");
 		}
