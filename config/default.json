@@ -1,7 +1,7 @@
 {
   "app": {
     "type": "Hosted",
-    "url": "http://search.dev.idolondemand.com",
+    "url": "http://search.dev.idolondemand.com/searchoptimizer/p",
     "find": "http://find.dev.idolondemand.com"
   },
   "selenium": {
