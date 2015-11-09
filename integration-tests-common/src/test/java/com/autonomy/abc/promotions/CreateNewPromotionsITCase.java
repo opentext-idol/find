@@ -2,21 +2,17 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
-import com.autonomy.abc.selenium.promotions.Promotion;
-import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.Errors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +25,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
@@ -42,12 +37,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     private SearchPage searchPage;
     private String promotedDocTitle;
-    private PromotionsPage promotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
     private CreateNewPromotionsPage createPromotionsPage;
     private Wizard wizard;
     private SearchActionFactory actionFactory;
-    private PromotionActionFactory promotionActionFactory;
+    private PromotionService promotionService;
 
     private List<String> goToWizard(Search search, int numberOfDocs) {
         search.apply();
@@ -63,17 +57,26 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage = getElementFactory().getSearchPage();
     }
 
+    private void goToTriggerStep() {
+        Promotion promotion = new PinToPositionPromotion(2, "");
+        wizard = promotion.makeWizard(createPromotionsPage);
+        wizard.getCurrentStep().apply();
+        wizard.next();
+        wizard.getCurrentStep().apply();
+        wizard.next();
+    }
+
     @Before
     public void setUp() {
         actionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-        promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
+        promotionService = getApplication().createPromotionService(getElementFactory());
         promotedDocTitle = goToWizard(actionFactory.makeSearch("fox"), 1).get(0);
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
     }
 
     @After
     public void cleanUp() {
-        promotionActionFactory.makeDeleteAll().apply();
+        promotionService.deleteAll();
     }
 
     @Test
@@ -111,114 +114,98 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testAddRemoveTriggerTermsAndCancel() {
-        createPromotionsPage.navigateToTriggers();
-        assertThat("Wizard has not progressed to Select the position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
-        assertThat("Trigger add button is not disabled when text box is empty", createPromotionsPage.isAttributePresent(createPromotionsPage.triggerAddButton(), "disabled"));
-        assertThat("Trigger add button is not disabled when text box is empty", !createPromotionsPage.isAttributePresent(createPromotionsPage.cancelButton(), "disabled"));
+        goToTriggerStep();
+        assertThat(createPromotionsPage, containsText(wizard.getCurrentStep().getTitle()));
+        assertThat(createPromotionsPage.triggerAddButton(), disabled());
+        assertThat(createPromotionsPage.cancelButton(), not(disabled()));
 
         createPromotionsPage.addSearchTrigger("animal");
-        assertThat("Promote button is not enabled when a trigger is added", !createPromotionsPage.isAttributePresent(createPromotionsPage.finishButton(), "disabled"));
-        assertThat("animal search trigger not added", createPromotionsPage.getSearchTriggersList().contains("animal"));
+        assertThat(createPromotionsPage.finishButton(), not(disabled()));
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasItem("animal"));
 
         createPromotionsPage.removeSearchTrigger("animal");
-        assertThat("animal search trigger not removed", !createPromotionsPage.getSearchTriggersList().contains("animal"));
-        assertThat("Promote button is not disabled when no triggers are added", createPromotionsPage.isAttributePresent(createPromotionsPage.finishButton(), "disabled"));
+        assertThat(createPromotionsPage.getSearchTriggersList(), not(hasItem("animal")));
+        assertThat(createPromotionsPage.finishButton(), disabled());
 
         createPromotionsPage.addSearchTrigger("bushy tail");
-        assertThat("Number of triggers does not equal 2", createPromotionsPage.getSearchTriggersList().size() == 2);
-        assertThat("bushy search trigger not added", createPromotionsPage.getSearchTriggersList().contains("bushy"));
-        assertThat("tail search trigger not added", createPromotionsPage.getSearchTriggersList().contains("tail"));
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasSize(2));
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasItem("bushy"));
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasItem("tail"));
 
         createPromotionsPage.removeSearchTrigger("tail");
-        assertThat("Number of triggers does not equal 1", createPromotionsPage.getSearchTriggersList().size() == 1);
-        assertThat("bushy search trigger not present", createPromotionsPage.getSearchTriggersList().contains("bushy"));
-        assertThat("tail search trigger not removed", !createPromotionsPage.getSearchTriggersList().contains("tail"));
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasSize(1));
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasItem("bushy"));
+        assertThat(createPromotionsPage.getSearchTriggersList(), not(hasItem("tail")));
 
         createPromotionsPage.cancelButton().click();
-        assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("create"));
+        assertThat(getDriver().getCurrentUrl(), not(containsString("create")));
     }
 
     @Test
     public void testWhitespaceTrigger() {
-        createPromotionsPage.navigateToTriggers();
-        assertThat("Trigger add button is not disabled", createPromotionsPage.isAttributePresent(createPromotionsPage.triggerAddButton(), "disabled"));
+        goToTriggerStep();
+        assertThat(createPromotionsPage.triggerAddButton(), disabled());
 
         createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton());
-        assertThat("Number of triggers does not equal 0", createPromotionsPage.getSearchTriggersList().size() == 0);
+        assertThat(createPromotionsPage.getSearchTriggersList(), empty());
 
         createPromotionsPage.addSearchTrigger("trigger");
-        assertThat("Number of triggers does not equal 1", createPromotionsPage.getSearchTriggersList().size() == 1);
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasSize(1));
 
-        createPromotionsPage.addSearchTrigger("   ");
-        assertThat("Number of triggers does not equal 1", createPromotionsPage.getSearchTriggersList().size() == 1);
-
-        createPromotionsPage.addSearchTrigger(" trigger");
-        assertThat("Whitespace at beginning should be ignored", createPromotionsPage.getSearchTriggersList().size() == 1);
-
-        createPromotionsPage.addSearchTrigger("\t");
-        assertThat("Whitespace at beginning should be ignored", createPromotionsPage.getSearchTriggersList().size() == 1);
+        String[] invalidTriggers = {"   ", " trigger", "\t"};
+        for (String trigger : invalidTriggers) {
+            createPromotionsPage.addSearchTrigger(trigger);
+            verifyThat("'" + trigger + "' is not accepted as a valid trigger", createPromotionsPage.getSearchTriggersList(), hasSize(1));
+        }
     }
 
     @Test
     public void testQuotesTrigger() {
-        createPromotionsPage.navigateToTriggers();
-        assertThat("Trigger add button is not disabled", createPromotionsPage.isAttributePresent(createPromotionsPage.triggerAddButton(), "disabled"));
+        goToTriggerStep();
+        assertThat(createPromotionsPage.triggerAddButton(), disabled());
 
         createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton());
-
-        assertThat("Number of triggers does not equal 0", createPromotionsPage.getSearchTriggersList().size() == 0);
+        assertThat(createPromotionsPage.getSearchTriggersList(), empty());
 
         createPromotionsPage.addSearchTrigger("bag");
-        assertThat("Number of triggers does not equal 1", createPromotionsPage.getSearchTriggersList().size() == 1);
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasSize(1));
 
-        createPromotionsPage.addSearchTrigger("\"bag");
-        assertThat("Number of triggers does not equal 1", createPromotionsPage.getSearchTriggersList().size() == 1);
-
-        createPromotionsPage.addSearchTrigger("bag\"");
-        assertThat("Number of triggers does not equal 1", createPromotionsPage.getSearchTriggersList().size() == 1);
-
-        createPromotionsPage.addSearchTrigger("\"bag\"");
-        assertThat("Number of triggers does not equal 1", createPromotionsPage.getSearchTriggersList().size() == 1);
+        String[] invalidTriggers = {"\"bag", "bag\"", "\"bag\""};
+        for (String trigger : invalidTriggers) {
+            createPromotionsPage.addSearchTrigger(trigger);
+            assertThat("'" + trigger + "' is not accepted as a valid trigger", createPromotionsPage.getSearchTriggersList(), hasSize(1));
+        }
 
         createPromotionsPage.removeSearchTrigger("bag");
-        assertThat("Number of triggers does not equal 0", createPromotionsPage.getSearchTriggersList().size() == 0);
+        assertThat(createPromotionsPage.getSearchTriggersList(), empty());
     }
 
     @Test
     public void testCommasTrigger() {
-        createPromotionsPage.navigateToTriggers();
+        goToTriggerStep();
         createPromotionsPage.addSearchTrigger("France");
-        assertThat("Number of triggers does not equal 1", createPromotionsPage.getSearchTriggersList().size() == 1);
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasSize(1));
 
-        createPromotionsPage.addSearchTrigger(",Germany");
-        assertThat("Commas should not be included in triggers", createPromotionsPage.getSearchTriggersList().size() == 1);
-        assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        createPromotionsPage.addSearchTrigger("Ita,ly Spain");
-        assertThat("Commas should not be included in triggers", createPromotionsPage.getSearchTriggersList().size() == 1);
-        assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        createPromotionsPage.addSearchTrigger("Ireland, Belgium");
-        assertThat("Commas should not be included in triggers", createPromotionsPage.getSearchTriggersList().size() == 1);
-        assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        createPromotionsPage.addSearchTrigger("UK , Luxembourg");
-        assertThat("Commas should not be included in triggers", createPromotionsPage.getSearchTriggersList().size() == 1);
-        assertThat("Incorrect/No error message displayed", createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
+        String[] invalidTriggers = {",Germany", "Ita,ly Spain", "Ireland, Belgium", "UK , Luxembourg"};
+        for (String trigger : invalidTriggers) {
+            createPromotionsPage.addSearchTrigger(trigger);
+            assertThat("'" + trigger + "' is not accepted as a valid trigger", createPromotionsPage.getSearchTriggersList(), hasSize(1));
+            assertThat(createPromotionsPage, containsText(Errors.Term.COMMAS));
+        }
 
         createPromotionsPage.addSearchTrigger("Andorra");
-        assertThat("Legitimate trigger not added", createPromotionsPage.getSearchTriggersList().size() == 2);
-        assertThat("Error message displayed with legitimate term", !createPromotionsPage.getText().contains("Terms may not contain commas. Separate words and phrases with whitespace."));
+        assertThat(createPromotionsPage.getSearchTriggersList(), hasSize(2));
+        assertThat(createPromotionsPage, not(containsText(Errors.Term.COMMAS)));
     }
 
     @Test
     public void testHTMLTrigger() {
-        createPromotionsPage.navigateToTriggers();
+        goToTriggerStep();
         final String searchTrigger = "<h1>hey</h1>";
         createPromotionsPage.addSearchTrigger(searchTrigger);
 
         final WebElement span = createPromotionsPage.findElement(By.cssSelector(".trigger-words-form .term"));
-        assertThat("HTML was not escaped", span.getText().equals(searchTrigger));
+        assertThat("HTML was escaped", span, hasTextThat(equalTo(searchTrigger)));
     }
 
     @Test
@@ -227,28 +214,28 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         createPromotionsPage.continueButton().click();
         createPromotionsPage.loadOrFadeWait();
         createPromotionsPage.loadOrFadeWait();
-        assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+        assertThat(createPromotionsPage.positionInputValue(), is(1));
 
         try {
             createPromotionsPage.pinToPositionInput().sendKeys(Keys.CONTROL, "a");
             createPromotionsPage.pinToPositionInput().sendKeys(Keys.CONTROL, "x");
-            assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+            assertThat(createPromotionsPage.positionInputValue(), is(1));
 
             createPromotionsPage.pinToPositionInput().sendKeys("bad");
-            assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+            assertThat(createPromotionsPage.positionInputValue(), is(1));
 
             createPromotionsPage.pinToPositionInput().sendKeys("1bad");
             body.getTopNavBar().sideBarToggle();
-            assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 1);
+            assertThat(createPromotionsPage.positionInputValue(), is(1));
 
             createPromotionsPage.pinToPositionInput().sendKeys("1");
             createPromotionsPage.selectPositionPlusButton().click();
             createPromotionsPage.pinToPositionInput().sendKeys("bad");
-            assertThat("Pin to position value not set to 1", createPromotionsPage.positionInputValue() == 2);
+            assertThat(createPromotionsPage.positionInputValue(), is(2));
 
             createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton());
             createPromotionsPage.loadOrFadeWait();
-            assertThat("Wizard has not progressed with a legitimate position", createPromotionsPage.getText().contains("Select Promotion Triggers"));
+            assertThat(createPromotionsPage, hasTextThat(containsString(SearchTriggerStep.TITLE)));
         } catch (final WebDriverException e) {
             //try catch because Chrome struggles to focus on pinToPositionInput
         }
@@ -256,7 +243,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testAddRemoveTriggersAndComplete() {
-        createPromotionsPage.navigateToTriggers();
+        goToTriggerStep();
         createPromotionsPage.addSearchTrigger("alpha");
         createPromotionsPage.addSearchTrigger("beta gamma delta");
         createPromotionsPage.removeSearchTrigger("gamma");
@@ -268,8 +255,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         finishPromotion();
 
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        promotionActionFactory.goToDetails("delta").apply();
-        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        promotionsDetailPage = promotionService.goToDetails("delta");
 
         verifyThat(promotionsDetailPage, containsText("delta"));
         verifyThat(promotionsDetailPage.pinPosition().getValue(), is("2"));
@@ -294,16 +280,18 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         }
 
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        promotionActionFactory.goToDetails(searchTrigger).apply();
-        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        promotionsDetailPage = promotionService.goToDetails(searchTrigger);
 
         verifyThat(promotionsDetailPage, containsText("Spotlight for: " + searchTrigger));
 
         promotionsDetailPage.trigger(searchTrigger).click();
         searchPage = getElementFactory().getSearchPage();
+        searchPage.waitForSearchLoadIndicatorToDisappear();
 
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedDocTitle));
-        verifyThat(searchPage.getTopPromotedLinkButtonText(), is(spotlightType.getOption()));
+        if (config.getType().equals(ApplicationType.ON_PREM)) {
+            verifyThat(searchPage.getTopPromotedSpotlightType(), is(spotlightType.getOption()));
+        }
 
         searchPage.modifiedResultsCheckBox().click();
         searchPage.loadOrFadeWait();
@@ -313,13 +301,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage.loadOrFadeWait();
         verifyThat(searchPage, containsText(promotedDocTitle));
 
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions"));
-        promotionsPage.getPromotionLinkWithTitleContaining(searchTrigger).click();
-
-        verifyThat(promotionsPage, containsText("Spotlight for: " + searchTrigger));
-        verifyThat(promotionsDetailPage.spotlightTypeDropdown().getValue(), is(spotlightType.getOption()));
+        if (config.getType().equals(ApplicationType.ON_PREM)) {
+            promotionsDetailPage = promotionService.goToDetails(searchTrigger);
+            verifyThat(promotionsDetailPage, containsText("Spotlight for: " + searchTrigger));
+            verifyThat(promotionsDetailPage.spotlightTypeDropdown().getValue(), is(spotlightType.getOption()));
+        }
     }
 
     @Test
@@ -370,11 +356,10 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
-        promotionActionFactory.goToDetails("animal").apply();
-        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        promotionsDetailPage = promotionService.goToDetails("animal");
 
         verifyThat(promotionsDetailPage, containsText("animal"));
-//        verifyThat(promotionsPage.promotionPosition(), containsText("2"));
+        verifyThat(promotionsDetailPage.pinPosition().getValue(), is("2"));
 
     }
 
@@ -461,7 +446,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testPromoteButtonInactiveWithEmptyBucketAfterPromotion() {
-        createPromotionsPage.navigateToTriggers();
+        goToTriggerStep();
         createPromotionsPage.addSearchTrigger("fox luke");
         finishPromotion();
         createPromotionsPage.loadOrFadeWait();
