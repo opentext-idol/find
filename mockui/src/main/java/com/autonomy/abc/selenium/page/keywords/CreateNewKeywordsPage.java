@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class CreateNewKeywordsPage extends AppElement implements AppPage {
 
 	public CreateNewKeywordsPage(final WebDriver driver) {
-		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))),driver);
+		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 
 	public WebElement continueWizardButton(final WizardStep dataType) {
 //		return findElement(By.cssSelector("[data-step='" + dataType.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Continue')]"));
-		return getDriver().findElement(By.xpath("//*[@data-step='"+dataType.getTitle()+"']//button[contains(text(),'Continue')]"));
+		return getDriver().findElement(By.xpath("//*[@data-step='" + dataType.getTitle() + "']//button[contains(text(),'Continue')]"));
 	}
 
 	public WebElement addSynonymsButton() {
@@ -172,7 +172,9 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		final List<String> keywordsList = new ArrayList<>();
 
 		for(final WebElement word : findElements(By.xpath(".//i[contains(@class, 'remove-word')]/.."))) {
-			keywordsList.add(word.getText());
+			if(word.isDisplayed()) {
+				keywordsList.add(word.getText());
+			}
 		}
 
 		return keywordsList;
