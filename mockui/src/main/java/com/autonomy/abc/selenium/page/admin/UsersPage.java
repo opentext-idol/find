@@ -29,7 +29,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public WebElement createUserButton() {
-		return findElement(By.xpath(".//button[contains(text(), 'Create User')]"));
+		return findElement(By.id("create-user"));
 	}
 
 	public WebElement createButton() {
@@ -194,6 +194,13 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	private static void waitForLoad(WebDriver driver) {
-		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".users-table")));
+//		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".users-table")));
+		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("create-user")));
+	}
+
+	public void addEmail(String email) {
+		WebElement emailBox = findElement(By.id("create-users-2900"));
+		emailBox.clear();
+		emailBox.sendKeys(email);
 	}
 }
