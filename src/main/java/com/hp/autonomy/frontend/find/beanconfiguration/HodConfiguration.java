@@ -30,8 +30,6 @@ import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
-import com.hp.autonomy.hod.client.api.queryprofile.QueryProfileService;
-import com.hp.autonomy.hod.client.api.queryprofile.QueryProfileServiceImpl;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.api.resource.ResourcesServiceImpl;
 import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
@@ -231,11 +229,6 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Bean
     public ViewDocumentService viewDocumentService() {
         return new ViewDocumentServiceImpl(hodServiceConfig());
-    }
-
-    @Bean
-    public QueryProfileService queryProfileService() {
-        return new QueryProfileServiceImpl(hodServiceConfig());
     }
 
     @Bean

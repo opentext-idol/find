@@ -1,12 +1,12 @@
 package com.hp.autonomy.frontend.find.view;
 
-import com.hp.autonomy.frontend.find.FindQueryProfileService;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
+import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.queryprofile.QueryProfile;
-import com.hp.autonomy.hod.client.api.queryprofile.QueryProfileService;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
@@ -34,15 +34,11 @@ import java.util.Locale;
 @Slf4j
 @Conditional(HodCondition.class)
 public class HodViewController extends AbstractViewController {
+    @Autowired
+    private ConfigService<HodFindConfig> configService;
 
     @Autowired
     private HodViewService hodViewService;
-
-    @Autowired
-    private QueryProfileService queryProfileService;
-
-    @Autowired
-    private FindQueryProfileService findQueryProfileService;
 
     @Autowired
     private MessageSource messageSource;
@@ -67,12 +63,8 @@ public class HodViewController extends AbstractViewController {
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
 
         final String domain = ((HodAuthentication) SecurityContextHolder.getContext().getAuthentication()).getPrincipal().getApplication().getDomain();
-
-        final String queryProfileName = findQueryProfileService.getQueryProfile().getName();
-        final QueryProfile queryProfile = queryProfileService.retrieveQueryProfile(queryProfileName);
-
-        final ResourceIdentifier queryManipulationIndex = new ResourceIdentifier(domain, queryProfile.getQueryManipulationIndex());
-        hodViewService.viewStaticContentPromotion(reference, queryManipulationIndex, response.getOutputStream());
+        final String queryManipulationIndex = configService.getConfig().getQueryManipulation().getIndex();
+        hodViewService.viewStaticContentPromotion(reference, new ResourceIdentifier(domain, queryManipulationIndex), response.getOutputStream());
     }
 
     @ExceptionHandler

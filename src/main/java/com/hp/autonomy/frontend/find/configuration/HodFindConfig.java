@@ -31,6 +31,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final Authentication<?> login;
     private final HsodConfig hsod;
     private final IodConfig iod;
+    private final QueryManipulationConfig queryManipulation;
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
 
@@ -40,22 +41,21 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         this.iod = builder.iod;
         this.allowedOrigins = builder.allowedOrigins;
         this.redis = builder.redis;
+        this.queryManipulation = builder.queryManipulation;
     }
 
     @Override
     public HodFindConfig merge(final HodFindConfig config) {
-        if(config != null) {
-            final Builder builder = new Builder();
-
-            builder.setLogin(this.login == null ? config.login : this.login.merge(config.login));
-            builder.setHsod(this.hsod == null ? config.hsod : this.hsod.merge(hsod));
-            builder.setIod(this.iod == null ? config.iod : this.iod.merge(config.iod));
-            builder.setAllowedOrigins(this.allowedOrigins == null ? config.allowedOrigins : this.allowedOrigins);
-            builder.setRedis(this.redis == null ? config.redis : this.redis.merge(config.redis));
-
-            return builder.build();
-        }
-        else {
+        if (config != null) {
+            return new Builder()
+                    .setLogin(this.login == null ? config.login : this.login.merge(config.login))
+                    .setIod(this.iod == null ? config.iod : this.iod.merge(config.iod))
+                    .setAllowedOrigins(this.allowedOrigins == null ? config.allowedOrigins : this.allowedOrigins)
+                    .setRedis(this.redis == null ? config.redis : this.redis.merge(config.redis))
+                    .setQueryManipulation(queryManipulation == null ? config.queryManipulation : queryManipulation.merge(config.queryManipulation))
+                    .setHsod(hsod == null ? config.hsod : hsod.merge(config.hsod))
+                    .build();
+        } else {
             return this;
         }
     }
@@ -89,7 +89,10 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
 
     @Override
     public void basicValidate() throws ConfigException {
-        if(!this.login.getMethod().equalsIgnoreCase("default")){
+        redis.basicValidate();
+        queryManipulation.basicValidate();
+
+        if (!this.login.getMethod().equalsIgnoreCase("default")) {
             this.login.basicValidate();
         }
     }
@@ -135,6 +138,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         private IodConfig iod;
         private Set<String> allowedOrigins;
         private RedisConfig redis;
+        private QueryManipulationConfig queryManipulation;
 
         public Builder() {}
 
@@ -144,6 +148,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             this.iod = config.iod;
             this.allowedOrigins = config.allowedOrigins;
             this.redis = config.redis;
+            this.queryManipulation = config.queryManipulation;
         }
 
         public HodFindConfig build() {
