@@ -95,6 +95,25 @@ public class ElementMatchers {
         };
     }
 
+    public static Matcher<? super WebElement> hasClass(final String className) {
+        return new TypeSafeMatcher<WebElement>() {
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return AppElement.hasClass(className, item);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("an element with class ").appendValue(className);
+            }
+
+            @Override
+            protected void describeMismatchSafely(WebElement item, Description mismatchDescription) {
+                mismatchDescription.appendText("element's class attribute was ").appendText(item.getAttribute("class"));
+            }
+        };
+    }
+
     public static Matcher<? super WebElement> disabled() {
         return new TypeSafeMatcher<WebElement>() {
 
