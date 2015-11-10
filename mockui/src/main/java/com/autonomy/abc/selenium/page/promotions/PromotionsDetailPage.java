@@ -157,7 +157,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
             @Override
             public Boolean apply(WebDriver input) {
                 List<WebElement> docs = input.findElements(By.cssSelector(".promoted-documents-list h3"));
-                return docs.isEmpty() || !docs.get(0).getText().contains("Unknown Document");
+                return !(docs.isEmpty() || docs.get(0).getText().contains("Unknown Document"));
             }
         });
     }

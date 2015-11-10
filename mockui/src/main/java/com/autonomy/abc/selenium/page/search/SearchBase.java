@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
+import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -42,7 +43,10 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public Checkbox searchCheckboxForTitle(final String docTitle) {
-		return new Checkbox(findElement(By.cssSelector(".search-page-contents")).findElement(By.xpath(".//a[contains(text(), '" + docTitle + "')]/../../..")), getDriver());
+		WebElement element = findElement(By.cssSelector(".search-page-contents"));
+		element = element.findElement(new Locator().withTagName("a").containingCaseInsensitive(docTitle));
+		element = element.findElement(By.xpath("./../../.."));
+		return new Checkbox(element, getDriver());
 	}
 
 	public String getSearchResultTitle(final int searchResultNumber) {
@@ -74,10 +78,14 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void deleteDocFromWithinBucket(final String docTitle) {
-		final String xpathString = cleanXpathString(docTitle);
-        LoggerFactory.getLogger(SearchBase.class).info(xpathString);
-		promotionsBucket().findElement(By.xpath(".//*[contains(text(), " + xpathString + ")]/../i")).click();
-		loadOrFadeWait();
+		for (WebElement document : promotionsBucketWebElements()) {
+			if (document.getText().compareToIgnoreCase(docTitle) == 0) {
+				document.findElement(By.cssSelector(".fa-close")).click();
+				new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(document));
+				return;
+			}
+		}
+		throw new NoSuchElementException("promotion bucket document with title " + docTitle);
 	}
 
 	public WebElement backToFirstPageButton() {
@@ -136,8 +144,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
-        LoggerFactory.getLogger(SearchBase.class).info(docTitle);
-        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), " + cleanXpathString(docTitle) + ")]"));
+        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(new Locator().containingCaseInsensitive(docTitle));
 	}
 
     /**

@@ -100,16 +100,48 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         }
         verifyThat(createPromotionsPage.positionInputValue(), is(3));
 
-        try {
-            // Try to send keys in case this gets changed back to an input
-            createPromotionsPage.pinToPositionInput().sendKeys("16");
-            verifyThat(createPromotionsPage.positionInputValue(), is(3));
-        } catch (final WebDriverException e) {
-            //try catch because chrome struggles to focus on this element
-        }
+        trySendKeysToPinPosition("16");
+        verifyThat("pin position is not an input box", createPromotionsPage.positionInputValue(), is(3));
 
         wizard.cancel();
         verifyThat(getDriver().getCurrentUrl(), not(containsString("create")));
+    }
+
+    @Test
+    public void testNonNumericEntryInPinToPosition() {
+        createPromotionsPage.promotionType("PIN_TO_POSITION").click();
+        createPromotionsPage.continueButton().click();
+        createPromotionsPage.loadOrFadeWait();
+        createPromotionsPage.loadOrFadeWait();
+        assertThat(createPromotionsPage.positionInputValue(), is(1));
+
+        trySendKeysToPinPosition(Keys.CONTROL, "a");
+        trySendKeysToPinPosition(Keys.CONTROL, "x");
+        assertThat(createPromotionsPage.positionInputValue(), is(1));
+
+        trySendKeysToPinPosition("bad");
+        assertThat(createPromotionsPage.positionInputValue(), is(1));
+
+        trySendKeysToPinPosition("1bad");
+        body.getTopNavBar().sideBarToggle();
+        assertThat(createPromotionsPage.positionInputValue(), is(1));
+
+        trySendKeysToPinPosition("1");
+        createPromotionsPage.selectPositionPlusButton().click();
+        trySendKeysToPinPosition("bad");
+        assertThat(createPromotionsPage.positionInputValue(), is(2));
+
+        createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton());
+        createPromotionsPage.loadOrFadeWait();
+        assertThat(createPromotionsPage, hasTextThat(containsString(SearchTriggerStep.TITLE)));
+    }
+
+    private void trySendKeysToPinPosition(CharSequence... keys) {
+        try {
+            createPromotionsPage.pinToPositionInput().sendKeys(keys);
+        } catch (final WebDriverException e) {
+            // Chrome "cannot focus element" (this is good - we do not want to send keys)
+        }
     }
 
     @Test
@@ -206,39 +238,6 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
         final WebElement span = createPromotionsPage.findElement(By.cssSelector(".trigger-words-form .term"));
         assertThat("HTML was escaped", span, hasTextThat(equalTo(searchTrigger)));
-    }
-
-    @Test
-    public void testNonNumericEntryInPinToPosition() {
-        createPromotionsPage.promotionType("PIN_TO_POSITION").click();
-        createPromotionsPage.continueButton().click();
-        createPromotionsPage.loadOrFadeWait();
-        createPromotionsPage.loadOrFadeWait();
-        assertThat(createPromotionsPage.positionInputValue(), is(1));
-
-        try {
-            createPromotionsPage.pinToPositionInput().sendKeys(Keys.CONTROL, "a");
-            createPromotionsPage.pinToPositionInput().sendKeys(Keys.CONTROL, "x");
-            assertThat(createPromotionsPage.positionInputValue(), is(1));
-
-            createPromotionsPage.pinToPositionInput().sendKeys("bad");
-            assertThat(createPromotionsPage.positionInputValue(), is(1));
-
-            createPromotionsPage.pinToPositionInput().sendKeys("1bad");
-            body.getTopNavBar().sideBarToggle();
-            assertThat(createPromotionsPage.positionInputValue(), is(1));
-
-            createPromotionsPage.pinToPositionInput().sendKeys("1");
-            createPromotionsPage.selectPositionPlusButton().click();
-            createPromotionsPage.pinToPositionInput().sendKeys("bad");
-            assertThat(createPromotionsPage.positionInputValue(), is(2));
-
-            createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton());
-            createPromotionsPage.loadOrFadeWait();
-            assertThat(createPromotionsPage, hasTextThat(containsString(SearchTriggerStep.TITLE)));
-        } catch (final WebDriverException e) {
-            //try catch because Chrome struggles to focus on pinToPositionInput
-        }
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -10,6 +9,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
@@ -20,13 +20,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.TimeoutException;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
+import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
 
 public class EditDocumentReferencesPageITCase extends ABCTestBase {
@@ -39,23 +42,22 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     private SearchPage searchPage;
     private PromotionsDetailPage promotionsDetailPage;
     private EditDocumentReferencesPage editReferencesPage;
-    private PromotionActionFactory promotionActionFactory;
+    private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
-    // simpsons filter avoids duplicate titles
-    private SearchFilter globalSearchFilter = new IndexFilter("simpsons");
+    // must avoid duplicate titles
+    private SearchFilter globalSearchFilter = new IndexFilter("default_index");
 
     @Before
     public void setUp() throws MalformedURLException {
-        promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
+        promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-        promotionActionFactory.makeDeleteAll().apply();
-        promotionsPage = getElementFactory().getPromotionsPage();
+        promotionsPage = promotionService.deleteAll();
     }
 
     private List<String> setUpPromotion(final String searchTerm, final String trigger, final int numberOfDocs) {
         Search search = searchActionFactory.makeSearch(searchTerm).applyFilter(globalSearchFilter);
-        final List<String> promotedDocTitles = promotionActionFactory.makeCreatePromotion(new SpotlightPromotion(trigger), search, numberOfDocs).apply();
-        promotionsDetailPage = promotionActionFactory.goToDetails(trigger.split(" ")[0]).apply();
+        final List<String> promotedDocTitles = promotionService.setUpPromotion(new SpotlightPromotion(trigger), search, numberOfDocs);
+        promotionsDetailPage = promotionService.goToDetails(trigger.split(" ")[0]);
         promotionsDetailPage.addMoreButton().click();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         return promotedDocTitles;
@@ -82,7 +84,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         verifyThat(promotionsBucketList.size(), is(promotedDocs.size()));
         for (final String docTitle : promotionsBucketList) {
-            verifyThat(promotedDocs, hasItem(docTitle));
+            verifyThat(promotedDocs, hasItem(equalToIgnoringCase(docTitle)));
         }
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
@@ -92,7 +94,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         final List<String> searchBucketDocs = searchPage.promotionsBucketList();
 
-        promotionsDetailPage = promotionActionFactory.goToDetails("jedi").apply();
+        promotionsDetailPage = promotionService.goToDetails("jedi");
         promotionsDetailPage.addMoreButton().click();
         promotionsPage.loadOrFadeWait();
 
@@ -100,7 +102,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         final List<String> secondPromotionsBucketList = editReferencesPage.promotionsBucketList();
         verifyThat(secondPromotionsBucketList.size(), is(promotionsBucketList.size()));
         for (final String searchBucketDoc : searchBucketDocs) {
-            verifyThat(secondPromotionsBucketList, not(hasItem(searchBucketDoc)));
+            verifyThat(secondPromotionsBucketList, not(hasItem(equalToIgnoringCase(searchBucketDoc))));
         }
 
         editDocumentSearch("wall");
@@ -126,7 +128,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         setUpPromotion("yoda", "green dude", promotedCount);
         verifyThat(editReferencesPage.promotionsBucketList().size(), is(promotedCount));
 
-        editDocumentSearch("star");
+        editDocumentSearch("unrelated");
 
         for (int i = 1; i < 7; i++) {
             AppElement.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
@@ -148,7 +150,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         getDriver().navigate().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
 
-        verifyThat(editReferencesPage.promotionsBucket(), containsText("Save"));
+        verifyThat(editReferencesPage.saveButton(), disabled());
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
     }
 
@@ -158,7 +160,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         verifyThat(editReferencesPage, not(containsText("An unknown error occurred executing the search action")));
         verifyThat(editReferencesPage, containsText("Search for new items to promote"));
-        verifyThat(editReferencesPage.saveButton(), containsText("Save"));
+        verifyThat(editReferencesPage.saveButton(), hasTextThat(equalToIgnoringCase("Save")));
     }
 
     @Test
@@ -173,7 +175,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editReferencesPage.searchResultCheckbox(3).click();
         editReferencesPage.searchResultCheckbox(4).click();
 
-        editDocumentSearch("cottage");
+        editDocumentSearch("villa");
         verifyThat(editReferencesPage.getCurrentPageNumber(), is(1));
         editReferencesPage.searchResultCheckbox(5).click();
         editReferencesPage.searchResultCheckbox(6).click();
@@ -184,7 +186,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         promotionsDetailPage.addMoreButton().click();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-        verifyThat(editReferencesPage.promotionsBucketList(), contains(originalDoc));
+        verifyThat(editReferencesPage.promotionsBucketList(), hasItem(equalToIgnoringCase(originalDoc)));
         verifyThat(editReferencesPage.promotionsBucketList(), hasSize(1));
     }
 
@@ -213,7 +215,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
 
         getDriver().switchTo().frame(docViewer.frame());
-        verifyThat(getDriver().findElement(By.xpath(".//*")), containsText(title));
+        verifyThat(getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
 
         getDriver().switchTo().window(handle);
         docViewer.close();
@@ -279,8 +281,14 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail"));
 
-        verifyThat(promotionsDetailPage.getPromotedTitles(), hasItem(newPromotedDoc));
-        verifyThat(promotionsDetailPage.getPromotedTitles(), hasSize(1));
+        List<String> newTitles = new ArrayList<>();
+        try {
+            newTitles = promotionsDetailPage.getPromotedTitles();
+        } catch (final TimeoutException e) {
+            // CSA-1761
+        }
+        verifyThat(newTitles, hasItem(newPromotedDoc));
+        verifyThat(newTitles, hasSize(1));
     }
 
 
@@ -300,8 +308,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         final List<String> promotionsList = promotionsDetailPage.getPromotedTitles();
 
         for (int i = 0; i < 4; i++) {
-            verifyThat(promotionsList, not(hasItem(bucketList.get(i))));
-            verifyThat(promotionsList, hasItem(bucketList.get(i + 4)));
+            verifyThat(promotionsList, not(hasItem(equalToIgnoringCase(bucketList.get(i)))));
+            verifyThat(promotionsList, hasItem(equalToIgnoringCase(bucketList.get(i + 4))));
         }
     }
 }

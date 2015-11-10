@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class PromotionsPage extends AppElement implements AppPage {
@@ -58,6 +59,9 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 
 	public List<WebElement> promotionsList() {
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loading-indicator")));
+		if (getText().contains("There are no promotions")) {
+			return Collections.emptyList();
+		}
 		return findElements(By.cssSelector(".promotion-list-container li a"));
 	}
 
