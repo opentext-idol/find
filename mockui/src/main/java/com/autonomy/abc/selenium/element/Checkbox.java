@@ -10,7 +10,7 @@ public class Checkbox extends AppElement {
 
     public Checkbox(WebElement element, WebDriver driver) {
         super(element, driver);
-        box = findElement(By.className("icheckbox_square-blue"));
+        box = findElement(By.className("icheckbox_square-green"));
     }
 
     public String getName() {
