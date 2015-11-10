@@ -20,63 +20,46 @@ public class LoginPageHostedITCase extends ABCTestBase {
         regularSetUp();
     }
 
-    private void setLoginType(String type){
-        System.setProperty("com.autonomy.loginType", type);
-    }
-
-    private void setUsernameAndPassword(String username,String password){
-        System.setProperty("com.autonomy.username",username);
-        System.setProperty("com.autonomy.password",password);
-    }
-
     @Test
     public void testAPIKeyLogin(){
-        String apiKey = "";
-        setLoginType("apikey");
-        System.setProperty("com.autonomy.apikey", apiKey);
-        tryLogIn();
+       testLogin("api_key");
     }
 
     @Test
     public void testGoogleLogin(){
-        setLoginType("google");
-        setUsernameAndPassword("", "");
-        tryLogIn();
+        testLogin("google");
     }
 
     @Test
     public void testTwitterLogin(){
-        setLoginType("twitter");
-        setUsernameAndPassword("hodtesting", "5cUdPhYM");
-        tryLogIn();
+        testLogin("twitter");
     }
 
     @Test
     public void testFacebookLogin(){
-        setLoginType("facebook");
-        setUsernameAndPassword("matthew.williamson@hpe.com", "vdPAuTGU");
-        tryLogIn();
+        testLogin("facebook");
     }
 
     @Test
     public void testYahooLogin(){
-        setLoginType("yahoo");
-        setUsernameAndPassword("", "");
-        tryLogIn();
+        testLogin("yahoo");
     }
 
     @Test
     public void testOpenIDLogin(){
-        String url = "";
-        setLoginType("openid");
-        System.setProperty("com.autonomy.url", url);
-        tryLogIn();
+        testLogin("open_id");
     }
 
     @Test
     public void testHPPassportLogin(){
-        setLoginType("passport");
-        setUsernameAndPassword("", "");
-        tryLogIn();
+        testLogin("hp_passport");
+    }
+
+    private void testLogin(String account) {
+        try {
+            loginAs(config.getUser(account));
+        } catch (Exception e) {
+            throw new AssertionError("unable to log in as " + account, e);
+        }
     }
 }
