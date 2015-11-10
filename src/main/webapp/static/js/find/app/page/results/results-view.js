@@ -45,6 +45,13 @@ define([
         return matchedType.className;
     };
 
+    var $window = $(window);
+    var SIZE = '90%';
+
+    var onResize = function() {
+        $.colorbox.resize({width: SIZE, height: SIZE});
+    };
+
     return Backbone.View.extend({
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
@@ -219,6 +226,9 @@ define([
                 iframe: false,
                 rel: 'results',
                 width:'70%',
+                onClosed: function() {
+                    $window.off('resize', onResize);
+                },
                 onComplete: _.bind(function() {
                     $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
 
@@ -229,6 +239,7 @@ define([
                         $('.view-server-page').removeClass('hidden');
                     });
 
+                    $window.resize(onResize);
                 }, this)
             };
 
