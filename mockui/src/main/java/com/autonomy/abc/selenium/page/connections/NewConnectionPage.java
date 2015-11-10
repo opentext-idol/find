@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.page.connections;
 
-import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,32 +16,16 @@ public class NewConnectionPage extends SAASPageBase {
     }
 
     public static NewConnectionPage make(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("actions")));
+        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wizard")));
         return new NewConnectionPage(driver);
     }
 
-    public AppElement webConnectorType() {
-        return new AppElement(findElement(By.id("web_cloud")), getDriver());
+    public ConnectorTypeStepTab getConnectorTypeStep(){
+        return ConnectorTypeStepTab.make(getDriver());
     }
 
-    public AppElement filesystemConnectorType() {
-        return new AppElement(findElement(By.id("filesystem_onsite")), getDriver());
-    }
-
-    public AppElement sharepointConnectorType() {
-        return new AppElement(findElement(By.id("sharepoint_onsite")), getDriver());
-    }
-
-    public AppElement dropboxConnectorType() {
-        return new AppElement(findElement(By.id("dropbox_cloud")), getDriver());
-    }
-
-    public FormInput connectorUrl() {
-        return new FormInput(findElement(By.name("connectorUrl")), getDriver());
-    }
-
-    public FormInput connectorName() {
-        return new FormInput(findElement(By.name("name")), getDriver());
+    public ConnectorConfigStepTab getConnectorConfigStep(){
+        return  ConnectorConfigStepTab.make(getDriver());
     }
 
     private WebElement menuButton(String text) {
@@ -58,6 +42,22 @@ public class NewConnectionPage extends SAASPageBase {
 
     public WebElement cancelButton() {
         return menuButton("Cancel");
+    }
+
+    public AppElement connectorTypeStepTab() {
+        return new AppElement(findElement(By.id("stepAnchor1")), getDriver());
+    }
+
+    public AppElement connectorSchedualeStepTab() {
+        return new AppElement(findElement(By.id("stepAnchor2")), getDriver());
+    }
+
+    public AppElement connectorIndexStepTab() {
+        return new AppElement(findElement(By.id("stepAnchor3")), getDriver());
+    }
+
+    public AppElement connectorSummaryStepTab() {
+        return new AppElement(findElement(By.id("stepAnchor4")), getDriver());
     }
 
     public void loadOrFadeWait() {
