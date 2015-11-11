@@ -5,6 +5,7 @@ import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
@@ -32,7 +33,7 @@ public class ScheduleStepITCase extends ConnectorTypeStepBase {
         ConnectorTypeStepTab connectorTypeStep = newConnectionPage.getConnectorTypeStep();
 
         FormInput connectorName = connectorTypeStep.connectorName();
-        selectDBConnectorType();
+        selectConnectorType(ConnectorType.DROPBOX);
 
         connectorName.setValue("name");
         newConnectionPage.loadOrFadeWait();

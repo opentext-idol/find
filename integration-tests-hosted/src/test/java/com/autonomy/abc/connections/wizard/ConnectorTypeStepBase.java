@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.hamcrest.Description;
@@ -36,11 +37,6 @@ public class ConnectorTypeStepBase extends ABCTestBase {
     protected ConnectionsPage connectionsPage;
     protected NewConnectionPage newConnectionPage;
     protected ConnectorTypeStepTab connectorTypeStepTab;
-
-    protected AppElement webConnectorTypeBtn;
-    protected AppElement filesystemConnectorTypeBtn;
-    protected AppElement sharepointConnectorTypeBtn;
-    protected AppElement dropboxConnectorTypeBtn;
     protected HSOElementFactory elementFactory;
 
     @Before
@@ -53,11 +49,6 @@ public class ConnectorTypeStepBase extends ABCTestBase {
 
         newConnectionPage = elementFactory.getNewConnectionPage();
         connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();
-
-        webConnectorTypeBtn = connectorTypeStepTab.webConnectorType();
-        filesystemConnectorTypeBtn = connectorTypeStepTab.filesystemConnectorType();
-        sharepointConnectorTypeBtn = connectorTypeStepTab.sharepointConnectorType();
-        dropboxConnectorTypeBtn = connectorTypeStepTab.dropboxConnectorType();
     }
 
     @After
@@ -65,40 +56,17 @@ public class ConnectorTypeStepBase extends ABCTestBase {
 
     }
 
-    protected void selectWebConnectorType() {
-        webConnectorTypeBtn.click();
+    protected void selectConnectorType(ConnectorType type) {
+        connectorTypeStepTab.typeBtn(type).click();
         newConnectionPage.loadOrFadeWait();
-        assertThat("The web connector is selected", webConnectorTypeBtn, hasClass("connector-icon-selected"));
-        assertThat("The FS connector isn't selected", filesystemConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The SharePoint connector isn't selected", sharepointConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The DropBox connector isn't selected", dropboxConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-    }
 
-    protected void selectDBConnectorType() {
-        dropboxConnectorTypeBtn.click();
-        newConnectionPage.loadOrFadeWait();
-        assertThat("The web connector isn't selected", webConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The FS connector isn't selected", filesystemConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The SharePoint connector isn't selected", sharepointConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The DropBox connector is selected", dropboxConnectorTypeBtn, hasClass("connector-icon-selected"));
-    }
-
-    protected void selectSharepointConnectorType() {
-        sharepointConnectorTypeBtn.click();
-        newConnectionPage.loadOrFadeWait();
-        assertThat("The web connector isn't selected", webConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The FS connector isn't selected", filesystemConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The SharePoint connector is selected", sharepointConnectorTypeBtn, hasClass("connector-icon-selected"));
-        assertThat("The DropBox connector isn't selected", dropboxConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-    }
-
-    protected void selectFSConnectorType() {
-        filesystemConnectorTypeBtn.click();
-        newConnectionPage.loadOrFadeWait();
-        assertThat("The web connector isn't selected", webConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The FS connector is selected", filesystemConnectorTypeBtn, hasClass("connector-icon-selected"));
-        assertThat("The SharePoint connector isn't selected", sharepointConnectorTypeBtn, not(hasClass("connector-icon-selected")));
-        assertThat("The DropBox connector isn't selected", dropboxConnectorTypeBtn, not(hasClass("connector-icon-selected")));
+        for (ConnectorType eachType : ConnectorType.values()) {
+            if (eachType.equals(type)) {
+                assertThat(connectorTypeStepTab.typeBtn(eachType), hasClass("connector-icon-selected"));
+            } else {
+                assertThat(connectorTypeStepTab.typeBtn(eachType), not(hasClass("connector-icon-selected")));
+            }
+        }
     }
 
     protected static Matcher<? super WebElement> stepIsCurrent() {

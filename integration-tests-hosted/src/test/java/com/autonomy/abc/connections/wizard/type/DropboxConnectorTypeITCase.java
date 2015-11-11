@@ -4,6 +4,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -24,7 +25,7 @@ public class DropboxConnectorTypeITCase extends ConnectorTypeStepBase {
     public void testDBConnectorValidators(){
         FormInput connectorName = connectorTypeStepTab.connectorName();
 
-        selectDBConnectorType();
+        selectConnectorType(ConnectorType.DROPBOX);
 
         newConnectionPage.nextButton().click();
         newConnectionPage.loadOrFadeWait();

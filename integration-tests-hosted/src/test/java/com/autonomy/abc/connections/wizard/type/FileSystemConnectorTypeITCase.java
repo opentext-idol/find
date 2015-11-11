@@ -4,6 +4,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
 
     @Before
     public void selectStep() {
-        selectFSConnectorType();
+        selectConnectorType(ConnectorType.FILESYSTEM);
         connectorPath = connectorTypeStepTab.connectorPath();
         connectorName = connectorTypeStepTab.connectorName();
     }

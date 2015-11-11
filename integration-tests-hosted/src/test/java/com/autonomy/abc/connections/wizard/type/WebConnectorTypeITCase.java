@@ -4,6 +4,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,17 +34,16 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
 
     @Before
     public void selectStep() {
-        selectWebConnectorType();
+        selectConnectorType(ConnectorType.WEB);
         connectorUrl = connectorTypeStepTab.connectorUrl();
         connectorName = connectorTypeStepTab.connectorName();
     }
 
     @Test
     public void testConnectorTypeSelection() {
-        selectWebConnectorType();
-        selectFSConnectorType();
-        selectSharepointConnectorType();
-        selectDBConnectorType();
+        for (ConnectorType type : ConnectorType.values()) {
+            selectConnectorType(type);
+        }
     }
 
     @Test

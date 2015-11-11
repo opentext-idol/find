@@ -21,22 +21,6 @@ public class ConnectorTypeStepTab extends SAASPageBase{
         return new ConnectorTypeStepTab(driver);
     }
 
-    public AppElement webConnectorType() {
-        return new AppElement(findElement(By.id("web_cloud")), getDriver());
-    }
-
-    public AppElement filesystemConnectorType() {
-        return new AppElement(findElement(By.id("filesystem_onsite")), getDriver());
-    }
-
-    public AppElement sharepointConnectorType() {
-        return new AppElement(findElement(By.id("sharepoint_onsite")), getDriver());
-    }
-
-    public AppElement dropboxConnectorType() {
-        return new AppElement(findElement(By.id("dropbox_cloud")), getDriver());
-    }
-
     public FormInput connectorUrl() {
         return new FormInput(findElement(By.name("connectorUrl")), getDriver());
     }
@@ -48,4 +32,9 @@ public class ConnectorTypeStepTab extends SAASPageBase{
     public FormInput connectorName() {
         return new FormInput(findElement(By.name("name")), getDriver());
     }
+
+    public AppElement typeBtn(ConnectorType type) {
+        return new AppElement(findElement(type.getLocator()), getDriver());
+    }
+
 }
