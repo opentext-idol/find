@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by avidan on 10-11-15.
@@ -28,11 +30,11 @@ public class DropboxConnectorTypeITCase extends ConnectorTypeStepBase {
         newConnectionPage.loadOrFadeWait();
 
         assertThat("The step is invalid without connector name", !isStepValid(newConnectionPage.connectorTypeStepTab()));
-        assertThat("The url input field isn't valid ", AppElement.hasClass(INVALID_INPUT_CLASS, AppElement.getParent(AppElement.getParent(connectorName.getElement()))));
+        assertThat(AppElement.getParent(AppElement.getParent(connectorName.getElement())), hasClass(INVALID_INPUT_CLASS));
 
 
         connectorName.setValue("name");
         newConnectionPage.loadOrFadeWait();
-        assertThat("The url input field isn't valid ", !AppElement.hasClass(INVALID_INPUT_CLASS, AppElement.getParent(AppElement.getParent(connectorName.getElement()))));
+        assertThat(AppElement.getParent(AppElement.getParent(connectorName.getElement())), not(hasClass(INVALID_INPUT_CLASS)));
     }
 }

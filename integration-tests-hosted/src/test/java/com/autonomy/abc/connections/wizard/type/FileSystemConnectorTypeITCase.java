@@ -14,7 +14,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static com.autonomy.abc.matchers.ElementMatchers.disabled;
+import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by avidan on 10-11-15.
@@ -44,16 +48,13 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
         map.put("koo", "c:\\foo\\koo");
         map.put("aa", "\\\\d\\aa");
 
-        Iterator iterator = map.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry pair = (Map.Entry) iterator.next();
-
-            connectorPath.setValue((String) pair.getValue());
+        for (String key : map.keySet()) {
+            connectorPath.setValue(map.get(key));
             connectorName.getElement().click();
             assertThat("The url input field isn't valid ", !AppElement.hasClass(INVALID_INPUT_CLASS, AppElement.getParent(AppElement.getParent(connectorPath.getElement()))));
 
-            assertThat("The name was extracted from the URL", connectorName.getElement().getAttribute("value"), equalTo((String) pair.getKey()));
-            assertThat("The next button in the wizard is enabled", newConnectionPage.nextButton().isEnabled());
+            assertThat("The name was extracted from the URL", connectorName.getElement(), hasAttribute("value", equalTo(key)));
+            assertThat("The next button in the wizard is enabled", newConnectionPage.nextButton(), not(disabled()));
             connectorPath.clear();
             connectorName.clear();
         }
@@ -76,7 +77,7 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
 
             connectorPath.setValue((String) pair.getValue());
             connectorName.getElement().click();
-            assertThat("The url input field isn't valid ", AppElement.hasClass(INVALID_INPUT_CLASS, AppElement.getParent(AppElement.getParent(connectorPath.getElement()))));
+            assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorPath.getElement())), hasClass(INVALID_INPUT_CLASS));
 
             newConnectionPage.nextButton().click();
             assertThat("The step should be set as error when value is " + pair.getKey(), !isStepValid(newConnectionPage.connectorTypeStepTab()));
