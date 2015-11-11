@@ -58,7 +58,7 @@ public class ConnectionService {
         connectionsPage.newConnectionButton().click();
         newConnectionPage = elementFactory.getNewConnectionPage();
         connector.makeWizard(newConnectionPage).apply();
-        new WebDriverWait(getDriver(), 300).until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
+        new WebDriverWait(getDriver(), 300).withMessage("connection " + connector + " timed out").until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
         return connectionsPage;
     }
 

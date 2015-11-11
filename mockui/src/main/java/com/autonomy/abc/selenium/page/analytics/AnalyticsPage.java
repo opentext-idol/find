@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.page.analytics;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -91,7 +90,7 @@ public class AnalyticsPage extends AppElement implements AppPage {
         container.findElement(By.xpath(".//*[contains(text(),'Count')]")).click();
     }
 
-    private class WaitUntilLoadingFinished implements ExpectedCondition {
+    private class WaitUntilLoadingFinished implements ExpectedCondition<Boolean> {
         WebElement container;
 
         private WaitUntilLoadingFinished(WebElement container) {
@@ -99,8 +98,8 @@ public class AnalyticsPage extends AppElement implements AppPage {
         }
 
         @Override
-        public Object apply(Object o) {
-            return container.findElements(By.className("loadingIconSmall")).size() == 0;
+        public Boolean apply(WebDriver input) {
+            return container.findElements(By.className("loadingIconSmall")).isEmpty();
         }
     }
 
