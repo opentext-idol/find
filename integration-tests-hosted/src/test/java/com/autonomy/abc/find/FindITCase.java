@@ -63,7 +63,7 @@ public class FindITCase extends ABCTestBase {
     private Logger logger = LoggerFactory.getLogger(FindITCase.class);
     private PromotionsPage promotions;
     private List<String> browserHandles;
-    private final String domain = "ce9f1f3d-a780-4793-8a6a-a74b12b7d1ae";
+    private final String domain = "60a7547c-e0e7-4e40-b095-812e486b4054";
     private final Matcher<String> noDocs = containsString("No results found");
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
@@ -928,7 +928,7 @@ public class FindITCase extends ABCTestBase {
 
             WebElement popover = service.getPopover();
 
-            new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover,"Loading")));
+            new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
 
             assertThat(popover.findElement(By.tagName("p")).getText(),not("An error occurred fetching similar documents"));
 
