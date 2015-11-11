@@ -111,8 +111,8 @@ public abstract class ABCTestBase {
 			tryLogIn();
 		} else {
 			workaroundLogIn();
+			getElementFactory().getPromotionsPage();
 		}
-		getElementFactory().getPromotionsPage();
 	}
 
 	// log in via dev console while the HSOD SSO page is broken
