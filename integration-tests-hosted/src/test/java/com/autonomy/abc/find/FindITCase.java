@@ -391,7 +391,7 @@ public class FindITCase extends ABCTestBase {
             try {
                 searchResult.findElement(By.tagName("h4")).click();
             } catch (WebDriverException e) {
-                fail("Could not click on title - most likely CSA-1767")
+                fail("Could not click on title - most likely CSA-1767");
             }
 
             WebElement metadata = service.getViewMetadata();
