@@ -548,7 +548,7 @@ public class FindITCase extends ABCTestBase {
         find.search("Review");
 
         for(WebElement result : service.getResults()){
-            result.findElement(By.tagName("h4")).click();
+            service.scrollIntoViewAndClick(result.findElement(By.tagName("h4")));
 
             new WebDriverWait(getDriver(),20).until(new WaitForCBoxLoadIndicatorToDisappear());
             assertThat(service.getCBoxLoadedContent().getText(), not(containsString("500")));
@@ -929,6 +929,8 @@ public class FindITCase extends ABCTestBase {
             WebElement popover = service.getPopover();
 
             new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover,"Loading")));
+
+            assertThat(popover.findElement(By.tagName("p")).getText(),not("An error occurred fetching similar documents"));
 
             for(WebElement similarResult : popover.findElements(By.tagName("li"))){
                 assertThat(similarResult.findElement(By.tagName("h5")).getText(),not(isEmptyString()));
