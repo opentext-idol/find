@@ -20,17 +20,15 @@ public class Service extends AppElement {
         return findElement(By.className("related-concepts-list"));
     }
 
+    @Deprecated
     public void filterByIndex(String domain, String index) {
-        System.out.println(domain);
-        System.out.println(index.replace(" ", "%20"));
+        filterByIndex(index);
+    }
 
-        try {
-            findElement(By.cssSelector("[data-id='" + domain + ":" + index.replace(" ", "%20") + "']")).click();
-        } catch (Exception e) {
-            findElement(By.cssSelector("[data-id='PUBLIC_INDEXES:"+ index.replace(" ","%20") + "']")).click();
-        }
-
+    public void filterByIndex(String index) {
+        findElement(By.cssSelector(".database-input[data-name='" + index.replace(" ", "%20") + "']")).click();
         waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
+
     }
 
     public boolean cBoxFirstDocument() {

@@ -40,7 +40,6 @@ public class PromotionsToFindITCase extends ABCTestBase {
     List<String> browserHandles;
     FindPage find;
     Service service;
-    private final String domain = "ce9f1f3d-a780-4793-8a6a-a74b12b7d1ae";
     private CreateNewPromotionsPage createNewPromotionsPage;
 
     @Before
@@ -112,12 +111,10 @@ public class PromotionsToFindITCase extends ABCTestBase {
 
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        service.filterByIndex(domain, "reddit");
-
+        service.filterByIndex("default_index");
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        service.filterByIndex(domain, "reddit");
-
+        service.filterByIndex("default_index");
         service.filterByParametric("Source Connector", "SIMPSONSARCHIVE");
 
         verifyPinToPosition(promotionTitles, 6, 10);
