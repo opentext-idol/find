@@ -208,22 +208,22 @@ public class Service extends AppElement {
             //Noop
         }
 
-        new WebDriverWait(getDriver(),60).until(new ExpectedCondition<Boolean>(){
+        new WebDriverWait(getDriver(), 60).withMessage("Container " + container + " failed to load").until(new ExpectedCondition<Boolean>() {
 
             @Override
             public Boolean apply(WebDriver driver) {
-                List<WebElement> indicators = findElement(By.className(container.getContainer()+"-container")).findElements(By.className("loading-spinner"));
+                List<WebElement> indicators = findElement(By.className(container.getContainer() + "-container")).findElements(By.className("loading-spinner"));
 
-                if(indicators.size() == 0) {
+                if (indicators.size() == 0) {
                     return true;
                 }
 
-                for(WebElement indicator : indicators){
-                    if(container == Container.RIGHT) {
-                        if(!indicator.findElement(By.xpath("..")).getAttribute("class").contains("hide")) {
+                for (WebElement indicator : indicators) {
+                    if (container == Container.RIGHT) {
+                        if (!indicator.findElement(By.xpath("..")).getAttribute("class").contains("hide")) {
                             return false;
                         }
-                    } else if (!indicator.getAttribute("class").contains("hide")){
+                    } else if (!indicator.getAttribute("class").contains("hide")) {
                         return false;
                     }
                 }

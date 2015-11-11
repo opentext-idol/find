@@ -203,6 +203,8 @@ public class FindITCase extends ABCTestBase {
         assertThat(getDriver().getCurrentUrl(), containsString(concept));
         assertThat(input.getSearchTerm(), containsString(concept));
 
+        hoverOverElement(service.getResultsDiv());
+
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.RIGHT);
 
         WebElement tableRelatedConcept = service.getRelatedConcepts().findElement(By.cssSelector("table a"));
@@ -432,11 +434,11 @@ public class FindITCase extends ABCTestBase {
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        service.filterByIndex(domain, Index.RED.title);
+        service.filterByIndex(domain, Index.PDF.title);
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         service.getSearchResultTitle(1).click();
         do{
-            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(Index.RED.title));
+            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(Index.PDF.title));
             service.viewBoxNextButton().click();
         } while (!service.cBoxFirstDocument());
     }
@@ -444,8 +446,8 @@ public class FindITCase extends ABCTestBase {
     @Test
     public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
         find.search("index");
-        service.filterByIndex(domain, Index.NATURALNAVIGATOR.title);
-        service.filterByIndex(domain, Index.NATURALNAVIGATOR.title);
+        service.filterByIndex(domain, Index.DEFAULT.title);
+        service.filterByIndex(domain, Index.DEFAULT.title);
         assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -937,17 +939,7 @@ public class FindITCase extends ABCTestBase {
 
     private enum Index {
         DEFAULT("default_index"),
-        NATURALNAVIGATOR("naturalnavigator"),
-        RED("red"),
-        RUGBY("rugbyworldcup"),
-        BBC("bbc"),
-        LABOUR("labour"),
-        REDDIT("reddit"),
-        FRUITMANUAL("fruitindex_manual"),
-        FRUIT("fruitindex"),
-        DELETABLE("deleteable"),
-        SIMPSONS("simpsons"),
-        STATIC("static6");
+        PDF("pdf");
 
         private final String title;
 
