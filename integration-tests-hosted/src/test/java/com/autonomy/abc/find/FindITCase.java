@@ -63,7 +63,7 @@ public class FindITCase extends ABCTestBase {
     private Logger logger = LoggerFactory.getLogger(FindITCase.class);
     private PromotionsPage promotions;
     private List<String> browserHandles;
-    private final String domain = "ce9f1f3d-a780-4793-8a6a-a74b12b7d1ae";
+    private final String domain = "60a7547c-e0e7-4e40-b095-812e486b4054";
     private final Matcher<String> noDocs = containsString("No results found");
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
@@ -202,6 +202,8 @@ public class FindITCase extends ABCTestBase {
 
         assertThat(getDriver().getCurrentUrl(), containsString(concept));
         assertThat(input.getSearchTerm(), containsString(concept));
+
+        hoverOverElement(service.getResultsDiv());
 
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.RIGHT);
 
@@ -381,11 +383,16 @@ public class FindITCase extends ABCTestBase {
     @Test
     public void testCheckMetadata(){
         find.search("stars");
+        service.filterByIndex(domain,Index.DEFAULT.getTitle());
 
         for(WebElement searchResult : service.getResults()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
 
-            find.scrollIntoViewAndClick(searchResult.findElement(By.tagName("h4")));
+            try {
+                searchResult.findElement(By.tagName("h4")).click();
+            } catch (WebDriverException e) {
+                fail("Could not click on title - most likely CSA-1767");
+            }
 
             WebElement metadata = service.getViewMetadata();
 
@@ -432,11 +439,11 @@ public class FindITCase extends ABCTestBase {
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        service.filterByIndex(domain, Index.RED.title);
+        service.filterByIndex(domain, Index.PDF.title);
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         service.getSearchResultTitle(1).click();
         do{
-            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(Index.RED.title));
+            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(Index.PDF.title));
             service.viewBoxNextButton().click();
         } while (!service.cBoxFirstDocument());
     }
@@ -444,9 +451,9 @@ public class FindITCase extends ABCTestBase {
     @Test
     public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
         find.search("index");
-        service.filterByIndex(domain, Index.NATURALNAVIGATOR.title);
-        service.filterByIndex(domain, Index.NATURALNAVIGATOR.title);
-        assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("error")));
+        service.filterByIndex(domain, Index.DEFAULT.title);
+        service.filterByIndex(domain, Index.DEFAULT.title);
+        assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
     }
 
     @Test
@@ -546,7 +553,11 @@ public class FindITCase extends ABCTestBase {
         find.search("Review");
 
         for(WebElement result : service.getResults()){
-            result.findElement(By.tagName("h4")).click();
+            try {
+                service.scrollIntoViewAndClick(result.findElement(By.tagName("h4")));
+            } catch (WebDriverException e){
+                fail("Could not click on title - most likely CSA-1767");
+            }
 
             new WebDriverWait(getDriver(),20).until(new WaitForCBoxLoadIndicatorToDisappear());
             assertThat(service.getCBoxLoadedContent().getText(), not(containsString("500")));
@@ -926,7 +937,9 @@ public class FindITCase extends ABCTestBase {
 
             WebElement popover = service.getPopover();
 
-            new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover,"Loading")));
+            new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
+
+            assertThat(popover.findElement(By.tagName("p")).getText(),not("An error occurred fetching similar documents"));
 
             for(WebElement similarResult : popover.findElements(By.tagName("li"))){
                 assertThat(similarResult.findElement(By.tagName("h5")).getText(),not(isEmptyString()));
@@ -937,17 +950,7 @@ public class FindITCase extends ABCTestBase {
 
     private enum Index {
         DEFAULT("default_index"),
-        NATURALNAVIGATOR("naturalnavigator"),
-        RED("red"),
-        RUGBY("rugbyworldcup"),
-        BBC("bbc"),
-        LABOUR("labour"),
-        REDDIT("reddit"),
-        FRUITMANUAL("fruitindex_manual"),
-        FRUIT("fruitindex"),
-        DELETABLE("deleteable"),
-        SIMPSONS("simpsons"),
-        STATIC("static6");
+        PDF("pdf");
 
         private final String title;
 

@@ -102,7 +102,7 @@ public class PromotionService {
         for (WebElement promotion : promotionsList) {
             deleteNoWait(promotion);
         }
-        new WebDriverWait(getDriver(), 10*(promotionsList.size() + 1 )).until(new ExpectedCondition<Boolean>() {
+        new WebDriverWait(getDriver(), 10*(promotionsList.size() + 1 )).withMessage("Promotions list not cleared").until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver input) {
                 return promotionsPage.promotionsList().isEmpty();
