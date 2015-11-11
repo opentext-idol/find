@@ -383,11 +383,16 @@ public class FindITCase extends ABCTestBase {
     @Test
     public void testCheckMetadata(){
         find.search("stars");
+        service.filterByIndex(domain,Index.DEFAULT.getTitle());
 
         for(WebElement searchResult : service.getResults()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
 
-            find.scrollIntoViewAndClick(searchResult.findElement(By.tagName("h4")));
+            try {
+                searchResult.findElement(By.tagName("h4")).click();
+            } catch (WebDriverException e) {
+                fail("Could not click on title - most likely CSA-1767")
+            }
 
             WebElement metadata = service.getViewMetadata();
 
@@ -448,7 +453,7 @@ public class FindITCase extends ABCTestBase {
         find.search("index");
         service.filterByIndex(domain, Index.DEFAULT.title);
         service.filterByIndex(domain, Index.DEFAULT.title);
-        assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("error")));
+        assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
     }
 
     @Test
@@ -548,7 +553,11 @@ public class FindITCase extends ABCTestBase {
         find.search("Review");
 
         for(WebElement result : service.getResults()){
-            service.scrollIntoViewAndClick(result.findElement(By.tagName("h4")));
+            try {
+                service.scrollIntoViewAndClick(result.findElement(By.tagName("h4")));
+            } catch (WebDriverException e){
+                fail("Could not click on title - most likely CSA-1767");
+            }
 
             new WebDriverWait(getDriver(),20).until(new WaitForCBoxLoadIndicatorToDisappear());
             assertThat(service.getCBoxLoadedContent().getText(), not(containsString("500")));
