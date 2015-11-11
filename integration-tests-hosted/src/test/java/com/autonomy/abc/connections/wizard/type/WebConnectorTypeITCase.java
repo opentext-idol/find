@@ -95,8 +95,8 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
             assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorUrl.getElement())), hasClass(INVALID_INPUT_CLASS));
 
             newConnectionPage.nextButton().click();
-            assertThat("The step should be set as error ", !isStepValid(newConnectionPage.connectorTypeStepTab()));
-            assertThat("The step should be set as current", isStepCurrent(newConnectionPage.connectorTypeStepTab()));
+            assertThat("The step should be set as error ", newConnectionPage.connectorTypeStepTab(), not(stepIsValid()));
+            assertThat("The step should be set as current", newConnectionPage.connectorTypeStepTab(), stepIsCurrent());
 
             connectorUrl.clear();
             connectorName.clear();

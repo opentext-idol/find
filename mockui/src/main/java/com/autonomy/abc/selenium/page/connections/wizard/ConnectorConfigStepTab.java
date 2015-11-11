@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * Created by avidan on 10-11-15.
  */
 public class ConnectorConfigStepTab extends SAASPageBase {
-    public ConnectorConfigStepTab(WebDriver driver) {
+    private ConnectorConfigStepTab(WebDriver driver) {
         super(driver);
     }
 
@@ -21,7 +21,7 @@ public class ConnectorConfigStepTab extends SAASPageBase {
         return new ConnectorConfigStepTab(driver);
     }
 
-    public AppElement schedualeForm(){
+    public AppElement scheduleForm(){
         return new AppElement(findElement(By.name("scheduleForm")), getDriver());
     }
 

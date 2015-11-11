@@ -25,7 +25,7 @@ public class NewConnectionPage extends SAASPageBase {
     }
 
     public ConnectorConfigStepTab getConnectorConfigStep(){
-        return  ConnectorConfigStepTab.make(getDriver());
+        return ConnectorConfigStepTab.make(getDriver());
     }
 
     private WebElement menuButton(String text) {

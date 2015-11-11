@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * Created by avidan on 10-11-15.
  */
 public class ConnectorTypeStepTab extends SAASPageBase{
-    public ConnectorTypeStepTab(WebDriver driver) {
+    private ConnectorTypeStepTab(WebDriver driver) {
         super(driver);
     }
 

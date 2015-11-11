@@ -29,7 +29,7 @@ public class DropboxConnectorTypeITCase extends ConnectorTypeStepBase {
         newConnectionPage.nextButton().click();
         newConnectionPage.loadOrFadeWait();
 
-        assertThat("The step is invalid without connector name", !isStepValid(newConnectionPage.connectorTypeStepTab()));
+        assertThat("The step is invalid without connector name", newConnectionPage.connectorTypeStepTab(), not(stepIsValid()));
         assertThat(AppElement.getParent(AppElement.getParent(connectorName.getElement())), hasClass(INVALID_INPUT_CLASS));
 
 

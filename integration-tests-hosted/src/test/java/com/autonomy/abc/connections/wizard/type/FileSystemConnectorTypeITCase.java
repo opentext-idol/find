@@ -80,8 +80,8 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
             assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorPath.getElement())), hasClass(INVALID_INPUT_CLASS));
 
             newConnectionPage.nextButton().click();
-            assertThat("The step should be set as error when value is " + pair.getKey(), !isStepValid(newConnectionPage.connectorTypeStepTab()));
-            assertThat("The step should be set as current", isStepCurrent(newConnectionPage.connectorTypeStepTab()));
+            assertThat("The step has an error when value is " + pair.getKey(), newConnectionPage.connectorTypeStepTab(), not(stepIsValid()));
+            assertThat(newConnectionPage.connectorTypeStepTab(), stepIsCurrent());
 
             connectorPath.clear();
             connectorName.clear();

@@ -9,9 +9,13 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
@@ -97,15 +101,31 @@ public class ConnectorTypeStepBase extends ABCTestBase {
         assertThat("The DropBox connector isn't selected", dropboxConnectorTypeBtn, not(hasClass("connector-icon-selected")));
     }
 
-    protected boolean isStepCurrent(AppElement wizardStepTab) {
-        return wizardStepTab.hasClass("current");
+    protected static Matcher<? super WebElement> stepIsCurrent() {
+        return new TypeSafeMatcher<WebElement>() {
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return AppElement.hasClass("current", item);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is current step");
+            }
+        };
     }
 
-    protected boolean isStepValid(AppElement wizardStepTab) {
-        return !wizardStepTab.hasClass("error");
-    }
+    protected static Matcher<? super WebElement> stepIsValid() {
+        return new TypeSafeMatcher<WebElement>() {
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return !AppElement.hasClass("error", item);
+            }
 
-    protected boolean isStepEnabled(AppElement wizardStepTab) {
-        return !wizardStepTab.hasClass("disabled");
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is valid step");
+            }
+        };
     }
 }
