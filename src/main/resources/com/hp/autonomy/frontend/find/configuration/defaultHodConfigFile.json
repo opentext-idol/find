@@ -17,6 +17,10 @@
         "activeIndexes": [],
         "publicIndexesEnabled": false
     },
+    "queryManipulation": {
+        "profile": "search_default_profile",
+        "index": "search_default_index"
+    },
     "allowedOrigins": [],
     "redis": {
         "address": {
