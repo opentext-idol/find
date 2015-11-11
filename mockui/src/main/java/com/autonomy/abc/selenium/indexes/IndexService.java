@@ -1,0 +1,66 @@
+package com.autonomy.abc.selenium.indexes;
+
+import com.autonomy.abc.selenium.config.HSOApplication;
+import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class IndexService {
+    private HSOApplication application;
+    private HSOElementFactory elementFactory;
+    private IndexesPage indexesPage;
+    private CreateNewIndexPage newIndexPage;
+
+    public IndexService(HSOApplication application, HSOElementFactory elementFactory) {
+        this.application = application;
+        this.elementFactory = elementFactory;
+    }
+
+    protected WebDriver getDriver() {
+        return elementFactory.getDriver();
+    }
+
+    protected AppBody getBody() {
+        return application.createAppBody(getDriver());
+    }
+
+    public IndexesPage goToIndexes() {
+        getBody().getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        indexesPage = elementFactory.getIndexesPage();
+        return indexesPage;
+    }
+
+    public IndexesPage setUpIndex(Index index) {
+        goToIndexes();
+
+        indexesPage.newIndexButton().click();
+        newIndexPage = elementFactory.getCreateNewIndexPage();
+        newIndexPage.inputIndexName(index.getName());
+        newIndexPage.nextButton().click();
+        newIndexPage.loadOrFadeWait();
+
+        newIndexPage.inputIndexFields(index.getIndexFields());
+        newIndexPage.inputParametricFields(index.getParametricFields());
+        newIndexPage.nextButton().click();
+        newIndexPage.loadOrFadeWait();
+
+        newIndexPage.finishButton().click();
+        new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));
+
+        indexesPage = elementFactory.getIndexesPage();
+        return indexesPage;
+    }
+
+    public IndexesPage deleteIndex(Index index) {
+        goToIndexes();
+
+        indexesPage.deleteIndex(index.getName());
+        return indexesPage;
+    }
+}
