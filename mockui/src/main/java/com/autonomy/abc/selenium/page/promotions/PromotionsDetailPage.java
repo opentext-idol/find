@@ -55,7 +55,58 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public Editable pinPosition() {
-        return new InlineEdit(findElement(By.className("promotion-position-edit")), getDriver());
+        final WebElement group = AppElement.getParent(findElement(By.cssSelector(".promotion-position-edit")));
+        return new Editable() {
+            @Override
+            public String getValue() {
+                return group.getText();
+            }
+
+            @Override
+            public WebElement editButton() {
+                return group.findElement(By.cssSelector(".inline-edit-open-form"));
+            }
+
+            @Override
+            public void setValueAsync(String value) {
+                int initialValue = Integer.valueOf(getValue());
+                editButton().click();
+                int desiredValue = Integer.valueOf(value);
+                changeValue(initialValue, desiredValue);
+                findElement(By.cssSelector(".hp-check")).click();
+            }
+
+            private void changeValue(int initialValue, int desiredValue) {
+                WebElement button;
+                int repeats;
+                if (desiredValue > initialValue) {
+                    button = group.findElement(By.cssSelector(".plus"));
+                    repeats = desiredValue - initialValue;
+                } else {
+                    button = group.findElement(By.cssSelector(".minus"));
+                    repeats = initialValue - desiredValue;
+                }
+                for (int i=0; i<repeats; i++) {
+                    button.click();
+                }
+            }
+
+            @Override
+            public void setValueAndWait(String value) {
+                setValueAsync(value);
+                waitForUpdate();
+            }
+
+            @Override
+            public void waitForUpdate() {
+                new WebDriverWait(getDriver(), 20).withMessage("waiting for pin position to update").until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".promotion-position-edit .fa-refresh")));
+            }
+
+            @Override
+            public WebElement getElement() {
+                return group;
+            }
+        };
     }
 
     public String getLanguage() {
