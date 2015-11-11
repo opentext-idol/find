@@ -308,9 +308,7 @@ define([
                 colorboxOptions = {model: model, href: href};
             }
 
-            $newResult.find('.result-header').colorbox(this.colorboxArguments(colorboxOptions));
-
-            $newResult.find('.dots').click(function(e) {
+            $newResult.find('.dots').click(function (e) {
                 e.preventDefault();
                 $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
             });
@@ -372,6 +370,7 @@ define([
          * @param text  The text to search in
          * @param textToFind  The text to replace with a label
          * @param replacement  The term or phrase to display in the label
+         * @param labelClasses Classes to add to the label
          * @returns {string|XML|*}  `text`, but with replacements made
          */
         replaceTextWithLabel: function(text, textToFind, replacement, labelClasses) {
