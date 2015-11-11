@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 
 public class ConnectorTypeStep implements WizardStep {
     private final static String TITLE = "Select Connector Type";
@@ -9,10 +10,12 @@ public class ConnectorTypeStep implements WizardStep {
     private String name;
 
     private NewConnectionPage page;
+    private ConnectorTypeStepTab connectorTypeStepTab;
     public ConnectorTypeStep(NewConnectionPage newConnectionPage, String url, String name) {
         this.url = url;
         this.name = name;
         this.page = newConnectionPage;
+        this.connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();
     }
 
     @Override
@@ -22,8 +25,8 @@ public class ConnectorTypeStep implements WizardStep {
 
     @Override
     public Object apply() {
-        page.connectorUrl().setValue(url);
-        page.connectorName().setValue(name);
+        connectorTypeStepTab.connectorUrl().setValue(url);
+        connectorTypeStepTab.connectorName().setValue(name);
         return null;
     }
 

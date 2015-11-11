@@ -25,7 +25,7 @@ public class ConnectionsPage extends SAASPageBase {
 
     private WebElement toolbar() {
         if (toolbar == null) {
-            toolbar = findElement(By.cssSelector(".affix-toolbar:not(.affix-clone)"));
+            toolbar = findElement(By.cssSelector(".affix-toolbar"));
         }
         return toolbar;
     }

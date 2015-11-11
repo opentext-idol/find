@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 public class ElementMatchers {
     public static Matcher<? super WebElement> containsElement(final By by) {
@@ -91,6 +92,48 @@ public class ElementMatchers {
             @Override
             public void describeMismatchSafely(final WebElement item, final Description description) {
                 description.appendText("element was ").appendText(item.toString());
+            }
+        };
+    }
+
+    public static Matcher<? super WebElement> hasAttribute(final String attribute, final Matcher<String> valueMatcher) {
+        return new TypeSafeMatcher<WebElement>() {
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return valueMatcher.matches(item.getAttribute(attribute));
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("an element with attribute ").appendDescriptionOf(valueMatcher);
+            }
+
+            @Override
+            protected void describeMismatchSafely(WebElement item, Description mismatchDescription) {
+                mismatchDescription.appendText("element's " + attribute + " attribute was ").appendValue(item.getAttribute(attribute));
+            }
+        };
+    }
+
+    public static Matcher<? super WebElement> hasAttribute(final String attribute, final String value) {
+        return hasAttribute(attribute, equalTo(value));
+    }
+
+    public static Matcher<? super WebElement> hasClass(final String className) {
+        return new TypeSafeMatcher<WebElement>() {
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return AppElement.hasClass(className, item);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("an element with class ").appendValue(className);
+            }
+
+            @Override
+            protected void describeMismatchSafely(WebElement item, Description mismatchDescription) {
+                mismatchDescription.appendText("element's class attribute was ").appendText(item.getAttribute("class"));
             }
         };
     }

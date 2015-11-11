@@ -32,7 +32,7 @@ public class FormInput {
         element.sendKeys(value);
     }
 
-    public WebElement getElement() {
+    public AppElement getElement() {
         return element;
     }
 
