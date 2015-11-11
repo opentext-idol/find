@@ -69,7 +69,7 @@ define([
             this.$('.app-logo').hide();
             $('.find-navbar').addClass('visible');
             $('.find-banner').addClass('hidden');
-            $('.hp-logo-footer').removeClass('visible');
+            $('.hp-logo-footer').removeClass('hidden');
 
             vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
@@ -82,7 +82,7 @@ define([
             this.$('.app-logo').show();
             $('.find-navbar').removeClass('visible');
             $('.find-banner').removeClass('hidden');
-            $('.hp-logo-footer').addClass('visible');
+            $('.hp-logo-footer').addClass('hidden');
 
             vent.navigate('find/search', {trigger: false});
         }
