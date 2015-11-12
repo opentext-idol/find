@@ -20,13 +20,14 @@ public class HSOPromotionsPage extends PromotionsPage {
         loadOrFadeWait();
         findElement(By.cssSelector("[data-attribute='staticTitle']")).sendKeys(title);
         findElement(By.cssSelector("[data-attribute='staticContent']")).sendKeys(content);
-        findElement(By.cssSelector(".current-step .next-step")).click();
+        WebElement continueButton = findElement(By.cssSelector(".wizard-controls .next-step"));
+        continueButton.click();
         loadOrFadeWait();
-        findElement(By.cssSelector(".current-step .next-step")).click();
+        continueButton.click();
         loadOrFadeWait();
         findElement(By.cssSelector(".current-step input")).sendKeys(trigger);
         findElement(By.cssSelector(".current-step .input-group .btn")).click();
         loadOrFadeWait();
-        findElement(By.cssSelector(".current-step .finish-step")).click();
+        findElement(By.cssSelector(".wizard-controls .finish-step")).click();
     }
 }
