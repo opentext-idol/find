@@ -9,12 +9,12 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import org.junit.Before;
 import org.openqa.selenium.Platform;
 
-public class IndexesITCase extends ABCTestBase {
+public class IndexesPageITCase extends ABCTestBase {
 
     ConnectionsPage connectionsPage;
     HSOElementFactory hsoElementFactory;
 
-    public IndexesITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
+    public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
     }
 
