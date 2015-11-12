@@ -71,7 +71,11 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		}
 	}
 
-	public WebElement continueWizardButton(final WizardStep dataType) {
+	public WebElement previousWizardButton(){
+		return findElement(By.cssSelector(".wizard-controls .previous-step"));
+	}
+
+	public WebElement continueWizardButton() {
 		return findElement(By.cssSelector(".wizard-controls .next-step"));
 	}
 
