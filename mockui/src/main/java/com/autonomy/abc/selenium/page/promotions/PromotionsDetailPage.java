@@ -13,8 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.thoughtworks.selenium.SeleneseTestBase.fail;
-
 public class PromotionsDetailPage extends AppElement implements AppPage {
     public PromotionsDetailPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);

@@ -1191,7 +1191,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			searchPage = getElementFactory().getSearchPage();
 			body.getTopNavBar().search("house");
 
-			searchPage.selectLanguage("English", getConfig().getType().getName());
+			searchPage.selectLanguage("English");
 
 			searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 			assertEquals(1, searchPage.countSynonymLists());
