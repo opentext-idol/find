@@ -85,10 +85,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Create new keywords button should not be visible", !keywordsPage.createNewKeywordsButton().isDisplayed());
 		assertThat("Create Synonyms button should be visible", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).isDisplayed());
 		assertThat("Create Blacklisted button should be visible", createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).isDisplayed());
-		assertThat("Cancel button be visible", createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).isDisplayed());
-		assertThat("Continue button should be visible", createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).isDisplayed());
+		assertThat("Cancel button be visible", createKeywordsPage.cancelWizardButton().isDisplayed());
+		assertThat("Continue button should be visible", createKeywordsPage.continueWizardButton().isDisplayed());
 
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.cancelWizardButton().click();
 		assertThat("Create new keywords button should be visible", keywordsPage.createNewKeywordsButton().isDisplayed());
 	}
 
@@ -96,11 +96,11 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testNavigateSynonymsWizard() throws InterruptedException {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		assertThat("Continue button should be disabled until a keywords type is selected", keywordsPage.isAttributePresent(createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE), "disabled"));
+		assertThat("Continue button should be disabled until a keywords type is selected", keywordsPage.isAttributePresent(createKeywordsPage.continueWizardButton(), "disabled"));
 
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 		assertThat("Synonym type not set active", createKeywordsPage.getFirstChild(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM)).getAttribute("class"), containsString("progressive-disclosure-selection"));
-		assertThat("Continue button should be enabled", createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).getAttribute("class"), not(containsString("disabled")));
+		assertThat("Continue button should be enabled", createKeywordsPage.continueWizardButton().getAttribute("class"), not(containsString("disabled")));
 		assertThat("languages select should be visible", createKeywordsPage.languagesSelectBox().isDisplayed());
 
 		if(getConfig().getType() == ApplicationType.ON_PREM) {
@@ -110,7 +110,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class).warn("Cannot select language for synonyms yet");
 		}
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		assertThat("Finish button should be disabled until synonyms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
@@ -168,7 +168,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
 
 		body.getTopNavBar().sideBarToggle();
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.cancelWizardButton().click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
@@ -176,10 +176,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
 
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		body.getTopNavBar().sideBarToggle();
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TRIGGERS).click();
+		createKeywordsPage.cancelWizardButton().click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
 		keywordsPage.createNewKeywordsButton().click();
@@ -187,10 +187,10 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
 
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		body.getTopNavBar().sideBarToggle();
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TRIGGERS).click();
+		createKeywordsPage.cancelWizardButton().click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 	}
 
@@ -198,11 +198,11 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public void testNavigateBlacklistedWizard() throws InterruptedException {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		assertThat("Continue button should be disabled until a keywords type is selected", createKeywordsPage.isAttributePresent(createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE), "disabled"));
+		assertThat("Continue button should be disabled until a keywords type is selected", createKeywordsPage.isAttributePresent(createKeywordsPage.continueWizardButton(), "disabled"));
 
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 		assertThat("Blacklisted type not set active", createKeywordsPage.getFirstChild(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST)).getAttribute("class"), containsString("progressive-disclosure-selection"));
-		assertThat("Continue button should be enabled", createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).getAttribute("class"), not(containsString("disabled")));
+		assertThat("Continue button should be enabled", createKeywordsPage.continueWizardButton().getAttribute("class"), not(containsString("disabled")));
 
 		assertThat("Wizard did not navigate to languages page", createKeywordsPage.languagesSelectBox().isDisplayed());
 
@@ -216,7 +216,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
 		}
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 
 		assertThat("Finish button should be disabled until blacklisted terms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
@@ -416,7 +416,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.selectLanguage("English");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
@@ -438,7 +438,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		assertThat("There should be no blacklist terms", createKeywordsPage.countKeywords() == 0);
 		assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TRIGGERS).click();
+		createKeywordsPage.cancelWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		assertThat("Cancel button redirects to wrong page", getDriver().getCurrentUrl(), endsWith("keywords"));
 		assertEquals("Wrong number of blacklisted terms", 1, keywordsPage.getBlacklistedTerms().size());
@@ -453,7 +453,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.selectLanguage("English");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		createKeywordsPage.addBlacklistedTextBox().sendKeys(" ");
 		createKeywordsPage.tryClickThenTryParentClick(createKeywordsPage.addBlacklistTermsButton());
@@ -478,7 +478,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.selectLanguage("English");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		createKeywordsPage.addSynonyms(" ");
 		assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
@@ -513,7 +513,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.selectLanguage("English");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 
 		createKeywordsPage.addSynonyms("\"");
@@ -556,7 +556,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		//createKeywordsPage.selectLanguage("English");
 		(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 
 		createKeywordsPage.addBlacklistedTerms("\"");
@@ -1419,7 +1419,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.selectLanguage("English");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton(	).click();
 		createKeywordsPage.loadOrFadeWait();
 
 		createKeywordsPage.addSynonyms("bear");
@@ -1477,7 +1477,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		//createKeywordsPage.selectLanguage("English");
 		(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		createKeywordsPage.addSynonyms("holder");
 		assertEquals(1, createKeywordsPage.countKeywords());
@@ -1493,7 +1493,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 //			assertEquals(1, createKeywordsPage.countKeywords());
 		}
 
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TRIGGERS).click();
+		createKeywordsPage.cancelWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 
 		keywordsPage.createNewKeywordsButton().click();
@@ -1504,7 +1504,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		//createKeywordsPage.selectLanguage("English");
 		(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		createKeywordsPage.addBlacklistedTerms("holder");
 		assertEquals(1, createKeywordsPage.countKeywords());
@@ -1519,7 +1519,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 //			assertEquals(1, createKeywordsPage.countKeywords());
 		}
 
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TRIGGERS).click();
+		createKeywordsPage.cancelWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 	}
 
@@ -1744,7 +1744,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.selectLanguage("English");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		createKeywordsPage.addSynonyms("placeholder");
 		assertEquals(1, createKeywordsPage.getProspectiveKeywordsList().size());
@@ -1758,7 +1758,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			createKeywordsPage.loadOrFadeWait();
 			assertEquals(2 + i, createKeywordsPage.getProspectiveKeywordsList().size());
 		}
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TRIGGERS).click();
+		createKeywordsPage.cancelWizardButton().click();
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -1766,7 +1766,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		createKeywordsPage.selectLanguage("English");
 
-		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 		createKeywordsPage.addBlacklistedTerms("placeholder");
 		assertEquals(1, createKeywordsPage.getProspectiveKeywordsList().size());
@@ -1779,7 +1779,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			assertEquals(2 + i, createKeywordsPage.getProspectiveKeywordsList().size());
 		}
 
-		createKeywordsPage.cancelWizardButton(CreateNewKeywordsPage.WizardStep.TRIGGERS).click();
+		createKeywordsPage.cancelWizardButton().click();
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
