@@ -23,11 +23,9 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     @Override
     public void waitForLoad() {
-        try {
-            new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotion-match-terms")));
-        } catch (TimeoutException e) {
-            fail("Promotion's Detail Page failed to load");
-        }
+        new WebDriverWait(getDriver(), 10)
+                .withMessage("Failed to load Promotions Detail Page")
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("promotion-match-terms")));
     }
 
     public Dropdown editMenu() {
