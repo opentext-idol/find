@@ -29,20 +29,20 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		return findElement(By.cssSelector(".current-step-pill .current-step-title")).getText();
 	}
 
-	private WebElement getVisibleElement(By by) {
-		return new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOfElementLocated(By.className("current-step"))).findElement(by);
-	}
-
 	public WebElement continueButton() {
-		return getVisibleElement(By.className("next-step"));
+		return findElement(By.cssSelector(".wizard-controls .next-step"));
 	}
 
 	public WebElement finishButton() {
-		return getVisibleElement(By.className("finish-step"));
+		return findElement(By.cssSelector(".wizard-controls .finish-step"));
 	}
 
 	public WebElement cancelButton() {
-		return getVisibleElement(By.className("cancel-wizard"));
+		return findElement(By.cssSelector(".wizard-controls .cancel-wizard"));
+	}
+
+	public WebElement previousButton(){
+		return findElement(By.cssSelector(".wizard-controls .previous-step"));
 	}
 
 	public FormInput triggerBox() {

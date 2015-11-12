@@ -51,8 +51,8 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		}
 	}
 
-	public WebElement cancelWizardButton(final WizardStep dataType) {
-		return findElement(By.cssSelector("[data-step='" + dataType.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Cancel')]"));
+	public WebElement cancelWizardButton() {
+		return findElement(By.cssSelector(".wizard-controls .cancel-wizard"));
 	}
 
 	public enum WizardStep {
@@ -71,9 +71,12 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		}
 	}
 
-	public WebElement continueWizardButton(final WizardStep dataType) {
-//		return findElement(By.cssSelector("[data-step='" + dataType.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Continue')]"));
-		return getDriver().findElement(By.xpath("//*[@data-step='" + dataType.getTitle() + "']//button[contains(text(),'Continue')]"));
+	public WebElement previousWizardButton(){
+		return findElement(By.cssSelector(".wizard-controls .previous-step"));
+	}
+
+	public WebElement continueWizardButton() {
+		return findElement(By.cssSelector(".wizard-controls .next-step"));
 	}
 
 	public WebElement addSynonymsButton() {
@@ -93,11 +96,11 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public WebElement finishWizardButton() {
-		return findElement(By.cssSelector(".current-step .finish-step"));
+		return findElement(By.cssSelector(".wizard-controls .finish-step"));
 	}
 
 	public WebElement enabledFinishWizardButton() {
-		return findElement(By.cssSelector(".current-step .finish-step:not([disabled])"));
+		return findElement(By.cssSelector(".wizard-controls .finish-step:not([disabled])"));
 	}
 
 	public void addSynonyms(final String synonyms) {
@@ -138,7 +141,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		keywordsType(KeywordType.SYNONYM, new WebDriverWait(getDriver(),15)).click();
 		selectLanguage(language);
 		Thread.sleep(2000);
-		continueWizardButton(WizardStep.TYPE).click();
+		continueWizardButton().click();
 		loadOrFadeWait();
 		addSynonyms(synonymGroup);
 		loadOrFadeWait();
@@ -148,7 +151,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) throws InterruptedException {
 		keywordsType(KeywordType.BLACKLIST).click();
         selectLanguage(language);
-        continueWizardButton(WizardStep.TYPE).click();
+        continueWizardButton().click();
 		loadOrFadeWait();
 		addBlacklistedTerm(blacklistedTerm);
 		loadOrFadeWait();
