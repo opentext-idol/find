@@ -842,7 +842,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		assertThat("link not directing to blacklist wizard", createKeywordsPage.getText(), containsString("Select terms to blacklist"));
 		assertEquals(1, createKeywordsPage.countKeywords(KeywordsPage.KeywordsFilter.BLACKLIST));
-		//TODO getProspectiveKeywordsList only looks for synonyms!
 		assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
 
 		createKeywordsPage.addBlacklistedTextBox().sendKeys("noir");
@@ -1546,7 +1545,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 	@Test
 	//CCUK-3243
-	//TODO file ticket - Says it has deleted both synonyms but only one has
 	public void testQuickSynonymDelete() throws InterruptedException {
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();

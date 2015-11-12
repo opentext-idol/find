@@ -338,7 +338,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear(int seconds) {
-		new WebDriverWait(getDriver(), seconds).until(Predicates.invisibilityOfAllElementsLocated(By.className("fa-spin")));
+		new WebDriverWait(getDriver(), seconds).withMessage("Search results didn't load").until(Predicates.invisibilityOfAllElementsLocated(By.className("fa-spin")));
 	}
 
 	public void waitForSynonymsLoadingIndicatorToDisappear(){
