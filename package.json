@@ -1,7 +1,6 @@
 {
   "name": "hp-find",
   "repository": "https://github.com/hpautonomy/find",
-  "version": "1.0.1",
   "private": true,
   "license": "MIT",
   "devDependencies": {
