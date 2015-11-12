@@ -1626,7 +1626,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
 
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOf(getElementFactory().getKeywordsPage()));
+		getElementFactory().getKeywordsPage();
 
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.BLACKLIST);
 

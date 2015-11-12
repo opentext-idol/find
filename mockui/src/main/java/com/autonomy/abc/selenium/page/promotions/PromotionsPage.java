@@ -120,9 +120,11 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 
 	@Override
 	public void waitForLoad() {
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()='Promote documents']")));
+		new WebDriverWait(getDriver(),30)
+				.withMessage("Could not load promotions page")
+				.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()='Promote documents']")));
 
-		new WebDriverWait(getDriver(),30).until(new ExpectedCondition<Boolean>() {
+		new WebDriverWait(getDriver(),30).withMessage("Waiting for promotions to load").until(new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				for (WebElement indicator : driver.findElements(By.className("loading-indicator"))) {
