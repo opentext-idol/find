@@ -162,14 +162,15 @@ public class AnalyticsE2EITCase extends ABCTestBase {
     private void tryGoToLeastPopularPromotion() {
         analyticsPage.reversePromotionSort();
         analyticsPage.getMostPopularPromotion().click();
-        if (!getDriver().getCurrentUrl().contains("detail")) {
+        if (getDriver().getCurrentUrl().contains("detail")) {
+            promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        } else {
             promotionsDetailPage = null;
         }
-        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
     }
 
     private void goToFirstPromotion() {
-        getElementFactory().getPromotionsPage().promotionsList().get(0).click();
+        promotionService.goToPromotions().promotionsList().get(0).click();
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
     }
 

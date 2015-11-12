@@ -38,7 +38,6 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.core.Is.is;
 
 //CSA-1564
-// TODO: re-enable once
 public class IndexSetUpITCase extends ABCTestBase {
     private IndexService indexService;
     private PromotionService promotionService;
