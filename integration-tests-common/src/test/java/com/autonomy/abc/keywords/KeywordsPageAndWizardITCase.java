@@ -1346,6 +1346,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.createSynonymsLink().click();
 		searchPage.loadOrFadeWait();
+		assertThat(getDriver().getCurrentUrl(),containsString("keywords/create"));
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.addSynonyms("한국");
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
@@ -1814,6 +1815,8 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.selectLanguage("English");
 
 		searchPage.createSynonymsLink().click();
+
+		assertThat(getDriver().getCurrentUrl(),containsString("keywords/create"));
 
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
