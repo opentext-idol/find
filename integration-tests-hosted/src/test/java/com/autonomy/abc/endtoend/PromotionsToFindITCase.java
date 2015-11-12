@@ -17,6 +17,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,16 +30,16 @@ import static org.hamcrest.Matchers.isIn;
 
 //CSA-1566
 public class PromotionsToFindITCase extends ABCTestBase {
+    private List<String> browserHandles;
+    private FindPage find;
+    private Service service;
+    private PromotionService promotionService;
+    private SearchActionFactory searchActionFactory;
+    private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
 
     public PromotionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
     }
-
-    List<String> browserHandles;
-    FindPage find;
-    Service service;
-    private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
 
     @Override
     public HSOElementFactory getElementFactory() {
@@ -49,7 +51,7 @@ public class PromotionsToFindITCase extends ABCTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-        PromotionsPage promotions = getElementFactory().getPromotionsPage();
+        PromotionsPage promotions = promotionService.deleteAll();
         browserHandles = promotions.createAndListWindowHandles();
         switchToFind();
         getDriver().get(config.getFindUrl());
@@ -76,6 +78,7 @@ public class PromotionsToFindITCase extends ABCTestBase {
         Promotion secondPinPromotion = new PinToPositionPromotion(6, searchTrigger);
 
         List<String> promotionTitles = setUpPromotion(pinPromotion, "Promotions", 5);
+        LOGGER.info("set up pin to position");
 
         switchToFind();
         find.search(searchTrigger);
@@ -84,6 +87,7 @@ public class PromotionsToFindITCase extends ABCTestBase {
         switchToSearch();
         PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(pinPromotion);
         promotionsDetailPage.pinPosition().setValueAndWait("6");
+        LOGGER.info("updated pin position");
 
         switchToFind();
         refreshFind();
@@ -92,6 +96,7 @@ public class PromotionsToFindITCase extends ABCTestBase {
         switchToSearch();
         promotionsDetailPage.triggerAddBox().setAndSubmit(secondaryTrigger);
         promotionsDetailPage.waitForTriggerRefresh();
+        LOGGER.info("added secondary trigger");
 
         switchToFind();
         find.search(secondaryTrigger);
@@ -106,6 +111,7 @@ public class PromotionsToFindITCase extends ABCTestBase {
 
         switchToSearch();
         List<String> spotlightPromotionTitles = setUpPromotion(spotlightPromotion, "Tertiary", 2);
+        LOGGER.info("set up spotlight promotion");
 
         switchToFind();
         find.search(searchTrigger);
@@ -115,6 +121,7 @@ public class PromotionsToFindITCase extends ABCTestBase {
 
         switchToSearch();
         String singlePromoted = setUpPromotion(secondPinPromotion, "187", 1).get(0);
+        LOGGER.info("set up second pin to position");
 
         switchToFind();
         refreshFind();
@@ -127,7 +134,8 @@ public class PromotionsToFindITCase extends ABCTestBase {
         verifySpotlight(spotlightPromotionTitles);
 
         switchToSearch();
-        promotionService.delete(spotlightPromotion);
+        promotionService.delete("Spotlight for: " + spotlightPromotion.getTrigger());
+        LOGGER.info("deleted spotlight promotion");
 
         switchToFind();
         find.search("Other");
@@ -162,7 +170,11 @@ public class PromotionsToFindITCase extends ABCTestBase {
 
     @After
     public void tearDown(){
-        switchToSearch();
-        promotionService.deleteAll();
+        try {
+            switchToSearch();
+            promotionService.deleteAll();
+        } catch (NullPointerException e) {
+            LOGGER.warn("skipping tear down");
+        }
     }
 }
