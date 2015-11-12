@@ -19,7 +19,9 @@ public abstract class KeywordsPage extends KeywordsBase {
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("keywords-container")));
+        new WebDriverWait(getDriver(),30)
+                .withMessage("Keywords page failed to load")
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("keywords-container")));
     }
 
     public WebElement createNewKeywordsButton() {

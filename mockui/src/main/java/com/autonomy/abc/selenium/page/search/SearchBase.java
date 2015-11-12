@@ -54,7 +54,9 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public WebElement getSearchResult(final int searchResultNumber) {
-		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3")));
+		return new WebDriverWait(getDriver(),60)
+				.withMessage("Waiting for the #" + searchResultNumber + " search result")
+				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3")));
 	}
 
 	public String getSearchResultDetails(final int searchResultNumber) {
