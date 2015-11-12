@@ -9,6 +9,8 @@ import java.util.Set;
 
 public class IndexFilter implements SearchFilter {
     private Set<String> indexes;
+    public final static IndexFilter ALL = new AllIndexFilter();
+    public final static IndexFilter NONE = new EmptyIndexFilter();
 
     public IndexFilter(String index) {
         indexes = new HashSet<>();
@@ -27,6 +29,29 @@ public class IndexFilter implements SearchFilter {
             } else {
                 checkbox.uncheck();
             }
+        }
+    }
+
+    private static class AllIndexFilter extends IndexFilter {
+        private AllIndexFilter() {
+            super("All");
+        }
+
+        @Override
+        public void apply(SearchBase searchBase) {
+            searchBase.allIndexesCheckbox().check();
+        }
+    }
+
+    private static class EmptyIndexFilter extends IndexFilter {
+        private EmptyIndexFilter() {
+            super("None");
+        }
+
+        @Override
+        public void apply(SearchBase searchBase) {
+            searchBase.allIndexesCheckbox().check();
+            searchBase.allIndexesCheckbox().uncheck();
         }
     }
 }

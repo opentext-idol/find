@@ -15,6 +15,6 @@ public class SearchActionFactory extends ActionFactory {
     }
 
     public Search makeSearch(String searchTerm) {
-        return new Search(body, getElementFactory(), searchTerm);
+        return new Search(getApplication(), getElementFactory(), searchTerm);
     }
 }

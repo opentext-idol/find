@@ -24,7 +24,7 @@ import com.hp.autonomy.hod.client.api.textindex.query.fields.*;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.Matcher;
@@ -383,7 +383,7 @@ public class FindITCase extends ABCTestBase {
     @Test
     public void testCheckMetadata(){
         find.search("stars");
-        service.filterByIndex(domain,Index.DEFAULT.getTitle());
+        service.filterByIndex(Index.DEFAULT.getTitle());
 
         for(WebElement searchResult : service.getResults()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
@@ -429,7 +429,7 @@ public class FindITCase extends ABCTestBase {
         service.closeViewBox();
         service.loadOrFadeWait();
 
-        service.filterByIndex(domain,index);
+        service.filterByIndex(index);
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
 
         assertThat(service.getSearchResultTitle(1).getText(), is(titleString));
@@ -439,7 +439,7 @@ public class FindITCase extends ABCTestBase {
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        service.filterByIndex(domain, Index.PDF.title);
+        service.filterByIndex(Index.PDF.title);
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         service.getSearchResultTitle(1).click();
         do{
@@ -451,8 +451,8 @@ public class FindITCase extends ABCTestBase {
     @Test
     public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
         find.search("index");
-        service.filterByIndex(domain, Index.DEFAULT.title);
-        service.filterByIndex(domain, Index.DEFAULT.title);
+        service.filterByIndex(Index.DEFAULT.title);
+        service.filterByIndex(Index.DEFAULT.title);
         assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
     }
 
@@ -734,7 +734,7 @@ public class FindITCase extends ABCTestBase {
 
         find.search(termOne + " OR " + termTwo);
         List<String> orResults = service.getResultTitles();
-        Set<String> concatenatedResults = new HashSet<String>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
+        Set<String> concatenatedResults = new HashSet<>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
         assertThat(orResults.size(), is(concatenatedResults.size()));
         assertThat(orResults, containsInAnyOrder(concatenatedResults.toArray()));
 

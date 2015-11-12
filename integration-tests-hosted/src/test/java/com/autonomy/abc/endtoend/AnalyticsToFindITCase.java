@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.PromotionService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,34 +26,35 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 //CSA-1590
 public class AnalyticsToFindITCase extends ABCTestBase {
+    private PromotionService promotionService;
 
     public AnalyticsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
     }
 
+    @Override
+    public HSOElementFactory getElementFactory() {
+        return (HSOElementFactory) super.getElementFactory();
+    }
+
     @Before
     public void setUp(){
+        promotionService = getApplication().createPromotionService(getElementFactory());
+
         PromotionsPage promotions = getElementFactory().getPromotionsPage();
         browserHandles = promotions.createAndListWindowHandles();
         getDriver().switchTo().window(browserHandles.get(1));
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
-        find = ((HSOElementFactory) getElementFactory()).getFindPage();
+        find = getElementFactory().getFindPage();
         service = find.getService();
         getDriver().switchTo().window(browserHandles.get(0));
-    }
-
-    private void navigateToPromotionsAndDelete(){
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        getElementFactory().getPromotionsPage().deleteAllPromotions();
     }
 
     private FindPage find;
@@ -63,7 +65,7 @@ public class AnalyticsToFindITCase extends ABCTestBase {
     public void testPromotionToFind() throws InterruptedException {
         body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
-        AnalyticsPage analyticsPage = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
+        AnalyticsPage analyticsPage = getElementFactory().getAnalyticsPage();
         body = getBody();
 
         Term zeroSearch = analyticsPage.getMostPopularZeroSearchTerm();
@@ -77,7 +79,7 @@ public class AnalyticsToFindITCase extends ABCTestBase {
         String trigger = "Trigger";
         String synonym = zeroSearch.getTerm();
 
-//        navigateToPromotionsAndDelete();
+        promotionService.deleteAll();
 
         body = getBody();
 
@@ -115,15 +117,17 @@ public class AnalyticsToFindITCase extends ABCTestBase {
     }
 
     private void promotionShownCorrectly (WebElement promotion) {
-        assertThat(promotion.getAttribute("class"),containsString("promoted-document"));
+        assertThat(promotion, hasClass("promoted-document"));
         assertThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
-        assertTrue(promotion.findElement(By.className("icon-star")).isDisplayed());
+        assertThat(promotion.findElement(By.className("icon-star")), displayed());
     }
 
     @After
     public void tearDown(){
         getDriver().switchTo().window(browserHandles.get(0));
-//        navigateToPromotionsAndDelete();
+
+        promotionService.deleteAll();
+
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
         keywordsPage.deleteKeywords();

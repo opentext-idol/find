@@ -32,6 +32,7 @@ public abstract class KeywordsPage extends KeywordsBase {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//div[contains(@class,'keywords-controls')]//a[contains(text(), 'New')]")));
     }
 
+    // use deleteKeywords instead
     @Deprecated
     public void deleteAllSynonyms() throws InterruptedException {
         loadOrFadeWait();

@@ -2,123 +2,93 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.actions.PromotionActionFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.isIn;
 
 //CSA-1572
 public class AnalyticsE2EITCase extends ABCTestBase {
 
     private AnalyticsPage analyticsPage;
-    private PromotionActionFactory promotionActionFactory;
+    private SearchPage searchPage;
+    private PromotionsDetailPage promotionsDetailPage;
+
+    private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
-    private final Matcher<String> noDocs = containsString("No results found");
+    private final static Matcher<? super WebElement> NO_RESULTS = containsText("No results found");
 
     public AnalyticsE2EITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
     }
 
+    @Override
+    public HSOElementFactory getElementFactory() {
+        return (HSOElementFactory) super.getElementFactory();
+    }
+
     @Before
     public void setUp(){
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        getElementFactory().getKeywordsPage().deleteKeywords();
+        List<String> searchTerms = Arrays.asList("one", "two", "three");
+        List<String> triggers = Arrays.asList("trigger1", "trigger2", "trigger3");
+        List<Integer> searchOrder = Arrays.asList(0, 1, 0, 1, 0, 2);
 
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-        promotionActionFactory = new PromotionActionFactory(getApplication(), getElementFactory());
+        promotionService = getApplication().createPromotionService(getElementFactory());
 
-        String trigger = "trigger";
-
-        promotionActionFactory.makeCreatePromotion(
-            new SpotlightPromotion(trigger + "1"),
-            new SearchActionFactory(getApplication(), getElementFactory()).makeSearch("One"),
-            3)
-            .apply();
-
-        promotionActionFactory.makeCreatePromotion(
-            new SpotlightPromotion(trigger + "2"),
-            new SearchActionFactory(getApplication(), getElementFactory()).makeSearch("Two"),
-            3)
-            .apply();
-
-        promotionActionFactory.makeCreatePromotion(
-            new SpotlightPromotion(trigger + "3"),
-            new SearchActionFactory(getApplication(), getElementFactory()).makeSearch("Three"),
-            3)
-            .apply();
-
-        searchActionFactory.makeSearch(trigger + "1").apply();
-        searchActionFactory.makeSearch(trigger + "2").apply();
-        searchActionFactory.makeSearch(trigger + "1").apply();
-        searchActionFactory.makeSearch(trigger + "2").apply();
-        searchActionFactory.makeSearch(trigger + "1").apply();
-        searchActionFactory.makeSearch(trigger + "3").apply();
-
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-        analyticsPage = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
+        deleteAllKeywords();
+        for (int i=0; i < searchTerms.size(); i++) {
+            setUpPromotion(searchTerms.get(i), triggers.get(i));
+        }
+        for (Integer termIndex : searchOrder) {
+            search(triggers.get(termIndex));
+        }
+        goToAnalytics();
     }
 
     @Test
     public void testAnalytics() throws InterruptedException {
-        Pair<Term,Term> synonymTuple = new ImmutablePair<>(analyticsPage.getMostPopularNonZeroSearchTerm(),analyticsPage.getMostPopularZeroSearchTerm());
+        List<String> newTriggers = Arrays.asList("Happy", "Sad");
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-        body = getBody();
-        keywordsPage.createNewKeywordsButton().click();
-        getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymTuple.getLeft().getTerm() + " " + synonymTuple.getRight().getTerm(), "English");
+        Term nonZeroTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
+        Term zeroTerm = analyticsPage.getMostPopularZeroSearchTerm();
+        addSynonymGroup(nonZeroTerm, zeroTerm);
 
-        searchActionFactory.makeSearch(synonymTuple.getLeft().getTerm());
-        SearchPage searchPage = getElementFactory().getSearchPage();
-        assertThat(searchPage.synonymInGroup(synonymTuple.getRight().getTerm()).getText(), is(synonymTuple.getRight().getTerm().toLowerCase()));
-        assertThat(searchPage.getText(), not(noDocs));
+        verifyTermSearch(zeroTerm);
+        verifyTermSearch(nonZeroTerm);
 
-        searchActionFactory.makeSearch(synonymTuple.getRight().getTerm());
-        searchPage = getElementFactory().getSearchPage();
-        assertThat(searchPage.synonymInGroup(synonymTuple.getLeft().getTerm()).getText(), is(synonymTuple.getLeft().getTerm().toLowerCase()));
-        assertThat(searchPage.getText(), not(noDocs));
-
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-        analyticsPage = ((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-        body = getBody();
-
-        analyticsPage.reversePromotionSort();
-        analyticsPage.getMostPopularPromotion().findElement(By.tagName("a")).click();    //TODO rename
-
-        if(!getDriver().getCurrentUrl().contains("detail")){
-            getElementFactory().getPromotionsPage().promotionsList().get(0).click();
+        goToAnalytics();
+        tryGoToLeastPopularPromotion();
+        if (promotionsDetailPage == null) {
+            // least popular promotion no longer exists
+            goToFirstPromotion();
         }
 
-        PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-
-        body = getBody();
-
-        List<String> newTriggers = Arrays.asList("Happy","Sad");
         List<String> existingTriggers = promotionsDetailPage.getTriggerList();
         List<String> promotedDocuments = promotionsDetailPage.getPromotedTitles();
 
@@ -133,26 +103,84 @@ public class AnalyticsE2EITCase extends ABCTestBase {
         }
 
         for(String trigger : newTriggers){
-            body.getTopNavBar().search(trigger);
-            searchPage = getElementFactory().getSearchPage();
-            searchPage.waitForPromotionsLoadIndicatorToDisappear();
-            assertThat(searchPage.getPromotedDocumentTitles(), hasItems(promotedDocuments.toArray(new String[promotedDocuments.size()])));
+            verifyTriggerPromotes(promotedDocuments, trigger, true);
         }
 
         for(String trigger : existingTriggers){
-            body.getTopNavBar().search(trigger);
-            searchPage = getElementFactory().getSearchPage();
-            searchPage.waitForSearchLoadIndicatorToDisappear();
-            assertThat(searchPage.getPromotedDocumentTitles(), not(hasItems(promotedDocuments.toArray(new String[promotedDocuments.size()]))));
+            verifyTriggerPromotes(promotedDocuments, trigger, false);
         }
-
     }
 
     @After
-    public void tearDown(){
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+    public void tearDownKeywords() {
+        deleteAllKeywords();
+    }
+
+    @After
+    public void tearDownPromotions() {
+        promotionService.deleteAll();
+    }
+
+    private void deleteAllKeywords() {
+        getBody().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         getElementFactory().getKeywordsPage().deleteKeywords();
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        getElementFactory().getPromotionsPage().deleteAllPromotions();
+    }
+
+    private void setUpPromotion(String searchTerm, String trigger) {
+        Promotion promotion = new SpotlightPromotion(trigger);
+        Search search = searchActionFactory.makeSearch(searchTerm);
+        promotionService.setUpPromotion(promotion, search, 3);
+    }
+
+    private void search(String searchTerm) {
+        searchPage = searchActionFactory.makeSearch(searchTerm).apply();
+    }
+
+    private void goToAnalytics() {
+        getBody().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        analyticsPage = getElementFactory().getAnalyticsPage();
+    }
+
+    private void addSynonymGroup(Term... terms) throws InterruptedException {
+        List<String> synonyms = new ArrayList<>();
+        for (Term term : terms) {
+            synonyms.add(term.getTerm());
+        }
+        String synonymString = String.join(" ", synonyms);
+
+        getBody().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
+        getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymString, "English");
+    }
+
+    private void verifyTermSearch(Term term) {
+        search(term.getTerm());
+        assertThat(searchPage.synonymInGroup(term.getTerm()), containsText(term.getTerm().toLowerCase()));
+        assertThat(searchPage, not(NO_RESULTS));
+    }
+
+    private void tryGoToLeastPopularPromotion() {
+        analyticsPage.reversePromotionSort();
+        analyticsPage.getMostPopularPromotion().click();
+        if (getDriver().getCurrentUrl().contains("detail")) {
+            promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        } else {
+            promotionsDetailPage = null;
+        }
+    }
+
+    private void goToFirstPromotion() {
+        promotionService.goToPromotions().promotionsList().get(0).click();
+        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+    }
+
+    private void verifyTriggerPromotes(List<String> promotedDocuments, String trigger, boolean promotes) {
+        search(trigger);
+        searchPage.waitForPromotionsLoadIndicatorToDisappear();
+        if (promotes) {
+            assertThat(promotedDocuments, everyItem(isIn(searchPage.getPromotedDocumentTitles())));
+        } else {
+            assertThat(promotedDocuments, everyItem(not(isIn(searchPage.getPromotedDocumentTitles()))));
+        }
     }
 }

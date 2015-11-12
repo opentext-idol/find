@@ -24,15 +24,15 @@ public class IndexesPage extends AppElement implements AppPage {
     }
 
     public WebElement newIndexButton(){
-        return findElement(By.cssSelector(".affix-container div:not(.affix-clone) div #new-index-btn"));
+        return findElement(By.id("new-index-btn"));
     }
 
     public WebElement findIndex(String indexName) {
-        return findElement(By.xpath("//div[contains(@class,'hpebox-content')]//*[text()[contains(.,'" + indexName + "')]]"));
+        return findElement(By.id(indexName));
     }
 
     public void deleteIndex(String indexName){
-        findIndex(indexName).findElement(By.xpath(".//../../../..//button")).click();
+        findIndex(indexName).findElement(By.cssSelector(".delete-action-button-container button")).click();
         loadOrFadeWait();
         modalClick();
         loadOrFadeWait();

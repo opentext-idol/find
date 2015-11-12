@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.indexes;
 
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -21,7 +22,7 @@ public class IndexesDetailPage extends SAASPageBase {
     }
 
     public String getIndexHeader(){
-        return getDriver().findElement(By.cssSelector(".affix-element h1 strong")).getText();   //TODO actually in the top nav bar
+        return getDriver().findElement(By.cssSelector("h1 b")).getText();
     }
 
     public String getIndexTitle() {
@@ -52,5 +53,10 @@ public class IndexesDetailPage extends SAASPageBase {
         WebElement inputBox = addURLInput();
         inputBox.sendKeys(url);
         inputBox.findElement(By.xpath(".//..//i")).click();
+    }
+
+    public void waitForSiteToIndex(String url) {
+        String fullUrl = url.startsWith("http://") ? url : "http://" + url;
+        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Document \"" + fullUrl + "\" was uploaded successfully"));
     }
 }
