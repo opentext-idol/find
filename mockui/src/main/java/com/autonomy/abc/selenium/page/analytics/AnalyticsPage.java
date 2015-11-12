@@ -45,7 +45,7 @@ public class AnalyticsPage extends AppElement implements AppPage {
         WebElement container = getPromotionsContainer();
         new WebDriverWait(getDriver(),30).until(new WaitUntilLoadingFinished(container));
 
-        return container.findElement(By.cssSelector(".list-group-item:nth-child(1)"));
+        return container.findElement(By.cssSelector(".list-group-item:nth-child(1) a"));
     }
 
     public Term getMostPopularZeroSearchTerm() {

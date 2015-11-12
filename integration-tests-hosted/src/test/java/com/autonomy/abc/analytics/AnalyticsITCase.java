@@ -108,7 +108,7 @@ public class AnalyticsITCase extends ABCTestBase {
     public void testPopularPromotionsClickthrough(){
         WebElement mostPopular = analytics.getMostPopularPromotion();
 
-        String promotionsName = mostPopular.findElement(By.tagName("a")).getText();
+        String promotionsName = mostPopular.getText();
 
         mostPopular.click();
 
