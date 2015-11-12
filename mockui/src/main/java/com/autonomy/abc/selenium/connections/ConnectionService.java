@@ -62,10 +62,12 @@ public class ConnectionService {
         return connectionsPage;
     }
 
-    public ConnectionsPage deleteConnection(final Connector connector) {
+    public ConnectionsPage deleteConnection(final Connector connector, boolean deleteIndex) {
         ConnectionsDetailPage connectionsDetailPage = goToDetails(connector);
         connectionsDetailPage.deleteButton().click();
-        connectionsDetailPage.alsoDeleteIndexCheckbox().click();
+        if(deleteIndex) {
+            connectionsDetailPage.alsoDeleteIndexCheckbox().click();
+        }
         connectionsDetailPage.deleteConfirmButton().click();
         connectionsPage = elementFactory.getConnectionsPage();
         new WebDriverWait(getDriver(), 100).until(GritterNotice.notificationContaining(connector.getDeleteNotification()));

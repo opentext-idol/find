@@ -86,7 +86,7 @@ public class ConnectionsToFindITCase extends ABCTestBase {
 
         assertPromotedItemsForEverySynonym();
 
-        connectionService.deleteConnection(connector);
+        connectionService.deleteConnection(connector, true);
 
         assertPromotedItemsForEverySynonym();
 
@@ -120,6 +120,6 @@ public class ConnectionsToFindITCase extends ABCTestBase {
 
     @After
     public void tearDown(){
-        connectionService.deleteConnection(connector);
+        connectionService.deleteConnection(connector, true);
     }
 }

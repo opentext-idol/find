@@ -116,7 +116,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             assertThat(notifications.notificationNumber(3).getText(), is(createdNotification));
             assertThat(notifications.notificationNumber(4).getText(), is(creatingNotification));
         } finally {
-            cs.deleteConnection(connector);
+            cs.deleteConnection(connector, true);
         }
     }
 
@@ -131,7 +131,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         ConnectionService cs = new ConnectionService(getApplication(), getElementFactory());
         cs.setUpConnection(connector);
 
-        cs.deleteConnection(connector);        //Because of the thread.Sleep() within no need to wait for the notifications
+        cs.deleteConnection(connector, true);        //Because of the thread.Sleep() within no need to wait for the notifications
 
         body.getTopNavBar().notificationsDropdown();
         notifications = body.getTopNavBar().getNotifications();
