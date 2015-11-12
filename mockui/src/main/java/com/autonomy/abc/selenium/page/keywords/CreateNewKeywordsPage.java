@@ -72,8 +72,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public WebElement continueWizardButton(final WizardStep dataType) {
-//		return findElement(By.cssSelector("[data-step='" + dataType.getTitle() + "']")).findElement(By.xpath(".//button[contains(text(), 'Continue')]"));
-		return getDriver().findElement(By.xpath("//*[@data-step='" + dataType.getTitle() + "']//button[contains(text(),'Continue')]"));
+		return findElement(By.cssSelector(".wizard-controls .next-step"));
 	}
 
 	public WebElement addSynonymsButton() {
@@ -93,11 +92,11 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public WebElement finishWizardButton() {
-		return findElement(By.cssSelector(".current-step .finish-step"));
+		return findElement(By.cssSelector(".wizard-controls .finish-step"));
 	}
 
 	public WebElement enabledFinishWizardButton() {
-		return findElement(By.cssSelector(".current-step .finish-step:not([disabled])"));
+		return findElement(By.cssSelector(".wizard-controls .finish-step:not([disabled])"));
 	}
 
 	public void addSynonyms(final String synonyms) {
