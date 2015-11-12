@@ -527,6 +527,14 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return checkboxes;
 	}
 
+	public Checkbox indexCheckbox(String indexName) {
+		return new Checkbox(findElement(By.cssSelector(".checkbox[data-name='" + indexName + "']")), getDriver());
+	}
+
+	public Checkbox allIndexesCheckbox() {
+		return new Checkbox(findElement(By.cssSelector(".checkbox[data-category-id='all']")), getDriver());
+	}
+
 	public enum Filter {
 		FILTER_BY("Filter By"),
 		RELATED_CONCEPTS("Related Concepts"),
