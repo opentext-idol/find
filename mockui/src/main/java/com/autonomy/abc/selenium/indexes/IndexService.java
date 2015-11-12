@@ -6,16 +6,15 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IndexService {
     private HSOApplication application;
     private HSOElementFactory elementFactory;
     private IndexesPage indexesPage;
-    private CreateNewIndexPage newIndexPage;
 
     public IndexService(HSOApplication application, HSOElementFactory elementFactory) {
         this.application = application;
@@ -36,11 +35,18 @@ public class IndexService {
         return indexesPage;
     }
 
-    public IndexesPage setUpIndex(Index index) {
+    public IndexesDetailPage goToDetails(Index index) {
         goToIndexes();
 
+        indexesPage.findIndex(index.getName()).click();
+        return elementFactory.getIndexesDetailPage();
+    }
+
+    public IndexesPage setUpIndex(Index index) {
+        goToIndexes();
         indexesPage.newIndexButton().click();
-        newIndexPage = elementFactory.getCreateNewIndexPage();
+        CreateNewIndexPage newIndexPage = elementFactory.getCreateNewIndexPage();
+
         newIndexPage.inputIndexName(index.getName());
         newIndexPage.nextButton().click();
         newIndexPage.loadOrFadeWait();

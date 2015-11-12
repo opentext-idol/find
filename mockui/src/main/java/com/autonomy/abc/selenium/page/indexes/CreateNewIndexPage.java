@@ -67,14 +67,8 @@ public class CreateNewIndexPage extends SAASPageBase {
     }
 
     private boolean isAdvancedOptionsCollapsed(){
-        String x = advancedOptionsTab().getAttribute("class");
-        System.out.println(x);
-
         String y = advancedOptionsTab().getAttribute("aria-expanded");
-        System.out.println(y);
-
-//        return x.contains("collapsed");
-        return y == null || y == "false";
+        return y == null || y.equalsIgnoreCase("false");
     }
 
     private void openAdvancedOptions(){
