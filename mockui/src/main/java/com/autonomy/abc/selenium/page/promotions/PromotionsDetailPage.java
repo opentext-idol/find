@@ -5,16 +5,15 @@ import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 
 public class PromotionsDetailPage extends AppElement implements AppPage {
     public PromotionsDetailPage(WebDriver driver) {
@@ -24,7 +23,11 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotion-match-terms")));
+        try {
+            new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotion-match-terms")));
+        } catch (TimeoutException e) {
+            fail("Promotion's Detail Page failed to load");
+        }
     }
 
     public Dropdown editMenu() {
