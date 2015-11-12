@@ -4,19 +4,10 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    'find/app/model/find-base-collection'
+], function(FindBaseCollection) {
 
-    return Backbone.Collection.extend({
-
-        url: '../api/search/find-related-concepts',
-
-        fetch: function(options) {
-            return Backbone.Collection.prototype.fetch.call(this, _.defaults(options, {
-                reset: true
-            }));
-        }
-
+    return FindBaseCollection.extend({
+        url: '../api/public/search/find-related-concepts'
     })
-
 });

@@ -8,7 +8,6 @@ define([
     'find/app/router',
     'find/app/vent'
 ], function(AbstractPages, router, vent) {
-
     return AbstractPages.extend({
 
         routePrefix: 'find/',
@@ -18,7 +17,5 @@ define([
         vent: vent,
 
         router: router
-
-
     });
 });

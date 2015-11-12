@@ -6,14 +6,17 @@
 define([
     'settings/js/server-widget',
     'find/app/model/indexes-collection',
+    'text!find/templates/app/page/settings/server-widget.html',
     'text!find/templates/app/page/settings/iod-widget.html',
     'text!find/templates/app/page/settings/indexes-list.html'
-], function(ServerWidget, IndexesCollection, template, indexesTemplate) {
+], function(ServerWidget, IndexesCollection, serverWidget, template, indexesTemplate) {
 
     template = _.template(template);
     indexesTemplate = _.template(indexesTemplate);
 
     return ServerWidget.extend({
+        serverTemplate: _.template(serverWidget),
+
         render: function() {
             ServerWidget.prototype.render.call(this);
 
@@ -21,7 +24,9 @@ define([
             this.$validateButtonParent.before(template({strings: this.strings}));
 
             this.$apikey = this.$('input[name="apikey"]');
-            this.$apiKeyControlGroup = this.$('.control-group').eq(0);
+            this.$application = this.$('input[name="application"]');
+            this.$domain = this.$('input[name="domain"]');
+            this.$apiKeyControlGroup = this.$('.form-group').eq(0);
         },
 
         getConfig: function() {
@@ -29,14 +34,24 @@ define([
 
             var activeIndexes;
 
+            var domain = this.$domain.val();
+
             if ($indexCheckboxes.length) {
                 var selectedIndexes = _.map($indexCheckboxes, function (input) {
                     return $(input).val();
                 });
 
-                activeIndexes = _.filter(this.indexes, function (index) {
-                    return _.contains(selectedIndexes, index.index);
-                });
+                activeIndexes = _.chain(this.indexes)
+                    .filter(function (index) {
+                        return _.contains(selectedIndexes, index.resource);
+                    })
+                    .map(function(index) {
+                        return {
+                            domain: index.private ? domain : 'PUBLIC_INDEXES',
+                            name: index.resource
+                        }
+                    })
+                    .value();
             }
             else if(this.$('input[type="checkbox"]').length) {
                 // no checkboxes ticked
@@ -49,6 +64,8 @@ define([
 
             return {
                 apiKey: this.$apikey.val(),
+                application: this.$application.val(),
+                domain: domain,
                 activeIndexes: activeIndexes
             };
         },
@@ -57,6 +74,8 @@ define([
             ServerWidget.prototype.updateConfig.apply(this, arguments);
 
             this.$apikey.val(config.apiKey);
+            this.$application.val(config.application);
+            this.$domain.val(config.domain);
             this.indexes = config.activeIndexes;
         },
 
@@ -70,6 +89,16 @@ define([
                     isValid = false;
                     this.updateInputValidation(this.$apikey);
                 }
+
+                if (config.application === '') {
+                    isValid = false;
+                    this.updateInputValidation(this.$application);
+                }
+
+                if (config.domain === '') {
+                    isValid = false;
+                    this.updateInputValidation(this.$domain);
+                }
             }
 
             return isValid;
@@ -80,13 +109,13 @@ define([
                 this.lastValidation = response.valid;
 
                 if(this.lastValidation && response.data && response.data.indexes) {
-                    var privateIndexes = response.data.indexes.privateIndexes;
+                    var privateIndexes = response.data.indexes.resources;
 
                     _.each(privateIndexes, function(privateIndex) {
                         privateIndex.private = true;
                     });
 
-                    this.indexes = response.data.indexes.publicIndexes.concat(privateIndexes);
+                    this.indexes = response.data.indexes.publicResources.concat(privateIndexes);
                 }
                 else {
                     this.indexes = [];

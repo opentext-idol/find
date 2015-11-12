@@ -1,12 +1,10 @@
-<div class="control-group indexes-list-group">
+<div class="indexes-list-group">
     <% if(indexes) { %>
-        <label class="control-label settings-label">Indexes list: </label>
-        <div class="controls">
-            <% _.each(indexes, function(index) { %>
-                <label class="checkbox">
-                    <input type="checkbox" value="<%- index.index %>"><%- index.index %> <%= index.private ? '(private)' : '' %>
-                </label>
-            <% }) %>
-        </div>
+        <label class="settings-label">Indexes list: </label>
+        <% _.each(indexes, function(index) { %>
+            <label class="checkbox">
+                <input type="checkbox" value="<%- index.resource %>"><%- index.resource %> <%= index.private ? '(private)' : '' %>
+            </label>
+        <% }) %>
     <% } %>
 </div>

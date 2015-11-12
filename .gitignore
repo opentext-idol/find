@@ -16,6 +16,21 @@ target/
 
 # Archetype
 filter-dev.properties
-src/main/webapp/lib/
 src/test/js/lib/
 .vagrant/
+
+src/main/webapp/static/bower_components/
+node_modules/
+.grunt/
+spec-runner.html
+
+# Vagrant
+cookbooks/
+tmp
+
+# Git
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*.orig

@@ -1,0 +1,17 @@
+SITE
+  remote: https://supermarket.getchef.com/api/v1
+  specs:
+    apt (2.7.0)
+
+GIT
+  remote: git@github.com:phlipper/chef-redis.git
+  ref: v0.5.6
+  sha: 7476279fc9c8727f082b8d77b5e1922dc2ef437b
+  specs:
+    redis (0.5.6)
+      apt (>= 0.0.0)
+
+DEPENDENCIES
+  apt (>= 0)
+  redis (>= 0)
+

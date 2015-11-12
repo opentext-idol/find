@@ -5,10 +5,14 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
+import com.hp.autonomy.hod.client.error.HodErrorException;
+
 import java.util.List;
 
 public interface RelatedConceptsService {
 
-    public List<Entity> findRelatedConcepts(String text, String indexes);
+    List<Entity> findRelatedConcepts(String text, List<ResourceIdentifier> indexes, String fieldText) throws HodErrorException;
 
 }

@@ -3,11 +3,14 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-@import 'bootstrap-custom.css';
-@import '../lib/hp-autonomy-bootstrap-2/bootstrap/css/bootstrap-responsive.css';
-@import '../lib/fontawesome/css/font-awesome.css';
-@import "../lib/colorbox/example1/colorbox.css";
-@import "../lib/hp-autonomy-settings-page/src/css/settings.css";
-@import "../lib/hp-autonomy-js-whatever/src/css/javascript-utils.css";
+@import '../lib/bootstrap/css/bootstrap.css';
+@import '../lib/bootstrap/css/bootstrap-theme.css';
+@import '../bower_components/fontawesome/css/font-awesome.css';
+@import '../bower_components/bootstrap-timepicker/build/css/bootstrap-datetimepicker.min.css';
+@import "../bower_components/colorbox/example1/colorbox.css";
+@import "../bower_components/hp-autonomy-settings-page/src/css/settings.css";
+@import "../bower_components/hp-autonomy-js-whatever/src/css/javascript-utils.css";
+@import "../bower_components/icheck/skins/all.css";
 @import 'app-include.css';
 @import 'colorbox.css';
+@import 'icons.css';

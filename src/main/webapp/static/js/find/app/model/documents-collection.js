@@ -4,13 +4,26 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    'find/app/model/find-base-collection',
+    'find/app/model/document-model',
+    'underscore'
+], function(FindBaseCollection, DocumentModel, _) {
 
-    return Backbone.Collection.extend({
+    return FindBaseCollection.extend({
+        model: DocumentModel,
+        url: '../api/public/search/query-text-index/results',
 
-        url: '../api/search/query-text-index'
+        initialize: function(models, options) {
+            this.indexesCollection = options.indexesCollection;
+        },
 
-    })
+        parse: function(response) {
+            return _.map(response.documents, function(document) {
+                document.index = this.indexesCollection.findWhere({name: document.index});
+
+                return document;
+            }, this);
+        }
+    });
 
 });

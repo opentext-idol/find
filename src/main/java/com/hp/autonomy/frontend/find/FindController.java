@@ -5,32 +5,63 @@
 
 package com.hp.autonomy.frontend.find;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.hp.autonomy.frontend.find.authentication.HodCombinedRequestController;
+import com.hp.autonomy.frontend.find.web.ErrorController;
+import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
-@Controller
-public class FindController {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class FindController {
+
+    public static final String PUBLIC_PATH = "/public/";
 
     @Autowired
-    private ConfigService<? extends AuthenticationConfig<?>> configService;
+    private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
+
+    @Autowired
+    private ObjectMapper contextObjectMapper;
 
     @RequestMapping("/")
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final String contextPath = request.getContextPath();
 
-        if(LoginTypes.DEFAULT.equals(configService.getConfig().getAuthentication().getMethod())) {
+        if(LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
             response.sendRedirect(contextPath + "/loginPage");
         }
         else {
-            response.sendRedirect(contextPath + "/public/");
+            response.sendRedirect(contextPath + PUBLIC_PATH);
         }
     }
 
+    @RequestMapping(value = PUBLIC_PATH, method = RequestMethod.GET)
+    public ModelAndView userName() throws JsonProcessingException, HodErrorException {
+        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final Map<String, Object> config = new HashMap<>();
+        config.put("username", username);
+
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put("configJson", convertToJson(config));
+
+        return new ModelAndView("public", attributes);
+    }
+
+    protected String convertToJson(final Object object) throws JsonProcessingException {
+        return contextObjectMapper.writeValueAsString(object).replace("</", "<\\/");
+    }
 }

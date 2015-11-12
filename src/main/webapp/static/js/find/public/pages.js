@@ -8,7 +8,6 @@ define([
     'find/app/page/find-search',
     'i18n!find/nls/bundle'
 ], function(FindPages, FindSearch) {
-
     return FindPages.extend({
 
         initializePages: function() {
@@ -19,7 +18,5 @@ define([
                 }
             ];
         }
-
     });
-
 });

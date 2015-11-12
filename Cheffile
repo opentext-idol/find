@@ -1,0 +1,7 @@
+site 'https://supermarket.getchef.com/api/v1'
+
+cookbook 'apt'
+
+cookbook 'redis',
+  :git => 'git@github.com:phlipper/chef-redis.git',
+  :ref => 'v0.5.6'

@@ -5,9 +5,12 @@
 
 package com.hp.autonomy.frontend.find.web;
 
+import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
+import com.hp.autonomy.hod.client.error.HodErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -33,6 +36,28 @@ public class GlobalExceptionHandler {
         return handler(exception);
     }
 
+    @ExceptionHandler(HodAuthenticationFailedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse authenticationFailedHandler(final HodAuthenticationFailedException exception) {
+        return new ErrorResponse("TOKEN HAS EXPIRED");
+    }
+
+    @ExceptionHandler(HodErrorException.class)
+    @ResponseBody
+    public ResponseEntity<HodErrorResponse> hodErrorHandler(final HodErrorException exception) {
+        final HodErrorResponse hodErrorResponse = new HodErrorResponse("HOD Error", exception.getErrorCode());
+        final ResponseEntity<HodErrorResponse> entity;
+
+        if (exception.isServerError()) {
+            entity = new ResponseEntity<>(hodErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            entity = new ResponseEntity<>(hodErrorResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        return entity;
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
@@ -49,5 +74,4 @@ public class GlobalExceptionHandler {
 
         return errorResponse;
     }
-
 }

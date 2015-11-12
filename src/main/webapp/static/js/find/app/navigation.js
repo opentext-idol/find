@@ -9,7 +9,6 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/navigation.html'
 ], function(Navigation, router, i18n, template) {
-
     return Navigation.extend({
 
         event: 'route:find',
@@ -23,7 +22,5 @@ define([
                 i18n: i18n
             }
         }
-
     })
-
 });

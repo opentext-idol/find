@@ -1,0 +1,18 @@
+{
+  "login": {
+    "method": "autonomy",
+    "community": {
+      "protocol": "HTTP",
+      "host": "find-backend",
+      "port": 9030,
+      "productType": ["UASERVER", "DAH", "IDOLPROXY"]
+    },
+    "name": "CommunityAuthentication"
+  },
+  "content": {
+    "protocol": "HTTP",
+    "host": "find-backend",
+    "port": 16000,
+    "productType": ["AXE", "QMS", "DAH", "IDOLPROXY"]
+  }
+}

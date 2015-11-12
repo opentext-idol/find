@@ -1,0 +1,33 @@
+{
+    "login": {
+        "method": "default",
+        "singleUser": {
+            "username": "admin",
+            "hashedPassword": ""
+        },
+        "name": "SingleUserAuthentication"
+    },
+    "hsod": {
+        "landingPageUrl": "https://search.int.havenondemand.com"
+    },
+    "iod": {
+        "apiKey": "",
+        "application": "",
+        "domain": "",
+        "activeIndexes": [],
+        "publicIndexesEnabled": false
+    },
+    "queryManipulation": {
+        "profile": "search_default_profile",
+        "index": "search_default_index"
+    },
+    "allowedOrigins": [],
+    "redis": {
+        "address": {
+            "host": "hp-find-backend",
+            "port": 6379
+        },
+        "database": 0,
+        "sentinels": []
+    }
+}

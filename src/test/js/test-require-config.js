@@ -3,17 +3,25 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-define(['/src/js/require-config.js'], function() {
-    require.config({
-        baseUrl: '/src/static/js',
-        paths: {
-            /*  Directories  */
-            mock: '/test/mock',
-            real: '/src/static/js',
-            resources: '/test/resources'
-
-            /* Mocks */
-            // replace this comment with your mocks
+require.config({
+    baseUrl: 'src/main/webapp/static/js',
+    paths: {
+        'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
+        'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
+        'mock': '../../../../test/js/mock'
+    },
+    shim: {
+        'jasmine-jquery': ['jquery']
+    },
+    map: {
+        '*': {
+            'find/lib/backbone/backbone-extensions': 'backbone'
+        },
+        'find/app/page/service-view': {
+            'find/app/model/indexes-collection': 'mock/model/indexes-collection'
+        },
+        'find/app/page/related-concepts/related-concepts-view': {
+            'find/app/model/documents-collection': 'mock/model/documents-collection'
         }
-    });
+    }
 });
