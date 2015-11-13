@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 
 import java.util.Collection;
@@ -19,6 +20,11 @@ public class IndexFilter implements SearchFilter {
 
     public IndexFilter(Collection<String> indexes) {
         this.indexes = new HashSet<>(indexes);
+    }
+
+    public IndexFilter(Index index){
+        indexes = new HashSet<>();
+        indexes.add(index.getName());
     }
 
     @Override

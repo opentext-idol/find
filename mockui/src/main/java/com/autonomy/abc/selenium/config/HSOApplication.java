@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.AppBody;
@@ -49,5 +50,9 @@ public class HSOApplication extends Application {
 
     public ConnectionService createConnectionService(ElementFactory elementFactory) {
         return new ConnectionService(this,elementFactory);
+    }
+
+    public IndexService createIndexService(HSOElementFactory elementFactory) {
+        return new IndexService(this,elementFactory);
     }
 }
