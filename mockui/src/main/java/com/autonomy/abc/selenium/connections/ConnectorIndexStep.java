@@ -40,9 +40,16 @@ public class ConnectorIndexStep implements WizardStep {
             }
         }
 
-        throw new IndexNotFoundException();
+        throw new IndexNotFoundException(index);
     }
 
     private class IndexNotFoundException extends RuntimeException {
+        public IndexNotFoundException(String index){
+            super("Index: '"+index+"' not found");
+        }
+
+        public IndexNotFoundException(Index index){
+            this(index.getName());
+        }
     }
 }

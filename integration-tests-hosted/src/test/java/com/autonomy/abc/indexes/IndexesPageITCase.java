@@ -57,7 +57,7 @@ public class IndexesPageITCase extends ABCTestBase {
 
     @Test
     //CSA1720
-    public void testDefaultIndexIsNoDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
+    public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = hsoApplication.createConnectionService(hsoElementFactory);
         Index default_index = new Index("default_index");
         WebConnector connector = new WebConnector("www.bbc.co.uk","bbc",default_index);
