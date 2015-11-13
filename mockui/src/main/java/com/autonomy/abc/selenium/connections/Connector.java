@@ -10,7 +10,7 @@ public abstract class Connector {
 
     public Connector(String name) {
         this.name = name;
-        this.index = null;
+        this.index = new Index(name);
     }
 
     public Connector(String name, Index index){
@@ -31,4 +31,8 @@ public abstract class Connector {
     }
 
     public abstract Wizard makeWizard(NewConnectionPage newConnectionPage);
+
+    public Index getIndex(){
+        return index;
+    }
 }

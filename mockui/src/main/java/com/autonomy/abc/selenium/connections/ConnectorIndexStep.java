@@ -9,12 +9,14 @@ import org.openqa.selenium.WebElement;
 public class ConnectorIndexStep implements WizardStep {
     private final static String TITLE = "Index";
     private final Index index;
+    private final String name;
 
     private final ConnectorIndexStepTab newConnectionPage;
 
-    public ConnectorIndexStep(NewConnectionPage newConnectionPage, Index index){
+    public ConnectorIndexStep(NewConnectionPage newConnectionPage, Index index, String name){
         this.index = index;
         this.newConnectionPage = newConnectionPage.getIndexStep();
+        this.name = name;
     }
 
     @Override
@@ -24,7 +26,7 @@ public class ConnectorIndexStep implements WizardStep {
 
     @Override
     public Object apply() {
-        if(index == null){
+        if(index.getName().equals(name)){
             return null;
         }
 

@@ -14,7 +14,7 @@ public class WebConnector extends Connector {
     }
 
     public WebConnector(String url, String name, Index index){
-        super(name);
+        super(name, index);
     }
 
     public String getUrl() {
@@ -34,7 +34,7 @@ public class WebConnector extends Connector {
             page = newConnectionPage;
             add(new ConnectorTypeStep(page, url, name));
             add(new BlankWizardStep("Connector Configuration"));
-            add(new ConnectorIndexStep(page,index));
+            add(new ConnectorIndexStep(page,index,name));
             add(new BlankWizardStep("Complete"));
         }
 
