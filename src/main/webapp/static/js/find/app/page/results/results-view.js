@@ -308,6 +308,8 @@ define([
                 colorboxOptions = {model: model, href: href};
             }
 
+            $newResult.find('.result-header').colorbox(this.colorboxArguments(colorboxOptions));
+
             $newResult.find('.dots').click(function (e) {
                 e.preventDefault();
                 $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
