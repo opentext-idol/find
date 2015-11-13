@@ -13,11 +13,35 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DocumentsService {
 
-    Documents<FindDocument> queryTextIndex(String text, int maxResults, Summary summary, List<ResourceIdentifier> indexes, String fieldText, Sort sort, DateTime minDate, DateTime maxDate) throws HodErrorException;
+    Documents<FindDocument> queryTextIndex(
+            String text,
+            int maxResults,
+            Summary summary,
+            List<ResourceIdentifier> indexes,
+            String fieldText,
+            Sort sort,
+            DateTime minDate,
+            DateTime maxDate
+    ) throws HodErrorException;
 
-    Documents<FindDocument> queryTextIndexForPromotions(String text, int maxResults, Summary summary, List<ResourceIdentifier> indexes, String fieldText, Sort sort, DateTime minDate, DateTime maxDate) throws HodErrorException;
+    Documents<FindDocument> queryTextIndexForPromotions(
+            String text,
+            int maxResults,
+            Summary summary,
+            List<ResourceIdentifier> indexes,
+            String fieldText,
+            Sort sort,
+            DateTime minDate,
+            DateTime maxDate
+    ) throws HodErrorException;
+
+    List<FindDocument> findSimilar(
+            Set<ResourceIdentifier> indexes,
+            String reference
+    ) throws HodErrorException;
 
 }

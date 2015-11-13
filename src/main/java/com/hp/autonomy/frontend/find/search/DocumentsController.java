@@ -22,16 +22,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
-@RequestMapping("/api/public/search/query-text-index")
+@RequestMapping("/api/public/search")
 @Conditional(HodCondition.class) // TODO remove this
 public class DocumentsController {
-
     @Autowired
     private DocumentsService documentsService;
 
-    @RequestMapping(value = "results", method = RequestMethod.GET)
+    @RequestMapping(value = "query-text-index/results", method = RequestMethod.GET)
     @ResponseBody
     public Documents<FindDocument> query(
         @RequestParam("text") final String text,
@@ -46,7 +46,7 @@ public class DocumentsController {
         return documentsService.queryTextIndex(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
     }
 
-    @RequestMapping(value="promotions", method = RequestMethod.GET)
+    @RequestMapping(value="query-text-index/promotions", method = RequestMethod.GET)
     @ResponseBody
     public Documents<FindDocument> queryForPromotions(
             @RequestParam("text") final String text,
@@ -59,5 +59,14 @@ public class DocumentsController {
             @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate
     ) throws HodErrorException {
         return documentsService.queryTextIndexForPromotions(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
+    }
+
+    @RequestMapping(value = "similar-documents", method = RequestMethod.GET)
+    @ResponseBody
+    public List<FindDocument> findSimilar(
+            @RequestParam("reference") final String reference,
+            @RequestParam("indexes") final Set<ResourceIdentifier> indexes
+    ) throws HodErrorException {
+        return documentsService.findSimilar(indexes, reference);
     }
 }

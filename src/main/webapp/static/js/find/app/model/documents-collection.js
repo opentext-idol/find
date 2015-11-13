@@ -13,16 +13,8 @@ define([
         model: DocumentModel,
         url: '../api/public/search/query-text-index/results',
 
-        initialize: function(models, options) {
-            this.indexesCollection = options.indexesCollection;
-        },
-
         parse: function(response) {
-            return _.map(response.documents, function(document) {
-                document.index = this.indexesCollection.findWhere({name: document.index});
-
-                return document;
-            }, this);
+            return response.documents;
         }
     });
 

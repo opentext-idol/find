@@ -45,12 +45,13 @@ public class HodViewController extends AbstractViewController {
     @RequestMapping(value = "/viewDocument", method = RequestMethod.GET)
     public void viewDocument(
             @RequestParam("reference") final String reference,
-            @RequestParam("indexes") final ResourceIdentifier indexes,
+            @RequestParam("domain") final String domain,
+            @RequestParam("index") final String index,
             final HttpServletResponse response
     ) throws HodErrorException, IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
-        hodViewService.viewDocument(reference, indexes, response.getOutputStream());
+        hodViewService.viewDocument(reference, new ResourceIdentifier(domain, index), response.getOutputStream());
     }
 
     @RequestMapping(value = "/viewStaticContentPromotion", method = RequestMethod.GET)

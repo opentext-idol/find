@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.configuration;
 
 import com.hp.autonomy.frontend.configuration.ValidationResult;
 import com.hp.autonomy.frontend.configuration.Validator;
-import com.hp.autonomy.frontend.find.search.IndexesService;
+import com.hp.autonomy.frontend.find.indexes.IndexesService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 

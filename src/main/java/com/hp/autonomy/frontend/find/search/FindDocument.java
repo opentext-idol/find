@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.hod.client.api.textindex.query.search.PromotionType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.joda.time.DateTime;
@@ -51,6 +52,7 @@ public class FindDocument implements Serializable {
 
     private final String reference;
     private final String index;
+    private final String domain;
     private final PromotionType promotionType;
 
     private final String title;
@@ -65,9 +67,10 @@ public class FindDocument implements Serializable {
     private final DateTime dateCreated;
     private final DateTime dateModified;
 
-    public FindDocument(final Builder builder) {
+    private FindDocument(final Builder builder) {
         reference = builder.reference;
         index = builder.index;
+        domain = builder.domain;
 
         promotionType = builder.promotionType == null ? PromotionType.NONE : builder.promotionType;
 
@@ -85,12 +88,15 @@ public class FindDocument implements Serializable {
         dateModified = builder.dateModified;
     }
 
+    @SuppressWarnings("FieldMayBeFinal")
     @Setter
+    @NoArgsConstructor
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder {
         private String reference;
         private String index;
+        private String domain;
 
         @JsonProperty("promotion")
         private PromotionType promotionType;
@@ -111,6 +117,22 @@ public class FindDocument implements Serializable {
         private DateTime date;
         private DateTime dateCreated;
         private DateTime dateModified;
+
+        public Builder(final FindDocument document) {
+            reference = document.reference;
+            index = document.index;
+            domain = document.domain;
+            promotionType = document.promotionType;
+            title = document.title;
+            summary = document.summary;
+            contentType = document.contentType;
+            url = document.url;
+            authors = document.authors;
+            categories = document.categories;
+            date = document.date;
+            dateCreated = document.dateCreated;
+            dateModified = document.dateModified;
+        }
 
         @JsonProperty(CONTENT_TYPE_FIELD)
         public Builder setContentType(final List<String> contentTypes) {

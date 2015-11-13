@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.search;
+package com.hp.autonomy.frontend.find.indexes;
 
 import com.hp.autonomy.databases.Database;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
