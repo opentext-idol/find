@@ -19,6 +19,7 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -147,4 +148,13 @@ public class IndexesPageITCase extends ABCTestBase {
         }
     }
 
+    @After
+    public void deleteConnections(){
+        hsoApplication.createConnectionService(hsoElementFactory).deleteAllConnections();
+    }
+
+    @After
+    public void deleteIndexes(){
+        hsoApplication.createIndexService(hsoElementFactory).deleteAllIndexes();
+    }
 }

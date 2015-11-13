@@ -9,8 +9,13 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionService {
     private Application application;
@@ -75,6 +80,14 @@ public class ConnectionService {
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {}
+        return connectionsPage;
+    }
+
+    public ConnectionsPage deleteAllConnections() {
+        goToConnections();
+        for(WebElement connector : getDriver().findElements(By.className("listItemTitle"))){
+            deleteConnection(new WebConnector(connector.getText().trim(),null),false);
+        }
         return connectionsPage;
     }
 }
