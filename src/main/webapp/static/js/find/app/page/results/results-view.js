@@ -263,7 +263,14 @@ define([
         formatResult: function(model, isPromotion) {
             var reference = model.get('reference');
             var summary = this.addLinksToSummary(model.get('summary'));
-            var href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
+
+            var href;
+
+            if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
+                href = viewClient.getStaticContentPromotionHref(reference);
+            } else {
+                href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
+            }
 
             var $newResult = $(this.resultsTemplate({
                 i18n: i18n,
