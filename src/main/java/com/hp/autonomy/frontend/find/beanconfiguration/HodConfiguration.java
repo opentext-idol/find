@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.find.configuration.HodFindConfigFileService;
 import com.hp.autonomy.frontend.find.configuration.IodConfigValidator;
 import com.hp.autonomy.frontend.find.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.parametricfields.CacheableParametricValuesService;
+import com.hp.autonomy.frontend.find.search.FindDocument;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
@@ -117,8 +118,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
         // The type annotation here is required to make it compile
         //noinspection Convert2Diamond
         validationService.setValidators(new HashSet<Validator<?>>(Arrays.asList(
-            singleUserAuthenticationValidator(),
-            iodConfigValidator()
+                singleUserAuthenticationValidator(),
+                iodConfigValidator()
         )));
 
         // fix circular dependency
@@ -142,7 +143,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
 
         final String proxyHost = System.getProperty("find.https.proxyHost");
 
-        if(proxyHost != null) {
+        if (proxyHost != null) {
             final Integer proxyPort = Integer.valueOf(System.getProperty("find.https.proxyPort", "8080"));
             builder.setProxy(new HttpHost(proxyHost, proxyPort));
         }
@@ -154,14 +155,14 @@ public class HodConfiguration extends CachingConfigurerSupport {
         final String endpoint = System.getProperty("find.iod.api", "https://api.havenondemand.com");
 
         return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
-            .setHttpClient(httpClient())
-            .setTokenRepository(tokenRepository);
+                .setHttpClient(httpClient())
+                .setTokenRepository(tokenRepository);
     }
 
     @Bean
     public HodServiceConfig<EntityType.Combined, TokenType.Simple> initialHodServiceConfig() {
         return hodServiceConfigBuilder()
-            .build();
+                .build();
     }
 
     @Bean
@@ -177,8 +178,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Bean
     public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig() {
         return hodServiceConfigBuilder()
-            .setTokenProxyService(tokenProxyService())
-            .build();
+                .setTokenProxyService(tokenProxyService())
+                .build();
     }
 
     @Bean
@@ -187,8 +188,13 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public QueryTextIndexService<Document> queryTextIndexService() {
+    public QueryTextIndexService<Document> documentQueryTextIndexService() {
         return QueryTextIndexServiceImpl.documentsService(hodServiceConfig());
+    }
+
+    @Bean
+    public QueryTextIndexService<FindDocument> queryTextIndexService() {
+        return new QueryTextIndexServiceImpl<>(hodServiceConfig(), FindDocument.class);
     }
 
     @Bean
@@ -247,12 +253,12 @@ public class HodConfiguration extends CachingConfigurerSupport {
 
     @Bean
     public HodViewService hodViewService() {
-        return new HodViewServiceImpl(viewDocumentService(), getContentService(), queryTextIndexService());
+        return new HodViewServiceImpl(viewDocumentService(), getContentService(), documentQueryTextIndexService());
     }
 
     @Bean
-    public FindSimilarService<Document> findSimilarService() {
-        return FindSimilarServiceImpl.documentsService(hodServiceConfig());
+    public FindSimilarService<FindDocument> findSimilarService() {
+        return new FindSimilarServiceImpl<>(hodServiceConfig(), FindDocument.class);
     }
 
     @Bean

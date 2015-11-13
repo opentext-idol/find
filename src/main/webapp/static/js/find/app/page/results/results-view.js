@@ -1,6 +1,7 @@
 define([
     'backbone',
     'jquery',
+    'find/app/model/document-model',
     'find/app/model/documents-collection',
     'find/app/model/promotions-collection',
     'find/app/model/similar-documents-collection',
@@ -20,9 +21,10 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, $, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover, viewClient, documentMimeTypes,
-            escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate, colorboxControlsTemplate,
-            loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate, moment, i18n) {
+], function(Backbone, $, DocumentModel, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover,
+            viewClient, documentMimeTypes, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
+            colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate,
+            moment, i18n) {
 
     /** Whitespace OR character in set bounded by [] */
     var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
@@ -34,7 +36,7 @@ define([
     var mediaTypes = ['audio', 'video'];
 
     var getContentTypeClass = function(model) {
-        var contentType =  model.get('fields').content_type ? model.get('fields').content_type[0] : '';
+        var contentType = model.get('contentType') || '';
 
         var matchedType = _.find(documentMimeTypes, function(mimeType) {
             return Boolean(_.find(mimeType.typeRegex, function(regex) {
@@ -63,14 +65,14 @@ define([
         viewDocumentTemplate: _.template(viewDocumentTemplate),
 
         events: {
-            'click .query-text' : function(e) {
+            'click .query-text': function(e) {
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
                 this.queryModel.set('queryText', queryText);
             },
             'mouseover .entity-to-summary': function(e) {
                 var title = $(e.currentTarget).find('a').html();
-                this.$('[data-title="'+ title +'"]').addClass('label label-primary entity-to-summary').removeClass('label-info');
+                this.$('[data-title="' + title + '"]').addClass('label label-primary entity-to-summary').removeClass('label-info');
             },
             'mouseleave .entity-to-summary': function() {
                 this.$('.suggestions-content li a').removeClass('label label-primary entity-to-summary');
@@ -128,7 +130,7 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if(this.resultsFinished && this.promotionsFinished) {
+            if (this.resultsFinished && this.promotionsFinished) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -145,17 +147,17 @@ define([
                 this.formatResult(model, true);
             });
 
-            this.listenTo(this.promotionsCollection, 'request', function () {
+            this.listenTo(this.promotionsCollection, 'request', function() {
                 this.promotionsFinished = false;
                 this.$('.main-results-content .promotions').empty();
             });
 
-            this.listenTo(this.promotionsCollection, 'sync', function () {
+            this.listenTo(this.promotionsCollection, 'sync', function() {
                 this.promotionsFinished = true;
                 this.clearLoadingSpinner();
             });
 
-            this.listenTo(this.promotionsCollection, 'error', function (collection, xhr) {
+            this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
                 this.promotionsFinished = true;
                 this.clearLoadingSpinner();
 
@@ -163,17 +165,17 @@ define([
             });
 
             /*main results content*/
-            this.listenTo(this.documentsCollection, 'request', function () {
+            this.listenTo(this.documentsCollection, 'request', function() {
                 this.resultsFinished = false;
                 this.$loadingSpinner.removeClass('hide');
                 this.$('.main-results-content .results').empty();
             });
 
-            this.listenTo(this.documentsCollection, 'add', function (model) {
+            this.listenTo(this.documentsCollection, 'add', function(model) {
                 this.formatResult(model, false);
             });
 
-            this.listenTo(this.documentsCollection, 'sync', function () {
+            this.listenTo(this.documentsCollection, 'sync', function() {
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
 
@@ -182,7 +184,7 @@ define([
                 }
             });
 
-            this.listenTo(this.documentsCollection, 'error', function (collection, xhr) {
+            this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
 
@@ -222,10 +224,10 @@ define([
         colorboxArguments: function(options) {
             var args = {
                 current: '{current} of {total}',
-                height:'70%',
+                height: '70%',
                 iframe: false,
                 rel: 'results',
-                width:'70%',
+                width: '70%',
                 onClosed: function() {
                     $window.off('resize', onResize);
                 },
@@ -243,7 +245,7 @@ define([
                 }, this)
             };
 
-            if(options.media) {
+            if (options.media) {
                 args.html = this.mediaPlayerTemplate({
                     media: options.media,
                     url: options.url,
@@ -254,8 +256,9 @@ define([
                     src: options.href,
                     i18n: i18n,
                     model: options.model,
-                    dateFields: ['date', 'dateCreated', 'dateModified'],
-                    fields: ['reference', 'author', 'categories']
+                    arrayFields: DocumentModel.ARRAY_FIELDS,
+                    dateFields: DocumentModel.DATE_FIELDS,
+                    fields: ['reference']
                 });
             }
 
@@ -264,23 +267,7 @@ define([
 
         formatResult: function(model, isPromotion) {
             var reference = model.get('reference');
-            var summary = model.get('summary');
-
-            var date = null;
-            var dateStamp = null;
-
-            var dateArray = model.get('fields').date;
-
-            if(dateArray) {
-                dateStamp = dateArray[0];
-
-                if(_.isFinite(dateStamp) && Math.floor(dateStamp) === dateStamp) {
-                    date = moment(dateStamp * 1000).format("YYYY/MM/DD HH:mm:ss");
-                }
-            }
-
-            summary = this.addLinksToSummary(summary);
-
+            var summary = this.addLinksToSummary(model.get('summary'));
             var href = viewClient.getHref(reference, model.get('index'));
 
             var $newResult = $(this.resultsTemplate({
@@ -290,7 +277,7 @@ define([
                 href: href,
                 summary: summary,
                 promotion: isPromotion,
-                date: date,
+                date: model.has('date') ? model.get('date').format('YYYY/MM/DD HH:mm:ss') : null,
                 contentType: getContentTypeClass(model)
             }));
 
@@ -300,24 +287,30 @@ define([
                 this.$('.main-results-content .results').append($newResult);
             }
 
-            var fields = model.get('fields');
-            var contentType = fields.content_type ? fields.content_type[0] : '';
+            var contentType = model.get('contentType') || '';
 
             var media = _.find(mediaTypes, function(mediaType) {
                 return contentType.indexOf(mediaType) === 0;
             });
 
-            if (media && fields.url) {
-                var url = fields.url[0];
-                var offset = fields.offset ? fields.offset[0] : 0;
+            var url = model.get('url');
+            var colorboxOptions;
 
-                $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, media: media, url: url, offset: offset}));
+            if (media && url) {
+                // This is a multimedia file
+                colorboxOptions = {
+                    media: media,
+                    url: url,
+                    offset: model.get('offset')
+                };
             } else {
-                // Use the standard Viewserver display
-                $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
+                // Use the standard display
+                colorboxOptions = {model: model, href: href};
             }
 
-            $newResult.find('.dots').click(function (e) {
+            $newResult.find('.result-header').colorbox(this.colorboxArguments(colorboxOptions));
+
+            $newResult.find('.dots').click(function(e) {
                 e.preventDefault();
                 $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
             });
@@ -338,9 +331,9 @@ define([
             var entities = this.entityCollection.map(function(entity) {
                 return {
                     text: entity.get('text'),
-                    id:  _.uniqueId('Find-IOD-Entity-Placeholder')
+                    id: _.uniqueId('Find-IOD-Entity-Placeholder')
                 };
-            }).sort(function(a,b) {
+            }).sort(function(a, b) {
                 return b.text.length - a.text.length;
             });
 

@@ -4,11 +4,21 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    'backbone',
+    'underscore',
+    'moment'
+], function(Backbone, _, moment) {
+
+    var ARRAY_FIELDS = ['authors', 'categories'];
+    var DATE_FIELDS = ['date', 'dateCreated', 'dateModified'];
 
     // Model representing a document in an HOD text index
     return Backbone.Model.extend({
+        defaults: _.reduce(ARRAY_FIELDS, function(memo, fieldName) {
+            memo[fieldName] = [];
+            return memo;
+        }, {}),
+
         parse: function(response) {
             if (!response.title) {
                 // If there is no title, use the last part of the reference (assuming the reference is a file path)
@@ -25,8 +35,17 @@ define([
                 }
             }
 
+            _.each(DATE_FIELDS, function(fieldName) {
+                if (response[fieldName]) {
+                    response[fieldName] = moment(response[fieldName]);
+                }
+            });
+
             return response;
         }
+    }, {
+        ARRAY_FIELDS: ARRAY_FIELDS,
+        DATE_FIELDS: DATE_FIELDS
     });
 
 });

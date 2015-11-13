@@ -5,8 +5,8 @@
 
 package com.hp.autonomy.frontend.find.similar;
 
+import com.hp.autonomy.frontend.find.search.FindDocument;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Document;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 
 import java.util.List;
@@ -22,6 +22,6 @@ public interface SimilarDocumentsService {
      * @return List of similar documents
      * @throws HodErrorException
      */
-    List<Document> findSimilar(Set<ResourceIdentifier> indexes, String reference) throws HodErrorException;
+    List<FindDocument> findSimilar(Set<ResourceIdentifier> indexes, String reference) throws HodErrorException;
 
 }
