@@ -336,7 +336,7 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear() {
-		waitForSearchLoadIndicatorToDisappear(30);
+		waitForSearchLoadIndicatorToDisappear(6000);
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear(int seconds) {
@@ -353,7 +353,13 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
     public void waitForPromotionsLoadIndicatorToDisappear() {
-        new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@data-cbox-rel='promoted-items-title']")));
+        new WebDriverWait(getDriver(), 60).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver input) {
+				WebElement promotionsBox = new WebDriverWait(input, 20).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".promotions")));
+				return !(promotionsBox.isDisplayed() && promotionsBox.findElements(By.cssSelector(".search-result-title")).isEmpty());
+			}
+		});
     }
 
 	public void waitForRelatedConceptsLoadIndicatorToDisappear() {
