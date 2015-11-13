@@ -50,7 +50,7 @@
       "role": "Admin",
       "auth": {
         "type": "Yahoo",
-        "username": "hodtest",
+        "username": "hodtesting",
         "password": "@\\S^*9hnT\"6pg9y^"
       }
     }
