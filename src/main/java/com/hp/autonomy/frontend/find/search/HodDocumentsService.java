@@ -5,12 +5,14 @@
 
 package com.hp.autonomy.frontend.find.search;
 
+import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.web.CacheNames;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
+import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
@@ -26,11 +28,35 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Conditional(HodCondition.class)
 public class HodDocumentsService implements DocumentsService {
+    private static final ImmutableSet<String> PUBLIC_INDEX_NAMES = ImmutableSet.of(
+            ResourceIdentifier.WIKI_CHI.getName(),
+            ResourceIdentifier.WIKI_ENG.getName(),
+            ResourceIdentifier.WIKI_FRA.getName(),
+            ResourceIdentifier.WIKI_GER.getName(),
+            ResourceIdentifier.WIKI_ITA.getName(),
+            ResourceIdentifier.WIKI_SPA.getName(),
+            ResourceIdentifier.WORLD_FACTBOOK.getName(),
+            ResourceIdentifier.NEWS_ENG.getName(),
+            ResourceIdentifier.NEWS_FRA.getName(),
+            ResourceIdentifier.NEWS_GER.getName(),
+            ResourceIdentifier.NEWS_ITA.getName(),
+            ResourceIdentifier.ARXIV.getName(),
+            ResourceIdentifier.PATENTS.getName()
+    );
+
+    private static final int MAX_SIMILAR_DOCUMENTS = 3;
+
+    @Autowired
+    private FindSimilarService<FindDocument> findSimilarService;
+
     @Autowired
     private ConfigService<HodFindConfig> configService;
 
@@ -67,6 +93,25 @@ public class HodDocumentsService implements DocumentsService {
         return queryTextIndex(text, maxResults, summary, indexes, fieldText, sort, minDate, maxDate, true);
     }
 
+    @Override
+    @Cacheable(CacheNames.SIMILAR_DOCUMENTS)
+    public List<FindDocument> findSimilar(final Set<ResourceIdentifier> indexes, final String reference) throws HodErrorException {
+        final QueryRequestBuilder requestBuilder = new QueryRequestBuilder()
+                .setIndexes(indexes)
+                .setPrint(Print.none)
+                .setAbsoluteMaxResults(MAX_SIMILAR_DOCUMENTS)
+                .setSummary(Summary.concept);
+
+        final Documents<FindDocument> result = findSimilarService.findSimilarDocumentsToIndexReference(reference, requestBuilder);
+        final List<FindDocument> documents = new LinkedList<>();
+
+        for (final FindDocument document : result.getDocuments()) {
+            documents.add(addDomain(indexes, document));
+        }
+
+        return documents;
+    }
+
     private Documents<FindDocument> queryTextIndex(
             final String text,
             final int maxResults,
@@ -78,7 +123,6 @@ public class HodDocumentsService implements DocumentsService {
             final DateTime maxDate,
             final boolean fetchPromotions
     ) throws HodErrorException {
-        final String domain = getDomain();
         final String profileName = configService.getConfig().getQueryManipulation().getProfile();
 
         final QueryRequestBuilder params = new QueryRequestBuilder()
@@ -86,7 +130,7 @@ public class HodDocumentsService implements DocumentsService {
                 .setSummary(summary)
                 .setIndexes(indexes)
                 .setFieldText(fieldText)
-                .setQueryProfile(new ResourceIdentifier(domain, profileName))
+                .setQueryProfile(new ResourceIdentifier(getDomain(), profileName))
                 .setSort(sort)
                 .setMinDate(minDate)
                 .setMaxDate(maxDate)
@@ -94,7 +138,44 @@ public class HodDocumentsService implements DocumentsService {
                 .setPrint(Print.fields)
                 .setPrintFields(new ArrayList<>(FindDocument.ALL_FIELDS));
 
-        return queryTextIndexService.queryTextIndexWithText(text, params);
+        final Documents<FindDocument> hodDocuments = queryTextIndexService.queryTextIndexWithText(text, params);
+        final List<FindDocument> documentList = new LinkedList<>();
+
+        for (final FindDocument hodDocument : hodDocuments.getDocuments()) {
+            documentList.add(addDomain(indexes, hodDocument));
+        }
+
+        return new Documents<>(documentList, hodDocuments.getTotalResults(), hodDocuments.getExpandedQuery());
+    }
+
+    // Add a domain to a FindDocument, given the collection of indexes which were queried against to return it from HOD
+    private FindDocument addDomain(final Collection<ResourceIdentifier> indexIdentifiers, final FindDocument document) {
+        // HOD does not return the domain for documents yet, but it does return the index
+        final String index = document.getIndex();
+        String domain = null;
+
+        // It's most likely that the returned documents will be in one of the indexes we are querying (hopefully the
+        // names are unique between the domains...)
+        for (final ResourceIdentifier indexIdentifier : indexIdentifiers) {
+            if (index.equals(indexIdentifier.getName())) {
+                domain = indexIdentifier.getDomain();
+                break;
+            }
+        }
+
+        if (domain == null) {
+            // If not, it might be a public index
+            if (PUBLIC_INDEX_NAMES.contains(index)) {
+                domain = ResourceIdentifier.PUBLIC_INDEXES_DOMAIN;
+            } else {
+                // If that fails, guess it is the user's domain
+                domain = getDomain();
+            }
+        }
+
+        return new FindDocument.Builder(document)
+                .setDomain(domain)
+                .build();
     }
 
     private String getDomain() {
