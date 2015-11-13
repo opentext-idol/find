@@ -29,7 +29,7 @@ public class HodSimilarDocumentsService implements SimilarDocumentsService {
     private static final int MAX_RESULTS = 3;
 
     @Autowired
-    private FindSimilarService<Documents> findSimilarService;
+    private FindSimilarService<Document> findSimilarService;
 
     @Override
     @Cacheable(CacheNames.SIMILAR_DOCUMENTS)
@@ -40,7 +40,7 @@ public class HodSimilarDocumentsService implements SimilarDocumentsService {
                 .setAbsoluteMaxResults(MAX_RESULTS)
                 .setSummary(Summary.concept);
 
-        final Documents result = findSimilarService.findSimilarDocumentsToIndexReference(reference, requestBuilder);
+        final Documents<Document> result = findSimilarService.findSimilarDocumentsToIndexReference(reference, requestBuilder);
         return result.getDocuments();
     }
 }

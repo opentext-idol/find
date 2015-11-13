@@ -38,7 +38,7 @@ import com.hp.autonomy.hod.client.api.textindex.query.fields.RetrieveIndexFields
 import com.hp.autonomy.hod.client.api.textindex.query.fields.RetrieveIndexFieldsServiceImpl;
 import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricValuesService;
 import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricValuesServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Document;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsServiceImpl;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
@@ -187,7 +187,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public QueryTextIndexService<Documents> queryTextIndexService() {
+    public QueryTextIndexService<Document> queryTextIndexService() {
         return QueryTextIndexServiceImpl.documentsService(hodServiceConfig());
     }
 
@@ -222,7 +222,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public GetContentService<Documents> getContentService() {
+    public GetContentService<Document> getContentService() {
         return GetContentServiceImpl.documentsService(hodServiceConfig());
     }
 
@@ -251,7 +251,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public FindSimilarService<Documents> findSimilarService() {
+    public FindSimilarService<Document> findSimilarService() {
         return FindSimilarServiceImpl.documentsService(hodServiceConfig());
     }
 
