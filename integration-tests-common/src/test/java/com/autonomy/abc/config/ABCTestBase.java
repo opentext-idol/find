@@ -34,7 +34,7 @@ import static org.junit.Assert.fail;
 @Ignore
 @RunWith(Parameterized.class)
 public abstract class ABCTestBase {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ABCTestBase.class);
+	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	// testState is used by Rules/StatementHandlers
 	private final TestState testState = TestState.get();
 	public final TestConfig config;
