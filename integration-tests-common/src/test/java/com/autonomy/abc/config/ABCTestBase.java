@@ -110,14 +110,14 @@ public abstract class ABCTestBase {
 		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
 			tryLogIn();
 		} else {
-			workaroundLogIn();
+			hostedLogIn("twitter");
 			getElementFactory().getPromotionsPage();
 		}
 	}
 
 	// log in via dev console while the HSOD SSO page is broken
-	private void workaroundLogIn() throws InterruptedException {
-		currentUser = config.getUser("twitter");
+	protected void hostedLogIn(String provider) throws InterruptedException {
+		currentUser = config.getUser(provider);
 		currentUser.getAuthProvider().login(getDriver());
 		if(!new AbcHasLoggedIn(getDriver()).hasLoggedIn()){
 			fail("Failed to log in");

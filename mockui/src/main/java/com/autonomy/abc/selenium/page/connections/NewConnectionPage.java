@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.connections;
 
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -22,6 +23,10 @@ public class NewConnectionPage extends SAASPageBase {
 
     public ConnectorTypeStepTab getConnectorTypeStep(){
         return ConnectorTypeStepTab.make(getDriver());
+    }
+
+    public ConnectorIndexStepTab getIndexStep(){
+        return ConnectorIndexStepTab.make(getDriver());
     }
 
     public ConnectorConfigStepTab getConnectorConfigStep(){

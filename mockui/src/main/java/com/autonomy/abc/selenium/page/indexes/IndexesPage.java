@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IndexesPage extends AppElement implements AppPage {
@@ -19,8 +20,12 @@ public class IndexesPage extends AppElement implements AppPage {
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content")));
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
+        new WebDriverWait(getDriver(),30)
+                .withMessage("Index page failed to load")
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content")));
+        new WebDriverWait(getDriver(),30)
+                .withMessage("Indexes failed to load")
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
     }
 
     public WebElement newIndexButton(){
@@ -44,5 +49,15 @@ public class IndexesPage extends AppElement implements AppPage {
 
     public List<WebElement> getIndexes() {
         return findElements(By.xpath("//*[contains(@ng-repeat,'index')]"));
+    }
+
+    public List<String> getIndexNames(){
+        List<String> names = new ArrayList<>();
+
+        for(WebElement index : getIndexes()){
+            names.add(index.findElement(By.className("listItemTitle")).getText());
+        }
+
+        return names;
     }
 }

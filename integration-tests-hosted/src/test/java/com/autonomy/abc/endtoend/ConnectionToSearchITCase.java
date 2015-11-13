@@ -87,6 +87,6 @@ public class ConnectionToSearchITCase extends ABCTestBase {
 
     @After
     public void tearDown() {
-        connectionService.deleteConnection(connector);
+        connectionService.deleteConnection(connector, true);
     }
 }
