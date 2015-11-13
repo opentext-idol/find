@@ -1,0 +1,7 @@
+{
+  "app": {
+    "type": "Hosted",
+    "url": "http://search.havenapps.io",
+    "find": "http://find.havenapps.io"
+  }
+}
