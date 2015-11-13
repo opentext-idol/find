@@ -1,7 +1,7 @@
 {
   "app": {
     "type": "Hosted",
-    "url": "http://search.havenapps.io",
+    "url": "http://search.havenapps.io/searchoptimizer/p",
     "find": "http://find.havenapps.io"
   },
   "selenium": {
