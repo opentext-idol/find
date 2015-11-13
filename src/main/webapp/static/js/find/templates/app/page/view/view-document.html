@@ -1,5 +1,6 @@
 <%
     var index = model.get('index');
+    var domain = model.get('domain');
 %>
 
 <div class="container-fluid full-height">
@@ -14,51 +15,38 @@
             <a class="btn btn-info view-server-button m-b-sm" target="_blank" href="<%-src%>"><%-i18n['search.document.openInNewTab']%></a>
             <table class="table m-t-xl view-server-document-info">
                 <tbody>
-                <% if (index) { %>
-                    <% if (index.get('domain')) { %>
-                        <tr>
-                            <th><%-i18n['search.document.domain']%></th>
-                            <td class="break-all"><%-index.get('domain')%></td>
-                        </tr>
-                    <% } %>
-                    <tr>
-                        <th><%-i18n['search.document.index']%></th>
-                        <td class="break-all"><%-index.get('name')%></td>
-                    </tr>
-                <% } %>
+                    <% _.each(fields, function(field) { %>
+                        <% if(model.has(field)) { %>
+                            <tr>
+                                <th><%-i18n['search.document.' + field]%></th>
+                                <td class="break-all"><%-model.get(field)%></td>
+                            </tr>
+                        <% } %>
+                    <% }); %>
 
-                <% _.each(fields, function(field) { %>
-                    <% if(model.has(field)) { %>
-                        <tr>
-                            <th><%-i18n['search.document.' + field]%></th>
-                            <td class="break-all"><%-model.get(field)%></td>
-                        </tr>
-                    <% } %>
-                <% }); %>
+                    <% _.each(arrayFields, function(field) { %>
+                        <% if (model.get(field).length) { %>
+                            <tr>
+                                <th><%-i18n['search.document.' + field]%></th>
+                                <td class="break-all">
+                                    <ul class="list-unstyled">
+                                        <% _.each(model.get(field), function(value) { %>
+                                            <li><%-value%></li>
+                                        <% }); %>
+                                    </ul>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% }); %>
 
-                <% _.each(arrayFields, function(field) { %>
-                    <% if (model.get(field).length) { %>
-                        <tr>
-                            <th><%-i18n['search.document.' + field]%></th>
-                            <td class="break-all">
-                                <ul class="list-unstyled">
-                                    <% _.each(model.get(field), function(value) { %>
-                                        <li><%-value%></li>
-                                    <% }); %>
-                                </ul>
-                            </td>
-                        </tr>
-                    <% } %>
-                <% }); %>
-
-                <% _.each(dateFields, function(field) { %>
-                    <% if(model.has(field)) { %>
-                        <tr>
-                            <th><%-i18n['search.document.' + field]%></th>
-                            <td><%-model.get(field).format('LLLL')%></td>
-                        </tr>
-                    <% } %>
-                <% });%>
+                    <% _.each(dateFields, function(field) { %>
+                        <% if(model.has(field)) { %>
+                            <tr>
+                                <th><%-i18n['search.document.' + field]%></th>
+                                <td><%-model.get(field).format('LLLL')%></td>
+                            </tr>
+                        <% } %>
+                    <% });%>
                 </tbody>
             </table>
         </div>

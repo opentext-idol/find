@@ -3,10 +3,11 @@ define([
 ], function($) {
 
     return {
-        getHref: function(reference, index) {
-            if (index) {
+        getHref: function(reference, index, domain) {
+            if (index && domain) {
                 return '../api/public/view/viewDocument?' + $.param({
-                        indexes: index.id,
+                        domain: domain,
+                        index: index,
                         reference: reference
                     });
             } else {

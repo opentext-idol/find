@@ -87,13 +87,8 @@ define([
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
 
-            this.documentsCollection = new DocumentsCollection([], {
-                indexesCollection: options.indexesCollection
-            });
-
-            this.promotionsCollection = new PromotionsCollection([], {
-                indexesCollection: options.indexesCollection
-            });
+            this.documentsCollection = new DocumentsCollection();
+            this.promotionsCollection = new PromotionsCollection();
 
             this.listenTo(this.queryModel, 'change refresh', function() {
                 if (!_.isEmpty(this.queryModel.get('indexes'))) {
@@ -258,7 +253,7 @@ define([
                     model: options.model,
                     arrayFields: DocumentModel.ARRAY_FIELDS,
                     dateFields: DocumentModel.DATE_FIELDS,
-                    fields: ['reference']
+                    fields: ['domain', 'index', 'reference']
                 });
             }
 
@@ -268,7 +263,7 @@ define([
         formatResult: function(model, isPromotion) {
             var reference = model.get('reference');
             var summary = this.addLinksToSummary(model.get('summary'));
-            var href = viewClient.getHref(reference, model.get('index'));
+            var href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
 
             var $newResult = $(this.resultsTemplate({
                 i18n: i18n,
