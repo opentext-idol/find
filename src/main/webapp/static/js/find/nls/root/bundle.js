@@ -51,7 +51,7 @@ define([
         'search.dates.timeInterval.week': 'Last Week',
         'search.dates.timeInterval.month': 'Last Month',
         'search.dates.timeInterval.year': 'Last Year',
-        'search.document.author': 'Author',
+        'search.document.authors': 'Authors',
         'search.document.categories': 'Categories',
         'search.document.date': 'Date',
         'search.document.dateCreated': 'Date Created',

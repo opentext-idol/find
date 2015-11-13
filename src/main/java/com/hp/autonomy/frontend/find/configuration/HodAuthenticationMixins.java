@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.configuration;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthentication;
 

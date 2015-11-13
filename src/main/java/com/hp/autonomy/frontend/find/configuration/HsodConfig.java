@@ -2,7 +2,6 @@ package com.hp.autonomy.frontend.find.configuration;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.hp.autonomy.frontend.configuration.ConfigException;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;

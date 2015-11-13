@@ -7,7 +7,6 @@ package com.hp.autonomy.frontend.find.search;
 
 import com.hp.autonomy.frontend.find.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Document;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
@@ -34,7 +33,7 @@ public class DocumentsController {
 
     @RequestMapping(value = "results", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<Document> query(
+    public Documents<FindDocument> query(
         @RequestParam("text") final String text,
         @RequestParam("max_results") final int maxResults,
         @RequestParam("summary") final Summary summary,
@@ -49,7 +48,7 @@ public class DocumentsController {
 
     @RequestMapping(value="promotions", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<Document> queryForPromotions(
+    public Documents<FindDocument> queryForPromotions(
             @RequestParam("text") final String text,
             @RequestParam("max_results") final int maxResults,
             @RequestParam("summary") final Summary summary,
