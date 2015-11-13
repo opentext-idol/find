@@ -6,7 +6,6 @@ import com.hp.autonomy.frontend.find.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
-import com.hp.autonomy.hod.client.api.queryprofile.QueryProfile;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
