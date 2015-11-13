@@ -9,6 +9,8 @@ import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.junit.Before;
@@ -20,7 +22,6 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class IndexesPageITCase extends ABCTestBase {
-
     IndexesPage indexesPage;
     HSOElementFactory hsoElementFactory;
     HSOApplication hsoApplication;
@@ -52,6 +53,7 @@ public class IndexesPageITCase extends ABCTestBase {
         WebConnector connector = new WebConnector("www.bbc.co.uk","bbc",new Index("default_index"));
 
         cs.setUpConnection(connector);
+
         try {
             cs.deleteConnection(connector, true);
 
@@ -66,7 +68,25 @@ public class IndexesPageITCase extends ABCTestBase {
     @Test
     //Potentially should be in ConnectionsPageITCase
     //CSA1710
-    public void testDeletingConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){}
+    public void testDeletingConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
+        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        ConnectionsPage connectionsPage = hsoElementFactory.getConnectionsPage();
+        ConnectionService connectionService = hsoApplication.createConnectionService(getElementFactory());
+
+        WebConnector connector = new WebConnector("www.bbc.co.uk","bbc");
+        Index index = connector.getIndex();
+
+        connectionsPage.newConnectionButton().click();
+        NewConnectionPage newConnectionPage = hsoElementFactory.getNewConnectionPage();
+        connector.makeWizard(newConnectionPage).apply();
+
+        connectionService.deleteConnection(connector, true);
+
+        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        IndexesPage indexesPage = hsoElementFactory.getIndexesPage();
+
+        assertThat(indexesPage.getIndexNames(),hasItem(index.getName()));
+    }
 
     @Test
     //CSA1626
