@@ -3,5 +3,9 @@
     "type": "Hosted",
     "url": "http://search.havenapps.io",
     "find": "http://find.havenapps.io"
+  },
+  "selenium": {
+    "url": "http://16.46.34.8:4444/wd/hub",
+    "browsers": ["chrome"]
   }
 }
