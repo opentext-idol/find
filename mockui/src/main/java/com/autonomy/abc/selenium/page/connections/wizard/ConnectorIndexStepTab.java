@@ -21,14 +21,18 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     }
 
     public WebElement selectIndexButton(){
-        return findElement(By.tagName("button"));
+        return findElement(By.xpath("//button[text()='Select index']"));
     }
 
     public WebElement getIndexSearchBox(){
-        return getDriver().findElement(By.className("chosen-search"));
+        return getDriver().findElement(By.className("chosen-single"));
     }
 
     public List<WebElement> getExistingIndexes() {
         return getDriver().findElements(By.cssSelector(".chosen-results li"));
+    }
+
+    public WebElement modalOKButton() {
+        return getDriver().findElement(By.cssSelector(".modal-footer [type='submit']"));
     }
 }

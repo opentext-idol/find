@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -43,5 +44,17 @@ public class ConnectorConfigStepTab extends SAASPageBase {
 
     public FormInput occurrencesInput(){
         return new FormInput(findElement(By.name("occurrences")), getDriver());
+    }
+
+    public WebElement advancedConfigurations(){
+        return findElement(By.id("advancedConfigurationPropsHeader"));
+    }
+
+    public WebElement getDepthBox(){
+        return findElement(By.cssSelector("[name='depth']"));
+    }
+
+    public WebElement getMaxPagesBox() {
+        return findElement(By.cssSelector("[name='max_pages']"));
     }
 }

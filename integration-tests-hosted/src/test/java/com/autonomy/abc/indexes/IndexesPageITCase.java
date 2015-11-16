@@ -17,9 +17,15 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -53,7 +59,7 @@ public class IndexesPageITCase extends HostedTestBase {
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = getApplication().createConnectionService(getElementFactory());
         Index default_index = new Index("default_index");
-        WebConnector connector = new WebConnector("www.bbc.co.uk","bbc",default_index);
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc",default_index);
 
         //Create connection
         cs.setUpConnection(connector);
@@ -61,8 +67,10 @@ public class IndexesPageITCase extends HostedTestBase {
         try {
             //Try to delete the connection, (and the default index)
             cs.deleteConnection(connector, true);
-        } catch (ElementNotFoundException e) {
+        } catch (ElementNotVisibleException e) {
             //If there's an error it is likely because the index couldn't be deleted - which is expected
+            //Need to exit the deletion modal that will still be open
+            getDriver().findElement(By.cssSelector(".modal-footer [type=button]")).click();
         }
 
         //Navigate to indexes
@@ -82,7 +90,7 @@ public class IndexesPageITCase extends HostedTestBase {
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
         //Create connector; index will be automatically set to 'bbc'
-        WebConnector connector = new WebConnector("www.bbc.co.uk","bbc");
+        WebConnector connector = new WebConnector("http;//www.bbc.co.uk","bbc");
         Index index = connector.getIndex();
 
         //Create new connector - NO WAIT
@@ -92,7 +100,11 @@ public class IndexesPageITCase extends HostedTestBase {
 
         //Try deleting the index straight away, while it is still processing
         //TODO change the Gritter Notice it's expecting
-        connectionService.deleteConnection(connector, true);
+        try {
+            connectionService.deleteConnection(connector, true);
+        } catch (Exception e) {
+            logger.warn("Error deleting index");
+        }
 
         //Navigate to Indexes
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
@@ -122,22 +134,44 @@ public class IndexesPageITCase extends HostedTestBase {
         PinToPositionPromotion ptpPromotion = new PinToPositionPromotion(1,"trigger");
         Search search = new Search(getApplication(),getElementFactory(),"search").applyFilter(new IndexFilter(index));
 
-        promotionService.setUpPromotion(ptpPromotion, search, 3);
+        try {
+            int numberOfDocs = 1;
+            promotionService.setUpPromotion(ptpPromotion, search, numberOfDocs);
 
-        //Now delete the index
-        indexService.deleteIndex(index);
+            //Now delete the index
+            connectionService.deleteConnection(connector, true);
 
-        //Navigate to the promotion - this will time out if it can't get to the Promotions Detail Page
-        PromotionsDetailPage pdp = promotionService.goToDetails(ptpPromotion);
+            //Navigate to the promotion - this will time out if it can't get to the Promotions Detail Page
+            PromotionsDetailPage pdp = promotionService.goToDetails(ptpPromotion);
 
-        //Get the promoted documents, there should still be three
-        List<String> promotionTitles = pdp.getPromotedTitles();
-        assertThat(promotionTitles.size(),is(3));
+            //Get the promoted documents, there should still be one
+            //TODO this is a workaround as getting promoted documents 'properly' errors if they are 'Unknown Document's
+            List<WebElement> promotedDocuments = getDriver().findElements(By.cssSelector(".promoted-documents-list h3"));
 
-        //All documents should know be 'unknown documents'
-        for(String promotionTitle : promotionTitles){
-            assertThat(promotionTitle,is("Unknown Document"));
+            assertThat(promotedDocuments.size(), is(numberOfDocs));
+
+            //All documents should know be 'unknown documents'
+            for(WebElement promotedDocument : promotedDocuments){
+                assertThat(promotedDocument.getText(), is("Unknown Document"));
+
+            }
+        } finally {
+            promotionService.deleteAll();
         }
     }
 
+    @Test
+    public void testIndexNameWithSpaceDoesNotGiveInvalidNameNotifications(){
+
+    }
+
+    @After
+    public void tearDown(){
+        try {
+            hsoApplication.createConnectionService(hsoElementFactory).deleteAllConnections();
+            hsoApplication.createIndexService(hsoElementFactory).deleteAllIndexes();
+        } catch (Exception e) {
+            logger.warn("Failed to tear down");
+        }
+    }
 }

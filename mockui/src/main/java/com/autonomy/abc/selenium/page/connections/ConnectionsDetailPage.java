@@ -35,7 +35,7 @@ public class ConnectionsDetailPage extends SAASPageBase {
 
     // TODO: this should be a "Checkbox" element
     public WebElement alsoDeleteIndexCheckbox() {
-        return deleteModal().findElement(By.cssSelector("input[type=checkbox]"));
+        return deleteModal().findElement(By.className("iCheck-helper"));
     }
 
     public WebElement deleteConfirmButton() {

@@ -15,8 +15,8 @@ public class ConnectorIndexStep implements WizardStep {
 
     public ConnectorIndexStep(NewConnectionPage newConnectionPage, Index index, String name){
         this.index = index;
-        this.newConnectionPage = newConnectionPage;
         this.name = name;
+        this.newConnectionPage = newConnectionPage;
     }
 
     @Override
@@ -26,18 +26,21 @@ public class ConnectorIndexStep implements WizardStep {
 
     @Override
     public Object apply() {
+        ConnectorIndexStepTab connectorIndexStepTab = newConnectionPage.getIndexStep();
+
         if(index.getName().equals(name)){
             return null;
         }
 
-        ConnectorIndexStepTab indexStepTab = newConnectionPage.getIndexStep();
+        connectorIndexStepTab.selectIndexButton().click();
+        connectorIndexStepTab.getIndexSearchBox().click();
 
-        indexStepTab.selectIndexButton().click();
-        indexStepTab.getIndexSearchBox().click();
-
-        for(WebElement existingIndex : indexStepTab.getExistingIndexes()){
+        for(WebElement existingIndex : connectorIndexStepTab.getExistingIndexes()){
             if(existingIndex.getText().equals(index.getName())){
                 existingIndex.click();
+                connectorIndexStepTab.modalOKButton().click();
+                //Need to wait for modal to disappear
+                try{Thread.sleep(1000);} catch (Exception e) {/*NO OP*/}
                 return null;
             }
         }

@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 
 public class WebConnector extends Connector {
     private String url;
@@ -15,6 +16,7 @@ public class WebConnector extends Connector {
 
     public WebConnector(String url, String name, Index index){
         super(name, index);
+        this.url = url;
     }
 
     public String getUrl() {
@@ -33,7 +35,7 @@ public class WebConnector extends Connector {
             super();
             page = newConnectionPage;
             add(new ConnectorTypeStep(page, url, name));
-            add(new BlankWizardStep("Connector Configuration"));
+            add(new ConnectorConfigStep(page).withDepth(1).maxPages(10));
             add(new ConnectorIndexStep(page,index,name));
             add(new BlankWizardStep("Complete"));
         }

@@ -27,7 +27,7 @@ public abstract class Connector {
     }
 
     public String getDeleteNotification() {
-        return "Deleting connection " + getName();
+        return "Connection " + getName() + " successfully removed";
     }
 
     public abstract Wizard makeWizard(NewConnectionPage newConnectionPage);
