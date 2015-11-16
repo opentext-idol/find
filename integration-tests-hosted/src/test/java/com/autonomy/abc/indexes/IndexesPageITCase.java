@@ -22,7 +22,11 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -32,9 +36,10 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class IndexesPageITCase extends ABCTestBase {
-    IndexesPage indexesPage;
-    HSOElementFactory hsoElementFactory;
-    HSOApplication hsoApplication;
+    private IndexesPage indexesPage;
+    private HSOElementFactory hsoElementFactory;
+    private HSOApplication hsoApplication;
+    private Logger logger = LoggerFactory.getLogger(IndexesPageITCase.class);
 
     public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -61,7 +66,7 @@ public class IndexesPageITCase extends ABCTestBase {
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = hsoApplication.createConnectionService(hsoElementFactory);
         Index default_index = new Index("default_index");
-        WebConnector connector = new WebConnector("www.bbc.co.uk","bbc",default_index);
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc",default_index);
 
         //Create connection
         cs.setUpConnection(connector);
@@ -69,8 +74,10 @@ public class IndexesPageITCase extends ABCTestBase {
         try {
             //Try to delete the connection, (and the default index)
             cs.deleteConnection(connector, true);
-        } catch (ElementNotFoundException e) {
+        } catch (ElementNotVisibleException e) {
             //If there's an error it is likely because the index couldn't be deleted - which is expected
+            //Need to exit the modal
+            getDriver().findElement(By.cssSelector(".modal-footer [type=button]")).click();
         }
 
         //Navigate to indexes
@@ -148,13 +155,18 @@ public class IndexesPageITCase extends ABCTestBase {
         }
     }
 
-    @After
-    public void deleteConnections(){
-        hsoApplication.createConnectionService(hsoElementFactory).deleteAllConnections();
+    @Test
+    public void testIndexNameWithSpaceDoesNotGiveInvalidNameNotifications(){
+
     }
 
     @After
-    public void deleteIndexes(){
-        hsoApplication.createIndexService(hsoElementFactory).deleteAllIndexes();
+    public void tearDown(){
+        try {
+            hsoApplication.createConnectionService(hsoElementFactory).deleteAllConnections();
+            hsoApplication.createIndexService(hsoElementFactory).deleteAllIndexes();
+        } catch (Exception e) {
+            logger.warn("Failed to tear down");
+        }
     }
 }
