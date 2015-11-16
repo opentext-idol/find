@@ -1,18 +1,11 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.config.HSOApplication;
-import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
-import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
@@ -23,9 +16,7 @@ import com.autonomy.abc.selenium.search.SearchActionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +29,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.core.Is.is;
 
 //CSA-1564
-public class IndexSetUpITCase extends ABCTestBase {
+public class IndexSetUpITCase extends HostedTestBase {
     private IndexService indexService;
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
@@ -51,16 +42,6 @@ public class IndexSetUpITCase extends ABCTestBase {
 
         indexName = UUID.randomUUID().toString().replace('-','a');
         index = new Index(indexName);
-    }
-
-    @Override
-    public HSOApplication getApplication() {
-        return (HSOApplication) super.getApplication();
-    }
-
-    @Override
-    public HSOElementFactory getElementFactory() {
-        return (HSOElementFactory) super.getElementFactory();
     }
 
     @Before

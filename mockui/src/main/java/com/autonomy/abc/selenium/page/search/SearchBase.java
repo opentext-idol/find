@@ -13,7 +13,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -353,8 +352,18 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 	}
 
     public void waitForPromotionsLoadIndicatorToDisappear() {
-        new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@data-cbox-rel='promoted-items-title']")));
+		final WebElement promotionsBox = new WebDriverWait(getDriver(), 20).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".promotions")));
+        new WebDriverWait(getDriver(), 60).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver input) {
+				return !promotionsBox.isDisplayed() || resultsAreLoaded(promotionsBox);
+			}
+		});
     }
+
+	private boolean resultsAreLoaded(WebElement promotionsBox) {
+		return promotionsBox.findElements(By.cssSelector(".search-result-title")).size() > 0;
+	}
 
 	public void waitForRelatedConceptsLoadIndicatorToDisappear() {
 		try {

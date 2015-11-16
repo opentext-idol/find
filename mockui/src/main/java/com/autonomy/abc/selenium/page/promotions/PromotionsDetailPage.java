@@ -203,13 +203,13 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     private void waitForPromotedTitlesToLoad() {
-        new WebDriverWait(getDriver(), 20).until(new ExpectedCondition<Boolean>() {
+        new WebDriverWait(getDriver(), 20).until(ExpectedConditions.refreshed(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver input) {
                 List<WebElement> docs = input.findElements(By.cssSelector(".promoted-documents-list h3"));
                 return !(docs.isEmpty() || docs.get(0).getText().contains("Unknown Document"));
             }
-        });
+        }));
     }
 
     private WebElement forwardButton(){

@@ -56,4 +56,9 @@ public class WebConnector extends Connector {
             page.loadOrFadeWait();
         }
     }
+
+    @Override
+    public String toString() {
+        return "WebConnector<" + getName() + "|" + getUrl() + ">";
+    }
 }

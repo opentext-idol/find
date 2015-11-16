@@ -1,6 +1,6 @@
 package com.autonomy.abc.topnavbar.login;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import org.openqa.selenium.Platform;
 /*
  * TODO Possibly make sure a gritter with 'Signed in' comes up, correct colour circle etc. May be difficult to do considering it occurs during tryLogIn()
  */
-public class LoginPageHostedITCase extends ABCTestBase {
+public class LoginPageHostedITCase extends HostedTestBase {
 
     public LoginPageHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);

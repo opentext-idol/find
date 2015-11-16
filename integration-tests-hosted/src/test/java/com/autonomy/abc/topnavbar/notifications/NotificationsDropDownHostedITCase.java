@@ -6,16 +6,10 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.menu.NotificationsDropDown;
-import com.autonomy.abc.selenium.menu.SideNavBar;
-import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.*;
-import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,6 +20,11 @@ import static org.hamcrest.core.Is.is;
 public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
     public NotificationsDropDownHostedITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
         super(config, browser, appType, platform);
+    }
+
+    @Override
+    public HSOElementFactory getElementFactory() {
+        return (HSOElementFactory) super.getElementFactory();
     }
 
     @Test
@@ -66,13 +65,13 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     public void testCreateIndexNotifications() {
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage indexes = ((HSOElementFactory) getElementFactory()).getIndexesPage();
+        IndexesPage indexes = getElementFactory().getIndexesPage();
 
         String indexName = "danye west";
         String indexCreationNotification = "Created a new index: "+indexName;
 
         indexes.newIndexButton().click();
-        CreateNewIndexPage createNewIndexPage = ((HSOElementFactory) getElementFactory()).getCreateNewIndexPage();
+        CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
         createNewIndexPage.inputIndexName(indexName);
         createNewIndexPage.nextButton().click();
         createNewIndexPage.loadOrFadeWait();
@@ -81,13 +80,13 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         createNewIndexPage.finishButton().click();
 
         try {
-            ((HSOElementFactory) getElementFactory()).getIndexesPage();
+            getElementFactory().getIndexesPage();
             new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(indexCreationNotification));
 
             checkForNotification(indexCreationNotification);
         } finally {
             body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-            ((HSOElementFactory) getElementFactory()).getIndexesPage().deleteIndex(indexName);
+            getElementFactory().getIndexesPage().deleteIndex(indexName);
         }
     }
 
@@ -106,7 +105,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
 
         try {
-            ((HSOElementFactory) getElementFactory()).getConnectionsPage();
+            getElementFactory().getConnectionsPage();
 
             body.getTopNavBar().notificationsDropdown();
             notifications = body.getTopNavBar().getNotifications();

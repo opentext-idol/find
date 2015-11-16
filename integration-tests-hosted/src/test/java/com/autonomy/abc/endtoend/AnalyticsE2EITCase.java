@@ -1,11 +1,10 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -19,21 +18,24 @@ import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.isIn;
 
 //CSA-1572
-public class AnalyticsE2EITCase extends ABCTestBase {
+public class AnalyticsE2EITCase extends HostedTestBase {
 
     private AnalyticsPage analyticsPage;
     private SearchPage searchPage;
@@ -42,14 +44,10 @@ public class AnalyticsE2EITCase extends ABCTestBase {
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
     private final static Matcher<? super WebElement> NO_RESULTS = containsText("No results found");
+    private final static Logger LOGGER = LoggerFactory.getLogger(AnalyticsE2EITCase.class);
 
     public AnalyticsE2EITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
-    }
-
-    @Override
-    public HSOElementFactory getElementFactory() {
-        return (HSOElementFactory) super.getElementFactory();
     }
 
     @Before
@@ -73,9 +71,16 @@ public class AnalyticsE2EITCase extends ABCTestBase {
 
     @Test
     public void testAnalytics() throws InterruptedException {
-        List<String> newTriggers = Arrays.asList("Happy", "Sad");
+        List<String> newTriggers = Arrays.asList("happy", "sad");
 
-        Term nonZeroTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
+        Term nonZeroTerm;
+        try {
+            nonZeroTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
+        } catch (NoSuchElementException e) {
+            // CSA-1752
+            LOGGER.warn("all popular search terms are zero hit terms");
+            nonZeroTerm = analyticsPage.getPopularSearchTerm(2);
+        }
         Term zeroTerm = analyticsPage.getMostPopularZeroSearchTerm();
         addSynonymGroup(nonZeroTerm, zeroTerm);
 
@@ -130,6 +135,7 @@ public class AnalyticsE2EITCase extends ABCTestBase {
         Promotion promotion = new SpotlightPromotion(trigger);
         Search search = searchActionFactory.makeSearch(searchTerm);
         promotionService.setUpPromotion(promotion, search, 3);
+        LOGGER.info("set up promotion for trigger " + trigger);
     }
 
     private void search(String searchTerm) {
@@ -151,12 +157,13 @@ public class AnalyticsE2EITCase extends ABCTestBase {
         getBody().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
         getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymString, "English");
+        LOGGER.info("added synonym group: " + synonymString);
     }
 
     private void verifyTermSearch(Term term) {
         search(term.getTerm());
-        assertThat(searchPage.synonymInGroup(term.getTerm()), containsText(term.getTerm().toLowerCase()));
-        assertThat(searchPage, not(NO_RESULTS));
+        verifyThat(searchPage.synonymInGroup(term.getTerm()), containsText(term.getTerm().toLowerCase()));
+        verifyThat(searchPage, not(NO_RESULTS));
     }
 
     private void tryGoToLeastPopularPromotion() {
@@ -164,6 +171,7 @@ public class AnalyticsE2EITCase extends ABCTestBase {
         analyticsPage.getMostPopularPromotion().click();
         if (getDriver().getCurrentUrl().contains("detail")) {
             promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+            LOGGER.info("gone to least popular promotion");
         } else {
             promotionsDetailPage = null;
         }
@@ -172,15 +180,19 @@ public class AnalyticsE2EITCase extends ABCTestBase {
     private void goToFirstPromotion() {
         promotionService.goToPromotions().promotionsList().get(0).click();
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+        LOGGER.warn("gone to first promotion in list");
     }
 
     private void verifyTriggerPromotes(List<String> promotedDocuments, String trigger, boolean promotes) {
         search(trigger);
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
+        if (searchPage.showMorePromotionsButton().isDisplayed()) {
+            searchPage.showMorePromotions();
+        }
         if (promotes) {
-            assertThat(promotedDocuments, everyItem(isIn(searchPage.getPromotedDocumentTitles())));
+            verifyThat(searchPage.getPromotedDocumentTitles(), everyItem(isIn(promotedDocuments)));
         } else {
-            assertThat(promotedDocuments, everyItem(not(isIn(searchPage.getPromotedDocumentTitles()))));
+            verifyThat(searchPage.getPromotedDocumentTitles(), everyItem(not(isIn(promotedDocuments))));
         }
     }
 }

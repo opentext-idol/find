@@ -1,11 +1,10 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -22,7 +21,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 //CSA-1563
-public class QuickSetUpITCase extends ABCTestBase {
+public class QuickSetUpITCase extends HostedTestBase {
 
     public QuickSetUpITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -37,7 +36,7 @@ public class QuickSetUpITCase extends ABCTestBase {
 
         body.getSideNavBar().switchPage(NavBarTabId.GETTING_STARTED);
         body = getBody();
-        gettingStarted = ((HSOElementFactory) getElementFactory()).getGettingStartedPage();
+        gettingStarted = getElementFactory().getGettingStartedPage();
     }
 
     @Test

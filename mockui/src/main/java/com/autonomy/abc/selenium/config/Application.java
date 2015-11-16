@@ -15,9 +15,7 @@ public abstract class Application {
 
     public abstract ElementFactory createElementFactory(WebDriver driver);
 
-    public PromotionService createPromotionService(ElementFactory elementFactory) {
-        return new PromotionService(this, elementFactory);
-    }
+    public abstract PromotionService createPromotionService(ElementFactory elementFactory);
 
     public abstract UserService createUserService(ElementFactory elementFactory);
 

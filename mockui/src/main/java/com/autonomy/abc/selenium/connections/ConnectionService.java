@@ -19,9 +19,9 @@ public class ConnectionService {
     private NewConnectionPage newConnectionPage;
     private ConnectionsDetailPage connectionsDetailPage;
 
-    public ConnectionService(Application application, ElementFactory elementFactory) {
+    public ConnectionService(Application application, HSOElementFactory elementFactory) {
         this.application = application;
-        this.elementFactory = (HSOElementFactory) elementFactory;
+        this.elementFactory = elementFactory;
     }
 
     protected WebDriver getDriver() {

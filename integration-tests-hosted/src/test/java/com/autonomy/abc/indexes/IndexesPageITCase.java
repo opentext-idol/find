@@ -1,15 +1,13 @@
 package com.autonomy.abc.indexes;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
@@ -26,14 +24,11 @@ import org.openqa.selenium.Platform;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class IndexesPageITCase extends ABCTestBase {
+public class IndexesPageITCase extends HostedTestBase {
     IndexesPage indexesPage;
-    HSOElementFactory hsoElementFactory;
-    HSOApplication hsoApplication;
 
     public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -46,11 +41,9 @@ public class IndexesPageITCase extends ABCTestBase {
         hostedLogIn("yahoo");
         getElementFactory().getPromotionsPage();
 
-        hsoElementFactory = (HSOElementFactory) getElementFactory();
-        hsoApplication = (HSOApplication) getApplication();
 
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        indexesPage = hsoElementFactory.getIndexesPage();
+        indexesPage = getElementFactory().getIndexesPage();
 
         body = getBody();
     }
@@ -58,7 +51,7 @@ public class IndexesPageITCase extends ABCTestBase {
     @Test
     //CSA1720
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
-        ConnectionService cs = hsoApplication.createConnectionService(hsoElementFactory);
+        ConnectionService cs = getApplication().createConnectionService(getElementFactory());
         Index default_index = new Index("default_index");
         WebConnector connector = new WebConnector("www.bbc.co.uk","bbc",default_index);
 
@@ -74,7 +67,7 @@ public class IndexesPageITCase extends ABCTestBase {
 
         //Navigate to indexes
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage indexesPage = hsoElementFactory.getIndexesPage();
+        IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Make sure default index is still there
         assertThat(indexesPage.getIndexNames(),hasItem(default_index.getName()));
@@ -85,8 +78,8 @@ public class IndexesPageITCase extends ABCTestBase {
     //CSA1710
     public void testDeletingConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
         body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-        ConnectionsPage connectionsPage = hsoElementFactory.getConnectionsPage();
-        ConnectionService connectionService = hsoApplication.createConnectionService(hsoElementFactory);
+        ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
+        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
         //Create connector; index will be automatically set to 'bbc'
         WebConnector connector = new WebConnector("www.bbc.co.uk","bbc");
@@ -94,7 +87,7 @@ public class IndexesPageITCase extends ABCTestBase {
 
         //Create new connector - NO WAIT
         connectionsPage.newConnectionButton().click();
-        NewConnectionPage newConnectionPage = hsoElementFactory.getNewConnectionPage();
+        NewConnectionPage newConnectionPage = getElementFactory().getNewConnectionPage();
         connector.makeWizard(newConnectionPage).apply();
 
         //Try deleting the index straight away, while it is still processing
@@ -103,7 +96,7 @@ public class IndexesPageITCase extends ABCTestBase {
 
         //Navigate to Indexes
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage indexesPage = hsoElementFactory.getIndexesPage();
+        IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Ensure the index wasn't deleted
         assertThat(indexesPage.getIndexNames(),hasItem(index.getName()));
@@ -115,19 +108,19 @@ public class IndexesPageITCase extends ABCTestBase {
         Index index = new Index("bbc");
 
         //Create index
-        IndexService indexService = hsoApplication.createIndexService(hsoElementFactory);
+        IndexService indexService = getApplication().createIndexService(getElementFactory());
         indexService.setUpIndex(index);
 
         //Create connection - attached to the same index (we need it to have data for a promotion)
-        ConnectionService connectionService = hsoApplication.createConnectionService(hsoElementFactory);
+        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
         WebConnector connector = new WebConnector("www.bbc.co.uk","bbc",index);
 
         connectionService.setUpConnection(connector);
 
         //Create a promotion (using the index created)
-        PromotionService promotionService = hsoApplication.createPromotionService(hsoElementFactory);
+        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
         PinToPositionPromotion ptpPromotion = new PinToPositionPromotion(1,"trigger");
-        Search search = new Search(hsoApplication,hsoElementFactory,"search").applyFilter(new IndexFilter(index));
+        Search search = new Search(getApplication(),getElementFactory(),"search").applyFilter(new IndexFilter(index));
 
         promotionService.setUpPromotion(ptpPromotion, search, 3);
 

@@ -1,13 +1,12 @@
 package com.autonomy.abc.find;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.Input;
 import com.autonomy.abc.selenium.find.Service;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -56,7 +55,7 @@ import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
-public class FindITCase extends ABCTestBase {
+public class FindITCase extends HostedTestBase {
     private FindPage find;
     private Service service;
     private Input input;
@@ -84,7 +83,7 @@ public class FindITCase extends ABCTestBase {
         getDriver().switchTo().window(browserHandles.get(1));
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
-        find = ((HSOElementFactory) getElementFactory()).getFindPage();
+        find = getElementFactory().getFindPage();
         input = find.getInput();
         service = find.getService();
     }
@@ -571,9 +570,9 @@ public class FindITCase extends ABCTestBase {
         }
     }
 
-    private class WaitForCBoxLoadIndicatorToDisappear implements ExpectedCondition {
+    private class WaitForCBoxLoadIndicatorToDisappear implements ExpectedCondition<Boolean> {
         @Override
-        public Object apply(Object o) {
+        public Boolean apply(WebDriver input) {
             return !getDriver().findElement(By.cssSelector("#cboxLoadedContent .icon-spin")).isDisplayed();
         }
 

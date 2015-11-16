@@ -1,12 +1,11 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.Service;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
@@ -31,16 +30,11 @@ import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 //CSA-1590
-public class AnalyticsToFindITCase extends ABCTestBase {
+public class AnalyticsToFindITCase extends HostedTestBase {
     private PromotionService promotionService;
 
     public AnalyticsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
-    }
-
-    @Override
-    public HSOElementFactory getElementFactory() {
-        return (HSOElementFactory) super.getElementFactory();
     }
 
     @Before

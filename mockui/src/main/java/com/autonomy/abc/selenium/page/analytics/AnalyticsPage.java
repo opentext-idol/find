@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page.analytics;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -58,19 +59,16 @@ public class AnalyticsPage extends AppElement implements AppPage {
 
     public Term getMostPopularNonZeroSearchTerm() {
         for(WebElement term : getPopularTerms()){
-            LoggerFactory.getLogger(AnalyticsPage.class).info(term.findElement(By.tagName("a")).getText());
             if(!zeroHitTerm(term.findElement(By.tagName("a")).getText())){
                 return new Term(term);
             }
         }
-
-        return null;
+        throw new NoSuchElementException("All popular search terms are zero hit terms");
     }
 
     private boolean zeroHitTerm(String term) {
         for(WebElement zeroTerm : getZeroHitContainer().findElements(By.cssSelector(".list-group-item a"))){
             if (zeroTerm.getText().equals(term)){
-                LoggerFactory.getLogger(AnalyticsPage.class).info("HIT!HIT!HIT!");
                 return true;
             }
         }
@@ -104,9 +102,13 @@ public class AnalyticsPage extends AppElement implements AppPage {
     }
 
     public Term getMostPopularSearchTerm() {
+        return getPopularSearchTerm(1);
+    }
+
+    public Term getPopularSearchTerm(int num) {
         WebElement container = getPopularTermContainer();
         new WebDriverWait(getDriver(),30).until(new WaitUntilLoadingFinished(container));
-        WebElement topTerm = container.findElement(By.cssSelector(".list-group-item:nth-child(1)"));
+        WebElement topTerm = container.findElement(By.cssSelector(".list-group-item:nth-child(" + num + ")"));
 
         return new Term(topTerm);
     }
