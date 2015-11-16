@@ -27,7 +27,7 @@ public abstract class TopNavBar extends AppElement {
 
     //TODO still overridden in HSOTopNavBar
     public void notificationsDropdown(){
-        getDriver().findElement(By.cssSelector("nav:not(.affix-clone) .count-info")).click();
+        getDriver().findElement(By.cssSelector("nav .count-info")).click();
     }
 
     public void search(String searchTerm) {
@@ -40,7 +40,7 @@ public abstract class TopNavBar extends AppElement {
 
     public WebElement searchBox() {
         if (searchbox == null) {
-            searchbox = findElement(By.cssSelector("[name='top-search']:not(.affix-clone)"));
+            searchbox = findElement(By.cssSelector("[name='top-search']"));
         }
         return searchbox;
     }
