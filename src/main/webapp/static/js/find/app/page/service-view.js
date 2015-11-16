@@ -92,7 +92,7 @@ define([
                 queryModel: this.queryModel,
                 selectedParametricValues: this.selectedParametricValues,
                 indexesCollection: this.indexesCollection,
-                selectedIndexesCollection: this.selectedIndexesCollection,
+                selectedIndexesCollection: this.selectedIndexesCollection
             });
 
             // Left Collapsed Views
