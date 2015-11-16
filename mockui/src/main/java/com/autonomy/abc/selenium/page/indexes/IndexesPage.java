@@ -55,7 +55,7 @@ public class IndexesPage extends AppElement implements AppPage {
         List<String> names = new ArrayList<>();
 
         for(WebElement index : getIndexes()){
-            names.add(index.findElement(By.className("listItemTitle")).getText());
+            names.add(index.findElement(By.className("listItemTitle")).getText().split("\\(")[0].trim());
         }
 
         return names;
