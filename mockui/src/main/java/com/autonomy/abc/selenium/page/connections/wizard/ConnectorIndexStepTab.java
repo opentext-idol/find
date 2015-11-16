@@ -16,7 +16,6 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     }
 
     public static ConnectorIndexStepTab make(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.name("indexStepForm")));
         return new ConnectorIndexStepTab(driver);
     }
 

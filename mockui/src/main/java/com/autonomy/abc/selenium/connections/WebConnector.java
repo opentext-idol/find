@@ -15,6 +15,7 @@ public class WebConnector extends Connector {
 
     public WebConnector(String url, String name, Index index){
         super(name, index);
+        this.url = url;
     }
 
     public String getUrl() {
