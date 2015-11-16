@@ -48,7 +48,7 @@ public class HSOApplication extends Application {
         return ApplicationType.HOSTED;
     }
 
-    public ConnectionService createConnectionService(ElementFactory elementFactory) {
+    public ConnectionService createConnectionService(HSOElementFactory elementFactory) {
         return new ConnectionService(this,elementFactory);
     }
 
