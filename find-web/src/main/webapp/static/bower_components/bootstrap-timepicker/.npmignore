@@ -1,0 +1,12 @@
+/assets
+/_includes
+/_layouts
+/src/main/webapp/static/bower_components/bootstrap-timepicker/.gitignore
+/node_modules
+/Makefile
+/test
+/build
+*.log
+*.swp
+*~
+*.tgz

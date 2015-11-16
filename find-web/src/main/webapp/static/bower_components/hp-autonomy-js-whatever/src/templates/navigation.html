@@ -1,0 +1,87 @@
+<%
+    var hrefBuilder = function(child) {
+        var href = '';
+
+        if(child.href) {
+            href = 'href="' + child.href + '"';
+        } else if (child.route) {
+            href = 'href="' + '#' + child.route + '"';
+        }
+
+        return href;
+    }
+%>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" <% if(ctx.brandRoute){ %> href="#<%=ctx.brandRoute%>" <% } %>>
+            <%=ctx.appName%>
+            <% if(ctx.subheading) { %>
+            <p class="subheading">
+                <small>
+                    <%- ctx.subheading %>
+                </small>
+            </p>
+            <% } %>
+            </a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <% _.each(ctx.navLeft, function(navItem) { %>
+                    <% if (navItem.children) { %>
+                    <li class="dropdown <%=navItem.classes%>" data-menu-id="<%=navItem.menuId%>">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="<%=navItem.icon%>"> </i> <%=navItem.label%> <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <% _.each(navItem.children, function(child) { %>
+                            <li class="<%=child.classes%>" data-pagename="<%=child.pageName%>">
+                                <a <%=hrefBuilder(child)%> > <%=child.label%></a>
+                            </li>
+                            <% }); %>
+                        </ul>
+                    </li>
+                    <% } else { %>
+                    <li class="<%=navItem.classes%>" data-menu-id="<%=navItem.pageName%>" data-pagename="<%=navItem.pageName%>">
+                        <a <%=hrefBuilder(navItem)%> >
+                        <i class="<%=navItem.icon%>"></i> <%=navItem.label%>
+                        </a>
+                    </li>
+                    <% } %>
+                    <% }); %>
+                </ul>
+                <ul class="nav pull-right banner"></ul>
+                <ul class="nav pull-right">
+                    <% _.each(ctx.navRight, function(navItem) { %>
+                    <% if (navItem.children) { %>
+                    <li class="dropdown <%=navItem.classes%>" data-menu-id="<%=navItem.menuId%>">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="<%=navItem.icon%>"></i> <%=navItem.label%> <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <% _.each(navItem.children, function(child) { %>
+                            <li class="<%=child.classes%>" data-pagename="<%=child.pageName%>">
+                                <a <%=hrefBuilder(child)%> > <%=child.label%></a>
+                            </li>
+                            <% }); %>
+                        </ul>
+                    </li>
+                    <% } else { %>
+                    <li class="<%=navItem.classes%>" data-menu-id="<%=navItem.pageName%>" data-pagename="<%=navItem.pageName%>">
+                        <a <%=hrefBuilder(navItem)%> >
+                        <i class="<%=navItem.icon%>"></i> <%=navItem.label%>
+                        </a>
+                    </li>
+                    <% } %>
+                    <% }); %>
+                    <li class="divider-vertical"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

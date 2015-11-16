@@ -1,0 +1,10 @@
+<%
+    var uid = _.uniqueId('settings-path-widget');
+%>
+
+<div class="control-group">
+    <label class="settings-label" for="path-input-<%=uid%>"><%=strings.label%></label>
+    <input id="path-input-<%=uid%>" type="text" name="path" class="input-xlarge">
+    <span class="settings-required-flag"><i class="icon-asterisk"></i></span>
+    <span class="settings-client-validation settings-info hide"><%-strings.validatePathBlank%></span>
+</div>

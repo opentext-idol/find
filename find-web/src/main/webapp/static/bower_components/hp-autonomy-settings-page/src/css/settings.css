@@ -1,0 +1,76 @@
+/*
+ * Copyright 2013-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.settings-info {
+    margin-left: 3px;
+}
+
+.settings-client-validation {
+    color: #BD4247;
+}
+
+.hide {
+    display: none;
+}
+
+.settings-required-flag {
+    color: #FF0000;
+    font-size: 11px;
+    font-weight: bold;
+    padding-left: 3px;
+}
+
+label.settings-optional-toggle,
+.control-group.success label.settings-optional-toggle,
+.control-group.error label.settings-optional-toggle {
+    color: #555555;
+}
+
+.settings-label {
+    display: inline-block;
+    min-width: 70px;
+}
+
+.settings-port-input {
+    width: 5em;
+}
+
+.settings-servergroup select[name="protocol"] {
+    width: 5em;
+}
+
+.no-bottom-margin {
+    margin-bottom: 0;
+}
+
+a[data-toggle="collapse"] {
+    cursor: pointer;
+}
+
+.settings-control {
+    margin-bottom: 10px;
+}
+
+.settings-logging-section:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+.settings-logging-section select,
+.settings-logging-section input {
+    margin-bottom: 0;
+}
+
+a.settings-widget-title:hover {
+    text-decoration: none;
+}
+
+a.settings-widget-title h3:hover {
+    color: rgb(42, 165, 235);
+}
+
+.single-user-settings-label {
+    display: inline-block;
+    min-width: 18ch;
+}

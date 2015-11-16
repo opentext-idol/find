@@ -1,0 +1,39 @@
+{
+  "name": "hp-autonomy-fieldtext-js",
+  "authors": [
+    "Daniel Grayling <daniel.grayling@hp.com>",
+    "Alex Scown <alex.scown@hp.com>"
+  ],
+  "description": "Tools for the field text language.",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "bin"
+  ],
+  "dependencies": {
+    "underscore": "~1.7.0",
+    "requirejs": "~2.1.15",
+    "requirejs-text": "~2.0.12",
+    "pegjs": "0.8.0"
+  },
+  "devDependencies": {
+    "hp-autonomy-js-testing-utils": "~1.1.0"
+  },
+  "homepage": "https://github.com/hpautonomy/fieldtext-js",
+  "version": "1.1.0",
+  "_release": "1.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.0",
+    "commit": "2f72201257fb71a15af5b83760668706ec647e2c"
+  },
+  "_source": "https://github.com/hpautonomy/fieldtext-js.git",
+  "_target": "~1.1.0",
+  "_originalSource": "hp-autonomy-fieldtext-js"
+}

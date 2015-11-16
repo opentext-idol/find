@@ -1,0 +1,6 @@
+<div class="wizard">
+    <% _.each(steps, function(step){ %>
+        <h1><%= step.label %></h1>
+        <div class="<%=step.class%>"></div>
+    <% }); %>
+</div>

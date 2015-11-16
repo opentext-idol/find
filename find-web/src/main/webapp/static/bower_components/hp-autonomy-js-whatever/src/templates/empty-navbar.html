@@ -1,0 +1,15 @@
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="brand"><%-strings.appName%></a>
+            <div class="nav-collapse">
+                <% if (showLogout) { %>
+                    <ul class="nav">
+                        <li><a href="<%=logoutUri%>"><%-strings.logout%></a></li>
+                    </ul>
+                <% } %>
+                <ul class="nav pull-right banner"></ul>
+            </div>
+        </div>
+    </div>
+</div>
