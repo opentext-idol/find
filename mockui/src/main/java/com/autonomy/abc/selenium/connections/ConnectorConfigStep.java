@@ -9,13 +9,21 @@ public class ConnectorConfigStep implements WizardStep {
     private static final String TITLE = "Connector Configuration";
 
     private final NewConnectionPage newConnectionPage;
-    private final int depth;
-    private final int maxPages;
+    private Integer depth;
+    private Integer maxPages;
 
-    public ConnectorConfigStep(NewConnectionPage newConnectionPage, int depth, int maxPages) {
+    public ConnectorConfigStep(NewConnectionPage newConnectionPage) {
         this.newConnectionPage = newConnectionPage;
+    }
+
+    public ConnectorConfigStep withDepth(int depth){
         this.depth = depth;
+        return this;
+    }
+
+    public ConnectorConfigStep maxPages(int maxPages){
         this.maxPages = maxPages;
+        return this;
     }
 
     @Override
@@ -25,15 +33,33 @@ public class ConnectorConfigStep implements WizardStep {
 
     @Override
     public Object apply() {
-        ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
+        if(maxPages != null || depth != null) {
+            ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
 
-        connectorConfigStepTab.advancedConfigurations().click();
-        WebElement maxPagesBox = connectorConfigStepTab.getMaxPagesBox();
-        maxPagesBox.clear();
-        maxPagesBox.sendKeys(maxPages + "");
-        WebElement depthBox = connectorConfigStepTab.getDepthBox();
-        depthBox.clear();
-        depthBox.sendKeys(depth + "");
+            WebElement advancedConfig = connectorConfigStepTab.advancedConfigurations();
+            advancedConfig.click();
+
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {/*NOOP*/}
+
+            if (maxPages != null) {
+                WebElement maxPagesBox = connectorConfigStepTab.getMaxPagesBox();
+                maxPagesBox.clear();
+                maxPagesBox.sendKeys(maxPages + "");
+            }
+
+            if (depth != null) {
+                WebElement depthBox = connectorConfigStepTab.getDepthBox();
+                depthBox.clear();
+                depthBox.sendKeys(depth + "");
+            }
+
+            advancedConfig.click();
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {/*NOOP*/}
+        }
 
         return null;
     }
