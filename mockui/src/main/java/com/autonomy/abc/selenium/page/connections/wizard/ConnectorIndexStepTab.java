@@ -20,7 +20,7 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     }
 
     public WebElement selectIndexButton(){
-        return findElement(By.tagName("button"));
+        return findElement(By.linkText("Select index"));
     }
 
     public WebElement getIndexSearchBox(){
