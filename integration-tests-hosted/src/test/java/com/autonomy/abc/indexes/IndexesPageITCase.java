@@ -98,7 +98,7 @@ public class IndexesPageITCase extends ABCTestBase {
         ConnectionService connectionService = hsoApplication.createConnectionService(hsoElementFactory);
 
         //Create connector; index will be automatically set to 'bbc'
-        WebConnector connector = new WebConnector("www.bbc.co.uk","bbc");
+        WebConnector connector = new WebConnector("http;//www.bbc.co.uk","bbc");
         Index index = connector.getIndex();
 
         //Create new connector - NO WAIT
@@ -108,7 +108,11 @@ public class IndexesPageITCase extends ABCTestBase {
 
         //Try deleting the index straight away, while it is still processing
         //TODO change the Gritter Notice it's expecting
-        connectionService.deleteConnection(connector, true);
+        try {
+            connectionService.deleteConnection(connector, true);
+        } catch (Exception e) {
+            logger.warn("Error deleting index");
+        }
 
         //Navigate to Indexes
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
