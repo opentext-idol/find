@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.indexes;
 
-import com.autonomy.abc.selenium.config.HSOApplication;
+import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
@@ -12,11 +12,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IndexService {
-    private HSOApplication application;
+    private Application application;
     private HSOElementFactory elementFactory;
     private IndexesPage indexesPage;
 
-    public IndexService(HSOApplication application, HSOElementFactory elementFactory) {
+    public IndexService(Application application, HSOElementFactory elementFactory) {
         this.application = application;
         this.elementFactory = elementFactory;
     }

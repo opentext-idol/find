@@ -570,9 +570,9 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
-    private class WaitForCBoxLoadIndicatorToDisappear implements ExpectedCondition {
+    private class WaitForCBoxLoadIndicatorToDisappear implements ExpectedCondition<Boolean> {
         @Override
-        public Object apply(Object o) {
+        public Boolean apply(WebDriver input) {
             return !getDriver().findElement(By.cssSelector("#cboxLoadedContent .icon-spin")).isDisplayed();
         }
 
