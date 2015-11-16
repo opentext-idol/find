@@ -1,10 +1,7 @@
 package com.autonomy.abc.selenium.menu;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -12,7 +9,7 @@ public abstract class TopNavBar extends AppElement {
     private WebElement searchbox;
 
     public TopNavBar(WebDriver driver) {
-        super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top"))), driver);
+        super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".navbar-static-top.affix-element"))), driver);
     }
 
     public abstract void logOut();
@@ -25,7 +22,6 @@ public abstract class TopNavBar extends AppElement {
         return new NotificationsDropDown(getDriver());
     }
 
-    //TODO still overridden in HSOTopNavBar
     public void notificationsDropdown(){
         getDriver().findElement(By.cssSelector("nav .count-info")).click();
     }
