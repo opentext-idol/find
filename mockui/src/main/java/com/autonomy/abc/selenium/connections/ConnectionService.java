@@ -86,7 +86,7 @@ public class ConnectionService {
     public ConnectionsPage deleteAllConnections() {
         goToConnections();
         for(WebElement connector : getDriver().findElements(By.className("listItemTitle"))){
-            deleteConnection(new WebConnector(null,connector.getText().split(" ")[0].trim()),false);
+            deleteConnection(new WebConnector(null,connector.getText().split("\\(")[0].trim()),false);
         }
         return connectionsPage;
     }

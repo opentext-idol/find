@@ -38,6 +38,9 @@ public class ConnectorIndexStep implements WizardStep {
         for(WebElement existingIndex : connectorIndexStepTab.getExistingIndexes()){
             if(existingIndex.getText().equals(index.getName())){
                 existingIndex.click();
+                connectorIndexStepTab.modalOKButton().click();
+                //Need to wait for modal to disappear
+                try{Thread.sleep(1000);} catch (Exception e) {/*NO OP*/}
                 return null;
             }
         }

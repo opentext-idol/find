@@ -75,7 +75,7 @@ public class IndexService {
     public IndexesPage deleteAllIndexes() {
         goToIndexes();
         for(WebElement index : getDriver().findElements(By.className("listItemTitle"))){
-            String indexName = index.getText().trim();
+            String indexName = index.getText().split("\\(")[0].trim();
             if(indexName.equals("default_index")){
                 continue;
             }
