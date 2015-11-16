@@ -115,7 +115,6 @@ public abstract class ABCTestBase {
 		}
 	}
 
-	// log in via dev console while the HSOD SSO page is broken
 	protected void hostedLogIn(String provider) throws InterruptedException {
 		currentUser = config.getUser(provider);
 		currentUser.getAuthProvider().login(getDriver());

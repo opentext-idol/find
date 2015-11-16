@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +77,7 @@ public class IndexesPageITCase extends ABCTestBase {
             cs.deleteConnection(connector, true);
         } catch (ElementNotVisibleException e) {
             //If there's an error it is likely because the index couldn't be deleted - which is expected
-            //Need to exit the modal
+            //Need to exit the deletion modal that will still be open
             getDriver().findElement(By.cssSelector(".modal-footer [type=button]")).click();
         }
 
@@ -119,39 +120,41 @@ public class IndexesPageITCase extends ABCTestBase {
 
     @Test
     //CSA1626
-    public void testDeletingIndexDoesNotInvalidatePromotions(){
-        Index index = new Index("bbc");
-
-        //Create index
-        IndexService indexService = hsoApplication.createIndexService(hsoElementFactory);
-        indexService.setUpIndex(index);
-
+    public void testDeletingIndexDoesNotInvalidatePromotions() throws InterruptedException {
         //Create connection - attached to the same index (we need it to have data for a promotion)
         ConnectionService connectionService = hsoApplication.createConnectionService(hsoElementFactory);
-        WebConnector connector = new WebConnector("www.bbc.co.uk","bbc",index);
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc");
 
         connectionService.setUpConnection(connector);
 
         //Create a promotion (using the index created)
         PromotionService promotionService = hsoApplication.createPromotionService(hsoElementFactory);
         PinToPositionPromotion ptpPromotion = new PinToPositionPromotion(1,"trigger");
-        Search search = new Search(hsoApplication,hsoElementFactory,"search").applyFilter(new IndexFilter(index));
+        Search search = new Search(hsoApplication,hsoElementFactory,"bbc").applyFilter(new IndexFilter(connector.getIndex()));
 
-        promotionService.setUpPromotion(ptpPromotion, search, 3);
+        try {
+            int numberOfDocs = 1;
+            promotionService.setUpPromotion(ptpPromotion, search, numberOfDocs);
 
-        //Now delete the index
-        indexService.deleteIndex(index);
+            //Now delete the index
+            connectionService.deleteConnection(connector, true);
 
-        //Navigate to the promotion - this will time out if it can't get to the Promotions Detail Page
-        PromotionsDetailPage pdp = promotionService.goToDetails(ptpPromotion);
+            //Navigate to the promotion - this will time out if it can't get to the Promotions Detail Page
+            PromotionsDetailPage pdp = promotionService.goToDetails(ptpPromotion);
 
-        //Get the promoted documents, there should still be three
-        List<String> promotionTitles = pdp.getPromotedTitles();
-        assertThat(promotionTitles.size(),is(3));
+            //Get the promoted documents, there should still be one
+            //TODO this is a workaround as getting promoted documents 'properly' errors if they are 'Unknown Document's
+            List<WebElement> promotedDocuments = getDriver().findElements(By.cssSelector(".promoted-documents-list h3"));
 
-        //All documents should know be 'unknown documents'
-        for(String promotionTitle : promotionTitles){
-            assertThat(promotionTitle,is("Unknown Document"));
+            assertThat(promotedDocuments.size(), is(numberOfDocs));
+
+            //All documents should know be 'unknown documents'
+            for(WebElement promotedDocument : promotedDocuments){
+                assertThat(promotedDocument.getText(), is("Unknown Document"));
+
+            }
+        } finally {
+            promotionService.deleteAll();
         }
     }
 
