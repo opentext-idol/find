@@ -44,7 +44,7 @@ public class IndexesPage extends AppElement implements AppPage {
     }
 
     private void modalClick() {
-        getDriver().findElement(By.className("modal-action-button")).click();
+        getDriver().findElement(By.cssSelector(".modal-footer [type=submit]"));
     }
 
     public List<WebElement> getIndexes() {
