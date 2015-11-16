@@ -1,14 +1,12 @@
 package com.autonomy.abc.promotions;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -35,7 +33,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 
-public class StaticPromotionsITCase extends ABCTestBase {
+public class StaticPromotionsITCase extends HostedTestBase {
 
     private HSOPromotionsPage promotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
@@ -49,16 +47,6 @@ public class StaticPromotionsITCase extends ABCTestBase {
     public StaticPromotionsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
         assumeThat(type, is(ApplicationType.HOSTED));
-    }
-
-    @Override
-    public HSOApplication getApplication() {
-        return (HSOApplication) super.getApplication();
-    }
-
-    @Override
-    public HSOElementFactory getElementFactory() {
-        return (HSOElementFactory) super.getElementFactory();
     }
 
     public void goToDetails() {

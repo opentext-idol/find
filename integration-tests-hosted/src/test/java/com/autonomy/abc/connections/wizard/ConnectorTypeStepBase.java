@@ -1,10 +1,9 @@
 package com.autonomy.abc.connections.wizard;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
@@ -26,7 +25,7 @@ import static org.hamcrest.Matchers.not;
 /**
  * Created by avidan on 29-10-15.
  */
-public class ConnectorTypeStepBase extends ABCTestBase {
+public class ConnectorTypeStepBase extends HostedTestBase {
     public ConnectorTypeStepBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
     }
@@ -37,17 +36,15 @@ public class ConnectorTypeStepBase extends ABCTestBase {
     protected ConnectionsPage connectionsPage;
     protected NewConnectionPage newConnectionPage;
     protected ConnectorTypeStepTab connectorTypeStepTab;
-    protected HSOElementFactory elementFactory;
 
     @Before
     public void setUp() {
         body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
 
-        elementFactory = (HSOElementFactory) getElementFactory();
-        connectionsPage = elementFactory.getConnectionsPage();
+        connectionsPage = getElementFactory().getConnectionsPage();
         connectionsPage.newConnectionButton().click();
 
-        newConnectionPage = elementFactory.getNewConnectionPage();
+        newConnectionPage = getElementFactory().getNewConnectionPage();
         connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();
     }
 

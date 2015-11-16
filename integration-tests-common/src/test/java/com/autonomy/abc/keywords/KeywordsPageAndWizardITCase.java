@@ -1890,6 +1890,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createNewKeywordsPage.createBlacklistedTerm("e", "English");
 		getElementFactory().getKeywordsPage();
 
+		// TODO: this is a shared test, does not belong
 		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
 			body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 

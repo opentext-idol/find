@@ -1,13 +1,12 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -27,13 +26,12 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
-public class ConnectionToSearchITCase extends ABCTestBase {
+public class ConnectionToSearchITCase extends HostedTestBase {
     private ConnectionsPage connectionsPage;
     private ConnectionsDetailPage connectionsDetailPage;
     private SearchPage searchPage;
     private ConnectionService connectionService;
     private SearchActionFactory searchActionFactory;
-    private HSOElementFactory elementFactory;
 
     private final WebConnector connector = new WebConnector("http://www.havenondemand.com", "hod");
     private final String indexName = "hod";
@@ -46,7 +44,6 @@ public class ConnectionToSearchITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        elementFactory = (HSOElementFactory) getElementFactory();
         connectionService = new ConnectionService(getApplication(), getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
     }
@@ -72,7 +69,7 @@ public class ConnectionToSearchITCase extends ABCTestBase {
 
         connectionsDetailPage = connectionService.goToDetails(connector);
         connectionsDetailPage.backButton().click();
-        connectionsPage = elementFactory.getConnectionsPage();
+        connectionsPage = getElementFactory().getConnectionsPage();
 
         FormInput input = connectionsPage.connectionFilterBox();
         Dropdown dropdown = connectionsPage.connectionFilterDropdown();

@@ -1,11 +1,10 @@
 package com.autonomy.abc.endtoend;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.Service;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
@@ -29,7 +28,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.isIn;
 
 //CSA-1566
-public class PromotionsToFindITCase extends ABCTestBase {
+public class PromotionsToFindITCase extends HostedTestBase {
     private List<String> browserHandles;
     private FindPage find;
     private Service service;
@@ -39,11 +38,6 @@ public class PromotionsToFindITCase extends ABCTestBase {
 
     public PromotionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
-    }
-
-    @Override
-    public HSOElementFactory getElementFactory() {
-        return (HSOElementFactory) super.getElementFactory();
     }
 
     @Before
