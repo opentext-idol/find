@@ -18,7 +18,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.hp.autonomy.frontend.find.beanconfiguration.AppConfiguration</param-value>
+        <param-value>com.hp.autonomy.frontend.find.hod.beanconfiguration.AppConfiguration</param-value>
     </context-param>
     
     <context-param>
@@ -35,7 +35,7 @@
         </init-param>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>com.hp.autonomy.frontend.find.beanconfiguration.DispatcherServletConfiguration</param-value>
+            <param-value>com.hp.autonomy.frontend.find.hod.beanconfiguration.DispatcherServletConfiguration</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

@@ -11,5 +11,22 @@
 
     <artifactId>find-idol</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>find-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.configuration</groupId>
+            <artifactId>configuration-idol</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.user</groupId>
+            <artifactId>idol-user-service</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 </project>
