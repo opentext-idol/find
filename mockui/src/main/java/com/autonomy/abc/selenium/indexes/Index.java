@@ -10,6 +10,8 @@ public class Index {
     private final List<String> parametricFields = new ArrayList<>();
     private final List<String> indexFields = new ArrayList<>();
 
+    public final static Index DEFAULT = new Index("default_index");
+
     public Index(String name) {
         this.name = name;
     }

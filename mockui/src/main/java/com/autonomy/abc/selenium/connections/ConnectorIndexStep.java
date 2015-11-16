@@ -11,11 +11,11 @@ public class ConnectorIndexStep implements WizardStep {
     private final Index index;
     private final String name;
 
-    private final ConnectorIndexStepTab newConnectionPage;
+    private final NewConnectionPage newConnectionPage;
 
     public ConnectorIndexStep(NewConnectionPage newConnectionPage, Index index, String name){
         this.index = index;
-        this.newConnectionPage = newConnectionPage.getIndexStep();
+        this.newConnectionPage = newConnectionPage;
         this.name = name;
     }
 
@@ -30,10 +30,12 @@ public class ConnectorIndexStep implements WizardStep {
             return null;
         }
 
-        newConnectionPage.selectIndexButton().click();
-        newConnectionPage.getIndexSearchBox().click();
+        ConnectorIndexStepTab indexStepTab = newConnectionPage.getIndexStep();
 
-        for(WebElement existingIndex : newConnectionPage.getExistingIndexes()){
+        indexStepTab.selectIndexButton().click();
+        indexStepTab.getIndexSearchBox().click();
+
+        for(WebElement existingIndex : indexStepTab.getExistingIndexes()){
             if(existingIndex.getText().equals(index.getName())){
                 existingIndex.click();
                 return null;
