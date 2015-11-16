@@ -35,6 +35,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class IndexesPageITCase extends HostedTestBase {
     IndexesPage indexesPage;
+    private Logger logger = LoggerFactory.getLogger(IndexesPageITCase.class);
 
     public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -90,7 +91,7 @@ public class IndexesPageITCase extends HostedTestBase {
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
         //Create connector; index will be automatically set to 'bbc'
-        WebConnector connector = new WebConnector("http;//www.bbc.co.uk","bbc");
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc");
         Index index = connector.getIndex();
 
         //Create new connector - NO WAIT
@@ -117,22 +118,16 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     //CSA1626
     public void testDeletingIndexDoesNotInvalidatePromotions(){
-        Index index = new Index("bbc");
-
-        //Create index
-        IndexService indexService = getApplication().createIndexService(getElementFactory());
-        indexService.setUpIndex(index);
-
         //Create connection - attached to the same index (we need it to have data for a promotion)
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
-        WebConnector connector = new WebConnector("www.bbc.co.uk","bbc",index);
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc");
 
         connectionService.setUpConnection(connector);
 
         //Create a promotion (using the index created)
         PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
         PinToPositionPromotion ptpPromotion = new PinToPositionPromotion(1,"trigger");
-        Search search = new Search(getApplication(),getElementFactory(),"search").applyFilter(new IndexFilter(index));
+        Search search = new Search(getApplication(),getElementFactory(),"bbc").applyFilter(new IndexFilter(connector.getIndex()));
 
         try {
             int numberOfDocs = 1;
@@ -168,8 +163,8 @@ public class IndexesPageITCase extends HostedTestBase {
     @After
     public void tearDown(){
         try {
-            hsoApplication.createConnectionService(hsoElementFactory).deleteAllConnections();
-            hsoApplication.createIndexService(hsoElementFactory).deleteAllIndexes();
+            getApplication().createConnectionService(getElementFactory()).deleteAllConnections();
+            getApplication().createIndexService(getElementFactory()).deleteAllIndexes();
         } catch (Exception e) {
             logger.warn("Failed to tear down");
         }
