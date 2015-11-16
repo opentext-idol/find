@@ -10,10 +10,12 @@ public class ConnectorConfigStep implements WizardStep {
 
     private final NewConnectionPage newConnectionPage;
     private final int depth;
+    private final int maxPages;
 
-    public ConnectorConfigStep(NewConnectionPage newConnectionPage, int depth) {
+    public ConnectorConfigStep(NewConnectionPage newConnectionPage, int depth, int maxPages) {
         this.newConnectionPage = newConnectionPage;
         this.depth = depth;
+        this.maxPages = maxPages;
     }
 
     @Override
@@ -26,8 +28,11 @@ public class ConnectorConfigStep implements WizardStep {
         ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
 
         connectorConfigStepTab.advancedConfigurations().click();
+        WebElement maxPagesBox = connectorConfigStepTab.getMaxPagesBox();
+        maxPagesBox.clear();
+        maxPagesBox.sendKeys(maxPages + "");
         WebElement depthBox = connectorConfigStepTab.getDepthBox();
-        depthBox.click();
+        depthBox.clear();
         depthBox.sendKeys(depth + "");
 
         return null;

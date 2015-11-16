@@ -47,10 +47,14 @@ public class ConnectorConfigStepTab extends SAASPageBase {
     }
 
     public WebElement advancedConfigurations(){
-        return findElement(By.id("#advancedConfigurationPropsHeader"));
+        return findElement(By.id("advancedConfigurationPropsHeader"));
     }
 
     public WebElement getDepthBox(){
         return findElement(By.cssSelector("[name='depth']"));
+    }
+
+    public WebElement getMaxPagesBox() {
+        return findElement(By.cssSelector("[name='max_pages']"));
     }
 }

@@ -35,7 +35,7 @@ public class WebConnector extends Connector {
             super();
             page = newConnectionPage;
             add(new ConnectorTypeStep(page, url, name));
-            add(new ConnectorConfigStep(page,1));
+            add(new ConnectorConfigStep(page,1,10));
             add(new ConnectorIndexStep(page,index,name));
             add(new BlankWizardStep("Complete"));
         }
