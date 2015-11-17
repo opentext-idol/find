@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -68,7 +69,7 @@ public class IndexesPageITCase extends HostedTestBase {
         try {
             //Try to delete the connection, (and the default index)
             cs.deleteConnection(connector, true);
-        } catch (ElementNotVisibleException e) {
+        } catch (ElementNotVisibleException | NoSuchElementException e) {
             //If there's an error it is likely because the index couldn't be deleted - which is expected
             //Need to exit the deletion modal that will still be open
             getDriver().findElement(By.cssSelector(".modal-footer [type=button]")).click();

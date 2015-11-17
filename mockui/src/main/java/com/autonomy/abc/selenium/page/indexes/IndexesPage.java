@@ -14,15 +14,14 @@ import java.util.List;
 public class IndexesPage extends AppElement implements AppPage {
 
     public IndexesPage(WebDriver driver) {
-        super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper"))), driver);
+        super(new WebDriverWait(driver, 30)
+                .withMessage("Indexes Page failed to load")
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
         waitForLoad();
     }
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30)
-                .withMessage("Index page failed to load")
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content")));
         new WebDriverWait(getDriver(),30)
                 .withMessage("Indexes failed to load")
                 .until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
