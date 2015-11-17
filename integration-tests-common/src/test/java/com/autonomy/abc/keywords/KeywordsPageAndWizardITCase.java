@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.util.Errors;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -1278,7 +1279,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 			verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("dwelling")));
 			verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("abode")));
 			verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
-			verifyThat("3 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"),hasItem("home"));
+			verifyThat("3 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("home"));
 
 			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 			keywordsPage.loadOrFadeWait();
@@ -2009,4 +2010,41 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		}
 	}
 
+	@Test
+	//CSA1719
+	public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
+		String blacklistOne = "cheese";
+		String blacklistTwo = "mouse";
+
+		keywordsPage.createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm(blacklistOne, "English");
+		keywordsPage = getElementFactory().getKeywordsPage();
+		assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
+
+		Search blacklistOneSearch = new Search(getApplication(),getElementFactory(),blacklistOne);
+		blacklistOneSearch.apply();
+
+		searchPage = getElementFactory().getSearchPage();
+		assertThat(searchPage.getText(),containsString(Errors.Search.NO_RESULTS));
+
+		getDriver().navigate().refresh();
+		body = getBody();
+
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage = getElementFactory().getKeywordsPage();
+		assertThat(keywordsPage.getBlacklistedTerms(),hasItem(blacklistOne));
+
+		keywordsPage.createNewKeywordsButton().click();
+		getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm(blacklistTwo, "English");
+		keywordsPage = getElementFactory().getKeywordsPage();
+		assertThat(keywordsPage.getBlacklistedTerms(),hasItem(blacklistOne));
+		assertThat(keywordsPage.getBlacklistedTerms(),hasItem(blacklistTwo));
+
+		new Search(getApplication(),getElementFactory(),blacklistTwo).apply();
+		searchPage = getElementFactory().getSearchPage();
+		assertThat(searchPage.getText(),containsString(Errors.Search.NO_RESULTS));
+
+		blacklistOneSearch.apply();
+		assertThat(searchPage.getText(),containsString(Errors.Search.NO_RESULTS));
+	}
 }
