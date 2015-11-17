@@ -11,6 +11,8 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.Search;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -1290,6 +1292,18 @@ public class SearchPageITCase extends ABCTestBase {
 				verifyThat(parent.getAttribute("class"), CoreMatchers.containsString("label"));
 			}
 			searchPage.forwardPageButton().click();
+		}
+	}
+
+	@Test
+	//CSA1708
+	public void testParametricLabelsNotUndefined(){
+		new Search(getApplication(),getElementFactory(),"simpsons").applyFilter(new IndexFilter("default_index")).apply();
+
+		searchPage.filterByContentType("TEXT/HTML");
+
+		for(WebElement filter : searchPage.findElements(By.cssSelector(".filter-display-view span"))){
+			assertThat(filter.getText().toLowerCase(),not(containsString("undefined")));
 		}
 	}
 }
