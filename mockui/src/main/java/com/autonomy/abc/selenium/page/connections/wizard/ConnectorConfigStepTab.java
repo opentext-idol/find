@@ -57,4 +57,25 @@ public class ConnectorConfigStepTab extends SAASPageBase {
     public WebElement getMaxPagesBox() {
         return findElement(By.cssSelector("[name='max_pages']"));
     }
+
+    private WebElement scheduleButton(String time){
+        return findElement(By.xpath("//button[text()='" + time + "']"));
+    }
+
+    public WebElement hoursButton(){
+        return scheduleButton("Hours");
+    }
+
+    public WebElement daysButton(){
+        return scheduleButton("Days");
+    }
+
+    public WebElement weeksButton(){
+        return scheduleButton("Weeks");
+    }
+
+    public String scheduleString(){
+        return findElement(By.cssSelector("label.ng-scope.m-t")).getText();
+    }
+
 }
