@@ -411,7 +411,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getSynonymGroupSynonyms(String synonym) {
-		LOGGER.warn("synonyms are not displayed on search page");
+		LOGGER.warn("keywords are not displayed on search page");
 		return Collections.emptyList();
 	}
 
@@ -428,7 +428,11 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public void deleteSynonym(String synonym) {
-		LoggerFactory.getLogger(SearchPage.class).warn("Cannot delete synonyms from search page");
+		LOGGER.warn("Cannot delete synonyms from search page");
+	}
+
+	public List<String> getBlacklistedTerms() {
+		return getSynonymGroupSynonyms(null);
 	}
 
 	public List<String> getPromotedDocumentTitles(){
