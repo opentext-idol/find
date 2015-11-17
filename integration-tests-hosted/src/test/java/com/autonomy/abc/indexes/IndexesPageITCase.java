@@ -60,7 +60,7 @@ public class IndexesPageITCase extends HostedTestBase {
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = getApplication().createConnectionService(getElementFactory());
         Index default_index = new Index("default_index");
-        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc",default_index);
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc",default_index).withDepth(2);
 
         //Create connection
         cs.setUpConnection(connector);
@@ -91,7 +91,7 @@ public class IndexesPageITCase extends HostedTestBase {
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
         //Create connector; index will be automatically set to 'bbc'
-        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc");
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
         Index index = connector.getIndex();
 
         //Create new connector - NO WAIT
@@ -120,7 +120,7 @@ public class IndexesPageITCase extends HostedTestBase {
     public void testDeletingIndexDoesNotInvalidatePromotions(){
         //Create connection - attached to the same index (we need it to have data for a promotion)
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
-        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc");
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
 
         connectionService.setUpConnection(connector);
 
