@@ -30,14 +30,12 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.util.AppElement.getParent;
 import static com.thoughtworks.selenium.SeleneseTestBase.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.StringEndsWith.endsWith;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	public KeywordsPageAndWizardITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
@@ -736,61 +734,78 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	//CSA-1447
 	@Test
 	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
+		List<String> notificationContents = new ArrayList<>();
+
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("orange", "English");
-		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationAppears());
+		notificationContents.add("Added \"orange\" to the blacklist");
+		waitForNotification();
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		notifications = body.getTopNavBar().getNotifications();
-		body.getTopNavBar().notificationsDropdown();
-		assertThat(notifications.notificationNumber(1).getText(), containsString("Added \"orange\" to the blacklist"));
+		verifyNotifications(notificationContents);
 
 		WebDriverWait wait = new WebDriverWait(getDriver(),15);
 
-		body.getTopNavBar().waitForGritterToClear();
 		notifications.notificationNumber(1).click();
-		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl(), containsString("keyword"));
+		verifyThat(notifications, displayed());
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createSynonymGroup("piano keyboard pianoforte", "English");
-		body.getTopNavBar().waitForGritterToClear();
+		notificationContents.add("Created a new synonym group containing: keyboard, piano, pianoforte");
+		waitForNotification();
 
-		body.getTopNavBar().notificationsDropdown();
-		assertThat("Notification text incorrect", notifications.notificationNumber(1).getText(), containsString("Created a new synonym group containing: keyboard, piano, pianoforte"));
-		assertThat("Notification text incorrect", notifications.notificationNumber(2).getText(), containsString("Added \"orange\" to the blacklist"));
+		verifyNotifications(notificationContents);
 
 		wait.until(ExpectedConditions.visibilityOf(notifications.notificationNumber(1))).click();
-		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl().contains("keyword"));
+		verifyThat(notifications, displayed());
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.deleteSynonym("keyboard", "piano");
-		body.getTopNavBar().waitForGritterToClear();
+		notificationContents.add("Removed \"keyboard\" from a synonym group");
+		waitForNotification();
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
-		body.getTopNavBar().notificationsDropdown();
-		assertThat("Notification text incorrect", notifications.notificationNumber(1).getText(), containsString("Updated a synonym group containing: piano, pianoforte"));
-		assertThat("Notification text incorrect", notifications.notificationNumber(2).getText(), containsString("Created a new synonym group containing: keyboard, piano, pianoforte"));
-		assertThat("Notification text incorrect", notifications.notificationNumber(3).getText(), containsString("Added \"orange\" to the blacklist"));
+		verifyNotifications(notificationContents);
 
 		wait.until(ExpectedConditions.visibilityOf(notifications.notificationNumber(1))).click();
-		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl(), containsString("keyword"));
+		verifyThat(notifications, displayed());
+		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.BLACKLIST);
 		keywordsPage.selectLanguage("English");
 		keywordsPage.deleteBlacklistedTerm("orange");
-		body.getTopNavBar().waitForGritterToClear();
-		body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+		notificationContents.add("Removed \"orange\" from the blacklist");
+		waitForNotification();
+		if (config.getType().equals(ApplicationType.HOSTED)) {
+			// TODO: belongs in a hosted notifications test
+			body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
+		}
 
-		body.getTopNavBar().notificationsDropdown();
-		assertThat("Notification text incorrect", notifications.notificationNumber(1).getText(), containsString("Removed \"orange\" from the blacklist"));
-		assertThat("Notification text incorrect", notifications.notificationNumber(2).getText(), containsString("Updated a synonym group containing: piano, pianoforte"));
-		assertThat("Notification text incorrect", notifications.notificationNumber(3).getText(), containsString("Created a new synonym group containing: keyboard, piano, pianoforte"));
-		assertThat("Notification text incorrect", notifications.notificationNumber(4).getText(), containsString("Added \"orange\" to the blacklist"));
+		verifyNotifications(notificationContents);
 
 		wait.until(ExpectedConditions.visibilityOf(notifications.notificationNumber(1))).click();
-		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl(), containsString("keyword"));
+		verifyThat(notifications, displayed());
+	}
+
+	private void waitForNotification() {
+		new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
+	}
+
+	private void verifyNotifications(List<String> contents) {
+		body.getTopNavBar().notificationsDropdown();
+		notifications = body.getTopNavBar().getNotifications();
+
+
+		int size = Math.min(contents.size(), 5);
+		for (int i=1; i <= size ; i++) {
+			verifyThat(notifications.notificationNumber(i), containsText(contents.get(size-i)));
+		}
 	}
 
 	// This only tests the notifications dropdown and not the gritters
