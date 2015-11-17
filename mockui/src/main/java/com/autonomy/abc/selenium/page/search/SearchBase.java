@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -21,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public abstract class SearchBase extends KeywordsBase implements AppPage {
+public abstract class SearchBase extends AppElement implements AppPage {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
@@ -236,13 +237,6 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 		return selected;
 	}
 
-	@Deprecated
-	@Override
-    public WebElement leadSynonym(final String synonym) {
-		return synonymInGroup(synonym);
-	}
-
-	@Override
 	public WebElement synonymInGroup(final String synonym){
 		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[@data-term='" + synonym.toLowerCase() + "']"));
 	}
@@ -544,6 +538,14 @@ public abstract class SearchBase extends KeywordsBase implements AppPage {
 
 	public Checkbox allIndexesCheckbox() {
 		return new Checkbox(findElement(By.cssSelector(".checkbox[data-category-id='all']")), getDriver());
+	}
+
+	public List<String> youSearchedFor() {
+		final List<String> youSearchedFor = new ArrayList<>();
+		for (final WebElement word : findElements(By.cssSelector(".search-terms-list span"))) {
+			youSearchedFor.add(word.getText());
+		}
+		return youSearchedFor;
 	}
 
 	public enum Filter {

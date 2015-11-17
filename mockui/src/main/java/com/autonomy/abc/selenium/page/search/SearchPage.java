@@ -3,16 +3,16 @@ package com.autonomy.abc.selenium.page.search;
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public abstract class SearchPage extends SearchBase implements AppPage {
+	private final static Logger LOGGER = LoggerFactory.getLogger(SearchPage.class);
 	public final static int RESULTS_PER_PAGE = 6;
 
 	public SearchPage(final WebDriver driver) {
@@ -402,19 +402,37 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return checkboxes;
 	}
 
+	public WebElement blacklistLink() {
+		return findElement(By.xpath(".//a[text() = 'blacklist']"));
+	}
+
+	public WebElement createSynonymsLink() {
+		return findElement(By.xpath(".//a[text() = 'create synonyms']"));
+	}
+
+	public List<String> getSynonymGroupSynonyms(String synonym) {
+		LOGGER.warn("keywords are not displayed on search page");
+		return Collections.emptyList();
+	}
+
 	public int countKeywords() {
 		return findElements(By.cssSelector(".search-synonyms-keywords .remove-keyword")).size();
 	}
 
-	public void deleteSynonym(String synonym) throws InterruptedException {
-		LoggerFactory.getLogger(SearchPage.class).info("Deleting '" + synonym + "'");
-		getSynonymIcon(synonym).click();
-		waitForRefreshIconToDisappear();
+	public void addSynonymToGroup(String newSynonym, String existing) {
+		getSynonymGroupSynonyms(existing);
 	}
 
-	@Override
-	public WebElement getSynonymIcon(String synonym) {
-		return findElement(By.xpath("//div[@data-pagename='search']//span[text()='"+synonym+"']/../i"));
+	public void deleteSynonym(String synonym, String group) {
+		deleteSynonym(synonym);
+	}
+
+	public void deleteSynonym(String synonym) {
+		LOGGER.warn("Cannot delete synonyms from search page");
+	}
+
+	public List<String> getBlacklistedTerms() {
+		return getSynonymGroupSynonyms(null);
 	}
 
 	public List<String> getPromotedDocumentTitles(){
