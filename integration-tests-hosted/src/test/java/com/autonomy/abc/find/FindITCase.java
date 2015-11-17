@@ -942,9 +942,34 @@ public class FindITCase extends HostedTestBase {
             assertThat(popover.findElement(By.tagName("p")).getText(),not("An error occurred fetching similar documents"));
 
             for(WebElement similarResult : popover.findElements(By.tagName("li"))){
-                assertThat(similarResult.findElement(By.tagName("h5")).getText(),not(isEmptyString()));
-                assertThat(similarResult.findElement(By.tagName("p")).getText(),not(isEmptyString()));
+                assertThat(similarResult.findElement(By.tagName("h5")).getText(), not(isEmptyString()));
+                assertThat(similarResult.findElement(By.tagName("p")).getText(), not(isEmptyString()));
             }
+        }
+    }
+
+    @Test
+    //CSA1630
+    public void testAllPromotedDocumentsHaveTitles(){
+        getDriver().switchTo().window(browserHandles.get(0));
+
+        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+
+        try {
+            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"),
+                    new Search(getApplication(), getElementFactory(), "scg-2"), 10);
+
+            getDriver().switchTo().window(browserHandles.get(1));
+
+            find.search("Tiger");
+
+            for(String title : service.getPromotionsTitles()){
+                assertThat(title, is(not("")));
+            }
+
+        } finally {
+            getDriver().switchTo().window(browserHandles.get(0));
+            promotionService.deleteAll();
         }
     }
 
