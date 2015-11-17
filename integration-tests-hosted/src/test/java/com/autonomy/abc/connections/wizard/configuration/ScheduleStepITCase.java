@@ -59,15 +59,6 @@ public class ScheduleStepITCase extends ConnectorTypeStepBase {
     @Test
     //CSA-1694
     public void testConnectionSchedulingValidation() {
-        connectionsPage.newConnectionButton().click();
-        newConnectionPage = getElementFactory().getNewConnectionPage();
-
-        ConnectorTypeStepTab connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();
-        connectorTypeStepTab.connectorUrl().setAndSubmit("http://www.bbc.co.uk");
-        connectorTypeStepTab.connectorName().setAndSubmit("bbc");
-
-        newConnectionPage.nextButton().click();
-
         ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
 
         assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
