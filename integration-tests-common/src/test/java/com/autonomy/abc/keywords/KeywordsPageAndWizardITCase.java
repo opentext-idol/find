@@ -831,7 +831,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 				containsString("Added \"<h1>hi</h1>\" to the blacklist"));
 
 		new WebDriverWait(getDriver(),5).until(ExpectedConditions.elementToBeClickable(notifications.notificationNumber(1))).click();
-		assertThat("notification link has not directed back to the keywords page", getDriver().getCurrentUrl(),containsString("keyword"));
+		assertThat(notifications, displayed());
 	}
 
 	//CSA-1521
@@ -1664,7 +1664,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
 
-		Thread.sleep(15000); //Wait for all blacklist terms to be added TODO nicer way
+		new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
 
 		keywordsPage.createNewKeywordsButton(wait).click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -1694,13 +1694,13 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
 
-		Thread.sleep(15000); //Wait for all blacklist terms to be added TODO nicer way
+		new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
 
 		keywordsPage.createNewKeywordsButton(wait).click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createSynonymGroup("ea es ed ef eg eh", "English");
 
-		new WebDriverWait(getDriver(),40).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
+		getElementFactory().getSearchPage();
 
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
@@ -1894,7 +1894,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		notifications.notificationNumber(1).click();
 
-		verifyThat(getDriver().getCurrentUrl(),containsString("keywords"));
+		verifyThat(notifications, displayed());
 
 		if(!getDriver().getCurrentUrl().contains("keywords")){
 			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
@@ -1931,7 +1931,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		notifications.notificationNumber(1).click();
 
-		verifyThat(getDriver().getCurrentUrl(),containsString("keywords"));
+		verifyThat(notifications, displayed());
 
 	}
 
