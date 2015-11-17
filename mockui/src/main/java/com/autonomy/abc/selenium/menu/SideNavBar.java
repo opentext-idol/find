@@ -38,7 +38,14 @@ public class SideNavBar extends AppElement {
     }
 
     public void switchPage(final NavBarTabId tab) {
+        if (!this.isDisplayed()) {
+            toggle();
+        }
         tryClickThenTryParentClick(new WebDriverWait(getDriver(),30).until(
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul//li//*[text()=' " + tab.toString() + "']"))));
+    }
+
+    public void toggle() {
+        getDriver().findElement(By.className("navbar-minimize")).click();
     }
 }

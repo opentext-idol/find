@@ -14,6 +14,8 @@ public abstract class TopNavBar extends AppElement {
 
     public abstract void logOut();
 
+    // use SideNavBar
+    @Deprecated
     public void sideBarToggle() {
         getDriver().findElement(By.className("navbar-minimize")).click();
     }
