@@ -1152,7 +1152,6 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.selectLanguage("Arabic");
 
 		assertThat("'You searched for:' section incorrect", searchPage.youSearchedFor(), hasItem("wizard"));
-		assertThat("Keywords incorrect", searchPage.getBlacklistedTerms(), hasItem("wizard"));
 		assertThat("link to blacklist or create synonyms should not be present", searchPage.getText(),
 				not(containsString("You can create synonyms or blacklist these search terms")));
 
