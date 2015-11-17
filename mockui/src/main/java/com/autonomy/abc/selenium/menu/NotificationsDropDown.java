@@ -11,7 +11,7 @@ import java.util.List;
 public class NotificationsDropDown extends AppElement {
 
     public NotificationsDropDown(WebDriver driver) {
-        super(driver.findElement(By.cssSelector("nav:not(.affix-clone) .notification-list")), driver);
+        super(driver.findElement(By.cssSelector("nav.affix-element .notification-list")), driver);
     }
 
     //TODO Even this may need to be abstracted - affix-element for Angular half

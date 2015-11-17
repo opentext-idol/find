@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -116,9 +117,9 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError()  {
-        find.search("red star");
-        service.selectContentType("APPLICATION/PDF");
-        service.selectContentType("APPLICATION/PDF");
+        find.search("wolf");
+        service.selectContentType("TEXT/HTML");
+        service.selectContentType("TEXT/HTML");
         assertThat(service.getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -768,12 +769,12 @@ public class FindITCase extends HostedTestBase {
 
         for (final String searchTerm : boolOperators) {
             find.search(searchTerm);
-            assertThat("Correct error message not present for searchterm: " + searchTerm, find.getText(), containsString("An error occurred retrieving results"));
+            verifyThat("Correct error message for searchterm: " + searchTerm, find.getText(), containsString(Errors.Search.OPERATORS));
         }
 
         for (final String searchTerm : stopWords) {
             find.search(searchTerm);
-            assertThat("Correct error message not present for searchterm: " + searchTerm, find.getText(), containsString("No results found"));
+            verifyThat("Correct error message for searchterm: " + searchTerm, find.getText(), containsString(Errors.Search.STOPWORDS));
         }
     }
 
@@ -784,7 +785,7 @@ public class FindITCase extends HostedTestBase {
         for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
             find.search(hiddenBooleansProximity);
             find.loadOrFadeWait();
-            assertThat(find.getText(), not(containsString("An error occurred retrieving results")));
+            assertThat(find.getText(), not(containsString(Errors.Search.GENERAL)));
         }
     }
 

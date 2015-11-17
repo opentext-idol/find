@@ -19,22 +19,6 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		super(element, driver);
 	}
 
-	public WebElement blacklistLink() {
-		return findElement(By.xpath(".//a[text() = 'blacklist']"));
-	}
-
-	public WebElement createSynonymsLink() {
-		return findElement(By.xpath(".//a[text() = 'create synonyms']"));
-	}
-
-	public List<String> youSearchedFor() {
-		final List<String> youSearchedFor = new ArrayList<>();
-		for (final WebElement word : findElements(By.cssSelector(".search-terms-list span"))) {
-			youSearchedFor.add(word.getText());
-		}
-		return youSearchedFor;
-	}
-
 	public WebElement synonymList(final int index) {
 		return findElements(By.cssSelector(".keywords-sub-list")).get(index);
 	}
