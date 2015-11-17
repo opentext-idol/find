@@ -9,6 +9,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by avidan on 10-11-15.
  */
@@ -78,4 +81,11 @@ public class ConnectorConfigStepTab extends SAASPageBase {
         return findElement(By.cssSelector("label.ng-scope.m-t")).getText();
     }
 
+    public List<WebElement> getAllButtons() {
+        List<WebElement> buttons = new ArrayList<>();
+        buttons.add(hoursButton());
+        buttons.add(daysButton());
+        buttons.add(weeksButton());
+        return buttons;
+    }
 }

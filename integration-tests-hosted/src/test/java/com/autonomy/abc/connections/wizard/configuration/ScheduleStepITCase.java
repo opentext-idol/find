@@ -11,10 +11,15 @@ import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static  com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
@@ -57,87 +62,51 @@ public class ScheduleStepITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA-1694
+    //CSA1717
     public void testConnectionSchedulingValidation() {
-        ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
+        List<WebElement> buttons = connectorConfigStep.getAllButtons();
 
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), not(containsString("active")));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"), containsString("active"));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 1 day"));
+        checkPage(buttons, 1, "Run the connector every 1 day");
 
-        connectorConfigStepTab.hoursButton().click();
+        connectorConfigStep.hoursButton().click();
+        checkPage(buttons, 0, "Connector can be scheduled to run every 6 hours at minimum");
 
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), containsString("active"));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Connector can be scheduled to run every 6 hours at minimum"));
+        connectorConfigStep.timeIntervalInput().setAndSubmit("6");
+        checkPage(buttons, 0, "Run the connector every 6 hours");
 
-        connectorConfigStepTab.timeIntervalInput().setAndSubmit("6");
+        connectorConfigStep.weeksButton().click();
+        checkPage(buttons, 2, "Run the connector every 6 weeks");
 
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), containsString("active"));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 6 hours"));
+        connectorConfigStep.timeIntervalInput().setAndSubmit("3");
+        checkPage(buttons, 2, "Run the connector every 3 weeks");
 
-        connectorConfigStepTab.weeksButton().click();
+        connectorConfigStep.hoursButton().click();
+        checkPage(buttons, 0, "Connector can be scheduled to run every 6 hours at minimum");
 
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), not(containsString("active")));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),containsString("active"));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 6 weeks"));
+        connectorConfigStep.daysButton().click();
+        checkPage(buttons, 1, "Run the connector every 3 days");
 
-        connectorConfigStepTab.timeIntervalInput().setAndSubmit("3");
+        connectorConfigStep.timeIntervalInput().setAndSubmit("0.25");
+        checkPage(buttons, 1, "Run the connector every 0.25 days");
 
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), not(containsString("active")));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),containsString("active"));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 3 weeks"));
+        connectorConfigStep.timeIntervalInput().setAndSubmit("0.24");
+        checkPage(buttons, 1, "Connector can be scheduled to run every 6 hours at minimum");
+    }
 
-        connectorConfigStepTab.hoursButton().click();
+    private void checkButton(WebElement currentButton, List<WebElement> allButtons){
+        for(WebElement button : allButtons){
+            if(button.getText().equals(currentButton.getText())){
+                assertThat(button,hasClass("active"));
+            } else {
+                assertThat(button,not(hasClass("active")));
+            }
+        }
+    }
 
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), containsString("active"));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Connector can be scheduled to run every 6 hours at minimum"));
-
-        connectorConfigStepTab.daysButton().click();
-
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), not(containsString("active")));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"), containsString("active"));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 3 days"));
-
-        connectorConfigStepTab.timeIntervalInput().setAndSubmit("0.25");
-
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), not(containsString("active")));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"), containsString("active"));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 0.25 days"));
-
-        connectorConfigStepTab.timeIntervalInput().setAndSubmit("0.24");
-
-        assertThat(connectorConfigStepTab.scheduleForm().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.hoursButton().getAttribute("class"), not(containsString("active")));
-        assertThat(connectorConfigStepTab.daysButton().getAttribute("class"), containsString("active"));
-        assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
-        assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.scheduleString(), is("Connector can be scheduled to run every 6 hours at minimum"));
+    private void checkPage(List<WebElement> allButtons, int button, String schedulerString){
+        checkButton(allButtons.get(button),allButtons);
+        assertThat(connectorConfigStep.scheduleForm().isEnabled(), is(true));
+        assertThat(connectorConfigStep.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
+        assertThat(connectorConfigStep.scheduleString(), is(schedulerString));
     }
 }
