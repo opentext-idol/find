@@ -34,7 +34,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     }
 
     @Test
-    public void testConnectionSchedulingValidation(){
+    public void testConnectionSchedulingValidation() {
         connectionsPage.newConnectionButton().click();
         newConnectionPage = getElementFactory().getNewConnectionPage();
 
@@ -51,7 +51,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"), containsString("active"));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("1"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 1 day"));
 
         connectorConfigStepTab.hoursButton().click();
@@ -61,7 +60,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("1"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Connector can be scheduled to run every 6 hours at minimum"));
 
         connectorConfigStepTab.timeIntervalInput().setAndSubmit("6");
@@ -71,7 +69,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("6"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 6 hours"));
 
         connectorConfigStepTab.weeksButton().click();
@@ -81,7 +78,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),containsString("active"));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("6"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 6 weeks"));
 
         connectorConfigStepTab.timeIntervalInput().setAndSubmit("3");
@@ -91,7 +87,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),containsString("active"));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("3"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 3 weeks"));
 
         connectorConfigStepTab.hoursButton().click();
@@ -101,7 +96,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("3"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Connector can be scheduled to run every 6 hours at minimum"));
 
         connectorConfigStepTab.daysButton().click();
@@ -111,7 +105,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"), containsString("active"));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("3"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 3 days"));
 
         connectorConfigStepTab.timeIntervalInput().setAndSubmit("0.25");
@@ -121,7 +114,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"), containsString("active"));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("0.25"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Run the connector every 0.25 days"));
 
         connectorConfigStepTab.timeIntervalInput().setAndSubmit("0.24");
@@ -131,7 +123,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
         assertThat(connectorConfigStepTab.daysButton().getAttribute("class"), containsString("active"));
         assertThat(connectorConfigStepTab.weeksButton().getAttribute("class"),not(containsString("active")));
         assertThat(connectorConfigStepTab.unlimitedOccurrencesCheckBox().isEnabled(), is(true));
-        assertThat(connectorConfigStepTab.timeIntervalInput().getValue(), is("0.24"));
         assertThat(connectorConfigStepTab.scheduleString(), is("Connector can be scheduled to run every 6 hours at minimum"));
     }
 
