@@ -4,10 +4,13 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
@@ -20,10 +23,8 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static junit.framework.TestCase.fail;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -86,7 +89,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     //Potentially should be in ConnectionsPageITCase
     //CSA1710
-    public void testDeletingConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
+    public void testAttemptingToDeleteConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
         body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
@@ -157,8 +160,27 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    public void testIndexNameWithSpaceDoesNotGiveInvalidNameNotifications(){
+    //CSA1544
+    public void testCreatingIndexNameWithSpaceViaConnectorWizardDoesNotGiveInvalidIndexNameNotifications(){
+        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
+        Connector hassleRecords = new WebConnector("http://www.hasslerecords.com","hassle records").withDepth(1);
+        String errorMessage = "Index name invalid";
+
+        connectionService.setUpConnection(hassleRecords);
+
+        try {
+            new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining(errorMessage));
+
+            fail("Index name should be valid; probably not due to double encoding");
+        } catch (TimeoutException e){
+            logger.info("Timeout exception");
+        }
+
+        body.getTopNavBar().notificationsDropdown();
+        for(String message : body.getTopNavBar().getNotifications().getAllNotificationMessages()){
+            assertThat(message,not(errorMessage));
+        }
     }
 
     @After
