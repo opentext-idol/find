@@ -365,7 +365,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	 * @return					Number of results in filtered search
 	 */
 	public int filterByContentType(String contentType) {
-		WebElement li = getContentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "'"));
+		WebElement li = getContentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "']"));
+
+		if(!li.isDisplayed()){
+			openParametricValuesList();
+		}
+
 		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
 		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
 		li.findElement(By.tagName("ins")).click();
