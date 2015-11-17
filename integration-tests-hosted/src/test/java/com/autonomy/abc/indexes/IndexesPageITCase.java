@@ -172,7 +172,7 @@ public class IndexesPageITCase extends HostedTestBase {
         try {
             new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining(errorMessage));
 
-            fail("Index name should be valid; probably not due to double encoding");
+            fail("Index name should be valid - likely failed due to double encoding of requests");
         } catch (TimeoutException e){
             logger.info("Timeout exception");
         }
