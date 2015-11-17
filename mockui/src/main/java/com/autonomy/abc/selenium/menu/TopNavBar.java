@@ -23,7 +23,7 @@ public abstract class TopNavBar extends AppElement {
     }
 
     public void notificationsDropdown(){
-        getDriver().findElement(By.cssSelector("nav .count-info")).click();
+        getDriver().findElement(By.cssSelector("nav.affix-element .count-info")).click();
     }
 
     public void search(String searchTerm) {
