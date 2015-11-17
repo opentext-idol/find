@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.search.Search;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -1935,7 +1936,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		keywordsPage.createNewKeywordsButton().click();
 		CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.createSynonymGroup(join(synonymGroup,' '),"English");
+		createNewKeywordsPage.createSynonymGroup(join(synonymGroup, ' '), "English");
 		getElementFactory().getSearchPage();
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage = getElementFactory().getKeywordsPage();
@@ -1969,6 +1970,24 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));
 
 		assertThat(getDriver().getCurrentUrl(),containsString("promotions"));
+	}
+
+	@Test
+	//CSA1694
+	public void testCancellingKeywordsWizardDoesntBreakSearch(){
+		new Search(getApplication(),getElementFactory(),"apu").apply();
+
+		searchPage = getElementFactory().getSearchPage();
+		searchPage.createSynonymsLink().click();
+
+		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+		createKeywordsPage.cancelWizardButton().click();
+
+		try {
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+		} catch (TimeoutException e) {
+			fail("Search does not find results after cancelling synonym wizard");
+		}
 	}
 
 }
