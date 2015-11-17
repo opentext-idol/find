@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.analytics.Term;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
@@ -37,6 +38,7 @@ public class AnalyticsITCase extends HostedTestBase {
         body = getBody();
     }
 
+    @Ignore("TODO: how often do statistics update?")
     @Test
     public void testPopularTermsSearchOptimizer(){
         Term mostPopular = analytics.getMostPopularSearchTerm();
@@ -101,6 +103,7 @@ public class AnalyticsITCase extends HostedTestBase {
         assertThat(analytics.getMostPopularSearchTerm().getSearchCount(),is(mostPopularSearchCount + 1));
     }
 
+    @Ignore("TODO: most popular promotion has been deleted")
     @Test
     public void testPopularPromotionsClickthrough(){
         WebElement mostPopular = analytics.getMostPopularPromotion();
