@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -35,15 +34,9 @@ import static org.hamcrest.core.Is.is;
 
 //CSA-1565
 public class ConnectionsToFindITCase extends HostedTestBase {
-    public ConnectionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
-    }
-
-
     private ConnectionService connectionService;
     private SearchActionFactory searchActionFactory;
     private PromotionActionFactory promotionActionFactory;
-
     private final WebConnector connector = new WebConnector("http://www.fifa.com", "fifa");
     private final String indexName = "fifa";
     private final String searchTerm = "football";
@@ -52,6 +45,10 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     private List<String> synonyms = Arrays.asList(searchTerm,"evil","malfoy","slytherin","greed");
     private SearchPage searchPage;
     private List<String> promotedTitles;
+
+    public ConnectionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
+        super(config, browser, type, platform);
+    }
 
     @Before
     public void setUp(){
@@ -99,7 +96,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
 
-        IndexesPage indexesPage = ((HSOElementFactory) getElementFactory()).getIndexesPage();
+        IndexesPage indexesPage = getElementFactory().getIndexesPage();
         indexesPage.findIndex(indexName).findElement(By.className("fa-trash-o")).click();
         indexesPage.loadOrFadeWait();
         getDriver().findElement(By.className("btn-alert")).click();
