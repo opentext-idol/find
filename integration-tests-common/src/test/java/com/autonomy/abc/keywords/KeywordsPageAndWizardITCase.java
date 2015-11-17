@@ -166,7 +166,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
 
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		createKeywordsPage.cancelWizardButton().click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
@@ -177,7 +177,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		createKeywordsPage.cancelWizardButton().click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
@@ -188,7 +188,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		createKeywordsPage.cancelWizardButton().click();
 		assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 	}
