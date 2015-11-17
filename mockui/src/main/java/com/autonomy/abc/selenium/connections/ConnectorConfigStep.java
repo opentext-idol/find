@@ -16,12 +16,12 @@ public class ConnectorConfigStep implements WizardStep {
         this.newConnectionPage = newConnectionPage;
     }
 
-    public ConnectorConfigStep withDepth(int depth){
+    public ConnectorConfigStep withDepth(Integer depth){
         this.depth = depth;
         return this;
     }
 
-    public ConnectorConfigStep maxPages(int maxPages){
+    public ConnectorConfigStep maxPages(Integer maxPages){
         this.maxPages = maxPages;
         return this;
     }
