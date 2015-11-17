@@ -371,6 +371,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 			openParametricValuesList();
 		}
 
+		loadOrFadeWait();
+
 		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
 		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
 		li.findElement(By.tagName("ins")).click();
