@@ -123,7 +123,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         assertThat(createPromotionsPage.positionInputValue(), is(1));
 
         trySendKeysToPinPosition("1bad");
-        body.getTopNavBar().sideBarToggle();
+        body.getSideNavBar().toggle();
         assertThat(createPromotionsPage.positionInputValue(), is(1));
 
         trySendKeysToPinPosition("1");
@@ -134,6 +134,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton());
         createPromotionsPage.loadOrFadeWait();
         assertThat(createPromotionsPage, hasTextThat(containsString(SearchTriggerStep.TITLE)));
+        body.getSideNavBar().toggle();
     }
 
     private void trySendKeysToPinPosition(CharSequence... keys) {
@@ -363,11 +364,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     }
 
     private void toggleAndCancel() {
-        body.getTopNavBar().sideBarToggle();
+        body.getSideNavBar().toggle();
         createPromotionsPage.cancelButton().click();
         verifyThat(getDriver().getCurrentUrl(), containsString("search/modified"));
         verifyThat(searchPage.promotedItemsCount(), is(1));
-        body.getTopNavBar().sideBarToggle();
+        body.getSideNavBar().toggle();
         searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
 //        searchPage.promoteTheseItemsButton().click();
         createPromotionsPage.waitForLoad();
