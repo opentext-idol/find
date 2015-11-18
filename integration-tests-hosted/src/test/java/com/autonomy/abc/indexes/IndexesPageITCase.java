@@ -186,7 +186,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @After
     public void tearDown(){
         try {
-            getApplication().createConnectionService(getElementFactory()).deleteAllConnections();
+            getApplication().createConnectionService(getElementFactory()).deleteAllConnections(false);
             getApplication().createIndexService(getElementFactory()).deleteAllIndexes();
         } catch (Exception e) {
             logger.warn("Failed to tear down");

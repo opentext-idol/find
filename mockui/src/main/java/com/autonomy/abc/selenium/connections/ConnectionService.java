@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
-import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
@@ -65,25 +64,46 @@ public class ConnectionService {
     }
 
     public ConnectionsPage deleteConnection(final Connector connector, boolean deleteIndex) {
-        ConnectionsDetailPage connectionsDetailPage = goToDetails(connector);
-        connectionsDetailPage.deleteButton().click();
+        beginDelete(connector);
+
         if(deleteIndex) {
-            connectionsDetailPage.alsoDeleteIndexCheckbox().click();
+            deleteIndex();
         }
-        connectionsDetailPage.deleteConfirmButton().click();
-        connectionsPage = elementFactory.getConnectionsPage();
-        new WebDriverWait(getDriver(), 100).until(GritterNotice.notificationContaining(connector.getDeleteNotification()));
-        // TODO: CSA-1539
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {}
+
+        confirmDelete(connector);
+
         return connectionsPage;
     }
 
-    public ConnectionsPage deleteAllConnections() {
+    private void beginDelete(Connector connector){
+        ConnectionsDetailPage connectionsDetailPage = goToDetails(connector);
+        connectionsDetailPage.deleteButton().click();
+    }
+
+    private void deleteIndex(){
+        connectionsDetailPage.alsoDeleteIndexCheckbox().click();
+    }
+
+    private void confirmDelete(Connector connector){
+        connectionsDetailPage.deleteConfirmButton().click();
+        connectionsPage = elementFactory.getConnectionsPage();
+        new WebDriverWait(getDriver(), 100).until(GritterNotice.notificationContaining(connector.getDeleteNotification()));
+    }
+
+    public ConnectionsPage deleteAllConnections(boolean deleteIndex) {
         goToConnections();
         for(WebElement connector : getDriver().findElements(By.className("listItemTitle"))){
-            deleteConnection(new WebConnector(null,connector.getText().split("\\(")[0].trim()),false);
+            WebConnector webConnector = new WebConnector(null, connector.getText().split("\\(")[0].trim());
+
+            beginDelete(webConnector);
+
+            if (deleteIndex) {
+                try {
+                    deleteIndex();
+                } catch (Exception e) {/* May have other connections associated */}
+            }
+
+            confirmDelete(webConnector);
         }
         return connectionsPage;
     }
