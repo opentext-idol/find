@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 public abstract class Connector {
     protected String name;
     protected Index index;
+    private ConnectionStatistics connectionStatistics;
 
     public Connector(String name) {
         this.name = name;
@@ -34,5 +35,13 @@ public abstract class Connector {
 
     public Index getIndex(){
         return index;
+    }
+
+    public ConnectionStatistics getStatistics(){
+        return connectionStatistics;
+    }
+
+    public void setStatistics(ConnectionStatistics connectionStatistics) {
+        this.connectionStatistics = connectionStatistics;
     }
 }

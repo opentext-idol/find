@@ -107,4 +107,10 @@ public class ConnectionService {
         }
         return connectionsPage;
     }
+
+    public ConnectionsDetailPage updateLastRun(WebConnector webConnector) {
+        goToDetails(webConnector);
+        webConnector.setStatistics(new ConnectionStatistics(connectionsDetailPage.lastRun()));
+        return connectionsDetailPage;
+    }
 }

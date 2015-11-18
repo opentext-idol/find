@@ -109,4 +109,40 @@ public class ConnectorConfigStepTab extends SAASPageBase {
         buttons.add(weeksButton());
         return buttons;
     }
+
+    public WebElement credentialsConfigurations() {
+        return findElement(By.id("CredentialsConfigurationPropsHeader"));
+    }
+
+    public WebElement addCredentialsCheckbox() {
+        return findElement(By.cssSelector("#CredentialsConfigurationPropsContent ins"));
+    }
+
+    public FormInput urlRegexBox(){
+        return new FormInput(findElement(By.name("form_url_regex")), getDriver());
+    }
+
+    public FormInput loginFieldBox(){
+        return new FormInput(findElement(By.name("login_field_value")), getDriver());
+    }
+
+    public FormInput passwordFieldBox(){
+        return new FormInput(findElement(By.name("password_field_value")), getDriver());
+    }
+
+    public FormInput submitButtonBox(){
+        return new FormInput(findElement(By.name("submit_selector")), getDriver());
+    }
+
+    public FormInput loginUsernameBox(){
+        return new FormInput(findElement(By.name("login_value")), getDriver());
+    }
+
+    public FormInput loginPasswordBox(){
+        return new FormInput(findElement(By.name("password_value")), getDriver());
+    }
+
+    public FormInput notificationEmailBox(){
+        return new FormInput(findElement(By.name("notification_email")), getDriver());
+    }
 }
