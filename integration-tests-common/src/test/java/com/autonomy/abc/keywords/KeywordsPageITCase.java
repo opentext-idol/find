@@ -873,61 +873,28 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testDeletingOfSynonymsAndBlacklistedTerms() throws InterruptedException {
-		WebDriverWait wait = new WebDriverWait(getDriver(),10);
+		String blacklistTerms = "aa ba ca da ab bb cb db";
+		String synonyms = "ea es ed ef eg eh";
+		String[] blacklistTermsToDelete = {"db", "aa", "da"};
+		String[] synonymsToDelete = {"es", "ea", "ef", "ed", "eg"};
 
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
+		keywordService.addBlacklistTerms(blacklistTerms);
+		keywordService.addSynonymGroup(synonyms);
 
-		new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
+		verifyDeletes(synonymsToDelete);
 
-		keywordsPage.createNewKeywordsButton(wait).click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("ea es ed ef eg eh", "English");
-		searchPage = getElementFactory().getSearchPage();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordService.deleteAll();
+		keywordService.addBlacklistTerms(blacklistTerms);
+		keywordService.addSynonymGroup(synonyms);
 
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
-		keywordsPage.deleteSynonym("es", "es");
-		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
+		verifyDeletes(blacklistTermsToDelete);
+	}
 
-		keywordsPage.deleteSynonym("ea", "ea");
-		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
-
-		keywordsPage.deleteSynonym("eg", "eg");
-		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
-
-		keywordsPage.deleteSynonym("ed", "ed");
-		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
-
-		keywordsPage.deleteSynonym("ef", "ef");
-		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
-
-		keywordsPage.deleteKeywords();
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
-
-		new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
-
-		keywordsPage.createNewKeywordsButton(wait).click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("ea es ed ef eg eh", "English");
-
-		getElementFactory().getSearchPage();
-
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
-		keywordsPage.deleteBlacklistedTerm("db");
-		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
-
-		keywordsPage.deleteBlacklistedTerm("aa");
-		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
-
-		keywordsPage.deleteBlacklistedTerm("da");
-		assertFalse("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled());
+	private void verifyDeletes(String[] keywords) {
+		for (String keyword : keywords) {
+			keywordService.deleteKeyword(keyword);
+			verifyThat("successfully removed keyword '" + keyword + "'", !keywordsPage.areAnyKeywordsDisabled());
+		}
 	}
 
 	@Test
