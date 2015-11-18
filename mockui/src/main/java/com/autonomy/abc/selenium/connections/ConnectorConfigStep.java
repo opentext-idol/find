@@ -12,6 +12,7 @@ public class ConnectorConfigStep implements WizardStep {
     private final NewConnectionPage newConnectionPage;
     private Integer depth;
     private Integer maxPages;
+    private Integer duration;
     private Credentials credentials;
 
     public ConnectorConfigStep(NewConnectionPage newConnectionPage) {
@@ -33,6 +34,11 @@ public class ConnectorConfigStep implements WizardStep {
         return this;
     }
 
+    public WizardStep withDuration(Integer duration) {
+        this.duration = duration;
+        return this;;
+    }
+
     @Override
     public String getTitle() {
         return TITLE;
@@ -42,7 +48,7 @@ public class ConnectorConfigStep implements WizardStep {
     public Object apply() {
         ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
 
-        if(maxPages != null || depth != null) {
+        if(maxPages != null || depth != null || duration != null) {
             WebElement advancedConfig = connectorConfigStepTab.advancedConfigurations();
             advancedConfig.click();
 
@@ -51,11 +57,15 @@ public class ConnectorConfigStep implements WizardStep {
             } catch (Exception e) {/*NOOP*/}
 
             if (maxPages != null) {
-                connectorConfigStepTab.getMaxPagesBox().setValue(maxPages + "");
+                connectorConfigStepTab.getMaxPagesBox().setValue(maxPages.toString());
             }
 
             if (depth != null) {
-                connectorConfigStepTab.getDepthBox().setValue(depth + "");
+                connectorConfigStepTab.getDepthBox().setValue(depth.toString());
+            }
+
+            if (duration != null) {
+                connectorConfigStepTab.getDurationBox().setValue(duration.toString());
             }
 
             advancedConfig.click();
