@@ -9,6 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,12 +54,32 @@ public class ConnectorConfigStepTab extends SAASPageBase {
         return findElement(By.id("advancedConfigurationPropsHeader"));
     }
 
-    public WebElement getDepthBox(){
-        return findElement(By.cssSelector("[name='depth']"));
+    public FormInput getDepthBox(){
+        return new FormInput(findElement(By.name("depth")), getDriver());
     }
 
-    public WebElement getMaxPagesBox() {
-        return findElement(By.cssSelector("[name='max_pages']"));
+    public FormInput getMaxPagesBox() {
+        return new FormInput(findElement(By.name("max_pages")), getDriver());
+    }
+
+    public FormInput getDurationBox() {
+        return new FormInput(findElement(By.name("duration")), getDriver());
+    }
+
+    public FormInput getMaxLinksBox() {
+        return new FormInput(findElement(By.name("max_links_per_page")), getDriver());
+    }
+
+    public FormInput getMaxPageSizeBox() {
+        return new FormInput(findElement(By.name("max_page_size")), getDriver());
+    }
+
+    public FormInput getMinPageSizeBox() {
+        return new FormInput(findElement(By.name("min_page_size")), getDriver());
+    }
+
+    public FormInput getPageTimeoutBox() {
+        return new FormInput(findElement(By.name("page_timeout")), getDriver());
     }
 
     private WebElement scheduleButton(String time){
