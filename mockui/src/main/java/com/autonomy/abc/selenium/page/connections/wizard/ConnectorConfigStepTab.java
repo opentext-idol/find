@@ -115,7 +115,7 @@ public class ConnectorConfigStepTab extends SAASPageBase {
     }
 
     public WebElement addCredentialsCheckbox() {
-        return credentialsConfigurations().findElement(By.tagName("ins"));
+        return findElement(By.cssSelector("#CredentialsConfigurationPropsContent ins"));
     }
 
     public FormInput urlRegexBox(){
