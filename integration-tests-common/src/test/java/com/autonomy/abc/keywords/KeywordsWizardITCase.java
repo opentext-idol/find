@@ -17,6 +17,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
 
 public class KeywordsWizardITCase extends ABCTestBase {
+    private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsWizardITCase.class); 
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage createKeywordsPage;
     private SearchPage searchPage;
@@ -83,7 +85,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
             createKeywordsPage.selectLanguage("French");
             assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("French"));
         } else {
-            LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class).warn("Cannot select language for synonyms yet");
+            LOGGER.warn("Cannot select language for synonyms yet");
         }
 
         createKeywordsPage.continueWizardButton().click();
@@ -189,7 +191,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
             createKeywordsPage.selectLanguage("English");
             assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("English"));
         } else {
-            (LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
+            LOGGER.warn("Cannot select language for blacklists yet");
         }
 
         createKeywordsPage.continueWizardButton().click();
@@ -379,7 +381,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 
         //createKeywordsPage.selectLanguage("English");
-        (LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
+        LOGGER.warn("Cannot select language for blacklists yet");
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -449,7 +451,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
         //createKeywordsPage.selectLanguage("English");
-        (LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
+        LOGGER.warn("Cannot select language for blacklists yet");
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -476,7 +478,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST))).click();
 
         //createKeywordsPage.selectLanguage("English");
-        (LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
+        LOGGER.warn("Cannot select language for blacklists yet");
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -553,7 +555,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 
         for (final String hiddenBooleansProximity : hiddenSearchOperators) {
-            LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class).info("Adding '"+hiddenBooleansProximity+"'");
+            LOGGER.info("Adding '"+hiddenBooleansProximity+"'");
 
             keywordsPage.addSynonymToGroup(hiddenBooleansProximity, "holder");
 

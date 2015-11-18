@@ -21,6 +21,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -38,17 +39,18 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class KeywordsPageAndWizardITCase extends ABCTestBase {
-	public KeywordsPageAndWizardITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
-	}
-
+public class KeywordsPageITCase extends ABCTestBase {
+	private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsPageITCase.class);
 	private KeywordsPage keywordsPage;
 	private CreateNewKeywordsPage createKeywordsPage;
 	private SearchPage searchPage;
 	private NotificationsDropDown notifications;
 	private KeywordService keywordService;
 	private SearchActionFactory searchFactory;
+	
+	public KeywordsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
+	}
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -266,7 +268,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
 
 		//keywordsPage.selectLanguage("English");
-		(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
+		LOGGER.warn("Cannot select language for blacklists yet");
 
 		keywordsPage.addSynonymToGroup("four", "one");
 		keywordsPage.waitForRefreshIconToDisappear();
@@ -631,7 +633,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.createSynonymsLink().click();
 		searchPage.loadOrFadeWait();
-		assertThat(getDriver().getCurrentUrl(),containsString("keywords/create"));
+		assertThat(getDriver().getCurrentUrl(), containsString("keywords/create"));
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.addSynonyms("한국");
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
@@ -737,7 +739,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 		createKeywordsPage.createSynonymGroup("ying yang", "Korean");
 
 		//keywordsPage.selectLanguage("Korean");
-		(LoggerFactory.getLogger(KeywordsPageAndWizardITCase.class)).warn("Cannot select language for blacklists yet");
+		LOGGER.warn("Cannot select language for blacklists yet");
 
 		new WebDriverWait(getDriver(),40).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
 
@@ -1103,7 +1105,7 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 
 		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));
 
-		assertThat(getDriver().getCurrentUrl(),containsString("promotions"));
+		assertThat(getDriver().getCurrentUrl(), containsString("promotions"));
 	}
 
 
