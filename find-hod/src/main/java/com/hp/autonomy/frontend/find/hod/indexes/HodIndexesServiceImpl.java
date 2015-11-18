@@ -17,10 +17,11 @@ import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.hod.sso.HodAuthentication;
+import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -62,9 +63,8 @@ public class HodIndexesServiceImpl implements HodIndexesService {
         final Iterator<Resource> iterator = indexes.getResources().iterator();
 
         while (iterator.hasNext()) {
-            final Resource i = iterator.next();
-
-            if (FLAVOURS_TO_REMOVE.contains(i.getFlavour())) {
+            final Resource resource = iterator.next();
+            if (FLAVOURS_TO_REMOVE.contains(resource.getFlavour())) {
                 iterator.remove();
             }
         }
@@ -83,8 +83,8 @@ public class HodIndexesServiceImpl implements HodIndexesService {
         final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if(activeIndexes.isEmpty()) {
-            final HodAuthentication auth = (HodAuthentication) SecurityContextHolder.getContext().getAuthentication();
-            final String domain = auth.getPrincipal().getApplication().getDomain();
+            final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            final String domain = ((HodAuthenticationPrincipal) auth.getPrincipal()).getApplication().getDomain();
 
             final Set<Database> validDatabases;
             final Set<Database> allDatabases = databasesService.getDatabases(domain);

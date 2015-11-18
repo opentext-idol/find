@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.indexes;
 
 import com.hp.autonomy.databases.Database;
+import com.hp.autonomy.frontend.find.core.indexes.IndexesService;
 import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
