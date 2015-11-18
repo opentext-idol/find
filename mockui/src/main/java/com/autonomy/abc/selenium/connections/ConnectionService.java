@@ -2,23 +2,16 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
-import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.NoSuchElementException;
 
 public class ConnectionService {
     private Application application;
@@ -26,7 +19,6 @@ public class ConnectionService {
     private ConnectionsPage connectionsPage;
     private NewConnectionPage newConnectionPage;
     private ConnectionsDetailPage connectionsDetailPage;
-    private Logger logger = LoggerFactory.getLogger(ConnectionService.class);
 
     public ConnectionService(Application application, HSOElementFactory elementFactory) {
         this.application = application;
