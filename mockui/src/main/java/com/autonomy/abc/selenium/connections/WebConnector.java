@@ -8,6 +8,23 @@ import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 
 public class WebConnector extends Connector {
     private String url;
+
+    public Integer getDepth() {
+        return depth;
+    }
+
+    public Integer getMaxPages() {
+        return maxPages;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public Credentials getCredentials() {
+        return credentials;
+    }
+
     private Integer depth;
     private Integer maxPages;
     private Integer duration;
@@ -64,7 +81,7 @@ public class WebConnector extends Connector {
             super();
             page = newConnectionPage;
             add(new ConnectorTypeStep(page, url, name));
-            add(new ConnectorConfigStep(page).withDepth(depth).maxPages(maxPages).withCredentials(credentials).withDuration(duration));
+            add(new ConnectorConfigStep(page, WebConnector.this));
             add(new ConnectorIndexStep(page,index,name));
             add(new BlankWizardStep("Complete"));
         }
