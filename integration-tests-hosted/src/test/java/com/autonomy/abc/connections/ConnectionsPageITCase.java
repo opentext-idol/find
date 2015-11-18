@@ -4,6 +4,8 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.Credentials;
+import com.autonomy.abc.selenium.connections.SecureWebConnector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
@@ -54,6 +56,11 @@ public class ConnectionsPageITCase extends HostedTestBase {
         getElementFactory().getKeywordsPage();
 
         navigateToConnectionViaURL(url);
+    }
+
+    @Test
+    public void testSecureWebConnector(){
+        WebConnector webConnector = new SecureWebConnector("http://www.facebook.com/settings","facebook", new Credentials(getConfig().getUser("facebook")));
     }
 
     private void navigateToConnectionViaURL(String url){

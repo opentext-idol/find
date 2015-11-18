@@ -10,11 +10,13 @@ public class ConnectorConfigStep implements WizardStep {
     private static final String TITLE = "Connector Configuration";
 
     private final NewConnectionPage newConnectionPage;
+    private final WebConnector webConnector;
     private Integer depth;
     private Integer maxPages;
 
-    public ConnectorConfigStep(NewConnectionPage newConnectionPage) {
+    public ConnectorConfigStep(NewConnectionPage newConnectionPage, WebConnector connector) {
         this.newConnectionPage = newConnectionPage;
+        this.webConnector = connector;
     }
 
     public ConnectorConfigStep withDepth(Integer depth){
@@ -56,6 +58,10 @@ public class ConnectorConfigStep implements WizardStep {
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {/*NOOP*/}
+
+            if(webConnector instanceof SecureWebConnector){
+                ((SecureWebConnector) webConnector).getCredentials().apply();
+            }
         }
 
         return null;

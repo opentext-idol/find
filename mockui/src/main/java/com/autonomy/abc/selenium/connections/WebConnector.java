@@ -47,7 +47,7 @@ public class WebConnector extends Connector {
             super();
             page = newConnectionPage;
             add(new ConnectorTypeStep(page, url, name));
-            add(new ConnectorConfigStep(page).withDepth(depth).maxPages(maxPages));
+            add(new ConnectorConfigStep(page, WebConnector.this).withDepth(depth).maxPages(maxPages));
             add(new ConnectorIndexStep(page,index,name));
             add(new BlankWizardStep("Complete"));
         }
