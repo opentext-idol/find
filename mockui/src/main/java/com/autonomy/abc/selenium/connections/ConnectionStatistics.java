@@ -1,10 +1,11 @@
 package com.autonomy.abc.selenium.connections;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectionStatistics {
-    List<Integer> detected;
-    List<Integer> ingested;
+    List<Integer> detected = new ArrayList<>();
+    List<Integer> ingested = new ArrayList<>();
 
     public ConnectionStatistics(List<Integer> statistics){
         detected.add(statistics.get(0));

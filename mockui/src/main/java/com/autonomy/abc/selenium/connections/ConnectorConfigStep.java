@@ -36,7 +36,7 @@ public class ConnectorConfigStep implements WizardStep {
 
     public WizardStep withDuration(Integer duration) {
         this.duration = duration;
-        return this;;
+        return this;
     }
 
     @Override
