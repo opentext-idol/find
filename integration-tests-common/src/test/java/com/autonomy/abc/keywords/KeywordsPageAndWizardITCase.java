@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
@@ -11,8 +12,10 @@ import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchActionFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,14 +50,21 @@ public class KeywordsPageAndWizardITCase extends ABCTestBase {
 	private CreateNewKeywordsPage createKeywordsPage;
 	private SearchPage searchPage;
 	private NotificationsDropDown notifications;
+	private KeywordService keywordService;
+	private SearchActionFactory searchFactory;
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.waitForRefreshIconToDisappear();
-		keywordsPage.deleteKeywords();
+		keywordService = new KeywordService(getApplication(), getElementFactory());
+		searchFactory = new SearchActionFactory(getApplication(), getElementFactory());
+
+		keywordsPage = keywordService.deleteAll();
     }
+
+	@After
+	public void tearDown() {
+		keywordService.deleteAll();
+	}
 
 	private class WaitForNotification implements ExpectedCondition{
 		private final String notificationText;
