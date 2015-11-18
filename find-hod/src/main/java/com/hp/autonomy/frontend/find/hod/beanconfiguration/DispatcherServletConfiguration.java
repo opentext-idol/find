@@ -15,6 +15,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ViewResolver;
@@ -37,7 +38,8 @@ import java.util.Properties;
         @ComponentScan.Filter(RestController.class),
     },
     excludeFilters = {
-        @ComponentScan.Filter(Configuration.class)
+        @ComponentScan.Filter(Configuration.class),
+        @ComponentScan.Filter(Component.class)
     }
 )
 public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {

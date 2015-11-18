@@ -5,10 +5,6 @@
 
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
-import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
-import com.hp.autonomy.frontend.find.hod.configuration.IodConfigValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.databases.DatabasesService;
 import com.hp.autonomy.databases.DatabasesServiceImpl;
@@ -19,6 +15,9 @@ import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableParametricValuesService;
 import com.hp.autonomy.frontend.find.hod.search.FindDocument;
@@ -71,6 +70,7 @@ import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -79,6 +79,8 @@ import java.util.HashSet;
 @Conditional({HodCondition.class})
 @EnableCaching
 public class HodConfiguration extends CachingConfigurerSupport {
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private TokenRepository tokenRepository;
@@ -107,20 +109,12 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public IodConfigValidator iodConfigValidator() {
-        return new IodConfigValidator();
-    }
-
-    @Bean
-    public ValidationService<HodFindConfig> validationService() {
+    @Autowired
+    public ValidationService<HodFindConfig> validationService(final Validator<?>[] validators) {
         final ValidationServiceImpl<HodFindConfig> validationService = new ValidationServiceImpl<>();
 
         // The type annotation here is required to make it compile
-        //noinspection Convert2Diamond
-        validationService.setValidators(new HashSet<Validator<?>>(Arrays.asList(
-                singleUserAuthenticationValidator(),
-                iodConfigValidator()
-        )));
+        validationService.setValidators(new HashSet<>(Arrays.asList(validators)));
 
         // fix circular dependency
         configService.setValidationService(validationService);
@@ -141,10 +135,10 @@ public class HodConfiguration extends CachingConfigurerSupport {
     public HttpClient httpClient() {
         final HttpClientBuilder builder = HttpClientBuilder.create();
 
-        final String proxyHost = System.getProperty("find.https.proxyHost");
+        final String proxyHost = environment.getProperty("find.https.proxyHost");
 
         if (proxyHost != null) {
-            final Integer proxyPort = Integer.valueOf(System.getProperty("find.https.proxyPort", "8080"));
+            final Integer proxyPort = Integer.valueOf(environment.getProperty("find.https.proxyPort", "8080"));
             builder.setProxy(new HttpHost(proxyHost, proxyPort));
         }
 
@@ -152,7 +146,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     private HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder() {
-        final String endpoint = System.getProperty("find.iod.api", "https://api.havenondemand.com");
+        final String endpoint = environment.getProperty("find.iod.api", "https://api.havenondemand.com");
 
         return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
                 .setHttpClient(httpClient())

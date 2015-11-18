@@ -7,21 +7,23 @@ package com.hp.autonomy.frontend.find.hod.configuration;
 
 import com.hp.autonomy.frontend.configuration.ValidationResult;
 import com.hp.autonomy.frontend.configuration.Validator;
-import com.hp.autonomy.frontend.find.hod.indexes.IndexesService;
+import com.hp.autonomy.frontend.find.hod.indexes.HodIndexesService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IodConfigValidator implements Validator<IodConfig> {
 
     @Autowired
-    private IndexesService indexesService;
+    private HodIndexesService hodIndexesService;
 
     @Autowired
     private AuthenticationService authenticationService;
 
     @Override
     public ValidationResult<?> validate(final IodConfig iodConfig) {
-        return iodConfig.validate(indexesService, authenticationService);
+        return iodConfig.validate(hodIndexesService, authenticationService);
     }
 
     @Override

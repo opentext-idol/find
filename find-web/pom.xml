@@ -253,10 +253,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>find-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>

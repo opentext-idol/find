@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 import com.hp.autonomy.frontend.configuration.ValidationResult;
-import com.hp.autonomy.frontend.find.hod.indexes.IndexesService;
+import com.hp.autonomy.frontend.find.hod.indexes.HodIndexesService;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
@@ -54,17 +54,17 @@ public class IodConfig implements ConfigurationComponent {
         return true;
     }
 
-    public ValidationResult<?> validate(final IndexesService indexesService, final AuthenticationService authenticationService) {
+    public ValidationResult<?> validate(final HodIndexesService indexesService, final AuthenticationService authenticationService) {
         try {
-            if(StringUtils.isBlank(apiKey)) {
+            if (StringUtils.isBlank(apiKey)) {
                 return new ValidationResult<>(false, "API Key is blank");
             }
 
-            if(StringUtils.isBlank(apiKey)) {
+            if (StringUtils.isBlank(apiKey)) {
                 return new ValidationResult<>(false, "Application is blank");
             }
 
-            if(StringUtils.isBlank(apiKey)) {
+            if (StringUtils.isBlank(apiKey)) {
                 return new ValidationResult<>(false, "Domain is blank");
             }
 
@@ -85,7 +85,7 @@ public class IodConfig implements ConfigurationComponent {
     }
 
     public IodConfig merge(final IodConfig iod) {
-        if(iod != null) {
+        if (iod != null) {
             final Builder builder = new Builder();
 
             builder.setApiKey(this.apiKey == null ? iod.apiKey : this.apiKey);
@@ -95,8 +95,7 @@ public class IodConfig implements ConfigurationComponent {
             builder.setPublicIndexesEnabled(this.publicIndexesEnabled == null ? iod.publicIndexesEnabled : this.publicIndexesEnabled);
 
             return builder.build();
-        }
-        else {
+        } else {
             return this;
         }
     }

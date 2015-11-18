@@ -34,7 +34,7 @@ public class HodConfigFileConfiguration {
         final HodFindConfigFileService configService = new HodFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
-        configService.setDefaultConfigFile("/com/hp/autonomy/frontend/find/configuration/defaultHodConfigFile.json");
+        configService.setDefaultConfigFile("/defaultHodConfigFile.json");
         configService.setMapper(objectMapper());
         configService.setTextEncryptor(textEncryptor);
         configService.setFilterProvider(filterProvider);
@@ -48,8 +48,8 @@ public class HodConfigFileConfiguration {
 
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        mapper.addMixInAnnotations(Authentication.class, HodAuthenticationMixins.class);
-        mapper.addMixInAnnotations(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class);
+        mapper.addMixIn(Authentication.class, HodAuthenticationMixins.class);
+        mapper.addMixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class);
 
         return mapper;
     }
