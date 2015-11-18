@@ -93,6 +93,11 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		waitForRefreshIconToDisappear();
 	}
 
+	public void deleteKeyword(final String keyword) {
+		findElement(By.cssSelector("[data-term='" + keyword + "'] .remove-keyword")).click();
+		waitForRefreshIconToDisappear();
+	}
+
 	@Deprecated
 	public WebElement getSynonymIcon(final String synonym, final String synonymLead) {
 		return getSynonymIcon(synonym);

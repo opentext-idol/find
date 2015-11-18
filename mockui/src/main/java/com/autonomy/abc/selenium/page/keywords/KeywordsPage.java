@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.keywords.KeywordType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -110,6 +111,12 @@ public abstract class KeywordsPage extends KeywordsBase {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
         findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
+    }
+
+    public void filterView(final KeywordType type) {
+        WebDriverWait wait = new WebDriverWait(getDriver(),5);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
+        findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ type.toString() +"']")).click();
     }
 
     public int countKeywords() {

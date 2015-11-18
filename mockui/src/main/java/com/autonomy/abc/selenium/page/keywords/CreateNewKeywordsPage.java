@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -91,6 +92,11 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.cssSelector(".synonyms-input-view [name='words']"));
 	}
 
+	public FormInput addKeywordsInput() {
+		return new FormInput(findElement(By.cssSelector(".wizard-branch:not(.hidden) input[name='words']")), getDriver());
+
+	}
+
 	public WebElement addBlacklistedTextBox() {
 		return findElement(By.cssSelector("[data-branch='blacklisted'] .form-group [name='words']"));
 	}
@@ -135,12 +141,12 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
         return keywords.findElements(By.cssSelector(".remove-word")).size();
     }
 
-	public void createSynonymGroup(final String synonymGroup, final String language) throws InterruptedException {
+	public void createSynonymGroup(final String synonymGroup, final String language) {
 		loadOrFadeWait();
 
 		keywordsType(KeywordType.SYNONYM, new WebDriverWait(getDriver(),15)).click();
 		selectLanguage(language);
-		Thread.sleep(2000);
+		loadOrFadeWait();
 		continueWizardButton().click();
 		loadOrFadeWait();
 		addSynonyms(synonymGroup);
@@ -148,7 +154,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		(new WebDriverWait(getDriver(),10)).until(ExpectedConditions.elementToBeClickable(enabledFinishWizardButton())).click();
 	}
 
-	public void createBlacklistedTerm(final String blacklistedTerm, final String language) throws InterruptedException {
+	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
 		keywordsType(KeywordType.BLACKLIST).click();
         selectLanguage(language);
         continueWizardButton().click();
