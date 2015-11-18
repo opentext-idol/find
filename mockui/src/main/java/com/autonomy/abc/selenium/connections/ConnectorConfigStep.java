@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import org.openqa.selenium.WebElement;
@@ -44,15 +45,11 @@ public class ConnectorConfigStep implements WizardStep {
             } catch (Exception e) {/*NOOP*/}
 
             if (maxPages != null) {
-                WebElement maxPagesBox = connectorConfigStepTab.getMaxPagesBox();
-                maxPagesBox.clear();
-                maxPagesBox.sendKeys(maxPages + "");
+                connectorConfigStepTab.getMaxPagesBox().setValue(maxPages + "");
             }
 
             if (depth != null) {
-                WebElement depthBox = connectorConfigStepTab.getDepthBox();
-                depthBox.clear();
-                depthBox.sendKeys(depth + "");
+                connectorConfigStepTab.getDepthBox().setValue(depth + "");
             }
 
             advancedConfig.click();
