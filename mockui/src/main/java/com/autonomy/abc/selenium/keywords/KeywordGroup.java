@@ -4,14 +4,17 @@ import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.util.Language;
 
 class KeywordGroup {
     private String keywordString;
     private KeywordType type;
+    private Language language;
 
-    public KeywordGroup(KeywordType type, String... keywords) {
+    public KeywordGroup(KeywordType type, Language language, String... keywords) {
         this.keywordString = String.join(" ", keywords);
         this.type = type;
+        this.language = language;
     }
 
     public Wizard makeWizard(CreateNewKeywordsPage newKeywordsPage) {
@@ -27,20 +30,8 @@ class KeywordGroup {
         }
 
         private void buildSteps() {
-            this.add(new OptionWizardStep(page, "Select Type of Keywords", type.getOption()));
-            this.add(new WizardStep() {
-                @Override
-                public String getTitle() {
-                    return type.getInputTitle();
-                }
-
-                @Override
-                public Object apply() {
-                    page.loadOrFadeWait();
-                    page.addKeywordsInput().setAndSubmit(keywordString);
-                    return null;
-                }
-            });
+            this.add(new TypeStep(page));
+            this.add(new InputStep(page));
         }
 
         @Override
@@ -57,6 +48,41 @@ class KeywordGroup {
         @Override
         public void cancel() {
             page.cancelWizardButton().click();
+        }
+    }
+
+    private class TypeStep extends OptionWizardStep {
+        private CreateNewKeywordsPage page;
+
+        public TypeStep(CreateNewKeywordsPage container) {
+            super(container, "Select Type of Keywords", type.getOption());
+            this.page = container;
+        }
+
+        @Override
+        public Object apply() {
+            super.apply();
+            page.selectLanguage(language.toString());
+            return null;
+        }
+    }
+
+    private class InputStep implements WizardStep {
+        private CreateNewKeywordsPage page;
+
+        public InputStep(CreateNewKeywordsPage container) {
+            this.page = container;
+        }
+
+        @Override
+        public String getTitle() {
+            return type.getInputTitle();
+        }
+
+        @Override
+        public Object apply() {
+            page.addKeywordsInput().setAndSubmit(keywordString);
+            return null;
         }
     }
 
