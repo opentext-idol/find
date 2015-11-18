@@ -37,6 +37,7 @@ import static com.hp.autonomy.frontend.selenium.util.AppElement.getParent;
 import static com.thoughtworks.selenium.SeleneseTestBase.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsPageITCase extends ABCTestBase {
@@ -564,8 +565,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() throws InterruptedException {
-		assertThat("Lanugage not implemented in Hosted",getConfig().getType(),not(ApplicationType.HOSTED));
+	public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() {
+		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
 
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -577,10 +578,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testKeywordsLanguage() throws InterruptedException {
-		if(getConfig().getType() == ApplicationType.HOSTED){
-			fail("Languages not implemented in HOSTED");
-		}
+	public void testKeywordsLanguage() {
+		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
 
 		WebDriverWait wait = new WebDriverWait(getDriver(),30);
 
@@ -1033,14 +1032,6 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
 			body = getBody();
-
-			new WebDriverWait(getDriver(), 30).until(new ExpectedCondition<Boolean>() {
-
-				@Override
-				public Boolean apply(WebDriver driver) {
-					return !driver.findElement(By.xpath("//nav[not(contains(@class, 'affix-clone'))]//*[@id='navbar-bell']/span")).getAttribute("class").contains("ng-hide");
-				}
-			});
 		} else {
 			body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		}
