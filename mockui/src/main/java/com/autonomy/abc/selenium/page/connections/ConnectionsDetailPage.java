@@ -7,6 +7,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConnectionsDetailPage extends SAASPageBase {
     private ConnectionsDetailPage(WebDriver driver) {
         super(driver);
@@ -42,4 +45,14 @@ public class ConnectionsDetailPage extends SAASPageBase {
         return deleteModal().findElement(By.cssSelector("button[type=submit]"));
     }
 
+    public List<Integer> lastRun() {
+        List<WebElement> lastRunElements = findElements(By.className("highlightDocCountNumber"));
+        List<Integer> lastRun = new ArrayList<>();
+
+        for(WebElement number : lastRunElements){
+            lastRun.add(Integer.parseInt(number.getText()));
+        }
+
+        return lastRun;
+    }
 }
