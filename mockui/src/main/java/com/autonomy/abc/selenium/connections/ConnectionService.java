@@ -80,10 +80,10 @@ public class ConnectionService {
         return connectionsPage;
     }
 
-    public ConnectionsPage deleteAllConnections() {
+    public ConnectionsPage deleteAllConnections(boolean deleteIndex) {
         goToConnections();
         for(WebElement connector : getDriver().findElements(By.className("listItemTitle"))){
-            deleteConnection(new WebConnector(null,connector.getText().split("\\(")[0].trim()),false);
+            deleteConnection(new WebConnector(null,connector.getText().split("\\(")[0].trim()),deleteIndex);
         }
         return connectionsPage;
     }
