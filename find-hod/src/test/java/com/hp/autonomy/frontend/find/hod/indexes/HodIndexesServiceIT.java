@@ -1,12 +1,12 @@
 package com.hp.autonomy.frontend.find.hod.indexes;
 
-import com.hp.autonomy.databases.Database;
 import com.hp.autonomy.frontend.find.hod.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
+import com.hp.autonomy.types.IdolDatabase;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -53,7 +53,7 @@ public class HodIndexesServiceIT {
     public void noExcludedIndexes() throws HodErrorException {
         assertTrue(hodIndexesService.listActiveIndexes().isEmpty());
 
-        final List<Database> databases = hodIndexesService.listVisibleIndexes();
+        final List<? extends IdolDatabase> databases = hodIndexesService.listVisibleIndexes();
         assertFalse(databases.isEmpty());
 
         final Resources resources = hodIndexesService.listIndexes(tokenProxy);

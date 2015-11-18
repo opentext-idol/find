@@ -9,6 +9,7 @@ import com.hp.autonomy.databases.Database;
 import com.hp.autonomy.frontend.find.core.indexes.IndexesService;
 import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.types.IdolDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
@@ -23,11 +24,11 @@ import java.util.List;
 public class ListIndexesController {
 
     @Autowired
-    private IndexesService indexesService;
+    private IndexesService<HodErrorException> indexesService;
 
     @RequestMapping(value = "/api/public/search/list-indexes", method = RequestMethod.GET)
     @ResponseBody
-    public List<Database> listActiveIndexes() throws HodErrorException {
+    public List<? extends IdolDatabase> listActiveIndexes() throws HodErrorException {
         return indexesService.listVisibleIndexes();
     }
 }
