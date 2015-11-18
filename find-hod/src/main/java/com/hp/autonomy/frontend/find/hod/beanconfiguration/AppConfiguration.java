@@ -84,12 +84,12 @@ public class AppConfiguration {
     //TODO: merge properties files
     @Bean
     public PropertiesFactoryBean dispatcherProperties() {
-        return getPropertiesFactoryBean(new ClassPathResource("com/hp/autonomy/frontend/find/dispatcher.properties"));
+        return getPropertiesFactoryBean(new ClassPathResource("/dispatcher.properties"));
     }
 
     @Bean
     public PropertiesFactoryBean applicationProperties() {
-        return getPropertiesFactoryBean(new ClassPathResource("com/hp/autonomy/frontend/find/find.properties"));
+        return getPropertiesFactoryBean(new ClassPathResource("/find.properties"));
     }
 
     private PropertiesFactoryBean getPropertiesFactoryBean(final ClassPathResource location) {
