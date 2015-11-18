@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
@@ -9,10 +10,15 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.NoSuchElementException;
 
 public class ConnectionService {
     private Application application;
@@ -20,6 +26,7 @@ public class ConnectionService {
     private ConnectionsPage connectionsPage;
     private NewConnectionPage newConnectionPage;
     private ConnectionsDetailPage connectionsDetailPage;
+    private Logger logger = LoggerFactory.getLogger(ConnectionService.class);
 
     public ConnectionService(Application application, HSOElementFactory elementFactory) {
         this.application = application;
@@ -65,25 +72,46 @@ public class ConnectionService {
     }
 
     public ConnectionsPage deleteConnection(final Connector connector, boolean deleteIndex) {
+        beginDelete(connector);
+
+        if(deleteIndex) {
+            deleteIndex();
+        }
+
+        confirmDelete(connector);
+
+        return connectionsPage;
+    }
+
+    private void beginDelete(Connector connector){
         ConnectionsDetailPage connectionsDetailPage = goToDetails(connector);
         connectionsDetailPage.deleteButton().click();
-        if(deleteIndex) {
-            connectionsDetailPage.alsoDeleteIndexCheckbox().click();
-        }
+    }
+
+    private void deleteIndex(){
+        connectionsDetailPage.alsoDeleteIndexCheckbox().click();
+    }
+
+    private void confirmDelete(Connector connector){
         connectionsDetailPage.deleteConfirmButton().click();
         connectionsPage = elementFactory.getConnectionsPage();
         new WebDriverWait(getDriver(), 100).until(GritterNotice.notificationContaining(connector.getDeleteNotification()));
-        // TODO: CSA-1539
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {}
-        return connectionsPage;
     }
 
     public ConnectionsPage deleteAllConnections(boolean deleteIndex) {
         goToConnections();
         for(WebElement connector : getDriver().findElements(By.className("listItemTitle"))){
-            deleteConnection(new WebConnector(null,connector.getText().split("\\(")[0].trim()),deleteIndex);
+            WebConnector webConnector = new WebConnector(null, connector.getText().split("\\(")[0].trim());
+
+            beginDelete(webConnector);
+
+            if (deleteIndex) {
+                try {
+                    deleteIndex();
+                } catch (Exception e) {/* May have other connections associated */}
+            }
+
+            confirmDelete(webConnector);
         }
         return connectionsPage;
     }
