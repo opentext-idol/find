@@ -4,10 +4,12 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 
 import java.util.HashMap;
@@ -20,6 +22,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
 
 /**
  * Created by avidan on 10-11-15.
@@ -124,5 +127,57 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         newConnectionPage.nextButton().click();
         assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorUrl.getElement())), hasClass(INVALID_INPUT_CLASS));
         assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorName.getElement())), not(hasClass(INVALID_INPUT_CLASS)));
+    }
+
+    @Test
+    //CSA1562
+    public void testAdvancedConfigurations() throws InterruptedException {
+        connectorUrl.setValue("http://www.w.ww");
+        connectorName.setValue("jeremy");
+
+        newConnectionPage.nextButton().click();
+
+        ConnectorConfigStepTab connectorConfigStep = ConnectorConfigStepTab.make(getDriver());
+
+        connectorConfigStep.advancedConfigurations().click();
+
+        //Let the dropdown open
+        Thread.sleep(1000);
+
+        connectorConfigStep.getMaxPagesBox().setValue("9");
+        connectorConfigStep.getDurationBox().setValue("59");
+        connectorConfigStep.getMaxLinksBox().setValue("-1");
+        connectorConfigStep.getMaxPageSizeBox().setValue("-1");
+        connectorConfigStep.getMinPageSizeBox().setValue("-1");
+        connectorConfigStep.getPageTimeoutBox().setValue("0");
+        connectorConfigStep.getDepthBox().setValue("-2");
+
+        newConnectionPage.nextButton().click();
+        assertThat(connectorConfigStep.advancedConfigurations().isDisplayed(), is(true));
+
+        checkFormInputError(connectorConfigStep.getMaxPagesBox(), 10);
+        checkFormInputError(connectorConfigStep.getDurationBox(), 60);
+        checkFormInputError(connectorConfigStep.getMaxLinksBox(), 0);
+        checkFormInputError(connectorConfigStep.getMaxPageSizeBox(), 0);
+        checkFormInputError(connectorConfigStep.getMinPageSizeBox(), 0);
+        checkFormInputError(connectorConfigStep.getPageTimeoutBox(), 1);
+        checkFormInputError(connectorConfigStep.getDepthBox(), -1);
+
+        connectorConfigStep.getMaxPagesBox().setValue("10");
+        connectorConfigStep.getDurationBox().setValue("60");
+        connectorConfigStep.getMaxLinksBox().setValue("0");
+        connectorConfigStep.getMaxPageSizeBox().setValue("0");
+        connectorConfigStep.getMinPageSizeBox().setValue("0");
+        connectorConfigStep.getPageTimeoutBox().setValue("1");
+        connectorConfigStep.getDepthBox().setValue("-1");
+
+        newConnectionPage.nextButton().click();
+        assertThat(connectorConfigStep.advancedConfigurations().isDisplayed(), is(false));
+    }
+
+    private void checkFormInputError(FormInput form, int minimum){
+        String visibleError = form.getElement().findElement(By.xpath(".//../../p[not(contains(@class,'ng-hide'))]")).getText();
+
+        assertThat(visibleError,is("Invalid Value (should be "+ minimum +" at minimum)"));
     }
 }
