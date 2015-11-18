@@ -60,7 +60,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
     @Test
     public void testSecureWebConnector(){
-        WebConnector webConnector = new SecureWebConnector("http://www.facebook.com/settings","facebook", new Credentials(getConfig().getUser("facebook")));
+//        WebConnector webConnector = new SecureWebConnector("http://www.facebook.com/settings","facebook");
     }
 
     private void navigateToConnectionViaURL(String url){

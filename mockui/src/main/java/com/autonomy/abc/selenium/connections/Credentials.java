@@ -32,10 +32,6 @@ public class Credentials {
         this.credentialsEnum = CredentialsEnum.FACEBOOK;
     }
 
-    public Credentials(User user){
-        user.getUsername();
-    }
-
     public void apply(ConnectorConfigStepTab connectorConfigStep) throws InterruptedException {
         connectorConfigStep.credentialsConfigurations().click();
 
