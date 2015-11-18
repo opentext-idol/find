@@ -32,10 +32,12 @@ public class Credentials {
         this.credentialsEnum = CredentialsEnum.FACEBOOK;
     }
 
-    public void apply(ConnectorConfigStepTab connectorConfigStep) throws InterruptedException {
+    public void apply(ConnectorConfigStepTab connectorConfigStep) {
         connectorConfigStep.credentialsConfigurations().click();
 
-        Thread.sleep(1000);
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) { /*NOOP*/ }
 
         connectorConfigStep.addCredentialsCheckbox().click();
 

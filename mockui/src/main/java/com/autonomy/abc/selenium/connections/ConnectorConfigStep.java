@@ -10,13 +10,12 @@ public class ConnectorConfigStep implements WizardStep {
     private static final String TITLE = "Connector Configuration";
 
     private final NewConnectionPage newConnectionPage;
-    private final WebConnector webConnector;
     private Integer depth;
     private Integer maxPages;
+    private Credentials credentials;
 
-    public ConnectorConfigStep(NewConnectionPage newConnectionPage, WebConnector connector) {
+    public ConnectorConfigStep(NewConnectionPage newConnectionPage) {
         this.newConnectionPage = newConnectionPage;
-        this.webConnector = connector;
     }
 
     public ConnectorConfigStep withDepth(Integer depth){
@@ -29,6 +28,11 @@ public class ConnectorConfigStep implements WizardStep {
         return this;
     }
 
+    public ConnectorConfigStep withCredentials(Credentials credentials){
+        this.credentials = credentials;
+        return this;
+    }
+
     @Override
     public String getTitle() {
         return TITLE;
@@ -36,9 +40,9 @@ public class ConnectorConfigStep implements WizardStep {
 
     @Override
     public Object apply() {
-        if(maxPages != null || depth != null) {
-            ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
+        ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
 
+        if(maxPages != null || depth != null) {
             WebElement advancedConfig = connectorConfigStepTab.advancedConfigurations();
             advancedConfig.click();
 
@@ -58,10 +62,10 @@ public class ConnectorConfigStep implements WizardStep {
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {/*NOOP*/}
+        }
 
-            if(webConnector instanceof SecureWebConnector){
-                ((SecureWebConnector) webConnector).getCredentials().apply();
-            }
+        if(credentials != null){
+            credentials.apply(connectorConfigStepTab);
         }
 
         return null;

@@ -10,6 +10,7 @@ public class WebConnector extends Connector {
     private String url;
     private Integer depth;
     private Integer maxPages;
+    private Credentials credentials;
 
     public WebConnector(String url, String name) {
         super(name);
@@ -19,6 +20,16 @@ public class WebConnector extends Connector {
     public WebConnector(String url, String name, Index index){
         super(name, index);
         this.url = url;
+    }
+
+    public WebConnector(String url, String name, Credentials credentials){
+        this(url, name);
+        this.credentials = credentials;
+    }
+
+    public WebConnector(String url, String name, Index index, Credentials credentials){
+        this(url, name, index);
+        this.credentials = credentials;
     }
 
     public WebConnector withDepth(int depth){
@@ -47,7 +58,7 @@ public class WebConnector extends Connector {
             super();
             page = newConnectionPage;
             add(new ConnectorTypeStep(page, url, name));
-            add(new ConnectorConfigStep(page, WebConnector.this).withDepth(depth).maxPages(maxPages));
+            add(new ConnectorConfigStep(page).withDepth(depth).maxPages(maxPages).withCredentials(credentials));
             add(new ConnectorIndexStep(page,index,name));
             add(new BlankWizardStep("Complete"));
         }
