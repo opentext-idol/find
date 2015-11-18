@@ -27,7 +27,7 @@ class KeywordGroup {
         }
 
         private void buildSteps() {
-            this.add(new OptionWizardStep(page, "Select Type of Keywords", type.getOptionTitle()));
+            this.add(new OptionWizardStep(page, "Select Type of Keywords", type.getOption()));
             this.add(new WizardStep() {
                 @Override
                 public String getTitle() {
@@ -36,8 +36,8 @@ class KeywordGroup {
 
                 @Override
                 public Object apply() {
-                    page.addSynonymsTextBox().sendKeys(keywordString);
-                    page.addSynonymsButton().click();
+                    page.loadOrFadeWait();
+                    page.addKeywordsInput().setAndSubmit(keywordString);
                     return null;
                 }
             });
@@ -49,7 +49,9 @@ class KeywordGroup {
                 page.finishWizardButton().click();
             } else {
                 page.continueWizardButton().click();
+                incrementStep();
             }
+            page.loadOrFadeWait();
         }
 
         @Override

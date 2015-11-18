@@ -1,16 +1,16 @@
 package com.autonomy.abc.selenium.keywords;
 
 public enum KeywordType {
-    BLACKLIST("Blacklist", "Blacklisted Terms", "Select terms to blacklist"),
-    SYNONYMS("Synonyms", "Synonyms", "Select synonyms");
+    BLACKLIST("Blacklist", "BLACKLISTED", "Select terms to blacklist"),
+    SYNONYMS("Synonyms", "SYNONYMS", "Select synonyms");
 
     private String name;
-    private String optionTitle;
+    private String option;
     private String inputTitle;
 
-    KeywordType(String name, String optionTitle, String inputTitle) {
+    KeywordType(String name, String option, String inputTitle) {
         this.name = name;
-        this.optionTitle = optionTitle;
+        this.option = option;
         this.inputTitle = inputTitle;
     }
 
@@ -18,8 +18,8 @@ public enum KeywordType {
         return inputTitle;
     }
 
-    String getOptionTitle() {
-        return optionTitle;
+    String getOption() {
+        return option;
     }
 
     @Override
