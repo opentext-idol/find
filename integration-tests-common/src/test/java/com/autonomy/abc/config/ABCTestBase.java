@@ -37,11 +37,8 @@ public abstract class ABCTestBase {
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	// testState is used by Rules/StatementHandlers
 	private final TestState testState = TestState.get();
-	public final TestConfig config;
+	protected final TestConfig config;
 
-	public final Browser browser;
-	private final Platform platform;
-	private final ApplicationType type;
 	private final Application application;
 	private WebDriver driver;
 	// TODO: use getBody() instead
@@ -56,10 +53,7 @@ public abstract class ABCTestBase {
 
 	public ABCTestBase(final TestConfig config) {
 		this.config = config;
-		this.browser = config.getBrowser();
-		this.platform = config.getPlatform();
-		this.type = config.getType();
-		this.application = Application.ofType(type);
+		this.application = Application.ofType(config.getType());
 	}
 
 	@Parameterized.Parameters
@@ -76,7 +70,7 @@ public abstract class ABCTestBase {
 	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this)).around(new TestArtifactRule(this));
 
 	protected void regularSetUp(){
-		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
+		LOGGER.info(config.toString());
 		driver = config.createWebDriver();
 		ImplicitWaits.setImplicitWait(driver);
 

@@ -138,6 +138,10 @@ public class TestConfig {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "parameter-set: [" + getIndex() + "]; browser: " + getBrowser() + "; platform: " + getPlatform() + "; type: " + getType();
+	}
 }
 
 
