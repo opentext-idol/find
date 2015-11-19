@@ -6,6 +6,7 @@ public class User {
     private final String username;
     private final Role role;
     private final AuthProvider authProvider;
+    public final static User NULL = NullUser.getInstance();
 
     public User(AuthProvider provider, String username, Role role) {
         this.authProvider = provider;

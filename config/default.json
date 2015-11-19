@@ -13,6 +13,24 @@
       "username": "TODO",
       "role": "Admin",
       "auth": {
+        "type": "Twitter",
+        "username": "hodtesting",
+        "password": "5cUdPhYM"
+      }
+    },
+    "index_tests": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Yahoo",
+        "username": "hodtesting",
+        "password": ":Z4jM8vq5`en89d>"
+      }
+    },
+    "google": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
         "type": "Google",
         "email": "hodtestqa401@gmail.com",
         "password": "qoxntlozubjaamyszerfk"

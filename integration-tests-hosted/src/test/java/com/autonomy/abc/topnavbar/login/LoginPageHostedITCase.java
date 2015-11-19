@@ -3,6 +3,7 @@ package com.autonomy.abc.topnavbar.login;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.users.User;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 
@@ -13,11 +14,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     public LoginPageHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
-    }
-
-    @Override
-    public void baseSetUp(){
-        regularSetUp();
+        setInitialUser(User.NULL);
     }
 
     @Test

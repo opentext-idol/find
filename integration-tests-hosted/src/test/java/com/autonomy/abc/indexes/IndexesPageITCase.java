@@ -8,9 +8,7 @@ import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
@@ -19,7 +17,6 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,24 +35,19 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class IndexesPageITCase extends HostedTestBase {
+    private final static Logger LOGGER = LoggerFactory.getLogger(IndexesPageITCase.class);
     IndexesPage indexesPage;
-    private Logger logger = LoggerFactory.getLogger(IndexesPageITCase.class);
 
     public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        // requires a separate account where indexes can safely be added and deleted
+        setInitialUser(config.getUser("index_tests"));
     }
 
     @Before
-    @Override
-    public void baseSetUp() throws InterruptedException {
-        regularSetUp();
-        hostedLogIn("yahoo");
-        getElementFactory().getPromotionsPage();
-
-
+    public void setUp() {
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
         indexesPage = getElementFactory().getIndexesPage();
-
         body = getBody();
     }
 
@@ -108,7 +100,7 @@ public class IndexesPageITCase extends HostedTestBase {
         try {
             connectionService.deleteConnection(connector, true);
         } catch (Exception e) {
-            logger.warn("Error deleting index");
+            LOGGER.warn("Error deleting index");
         }
 
         //Navigate to Indexes
@@ -174,7 +166,7 @@ public class IndexesPageITCase extends HostedTestBase {
 
             fail("Index name should be valid - likely failed due to double encoding of requests");
         } catch (TimeoutException e){
-            logger.info("Timeout exception");
+            LOGGER.info("Timeout exception");
         }
 
         body.getTopNavBar().notificationsDropdown();
@@ -189,7 +181,7 @@ public class IndexesPageITCase extends HostedTestBase {
             getApplication().createConnectionService(getElementFactory()).deleteAllConnections(false);
             getApplication().createIndexService(getElementFactory()).deleteAllIndexes();
         } catch (Exception e) {
-            logger.warn("Failed to tear down");
+            LOGGER.warn("Failed to tear down");
         }
     }
 }
