@@ -548,6 +548,14 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return youSearchedFor;
 	}
 
+	public void deselectIndex(String index) {
+		Checkbox checkbox = indexCheckbox(index);
+
+		if(checkbox.isChecked()){
+			checkbox.toggle();
+		}
+	}
+
 	public enum Filter {
 		FILTER_BY("Filter By"),
 		RELATED_CONCEPTS("Related Concepts"),
