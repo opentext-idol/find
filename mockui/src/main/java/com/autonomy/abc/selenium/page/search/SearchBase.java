@@ -554,6 +554,9 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		if(checkbox.isChecked()){
 			checkbox.toggle();
 		}
+
+		loadOrFadeWait();
+		waitForSearchLoadIndicatorToDisappear();
 	}
 
 	public void openPublicFilter(){
@@ -573,6 +576,9 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 
 		checkbox.toggle();
+
+		loadOrFadeWait();
+		waitForSearchLoadIndicatorToDisappear();
 	}
 
 	public enum Filter {
