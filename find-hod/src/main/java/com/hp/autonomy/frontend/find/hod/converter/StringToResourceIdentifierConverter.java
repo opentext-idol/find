@@ -7,10 +7,12 @@ package com.hp.autonomy.frontend.find.hod.converter;
 
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+@Component
 public class StringToResourceIdentifierConverter implements Converter<String, ResourceIdentifier> {
     @Override
     public ResourceIdentifier convert(final String s) {

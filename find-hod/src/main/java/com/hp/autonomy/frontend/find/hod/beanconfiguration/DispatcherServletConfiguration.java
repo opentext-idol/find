@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ViewResolver;
@@ -50,6 +50,9 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
     @Autowired
     private Properties dispatcherProperties;
 
+    @Autowired
+    private Converter<?, ?>[] converters;
+
     @Bean
     public ViewResolver internalResourceViewResolver() {
         final InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -78,7 +81,9 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     public void addFormatters(final FormatterRegistry registry) {
-        registry.addConverter(new StringToResourceIdentifierConverter());
+        for (final Converter<?, ?> converter : converters) {
+            registry.addConverter(converter);
+        }
 
         registry.addFormatterForFieldAnnotation(new JodaDateTimeFormatAnnotationFormatterFactory());
     }
