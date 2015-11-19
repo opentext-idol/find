@@ -54,7 +54,7 @@ public class KeywordService extends ServiceBase {
     }
 
     public SearchPage addSynonymGroup(Language language, Iterable<String> synonyms) {
-        addKeywords(KeywordType.SYNONYMS, language, synonyms);
+        addKeywords(KeywordWizardType.SYNONYMS, language, synonyms);
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
         return searchPage;
@@ -73,14 +73,14 @@ public class KeywordService extends ServiceBase {
     }
 
     public KeywordsPage addBlacklistTerms(Language language, Iterable<String> blacklists) {
-        addKeywords(KeywordType.BLACKLIST, language, blacklists);
+        addKeywords(KeywordWizardType.BLACKLIST, language, blacklists);
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining("to the blacklist"));
         // terms appear asynchronously - must wait until they have ALL been added
         new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationsDisappear());
         return getElementFactory().getKeywordsPage();
     }
 
-    private void addKeywords(KeywordType type, Language language, Iterable<String> keywords) {
+    private void addKeywords(KeywordWizardType type, Language language, Iterable<String> keywords) {
         goToKeywordsWizard();
         if (getApplication().getType().equals(ApplicationType.HOSTED) && !language.equals(Language.ENGLISH)) {
             LOGGER.warn("hosted mode does not support foreign keywords, using English instead");

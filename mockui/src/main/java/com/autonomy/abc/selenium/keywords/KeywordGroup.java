@@ -8,10 +8,10 @@ import com.autonomy.abc.selenium.util.Language;
 
 class KeywordGroup {
     private String keywordString;
-    private KeywordType type;
+    private KeywordWizardType type;
     private Language language;
 
-    public KeywordGroup(KeywordType type, Language language, Iterable<String> keywords) {
+    public KeywordGroup(KeywordWizardType type, Language language, Iterable<String> keywords) {
         this.keywordString = String.join(" ", keywords);
         this.type = type;
         this.language = language;
