@@ -23,7 +23,7 @@
                 <env>dev</env>
             </properties>
             <build>
-                <finalName>${project.artifactId}-${env}</finalName>
+                <finalName>${project.parent.artifactId}-${env}</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
@@ -229,7 +229,7 @@
                     <scanIntervalSeconds>3</scanIntervalSeconds>
                     <webApp>
                         <overrideDescriptor>./web-override.xml</overrideDescriptor>
-                        <contextPath>/${project.artifactId}</contextPath>
+                        <contextPath>/${project.parent.artifactId}</contextPath>
                     </webApp>
                     <stopPort>59991</stopPort>
                     <stopKey>test</stopKey>
@@ -255,6 +255,11 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>find-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>find-hod</artifactId>
             <version>${project.version}</version>
         </dependency>
 

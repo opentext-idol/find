@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
@@ -38,8 +39,7 @@ import java.util.Properties;
         @ComponentScan.Filter(RestController.class),
     },
     excludeFilters = {
-        @ComponentScan.Filter(Configuration.class),
-        @ComponentScan.Filter(Component.class)
+        @ComponentScan.Filter(Configuration.class)
     }
 )
 public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
@@ -58,6 +58,14 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
         viewResolver.setSuffix(".jsp");
 
         return viewResolver;
+    }
+
+    @Bean
+    @Override
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        final RequestMappingHandlerMapping requestMappingHandlerMapping = super.requestMappingHandlerMapping();
+        requestMappingHandlerMapping.setDetectHandlerMethodsInAncestorContexts(true);
+        return requestMappingHandlerMapping;
     }
 
     @Override
