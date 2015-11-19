@@ -13,6 +13,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     public LoginPageHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        setInitialUser(null);
     }
 
     @Override

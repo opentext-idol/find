@@ -28,6 +28,8 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
     public ConnectionsPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        // requires a separate account where indexes can safely be added and deleted
+        setInitialUser(config.getUser("yahoo"));
     }
 
     @Before @Override

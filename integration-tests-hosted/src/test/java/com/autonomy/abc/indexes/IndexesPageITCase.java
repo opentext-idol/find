@@ -38,11 +38,13 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class IndexesPageITCase extends HostedTestBase {
+    private final static Logger LOGGER = LoggerFactory.getLogger(IndexesPageITCase.class);
     IndexesPage indexesPage;
-    private Logger logger = LoggerFactory.getLogger(IndexesPageITCase.class);
 
     public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        // requires a separate account where indexes can safely be added and deleted
+        setInitialUser(config.getUser("yahoo"));
     }
 
     @Before
@@ -108,7 +110,7 @@ public class IndexesPageITCase extends HostedTestBase {
         try {
             connectionService.deleteConnection(connector, true);
         } catch (Exception e) {
-            logger.warn("Error deleting index");
+            LOGGER.warn("Error deleting index");
         }
 
         //Navigate to Indexes
@@ -174,7 +176,7 @@ public class IndexesPageITCase extends HostedTestBase {
 
             fail("Index name should be valid - likely failed due to double encoding of requests");
         } catch (TimeoutException e){
-            logger.info("Timeout exception");
+            LOGGER.info("Timeout exception");
         }
 
         body.getTopNavBar().notificationsDropdown();
@@ -189,7 +191,7 @@ public class IndexesPageITCase extends HostedTestBase {
             getApplication().createConnectionService(getElementFactory()).deleteAllConnections(false);
             getApplication().createIndexService(getElementFactory()).deleteAllIndexes();
         } catch (Exception e) {
-            logger.warn("Failed to tear down");
+            LOGGER.warn("Failed to tear down");
         }
     }
 }

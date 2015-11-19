@@ -44,6 +44,8 @@ public abstract class ABCTestBase {
 	// TODO: use getBody() instead
 	public AppBody body;
 	private ElementFactory elementFactory;
+	private User initialUser;
+	private String initialUrl;
 	private User currentUser;
 
 	// TODO: replace with single argument constructor
@@ -54,6 +56,8 @@ public abstract class ABCTestBase {
 	public ABCTestBase(final TestConfig config) {
 		this.config = config;
 		this.application = Application.ofType(config.getType());
+		this.initialUser = config.getDefaultUser();
+		this.initialUrl = config.getWebappUrl();
 	}
 
 	@Parameterized.Parameters
@@ -108,6 +112,10 @@ public abstract class ABCTestBase {
 			getElementFactory().getPromotionsPage();
 		}
 	}
+	
+	protected final void setInitialUser(User user) {
+		initialUser = user;
+	}
 
 	protected void hostedLogIn(String provider) throws InterruptedException {
 		currentUser = config.getUser(provider);
@@ -117,6 +125,10 @@ public abstract class ABCTestBase {
 		}
 		Thread.sleep(5000);
 		body = getBody();
+	}
+	
+	protected final void setInitialUrl(String url) {
+		initialUrl = url;
 	}
 
 	@After
@@ -151,7 +163,7 @@ public abstract class ABCTestBase {
 
 	protected void logout() {
 		getBody().logout();
-		currentUser = null;
+		currentUser = User.NULL;
 	}
 
 	protected User getCurrentUser() {
