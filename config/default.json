@@ -13,9 +13,9 @@
       "username": "TODO",
       "role": "Admin",
       "auth": {
-        "type": "Twitter",
-        "username": "hodtesting",
-        "password": "5cUdPhYM"
+        "type": "HP Passport",
+        "username": "hodtest",
+        "password": "Z@s=5rYbw6MEx]?X"
       }
     },
     "index_tests": {
