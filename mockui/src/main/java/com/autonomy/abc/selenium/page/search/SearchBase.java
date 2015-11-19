@@ -556,6 +556,25 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
+	public void openPublicFilter(){
+		findElement(By.cssSelector("[data-category-id=public] i")).click();
+	}
+
+	public void selectIndex(String index) {
+		Checkbox checkbox = indexCheckbox(index);
+
+		if(checkbox.isChecked()){
+			return;
+		}
+
+		if(!checkbox.isDisplayed()){
+			openPublicFilter();
+			loadOrFadeWait();
+		}
+
+		checkbox.toggle();
+	}
+
 	public enum Filter {
 		FILTER_BY("Filter By"),
 		RELATED_CONCEPTS("Related Concepts"),
