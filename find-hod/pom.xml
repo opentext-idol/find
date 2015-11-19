@@ -48,5 +48,13 @@
             <artifactId>view-proxy-components</artifactId>
             <version>0.3.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>find-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
