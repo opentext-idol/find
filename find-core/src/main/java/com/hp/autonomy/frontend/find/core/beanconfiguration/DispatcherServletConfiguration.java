@@ -3,10 +3,9 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.beanconfiguration;
+package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.autonomy.frontend.find.hod.converter.StringToResourceIdentifierConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

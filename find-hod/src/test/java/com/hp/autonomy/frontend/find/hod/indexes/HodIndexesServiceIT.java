@@ -1,6 +1,6 @@
 package com.hp.autonomy.frontend.find.hod.indexes;
 
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.AppConfiguration;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.Resources;
