@@ -44,6 +44,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,11 +71,17 @@ public class SecurityConfiguration {
         @SuppressWarnings("ProhibitedExceptionDeclared")
         @Override
         protected void configure(final HttpSecurity http) throws Exception {
+            final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+            requestCache.setRequestMatcher(new AntPathRequestMatcher(FindController.PUBLIC_PATH));
+
             http
                 .authorizeRequests()
                     .antMatchers("/api/public/**").hasRole(USER_ROLE)
                     .antMatchers("/api/useradmin/**").hasRole(ADMIN_ROLE)
                     .antMatchers("/api/config/**").hasRole(CONFIG_ROLE)
+                    .and()
+                .requestCache()
+                    .requestCache(requestCache)
                     .and()
                 .csrf()
                     .disable()
@@ -217,7 +226,7 @@ public class SecurityConfiguration {
                         .accessDeniedPage("/authentication-error")
                         .and()
                 .authorizeRequests()
-                    .antMatchers("/public/**").hasRole("PUBLIC")
+                    .antMatchers(FindController.PUBLIC_PATH + "**").hasRole("PUBLIC")
                     .and()
                 .logout()
                     .logoutSuccessHandler(logoutSuccessHandler)
@@ -253,11 +262,20 @@ public class SecurityConfiguration {
         @Override
         protected void configure(final HttpSecurity http) throws Exception {
             final LoginSuccessHandler loginSuccessHandler = new LoginSuccessHandler("ROLE_DEFAULT", "/config/", "/p/");
+            final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+
+            requestCache.setRequestMatcher(new OrRequestMatcher(
+                    new AntPathRequestMatcher("/p/**"),
+                    new AntPathRequestMatcher("/config/**")
+            ));
 
             http.regexMatcher("/p/.*|/config/.*|/authenticate|/logout")
                 .authorizeRequests()
                     .antMatchers("/p/**").hasRole("ADMIN")
                     .antMatchers("/config/**").hasRole("DEFAULT")
+                    .and()
+                .requestCache()
+                    .requestCache(requestCache)
                     .and()
                 .formLogin()
                     .loginPage("/loginPage")
