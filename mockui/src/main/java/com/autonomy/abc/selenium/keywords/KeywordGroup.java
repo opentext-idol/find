@@ -11,7 +11,7 @@ class KeywordGroup {
     private KeywordType type;
     private Language language;
 
-    public KeywordGroup(KeywordType type, Language language, String... keywords) {
+    public KeywordGroup(KeywordType type, Language language, Iterable<String> keywords) {
         this.keywordString = String.join(" ", keywords);
         this.type = type;
         this.language = language;

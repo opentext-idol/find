@@ -16,6 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class KeywordService extends ServiceBase {
@@ -41,10 +42,18 @@ public class KeywordService extends ServiceBase {
     }
 
     public SearchPage addSynonymGroup(String... synonyms) {
+        return addSynonymGroup(Arrays.asList(synonyms));
+    }
+
+    public SearchPage addSynonymGroup(Iterable<String> synonyms) {
         return addSynonymGroup(Language.ENGLISH, synonyms);
     }
 
     public SearchPage addSynonymGroup(Language language, String... synonyms) {
+        return addSynonymGroup(language, Arrays.asList(synonyms));
+    }
+
+    public SearchPage addSynonymGroup(Language language, Iterable<String> synonyms) {
         addKeywords(KeywordType.SYNONYMS, language, synonyms);
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
@@ -52,10 +61,18 @@ public class KeywordService extends ServiceBase {
     }
 
     public KeywordsPage addBlacklistTerms(String... blacklists) {
+        return addBlacklistTerms(Arrays.asList(blacklists));
+    }
+
+    public KeywordsPage addBlacklistTerms(Iterable<String> blacklists) {
         return addBlacklistTerms(Language.ENGLISH, blacklists);
     }
 
     public KeywordsPage addBlacklistTerms(Language language, String... blacklists) {
+        return addBlacklistTerms(language, Arrays.asList(blacklists));
+    }
+
+    public KeywordsPage addBlacklistTerms(Language language, Iterable<String> blacklists) {
         addKeywords(KeywordType.BLACKLIST, language, blacklists);
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining("to the blacklist"));
         // terms appear asynchronously - must wait until they have ALL been added
@@ -63,7 +80,7 @@ public class KeywordService extends ServiceBase {
         return getElementFactory().getKeywordsPage();
     }
 
-    private void addKeywords(KeywordType type, Language language, String... keywords) {
+    private void addKeywords(KeywordType type, Language language, Iterable<String> keywords) {
         goToKeywordsWizard();
         if (getApplication().getType().equals(ApplicationType.HOSTED) && !language.equals(Language.ENGLISH)) {
             LOGGER.warn("hosted mode does not support foreign keywords, using English instead");
