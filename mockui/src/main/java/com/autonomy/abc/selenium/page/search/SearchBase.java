@@ -548,6 +548,39 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return youSearchedFor;
 	}
 
+	public void deselectIndex(String index) {
+		Checkbox checkbox = indexCheckbox(index);
+
+		if(checkbox.isChecked()){
+			checkbox.toggle();
+		}
+
+		loadOrFadeWait();
+		waitForSearchLoadIndicatorToDisappear();
+	}
+
+	public void openPublicFilter(){
+		findElement(By.cssSelector("[data-category-id=public] i")).click();
+	}
+
+	public void selectIndex(String index) {
+		Checkbox checkbox = indexCheckbox(index);
+
+		if(checkbox.isChecked()){
+			return;
+		}
+
+		if(!checkbox.isDisplayed()){
+			openPublicFilter();
+			loadOrFadeWait();
+		}
+
+		checkbox.toggle();
+
+		loadOrFadeWait();
+		waitForSearchLoadIndicatorToDisappear();
+	}
+
 	public enum Filter {
 		FILTER_BY("Filter By"),
 		RELATED_CONCEPTS("Related Concepts"),
