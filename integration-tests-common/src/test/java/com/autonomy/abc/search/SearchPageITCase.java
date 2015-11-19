@@ -648,12 +648,14 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testFieldTextFilter() {
-//		search("war");
-		new Search(getApplication(),getElementFactory(),"*").applyFilter(new IndexFilter("sitesearch")).apply();
+		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
+			search("war");
+			searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+		} else {
+			new Search(getApplication(), getElementFactory(), "*").applyFilter(new IndexFilter("sitesearch")).apply();
+		}
+		
 		searchPage.selectLanguage("English");
-
-		//TODO Change back at some point when other indexes decide they want to work properly?
-//		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 
 		final String searchResultTitle = searchPage.getSearchResultTitle(1);
 		final String lastWordInTitle = searchPage.getLastWord(searchResultTitle);
@@ -704,12 +706,15 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testEditFieldText() {
-//		search("boer");
-		new Search(getApplication(),getElementFactory(),"*").applyFilter(new IndexFilter("sitesearch")).apply();
+		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+			searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+			search("boer");
+		} else {
+			new Search(getApplication(), getElementFactory(), "*").applyFilter(new IndexFilter("sitesearch")).apply();
+		}
 
 		searchPage.selectLanguage("Afrikaans");
 
-//        searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 
         searchPage.showFieldTextOptions();
 		searchPage.clearFieldText();
