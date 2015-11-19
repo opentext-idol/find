@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.*;
 
 import static org.junit.Assert.fail;
@@ -69,7 +68,7 @@ public abstract class ABCTestBase {
 	protected static List<Object[]> parameters(final Collection<ApplicationType> applicationTypes) throws IOException {
 		return TestConfig.readConfigs(applicationTypes);
 	}
-	
+
 	// StateHelperRule.finished() calls WebDriver.quit so must be the last thing called
 	@Rule
 	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this)).around(new TestArtifactRule(this));
@@ -105,12 +104,15 @@ public abstract class ABCTestBase {
 	public void baseSetUp() {
 		initialiseTest();
 		goToInitialPage();
-		try {
-			loginAs(initialUser);
-			postLogin();
-		} catch (Exception e) {
-			LOGGER.error("Unable to login");
-			fail("Unable to login");
+		if (!initialUser.equals(User.NULL)) {
+			try {
+				loginAs(initialUser);
+				postLogin();
+			} catch (Exception e) {
+				LOGGER.error("Unable to login");
+				LOGGER.error(e.toString());
+				fail("Unable to login");
+			}
 		}
 	}
 
@@ -118,16 +120,6 @@ public abstract class ABCTestBase {
 		initialUser = user;
 	}
 
-	protected void hostedLogIn(String provider) throws InterruptedException {
-		currentUser = config.getUser(provider);
-		currentUser.getAuthProvider().login(getDriver());
-		if(!new AbcHasLoggedIn(getDriver()).hasLoggedIn()){
-			fail("Failed to log in");
-		}
-		Thread.sleep(5000);
-		body = getBody();
-	}
-	
 	protected final void setInitialUrl(String url) {
 		initialUrl = url;
 	}

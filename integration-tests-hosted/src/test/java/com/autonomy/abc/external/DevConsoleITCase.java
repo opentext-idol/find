@@ -23,11 +23,6 @@ public class DevConsoleITCase extends HostedTestBase {
         loginUser = config.getUser("twitter");
     }
 
-    @Override
-    protected void postLogin() throws Exception {
-        /* NOOP */
-    }
-
     @Test
     public void testLaunchSearch() throws InterruptedException {
         button("Admin").click();

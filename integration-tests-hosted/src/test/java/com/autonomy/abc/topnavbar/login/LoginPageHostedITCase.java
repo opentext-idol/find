@@ -17,11 +17,6 @@ public class LoginPageHostedITCase extends HostedTestBase {
         setInitialUser(User.NULL);
     }
 
-    @Override
-    protected void postLogin() throws Exception {
-        /* NOOP */
-    }
-
     @Test
     public void testAPIKeyLogin(){
        testLogin("api_key");
