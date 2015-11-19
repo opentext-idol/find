@@ -11,7 +11,7 @@ define([
     'find/app/page/service-view',
     'find/app/router',
     'find/app/vent',
-    '../../../../bower_components/underscore/underscore',
+    'underscore',
     'text!find/templates/app/page/find-search.html'
 ], function(BasePage, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
 

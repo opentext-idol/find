@@ -7,7 +7,7 @@
  * @module settings/js/widget
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'text!settings/templates/widget.html'
 ], function(Backbone, template) {
 

@@ -7,7 +7,7 @@
  * @module js-whatever/js/footer
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'store',
     'text!js-whatever/templates/footer/footer.html',
     'text!js-whatever/templates/footer/footer-tab.html',

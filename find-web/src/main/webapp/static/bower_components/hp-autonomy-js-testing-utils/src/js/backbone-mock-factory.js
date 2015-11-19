@@ -4,7 +4,7 @@
  */
 
 define([
-    '../../../backbone/backbone'
+    'backbone'
 ], function(Backbone) {
 
     // Check if we are using jasmine 2; if we are, spies have different behaviour

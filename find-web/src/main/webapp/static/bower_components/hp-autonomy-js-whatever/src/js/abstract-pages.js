@@ -7,7 +7,7 @@
  * @module js-whatever/js/abstract-pages
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'underscore'
 ], function(Backbone, _) {
 

@@ -7,7 +7,7 @@
  * @module js-whatever/js/duration-format
  */
 define([
-    '../../../underscore/underscore'
+    'underscore'
 ], function(_){
     /**
      * @typedef DurationFormatStrings

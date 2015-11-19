@@ -7,7 +7,7 @@
  * @module js-whatever/js/empty-navbar
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'text!js-whatever/templates/empty-navbar.html'
 ], function(Backbone, template) {
 

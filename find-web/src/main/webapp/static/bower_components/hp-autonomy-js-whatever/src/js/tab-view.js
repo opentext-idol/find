@@ -7,7 +7,7 @@
  * @module js-whatever/js/tab-view
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'jqueryui'
 ], function(Backbone) {
 

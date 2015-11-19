@@ -7,7 +7,7 @@
  * @module js-whatever/js/repeater
  */
 define([
-    '../../../underscore/underscore'
+    'underscore'
 ], function () {
     /**
      * @name module:js-whatever/js/repeater.Repeater

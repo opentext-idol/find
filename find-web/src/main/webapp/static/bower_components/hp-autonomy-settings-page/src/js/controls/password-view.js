@@ -7,7 +7,7 @@
  * @module settings/js/controls/password-view
  */
 define([
-    '../../../../backbone/backbone',
+    'backbone',
     'text!settings/templates/controls/password-view.html'
 ], function(Backbone, template) {
 

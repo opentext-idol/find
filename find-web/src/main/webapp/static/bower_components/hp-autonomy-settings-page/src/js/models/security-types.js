@@ -7,7 +7,7 @@
  * @module settings/js/models/security-types
  */
 define([
-    '../../../../backbone/backbone'
+    'backbone'
 ], function(Backbone) {
 
     /**

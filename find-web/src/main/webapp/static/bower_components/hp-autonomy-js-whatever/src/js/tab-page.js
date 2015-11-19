@@ -10,7 +10,7 @@ define([
     'js-whatever/js/base-page',
     'js-whatever/js/lazy-tab-view',
     'text!js-whatever/templates/tab-page.html',
-    '../../../underscore/underscore'
+    'underscore'
 ], function(BasePage, LazyTabView, template, _) {
 
     /**

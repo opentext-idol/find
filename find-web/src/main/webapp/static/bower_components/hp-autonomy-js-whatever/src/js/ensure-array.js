@@ -6,7 +6,7 @@
 /**
  * @module js-whatever/js/ensure-array
  */
-define(['../../../underscore/underscore'], function(_){
+define(['underscore'], function(_){
     //noinspection UnnecessaryLocalVariableJS
     /**
      * @alias module:js-whatever/js/ensure-array

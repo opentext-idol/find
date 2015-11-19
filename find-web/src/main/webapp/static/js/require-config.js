@@ -27,7 +27,6 @@ require.config({
     },
     shim: {
         'backbone-base': {
-            deps: ['underscore', 'jquery', 'json2'],
             exports: 'Backbone'
         },
         bootstrap: ['jquery'],

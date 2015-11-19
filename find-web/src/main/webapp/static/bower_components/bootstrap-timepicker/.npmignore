@@ -1,7 +1,7 @@
 /assets
 /_includes
 /_layouts
-/src/main/webapp/static/bower_components/bootstrap-timepicker/.gitignore
+/.gitignore
 /node_modules
 /Makefile
 /test

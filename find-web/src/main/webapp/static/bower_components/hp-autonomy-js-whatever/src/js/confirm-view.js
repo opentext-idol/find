@@ -7,7 +7,7 @@
  * @module js-whatever/js/confirm-view
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'text!js-whatever/templates/confirm.html',
     'underscore',
     'bootstrap'

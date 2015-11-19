@@ -5,7 +5,7 @@
 
 define([
     'databases-view/js/databases-collection',
-    '../../../../bower_components/underscore/underscore'
+    'underscore'
 ], function(DatabasesCollection, _) {
 
     return DatabasesCollection.extend({

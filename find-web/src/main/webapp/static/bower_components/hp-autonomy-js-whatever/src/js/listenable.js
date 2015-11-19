@@ -7,7 +7,7 @@
  * @module js-whatever/js/listenable
  */
 define([
-    '../../../jquery/jquery',
+    'jquery',
     'underscore'
 ], function() {
 

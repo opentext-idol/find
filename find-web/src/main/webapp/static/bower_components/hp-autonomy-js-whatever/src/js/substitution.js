@@ -6,7 +6,7 @@
 /**
  * @module js-whatever/js/substitution
  */
-define(['../../../underscore/underscore'], function(_) {
+define(['underscore'], function(_) {
 
     //noinspection UnnecessaryLocalVariableJS
     /**

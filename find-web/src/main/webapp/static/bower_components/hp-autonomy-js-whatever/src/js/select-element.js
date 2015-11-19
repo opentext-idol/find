@@ -7,7 +7,7 @@
  * @module js-whatever/js/select-element
  */
 define([
-    '../../../jquery/jquery'
+    'jquery'
 ], function() {
     //noinspection UnnecessaryLocalVariableJS
     /**

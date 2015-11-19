@@ -7,7 +7,7 @@
  * @module js-whatever/js/checkbox-modal
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'js-whatever/js/ensure-array',
     'text!js-whatever/templates/checkbox-modal/checkbox-modal.html',
     'text!js-whatever/templates/checkbox-modal/checkbox-table.html'

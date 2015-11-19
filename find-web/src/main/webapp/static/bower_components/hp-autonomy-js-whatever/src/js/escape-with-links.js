@@ -8,7 +8,7 @@
  */
 define([
     'js-whatever/js/regex-replace',
-    '../../../underscore/underscore'
+    'underscore'
 ], function(regexReplace, _){
     /**
      * @alias module:js-whatever/js/escape-with-links

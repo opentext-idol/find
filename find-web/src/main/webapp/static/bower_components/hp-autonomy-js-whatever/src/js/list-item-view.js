@@ -2,7 +2,7 @@
  * @module js-whatever/js/list-item-view
  */
 define([
-    '../../../backbone/backbone'
+    'backbone'
 ], function(Backbone) {
 
     /**

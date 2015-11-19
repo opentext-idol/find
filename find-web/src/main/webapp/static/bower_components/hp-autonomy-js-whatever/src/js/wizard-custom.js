@@ -7,7 +7,7 @@
  * @module js-whatever/js/wizard-custom
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'underscore',
     'text!js-whatever/templates/wizard/wizard.html',
     'jquery-steps'

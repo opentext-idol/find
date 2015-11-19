@@ -7,7 +7,7 @@
  * @module databases-view/js/databases-collection
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'underscore',
     'js-whatever/js/escape-hod-identifier'
 ], function(Backbone, _, escapeHodIdentifier) {

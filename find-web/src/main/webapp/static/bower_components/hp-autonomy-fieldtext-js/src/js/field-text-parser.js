@@ -1,5 +1,5 @@
 define([
-    '../../../underscore/underscore',
+    'underscore',
     'peg',
     'text!fieldtext/js/field-text.pegjs'
 ], function(_, Peg, grammer) {

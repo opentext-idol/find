@@ -7,7 +7,7 @@
  * @module settings/js/controls/enable-view
  */
 define([
-    '../../../../backbone/backbone',
+    'backbone',
     'text!settings/templates/controls/enable-view.html'
 ], function(Backbone, template) {
 

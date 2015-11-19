@@ -7,7 +7,7 @@
  * @module js-whatever/js/base-page
  */
 define([
-    '../../../backbone/backbone'
+    'backbone'
 ], function(Backbone) {
 
     /**

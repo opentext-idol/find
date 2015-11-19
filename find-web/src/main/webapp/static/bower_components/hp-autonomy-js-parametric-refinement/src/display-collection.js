@@ -7,7 +7,7 @@
  * @module display-collection
  */
 define([
-    '../../backbone/backbone',
+    'backbone',
     'underscore'
 ], function(Backbone, _) {
 

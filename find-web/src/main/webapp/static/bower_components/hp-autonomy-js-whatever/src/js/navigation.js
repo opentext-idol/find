@@ -7,7 +7,7 @@
  * @module js-whatever/js/navigation
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'text!js-whatever/templates/navigation.html'
 ], function(Backbone, template) {
 

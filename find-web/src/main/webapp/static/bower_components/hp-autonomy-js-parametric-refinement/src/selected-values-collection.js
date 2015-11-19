@@ -8,7 +8,7 @@
  * @module selected-values-collection
  */
 define([
-    '../../backbone/backbone',
+    'backbone',
     'underscore',
     'fieldtext/js/field-text-parser'
 ], function(Backbone, _, parser) {

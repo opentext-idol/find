@@ -7,7 +7,7 @@
  * @module js-whatever/js/autoload
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'js-whatever/js/autoload-methods'
 ], function(Backbone, autoloadMethods) {
 

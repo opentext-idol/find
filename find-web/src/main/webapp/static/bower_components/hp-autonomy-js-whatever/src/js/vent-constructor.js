@@ -7,7 +7,7 @@
  * @module js-whatever/js/vent-constructor
  */
 define([
-    '../../../backbone/backbone'
+    'backbone'
 ], function(Backbone) {
         /**
          * @name module:js-whatever/js/vent-constructor.Vent

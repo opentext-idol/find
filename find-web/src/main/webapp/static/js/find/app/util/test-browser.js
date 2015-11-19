@@ -7,7 +7,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/old-browser-modal.html',
     'bootstrap',
-    '../../../../bower_components/underscore/underscore'
+    'underscore'
 ], function(i18n, oldBrowserModal){
 
     // do any required feature detection for your app config page here

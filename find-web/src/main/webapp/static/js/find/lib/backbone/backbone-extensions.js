@@ -4,7 +4,7 @@
  */
 
 define([
-    '../../../../bower_components/underscore/underscore',
+    'underscore',
     'backbone-base'
 ], function(_, Backbone) {
     var oldSync = Backbone.sync;

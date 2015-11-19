@@ -9,7 +9,7 @@
  * @abstract
  */
 define([
-    '../../../jquery/jquery',
+    'jquery',
     'underscore'
 ],function($, _) {
 

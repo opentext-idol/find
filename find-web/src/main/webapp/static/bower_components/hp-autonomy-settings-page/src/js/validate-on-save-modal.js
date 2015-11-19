@@ -7,7 +7,7 @@
  * @module settings/js/validate-on-save-modal
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'text!settings/templates/validate-on-save-modal.html',
     'text!settings/templates/validation-error-message.html'
 ], function(Backbone, template, errorTemplate) {

@@ -4,7 +4,7 @@
  */
 
 define([
-    '../../../../bower_components/underscore/underscore',
+    'underscore',
     'find/app/model/find-base-collection',
     'find/app/model/document-model'
 ], function(_, BaseCollection, DocumentModel) {

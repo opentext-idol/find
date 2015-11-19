@@ -6,7 +6,7 @@
 define([
     'find/app/model/find-base-collection',
     'find/app/model/document-model',
-    '../../../../bower_components/underscore/underscore'
+    'underscore'
 ], function(FindBaseCollection, DocumentModel, _) {
 
     return FindBaseCollection.extend({

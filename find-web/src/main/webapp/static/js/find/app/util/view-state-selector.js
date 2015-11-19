@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/underscore/underscore'
+    'underscore'
 ], function(_) {
     return function(viewStates) {
         return function(showStates) {

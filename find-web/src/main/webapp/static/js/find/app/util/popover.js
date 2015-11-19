@@ -4,7 +4,7 @@
  */
 
 define([
-    '../../../../bower_components/underscore/underscore',
+    'underscore',
     'jquery',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/loading-spinner.html',

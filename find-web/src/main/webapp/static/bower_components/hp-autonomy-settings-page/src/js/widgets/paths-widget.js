@@ -8,7 +8,7 @@
  */
 define([
     'settings/js/widget',
-    '../../../../backbone/backbone',
+    'backbone',
     'js-whatever/js/list-view',
     'text!settings/templates/widgets/paths-widget.html',
     'text!settings/templates/widgets/paths-widget-row.html'

@@ -2,7 +2,7 @@
  * @module js-whatever/js/filtering-collection
  */
 define([
-    '../../../backbone/backbone'
+    'backbone'
 ], function(Backbone) {
 
     var getTrackedAttributes = function(trackedModel) {

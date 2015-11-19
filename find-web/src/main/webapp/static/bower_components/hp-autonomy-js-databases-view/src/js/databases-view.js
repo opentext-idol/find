@@ -7,7 +7,7 @@
  * @module databases-view/js/databases-view
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'jquery',
     'underscore',
     'js-whatever/js/list-view',

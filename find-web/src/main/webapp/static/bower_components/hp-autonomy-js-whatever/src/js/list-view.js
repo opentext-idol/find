@@ -7,7 +7,7 @@
  * @module js-whatever/js/list-view
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'js-whatever/js/list-item-view'
 ], function(Backbone, ListItemView) {
 

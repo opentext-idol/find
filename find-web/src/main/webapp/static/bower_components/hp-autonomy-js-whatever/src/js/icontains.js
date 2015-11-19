@@ -16,7 +16,7 @@
  * $test.filter(':icontains("bears")').length; // returns 0
  */
 define([
-    '../../../jquery/jquery'
+    'jquery'
 ], function(jQuery) {
     jQuery.expr[':'].icontains = jQuery.expr.createPseudo(function(arg) {
         return function(elem) {

@@ -7,7 +7,7 @@
  * @module login-page/js/login
  */
 define([
-    '../../../backbone/backbone',
+    'backbone',
     'js-whatever/js/location',
     'text!login-page/templates/login.html',
     'underscore',

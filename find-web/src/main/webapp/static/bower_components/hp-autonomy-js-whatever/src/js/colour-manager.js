@@ -7,7 +7,7 @@
  * @module js-whatever/js/colour-manager
  */
 define([
-    '../../../underscore/underscore'
+    'underscore'
 ], function() {
 
     var hex2Rgb = function(hex) {

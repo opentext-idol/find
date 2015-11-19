@@ -7,7 +7,7 @@
  * @module js-whatever/js/string-ends-with
  */
 define([
-    '../../../underscore/underscore'
+    'underscore'
 ], function() {
     _.mixin({
         /**
