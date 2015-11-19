@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.connections.ConnectionStatistics;
 import com.autonomy.abc.selenium.connections.Credentials;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import org.junit.After;
@@ -32,14 +31,12 @@ public class ConnectionsPageITCase extends HostedTestBase {
         setInitialUser(config.getUser("yahoo"));
     }
 
-    @Before @Override
-    public void baseSetUp() throws InterruptedException {
-        regularSetUp();
-        hostedLogIn("yahoo");
+    @Before
+    public void setUp() {
+        connectionService = getApplication().createConnectionService(getElementFactory());
 
         body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         connectionsPage = getElementFactory().getConnectionsPage();
-        connectionService = getApplication().createConnectionService(getElementFactory());
         body = getBody();
     }
 

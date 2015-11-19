@@ -10,8 +10,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
-import java.net.MalformedURLException;
-
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -26,9 +24,8 @@ public class DevConsoleITCase extends HostedTestBase {
     }
 
     @Override
-    public void baseSetUp() throws MalformedURLException {
-        regularSetUp();
-        getDriver().get("http://search.havenondemand.com");
+    protected void postLogin() throws Exception {
+        /* NOOP */
     }
 
     @Test

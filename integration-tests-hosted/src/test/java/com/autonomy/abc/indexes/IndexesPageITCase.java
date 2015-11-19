@@ -8,9 +8,7 @@ import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
@@ -19,7 +17,6 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,16 +45,9 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Before
-    @Override
-    public void baseSetUp() throws InterruptedException {
-        regularSetUp();
-        hostedLogIn("yahoo");
-        getElementFactory().getPromotionsPage();
-
-
+    public void setUp() {
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
         indexesPage = getElementFactory().getIndexesPage();
-
         body = getBody();
     }
 

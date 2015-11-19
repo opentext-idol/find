@@ -69,19 +69,22 @@ public abstract class ABCTestBase {
 	protected static List<Object[]> parameters(final Collection<ApplicationType> applicationTypes) throws IOException {
 		return TestConfig.readConfigs(applicationTypes);
 	}
+	
 	// StateHelperRule.finished() calls WebDriver.quit so must be the last thing called
 	@Rule
 	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this)).around(new TestArtifactRule(this));
 
-	protected void regularSetUp(){
+	private void initialiseTest() {
 		LOGGER.info(config.toString());
 		driver = config.createWebDriver();
 		ImplicitWaits.setImplicitWait(driver);
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
 		testState.addStatementHandler(new StatementArtifactHandler(this));
+	}
 
-		driver.get(config.getWebappUrl());
+	private void goToInitialPage() {
+		getDriver().get(initialUrl);
 		getDriver().manage().window().maximize();
 
 		// no side/top bar until logged in
@@ -89,30 +92,28 @@ public abstract class ABCTestBase {
 		elementFactory = getApplication().createElementFactory(driver);
 	}
 
-	protected void tryLogIn(){
+	protected void postLogin() throws Exception {
+		//Wait for page to load
+		Thread.sleep(2000);
+		// now has side/top bar
+		body = getBody();
+		// wait for the first page to load
+		getElementFactory().getPromotionsPage();
+	}
+
+	@Before
+	public void baseSetUp() {
+		initialiseTest();
+		goToInitialPage();
 		try {
-			loginAs(config.getDefaultUser());
-			//Wait for page to load
-			Thread.sleep(2000);
-			// now has side/top bar
-			body = getBody();
+			loginAs(initialUser);
+			postLogin();
 		} catch (Exception e) {
 			LOGGER.error("Unable to login");
 			fail("Unable to login");
 		}
 	}
 
-	@Before
-	public void baseSetUp() throws MalformedURLException, InterruptedException {
-		regularSetUp();
-		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			tryLogIn();
-		} else {
-			hostedLogIn("twitter");
-			getElementFactory().getPromotionsPage();
-		}
-	}
-	
 	protected final void setInitialUser(User user) {
 		initialUser = user;
 	}
