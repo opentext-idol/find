@@ -101,7 +101,7 @@ public abstract class ABCTestBase {
 	}
 
 	@Before
-	public void baseSetUp() {
+	public final void baseSetUp() {
 		initialiseTest();
 		goToInitialPage();
 		if (!initialUser.equals(User.NULL)) {
@@ -125,15 +125,15 @@ public abstract class ABCTestBase {
 	}
 
 	@After
-	public void baseTearDown() throws MultipleFailureException {
+	public final void baseTearDown() throws MultipleFailureException {
 		testState.throwIfFailed();
 	}
 
-	public WebDriver getDriver() {
+	public final WebDriver getDriver() {
 		return driver;
 	}
 
-	public TestConfig getConfig() {
+	public final TestConfig getConfig() {
 		return config;
 	}
 
@@ -149,17 +149,17 @@ public abstract class ABCTestBase {
 		return getApplication().createAppBody(driver);
 	}
 
-	protected void loginAs(User user) {
+	protected final void loginAs(User user) {
 		getElementFactory().getLoginPage().loginWith(user.getAuthProvider());
 		currentUser = user;
 	}
 
-	protected void logout() {
+	protected final void logout() {
 		getBody().logout();
 		currentUser = User.NULL;
 	}
 
-	protected User getCurrentUser() {
+	protected final User getCurrentUser() {
 		return currentUser;
 	}
 }
