@@ -41,7 +41,7 @@ public class IndexesPageITCase extends HostedTestBase {
     public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
         // requires a separate account where indexes can safely be added and deleted
-        setInitialUser(config.getUser("yahoo"));
+        setInitialUser(config.getUser("index_tests"));
     }
 
     @Before

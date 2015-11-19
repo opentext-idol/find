@@ -1,7 +1,7 @@
 {
   "app": {
     "type": "On Premise",
-    "url": "http://searchoptimizer-test-01.hpswlabs.hp.com:8080/searchoptimizer/p/"
+    "url": "http://searchoptimizer-test-01.hpswlabs.hp.com:8080/searchoptimizer/p/promotions"
   },
   "selenium": {
     "browsers": ["chrome"],
