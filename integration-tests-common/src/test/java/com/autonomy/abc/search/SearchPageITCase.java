@@ -555,7 +555,7 @@ public class SearchPageITCase extends ABCTestBase {
 				final String handle = getDriver().getWindowHandle();
 				searchPage.searchResultCheckbox(i).click();
 				final String docTitle = searchPage.getSearchResultTitle(i);
-				searchPage.getPromotionBucketElementByTrimmedTitle(docTitle).click();
+				searchPage.getPromotionBucketElementByTitle(docTitle).click();
 
 				Thread.sleep(5000);
 
@@ -648,10 +648,14 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testFieldTextFilter() {
-		search("war");
+//		search("war");
+		new Search(getApplication(),getElementFactory(),"*").applyFilter(new IndexFilter("sitesearch")).apply();
 		searchPage.selectLanguage("English");
-		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-        final String searchResultTitle = searchPage.getSearchResultTitle(1);
+
+		//TODO Change back at some point when other indexes decide they want to work properly?
+//		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+
+		final String searchResultTitle = searchPage.getSearchResultTitle(1);
 		final String lastWordInTitle = searchPage.getLastWord(searchResultTitle);
 		int comparisonIndex = 0;
 		String comparisonString = null;
@@ -700,11 +704,13 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testEditFieldText() {
-		search("boer");
+//		search("boer");
+		new Search(getApplication(),getElementFactory(),"*").applyFilter(new IndexFilter("sitesearch")).apply();
 
 		searchPage.selectLanguage("Afrikaans");
 
-        searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+//        searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
+
         searchPage.showFieldTextOptions();
 		searchPage.clearFieldText();
 
