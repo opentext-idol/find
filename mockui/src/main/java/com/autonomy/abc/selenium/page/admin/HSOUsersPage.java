@@ -1,17 +1,13 @@
 package com.autonomy.abc.selenium.page.admin;
 
-import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.users.HSOUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.Status;
 import com.autonomy.abc.selenium.users.User;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSOUsersPage extends UsersPage {
     public HSOUsersPage(WebDriver driver) {
@@ -43,11 +39,23 @@ public class HSOUsersPage extends UsersPage {
         return findElement(By.xpath("//*[contains(@class,'user-email') and text()='" + user.getEmail() + "']/.."));
     }
 
-    public Status getUserStatus(HSOUser user) {
+    public Status getStatusOf(HSOUser user) {
         return Status.fromString(getUserRow(user).findElement(By.className("account-status")).getText());
     }
 
-    public Role getUserRole(HSOUser user) {
-        return Role.fromString(getUserRow(user).findElement(By.className("user-role")).getText());
+    public Role getRoleOf(HSOUser user) {
+        return Role.fromString(roleLinkFor(user).getText());
+    }
+
+    public WebElement roleLinkFor(HSOUser user){
+        return getUserRow(user).findElement(By.cssSelector(".user-role a"));
+    }
+
+    public void selectRoleFor(HSOUser user, Role newRole) {
+        getUserRow(user).findElement(By.xpath(".//option[contains(text(),'"+newRole+"')]")).click();
+    }
+
+    public void submitPendingEditFor(HSOUser user) {
+        getUserRow(user).findElement(By.cssSelector(".editable-submit")).click();
     }
 }

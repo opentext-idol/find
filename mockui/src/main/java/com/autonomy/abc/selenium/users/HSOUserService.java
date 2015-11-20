@@ -54,4 +54,10 @@ public class HSOUserService extends UserService {
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         usersPage.loadOrFadeWait();
     }
+
+    public void changeRole(HSOUser user, Role newRole) {
+        usersPage.roleLinkFor(user).click();
+        usersPage.selectRoleFor(user, newRole);
+        usersPage.submitPendingEditFor(user);
+    }
 }
