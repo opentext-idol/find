@@ -114,7 +114,7 @@ public class KeywordService extends ServiceBase {
         }
     }
 
-    private void removeKeywordGroup(WebElement group) {
+    public void removeKeywordGroup(WebElement group) {
         List<WebElement> removeBtns = group.findElements(By.cssSelector("li .remove-keyword"));
         if (removeBtns.size() > 1) {
             removeBtns.remove(0);

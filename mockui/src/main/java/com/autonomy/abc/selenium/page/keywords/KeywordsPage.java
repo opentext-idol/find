@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.util.Language;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -151,6 +152,10 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public abstract void selectLanguage(final String language);
+
+    public final void selectLanguage(final Language language) {
+        selectLanguage(language.toString());
+    }
 
     public String getSelectedLanguage() {
         return selectLanguageButton().getText();
