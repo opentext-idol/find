@@ -44,11 +44,20 @@ public class UserManagementHostedITCase extends HostedTestBase {
         verifyThat(getContainingDiv(usersPage.getUsernameInput()), not(hasClass("has-error")));
         verifyThat(getContainingDiv(usersPage.getEmailInput()), hasClass("has-error"));
         verifyThat(getContainingDiv(usersPage.getUserLevelDropdown()), not(hasClass("has-error")));
-        verifyThat(getContainingDiv(usersPage.getUsernameInput()), not(hasClass("has-error")));
+        verifyThat(getContainingDiv(usersPage.createButton()), not(hasClass("has-error")));
 
         usersPage.closeModal();
 
         usersPage.refreshButton().click();
+        usersPage.loadOrFadeWait();
+
+        verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
+
+        //Sometimes it requires us to add a valid user before invalid users show up
+        userService.createNewUser(new HSONewUser("Valid", "Valid@User.com"), Role.ADMIN);
+
+        usersPage.refreshButton().click();
+        usersPage.loadOrFadeWait();
 
         verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
     }
