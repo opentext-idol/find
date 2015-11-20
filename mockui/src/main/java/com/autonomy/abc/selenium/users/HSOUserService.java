@@ -29,10 +29,10 @@ public class HSOUserService extends UserService {
     }
 
     @Override
-    public User createNewUser(NewUser newUser, Role role) {
+    public HSOUser createNewUser(NewUser newUser, Role role) {
         UsersPage usersPage = goToUsers();
-        usersPage.createButton().click();
-        User user = newUser.signUpAs(role, usersPage);
+        usersPage.createUserButton().click();
+        HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage);
         usersPage.closeModal();
         return user;
     }
@@ -44,6 +44,7 @@ public class HSOUserService extends UserService {
             trashCan.click();
             ModalView.getVisibleModalView(getDriver()).okButton().click();
             new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
+            usersPage.loadOrFadeWait();
         }
     }
 }
