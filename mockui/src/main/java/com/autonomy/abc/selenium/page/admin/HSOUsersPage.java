@@ -44,10 +44,10 @@ public class HSOUsersPage extends UsersPage {
     }
 
     public Status getUserStatus(HSOUser user) {
-        return Status.fromString(getUserRow(user).findElement(By.className("account-status")).toString());
+        return Status.fromString(getUserRow(user).findElement(By.className("account-status")).getText());
     }
 
     public Role getUserRole(HSOUser user) {
-        return Role.fromString(getUserRow(user).findElement(By.className("user-role")).toString());
+        return Role.fromString(getUserRow(user).findElement(By.className("user-role")).getText());
     }
 }

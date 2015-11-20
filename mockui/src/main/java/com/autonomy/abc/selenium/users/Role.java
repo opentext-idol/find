@@ -24,6 +24,7 @@ public enum Role {
             case "admin":
                 return ADMIN;
             case "user":
+            case "end user":
                 return USER;
             case "none":
                 return NONE;
