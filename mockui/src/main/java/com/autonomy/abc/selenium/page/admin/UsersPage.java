@@ -194,13 +194,6 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	private static void waitForLoad(WebDriver driver) {
-//		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".users-table")));
 		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("create-user")));
-	}
-
-	public void addEmail(String email) {
-		WebElement emailBox = findElement(By.id("create-users-2900"));
-		emailBox.clear();
-		emailBox.sendKeys(email);
 	}
 }

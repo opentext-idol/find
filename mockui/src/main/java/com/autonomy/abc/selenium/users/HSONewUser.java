@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 
 // TODO: CSA-1663
@@ -15,11 +16,13 @@ public class HSONewUser implements NewUser {
 
     @Override
     public User signUpAs(Role role, UsersPage usersPage) {
-        usersPage.addUsername(username);
-        usersPage.addEmail(email);
-        usersPage.selectRole(role);
-        usersPage.createButton().click();
-        usersPage.loadOrFadeWait();
+        HSOUsersPage hsoUsersPage = (HSOUsersPage) usersPage;
+
+        hsoUsersPage.addUsername(username);
+        hsoUsersPage.addEmail(email);
+        hsoUsersPage.selectRole(role);
+        hsoUsersPage.createButton().click();
+        hsoUsersPage.loadOrFadeWait();
         return new User(null,username,role);
     }
 
