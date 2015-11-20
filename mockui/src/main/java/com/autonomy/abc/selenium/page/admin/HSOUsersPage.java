@@ -39,4 +39,8 @@ public class HSOUsersPage extends UsersPage {
     public void addEmail(String email) {
         getEmailInput().setValue(email);
     }
+
+    public WebElement refreshButton() {
+        return findElement(By.id("refresh-users"));
+    }
 }

@@ -32,7 +32,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
     }
 
     @Before
-    public void setUp() throws MalformedURLException, InterruptedException {
+    public void setUp() {
         userService = getApplication().createUserService(getElementFactory());
         usersPage = userService.goToUsers();
         usersPage.deleteOtherUsers();
@@ -52,8 +52,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
         usersPage.closeModal();
 
-        getDriver().navigate().refresh();
-        usersPage = getElementFactory().getUsersPage();
+        usersPage.refreshButton().click();
 
         verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
     }
