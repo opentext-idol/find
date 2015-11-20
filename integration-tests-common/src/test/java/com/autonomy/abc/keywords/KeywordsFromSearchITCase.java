@@ -10,7 +10,6 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.Search;
 import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,6 +28,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
@@ -180,7 +180,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("lodge"), hasItems("lodge", "dodge", "podge"));
         assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("podge"), hasItems("lodge", "dodge", "podge"));
-        assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("dodge"),hasItems("lodge", "dodge", "podge"));
+        assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("dodge"), hasItems("lodge", "dodge", "podge"));
 
         assertEquals(1, keywordsPage.countSynonymLists());
         assertEquals(3, keywordsPage.countKeywords());
@@ -423,7 +423,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         assertThat(prospectiveKeywords, containsItems(wordsInPhrase));
         assertThat(prospectiveKeywords, not(hasItem("the")));
-        assertThat(wordsInPhrase.size(),is(prospectiveKeywords.size()));
+        assertThat(wordsInPhrase.size(), is(prospectiveKeywords.size()));
     }
 
 
@@ -443,9 +443,5 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         } catch (TimeoutException e) {
             fail("Search does not find results after cancelling synonym wizard");
         }
-    }
-
-    private Matcher<Iterable<String>> containsItems(List<String> list) {
-        return hasItems(list.toArray(new String[list.size()]));
     }
 }

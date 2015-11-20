@@ -14,7 +14,6 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Language;
-import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -28,13 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.util.AppElement.getParent;
 import static org.hamcrest.Matchers.*;
@@ -501,10 +498,6 @@ public class KeywordsPageITCase extends ABCTestBase {
 				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
 			}
 		}
-	}
-
-	private Matcher<Iterable<String>> containsItems(List<String> list) {
-		return hasItems(list.toArray(new String[list.size()]));
 	}
 
 	@Test
