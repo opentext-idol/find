@@ -27,15 +27,6 @@ public class HSOUsersPage extends UsersPage {
         return getDriver().findElement(By.id("create-users-role"));
     }
 
-    @Override
-    public void deleteOtherUsers(){
-        for(WebElement trashCan : findElements(By.className("users-deleteUser"))){
-            trashCan.click();
-            ModalView.getVisibleModalView(getDriver()).okButton().click();
-            new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
-        }
-    }
-
     public void addEmail(String email) {
         getEmailInput().setValue(email);
     }

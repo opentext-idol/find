@@ -44,7 +44,7 @@ public class UsersPageITCase extends ABCTestBase {
 	public void setUp() throws MalformedURLException, InterruptedException {
 		userService = getApplication().createUserService(getElementFactory());
 		usersPage = userService.goToUsers();
-		usersPage.deleteOtherUsers();
+		userService.deleteOtherUsers();
 	}
 
 	private User singleSignUp() {
@@ -131,7 +131,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
-		usersPage.deleteOtherUsers();
+		userService.deleteOtherUsers();
 		verifyThat("Not all users are deleted", usersPage.countNumberOfUsers(), is(1));
 	}
 

@@ -74,18 +74,6 @@ public class UsersPage extends AppElement implements AppPage {
 		loadOrFadeWait();
 	}
 
-	// TODO: move to UserService.deleteOtherUsers()?
-	public void deleteOtherUsers() {
-		for (final WebElement deleteButton : getTable().findElements(By.cssSelector("button"))) {
-			if (!isAttributePresent(deleteButton, "disabled")) {
-				loadOrFadeWait();
-				deleteButton.click();
-				loadOrFadeWait();
-				findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
-			}
-		}
-	}
-
 	public int countNumberOfUsers() {
 		loadOrFadeWait();
 		return getTable().findElements(By.cssSelector("tbody tr")).size();

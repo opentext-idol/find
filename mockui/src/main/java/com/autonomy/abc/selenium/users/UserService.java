@@ -4,7 +4,9 @@ import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 public abstract class UserService {
 
@@ -43,5 +45,17 @@ public abstract class UserService {
 
     public void setUsersPage(UsersPage usersPage) {
         this.usersPage = usersPage;
+    }
+
+    public void deleteOtherUsers() {
+        usersPage = goToUsers();
+        for (final WebElement deleteButton : usersPage.getTable().findElements(By.cssSelector("button"))) {
+            if (!usersPage.isAttributePresent(deleteButton, "disabled")) {
+                usersPage.loadOrFadeWait();
+                deleteButton.click();
+                usersPage.loadOrFadeWait();
+                usersPage.findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
+            }
+        }
     }
 }
