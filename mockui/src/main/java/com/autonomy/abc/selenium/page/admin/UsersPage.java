@@ -19,7 +19,7 @@ import java.util.List;
 
 public class UsersPage extends AppElement implements AppPage {
 
-	private UsersPage(final WebDriver driver) {
+	protected UsersPage(final WebDriver driver) {
 		super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
 	}
 
@@ -29,7 +29,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public WebElement createUserButton() {
-		return findElement(By.xpath(".//button[contains(text(), 'Create User')]"));
+		return findElement(By.id("create-user"));
 	}
 
 	public WebElement createButton() {
@@ -57,7 +57,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public void selectRole(Role role) {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + role + "']")).click();
+		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[contains(text(),'" + role + "')]")).click();
 	}
 
 	public void createNewUser(final String userName, final String password, final String userLevel) {
@@ -72,18 +72,6 @@ public class UsersPage extends AppElement implements AppPage {
 	public void closeModal() {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[data-dismiss='modal']")).click();
 		loadOrFadeWait();
-	}
-
-	// TODO: move to UserService.deleteOtherUsers()?
-	public void deleteOtherUsers() {
-		for (final WebElement deleteButton : getTable().findElements(By.cssSelector("button"))) {
-			if (!isAttributePresent(deleteButton, "disabled")) {
-				loadOrFadeWait();
-				deleteButton.click();
-				loadOrFadeWait();
-				findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
-			}
-		}
 	}
 
 	public int countNumberOfUsers() {
@@ -115,7 +103,7 @@ public class UsersPage extends AppElement implements AppPage {
 
 	public List<String> getUsernames() {
 		List<String> usernames = new ArrayList<>();
-		for (WebElement element : getTable().findElements(By.cssSelector("tbody .user"))) {
+		for (WebElement element : getTable().findElements(By.cssSelector("tbody .user-username"))) {
 			usernames.add(element.getText().trim());
 		}
 		return usernames;
@@ -147,12 +135,6 @@ public class UsersPage extends AppElement implements AppPage {
 
 	public void submitPendingEditFor(User user) {
 		getUserRow(user.getUsername()).findElement(By.cssSelector(".editable-submit")).click();
-	}
-
-	public void changeRole(User user, Role newRole) {
-		roleLinkFor(user).click();
-		setRoleValueFor(user, newRole);
-		submitPendingEditFor(user);
 	}
 
 	public User changeAuth(User user, NewUser replacementAuth) {
@@ -194,6 +176,6 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	private static void waitForLoad(WebDriver driver) {
-		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".users-table")));
+		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("create-user")));
 	}
 }
