@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -1044,5 +1045,53 @@ public class KeywordsPageITCase extends ABCTestBase {
 		assertThat(getDriver().getCurrentUrl(), containsString("promotions"));
 	}
 
+
+	private void verifyBlacklisted(String blacklist) {
+		verifyThat(blacklist + " is blacklisted", keywordsPage.getBlacklistedTerms(), hasItem(blacklist));
+	}
+
+	private void verifySynonymGroup(List<String> synonymGroup) {
+		verifyThat(synonymGroup, everyItem(isIn(keywordsPage.getSynonymGroupSynonyms(synonymGroup.get(0)))));
+	}
+
+	private void verifyNoBlacklist() {
+		verifyThat("no blacklist terms displayed", keywordsPage.getBlacklistedTerms(), empty());
+	}
+
+	private void verifyNoSynonyms() {
+		verifyThat("no synonyms displayed", keywordsPage.countSynonymLists(), is(0));
+	}
+
+	private void verifyNumberOfSynonymGroups(int count) {
+		verifyThat("number of synonym groups is " + count, keywordsPage.countSynonymLists(), is(count));
+	}
+
+	private void verifySynonymGroupSize(List<String> synonyms) {
+		verifyThat(keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), hasSize(synonyms.size()));
+	}
+
+	private List<String> deleteSynonymAndVerify(List<String> synonyms, int index) {
+		if (synonyms.size() == 2) {
+			deleteSynonymGroupAndVerify(synonyms.get(index));
+			return Collections.emptyList();
+		}
+		synonyms = new ArrayList<>(synonyms);
+		String deleted = synonyms.remove(index);
+		String remaining = synonyms.get(index == 0 ? 1 : 0);
+		keywordService.deleteKeyword(deleted);
+		verifySynonymGroup(synonyms);
+		verifyThat(deleted + " is no longer in synonym group", keywordsPage.getSynonymGroupSynonyms(remaining), not(hasItem(deleted)));
+		verifySynonymGroupSize(synonyms);
+		return synonyms;
+	}
+
+	private void deleteSynonymGroupAndVerify(String synonym) {
+		int expectedGroups = keywordsPage.countSynonymLists() - 1;
+		int expectedKeywords = keywordsPage.countKeywords() - keywordsPage.getSynonymGroupSynonyms(synonym).size();
+		keywordService.removeKeywordGroup(keywordsPage.synonymGroup(synonym));
+		verifyNumberOfSynonymGroups(expectedGroups);
+		verifyThat("number of keywords is " + expectedKeywords, keywordsPage.countKeywords(), is(expectedKeywords));
+		verifyThat("no refresh icons", keywordsPage.countRefreshIcons(), is(0));
+	}
 
 }
