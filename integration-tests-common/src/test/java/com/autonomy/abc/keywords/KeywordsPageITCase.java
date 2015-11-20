@@ -69,89 +69,50 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testKeywordsFilter() throws InterruptedException {
-		final WebDriverWait wait = new WebDriverWait(getDriver(), 5);
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("dog hound canine", "English");
+		List<String> synonyms = Arrays.asList("dog", "hound", "canine");
+		String blacklist = "illegal";
 
-		searchPage = getElementFactory().getSearchPage();
-		wait.until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-		assertThat("New keyword not searched for", searchPage.searchTitle().getText(), containsString("dog"));
-		assertThat("New keyword not searched for", searchPage.searchTitle().getText(), containsString("hound"));
-		assertThat("New keyword not searched for", searchPage.searchTitle().getText(), containsString("canine"));
-
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		wait.until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
+		searchPage = keywordService.addSynonymGroup(synonyms);
+		for (String synonym : synonyms) {
+			verifyThat("search title contains " + synonym, searchPage.searchTitle(), containsText(synonym));
+		}
+		
+		keywordService.addBlacklistTerms(blacklist);
 		keywordsPage.filterView(KeywordFilter.ALL);
-		keywordsPage.selectLanguage("English");
-		assertThat("Synonym group dog not visible", keywordsPage.getSynonymGroupSynonyms("dog"), hasItems("hound", "canine"));
-		assertThat("Synonym group hound not visible", keywordsPage.getSynonymGroupSynonyms("hound"), hasItems("dog", "canine"));
-		assertThat("Synonym group canine not visible", keywordsPage.getSynonymGroupSynonyms("canine"), hasItems("dog", "hound"));
-
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("illegal", "English");
-
-		new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOf(keywordsPage));
-
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
-		new WebDriverWait(getDriver(),45).until(GritterNotice.notificationContaining("illegal"));
-
-		assertThat("Blacklisted term 'illegal' not visible", keywordsPage.getBlacklistedTerms(), hasItem("illegal"));
+		keywordsPage.selectLanguage(Language.ENGLISH);
+		verifySynonymGroup(synonyms);
+		verifyBlacklisted(blacklist);
 
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-		assertThat("Blacklist terms are still visible", keywordsPage.getBlacklistedTerms().size() == 0);
-		assertThat("A synonym list on row 2 is not visible", keywordsPage.synonymList(1).isDisplayed(), is(Boolean.FALSE));
-		assertThat("Synonym group dog not visible", keywordsPage.getSynonymGroupSynonyms("dog"), hasItems("hound", "canine"));
-		assertThat("Synonym group hound not visible", keywordsPage.getSynonymGroupSynonyms("hound"), hasItems("dog", "canine"));
-		assertThat("Synonym group canine not visible", keywordsPage.getSynonymGroupSynonyms("canine"), hasItems("dog", "hound"));
+		verifySynonymGroup(synonyms);
+		verifyNoBlacklist();
+		verifyThat("synonym list on row 2 is not visible", keywordsPage.synonymList(1), not(displayed()));
 
 		keywordsPage.filterView(KeywordFilter.BLACKLIST);
-		assertThat("Blacklisted term 'illegal' not visible", keywordsPage.getBlacklistedTerms(), hasItem("illegal"));
-		assertThat("There should not be a a synonym list on row 2", keywordsPage.countSynonymLists(), is(0));
+		verifyNoSynonyms();
+		verifyBlacklisted(blacklist);
 
 		keywordsPage.filterView(KeywordFilter.ALL);
-		assertThat("A synonym list should be visible on row 2", keywordsPage.synonymList(1).isDisplayed());
-		assertThat("Synonym group dog not visible", keywordsPage.getSynonymGroupSynonyms("dog"), hasItems("hound", "canine"));
-		assertThat("Synonym group hound not visible", keywordsPage.getSynonymGroupSynonyms("hound"), hasItems("dog", "canine"));
-		assertThat("Synonym group canine not visible", keywordsPage.getSynonymGroupSynonyms("canine"),hasItems("dog", "hound"));
-		assertThat("Blacklist term illegal is not visible", keywordsPage.getBlacklistedTerms(), hasItem("illegal"));
+		verifySynonymGroup(synonyms);
+		verifyBlacklisted(blacklist);
+		verifyThat("A synonym list should be visible on row 2", keywordsPage.synonymList(1), displayed());
 	}
 
 	@Test
 	public void testDeleteKeywords() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("frog toad amphibian tadpole", "English");
-		searchPage = getElementFactory().getSearchPage();
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		List<String> synonyms = Arrays.asList("frog", "toad", "amphibian", "tadpole");
+		addSynonymsAndVerify(synonyms);
+		verifyNumberOfSynonymGroups(1);
 
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.filterView(KeywordFilter.ALL);
+		synonyms = deleteSynonymAndVerify(synonyms, 2);
+		verifyNumberOfSynonymGroups(1);
 
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-		assertThat("synonym group not fully created", keywordsPage.getSynonymGroupSynonyms("frog"), hasItems("frog", "toad", "amphibian", "tadpole"));
-		assertThat("Wrong number of synonym lists displayed", keywordsPage.countSynonymLists(), is(1));
-		assertThat("Wrong number of synonyms in group frog", keywordsPage.getSynonymGroupSynonyms("frog").size(), is(4));
+		synonyms = deleteSynonymAndVerify(synonyms, 2);
+		verifyNumberOfSynonymGroups(1);
 
-		keywordsPage.deleteSynonym("amphibian", "toad");
-		assertThat("Wrong number of synonym lists displayed", keywordsPage.countSynonymLists(), is(1));
-		assertThat("Wrong number of synonyms in group toad", keywordsPage.getSynonymGroupSynonyms("toad").size(), is(3));
-		assertThat("the synonym amphibian should be deleted from every synonym list", keywordsPage.getSynonymGroupSynonyms("tadpole"), not(hasItems("amphibian")));
-		assertThat("the synonym amphibian should be deleted from every synonym list", keywordsPage.getSynonymGroupSynonyms("toad"), not(hasItems("amphibian")));
-		assertThat("the synonym amphibian should be deleted from every synonym list", keywordsPage.getSynonymGroupSynonyms("frog"), not(hasItems("amphibian")));
-
-		keywordsPage.deleteSynonym("frog", "frog");
-		assertThat("Wrong number of synonym lists displayed", keywordsPage.countSynonymLists(), is(1));
-		assertThat("Wrong number of synonyms in group toad", keywordsPage.getSynonymGroupSynonyms("toad").size(), is(2));
-		assertThat("the synonym frog should be deleted from every synonym list", keywordsPage.getSynonymGroupSynonyms("toad"), not(hasItems("frog")));
-		assertThat("the synonym frog should be deleted from every synonym list", keywordsPage.getSynonymGroupSynonyms("tadpole"), not(hasItems("frog")));
-
-		keywordsPage.deleteSynonym("tadpole", "toad");
-		assertThat("Wrong number of synonym lists displayed", keywordsPage.countSynonymLists(), is(0));
+		keywordService.deleteKeyword(synonyms.get(0));
+		verifyNoSynonyms();
 	}
-
 
 	//The keyword 'wine' exists in two different synonym groups. Tests that deleting this keyword does not effect the other synonym group
 	@Test
@@ -1047,7 +1008,6 @@ public class KeywordsPageITCase extends ABCTestBase {
 		assertThat(getDriver().getCurrentUrl(), containsString("promotions"));
 	}
 
-
 	private void verifyBlacklisted(String blacklist) {
 		verifyThat(blacklist + " is blacklisted", keywordsPage.getBlacklistedTerms(), hasItem(blacklist));
 	}
@@ -1070,6 +1030,14 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	private void verifySynonymGroupSize(List<String> synonyms) {
 		verifyThat(keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), hasSize(synonyms.size()));
+	}
+
+	private void addSynonymsAndVerify(List<String> synonyms) {
+		keywordService.addSynonymGroup(synonyms);
+		keywordService.goToKeywords();
+		keywordsPage.filterView(KeywordFilter.ALL);
+		verifySynonymGroup(synonyms);
+		verifySynonymGroupSize(synonyms);
 	}
 
 	private List<String> deleteSynonymAndVerify(List<String> synonyms, int index) {
