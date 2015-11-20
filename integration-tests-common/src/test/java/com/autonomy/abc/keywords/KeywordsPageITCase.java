@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.Language;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
@@ -58,12 +59,12 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordService = new KeywordService(getApplication(), getElementFactory());
 		searchFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-		keywordsPage = keywordService.deleteAll();
+		keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
     }
 
 	@After
 	public void tearDown() {
-		keywordService.deleteAll();
+		keywordService.deleteAll(KeywordFilter.ALL);
 	}
 
 	@Test
@@ -863,7 +864,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		verifyDeletes(synonymsToDelete);
 
-		keywordService.deleteAll();
+		keywordService.deleteAll(KeywordFilter.ALL);
 		keywordService.addBlacklistTerms(blacklistTerms);
 		keywordService.addSynonymGroup(synonyms);
 

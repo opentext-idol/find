@@ -45,12 +45,12 @@ public class KeywordsWizardITCase extends ABCTestBase {
     public void setUp() {
         keywordService = new KeywordService(getApplication(), getElementFactory());
 
-        keywordsPage = keywordService.deleteAll();
+        keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
     }
 
     @After
     public void tearDown() {
-        keywordService.deleteAll();
+        keywordService.deleteAll(KeywordFilter.ALL);
     }
 
     @Test

@@ -89,13 +89,14 @@ public class KeywordService extends ServiceBase {
         new KeywordGroup(type, language, keywords).makeWizard(newKeywordsPage).apply();
     }
 
-    public KeywordsPage deleteAll() {
+    public KeywordsPage deleteAll(KeywordFilter type) {
         goToKeywords();
+        keywordsPage.filterView(type);
         for (final String language : keywordsPage.getLanguageList()) {
             try {
                 tryDeleteAll(language);
             } catch (StaleElementReferenceException e) {
-                return deleteAll();
+                return deleteAll(type);
             }
         }
         new WebDriverWait(getDriver(), 100).withMessage("deleting keywords").until(ExpectedConditions.textToBePresentInElement(keywordsPage, "No keywords found"));
@@ -108,7 +109,7 @@ public class KeywordService extends ServiceBase {
         } catch (WebDriverException e) {
             /* language dropdown disabled */
         }
-        List<WebElement> keywordGroups = keywordsPage.findElements(By.cssSelector(".keywords-list-container .keywords-sub-list"));
+        List<WebElement> keywordGroups = keywordsPage.findElements(By.cssSelector(".keywords-container .keywords-sub-list"));
         for (WebElement group : keywordGroups) {
             removeKeywordGroup(group);
         }
