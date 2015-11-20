@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.junit.After;
@@ -130,7 +131,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-        keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
+        keywordsPage.filterView(KeywordFilter.ALL);
 
         keywordsPage.selectLanguage("French");
         assertThat("synonym horse is not displayed", keywordsPage.leadSynonym("horse").isDisplayed());
@@ -552,7 +553,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordsPage.selectLanguage("English");
 
-        keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+        keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
         for (final String hiddenBooleansProximity : hiddenSearchOperators) {
             LOGGER.info("Adding '"+hiddenBooleansProximity+"'");

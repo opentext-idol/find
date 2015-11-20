@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
@@ -80,7 +81,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		wait.until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
+		keywordsPage.filterView(KeywordFilter.ALL);
 		keywordsPage.selectLanguage("English");
 		assertThat("Synonym group dog not visible", keywordsPage.getSynonymGroupSynonyms("dog"), hasItems("hound", "canine"));
 		assertThat("Synonym group hound not visible", keywordsPage.getSynonymGroupSynonyms("hound"), hasItems("dog", "canine"));
@@ -98,18 +99,18 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		assertThat("Blacklisted term 'illegal' not visible", keywordsPage.getBlacklistedTerms(), hasItem("illegal"));
 
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		assertThat("Blacklist terms are still visible", keywordsPage.getBlacklistedTerms().size() == 0);
 		assertThat("A synonym list on row 2 is not visible", keywordsPage.synonymList(1).isDisplayed(), is(Boolean.FALSE));
 		assertThat("Synonym group dog not visible", keywordsPage.getSynonymGroupSynonyms("dog"), hasItems("hound", "canine"));
 		assertThat("Synonym group hound not visible", keywordsPage.getSynonymGroupSynonyms("hound"), hasItems("dog", "canine"));
 		assertThat("Synonym group canine not visible", keywordsPage.getSynonymGroupSynonyms("canine"), hasItems("dog", "hound"));
 
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.BLACKLIST);
+		keywordsPage.filterView(KeywordFilter.BLACKLIST);
 		assertThat("Blacklisted term 'illegal' not visible", keywordsPage.getBlacklistedTerms(), hasItem("illegal"));
 		assertThat("There should not be a a synonym list on row 2", keywordsPage.countSynonymLists(), is(0));
 
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
+		keywordsPage.filterView(KeywordFilter.ALL);
 		assertThat("A synonym list should be visible on row 2", keywordsPage.synonymList(1).isDisplayed());
 		assertThat("Synonym group dog not visible", keywordsPage.getSynonymGroupSynonyms("dog"), hasItems("hound", "canine"));
 		assertThat("Synonym group hound not visible", keywordsPage.getSynonymGroupSynonyms("hound"), hasItems("dog", "canine"));
@@ -126,7 +127,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
+		keywordsPage.filterView(KeywordFilter.ALL);
 
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		assertThat("synonym group not fully created", keywordsPage.getSynonymGroupSynonyms("frog"), hasItems("frog", "toad", "amphibian", "tadpole"));
@@ -170,7 +171,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.selectLanguage("English");
 		assertThat("synonym group not fully created", keywordsPage.getSynonymGroupSynonyms("red"), hasItems("red", "scarlet", "wine", "burgundy"));
 		assertThat(keywordsPage.countSynonymLists(), is(2));
@@ -246,7 +247,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
 		//keywordsPage.selectLanguage("English");
 		LOGGER.warn("Cannot select language for blacklists yet");
@@ -315,7 +316,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.selectLanguage("English");
 		keywordsPage.synonymGroupPlusButton("three").click();
 		keywordsPage.synonymGroupTextBox("three").clear();
@@ -378,7 +379,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		verifyThat(notifications, displayed());
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.BLACKLIST);
+		keywordsPage.filterView(KeywordFilter.BLACKLIST);
 		keywordsPage.selectLanguage("English");
 		keywordsPage.deleteBlacklistedTerm("orange");
 		notificationContents.add("Removed \"orange\" from the blacklist");
@@ -473,7 +474,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.selectLanguage("English");
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		assertThat(keywordsPage.countSynonymLists(), is(2));
 
 		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
@@ -586,7 +587,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		}
 
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
+		keywordsPage.filterView(KeywordFilter.ALL);
 		keywordsPage.selectLanguage("Georgian");
 		assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
 		assertThat(keywordsPage.countSynonymLists(), is(0));
@@ -626,7 +627,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		verifyThat(searchPage.countSynonymLists(), is(1));
 
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
+		keywordsPage.filterView(KeywordFilter.ALL);
 
 		keywordsPage.selectLanguage("French");
 		verifyThat("synonym not assigned to wrong language", keywordsPage, not(containsText("한국")));
@@ -643,7 +644,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		createKeywordsPage.createSynonymGroup("double duo two pair couple", "Urdu");
 		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
 		keywordsPage.selectLanguage("Urdu");
 
@@ -724,7 +725,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		assertThat(keywordsPage.countSynonymLists(), is(1));
 		assertThat(keywordsPage.countKeywords(), is(2));
 
@@ -744,7 +745,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
 		keywordsPage.selectLanguage("Kazakh");
 
@@ -763,7 +764,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		createKeywordsPage.createSynonymGroup("string strong strang streng strung", "German");
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.loadOrFadeWait();
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.loadOrFadeWait();
 
 		keywordsPage.selectLanguage("German");
@@ -821,7 +822,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		keywordsPage.loadOrFadeWait();
 		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.SYNONYMS);
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.searchFilterTextBox().sendKeys("cc");
 		final List<String> keywords = keywordsPage.getLeadSynonymsList();
 
@@ -838,7 +839,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		getElementFactory().getKeywordsPage();
 
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.BLACKLIST);
+		keywordsPage.filterView(KeywordFilter.BLACKLIST);
 
 		Thread.sleep(10000);    //TODO Need to find a better way to do this -- need to wait for all blacklist terms to be added
 
@@ -883,7 +884,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		createKeywordsPage.createSynonymGroup("ea es ed ef eg eh", "English");
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.filterView(KeywordsPage.KeywordsFilter.ALL_TYPES);
+		keywordsPage.filterView(KeywordFilter.ALL);
 
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();

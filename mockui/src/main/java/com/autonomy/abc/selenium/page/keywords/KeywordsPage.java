@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.util.Language;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -37,7 +38,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     @Deprecated
     public void deleteAllSynonyms() throws InterruptedException {
         loadOrFadeWait();
-        filterView(KeywordsFilter.SYNONYMS);
+        filterView(KeywordFilter.SYNONYMS);
         WebDriverWait wait = new WebDriverWait(getDriver(),40);	//TODO Possibly too long?
 
         for (final String language : getLanguageList()) {
@@ -64,7 +65,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public void deleteKeywords() {
-        filterView(KeywordsFilter.ALL_TYPES);
+        filterView(KeywordFilter.ALL);
 
         for(final String language : getLanguageList()){
             selectLanguage(language);
@@ -107,7 +108,7 @@ public abstract class KeywordsPage extends KeywordsBase {
 
     public abstract void deleteAllBlacklistedTerms() throws InterruptedException;
 
-    public void filterView(final KeywordsFilter filter) {
+    public void filterView(final KeywordFilter filter) {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
         findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
@@ -119,23 +120,6 @@ public abstract class KeywordsPage extends KeywordsBase {
 
     public WebElement getSynonymGroup(String synonym) {
         return getSynonymIcon(synonym).findElement(By.xpath(".//../../.."));
-    }
-
-    public enum KeywordsFilter {
-        ALL_TYPES("All Types"),
-        BLACKLIST("Blacklist"),
-        SYNONYMS("Synonyms");
-
-        private final String filterName;
-
-        KeywordsFilter(final String name) {
-            filterName = name;
-        }
-
-        public String toString() {
-            return filterName;
-        }
-
     }
 
     @Deprecated

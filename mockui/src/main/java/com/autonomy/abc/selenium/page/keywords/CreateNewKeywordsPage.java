@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.keywords;
 
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -129,10 +130,10 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElements(By.cssSelector(".remove-word")).size();
 	}
 
-    public int countKeywords(KeywordsPage.KeywordsFilter keywordType) {
+    public int countKeywords(KeywordFilter keywordType) {
         WebElement keywords;
 
-        if (keywordType == KeywordsPage.KeywordsFilter.BLACKLIST){
+        if (keywordType == KeywordFilter.BLACKLIST){
             keywords = findElement(By.xpath("//div[@data-branch='blacklisted']"));
         } else {
 			keywords = findElement(By.xpath("//div[@data-branch='synonyms']"));
