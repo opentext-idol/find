@@ -57,7 +57,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public void selectRole(Role role) {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + role + "']")).click();
+		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[contains(text(),'" + role + "')]")).click();
 	}
 
 	public void createNewUser(final String userName, final String password, final String userLevel) {

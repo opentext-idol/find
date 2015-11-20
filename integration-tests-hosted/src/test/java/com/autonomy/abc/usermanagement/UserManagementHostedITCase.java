@@ -5,21 +5,17 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.users.HSONewUser;
-import com.autonomy.abc.selenium.users.HSOUserService;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
-import java.net.MalformedURLException;
-
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class UserManagementHostedITCase extends HostedTestBase {
@@ -35,7 +31,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
     public void setUp() {
         userService = getApplication().createUserService(getElementFactory());
         usersPage = userService.goToUsers();
-        usersPage.deleteOtherUsers();
+        userService.deleteOtherUsers();
     }
 
     @Test
@@ -55,6 +51,17 @@ public class UserManagementHostedITCase extends HostedTestBase {
         usersPage.refreshButton().click();
 
         verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
+    }
+
+    @Test
+    public void testAddingUserShowsUpAsPending(){
+        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@User.com");
+
+        HSOUser user = userService.createNewUser(newUser,Role.USER);
+
+        verifyThat(usersPage.getUsernames(),hasItem(user.getUsername()));
+        verifyThat(usersPage.getUserStatus(user), is(Status.PENDING));
+        verifyThat(usersPage.getUserRole(user), is(Role.USER));
     }
 
     private WebElement getContainingDiv(WebElement webElement){
