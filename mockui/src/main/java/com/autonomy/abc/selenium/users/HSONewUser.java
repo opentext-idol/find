@@ -15,7 +15,7 @@ public class HSONewUser implements NewUser {
     }
 
     @Override
-    public User signUpAs(Role role, UsersPage usersPage) {
+    public HSOUser signUpAs(Role role, UsersPage usersPage) {
         HSOUsersPage hsoUsersPage = (HSOUsersPage) usersPage;
 
         hsoUsersPage.addUsername(username);
@@ -23,7 +23,7 @@ public class HSONewUser implements NewUser {
         hsoUsersPage.selectRole(role);
         hsoUsersPage.createButton().click();
         hsoUsersPage.loadOrFadeWait();
-        return new User(null,username,role);
+        return new HSOUser(username,email,role);
     }
 
     @Override
