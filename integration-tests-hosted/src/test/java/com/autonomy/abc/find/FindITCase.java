@@ -439,11 +439,13 @@ public class FindITCase extends HostedTestBase {
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        service.filterByIndex(Index.PDF.title);
+        String indexTitle = Index.values()[1].getTitle();
+
+        service.filterByIndex(indexTitle);
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         service.getSearchResultTitle(1).click();
         do{
-            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(Index.PDF.title));
+            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(indexTitle));
             service.viewBoxNextButton().click();
         } while (!service.cBoxFirstDocument());
     }
@@ -975,7 +977,8 @@ public class FindITCase extends HostedTestBase {
 
     private enum Index {
         DEFAULT("default_index"),
-        PDF("pdf");
+        FIFA("fifa"),
+        SIMPSONS_ARCHIVE("simpsonsarchive");
 
         private final String title;
 
