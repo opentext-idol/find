@@ -111,11 +111,11 @@ public class KeywordService extends ServiceBase {
         }
         List<WebElement> keywordGroups = keywordsPage.findElements(By.cssSelector(".keywords-container .keywords-sub-list"));
         for (WebElement group : keywordGroups) {
-            removeKeywordGroup(group);
+            removeKeywordGroupAsync(group);
         }
     }
 
-    public void removeKeywordGroup(WebElement group) {
+    private void removeKeywordGroupAsync(WebElement group) {
         List<WebElement> removeBtns = group.findElements(By.cssSelector("li .remove-keyword"));
         if (removeBtns.size() > 1) {
             removeBtns.remove(0);
@@ -123,6 +123,11 @@ public class KeywordService extends ServiceBase {
         for (WebElement removeBtn : removeBtns) {
             removeBtn.click();
         }
+    }
+
+    public void removeKeywordGroup(WebElement group) {
+        removeKeywordGroupAsync(group);
+        keywordsPage.waitForRefreshIconToDisappear();
     }
 
     public KeywordsPage deleteKeyword(String term) {

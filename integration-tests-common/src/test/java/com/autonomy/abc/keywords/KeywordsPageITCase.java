@@ -25,7 +25,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
 
@@ -101,99 +100,81 @@ public class KeywordsPageITCase extends ABCTestBase {
 		addSynonymsAndVerify(synonyms);
 		verifyNumberOfSynonymGroups(1);
 
-		synonyms = deleteSynonymAndVerify(synonyms, 2);
-		verifyNumberOfSynonymGroups(1);
+		synonyms = deleteSynonymAndVerify("frog", synonyms);
+		synonyms = deleteSynonymAndVerify("tadpole", synonyms);
 
-		synonyms = deleteSynonymAndVerify(synonyms, 2);
-		verifyNumberOfSynonymGroups(1);
-
-		keywordService.deleteKeyword(synonyms.get(0));
+		deleteSynonymAndVerify("toad", synonyms);
 		verifyNoSynonyms();
 	}
 
-	//The keyword 'wine' exists in two different synonym groups. Tests that deleting this keyword does not effect the other synonym group
+	//The keyword 'orange' exists in two different synonym groups. Tests that deleting this keyword does not affect the other synonym group
 	@Test
 	public void testDeleteSynonymsFromOverlappingSynonymGroups() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("wine merlot shiraz bordeaux", "English");
-		searchPage = getElementFactory().getSearchPage();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		String duplicate = "orange";
+		List<String> fruits = Arrays.asList("apple", "pear", "banana", duplicate);
+		List<String> colours = Arrays.asList("red", "blue", "yellow", duplicate);
 
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("wine red scarlet burgundy", "English");
-		searchPage = getElementFactory().getSearchPage();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordService.addSynonymGroup(fruits);
+		keywordService.addSynonymGroup(colours);
 
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
+		keywordService.goToKeywords();
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-		keywordsPage.selectLanguage("English");
-		assertThat("synonym group not fully created", keywordsPage.getSynonymGroupSynonyms("red"), hasItems("red", "scarlet", "wine", "burgundy"));
-		assertThat(keywordsPage.countSynonymLists(), is(2));
-		assertThat(keywordsPage.countKeywords(), is(8));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("burgundy").size(), is(4));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("merlot").size(), is(4));
-		assertThat(keywordsPage.countSynonymGroupsWithSynonym("wine"), is(2));
 
-		keywordsPage.deleteSynonym("bordeaux", "shiraz");
-		assertThat(keywordsPage.countSynonymLists(), is(2));
-		assertThat(keywordsPage.countKeywords(), is(7));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("merlot").size(), is(3));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("scarlet").size(), is(4));
-		assertThat(keywordsPage.countSynonymGroupsWithSynonym("wine"), is(2));
+		verifySynonymGroup(fruits);
+		verifySynonymGroup(colours);
+		verifyKeywordState(2, 8);
+		verifyDuplicateCount(duplicate, 2);
 
-		keywordsPage.deleteSynonym("burgundy", "red");
-		assertThat(keywordsPage.countSynonymLists(), is(2));
-		assertThat(keywordsPage.countKeywords(), is(6));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("merlot").size(), is(3));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("scarlet").size(), is(3));
-		assertThat(keywordsPage.countSynonymGroupsWithSynonym("wine"), is(2));
+		fruits = deleteSynonymAndVerify("apple", fruits);
+		verifySynonymGroup(colours);
+		verifyDuplicateCount(duplicate, 2);
 
-		keywordsPage.deleteSynonym("wine", keywordsPage.getSynonymGroup("red"));
-		assertThat(keywordsPage.countSynonymLists(), is(2));
-		assertThat(keywordsPage.countKeywords(), is(5));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("merlot").size(), is(3));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("scarlet").size(), is(2));
-		assertThat(keywordsPage.countSynonymGroupsWithSynonym("wine"), is(1));
+		colours = deleteSynonymAndVerify("red", colours);
+		verifySynonymGroup(fruits);
+		verifyDuplicateCount(duplicate, 2);
 
-		keywordsPage.deleteSynonym("shiraz", "wine");
-		assertThat(keywordsPage.countSynonymLists(), is(2));
-		assertThat(keywordsPage.countKeywords(), is(4));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("merlot").size(), is(2));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("scarlet").size(), is(2));
-		assertThat(keywordsPage.countSynonymGroupsWithSynonym("wine"), is(1));
+		colours = deleteSynonymAndVerify(duplicate, colours);
+		verifySynonymGroup(fruits);
+		verifyDuplicateCount(duplicate, 1);
 
-		keywordsPage.deleteSynonym("scarlet", "red");
-		assertThat(keywordsPage.countSynonymLists(), is(1));
-		assertThat(keywordsPage.countKeywords(), is(2));
-		assertThat(keywordsPage.getSynonymGroupSynonyms("merlot").size(), is(2));
-		assertThat(keywordsPage.countSynonymGroupsWithSynonym("wine"), is(1));
+		fruits = deleteSynonymAndVerify("banana", fruits);
+		verifyDuplicateCount(duplicate, 1);
 
-		keywordsPage.deleteSynonym("wine", "merlot");
-		assertThat(keywordsPage.countSynonymLists(), is(0));
+		deleteSynonymAndVerify("yellow", colours);
+		verifyDuplicateCount(duplicate, 1);
+
+		deleteSynonymAndVerify(duplicate, fruits);
+		verifyNoSynonyms();
+	}
+
+	private void verifyDuplicateCount(String duplicate, int count) {
+		verifyThat(duplicate + " appears " + count + " times", keywordsPage.countSynonymGroupsWithSynonym(duplicate), is(count));
 	}
 
 	@Ignore
 	// This takes too long for a nightly test but is a useful test that need run periodically as the application has failed in the past with a large number of synonym groups.
 	// Failure can present itself on other pages other than the KeywordsPage
 	@Test
-	public void testAddLotsOfSynonymGroups() throws IOException, InterruptedException {
-		keywordsPage.deleteAllSynonyms();
-		keywordsPage.deleteAllBlacklistedTerms();
-		final List<String> groupsOfFiveSynonyms = keywordsPage.loadTextFileLineByLineIntoList("C://dev//res//100.txt");
+	public void testAddLotsOfSynonymGroups() {
+		final List<String> groupsOfFiveSynonyms = readSynonymFile();
 
+		int expectedGroups = 0;
 		for (final String synonymGroup : groupsOfFiveSynonyms) {
-			keywordsPage.createNewKeywordsButton().click();
-			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			createKeywordsPage.createSynonymGroup(synonymGroup, "English");
-
-			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-			assertThat("Wrong number of synonym lists", keywordsPage.countSynonymLists() == groupsOfFiveSynonyms.indexOf(synonymGroup) + 1);
+			keywordService.addSynonymGroup(synonymGroup);
+			expectedGroups++;
+			keywordService.goToKeywords();
+			verifyKeywordState(expectedGroups, 5*expectedGroups);
 		}
+	}
+
+	// TODO: this still does not work
+	private List<String> readSynonymFile() {
+		final List<String> groupsOfFiveSynonyms = new ArrayList<>();
+		Scanner scanner = new Scanner(ClassLoader.getSystemResource("/100SynonymGroups.txt").getFile());
+		while (scanner.hasNextLine()) {
+			groupsOfFiveSynonyms.add(scanner.nextLine());
+		}
+		return groupsOfFiveSynonyms;
 	}
 
 	//Whitespace, Odd number of quotes or quotes with blank text, boolean operators or proximity operators should not be able to added as keywords. This test checks they can't be added to existing synonyms on the Keywords Page
@@ -641,7 +622,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		createKeywordsPage.selectLanguage("English");
 
-		createKeywordsPage.continueWizardButton(	).click();
+		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
 
 		createKeywordsPage.addSynonyms("bear");
@@ -971,7 +952,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.createNewKeywordsButton().click();
 		createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.createBlacklistedTerm(blacklist,"English");
+		createNewKeywordsPage.createBlacklistedTerm(blacklist, "English");
 		getElementFactory().getKeywordsPage();
 
 		body.getTopNavBar().search(blacklist);
@@ -979,7 +960,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 
 		//Make sure no results show up for blacklisted terms
-		assertThat(searchPage.visibleDocumentsCount(),is(0));
+		assertThat(searchPage.visibleDocumentsCount(), is(0));
 
 		body.getTopNavBar().search(synonym);
 
@@ -1022,7 +1003,11 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	private void verifySynonymGroupSize(List<String> synonyms) {
-		verifyThat(keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), hasSize(synonyms.size()));
+		verifySynonymGroupSize(synonyms.get(0), synonyms.size());
+	}
+
+	private void verifySynonymGroupSize(String synonym, int size) {
+		verifyThat(keywordsPage.getSynonymGroupSynonyms(synonym), hasSize(size));
 	}
 
 	private void addSynonymsAndVerify(List<String> synonyms) {
@@ -1033,25 +1018,37 @@ public class KeywordsPageITCase extends ABCTestBase {
 		verifySynonymGroupSize(synonyms);
 	}
 
-	private List<String> deleteSynonymAndVerify(List<String> synonyms, int index) {
+	private List<String> deleteSynonymAndVerify(String toDelete, List<String> synonyms) {
 		if (synonyms.size() == 2) {
-			deleteSynonymGroupAndVerify(synonyms.get(index));
+			deleteSynonymGroupAndVerify(toDelete);
 			return Collections.emptyList();
 		}
+		return deleteSingleSynonymAndVerify(toDelete, synonyms);
+	}
+
+	private List<String> deleteSingleSynonymAndVerify(String toDelete, List<String> synonyms) {
 		synonyms = new ArrayList<>(synonyms);
-		String deleted = synonyms.remove(index);
-		String remaining = synonyms.get(index == 0 ? 1 : 0);
-		keywordService.deleteKeyword(deleted);
+		synonyms.remove(toDelete);
+		int expectedGroups = keywordsPage.countSynonymLists();
+		int expectedKeywords = keywordsPage.countKeywords() - 1;
+		keywordsPage.deleteSynonym(toDelete, keywordsPage.getSynonymGroup(synonyms.get(0)));
+
 		verifySynonymGroup(synonyms);
-		verifyThat(deleted + " is no longer in synonym group", keywordsPage.getSynonymGroupSynonyms(remaining), not(hasItem(deleted)));
+		verifyThat(toDelete + " is no longer in synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(toDelete)));
 		verifySynonymGroupSize(synonyms);
+		verifyKeywordState(expectedGroups, expectedKeywords);
 		return synonyms;
 	}
 
 	private void deleteSynonymGroupAndVerify(String synonym) {
 		int expectedGroups = keywordsPage.countSynonymLists() - 1;
 		int expectedKeywords = keywordsPage.countKeywords() - keywordsPage.getSynonymGroupSynonyms(synonym).size();
+
 		keywordService.removeKeywordGroup(keywordsPage.synonymGroup(synonym));
+		verifyKeywordState(expectedGroups, expectedKeywords);
+	}
+
+	private void verifyKeywordState(int expectedGroups, int expectedKeywords) {
 		verifyNumberOfSynonymGroups(expectedGroups);
 		verifyThat("number of keywords is " + expectedKeywords, keywordsPage.countKeywords(), is(expectedKeywords));
 		verifyThat("no refresh icons", keywordsPage.countRefreshIcons(), is(0));
