@@ -115,7 +115,7 @@ public class UsersPage extends AppElement implements AppPage {
 
 	public List<String> getUsernames() {
 		List<String> usernames = new ArrayList<>();
-		for (WebElement element : getTable().findElements(By.cssSelector("tbody .user"))) {
+		for (WebElement element : getTable().findElements(By.cssSelector("tbody .user-username"))) {
 			usernames.add(element.getText().trim());
 		}
 		return usernames;

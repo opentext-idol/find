@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HSOUsersPage extends UsersPage {
     public HSOUsersPage(WebDriver driver) {
         super(driver);
+        waitForLoad();
     }
 
     public FormInput getUsernameInput(){
