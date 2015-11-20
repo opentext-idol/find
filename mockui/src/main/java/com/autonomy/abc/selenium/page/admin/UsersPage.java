@@ -137,12 +137,6 @@ public class UsersPage extends AppElement implements AppPage {
 		getUserRow(user.getUsername()).findElement(By.cssSelector(".editable-submit")).click();
 	}
 
-	public void changeRole(User user, Role newRole) {
-		roleLinkFor(user).click();
-		setRoleValueFor(user, newRole);
-		submitPendingEditFor(user);
-	}
-
 	public User changeAuth(User user, NewUser replacementAuth) {
 		return replacementAuth.replaceAuthFor(user, this);
 	}

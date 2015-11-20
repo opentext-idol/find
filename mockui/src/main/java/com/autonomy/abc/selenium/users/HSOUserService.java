@@ -47,4 +47,11 @@ public class HSOUserService extends UserService {
             usersPage.loadOrFadeWait();
         }
     }
+
+    public void deleteUser(HSOUser user){
+        usersPage.getUserRow(user).findElement(By.className("users-deleteUser")).click();
+        usersPage.loadOrFadeWait();
+        ModalView.getVisibleModalView(getDriver()).okButton().click();
+        usersPage.loadOrFadeWait();
+    }
 }

@@ -58,4 +58,10 @@ public abstract class UserService {
             }
         }
     }
+
+    public void changeRole(User user, Role newRole) {
+        usersPage.roleLinkFor(user).click();
+        usersPage.setRoleValueFor(user, newRole);
+        usersPage.submitPendingEditFor(user);
+    }
 }
