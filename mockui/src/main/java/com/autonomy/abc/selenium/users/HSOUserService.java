@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSOUserService extends UserService {
@@ -52,12 +53,14 @@ public class HSOUserService extends UserService {
         usersPage.getUserRow(user).findElement(By.className("users-deleteUser")).click();
         usersPage.loadOrFadeWait();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
-        usersPage.loadOrFadeWait();
+        new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
     }
 
     public void changeRole(HSOUser user, Role newRole) {
-        usersPage.roleLinkFor(user).click();
+        WebElement roleLink = usersPage.roleLinkFor(user);
+        roleLink.click();
         usersPage.selectRoleFor(user, newRole);
         usersPage.submitPendingEditFor(user);
+        new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(roleLink));
     }
 }

@@ -59,9 +59,22 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
         HSOUser user = userService.createNewUser(newUser,Role.USER);
 
-        verifyThat(usersPage.getUsernames(),hasItem(user.getUsername()));
-        verifyThat(usersPage.getUserStatus(user), is(Status.PENDING));
-        verifyThat(usersPage.getUserRole(user), is(Role.USER));
+        verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
+        verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
+        verifyThat(usersPage.getRoleOf(user), is(Role.USER));
+    }
+
+    @Test
+    public void testDisablingAndDeletingUser(){
+        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@User.com");
+
+        HSOUser user = userService.createNewUser(newUser,Role.USER);
+
+        userService.changeRole(user,Role.NONE);
+        verifyThat(usersPage.getRoleOf(user), is(Role.NONE));
+
+        userService.deleteUser(user);
+        verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
     }
 
     private WebElement getContainingDiv(WebElement webElement){
