@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.HSOLoginPage;
 import com.autonomy.abc.selenium.find.FindPage;
@@ -59,6 +60,10 @@ public class HSOElementFactory extends ElementFactory {
     @Override
     public HSOCreateNewPromotionsPage getCreateNewPromotionsPage() {
         return new HSOCreateNewPromotionsPage(getDriver());
+    }
+
+    public HSOUsersPage getUsersPage(){
+        return new HSOUsersPage(getDriver());
     }
 
     public ConnectionsPage getConnectionsPage() {

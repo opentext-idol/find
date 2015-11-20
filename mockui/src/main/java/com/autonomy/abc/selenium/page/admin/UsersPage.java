@@ -19,7 +19,7 @@ import java.util.List;
 
 public class UsersPage extends AppElement implements AppPage {
 
-	private UsersPage(final WebDriver driver) {
+	protected UsersPage(final WebDriver driver) {
 		super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
 	}
 
