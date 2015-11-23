@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.util.Language;
 import org.openqa.selenium.By;
@@ -134,6 +135,10 @@ public abstract class KeywordsPage extends KeywordsBase {
 
     public WebElement searchFilterTextBox() {
         return findElement(By.className("keywords-search-filter"));
+    }
+
+    public FormInput searchFilterBox() {
+        return new FormInput(searchFilterTextBox(), getDriver());
     }
 
     public abstract void selectLanguage(final String language);

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
@@ -411,12 +412,16 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getSynonymGroupSynonyms(String synonym) {
-		LOGGER.warn("keywords are not displayed on search page");
-		return Collections.emptyList();
+		return ElementUtil.getTexts(synonymGroupContaining(synonym).findElements(By.cssSelector(".term")));
+	}
+
+	public WebElement synonymGroupContaining(String term) {
+		WebElement termBox = keywordContainer().findElement(By.cssSelector("[data-id='" + term.toLowerCase() + "']"));
+		return ElementUtil.ancestor(termBox, 1);
 	}
 
 	public int countKeywords() {
-		return findElements(By.cssSelector(".search-synonyms-keywords .remove-keyword")).size();
+		return keywordContainer().findElements(By.cssSelector(".search-terms-list .term")).size();
 	}
 
 	public void addSynonymToGroup(String newSynonym, String existing) {
@@ -433,6 +438,10 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public List<String> getBlacklistedTerms() {
 		return getSynonymGroupSynonyms(null);
+	}
+
+	private WebElement keywordContainer() {
+		return findElement(By.cssSelector(".search-results-synonyms"));
 	}
 
 	public List<String> getPromotedDocumentTitles(){

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.element;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -17,6 +18,8 @@ public class FormInput {
 
     public void clear() {
         element.clear();
+        // artificially trigger key up event
+        element.sendKeys("a" + Keys.BACK_SPACE);
     }
 
     public void submit() {

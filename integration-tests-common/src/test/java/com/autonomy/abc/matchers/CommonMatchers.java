@@ -4,7 +4,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -13,10 +12,18 @@ import static org.hamcrest.Matchers.*;
 public class CommonMatchers {
     private CommonMatchers() {}
 
-    public static <T> Matcher<Iterable<T>> containsItems(List<? extends T> list) {
-        @SuppressWarnings("unchecked")
-        T[] empties = (T[]) new Object[list.size()];
-        return hasItems(list.toArray(empties));
+    public static <T> Matcher<List<T>> containsItems(final List<? extends T> list) {
+        return new TypeSafeMatcher<List<T>>() {
+            @Override
+            protected boolean matchesSafely(List<T> container) {
+                return everyItem(isIn(container)).matches(list);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("a collection containing all of ").appendValueList("{", ", ", "}", list);
+            }
+        };
     }
 
     public static <T> Matcher<Iterable<? super T>> containsItems(final List<? extends T> list, final Comparator<? super T> comparator) {
