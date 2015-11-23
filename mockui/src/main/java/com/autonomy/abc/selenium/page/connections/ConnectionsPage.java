@@ -50,4 +50,12 @@ public class ConnectionsPage extends SAASPageBase {
         return findElement(By.xpath(".//*[contains(@class, 'listItemTitle')][contains(text(), '" + name + "')]"));
     }
 
+    public WebElement displayedConnectionWithTitleContaining(String name){
+        for (WebElement connection : findElements(By.xpath(".//*[contains(@class, 'listItemTitle')][contains(text(), '" + name + "')]"))){
+            if (connection.isDisplayed()){
+                return connection;
+            }
+        }
+        return null;
+    }
 }
