@@ -30,7 +30,7 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.CommonMatchers.*;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.util.AppElement.getParent;
 import static org.hamcrest.Matchers.*;
@@ -180,70 +180,24 @@ public class KeywordsPageITCase extends ABCTestBase {
 	//Whitespace, Odd number of quotes or quotes with blank text, boolean operators or proximity operators should not be able to added as keywords. This test checks they can't be added to existing synonyms on the Keywords Page
 	@Test
 	public void testAddingWhitespaceQuotesBooleansProximityOperatorsOnKeywordsPage() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("one two three", "English");
-		searchPage = (SearchPage) new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
+		List<String> synonyms = Arrays.asList("one", "two", "three");
+
+		keywordService.addSynonymGroup(synonyms);
+		keywordService.goToKeywords();
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
-		//keywordsPage.selectLanguage("English");
-		LOGGER.warn("Cannot select language for blacklists yet");
+		synonyms = verifyAddToGroup("four", synonyms);
 
-		keywordsPage.addSynonymToGroup("four", "one");
-		keywordsPage.waitForRefreshIconToDisappear();
-		assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("two"), hasItem("four"));
-		assertThat(keywordsPage.countSynonymLists(), is(1));
-		assertThat(keywordsPage.countKeywords(), is(4));
-
-		keywordsPage.synonymGroupPlusButton("three").click();
-		keywordsPage.synonymGroupTextBox("three").clear();
-		keywordsPage.synonymGroupTickButton("three").click();
-		assertThat("add synonym box should still be displayed", keywordsPage.synonymGroupTextBox("three").isDisplayed());
-
-		keywordsPage.searchFilterTextBox().click();
-		assertThat("there should be four synonyms in a group", keywordsPage.getSynonymGroupSynonyms("two"), hasItem("four"));
-		assertThat(keywordsPage.countSynonymLists(), is(1));
-		assertThat(keywordsPage.countKeywords(), is(4));
-
-		notifications = body.getTopNavBar().getNotifications();
-
-		for (final String badSynonym : Arrays.asList(" ", "\t", "\"")) {
-			addSynonymKeywordsPage("three",badSynonym);
-			assertThat("add synonym box should still be displayed. Offending term is " + badSynonym, keywordsPage.synonymGroupTextBox("three").isDisplayed());
-
-			new WebDriverWait(getDriver(),30).until(new ExpectedCondition<Boolean>() {
-				@Override
-				public Boolean apply(WebDriver webDriver) {
-					return keywordsPage.synonymGroupTextBox("three").isEnabled();
-				}
-			});
-
-			keywordsPage.loadOrFadeWait();
+		for (final String badSynonym : Arrays.asList("", " ", "\t", "\"")) {
+			verifyCannotAddToGroup(badSynonym, synonyms);
+			// close input box
 			keywordsPage.searchFilterTextBox().click();
-			assertThat("there should be four synonyms in a group. Offending term is " + badSynonym, keywordsPage.getSynonymGroupSynonyms("one").size() == 4);
-			assertThat(keywordsPage.countSynonymLists(), is(1));
-			assertThat(keywordsPage.countKeywords(), is(4));
 		}
 
-		int synonymGroupSize = 4;
 		for(final String operatorSynonym : Arrays.asList("NOT", "NEAR", "DNEAR", "XNEAR", "YNEAR", "NEAR123", "SENTENCE2", "PARAGRAPH3", "AND", "BEFORE", "AFTER", "WHEN", "SENTENCE", "PARAGRAPH", "OR", "WNEAR", "EOR", "NOTWHEN")){
-			addSynonymKeywordsPage("three", operatorSynonym);
-			keywordsPage.waitForRefreshIconToDisappear();
-			assertThat(keywordsPage.getSynonymGroupSynonyms("three"), hasItem(operatorSynonym.toLowerCase()));
-
-			assertThat(keywordsPage.getSynonymGroupSynonyms("three"), hasSize(++synonymGroupSize));
-			assertThat(keywordsPage.countSynonymLists(), is(1));
+			synonyms = verifyAddToGroup(operatorSynonym, synonyms);
+			synonyms = deleteSingleSynonymAndVerify(operatorSynonym, synonyms);
 		}
-	}
-
-	private void addSynonymKeywordsPage(String leadSynonym,String addSynonym){
-		keywordsPage.synonymGroupPlusButton(leadSynonym).click();
-		keywordsPage.synonymGroupTextBox(leadSynonym).clear();
-		keywordsPage.synonymGroupTextBox(leadSynonym).sendKeys(addSynonym);
-		keywordsPage.synonymGroupTickButton(leadSynonym).click();
 	}
 
 	//Phrases should be able to be added as synonyms from the keywords page
@@ -983,11 +937,11 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	private void verifyBlacklisted(String blacklist) {
-		verifyThat(blacklist + " is blacklisted", keywordsPage.getBlacklistedTerms(), hasItem(blacklist));
+		verifyThat("'" + blacklist + "' is blacklisted", keywordsPage.getBlacklistedTerms(), hasItem(blacklist));
 	}
 
 	private void verifySynonymGroup(List<String> synonymGroup) {
-		verifyThat(synonymGroup, everyItem(isIn(keywordsPage.getSynonymGroupSynonyms(synonymGroup.get(0)))));
+		verifyThat(keywordsPage.getSynonymGroupSynonyms(synonymGroup.get(0)), containsItems(synonymGroup, String.CASE_INSENSITIVE_ORDER));
 	}
 
 	private void verifyNoBlacklist() {
@@ -1034,7 +988,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.deleteSynonym(toDelete, keywordsPage.getSynonymGroup(synonyms.get(0)));
 
 		verifySynonymGroup(synonyms);
-		verifyThat(toDelete + " is no longer in synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(toDelete)));
+		verifyThat("'" + toDelete + "' is no longer in synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(toDelete)));
 		verifySynonymGroupSize(synonyms);
 		verifyKeywordState(expectedGroups, expectedKeywords);
 		return synonyms;
@@ -1051,7 +1005,31 @@ public class KeywordsPageITCase extends ABCTestBase {
 	private void verifyKeywordState(int expectedGroups, int expectedKeywords) {
 		verifyNumberOfSynonymGroups(expectedGroups);
 		verifyThat("number of keywords is " + expectedKeywords, keywordsPage.countKeywords(), is(expectedKeywords));
-		verifyThat("no refresh icons", keywordsPage.countRefreshIcons(), is(0));
 	}
 
+	private List<String> verifyAddToGroup(String toAdd, List<String> synonyms) {
+		synonyms = new ArrayList<>(synonyms);
+		synonyms.add(toAdd);
+		int expectedGroups = keywordsPage.countSynonymLists();
+		int expectedKeywords = keywordsPage.countKeywords() + 1;
+		keywordsPage.addSynonymToGroup(toAdd, keywordsPage.getSynonymGroup(synonyms.get(0)));
+
+		verifyThat("'" + toAdd + "' added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), hasItem(equalToIgnoringCase(toAdd)));
+		verifySynonymGroup(synonyms);
+		verifySynonymGroupSize(synonyms);
+		verifyKeywordState(expectedGroups, expectedKeywords);
+		return synonyms;
+	}
+
+	private void verifyCannotAddToGroup(String toAdd, List<String> synonyms) {
+		int expectedGroups = keywordsPage.countSynonymLists();
+		int expectedKeywords = keywordsPage.countKeywords();
+		keywordsPage.addSynonymToGroup(toAdd, keywordsPage.getSynonymGroup(synonyms.get(0)));
+
+		verifyThat("'" + toAdd + "' not added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(equalToIgnoringCase(toAdd))));
+		verifyThat("synonym box not closed", keywordsPage.synonymGroupTextBox(synonyms.get(0)), displayed());
+		verifySynonymGroup(synonyms);
+		verifySynonymGroupSize(synonyms);
+		verifyKeywordState(expectedGroups, expectedKeywords);
+	}
 }

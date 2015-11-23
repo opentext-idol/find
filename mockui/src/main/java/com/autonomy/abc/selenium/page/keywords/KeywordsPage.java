@@ -119,7 +119,8 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public WebElement getSynonymGroup(String synonym) {
-        return getSynonymIcon(synonym).findElement(By.xpath(".//../../.."));
+        // li[data-keywords-cid=...]
+        return getSynonymIcon(synonym).findElement(By.xpath(".//../../../.."));
     }
 
     @Deprecated
