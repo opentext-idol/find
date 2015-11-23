@@ -63,7 +63,7 @@ public class FindITCase extends HostedTestBase {
     private Logger logger = LoggerFactory.getLogger(FindITCase.class);
     private PromotionsPage promotions;
     private List<String> browserHandles;
-    private final String domain = "60a7547c-e0e7-4e40-b095-812e486b4054";
+    private final String domain = "2b7725de-bd04-4341-a4a0-5754f0655de8";
     private final Matcher<String> noDocs = containsString("No results found");
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;

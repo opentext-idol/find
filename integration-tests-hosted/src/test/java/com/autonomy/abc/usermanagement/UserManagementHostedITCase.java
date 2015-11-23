@@ -53,8 +53,9 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
         verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
 
+        //TODO use own email addresses
         //Sometimes it requires us to add a valid user before invalid users show up
-        userService.createNewUser(new HSONewUser("Valid", "Valid@User.com"), Role.ADMIN);
+        userService.createNewUser(new HSONewUser("Valid", "Valid@definitelynotarealaddress.com"), Role.ADMIN);
 
         usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
@@ -64,7 +65,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
     @Test
     public void testAddingUserShowsUpAsPending(){
-        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@User.com");
+        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@definitelynotarealaddress.com");
 
         HSOUser user = userService.createNewUser(newUser,Role.USER);
 
@@ -75,7 +76,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
     @Test
     public void testDisablingAndDeletingUser(){
-        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@User.com");
+        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@definitelynotarealaddress.com");
 
         HSOUser user = userService.createNewUser(newUser,Role.USER);
 
