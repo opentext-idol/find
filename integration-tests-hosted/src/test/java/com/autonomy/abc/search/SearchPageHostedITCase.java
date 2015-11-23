@@ -28,6 +28,7 @@ import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 
 public class SearchPageHostedITCase extends HostedTestBase {
 	public SearchPageHostedITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
@@ -91,16 +92,13 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Test
 	public void testAuthor(){
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
-
 		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
 
-		LoggerFactory.getLogger(SearchPageHostedITCase.class).info("Searching for: 'fruit'");
 		topNavBar.search("fruit");
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		Assert.assertNotEquals(searchPage.getText(), contains("Haven OnDemand returned an error while executing the search action"));
 
-		String author = "RUGBYBWORLDCUP.COM";
+		String author = "FIFA.COM";
 
 		searchPage.openParametricValuesList();
 
@@ -117,7 +115,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.getSearchResult(1).click();
 
 		for(int i = 0; i < results; i++) {
-			ABCAssert.assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is(author.toLowerCase()));
+			ABCAssert.assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), equalToIgnoringCase(author));
 			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
 		}
 
