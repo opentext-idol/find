@@ -33,6 +33,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.*;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static com.hp.autonomy.frontend.selenium.util.AppElement.getParent;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
@@ -384,7 +385,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() {
-		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
+		assumeThat("Language not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
 
 		keywordsPage.createNewKeywordsButton().click();
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -739,30 +740,22 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testClickingOnNotifications() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.createSynonymGroup("a b c d", "English");
-		getElementFactory().getSearchPage();
+		keywordService.addSynonymGroup("a b c d");
+
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		getElementFactory().getPromotionsPage();
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
 
-		verifyThat(notifications.notificationNumber(1).getText(), is("Created a new synonym group containing: a, b, c, d"));
+		verifyThat(notifications.notificationNumber(1), hasTextThat(startsWith("Created a new synonym group containing: ")));
 
 		notifications.notificationNumber(1).click();
-
-		verifyThat(notifications, displayed());
-
+		verifyThat("clicking notification does nothing", notifications, displayed());
 		if(!getDriver().getCurrentUrl().contains("keywords")){
 			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		}
 
-		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.createNewKeywordsButton().click();
-		createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.createBlacklistedTerm("e", "English");
-		getElementFactory().getKeywordsPage();
+		keywordService.addBlacklistTerms("e");
 
 		// TODO: this is a shared test, does not belong
 		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
@@ -776,13 +769,10 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
-
 		verifyThat(notifications.notificationNumber(1).getText(), is("Added \"e\" to the blacklist"));
 
 		notifications.notificationNumber(1).click();
-
-		verifyThat(notifications, displayed());
-
+		verifyThat("clicking notification does nothing", notifications, displayed());
 	}
 
 	/**

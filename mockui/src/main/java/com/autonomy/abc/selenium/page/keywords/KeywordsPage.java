@@ -113,6 +113,7 @@ public abstract class KeywordsPage extends KeywordsBase {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
         findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
+        loadOrFadeWait();
     }
 
     public int countKeywords() {
