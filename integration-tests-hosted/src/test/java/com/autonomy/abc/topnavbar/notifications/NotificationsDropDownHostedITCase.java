@@ -20,6 +20,7 @@ import static org.hamcrest.core.Is.is;
 public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
     public NotificationsDropDownHostedITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
         super(config, browser, appType, platform);
+        setInitialUser(config.getUser("index_tests"));
     }
 
     @Override
@@ -66,20 +67,21 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     public void testCreateIndexNotifications() {
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
         IndexesPage indexes = getElementFactory().getIndexesPage();
+        body = getBody();
 
         String indexName = "danye west";
         String indexCreationNotification = "Created a new index: "+indexName;
 
-        indexes.newIndexButton().click();
-        CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
-        createNewIndexPage.inputIndexName(indexName);
-        createNewIndexPage.nextButton().click();
-        createNewIndexPage.loadOrFadeWait();
-        createNewIndexPage.nextButton().click();
-        createNewIndexPage.loadOrFadeWait();
-        createNewIndexPage.finishButton().click();
-
         try {
+            indexes.newIndexButton().click();
+            CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
+            createNewIndexPage.inputIndexName(indexName);
+            createNewIndexPage.nextButton().click();
+            createNewIndexPage.loadOrFadeWait();
+            createNewIndexPage.nextButton().click();
+            createNewIndexPage.loadOrFadeWait();
+            createNewIndexPage.finishButton().click();
+
             getElementFactory().getIndexesPage();
             new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(indexCreationNotification));
 
@@ -99,12 +101,12 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         String startedNotification = "Connection " + connectorName + " started";
         String finishedNotification = "Connection "+ connectorName + " has finished running";
 
-        WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName);
+        WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName).withDuration(200);
 
         ConnectionService cs = new ConnectionService(getApplication(), getElementFactory());
-        cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
-
         try {
+            cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
+
             getElementFactory().getConnectionsPage();
 
             body.getTopNavBar().notificationsDropdown();
@@ -122,7 +124,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     public void testConnectorsDeletionNotifications() {
         String connectorName = "deathcabyoucutie";
-        WebConnector connector = new WebConnector("http://deathcabforcutie.com/", connectorName);
+        WebConnector connector = new WebConnector("http://deathcabforcutie.com/", connectorName).withDuration(200);
 
         String deletingNotification = "Deleting connection " + connectorName;
         String successfulNotification = "Connection " + connectorName + " successfully removed";

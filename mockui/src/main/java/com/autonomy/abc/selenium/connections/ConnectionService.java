@@ -49,7 +49,7 @@ public class ConnectionService {
 
     public ConnectionsDetailPage goToDetails(final String name) {
         goToConnections();
-        connectionsPage.connectionWithTitleContaining(name).click();
+        connectionsPage.displayedConnectionWithTitleContaining(name).click();
         connectionsDetailPage = getElementFactory().getConnectionsDetailPage();
         return connectionsDetailPage;
     }

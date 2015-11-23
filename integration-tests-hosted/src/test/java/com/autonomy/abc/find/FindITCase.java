@@ -63,7 +63,7 @@ public class FindITCase extends HostedTestBase {
     private Logger logger = LoggerFactory.getLogger(FindITCase.class);
     private PromotionsPage promotions;
     private List<String> browserHandles;
-    private final String domain = "60a7547c-e0e7-4e40-b095-812e486b4054";
+    private final String domain = "2b7725de-bd04-4341-a4a0-5754f0655de8";
     private final Matcher<String> noDocs = containsString("No results found");
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
@@ -439,11 +439,13 @@ public class FindITCase extends HostedTestBase {
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        service.filterByIndex(Index.PDF.title);
+        String indexTitle = Index.values()[1].getTitle();
+
+        service.filterByIndex(indexTitle);
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         service.getSearchResultTitle(1).click();
         do{
-            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(Index.PDF.title));
+            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(indexTitle));
             service.viewBoxNextButton().click();
         } while (!service.cBoxFirstDocument());
     }
@@ -975,7 +977,8 @@ public class FindITCase extends HostedTestBase {
 
     private enum Index {
         DEFAULT("default_index"),
-        PDF("pdf");
+        FIFA("fifa"),
+        SIMPSONS_ARCHIVE("simpsonsarchive");
 
         private final String title;
 

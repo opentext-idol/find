@@ -42,16 +42,16 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	public void clearPasswords() {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-password']")).clear();
-		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-passwordConfirm']")).clear();
+		ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password")).clear();
+		ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm")).clear();
 	}
 
 	public void addAndConfirmPassword(final String password, final String passwordConfirm) {
-		final WebElement passwordElement = ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-password']"));
+		final WebElement passwordElement = ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password"));
 		passwordElement.clear();
 		passwordElement.sendKeys(password);
 
-		final WebElement passwordConfirmElement = ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-passwordConfirm']"));
+		final WebElement passwordConfirmElement = ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm"));
 		passwordConfirmElement.clear();
 		passwordConfirmElement.sendKeys(passwordConfirm);
 	}

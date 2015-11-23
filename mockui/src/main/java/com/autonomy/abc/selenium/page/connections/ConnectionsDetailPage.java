@@ -55,4 +55,13 @@ public class ConnectionsDetailPage extends SAASPageBase {
 
         return lastRun;
     }
+
+    public WebElement editButton() {
+        return menuButton("Edit");
+    }
+
+    //TODO does it belong here?
+    public WebElement cancelButton() {
+        return findElement(By.xpath("//a[contains(text(),'Cancel')]"));
+    }
 }

@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.connections.ConnectionStatistics;
 import com.autonomy.abc.selenium.connections.Credentials;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import org.junit.After;
@@ -17,6 +18,7 @@ import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 
@@ -75,6 +77,33 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
         verifyThat(connectionStatistics.getDetected(), not(0));
         verifyThat(connectionStatistics.getIngested(), not(0));
+    }
+
+    @Test
+    //CSA-1795
+    public void testBackButton(){
+        WebConnector webConnector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
+
+        connectionService.setUpConnection(webConnector);
+        connectionService.goToDetails(webConnector);
+
+        ConnectionsDetailPage connectionsDetailPage = getElementFactory().getConnectionsDetailPage();
+
+        connectionsDetailPage.backButton().click();
+
+        verifyThat(getDriver().getCurrentUrl(), containsString("repositories"));
+
+        connectionService.goToDetails(webConnector);
+
+        connectionsDetailPage = getElementFactory().getConnectionsDetailPage();
+
+        connectionsDetailPage.editButton().click();
+
+        //TODO maybe doesn't belong here?
+        connectionsDetailPage.cancelButton().click();
+        connectionsDetailPage.backButton().click();
+
+        verifyThat(getDriver().getCurrentUrl(), containsString("repositories"));
     }
 
     private void navigateToConnectionViaURL(String url){
