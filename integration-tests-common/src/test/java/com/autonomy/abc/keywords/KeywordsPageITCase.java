@@ -3,6 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -232,29 +233,21 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
 		List<String> notificationContents = new ArrayList<>();
+		WebDriverWait wait = new WebDriverWait(getDriver(),15);
 
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("orange", "English");
+		keywordService.addBlacklistTerms("orange");
 		notificationContents.add("Added \"orange\" to the blacklist");
-		waitForNotification();
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		notifications = body.getTopNavBar().getNotifications();
 		verifyNotifications(notificationContents);
 
-		WebDriverWait wait = new WebDriverWait(getDriver(),15);
-
 		notifications.notificationNumber(1).click();
 		verifyThat(notifications, displayed());
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("piano keyboard pianoforte", "English");
+		keywordService.addSynonymGroup("piano keyboard pianoforte");
 		notificationContents.add("Created a new synonym group containing: keyboard, piano, pianoforte");
-		waitForNotification();
-
 		verifyNotifications(notificationContents);
 
 		wait.until(ExpectedConditions.visibilityOf(notifications.notificationNumber(1))).click();
@@ -274,7 +267,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
 		keywordsPage.filterView(KeywordFilter.BLACKLIST);
-		keywordsPage.selectLanguage("English");
+		keywordsPage.selectLanguage(Language.ENGLISH);
 		keywordsPage.deleteBlacklistedTerm("orange");
 		notificationContents.add("Removed \"orange\" from the blacklist");
 		waitForNotification();
@@ -332,107 +325,61 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testKeywordsSearchFilter() throws InterruptedException {
-		WebDriverWait wait = new WebDriverWait(getDriver(),15);
-
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("grizzly brownBear bigBear", "English");
-		//All keywords should be changed by the application to lowercase in all instances
 		final List<String> synonymListBears = Arrays.asList("grizzly", "brownbear", "bigbear");
-		wait.until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
-		searchPage = getElementFactory().getSearchPage();
 
-		for (final String synonym : synonymListBears) {
-			assertThat(synonym + " not included in title", searchPage.title(), containsString(synonym));
-			assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
-			verifyThat(synonym + " synonym group not complete in'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
-			verifyThat(searchPage.countSynonymLists(), is(1));
-		}
+		//All keywords should be changed by the application to lowercase in all instances
+		searchPage = keywordService.addSynonymGroup("grizzly brownBear bigBear");
+		verifySearchKeywords(synonymListBears);
+		verifyThat(searchPage.countSynonymLists(), is(1));
 
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("honeyBee bumbleBee buzzyBee", "English");
 		final List<String> synonymListBees = Arrays.asList("honeybee", "bumblebee", "buzzybee");
-		wait.until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
-		searchPage = getElementFactory().getSearchPage();
+		searchPage = keywordService.addSynonymGroup("honeyBee bumbleBee buzzyBee");
+		verifySearchKeywords(synonymListBees);
+		verifyThat(searchPage.countSynonymLists(), is(1));
 
-		for (final String synonym : synonymListBees) {
-			assertThat(synonym + " not included in title", searchPage.title(),containsString(synonym));
-			assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
-			assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBees));
-			assertThat(searchPage.countSynonymLists(), is(1));
-			assertThat(createKeywordsPage.countKeywords(), is(3));
-		}
-
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.loadOrFadeWait();
-		keywordsPage.selectLanguage("English");
+		keywordService.goToKeywords();
+		keywordsPage.selectLanguage(Language.ENGLISH);
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-		assertThat(keywordsPage.countSynonymLists(), is(2));
+		FormInput filterBox = keywordsPage.searchFilterBox();
 
-		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
-			for (final String synonym : synonymList) {
-				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
-			}
+		verifyKeywordState(2, 6);
+		verifySynonymGroup(synonymListBears);
+		verifySynonymGroup(synonymListBees);
+
+		filterBox.setValue("zz");
+		verifyKeywordState(2, 6);
+		verifySynonymGroup(synonymListBears);
+		verifySynonymGroup(synonymListBees);
+
+		filterBox.setValue("buzz");
+		verifyKeywordState(1, 3);
+		List<String> beeSynonyms = keywordsPage.getSynonymGroupSynonyms(synonymListBees.get(0));
+		verifyThat(synonymListBees, everyItem(isIn(beeSynonyms)));
+		verifyThat(synonymListBears, everyItem(not(isIn(beeSynonyms))));
+
+		filterBox.clear();
+		verifySynonymGroup(synonymListBears);
+		verifySynonymGroup(synonymListBees);
+
+		filterBox.setValue("Bear");
+		verifyKeywordState(1, 3);
+		List<String> bearSynonyms = keywordsPage.getSynonymGroupSynonyms(synonymListBears.get(0));
+		verifyThat(synonymListBears, everyItem(isIn(bearSynonyms)));
+		verifyThat(synonymListBees, everyItem(not(isIn(bearSynonyms))));
+
+		filterBox.clear();
+		verifyKeywordState(2, 6);
+		verifySynonymGroup(synonymListBears);
+		verifySynonymGroup(synonymListBees);
+	}
+
+	private void verifySearchKeywords(final List<String> synonyms) {
+		for (final String synonym : synonyms) {
+			verifyThat(synonym + " included in title", searchPage.title(), containsString(synonym));
+			verifyThat(synonym + " included in 'You searched for' section", searchPage.youSearchedFor(), hasItem(synonym));
 		}
-
-		keywordsPage.searchFilterTextBox().clear();
-		keywordsPage.searchFilterTextBox().sendKeys("zz");
-		assertThat(keywordsPage.countSynonymLists(), is(2));
-
-		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
-			for (final String synonym : synonymList) {
-				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
-			}
-		}
-
-		keywordsPage.searchFilterTextBox().clear();
-		keywordsPage.searchFilterTextBox().sendKeys("buzz");
-		keywordsPage.loadOrFadeWait();
-		assertThat(keywordsPage.countSynonymLists(), is(1));
-		assertThat(keywordsPage.countKeywords(), is(3));
-
-		for (final String synonym : synonymListBees) {
-			assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBees));
-			assertThat("synonym included in synonym group: " + synonym + " that should not be there", keywordsPage.getSynonymGroupSynonyms(synonym),not(containsItems(synonymListBears)));
-		}
-
-		keywordsPage.searchFilterTextBox().clear();
-		keywordsPage.searchFilterTextBox().sendKeys("a");
-		keywordsPage.searchFilterTextBox().sendKeys(Keys.BACK_SPACE);
-		keywordsPage.loadOrFadeWait();
-		assertThat(keywordsPage.countSynonymLists(), is(2));
-
-		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
-			for (final String synonym : synonymList) {
-				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
-			}
-		}
-
-		keywordsPage.searchFilterTextBox().clear();
-		keywordsPage.searchFilterTextBox().sendKeys("Bear");
-		keywordsPage.loadOrFadeWait();
-		assertThat(keywordsPage.countSynonymLists(), is(1));      //Fails because of capital letter
-		assertThat(keywordsPage.countKeywords(), is(3));
-
-		for (final String synonym : synonymListBears) {
-			assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
-			assertThat("synonym included in synonym group: " + synonym + " that should not be there", keywordsPage.getSynonymGroupSynonyms(synonym),not(containsItems(synonymListBees)));
-		}
-
-		keywordsPage.searchFilterTextBox().clear();
-		keywordsPage.searchFilterTextBox().sendKeys("a");
-		keywordsPage.searchFilterTextBox().sendKeys(Keys.BACK_SPACE);
-		keywordsPage.loadOrFadeWait();
-		assertThat(keywordsPage.countSynonymLists(), is(2));
-		assertThat(keywordsPage.countKeywords(), is(6));
-
-		for (final List<String> synonymList : Arrays.asList(synonymListBears, synonymListBees)) {
-			for (final String synonym : synonymList) {
-				assertThat("synonym not included in synonym group: " + synonym, keywordsPage.getSynonymGroupSynonyms(synonym),containsItems(synonymList));
-			}
-		}
+		verifyThat(searchPage.getSynonymGroupSynonyms(synonyms.get(0)), containsItems(synonyms));
+		verifyThat(searchPage.countKeywords(), is(synonyms.size()));
 	}
 
 	@Test
@@ -734,38 +681,27 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testDoesDeletingSynonymDisableOtherSynonyms() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("ea es ed ef eg eh", "English");
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage = getElementFactory().getKeywordsPage();
+		final List<String> synonyms = Arrays.asList("ea", "es", "ed", "ef", "eg");
+
+		keywordService.addSynonymGroup(synonyms);
+		keywordService.goToKeywords();
 		keywordsPage.filterView(KeywordFilter.ALL);
 
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
-		//Wait for the synonyms to be added
-		new WebDriverWait(getDriver(),45).until(GritterNotice.notificationContaining("Created a new synonym group containing: "));
-
-		final List<String> synonyms = Arrays.asList("ea", "es", "ed", "ef", "eg");
-		for (final String synonym : synonyms) {
+		// the last 2 synonyms should be removed together
+		for (int i = 0; i < synonyms.size()-1; i++) {
+			String synonym = synonyms.get(i);
 			keywordsPage.getSynonymIcon(synonym, synonym).click();
 
-			if(getParent(getParent(getParent(keywordsPage.getSynonymIcon(synonym)))).findElements(By.tagName("li")).size() > 2) {
-				assertThat("Too many synonyms are disabled on synonym delete", keywordsPage.countRefreshIcons(), is(1));
+			if(i < synonyms.size()-2) {
+				assertThat("one refresh icon", keywordsPage.countRefreshIcons(), is(1));
 			} else {
-				assertThat(keywordsPage.countRefreshIcons(), is(2));
+				assertThat("two refresh icons", keywordsPage.countRefreshIcons(), is(2));
 			}
 
-			//Wait for deletion to complete
-			new WebDriverWait(getDriver(),30).until(new ExpectedCondition<Boolean>() {
-				@Override
-				public Boolean apply(WebDriver driver) {
-					return keywordsPage.countRefreshIcons() == 0;
-				}
-			});
-
-			assertThat("some keywords are disabled after the last keyword delete", keywordsPage.areAnyKeywordsDisabled(), is(false));
+			keywordsPage.waitForRefreshIconToDisappear();
+			assertThat("all keywords are enabled", keywordsPage.areAnyKeywordsDisabled(), is(false));
 		}
+		verifyNoSynonyms();
 	}
 
 	@Test
