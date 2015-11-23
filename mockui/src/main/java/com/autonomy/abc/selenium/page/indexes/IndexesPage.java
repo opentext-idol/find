@@ -32,6 +32,10 @@ public class IndexesPage extends AppElement implements AppPage {
     }
 
     public WebElement findIndex(String indexName) {
+        if(indexName.contains(" ")){
+            findElement(By.xpath("//*[contains(text(),'"+indexName+"')]"));
+        }
+
         return findElement(By.id(indexName));
     }
 

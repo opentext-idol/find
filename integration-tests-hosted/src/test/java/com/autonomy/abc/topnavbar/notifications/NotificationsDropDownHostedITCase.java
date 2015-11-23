@@ -72,16 +72,16 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         String indexName = "danye west";
         String indexCreationNotification = "Created a new index: "+indexName;
 
-        indexes.newIndexButton().click();
-        CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
-        createNewIndexPage.inputIndexName(indexName);
-        createNewIndexPage.nextButton().click();
-        createNewIndexPage.loadOrFadeWait();
-        createNewIndexPage.nextButton().click();
-        createNewIndexPage.loadOrFadeWait();
-        createNewIndexPage.finishButton().click();
-
         try {
+            indexes.newIndexButton().click();
+            CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
+            createNewIndexPage.inputIndexName(indexName);
+            createNewIndexPage.nextButton().click();
+            createNewIndexPage.loadOrFadeWait();
+            createNewIndexPage.nextButton().click();
+            createNewIndexPage.loadOrFadeWait();
+            createNewIndexPage.finishButton().click();
+
             getElementFactory().getIndexesPage();
             new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(indexCreationNotification));
 
