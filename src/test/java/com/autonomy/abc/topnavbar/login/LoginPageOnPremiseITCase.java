@@ -51,7 +51,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	public void setUp() throws InterruptedException {
         UserService userService = getApplication().createUserService(getElementFactory());
         usersPage = userService.goToUsers();
-		usersPage.deleteOtherUsers();
+		userService.deleteOtherUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 		usersPage.createNewUser("admin", "qwerty", "Admin");
