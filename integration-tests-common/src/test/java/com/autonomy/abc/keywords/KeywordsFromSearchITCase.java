@@ -29,6 +29,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
@@ -401,6 +402,41 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         } finally {
             getDriver().navigate().refresh();
         }
+    }
+
+    @Test
+    public void testLanguageOfSearchPageKeywords() throws InterruptedException {
+        keywordsPage.createNewKeywordsButton().click();
+        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+        createKeywordsPage.createSynonymGroup("road rue strasse", "French");
+        searchPage = getElementFactory().getSearchPage();
+        body.getTopNavBar().search("Korea");
+        searchPage.selectLanguage("Chinese");
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+        searchPage.createSynonymsLink().click();
+        searchPage.loadOrFadeWait();
+        assertThat(getDriver().getCurrentUrl(), containsString("keywords/create"));
+        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+        createKeywordsPage.addSynonyms("한국");
+        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
+        searchPage = getElementFactory().getSearchPage();
+
+        body.getTopNavBar().search("Korea");
+        searchPage.selectLanguage("Chinese");
+        verifyThat(searchPage.countSynonymLists(), is(1));
+
+        searchPage.selectLanguage("French");
+        verifyThat(searchPage.countSynonymLists(), is(1));
+
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        keywordsPage.filterView(KeywordFilter.ALL);
+
+        keywordsPage.selectLanguage("French");
+        verifyThat("synonym not assigned to wrong language", keywordsPage, not(containsText("한국")));
+
+        keywordsPage.selectLanguage("Chinese");
+        verifyThat(keywordsPage.countSynonymLists(), is(1));
+        verifyThat("synonym assigned to correct language", keywordsPage, containsText("한국"));
     }
 
     @Test
