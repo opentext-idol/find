@@ -58,38 +58,16 @@ public class HSONewUser implements NewUser {
         driver.switchTo().window(browserHandles.get(1));
         driver.get("https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier");
 
-        try {
-            new FormInput(driver.findElement(By.id("Email")), driver).setAndSubmit("hodtestqa401@gmail.com");
-            Thread.sleep(1000);
-        } catch (Exception e) {/* Probably have had the session already open */}
+        tryLoggingInToEmail();
 
-        new FormInput(driver.findElement(By.id("Passwd")), driver).setAndSubmit("qoxntlozubjaamyszerfk");
+        waitForNewEmail();
 
-        new WebDriverWait(driver,60).until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                List<WebElement> unreadEmails = driver.findElements(By.cssSelector(".zA.zE"));
-
-                if (unreadEmails.size() > 0) {
-                    return true;
-                }
-
-                driver.findElement(By.cssSelector(".T-I.J-J5-Ji.nu.T-I-ax7.L3")).click();
-
-                return false;
-            }
-        });
-
+        //Click through into unread message
         driver.findElement(By.cssSelector(".zA.zE")).click();
 
-        try {
-            WebElement elipses = driver.findElement(By.cssSelector("img.ajT"));
+        expandCollapsedMessage();
 
-            if(elipses.isDisplayed()){
-                elipses.click();
-            }
-        } catch (Exception e) { /* No Elipses */ }
-
+        //Click on link to verify
         driver.findElement(By.xpath("//a[text()='here']")).click();
 
         try {
@@ -106,6 +84,44 @@ public class HSONewUser implements NewUser {
 
     private void verifyUser(WebElement verificationPage){
         verificationPage.findElement(By.linkText("Google")).click();
+
+        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("noAccount")));
+    }
+
+    private void expandCollapsedMessage() {
+        try {
+            WebElement ellipses = driver.findElement(By.cssSelector("img.ajT"));
+
+            if(ellipses.isDisplayed()){
+                ellipses.click();
+            }
+        } catch (Exception e) { /* No Ellipses */ }
+    }
+
+    private void waitForNewEmail() {
+        new WebDriverWait(driver,60).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                List<WebElement> unreadEmails = driver.findElements(By.cssSelector(".zA.zE"));
+
+                if (unreadEmails.size() > 0) {
+                    return true;
+                }
+
+                driver.findElement(By.cssSelector(".T-I.J-J5-Ji.nu.T-I-ax7.L3")).click();
+
+                return false;
+            }
+        });
+    }
+
+    private void tryLoggingInToEmail(){
+        try {
+            new FormInput(driver.findElement(By.id("Email")), driver).setAndSubmit("hodtestqa401@gmail.com");
+            Thread.sleep(1000);
+        } catch (Exception e) {/* Probably have had the session already open */}
+
+        new FormInput(driver.findElement(By.id("Passwd")), driver).setAndSubmit("qoxntlozubjaamyszerfk");
     }
 
     @Override
