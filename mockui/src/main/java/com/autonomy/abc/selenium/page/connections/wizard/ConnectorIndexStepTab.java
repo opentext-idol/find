@@ -54,7 +54,7 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         return new Index(getIndexSearchBox().findElement(By.tagName("span")).getText());
     }
 
-    private boolean dropdownOpen() {
+    private boolean isDropdownOpen() {
         if(getIndexSearchBox().findElement(By.xpath(".//..")).getAttribute("class").contains("chosen-with-drop")){
             return true;
         }
@@ -63,12 +63,12 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     }
 
     public void closeDropdown(){
-        if(dropdownOpen()){
+        if(isDropdownOpen()){
             getIndexSearchBox().click();
         }
     }
 
-    private boolean modalOpen(){
+    private boolean isModalOpen(){
         try {
             if (getDriver().findElement(By.className("modal")).isDisplayed()) {
                 return true;
@@ -79,7 +79,7 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     }
 
     public void closeModal(){
-        if(modalOpen()){
+        if(isModalOpen()){
             getDriver().findElement(By.xpath("//div[contains(@class,'modal-footer')]/button[text()='Cancel']")).click();
         }
     }

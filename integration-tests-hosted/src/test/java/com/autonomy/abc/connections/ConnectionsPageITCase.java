@@ -151,7 +151,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
             try {
                 connectorIndexStepTab.closeDropdown();
                 connectorIndexStepTab.closeModal();
-//                ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//button[text()='Cancel']")).click();
             } catch (Exception e) { /* No visible modal */ }
 
             indexService.deleteAllIndexes();
