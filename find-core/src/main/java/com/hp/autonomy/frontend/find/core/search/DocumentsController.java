@@ -3,15 +3,11 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.search;
+package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.frontend.find.core.search.FindDocument;
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
-import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.types.Identifier;
+import com.hp.autonomy.types.query.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,29 +19,26 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/api/public/search")
-@Conditional(HodCondition.class) // TODO remove this
-public class DocumentsController {
+public class DocumentsController<I extends Identifier, E extends Exception> {
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private DocumentsService documentsService;
+    private DocumentsService<I, E> documentsService;
 
     @RequestMapping(value = "query-text-index/results", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<FindDocument> query(@RequestParam("queryParams") final QueryParams queryParams) throws HodErrorException {
+    public Documents<FindDocument> query(@RequestParam("queryParams") final QueryParams<I> queryParams) throws E {
         return documentsService.queryTextIndex(queryParams);
     }
 
     @RequestMapping(value = "query-text-index/promotions", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<FindDocument> queryForPromotions(@RequestParam("queryParams") final QueryParams queryParams) throws HodErrorException {
+    public Documents<FindDocument> queryForPromotions(@RequestParam("queryParams") final QueryParams<I> queryParams) throws E {
         return documentsService.queryTextIndexForPromotions(queryParams);
     }
 
     @RequestMapping(value = "similar-documents", method = RequestMethod.GET)
     @ResponseBody
-    public List<FindDocument> findSimilar(
-            @RequestParam("reference") final String reference,
-            @RequestParam("indexes") final Set<ResourceIdentifier> indexes
-    ) throws HodErrorException {
+    public List<FindDocument> findSimilar(@RequestParam("reference") final String reference, @RequestParam("indexes") final Set<I> indexes) throws E {
         return documentsService.findSimilar(indexes, reference);
     }
 }

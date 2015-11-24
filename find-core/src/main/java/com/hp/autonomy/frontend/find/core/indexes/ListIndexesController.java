@@ -15,16 +15,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-public class ListIndexesController {
+public class ListIndexesController<D extends IdolDatabase, E extends Exception> {
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private IndexesService<?, ?> indexesService;
+    private IndexesService<D, E> indexesService;
 
-    @SuppressWarnings("ProhibitedExceptionDeclared")
     @RequestMapping(value = "/api/public/search/list-indexes", method = RequestMethod.GET)
     @ResponseBody
-    public List<? extends IdolDatabase> listActiveIndexes() throws Exception {
+    public List<D> listActiveIndexes() throws E {
         return indexesService.listVisibleIndexes();
     }
 }

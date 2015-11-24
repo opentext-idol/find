@@ -7,19 +7,22 @@ package com.hp.autonomy.frontend.find.hod.search;
 
 import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
+import com.hp.autonomy.frontend.find.core.search.QueryParams;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Documents;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
+import com.hp.autonomy.types.query.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Conditional;
@@ -33,7 +36,7 @@ import java.util.Set;
 
 @Service
 @Conditional(HodCondition.class)
-public class HodDocumentsService implements DocumentsService {
+public class HodDocumentsService implements DocumentsService<ResourceIdentifier, HodErrorException> {
     private static final ImmutableSet<String> PUBLIC_INDEX_NAMES = ImmutableSet.of(
             ResourceIdentifier.WIKI_CHI.getName(),
             ResourceIdentifier.WIKI_ENG.getName(),
@@ -63,13 +66,13 @@ public class HodDocumentsService implements DocumentsService {
 
     @Override
     @Cacheable(CacheNames.DOCUMENTS)
-    public Documents<FindDocument> queryTextIndex(final QueryParams queryParams) throws HodErrorException {
+    public Documents<FindDocument> queryTextIndex(final QueryParams<ResourceIdentifier> queryParams) throws HodErrorException {
         return queryTextIndex(queryParams, false);
     }
 
     @Override
     @Cacheable(CacheNames.PROMOTED_DOCUMENTS)
-    public Documents<FindDocument> queryTextIndexForPromotions(final QueryParams queryParams) throws HodErrorException {
+    public Documents<FindDocument> queryTextIndexForPromotions(final QueryParams<ResourceIdentifier> queryParams) throws HodErrorException {
         return queryTextIndex(queryParams, true);
     }
 
@@ -92,16 +95,16 @@ public class HodDocumentsService implements DocumentsService {
         return documents;
     }
 
-    private Documents<FindDocument> queryTextIndex(final QueryParams queryParams, final boolean fetchPromotions) throws HodErrorException {
+    private Documents<FindDocument> queryTextIndex(final QueryParams<ResourceIdentifier> queryParams, final boolean fetchPromotions) throws HodErrorException {
         final String profileName = configService.getConfig().getQueryManipulation().getProfile();
 
         final QueryRequestBuilder params = new QueryRequestBuilder()
                 .setAbsoluteMaxResults(queryParams.getMaxResults())
-                .setSummary(queryParams.getSummary())
+                .setSummary(queryParams.getSummary() != null ? Summary.valueOf(queryParams.getSummary()) : null)
                 .setIndexes(queryParams.getIndex())
                 .setFieldText(queryParams.getFieldText())
                 .setQueryProfile(new ResourceIdentifier(getDomain(), profileName))
-                .setSort(queryParams.getSort())
+                .setSort(queryParams.getSort() != null ? Sort.valueOf(queryParams.getSort()) : null)
                 .setMinDate(queryParams.getMinDate())
                 .setMaxDate(queryParams.getMaxDate())
                 .setPromotions(fetchPromotions)

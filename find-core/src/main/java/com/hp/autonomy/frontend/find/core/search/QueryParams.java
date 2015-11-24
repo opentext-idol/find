@@ -1,8 +1,6 @@
-package com.hp.autonomy.frontend.find.hod.search;
+package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
+import com.hp.autonomy.types.Identifier;
 import lombok.Data;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,13 +8,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.List;
 
 @Data
-public class QueryParams {
+public class QueryParams<I extends Identifier> {
     private String text;
     private int maxResults;
-    private Summary summary;
-    private List<ResourceIdentifier> index;
+    private String summary;
+    private List<I> index;
     private String fieldText;
-    private Sort sort;
+    private String sort;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private DateTime minDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
