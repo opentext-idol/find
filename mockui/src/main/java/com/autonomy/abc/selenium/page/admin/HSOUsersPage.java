@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.users.HSOUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.Status;
-import com.autonomy.abc.selenium.users.User;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -57,5 +57,19 @@ public class HSOUsersPage extends UsersPage {
 
     public void submitPendingEditFor(HSOUser user) {
         getUserRow(user).findElement(By.cssSelector(".editable-submit")).click();
+    }
+
+    private WebElement getUserRowByUsername(String username){
+        return findElement(By.xpath("//*[contains(@class,'user-name') and text()='" + username + "']/.."));
+    }
+
+    private By trashCan(){
+        return By.className("users-deleteUser");
+    }
+
+    @Override
+    public void deleteUser(String username){
+        getUserRowByUsername(username).findElement(trashCan()).click();
+        ModalView.getVisibleModalView(getDriver()).okButton().click();
     }
 }
