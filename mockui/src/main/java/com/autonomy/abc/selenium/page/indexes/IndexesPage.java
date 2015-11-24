@@ -28,10 +28,14 @@ public class IndexesPage extends AppElement implements AppPage {
     }
 
     public WebElement newIndexButton(){
-        return findElement(By.id("new-index-btn"));
+        return getDriver().findElement(By.id("new-index-btn"));
     }
 
     public WebElement findIndex(String indexName) {
+        if(indexName.contains(" ")){
+            findElement(By.xpath("//*[contains(text(),'"+indexName+"')]"));
+        }
+
         return findElement(By.id(indexName));
     }
 

@@ -4,8 +4,10 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.ABCAssert;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +28,7 @@ import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 
 public class SearchPageHostedITCase extends HostedTestBase {
 	public SearchPageHostedITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
@@ -51,26 +54,32 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Test
 	public void testIndexSelection() {
-		//TODO: Configure test Indexes for Hosted. Below is Database test from on Prem. Follow its structure.
-		assert false : "This test needs rewritten to handle indexes";
 		topNavBar.search("car");
 		searchPage.selectLanguage("English");
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		assertThat("All databases not showing", searchPage.getSelectedDatabases(), hasItem("All"));
+		//TODO add a matcher
+		assertThat("All databases not showing", searchPage.allIndexesCheckbox().isChecked(), is(true));
 
-		searchPage.selectDatabase("WikiEnglish");
-		assertThat("Database not showing", searchPage.getSelectedDatabases(), hasItem("WikiEnglish"));
+		for(Checkbox checkbox : searchPage.indexList()){
+			assertThat(checkbox.isChecked(),is(true));
+		}
+
+		searchPage.allIndexesCheckbox().toggle();
+
+		searchPage.selectIndex("news_eng");
+		assertThat("Database not showing", searchPage.indexCheckbox("news_eng").isChecked(), is(true));
 		final String wikiEnglishResult = searchPage.getSearchResult(1).getText();
-		searchPage.deselectDatabase("WikiEnglish");
+		searchPage.deselectIndex("news_eng");
 
-		searchPage.selectDatabase("Wookiepedia");
-		assertThat("Database not showing", searchPage.getSelectedDatabases(), hasItem("Wookiepedia"));
+		searchPage.selectIndex("news_ger");
+		assertThat("Database not showing", searchPage.indexCheckbox("news_ger").isChecked(), is(true));
 		final String wookiepediaResult = searchPage.getSearchResult(1).getText();
 		assertNotEquals(wookiepediaResult, wikiEnglishResult);
 
-		searchPage.selectDatabase("WikiEnglish");
-		assertThat("Databases not showing", searchPage.getSelectedDatabases(),hasItems("Wookiepedia", "WikiEnglish"));
-		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText(),anyOf(is(wookiepediaResult),is(wikiEnglishResult)));
+		searchPage.selectIndex("wiki_chi");
+		assertThat(searchPage.indexCheckbox("news_ger").isChecked(), is(true));
+		assertThat(searchPage.indexCheckbox("wiki_chi").isChecked(),is(true));
+		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText(), anyOf(is(wookiepediaResult), is(wikiEnglishResult)));
 	}
 
 	@Test
@@ -83,16 +92,13 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Test
 	public void testAuthor(){
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'news_eng')]]"))).click();
-
 		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
 
-		LoggerFactory.getLogger(SearchPageHostedITCase.class).info("Searching for: 'fruit'");
 		topNavBar.search("fruit");
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		Assert.assertNotEquals(searchPage.getText(), contains("Haven OnDemand returned an error while executing the search action"));
 
-		String author = "RUGBYBWORLDCUP.COM";
+		String author = "FIFA.COM";
 
 		searchPage.openParametricValuesList();
 
@@ -109,7 +115,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.getSearchResult(1).click();
 
 		for(int i = 0; i < results; i++) {
-			ABCAssert.assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is(author.toLowerCase()));
+			ABCAssert.assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), equalToIgnoringCase(author));
 			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
 		}
 

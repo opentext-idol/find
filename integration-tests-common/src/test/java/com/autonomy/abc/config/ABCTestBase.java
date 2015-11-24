@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.*;
 
 import static org.junit.Assert.fail;
@@ -37,16 +36,15 @@ public abstract class ABCTestBase {
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	// testState is used by Rules/StatementHandlers
 	private final TestState testState = TestState.get();
-	public final TestConfig config;
+	protected final TestConfig config;
 
-	public final Browser browser;
-	private final Platform platform;
-	private final ApplicationType type;
 	private final Application application;
 	private WebDriver driver;
 	// TODO: use getBody() instead
 	public AppBody body;
 	private ElementFactory elementFactory;
+	private User initialUser;
+	private String initialUrl;
 	private User currentUser;
 
 	// TODO: replace with single argument constructor
@@ -56,10 +54,9 @@ public abstract class ABCTestBase {
 
 	public ABCTestBase(final TestConfig config) {
 		this.config = config;
-		this.browser = config.getBrowser();
-		this.platform = config.getPlatform();
-		this.type = config.getType();
-		this.application = Application.ofType(type);
+		this.application = Application.ofType(config.getType());
+		this.initialUser = config.getDefaultUser();
+		this.initialUrl = config.getWebappUrl();
 	}
 
 	@Parameterized.Parameters
@@ -71,19 +68,22 @@ public abstract class ABCTestBase {
 	protected static List<Object[]> parameters(final Collection<ApplicationType> applicationTypes) throws IOException {
 		return TestConfig.readConfigs(applicationTypes);
 	}
+
 	// StateHelperRule.finished() calls WebDriver.quit so must be the last thing called
 	@Rule
 	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this)).around(new TestArtifactRule(this));
 
-	protected void regularSetUp(){
-		LOGGER.info("parameter-set: [" + config.getIndex() + "]; browser: " + browser + "; platform: " + platform + "; type: " + type);
+	private void initialiseTest() {
+		LOGGER.info(config.toString());
 		driver = config.createWebDriver();
 		ImplicitWaits.setImplicitWait(driver);
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
 		testState.addStatementHandler(new StatementArtifactHandler(this));
+	}
 
-		driver.get(config.getWebappUrl());
+	private void goToInitialPage() {
+		getDriver().get(initialUrl);
 		getDriver().manage().window().maximize();
 
 		// no side/top bar until logged in
@@ -91,50 +91,49 @@ public abstract class ABCTestBase {
 		elementFactory = getApplication().createElementFactory(driver);
 	}
 
-	protected void tryLogIn(){
-		try {
-			loginAs(config.getDefaultUser());
-			//Wait for page to load
-			Thread.sleep(2000);
-			// now has side/top bar
-			body = getBody();
-		} catch (Exception e) {
-			LOGGER.error("Unable to login");
-			fail("Unable to login");
-		}
+	protected void postLogin() throws Exception {
+		//Wait for page to load
+		Thread.sleep(2000);
+		// now has side/top bar
+		body = getBody();
+		// wait for the first page to load
+		getElementFactory().getPromotionsPage();
 	}
 
 	@Before
-	public void baseSetUp() throws MalformedURLException, InterruptedException {
-		regularSetUp();
-		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			tryLogIn();
-		} else {
-			hostedLogIn("twitter");
-			getElementFactory().getPromotionsPage();
+	public final void baseSetUp() {
+		initialiseTest();
+		goToInitialPage();
+		if (!initialUser.equals(User.NULL)) {
+			try {
+				loginAs(initialUser);
+				postLogin();
+			} catch (Exception e) {
+				LOGGER.error("Unable to login");
+				LOGGER.error(e.toString());
+				fail("Unable to login");
+			}
 		}
 	}
 
-	protected void hostedLogIn(String provider) throws InterruptedException {
-		currentUser = config.getUser(provider);
-		currentUser.getAuthProvider().login(getDriver());
-		if(!new AbcHasLoggedIn(getDriver()).hasLoggedIn()){
-			fail("Failed to log in");
-		}
-		Thread.sleep(5000);
-		body = getBody();
+	protected final void setInitialUser(User user) {
+		initialUser = user;
+	}
+
+	protected final void setInitialUrl(String url) {
+		initialUrl = url;
 	}
 
 	@After
-	public void baseTearDown() throws MultipleFailureException {
+	public final void baseTearDown() throws MultipleFailureException {
 		testState.throwIfFailed();
 	}
 
-	public WebDriver getDriver() {
+	public final WebDriver getDriver() {
 		return driver;
 	}
 
-	public TestConfig getConfig() {
+	public final TestConfig getConfig() {
 		return config;
 	}
 
@@ -150,17 +149,17 @@ public abstract class ABCTestBase {
 		return getApplication().createAppBody(driver);
 	}
 
-	protected void loginAs(User user) {
+	protected final void loginAs(User user) {
 		getElementFactory().getLoginPage().loginWith(user.getAuthProvider());
 		currentUser = user;
 	}
 
-	protected void logout() {
+	protected final void logout() {
 		getBody().logout();
-		currentUser = null;
+		currentUser = User.NULL;
 	}
 
-	protected User getCurrentUser() {
+	protected final User getCurrentUser() {
 		return currentUser;
 	}
 }

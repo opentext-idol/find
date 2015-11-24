@@ -44,7 +44,7 @@ public class UsersPageITCase extends ABCTestBase {
 	public void setUp() throws MalformedURLException, InterruptedException {
 		userService = getApplication().createUserService(getElementFactory());
 		usersPage = userService.goToUsers();
-		usersPage.deleteOtherUsers();
+		userService.deleteOtherUsers();
 	}
 
 	private User singleSignUp() {
@@ -131,7 +131,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
-		usersPage.deleteOtherUsers();
+		userService.deleteOtherUsers();
 		verifyThat("Not all users are deleted", usersPage.countNumberOfUsers(), is(1));
 	}
 
@@ -199,15 +199,15 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(user.getRole()));
 
-		usersPage.changeRole(user, Role.USER);
+		userService.changeRole(user, Role.USER);
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.USER));
 
-		usersPage.changeRole(user, Role.ADMIN);
+		userService.changeRole(user, Role.ADMIN);
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.ADMIN));
 
-		usersPage.changeRole(user, Role.NONE);
+		userService.changeRole(user, Role.NONE);
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.NONE));
 	}
@@ -256,7 +256,7 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(user.getRole()));
 
-		usersPage.changeRole(user, Role.NONE);
+		userService.changeRole(user, Role.NONE);
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.NONE));
 

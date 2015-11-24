@@ -14,6 +14,12 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>../config</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>

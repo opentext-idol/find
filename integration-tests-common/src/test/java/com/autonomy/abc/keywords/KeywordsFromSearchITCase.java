@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.util.Errors;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -479,5 +480,44 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         } catch (TimeoutException e) {
             fail("Search does not find results after cancelling synonym wizard");
         }
+    }
+
+
+    @Test
+    //CSA1719
+    public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
+        String blacklistOne = "cheese";
+        String blacklistTwo = "mouse";
+
+        keywordsPage.createNewKeywordsButton().click();
+        getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm(blacklistOne, "English");
+        keywordsPage = getElementFactory().getKeywordsPage();
+        assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
+
+        Search blacklistOneSearch = new Search(getApplication(),getElementFactory(),blacklistOne);
+        blacklistOneSearch.apply();
+
+        searchPage = getElementFactory().getSearchPage();
+        assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
+
+        getDriver().navigate().refresh();
+        body = getBody();
+
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        keywordsPage = getElementFactory().getKeywordsPage();
+        assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
+
+        keywordsPage.createNewKeywordsButton().click();
+        getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm(blacklistTwo, "English");
+        keywordsPage = getElementFactory().getKeywordsPage();
+        assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
+        assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistTwo));
+
+        new Search(getApplication(), getElementFactory(), blacklistTwo).apply();
+        searchPage = getElementFactory().getSearchPage();
+        assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
+
+        blacklistOneSearch.apply();
+        assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
     }
 }
