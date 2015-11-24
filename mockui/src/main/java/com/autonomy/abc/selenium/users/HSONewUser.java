@@ -58,11 +58,10 @@ public class HSONewUser implements NewUser {
         driver.switchTo().window(browserHandles.get(1));
         driver.get("https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier");
 
-        new FormInput(driver.findElement(By.id("Email")), driver).setAndSubmit("hodtestqa401@gmail.com");
-
         try {
+            new FormInput(driver.findElement(By.id("Email")), driver).setAndSubmit("hodtestqa401@gmail.com");
             Thread.sleep(1000);
-        } catch (Exception e) {/**/}
+        } catch (Exception e) {/* Probably have had the session already open */}
 
         new FormInput(driver.findElement(By.id("Passwd")), driver).setAndSubmit("qoxntlozubjaamyszerfk");
 
