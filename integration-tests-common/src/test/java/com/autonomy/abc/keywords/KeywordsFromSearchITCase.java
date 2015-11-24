@@ -16,6 +16,7 @@ import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Language;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -59,7 +60,12 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         keywordService = new KeywordService(getApplication(), getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-        keywordsPage = keywordService.goToKeywords();
+        keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
+    }
+
+    @After
+    public void tearDown() {
+        keywordService.deleteAll(KeywordFilter.ALL);
     }
 
     //CSA-1521
@@ -360,6 +366,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
     @Test
     public void testLanguageOfSearchPageKeywords() throws InterruptedException {
+        assumeThat("Language not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
+
         keywordService.addSynonymGroup(Language.FRENCH, "road rue strasse", "French");
         search("Korea", Language.CHINESE);
 
@@ -375,16 +383,16 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         search("Korea", Language.CHINESE);
         verifyThat(searchPage.countSynonymLists(), is(1));
 
-        searchPage.selectLanguage("French");
+        searchPage.selectLanguage(Language.FRENCH);
         verifyThat(searchPage.countSynonymLists(), is(1));
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage.filterView(KeywordFilter.ALL);
 
-        keywordsPage.selectLanguage("French");
+        keywordsPage.selectLanguage(Language.FRENCH);
         verifyThat("synonym not assigned to wrong language", keywordsPage, not(containsText("한국")));
 
-        keywordsPage.selectLanguage("Chinese");
+        keywordsPage.selectLanguage(Language.CHINESE);
         verifyThat(keywordsPage.countSynonymLists(), is(1));
         verifyThat("synonym assigned to correct language", keywordsPage, containsText("한국"));
     }
@@ -428,7 +436,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
 
     @Test
-    //CSA1719
+    //CSA-1719
+    //CSA-1792
     public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
         String blacklistOne = "cheese";
         String blacklistTwo = "mouse";

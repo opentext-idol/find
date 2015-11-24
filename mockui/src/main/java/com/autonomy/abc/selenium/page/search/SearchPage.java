@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Language;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
@@ -167,6 +168,10 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public abstract void selectLanguage(final String language);
+
+	public void selectLanguage(final Language language) {
+		selectLanguage(language.toString());
+	}
 
     @Deprecated
     public void selectLanguage(final String language, final String type){
@@ -437,7 +442,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getBlacklistedTerms() {
-		return getSynonymGroupSynonyms(null);
+		return ElementUtil.getTexts(keywordContainer().findElements(By.cssSelector(".blacklisted-word")));
 	}
 
 	private WebElement keywordContainer() {
