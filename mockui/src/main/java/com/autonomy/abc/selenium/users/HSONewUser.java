@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 // TODO: CSA-1663
 public class HSONewUser implements NewUser {
@@ -21,7 +22,7 @@ public class HSONewUser implements NewUser {
 
     public HSONewUser(String username, String email) {
         this.username = username;
-        this.email = email;
+        this.email = email.replace("+","+" + Math.random());
     }
 
     @Override
@@ -34,23 +35,35 @@ public class HSONewUser implements NewUser {
         hsoUsersPage.createButton().click();
         hsoUsersPage.loadOrFadeWait();
 
-        WebElement verificationPage = getGmail(usersPage);
+        driver = usersPage.getDriver();
+        browserHandles = usersPage.createAndListWindowHandles();
+
+        WebElement verificationPage = getGmail();
         verifyUser(verificationPage);
+
+        for(int i = driver.getWindowHandles().size() - 1; i > 0; i--){
+            driver.switchTo().window(browserHandles.get(i));
+            driver.close();
+        }
+
+        driver.switchTo().window(browserHandles.get(0));
 
         return new HSOUser(username,email,role);
     }
 
     List<String> browserHandles;
+    WebDriver driver;
 
-    private WebElement getGmail(UsersPage usersPage){
-        browserHandles = usersPage.createAndListWindowHandles();
-
-        WebDriver driver = usersPage.getDriver();
-
+    private WebElement getGmail(){
         driver.switchTo().window(browserHandles.get(1));
         driver.get("https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier");
 
         new FormInput(driver.findElement(By.id("Email")), driver).setAndSubmit("hodtestqa401@gmail.com");
+
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {/**/}
+
         new FormInput(driver.findElement(By.id("Passwd")), driver).setAndSubmit("qoxntlozubjaamyszerfk");
 
         new WebDriverWait(driver,60).until(new ExpectedCondition<Boolean>() {
@@ -80,9 +93,14 @@ public class HSONewUser implements NewUser {
 
         driver.findElement(By.xpath("//a[text()='here']")).click();
 
-        new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {/**/}
 
         browserHandles = new ArrayList<>(driver.getWindowHandles());
+        driver.switchTo().window(browserHandles.get(2));
+
+        new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
 
         return driver.findElement(By.tagName("body"));
     }
