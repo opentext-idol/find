@@ -4,8 +4,8 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.services.ProcessorException;
-import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciResponseInputStream;
+import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.indexes.IndexesService;
 import com.hp.autonomy.types.idol.Database;
 import com.hp.autonomy.types.idol.GetStatusResponseData;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -32,7 +31,7 @@ public class IdolIndexesService implements IndexesService<Database, AciErrorExce
     @SuppressWarnings("SerializableInnerClassWithNonSerializableOuterClass")
     @Override
     public List<Database> listVisibleIndexes() throws AciErrorException {
-        return contentAciService.executeAction(Collections.singleton(new AciParameter("action", "getstatus")), new Processor<List<Database>>() {
+        return contentAciService.executeAction(new AciParameters("GetStatus"), new Processor<List<Database>>() {
             private static final long serialVersionUID = -1983490659468698548L;
 
             @Override
