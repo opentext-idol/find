@@ -281,7 +281,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		verifyNotifications(notificationContents);
 
 		wait.until(ExpectedConditions.visibilityOf(notifications.notificationNumber(1))).click();
-		verifyThat(notifications, displayed());
+		verifyThat("clicking notifications does nothing", notifications, displayed());
 	}
 
 	private void waitForNotification() {
