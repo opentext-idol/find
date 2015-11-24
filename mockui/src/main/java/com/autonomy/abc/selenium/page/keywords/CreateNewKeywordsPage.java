@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -79,19 +81,25 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.cssSelector(".wizard-controls .next-step"));
 	}
 
-	public WebElement addSynonymsButton() {
+	public WebElement synonymAddButton() {
 		return findElement(By.cssSelector(".synonyms-input-view [type='submit']"));
 	}
 
-	public WebElement addBlacklistTermsButton() {
+	public WebElement blacklistAddButton() {
 		return findElement(By.cssSelector("[data-branch='blacklisted']")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
-	public WebElement addSynonymsTextBox() {
+	// use keywordAddInput instead
+	public WebElement synonymAddTextBox() {
 		return findElement(By.cssSelector(".synonyms-input-view [name='words']"));
 	}
 
-	public WebElement addBlacklistedTextBox() {
+	public FormInput keywordAddInput() {
+		return new FormInput(findElement(By.cssSelector(".wizard-branch:not(.hidden) input[name='words']")), getDriver());
+	}
+
+	// use keywordAddInput instead
+	public WebElement blacklistAddTextBox() {
 		return findElement(By.cssSelector("[data-branch='blacklisted'] .form-group [name='words']"));
 	}
 
@@ -104,18 +112,18 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public void addSynonyms(final String synonyms) {
-		final WebElement addSynonymsTextBox = addSynonymsTextBox();
+		final WebElement addSynonymsTextBox = synonymAddTextBox();
 		addSynonymsTextBox.clear();
 		addSynonymsTextBox.sendKeys(synonyms);
-		tryClickThenTryParentClick(addSynonymsButton());
+		tryClickThenTryParentClick(synonymAddButton());
 		loadOrFadeWait();
 	}
 
 	public void addBlacklistedTerms(final String blacklistedTerms) {
-		final WebElement addBlacklistedTextBox = addBlacklistedTextBox();
+		final WebElement addBlacklistedTextBox = blacklistAddTextBox();
 		addBlacklistedTextBox.clear();
 		addBlacklistedTextBox.sendKeys(blacklistedTerms);
-		tryClickThenTryParentClick(addBlacklistTermsButton());
+		tryClickThenTryParentClick(blacklistAddButton());
 	}
 
 	public int countKeywords() {
@@ -123,10 +131,10 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElements(By.cssSelector(".remove-word")).size();
 	}
 
-    public int countKeywords(KeywordsPage.KeywordsFilter keywordType) {
+    public int countKeywords(KeywordFilter keywordType) {
         WebElement keywords;
 
-        if (keywordType == KeywordsPage.KeywordsFilter.BLACKLIST){
+        if (keywordType == KeywordFilter.BLACKLIST){
             keywords = findElement(By.xpath("//div[@data-branch='blacklisted']"));
         } else {
 			keywords = findElement(By.xpath("//div[@data-branch='synonyms']"));
@@ -135,12 +143,12 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
         return keywords.findElements(By.cssSelector(".remove-word")).size();
     }
 
-	public void createSynonymGroup(final String synonymGroup, final String language) throws InterruptedException {
+	public void createSynonymGroup(final String synonymGroup, final String language) {
 		loadOrFadeWait();
 
 		keywordsType(KeywordType.SYNONYM, new WebDriverWait(getDriver(),15)).click();
 		selectLanguage(language);
-		Thread.sleep(2000);
+		loadOrFadeWait();
 		continueWizardButton().click();
 		loadOrFadeWait();
 		addSynonyms(synonymGroup);
@@ -148,7 +156,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		(new WebDriverWait(getDriver(),10)).until(ExpectedConditions.elementToBeClickable(enabledFinishWizardButton())).click();
 	}
 
-	public void createBlacklistedTerm(final String blacklistedTerm, final String language) throws InterruptedException {
+	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
 		keywordsType(KeywordType.BLACKLIST).click();
         selectLanguage(language);
         continueWizardButton().click();
@@ -159,10 +167,10 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	private void addBlacklistedTerm(final String blacklistedTerm) {
-		addBlacklistedTextBox().clear();
-		addBlacklistedTextBox().sendKeys(blacklistedTerm);
+		blacklistAddTextBox().clear();
+		blacklistAddTextBox().sendKeys(blacklistedTerm);
 		loadOrFadeWait();
-		addBlacklistTermsButton().click();
+		blacklistAddButton().click();
 		loadOrFadeWait();
 	}
 

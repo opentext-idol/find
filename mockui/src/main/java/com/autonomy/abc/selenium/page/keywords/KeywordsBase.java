@@ -2,10 +2,7 @@ package com.autonomy.abc.selenium.page.keywords;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
@@ -50,6 +47,17 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		waitForRefreshIconToDisappear();
 	}
 
+	public void addSynonymToGroup(final String synonym, final WebElement group) {
+		try {
+			group.findElement(By.cssSelector(".hp-add")).click();
+		} catch (ElementNotVisibleException e) {
+			/* box already open */
+		}
+		group.findElement(By.cssSelector("[name='new-synonym']")).sendKeys(synonym);
+		group.findElement(By.cssSelector(".fa-check")).click();
+		waitForRefreshIconToDisappear();
+	}
+
 	public WebElement synonymGroupPlusButton(final String synonymGroupLead) {
 		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".hp-add"));
 	}
@@ -90,6 +98,11 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 
 	public void deleteBlacklistedTerm(final String blacklistedTerm) {
 		findElement(By.cssSelector("[data-term = '" + blacklistedTerm + "'] .blacklisted-word .remove-keyword")).click();
+		waitForRefreshIconToDisappear();
+	}
+
+	public void deleteKeyword(final String keyword) {
+		findElement(By.cssSelector("[data-term='" + keyword + "'] .remove-keyword")).click();
 		waitForRefreshIconToDisappear();
 	}
 

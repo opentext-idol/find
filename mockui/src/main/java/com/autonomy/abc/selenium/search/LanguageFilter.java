@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.page.search.SearchBase;
+import com.autonomy.abc.selenium.util.Language;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,10 @@ public class LanguageFilter implements SearchFilter {
 
     public LanguageFilter(String language) {
         this.language = language;
+    }
+
+    public LanguageFilter(Language language) {
+        this.language = language.toString();
     }
 
     // TODO: create via app-specific factory

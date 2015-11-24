@@ -1,5 +1,9 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.Removable;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
+import com.autonomy.abc.selenium.util.Language;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -36,7 +40,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     @Deprecated
     public void deleteAllSynonyms() throws InterruptedException {
         loadOrFadeWait();
-        filterView(KeywordsFilter.SYNONYMS);
+        filterView(KeywordFilter.SYNONYMS);
         WebDriverWait wait = new WebDriverWait(getDriver(),40);	//TODO Possibly too long?
 
         for (final String language : getLanguageList()) {
@@ -63,7 +67,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public void deleteKeywords() {
-        filterView(KeywordsFilter.ALL_TYPES);
+        filterView(KeywordFilter.ALL);
 
         for(final String language : getLanguageList()){
             selectLanguage(language);
@@ -89,6 +93,14 @@ public abstract class KeywordsPage extends KeywordsBase {
         return (findElement(By.className("keywords-list"))).findElements(By.cssSelector(".add-synonym")).size();
     }
 
+    public List<WebElement> allKeywordGroups() {
+        return findElements(By.cssSelector(".keywords-container .keywords-sub-list"));
+    }
+
+    public List<WebElement> removeButtons(WebElement keywordGroup) {
+        return keywordGroup.findElements(By.cssSelector("li .remove-keyword"));
+    }
+
     @Deprecated
     @Override
     public WebElement leadSynonym(final String synonym) {
@@ -106,10 +118,11 @@ public abstract class KeywordsPage extends KeywordsBase {
 
     public abstract void deleteAllBlacklistedTerms() throws InterruptedException;
 
-    public void filterView(final KeywordsFilter filter) {
+    public void filterView(final KeywordFilter filter) {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
         findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
+        loadOrFadeWait();
     }
 
     public int countKeywords() {
@@ -117,24 +130,8 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public WebElement getSynonymGroup(String synonym) {
-        return getSynonymIcon(synonym).findElement(By.xpath(".//../../.."));
-    }
-
-    public enum KeywordsFilter {
-        ALL_TYPES("All Types"),
-        BLACKLIST("Blacklist"),
-        SYNONYMS("Synonyms");
-
-        private final String filterName;
-
-        KeywordsFilter(final String name) {
-            filterName = name;
-        }
-
-        public String toString() {
-            return filterName;
-        }
-
+        // li[data-keywords-cid=...]
+        return getSynonymIcon(synonym).findElement(By.xpath(".//../../../.."));
     }
 
     @Deprecated
@@ -150,7 +147,15 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElement(By.className("keywords-search-filter"));
     }
 
+    public FormInput searchFilterBox() {
+        return new FormInput(searchFilterTextBox(), getDriver());
+    }
+
     public abstract void selectLanguage(final String language);
+
+    public final void selectLanguage(final Language language) {
+        selectLanguage(language.toString());
+    }
 
     public String getSelectedLanguage() {
         return selectLanguageButton().getText();

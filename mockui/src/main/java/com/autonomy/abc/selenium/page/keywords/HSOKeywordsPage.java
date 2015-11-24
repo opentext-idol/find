@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,7 +13,7 @@ public class HSOKeywordsPage extends KeywordsPage {
 
     @Override
     public void deleteAllBlacklistedTerms() throws InterruptedException {
-        filterView(KeywordsFilter.BLACKLIST);
+        filterView(KeywordFilter.BLACKLIST);
 
         for (final String language : getLanguageList()) {
             loadOrFadeWait();
