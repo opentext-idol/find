@@ -20,7 +20,7 @@ import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableParametricValuesService;
-import com.hp.autonomy.frontend.find.hod.search.FindDocument;
+import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
@@ -95,7 +95,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     public ObjectMapper dispatcherObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper();
 
-        mapper.addMixInAnnotations(Authentication.class, HodAuthenticationMixins.class);
+        mapper.addMixIn(Authentication.class, HodAuthenticationMixins.class);
 
         return mapper;
     }

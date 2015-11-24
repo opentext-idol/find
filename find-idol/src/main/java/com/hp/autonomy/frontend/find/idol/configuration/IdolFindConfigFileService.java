@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.configuration.AbstractAuthenticatingConfigFileSe
 
 public class IdolFindConfigFileService extends AbstractAuthenticatingConfigFileService<IdolFindConfig> {
     @Override
-    public void postInitialise(final IdolFindConfig config) throws Exception {
+    public void postInitialise(final IdolFindConfig config) {
 
     }
 
@@ -29,7 +29,7 @@ public class IdolFindConfigFileService extends AbstractAuthenticatingConfigFileS
     }
 
     @Override
-    public void postUpdate(final IdolFindConfig config) throws Exception {
+    public void postUpdate(final IdolFindConfig config) {
 
     }
 }

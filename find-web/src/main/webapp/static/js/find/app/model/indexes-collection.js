@@ -13,7 +13,7 @@ define([
 
         parse: function(response) {
             return _.map(response, function(responseItem) {
-                responseItem.id = encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name);
+                responseItem.id = responseItem.domain ? encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name) : responseItem.name;
                 return responseItem;
             });
         }

@@ -7,17 +7,19 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
+import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
-import com.hp.autonomy.frontend.find.idol.configuration.CommunityAciService;
-import com.hp.autonomy.frontend.find.idol.configuration.ContentAciService;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
+import com.hp.autonomy.types.idol.Error;
+import com.hp.autonomy.types.idol.IdolResponseParser;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
 import org.apache.http.client.HttpClient;
@@ -44,7 +46,7 @@ public class IdolConfiguration {
         final IdolFindConfigFileService configService = new IdolFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
-        configService.setDefaultConfigFile("/com/hp/autonomy/frontend/find/configuration/defaultIdolConfigFile.json");
+        configService.setDefaultConfigFile("/defaultIdolConfigFile.json");
         configService.setMapper(objectMapper());
         configService.setTextEncryptor(textEncryptor);
         configService.setFilterProvider(filterProvider);
@@ -64,29 +66,38 @@ public class IdolConfiguration {
     }
 
     @Bean
-    public HttpClient httpClient() {
-        final SocketConfig socketConfig = SocketConfig.custom()
-            .setSoTimeout(90000)
-            .build();
-
-        return HttpClientBuilder.create()
-            .setMaxConnPerRoute(20)
-            .setMaxConnTotal(120)
-            .setDefaultSocketConfig(socketConfig)
-            .build();
+    public IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser() {
+        return new IdolResponseParser<>(new IdolResponseParser.Function<Error, AciErrorException>() {
+            @Override
+            public AciErrorException apply(final Error error) {
+                final AciErrorException aciErrorException = new AciErrorException();
+                aciErrorException.setErrorId(error.getErrorid());
+                aciErrorException.setRawErrorId(error.getRawerrorid());
+                aciErrorException.setErrorString(error.getErrorstring());
+                aciErrorException.setErrorDescription(error.getErrordescription());
+                aciErrorException.setErrorCode(error.getErrorcode());
+                aciErrorException.setErrorTime(error.getErrortime());
+                return aciErrorException;
+            }
+        }, new IdolResponseParser.BiFunction<String, Exception, ProcessorException>() {
+            @Override
+            public ProcessorException apply(final String message, final Exception cause) {
+                return new ProcessorException(message, cause);
+            }
+        });
     }
 
     @Bean
-    public HttpClient testHttpClient() {
+    public HttpClient httpClient() {
         final SocketConfig socketConfig = SocketConfig.custom()
-            .setSoTimeout(2000)
-            .build();
+                .setSoTimeout(90000)
+                .build();
 
         return HttpClientBuilder.create()
-            .setMaxConnPerRoute(5)
-            .setMaxConnTotal(5)
-            .setDefaultSocketConfig(socketConfig)
-            .build();
+                .setMaxConnPerRoute(20)
+                .setMaxConnTotal(120)
+                .setDefaultSocketConfig(socketConfig)
+                .build();
     }
 
     @Bean
@@ -100,23 +111,7 @@ public class IdolConfiguration {
     }
 
     @Bean
-    public AciService contentAciService() {
-        return new ContentAciService(aciService(), configFileService());
-    }
-
-    @Bean
-    public AciService communutyAciService() {
-        return new CommunityAciService(aciService(), configFileService());
-    }
-
-    @Bean
     public AciService aciService() {
         return new AciServiceImpl(new AciHttpClientImpl(httpClient()));
     }
-
-    @Bean
-    public AciService testAciService() {
-        return new AciServiceImpl(new AciHttpClientImpl(testHttpClient()));
-    }
-
 }

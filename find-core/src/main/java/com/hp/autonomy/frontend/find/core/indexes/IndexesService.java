@@ -9,6 +9,6 @@ import com.hp.autonomy.types.IdolDatabase;
 
 import java.util.List;
 
-public interface IndexesService<E extends Exception> {
-    List<? extends IdolDatabase> listVisibleIndexes() throws E;
+public interface IndexesService<D extends IdolDatabase, E extends Exception> {
+    List<D> listVisibleIndexes() throws E;
 }

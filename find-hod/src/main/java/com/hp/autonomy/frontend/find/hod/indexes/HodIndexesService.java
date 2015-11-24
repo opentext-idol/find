@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.indexes;
 
+import com.hp.autonomy.databases.Database;
 import com.hp.autonomy.frontend.find.core.indexes.IndexesService;
 import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Service
 @Conditional(HodCondition.class)
-public interface HodIndexesService extends IndexesService<HodErrorException> {
+public interface HodIndexesService extends IndexesService<Database, HodErrorException> {
     Resources listIndexes(final TokenProxy<?, TokenType.Simple> tokenProxy) throws HodErrorException;
 
     List<ResourceIdentifier> listActiveIndexes();

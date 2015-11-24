@@ -9,12 +9,17 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.AbstractConfigurableAciService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CommunityAciService extends AbstractConfigurableAciService {
 
     private final ConfigService<IdolFindConfig> configService;
 
-    public CommunityAciService(final AciService aciService, final ConfigService<IdolFindConfig> configService) {
+    @Autowired
+    public CommunityAciService(@Qualifier("aciService") final AciService aciService, final ConfigService<IdolFindConfig> configService) {
         super(aciService);
 
         this.configService = configService;

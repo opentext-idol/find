@@ -1,5 +1,6 @@
 package com.hp.autonomy.frontend.find.hod.indexes;
 
+import com.hp.autonomy.databases.Database;
 import com.hp.autonomy.frontend.find.core.indexes.AbstractIndexesServiceIT;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
@@ -14,7 +15,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public class HodIndexesServiceIT extends AbstractIndexesServiceIT<HodIndexesService, HodErrorException> {
+public class HodIndexesServiceIT extends AbstractIndexesServiceIT<HodIndexesService, Database, HodErrorException> {
     @Autowired
     private TokenProxy<EntityType.Application, TokenType.Simple> tokenProxy;
 
@@ -22,7 +23,7 @@ public class HodIndexesServiceIT extends AbstractIndexesServiceIT<HodIndexesServ
     public void noExcludedIndexes() throws HodErrorException {
         assertTrue(indexesService.listActiveIndexes().isEmpty());
 
-        final List<? extends IdolDatabase> databases = indexesService.listVisibleIndexes();
+        final List<Database> databases = indexesService.listVisibleIndexes();
         assertFalse(databases.isEmpty());
 
         final Resources resources = indexesService.listIndexes(tokenProxy);

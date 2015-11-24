@@ -22,7 +22,7 @@ import static org.junit.Assert.assertFalse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfiguration.class)
 @TestPropertySource(properties = {"hp.find.persistentState = INMEMORY", "hp.find.home = ./target/test", "find.https.proxyHost = web-proxy.sdc.hpecorp.net", "find.https.proxyPort: 8080", "find.iod.api = https://api.havenondemand.com", "find.hod.sso = https://dev.havenondemand.com/sso.html"})
-public abstract class AbstractIndexesServiceIT<S extends IndexesService<E>, E extends Exception> {
+public abstract class AbstractIndexesServiceIT<S extends IndexesService<D, E>, D extends IdolDatabase, E extends Exception> {
     private static final String TEST_DIR = "./target/test";
 
     @BeforeClass
@@ -43,7 +43,7 @@ public abstract class AbstractIndexesServiceIT<S extends IndexesService<E>, E ex
 
     @Test
     public void noExcludedIndexes() throws E {
-        final List<? extends IdolDatabase> databases = indexesService.listVisibleIndexes();
+        final List<D> databases = indexesService.listVisibleIndexes();
         assertFalse(databases.isEmpty());
     }
 }
