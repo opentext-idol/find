@@ -8,6 +8,28 @@
     "browsers": ["chrome"],
     "url": "http://localhost:4444/wd/hub"
   },
+  "newusers": {
+    "james": {
+      "username": "james",
+      "password": "bond",
+      "email": "hodtestqa401+newuser1@gmail.com"
+    },
+    "john": {
+      "username": "john",
+      "password": "lennon",
+      "email": "hodtestqa401+newuser2@gmail.com"
+    },
+    "bob": {
+      "username": "bob",
+      "password": "marley",
+      "email": "hodtestqa401+newuser3@gmail.com"
+    },
+    "testAddDuplicateUser_james": {
+      "username": "james",
+      "password": "giantPeach",
+      "email": "hodtestqa401+newuser4@gmail.com"
+    }
+  },
   "users": {
     "default": {
       "username": "TODO",

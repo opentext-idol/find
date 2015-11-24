@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
+import com.autonomy.abc.selenium.users.HSONewUser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
@@ -24,7 +25,9 @@ public class HSOUserConfigParser implements UserConfigParser {
 
     @Override
     public NewUser parseNewUser(JsonNode newUserNode) {
-        return null;
+        String username = newUserNode.path("username").asText();
+        String email = newUserNode.path("email").asText();
+        return new HSONewUser(username, email);
     }
 
 }
