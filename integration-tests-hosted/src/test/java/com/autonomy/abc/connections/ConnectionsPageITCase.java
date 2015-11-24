@@ -3,17 +3,20 @@ package com.autonomy.abc.connections;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.connections.ConnectionService;
-import com.autonomy.abc.selenium.connections.ConnectionStatistics;
-import com.autonomy.abc.selenium.connections.Credentials;
-import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.connections.*;
+import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -104,6 +107,55 @@ public class ConnectionsPageITCase extends HostedTestBase {
         connectionsDetailPage.backButton().click();
 
         verifyThat(getDriver().getCurrentUrl(), containsString("repositories"));
+    }
+
+    @Test
+    //CSA-1798
+    public void testCanSelectLastIndex(){
+        IndexService indexService = getApplication().createIndexService(getElementFactory());
+        ConnectorIndexStepTab connectorIndexStepTab = null;
+
+        try {
+            try {
+                indexService.setUpIndex(new Index("index one"));
+                indexService.setUpIndex(new Index("index two"));
+            } catch (Exception e) { /* couldn't create an index */  }
+
+            body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+
+            connectionsPage.newConnectionButton().click();
+
+            newConnectionPage = getElementFactory().getNewConnectionPage();
+
+            ConnectorTypeStepTab connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();
+            connectorTypeStepTab.connectorUrl().setValue("http://w.ww");
+            connectorTypeStepTab.connectorName().setValue("w");
+            newConnectionPage.nextButton().click();
+
+            newConnectionPage.nextButton().click();
+
+            connectorIndexStepTab = newConnectionPage.getIndexStep();
+            connectorIndexStepTab.selectIndexButton().click();
+            connectorIndexStepTab.selectFirstIndex();
+            newConnectionPage.loadOrFadeWait();
+
+            Index firstIndex = connectorIndexStepTab.getChosenIndexInModal();
+
+            connectorIndexStepTab.selectLastIndex();
+            newConnectionPage.loadOrFadeWait();
+
+            Index lastIndex = connectorIndexStepTab.getChosenIndexInModal();
+
+            assertThat(firstIndex, not(lastIndex));
+        } finally {
+            try {
+                connectorIndexStepTab.closeDropdown();
+                connectorIndexStepTab.closeModal();
+//                ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//button[text()='Cancel']")).click();
+            } catch (Exception e) { /* No visible modal */ }
+
+            indexService.deleteAllIndexes();
+        }
     }
 
     private void navigateToConnectionViaURL(String url){
