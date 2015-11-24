@@ -41,6 +41,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeThat;
 
 public class KeywordsFromSearchITCase extends ABCTestBase {
     private CreateNewKeywordsPage createKeywordsPage;
@@ -171,9 +172,10 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertEquals(3, keywordsPage.countKeywords());
     }
 
-    @Ignore("Ignoring test modifying keywords from search page")
     @Test
     public void testSearchPageKeywords() throws InterruptedException {
+        assumeThat("Cannot modify keywords from search page in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
+
         List<String> synonymListBears = Arrays.asList("grizzly", "brownbear", "bigbear");
         searchPage = keywordService.addSynonymGroup(synonymListBears);
 
@@ -264,9 +266,10 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("Term should not be blacklisted in English", searchPage.getText(),not(containsString("Any query terms were either blacklisted or stop words")));
     }
 
-    @Ignore("Ignoring test modifying keywords from search page")
     @Test
     public void testSynonymGroupMembersSearchWholeGroup() throws InterruptedException {
+        assumeThat("Cannot modify keywords from search page in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
+
         final List<String> synonymListCars = Arrays.asList("car", "auto", "motor");
         searchPage = keywordService.addSynonymGroup(Language.SWAHILI, synonymListCars);
 
@@ -279,9 +282,10 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         }
     }
 
-    @Ignore("Ignoring test modifying keywords from search page")
     @Test
     public void testAddTwoSynonymsToSynonymGroupFromSearchPage() throws InterruptedException {
+        assumeThat("Cannot modify keywords from search page in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
+
         try {
             keywordService.addSynonymGroup("house home dwelling abode");
             search("house", Language.ENGLISH);
@@ -311,9 +315,10 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         }
     }
 
-    @Ignore("Ignoring test modifying keywords from search page")
     @Test
     public void testRemoveTwoSynonymsFromSynonymGroupFromSearchPage() throws InterruptedException {
+        assumeThat("Cannot modify keywords from search page in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
+
         try {
             keywordService.addSynonymGroup(Language.ENGLISH, "house home dwelling abode residence");
             search("house", Language.ENGLISH);
