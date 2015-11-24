@@ -16,4 +16,9 @@ public class Errors {
         public static final String OPERATORS = "Invalid use of special tokens";
         public static final String STOPWORDS = "All terms were invalid, through being stopwords";
     }
+
+    public static class Keywords {
+        public static final String CREATING = "Error occurred creating keywords";
+        public static final String DUPLICATE_BLACKLIST = "already blacklisted";
+    }
 }

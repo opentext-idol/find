@@ -3,18 +3,19 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Language;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -25,6 +26,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.hasItems;
@@ -230,46 +234,59 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
 
     //Duplicate blacklisted terms are not allowed to be created within the same language
+    //CSA-1791
     @Test
     public void testCreateDuplicateBlacklist() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createKeywordsPage.createBlacklistedTerm("fish", "English");
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-        assertThat("Blacklist fish not visible", keywordsPage.getBlacklistedTerms(), hasItem("fish"));
+        final String term = "fish";
+        final String other = "chips";
+
+        keywordService.addBlacklistTerms(Language.ENGLISH, term);
+        assertThat(keywordsPage.getBlacklistedTerms(), hasItem("fish"));
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-
-        createKeywordsPage.selectLanguage("English");
+        createKeywordsPage.selectLanguage(Language.ENGLISH);
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
-        assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        assertThat(createKeywordsPage.finishWizardButton(), disabled());
 
-        createKeywordsPage.blacklistAddTextBox().sendKeys("fish");
-        createKeywordsPage.blacklistAddButton().click();
-        createKeywordsPage.loadOrFadeWait();
-        assertThat("Duplicate blacklist warning message not present", createKeywordsPage.getText(), containsString("The word \"fish\" is already blacklisted"));
-        assertThat("Duplicate blacklist term should not be added", createKeywordsPage.countKeywords() == 0);
-        assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        createKeywordsPage.keywordAddInput().setAndSubmit(term);
+        verifyThat(createKeywordsPage, containsText(Errors.Keywords.DUPLICATE_BLACKLIST));
+        verifyKeywordCount(0);
 
-        createKeywordsPage.blacklistAddTextBox().clear();
-        createKeywordsPage.blacklistAddTextBox().sendKeys("chips");
-        createKeywordsPage.blacklistAddButton().click();
-        assertThat("Duplicate blacklist warning message has not disappeared", createKeywordsPage.getText(), not(containsString("The word \"fish\" is already blacklisted")));
-        assertThat("New blacklist term should be added", createKeywordsPage.countKeywords() == 1);
-        assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        try {
+            createKeywordsPage.finishWizardButton().click();
+            WebElement notification = new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
+            verifyThat(notification, containsText(Errors.Keywords.CREATING));
+            createKeywordsPage.deleteKeyword(term);
+            verifyThat(createKeywordsPage.finishWizardButton(), disabled());
+        } catch (WebDriverException e) {
+            LOGGER.info("cannot click finish wizard button, or timed out");
+            assertThat(getDriver().getCurrentUrl(), not(endsWith("keywords")));
+        }
 
-        createKeywordsPage.deleteKeyword("chips");
-        assertThat("There should be no blacklist terms", createKeywordsPage.countKeywords() == 0);
-        assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        createKeywordsPage.keywordAddInput().setAndSubmit(other);
+        assertThat(createKeywordsPage, not(containsText(Errors.Keywords.DUPLICATE_BLACKLIST)));
+        verifyKeywordCount(1);
+
+        createKeywordsPage.deleteKeyword(other);
+        verifyKeywordCount(0);
 
         createKeywordsPage.cancelWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
-        assertThat("Cancel button redirects to wrong page", getDriver().getCurrentUrl(), endsWith("keywords"));
-        assertEquals("Wrong number of blacklisted terms", 1, keywordsPage.getBlacklistedTerms().size());
+        assertThat(getDriver().getCurrentUrl(), endsWith("keywords"));
+        assertThat(keywordsPage.getBlacklistedTerms(), hasSize(1));
+    }
+
+    private void verifyKeywordCount(int count) {
+        verifyThat(count + " keywords ready to be added", createKeywordsPage.countKeywords(), is(count));
+        if (count > 0) {
+            verifyThat(createKeywordsPage.finishWizardButton(), not(disabled()));
+        } else {
+            verifyThat(createKeywordsPage.finishWizardButton(), disabled());
+        }
     }
 
     //Whitespace of any form should not be added as a blacklisted term
