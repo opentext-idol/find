@@ -15,12 +15,12 @@ import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableParametricValuesService;
-import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
@@ -72,8 +72,8 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 @Configuration
 @Conditional({HodCondition.class})
@@ -110,11 +110,10 @@ public class HodConfiguration extends CachingConfigurerSupport {
 
     @Bean
     @Autowired
-    public ValidationService<HodFindConfig> validationService(final Validator<?>[] validators) {
+    public ValidationService<HodFindConfig> validationService(final List<Validator<?>> validators) {
         final ValidationServiceImpl<HodFindConfig> validationService = new ValidationServiceImpl<>();
 
-        // The type annotation here is required to make it compile
-        validationService.setValidators(new HashSet<>(Arrays.asList(validators)));
+        validationService.setValidators(new HashSet<>(validators));
 
         // fix circular dependency
         configService.setValidationService(validationService);

@@ -3,13 +3,12 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.search;
+package com.hp.autonomy.frontend.find.core.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.google.common.collect.ImmutableSet;
-import com.hp.autonomy.hod.client.api.textindex.query.search.PromotionType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,7 +52,6 @@ public class FindDocument implements Serializable {
     private final String reference;
     private final String index;
     private final String domain;
-    private final PromotionType promotionType;
 
     private final String title;
     private final String summary;
@@ -67,12 +65,10 @@ public class FindDocument implements Serializable {
     private final DateTime dateCreated;
     private final DateTime dateModified;
 
-    private FindDocument(final Builder builder) {
+    protected FindDocument(final Builder builder) {
         reference = builder.reference;
         index = builder.index;
         domain = builder.domain;
-
-        promotionType = builder.promotionType == null ? PromotionType.NONE : builder.promotionType;
 
         title = builder.title;
         summary = builder.summary;
@@ -98,9 +94,6 @@ public class FindDocument implements Serializable {
         private String index;
         private String domain;
 
-        @JsonProperty("promotion")
-        private PromotionType promotionType;
-
         private String title;
         private String summary;
 
@@ -122,7 +115,6 @@ public class FindDocument implements Serializable {
             reference = document.reference;
             index = document.index;
             domain = document.domain;
-            promotionType = document.promotionType;
             title = document.title;
             summary = document.summary;
             contentType = document.contentType;

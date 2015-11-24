@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.hod.configuration;
 
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
+import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.cache.Cache;
 import org.springframework.cache.ehcache.EhCacheCache;
@@ -16,7 +17,7 @@ public class AutoCreatingEhCacheCacheManager extends EhCacheCacheManager {
 
     private final CacheConfiguration defaults;
 
-    public AutoCreatingEhCacheCacheManager(final net.sf.ehcache.CacheManager cacheManager, final CacheConfiguration defaults) {
+    public AutoCreatingEhCacheCacheManager(final CacheManager cacheManager, final CacheConfiguration defaults) {
         super(cacheManager);
         this.defaults = defaults;
     }

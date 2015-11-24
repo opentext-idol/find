@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.hod.search;
 
 import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
@@ -16,11 +17,9 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Conditional;
@@ -28,7 +27,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -65,32 +63,14 @@ public class HodDocumentsService implements DocumentsService {
 
     @Override
     @Cacheable(CacheNames.DOCUMENTS)
-    public Documents<FindDocument> queryTextIndex(
-            final String text,
-            final int maxResults,
-            final Summary summary,
-            final List<ResourceIdentifier> indexes,
-            final String fieldText,
-            final Sort sort,
-            final DateTime minDate,
-            final DateTime maxDate
-    ) throws HodErrorException {
-        return queryTextIndex(text, maxResults, summary, indexes, fieldText, sort, minDate, maxDate, false);
+    public Documents<FindDocument> queryTextIndex(final QueryParams queryParams) throws HodErrorException {
+        return queryTextIndex(queryParams, false);
     }
 
     @Override
     @Cacheable(CacheNames.PROMOTED_DOCUMENTS)
-    public Documents<FindDocument> queryTextIndexForPromotions(
-            final String text,
-            final int maxResults,
-            final Summary summary,
-            final List<ResourceIdentifier> indexes,
-            final String fieldText,
-            final Sort sort,
-            final DateTime minDate,
-            final DateTime maxDate
-    ) throws HodErrorException {
-        return queryTextIndex(text, maxResults, summary, indexes, fieldText, sort, minDate, maxDate, true);
+    public Documents<FindDocument> queryTextIndexForPromotions(final QueryParams queryParams) throws HodErrorException {
+        return queryTextIndex(queryParams, true);
     }
 
     @Override
@@ -112,44 +92,34 @@ public class HodDocumentsService implements DocumentsService {
         return documents;
     }
 
-    private Documents<FindDocument> queryTextIndex(
-            final String text,
-            final int maxResults,
-            final Summary summary,
-            final List<ResourceIdentifier> indexes,
-            final String fieldText,
-            final Sort sort,
-            final DateTime minDate,
-            final DateTime maxDate,
-            final boolean fetchPromotions
-    ) throws HodErrorException {
+    private Documents<FindDocument> queryTextIndex(final QueryParams queryParams, final boolean fetchPromotions) throws HodErrorException {
         final String profileName = configService.getConfig().getQueryManipulation().getProfile();
 
         final QueryRequestBuilder params = new QueryRequestBuilder()
-                .setAbsoluteMaxResults(maxResults)
-                .setSummary(summary)
-                .setIndexes(indexes)
-                .setFieldText(fieldText)
+                .setAbsoluteMaxResults(queryParams.getMaxResults())
+                .setSummary(queryParams.getSummary())
+                .setIndexes(queryParams.getIndex())
+                .setFieldText(queryParams.getFieldText())
                 .setQueryProfile(new ResourceIdentifier(getDomain(), profileName))
-                .setSort(sort)
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
+                .setSort(queryParams.getSort())
+                .setMinDate(queryParams.getMinDate())
+                .setMaxDate(queryParams.getMaxDate())
                 .setPromotions(fetchPromotions)
                 .setPrint(Print.fields)
                 .setPrintFields(new ArrayList<>(FindDocument.ALL_FIELDS));
 
-        final Documents<FindDocument> hodDocuments = queryTextIndexService.queryTextIndexWithText(text, params);
+        final Documents<FindDocument> hodDocuments = queryTextIndexService.queryTextIndexWithText(queryParams.getText(), params);
         final List<FindDocument> documentList = new LinkedList<>();
 
         for (final FindDocument hodDocument : hodDocuments.getDocuments()) {
-            documentList.add(addDomain(indexes, hodDocument));
+            documentList.add(addDomain(queryParams.getIndex(), hodDocument));
         }
 
         return new Documents<>(documentList, hodDocuments.getTotalResults(), hodDocuments.getExpandedQuery());
     }
 
     // Add a domain to a FindDocument, given the collection of indexes which were queried against to return it from HOD
-    private FindDocument addDomain(final Collection<ResourceIdentifier> indexIdentifiers, final FindDocument document) {
+    private FindDocument addDomain(final Iterable<ResourceIdentifier> indexIdentifiers, final FindDocument document) {
         // HOD does not return the domain for documents yet, but it does return the index
         final String index = document.getIndex();
         String domain = null;
@@ -165,12 +135,7 @@ public class HodDocumentsService implements DocumentsService {
 
         if (domain == null) {
             // If not, it might be a public index
-            if (PUBLIC_INDEX_NAMES.contains(index)) {
-                domain = ResourceIdentifier.PUBLIC_INDEXES_DOMAIN;
-            } else {
-                // If that fails, guess it is the user's domain
-                domain = getDomain();
-            }
+            domain = PUBLIC_INDEX_NAMES.contains(index) ? ResourceIdentifier.PUBLIC_INDEXES_DOMAIN : getDomain();
         }
 
         return new FindDocument.Builder(document)

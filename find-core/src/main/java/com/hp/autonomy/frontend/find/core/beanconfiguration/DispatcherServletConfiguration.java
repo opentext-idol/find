@@ -62,14 +62,6 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
         return viewResolver;
     }
 
-    @Bean
-    @Override
-    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-        final RequestMappingHandlerMapping requestMappingHandlerMapping = super.requestMappingHandlerMapping();
-        requestMappingHandlerMapping.setDetectHandlerMethodsInAncestorContexts(true);
-        return requestMappingHandlerMapping;
-    }
-
     @Override
     public void extendMessageConverters(final List<HttpMessageConverter<?>> converters) {
         final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();

@@ -17,7 +17,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -46,6 +49,6 @@ public abstract class AbstractIndexesServiceIT {
     @Test
     public void noExcludedIndexes() throws Exception {
         final List<? extends IdolDatabase> databases = listIndexesController.listActiveIndexes();
-        assertFalse(databases.isEmpty());
+        assertThat(databases, is(not(empty())));
     }
 }

@@ -3,7 +3,7 @@ package com.hp.autonomy.frontend.find.core.exceptions;
 /**
  * Any error
  */
-public class FindException extends Exception{
+public class FindException extends RuntimeException {
     public FindException(final String message) {
         super(message);
     }
