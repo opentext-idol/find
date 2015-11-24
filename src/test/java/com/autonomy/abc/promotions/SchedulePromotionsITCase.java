@@ -373,7 +373,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		schedulePage.continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
 		schedulePage.loadOrFadeWait();
 		schedulePage.startDateTextBox().clear();
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		assertThat("continue button should be disabled", schedulePage.isAttributePresent(schedulePage.continueButton(SchedulePage.WizardStep.START_END), "disabled"), is(true));
 
 		schedulePage.startDateTextBoxButton().click();
@@ -381,31 +381,31 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		datePicker.calendarDateSelect(schedulePage.getTodayDate());
 		schedulePage.startDateTextBoxButton().click();
 		schedulePage.startDateTextBox().sendKeys("Hello!!");
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		schedulePage.startDateTextBox().sendKeys(Keys.BACK_SPACE);
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		schedulePage.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
 		schedulePage.startDateTextBox().sendKeys("30/02/2019 11:20");
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		schedulePage.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
 		schedulePage.startDateTextBox().sendKeys("10/13/2019 11:20");
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		schedulePage.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
 		schedulePage.startDateTextBox().sendKeys("02/02/2019 24:20");
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 
 		schedulePage.sendBackspaceToWebElement(schedulePage.startDateTextBox(), 16);
 		schedulePage.startDateTextBox().sendKeys("02/02/2019 22:61");
-		body.getTopNavBar().sideBarToggle();
+		body.getSideNavBar().toggle();
 		assertThat(schedulePage.dateAsString(schedulePage.getTodayDate()), is(pattern.split(schedulePage.startDateTextBox().getAttribute("value"))[0]));
 	}
 

@@ -3,7 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.menu.TopNavBar;
+import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.page.promotions.*;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
@@ -258,10 +258,10 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
         searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
-        TopNavBar navBar = body.getTopNavBar();
+        SideNavBar sideBar = body.getSideNavBar();
 
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		navBar.sideBarToggle();
+		sideBar.toggle();
 		dynamicPromotionsPage.cancelButton().click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
 
@@ -274,10 +274,10 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		dynamicPromotionsPage.continueButton().click();
 		dynamicPromotionsPage.loadOrFadeWait();
 		if (getConfig().getType().equals(ApplicationType.HOSTED)) {
-			navBar.sideBarToggle();
+			sideBar.toggle();
 			dynamicPromotionsPage.cancelButton().click();
 		} else {
-			body.getTopNavBar().sideBarToggle();
+			body.getSideNavBar().toggle();
 			dynamicPromotionsPage.cancelButton().click();
 		}
 
@@ -294,7 +294,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 			dynamicPromotionsPage.continueButton().click();
 			dynamicPromotionsPage.loadOrFadeWait();
 		}
-		navBar.sideBarToggle();
+		sideBar.toggle();
 		dynamicPromotionsPage.cancelButton().click();
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
 	}
