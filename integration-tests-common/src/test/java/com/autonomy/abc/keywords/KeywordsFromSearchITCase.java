@@ -78,8 +78,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.BLACKLIST));
         assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
 
-        createKeywordsPage.addBlacklistedTextBox().sendKeys("noir");
-        createKeywordsPage.addBlacklistTermsButton().click();
+        createKeywordsPage.blacklistAddTextBox().sendKeys("noir");
+        createKeywordsPage.blacklistAddButton().click();
         assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.BLACKLIST));
         assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
 
@@ -115,15 +115,15 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("rouge"));
         assertThat("Finish button should be disabled until further synonyms added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.addSynonymsTextBox().sendKeys("rouge");
-        createKeywordsPage.addSynonymsButton().click();
+        createKeywordsPage.synonymAddTextBox().sendKeys("rouge");
+        createKeywordsPage.synonymAddButton().click();
         assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("rouge"));
         assertThat("Finish button should be disabled until further synonyms added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.addSynonymsTextBox().clear();
-        createKeywordsPage.addSynonymsTextBox().sendKeys("red");
-        createKeywordsPage.addSynonymsButton().click();
+        createKeywordsPage.synonymAddTextBox().clear();
+        createKeywordsPage.synonymAddTextBox().sendKeys("red");
+        createKeywordsPage.synonymAddButton().click();
         assertEquals(2, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(),hasItem("rouge"));
         assertThat("keywords list does not include term 'red'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("red"));

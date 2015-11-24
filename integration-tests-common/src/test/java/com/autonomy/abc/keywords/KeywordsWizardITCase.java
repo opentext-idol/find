@@ -96,14 +96,14 @@ public class KeywordsWizardITCase extends ABCTestBase {
 //		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
 //		createKeywordsPage.loadOrFadeWait();
 
-        createKeywordsPage.addSynonymsTextBox().clear();
+        createKeywordsPage.synonymAddTextBox().clear();
         assertThat("Finish button should be disabled until synonyms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertThat("Add synonyms button should be disabled until synonyms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.addSynonymsButton(), "disabled"));
+        assertThat("Add synonyms button should be disabled until synonyms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.synonymAddButton(), "disabled"));
 
-        createKeywordsPage.addSynonymsTextBox().sendKeys("horse");
+        createKeywordsPage.synonymAddTextBox().sendKeys("horse");
         assertThat("Finish button should be disabled until synonyms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.addSynonymsButton().click();
+        createKeywordsPage.synonymAddButton().click();
         assertThat("Finish button should be disabled until more than one synonym is added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
         assertEquals(1, createKeywordsPage.countKeywords());
 
@@ -199,21 +199,21 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.loadOrFadeWait();
 
         assertThat("Finish button should be disabled until blacklisted terms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertThat("Wizard did not navigate to blacklist page", createKeywordsPage.addBlacklistedTextBox().isDisplayed());
+        assertThat("Wizard did not navigate to blacklist page", createKeywordsPage.blacklistAddTextBox().isDisplayed());
 
-        createKeywordsPage.addBlacklistedTextBox().clear();
+        createKeywordsPage.blacklistAddTextBox().clear();
         assertThat("Finish button should be disabled until blacklisted terms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertThat("Finish button should be disabled until blacklisted terms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.addBlacklistTermsButton(), "disabled"));
+        assertThat("Finish button should be disabled until blacklisted terms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
 
-        createKeywordsPage.addBlacklistedTextBox().sendKeys("danger");
+        createKeywordsPage.blacklistAddTextBox().sendKeys("danger");
         assertThat("Finish button should be disabled until blacklisted terms are added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.addBlacklistTermsButton().click();
+        createKeywordsPage.blacklistAddButton().click();
         assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
         assertEquals(1, createKeywordsPage.countKeywords());
 
-        createKeywordsPage.addBlacklistedTextBox().sendKeys("warning beware scary");
-        createKeywordsPage.addBlacklistTermsButton().click();
+        createKeywordsPage.blacklistAddTextBox().sendKeys("warning beware scary");
+        createKeywordsPage.blacklistAddButton().click();
         createKeywordsPage.loadOrFadeWait();
         assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
         assertEquals(4, createKeywordsPage.countKeywords());
@@ -248,16 +248,16 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.loadOrFadeWait();
         assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.addBlacklistedTextBox().sendKeys("fish");
-        createKeywordsPage.addBlacklistTermsButton().click();
+        createKeywordsPage.blacklistAddTextBox().sendKeys("fish");
+        createKeywordsPage.blacklistAddButton().click();
         createKeywordsPage.loadOrFadeWait();
         assertThat("Duplicate blacklist warning message not present", createKeywordsPage.getText(), containsString("The word \"fish\" is already blacklisted"));
         assertThat("Duplicate blacklist term should not be added", createKeywordsPage.countKeywords() == 0);
         assertThat("Finish button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.addBlacklistedTextBox().clear();
-        createKeywordsPage.addBlacklistedTextBox().sendKeys("chips");
-        createKeywordsPage.addBlacklistTermsButton().click();
+        createKeywordsPage.blacklistAddTextBox().clear();
+        createKeywordsPage.blacklistAddTextBox().sendKeys("chips");
+        createKeywordsPage.blacklistAddButton().click();
         assertThat("Duplicate blacklist warning message has not disappeared", createKeywordsPage.getText(), not(containsString("The word \"fish\" is already blacklisted")));
         assertThat("New blacklist term should be added", createKeywordsPage.countKeywords() == 1);
         assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
@@ -283,17 +283,17 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
-        createKeywordsPage.addBlacklistedTextBox().sendKeys(" ");
-        createKeywordsPage.tryClickThenTryParentClick(createKeywordsPage.addBlacklistTermsButton());
+        createKeywordsPage.blacklistAddTextBox().sendKeys(" ");
+        createKeywordsPage.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton());
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
-        createKeywordsPage.addBlacklistedTextBox().clear();
-        createKeywordsPage.addBlacklistedTextBox().click();
-        createKeywordsPage.addBlacklistedTextBox().sendKeys(Keys.RETURN);
+        createKeywordsPage.blacklistAddTextBox().clear();
+        createKeywordsPage.blacklistAddTextBox().click();
+        createKeywordsPage.blacklistAddTextBox().sendKeys(Keys.RETURN);
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
-        createKeywordsPage.addBlacklistedTextBox().sendKeys("\t");
-        createKeywordsPage.tryClickThenTryParentClick(createKeywordsPage.addBlacklistTermsButton());
+        createKeywordsPage.blacklistAddTextBox().sendKeys("\t");
+        createKeywordsPage.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton());
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
     }
 
@@ -311,9 +311,9 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.addSynonyms(" ");
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
-        createKeywordsPage.addSynonymsTextBox().clear();
-        createKeywordsPage.addSynonymsTextBox().click();
-        createKeywordsPage.addSynonymsTextBox().sendKeys(Keys.RETURN);
+        createKeywordsPage.synonymAddTextBox().clear();
+        createKeywordsPage.synonymAddTextBox().click();
+        createKeywordsPage.synonymAddTextBox().sendKeys(Keys.RETURN);
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
         createKeywordsPage.addSynonyms("\t");
@@ -323,9 +323,9 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.addSynonyms(" ");
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 1);
 
-        createKeywordsPage.addSynonymsTextBox().clear();
-        createKeywordsPage.addSynonymsTextBox().click();
-        createKeywordsPage.addSynonymsTextBox().sendKeys(Keys.RETURN);
+        createKeywordsPage.synonymAddTextBox().clear();
+        createKeywordsPage.synonymAddTextBox().click();
+        createKeywordsPage.synonymAddTextBox().sendKeys(Keys.RETURN);
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 1);
 
         createKeywordsPage.addSynonyms("\t");
@@ -389,15 +389,15 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.addBlacklistedTerms("\"");
         assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.addBlacklistTermsButton(), "disabled"));
+        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
 
         createKeywordsPage.addBlacklistedTerms("\"\"");
         assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.addBlacklistTermsButton(), "disabled"));
+        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
 
         createKeywordsPage.addBlacklistedTerms("\" \"");
         assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.addBlacklistTermsButton(), "disabled"));
+        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
 
         createKeywordsPage.addBlacklistedTerms("\"d");
         assertEquals(0, createKeywordsPage.countKeywords());
@@ -418,15 +418,15 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.addBlacklistedTerms("test");
         createKeywordsPage.addBlacklistedTerms("\"");
         assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.addBlacklistTermsButton(), "disabled"));
+        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
 
         createKeywordsPage.addBlacklistedTerms("\"\"");
         assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.addBlacklistTermsButton(), "disabled"));
+        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
 
         createKeywordsPage.addBlacklistedTerms("\" \"");
         assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.addBlacklistTermsButton(), "disabled"));
+        assertThat("plus button should be disabled", createKeywordsPage.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
 
         createKeywordsPage.addBlacklistedTerms("\"d");
         assertEquals(1, createKeywordsPage.countKeywords());
@@ -516,9 +516,9 @@ public class KeywordsWizardITCase extends ABCTestBase {
         final List<String> hiddenSearchOperators = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "NEARLY", "NEAR123LY", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
 
         for (int i = 0; i < hiddenSearchOperators.size(); i++) {
-            createKeywordsPage.addSynonymsTextBox().clear();
-            createKeywordsPage.addSynonymsTextBox().sendKeys(hiddenSearchOperators.get(i));
-            createKeywordsPage.addSynonymsButton().click();
+            createKeywordsPage.synonymAddTextBox().clear();
+            createKeywordsPage.synonymAddTextBox().sendKeys(hiddenSearchOperators.get(i));
+            createKeywordsPage.synonymAddButton().click();
             createKeywordsPage.loadOrFadeWait();
             assertEquals(2 + i, createKeywordsPage.getProspectiveKeywordsList().size());
         }
@@ -536,9 +536,9 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertEquals(1, createKeywordsPage.getProspectiveKeywordsList().size());
 
         for (int i = 0; i < hiddenSearchOperators.size(); i++) {
-            createKeywordsPage.addBlacklistedTextBox().clear();
-            createKeywordsPage.addBlacklistedTextBox().sendKeys(hiddenSearchOperators.get(i));
-            createKeywordsPage.addBlacklistTermsButton().click();
+            createKeywordsPage.blacklistAddTextBox().clear();
+            createKeywordsPage.blacklistAddTextBox().sendKeys(hiddenSearchOperators.get(i));
+            createKeywordsPage.blacklistAddButton().click();
             createKeywordsPage.loadOrFadeWait();
             assertEquals(2 + i, createKeywordsPage.getProspectiveKeywordsList().size());
         }

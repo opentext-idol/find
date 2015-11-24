@@ -81,24 +81,25 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.cssSelector(".wizard-controls .next-step"));
 	}
 
-	public WebElement addSynonymsButton() {
+	public WebElement synonymAddButton() {
 		return findElement(By.cssSelector(".synonyms-input-view [type='submit']"));
 	}
 
-	public WebElement addBlacklistTermsButton() {
+	public WebElement blacklistAddButton() {
 		return findElement(By.cssSelector("[data-branch='blacklisted']")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
 	}
 
-	public WebElement addSynonymsTextBox() {
+	// use keywordAddInput instead
+	public WebElement synonymAddTextBox() {
 		return findElement(By.cssSelector(".synonyms-input-view [name='words']"));
 	}
 
-	public FormInput addKeywordsInput() {
+	public FormInput keywordAddInput() {
 		return new FormInput(findElement(By.cssSelector(".wizard-branch:not(.hidden) input[name='words']")), getDriver());
-
 	}
 
-	public WebElement addBlacklistedTextBox() {
+	// use keywordAddInput instead
+	public WebElement blacklistAddTextBox() {
 		return findElement(By.cssSelector("[data-branch='blacklisted'] .form-group [name='words']"));
 	}
 
@@ -111,18 +112,18 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public void addSynonyms(final String synonyms) {
-		final WebElement addSynonymsTextBox = addSynonymsTextBox();
+		final WebElement addSynonymsTextBox = synonymAddTextBox();
 		addSynonymsTextBox.clear();
 		addSynonymsTextBox.sendKeys(synonyms);
-		tryClickThenTryParentClick(addSynonymsButton());
+		tryClickThenTryParentClick(synonymAddButton());
 		loadOrFadeWait();
 	}
 
 	public void addBlacklistedTerms(final String blacklistedTerms) {
-		final WebElement addBlacklistedTextBox = addBlacklistedTextBox();
+		final WebElement addBlacklistedTextBox = blacklistAddTextBox();
 		addBlacklistedTextBox.clear();
 		addBlacklistedTextBox.sendKeys(blacklistedTerms);
-		tryClickThenTryParentClick(addBlacklistTermsButton());
+		tryClickThenTryParentClick(blacklistAddButton());
 	}
 
 	public int countKeywords() {
@@ -166,10 +167,10 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	private void addBlacklistedTerm(final String blacklistedTerm) {
-		addBlacklistedTextBox().clear();
-		addBlacklistedTextBox().sendKeys(blacklistedTerm);
+		blacklistAddTextBox().clear();
+		blacklistAddTextBox().sendKeys(blacklistedTerm);
 		loadOrFadeWait();
-		addBlacklistTermsButton().click();
+		blacklistAddButton().click();
 		loadOrFadeWait();
 	}
 

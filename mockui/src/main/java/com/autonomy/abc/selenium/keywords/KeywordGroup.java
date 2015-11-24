@@ -81,7 +81,7 @@ class KeywordGroup {
 
         @Override
         public Object apply() {
-            page.addKeywordsInput().setAndSubmit(keywordString);
+            page.keywordAddInput().setAndSubmit(keywordString);
             return null;
         }
     }
