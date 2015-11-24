@@ -49,7 +49,7 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
     @Autowired
     private Properties dispatcherProperties;
 
-    @Autowired
+    @Autowired(required = false)
     private Converter<?, ?>[] converters;
 
     @Bean
@@ -80,8 +80,10 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     public void addFormatters(final FormatterRegistry registry) {
-        for (final Converter<?, ?> converter : converters) {
-            registry.addConverter(converter);
+        if (converters != null) {
+            for (final Converter<?, ?> converter : converters) {
+                registry.addConverter(converter);
+            }
         }
 
         registry.addFormatterForFieldAnnotation(new JodaDateTimeFormatAnnotationFormatterFactory());

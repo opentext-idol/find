@@ -12,10 +12,5 @@ import static org.junit.Assert.assertFalse;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @TestPropertySource(properties = "hp.find.backend = IDOL")
-public class IdolIndexesServiceIT extends AbstractIndexesServiceIT<IdolIndexesService, Database, AciErrorException> {
-    @Override
-    public void noExcludedIndexes() throws FindException {
-        final List<Database> databases = indexesService.listVisibleIndexes();
-        assertFalse(databases.isEmpty());
-    }
+public class IdolIndexesServiceIT extends AbstractIndexesServiceIT {
 }

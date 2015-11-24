@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.core.indexes;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import com.hp.autonomy.types.IdolDatabase;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -20,9 +21,9 @@ import static org.junit.Assert.assertFalse;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AppConfiguration.class)
+@ContextConfiguration(classes = {DispatcherServletConfiguration.class, AppConfiguration.class})
 @TestPropertySource(properties = {"hp.find.persistentState = INMEMORY", "hp.find.home = ./target/test", "find.https.proxyHost = web-proxy.sdc.hpecorp.net", "find.https.proxyPort: 8080", "find.iod.api = https://api.havenondemand.com", "find.hod.sso = https://dev.havenondemand.com/sso.html"})
-public abstract class AbstractIndexesServiceIT<S extends IndexesService<D, E>, D extends IdolDatabase, E extends Exception> {
+public abstract class AbstractIndexesServiceIT {
     private static final String TEST_DIR = "./target/test";
 
     @BeforeClass
@@ -39,11 +40,12 @@ public abstract class AbstractIndexesServiceIT<S extends IndexesService<D, E>, D
     }
 
     @Autowired
-    protected S indexesService;
+    protected ListIndexesController listIndexesController;
 
+    @SuppressWarnings("ProhibitedExceptionDeclared")
     @Test
-    public void noExcludedIndexes() throws E {
-        final List<D> databases = indexesService.listVisibleIndexes();
+    public void noExcludedIndexes() throws Exception {
+        final List<? extends IdolDatabase> databases = listIndexesController.listActiveIndexes();
         assertFalse(databases.isEmpty());
     }
 }

@@ -6,7 +6,6 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciResponseInputStream;
-import com.hp.autonomy.frontend.find.core.exceptions.FindException;
 import com.hp.autonomy.frontend.find.core.indexes.IndexesService;
 import com.hp.autonomy.types.idol.Database;
 import com.hp.autonomy.types.idol.GetStatusResponseData;
@@ -42,7 +41,7 @@ public class IdolIndexesService implements IndexesService<Database, AciErrorExce
                 try {
                     xml = IOUtils.toString(aciResponseInputStream);
                 } catch (final IOException e) {
-                    throw new FindException("Error running getstatus command", e);
+                    throw new ProcessorException("Error running getstatus command", e);
                 }
 
                 final GetStatusResponseData responseData = idolResponseParser.parseIdolResponseData(xml, GetStatusResponseData.class);
