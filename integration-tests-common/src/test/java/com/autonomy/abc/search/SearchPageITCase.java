@@ -730,6 +730,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
+		assertThat(searchPage.getText(), not(containsString("No results found")));
 		assertEquals(firstSearchResult, searchPage.getSearchResultTitle(1));
 
 		searchPage.fieldTextEditButton().click();
