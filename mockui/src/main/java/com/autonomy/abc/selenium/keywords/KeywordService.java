@@ -92,14 +92,16 @@ public class KeywordService extends ServiceBase {
     public KeywordsPage deleteAll(KeywordFilter type) {
         goToKeywords();
         keywordsPage.filterView(type);
+        int count = 0;
         for (final String language : keywordsPage.getLanguageList()) {
+            count += keywordsPage.countKeywords();
             try {
                 tryDeleteAll(language);
             } catch (StaleElementReferenceException e) {
                 return deleteAll(type);
             }
         }
-        new WebDriverWait(getDriver(), 100).withMessage("deleting keywords").until(ExpectedConditions.textToBePresentInElement(keywordsPage, "No keywords found"));
+        new WebDriverWait(getDriver(), 10 * (count + 1)).withMessage("deleting keywords").until(ExpectedConditions.textToBePresentInElement(keywordsPage, "No keywords found"));
         return keywordsPage;
     }
 
