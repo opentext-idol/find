@@ -109,19 +109,19 @@ public class KeywordService extends ServiceBase {
         } catch (WebDriverException e) {
             /* language dropdown disabled */
         }
-        List<WebElement> keywordGroups = keywordsPage.findElements(By.cssSelector(".keywords-container .keywords-sub-list"));
+        List<WebElement> keywordGroups = keywordsPage.allKeywordGroups();
         for (WebElement group : keywordGroups) {
             removeKeywordGroupAsync(group);
         }
     }
 
     private void removeKeywordGroupAsync(WebElement group) {
-        List<WebElement> removeBtns = group.findElements(By.cssSelector("li .remove-keyword"));
-        if (removeBtns.size() > 1) {
-            removeBtns.remove(0);
+        List<WebElement> removeButtons = keywordsPage.removeButtons(group);
+        if (removeButtons.size() > 1) {
+            removeButtons.remove(0);
         }
-        for (WebElement removeBtn : removeBtns) {
-            removeBtn.click();
+        for (WebElement removeButton : removeButtons) {
+            removeButton.click();
         }
     }
 
