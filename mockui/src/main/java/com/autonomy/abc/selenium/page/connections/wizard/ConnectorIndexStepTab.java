@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.connections.wizard;
 
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -34,5 +35,52 @@ public class ConnectorIndexStepTab extends SAASPageBase {
 
     public WebElement modalOKButton() {
         return getDriver().findElement(By.cssSelector(".modal-footer [type='submit']"));
+    }
+
+    public void selectFirstIndex() {
+        selectNthIndex(1);
+    }
+
+    public void selectLastIndex() {
+        selectNthIndex(getDriver().findElements(By.cssSelector(".chosen-results li")).size());
+    }
+
+    public void selectNthIndex(int n){
+        getIndexSearchBox().click();
+        getDriver().findElement(By.cssSelector(".chosen-results li:nth-child(" + n + ")")).click();
+    }
+
+    public Index getChosenIndexInModal() {
+        return new Index(getIndexSearchBox().findElement(By.tagName("span")).getText());
+    }
+
+    private boolean dropdownOpen() {
+        if(getIndexSearchBox().findElement(By.xpath(".//..")).getAttribute("class").contains("chosen-with-drop")){
+            return true;
+        }
+
+        return false;
+    }
+
+    public void closeDropdown(){
+        if(dropdownOpen()){
+            getIndexSearchBox().click();
+        }
+    }
+
+    private boolean modalOpen(){
+        try {
+            if (getDriver().findElement(By.className("modal")).isDisplayed()) {
+                return true;
+            }
+        } catch (Exception e) { /* Modal not open */ }
+
+        return false;
+    }
+
+    public void closeModal(){
+        if(modalOpen()){
+            getDriver().findElement(By.xpath("//div[contains(@class,'modal-footer')]/button[text()='Cancel']")).click();
+        }
     }
 }

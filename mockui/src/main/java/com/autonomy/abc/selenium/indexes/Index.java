@@ -41,4 +41,20 @@ public class Index {
     public String getCreateNotification() {
         return "Created a new index: " + name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Index){
+            if (((Index) obj).getName().equals(getName())){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Index<" + getName() + ">";
+    }
 }
