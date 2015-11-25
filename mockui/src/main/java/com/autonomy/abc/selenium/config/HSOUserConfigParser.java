@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
+import com.autonomy.abc.selenium.users.HSONewUser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
@@ -13,9 +14,7 @@ import java.util.Map;
 public class HSOUserConfigParser implements UserConfigParser {
     @Override
     public User parseUser(JsonNode userNode) {
-        Map<String, Object> authMap = new ObjectMapper().convertValue(userNode.path("auth"), new TypeReference<Map<String, Object>>() {
-        });
-        AuthProvider provider = HSOAuthFactory.fromMap(authMap);
+        AuthProvider provider = authProvider(userNode.path("auth"));
         String username = userNode.path("username").asText();
         Role role = Role.fromString(userNode.path("role").asText());
 
@@ -24,7 +23,17 @@ public class HSOUserConfigParser implements UserConfigParser {
 
     @Override
     public NewUser parseNewUser(JsonNode newUserNode) {
-        return null;
+        AuthProvider provider = authProvider(newUserNode.path("auth"));
+        String username = newUserNode.path("username").asText();
+        String email = newUserNode.path("email").asText();
+
+        return new HSONewUser(username, email, provider);
+    }
+
+    private AuthProvider authProvider(JsonNode authNode){
+        Map<String, Object> authMap = new ObjectMapper().convertValue(authNode, new TypeReference<Map<String, Object>>() {
+        });
+        return HSOAuthFactory.fromMap(authMap);
     }
 
 }

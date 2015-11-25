@@ -8,7 +8,7 @@ public abstract class AppBody {
 
     private final TopNavBar topNavBar;
     private final SideNavBar sideNavBar;
-    private final WebDriver driver;
+    protected final WebDriver driver;
 
     public AppBody(WebDriver driver, TopNavBar topNavBar, SideNavBar sideNavBar) {
         this.driver = driver;

@@ -27,7 +27,7 @@ public class FormInput {
     }
 
     public String getValue() {
-        return element.getText();
+        return element.getAttribute("value");
     }
 
     public void setValue(String value) {

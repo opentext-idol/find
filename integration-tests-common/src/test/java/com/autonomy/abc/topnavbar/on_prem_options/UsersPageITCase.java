@@ -4,20 +4,17 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
+import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.UnhandledAlertException;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -39,6 +36,7 @@ public class UsersPageITCase extends ABCTestBase {
 	private final NewUser newUser2 = config.getNewUser("john");
 	private UsersPage usersPage;
 	private UserService userService;
+	private int defaultNoUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
@@ -52,7 +50,8 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		User user = aNewUser.signUpAs(Role.USER, usersPage);
-		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
+//		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
+		verifyUserAdded(newUserModal, user);
 		usersPage.closeModal();
 		return user;
 	}
@@ -64,14 +63,25 @@ public class UsersPageITCase extends ABCTestBase {
 		User user = newUser.signUpAs(Role.USER, usersPage);
 		usersPage.closeModal();
 
+		try {
+			usersPage.waitForGritterToClear();
+		} catch (InterruptedException e) { /**/ }
+
 		logout();
+
+		getDriver().get(getConfig().getWebappUrl());
+
 		loginAs(user);
 		assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
 	}
 
 	private void deleteAndVerify(User user) {
 		usersPage.deleteUser(user.getUsername());
-		verifyThat(usersPage, containsText("User " + user.getUsername() + " successfully deleted"));
+		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
+			verifyThat(usersPage, containsText("User " + user.getUsername() + " successfully deleted"));
+		} else {
+			new WebDriverWait(getDriver(),10).withMessage("User " + user.getUsername() + " not successfully deleted").until(GritterNotice.notificationContaining("Deleted user " + user.getUsername()));
+		}
 	}
 
 	@Test
@@ -114,6 +124,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 		User user = aNewUser.signUpAs(Role.USER, usersPage);
+		usersPage.loadOrFadeWait();
 		User admin = newUser2.signUpAs(Role.ADMIN, usersPage);
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
@@ -132,7 +143,15 @@ public class UsersPageITCase extends ABCTestBase {
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
 		userService.deleteOtherUsers();
-		verifyThat("Not all users are deleted", usersPage.countNumberOfUsers(), is(1));
+		verifyThat("All users are deleted", usersPage.countNumberOfUsers(), is(defaultNoUsers));
+	}
+
+	private void verifyUserAdded(ModalView newUserModal, User user){
+		if(getConfig().getType().equals(ApplicationType.ON_PREM)){
+			verifyThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
+//		} else {
+//			new WebDriverWait(getDriver(),10).withMessage("User not added").until(GritterNotice.notificationContaining("Created user " + user.getUsername()));
+		}
 	}
 
 	@Test
@@ -141,7 +160,7 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		User original = aNewUser.signUpAs(Role.USER, usersPage);
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-		verifyThat(newUserModal, containsText("Done! User " + original.getUsername() + " successfully created"));
+		verifyUserAdded(newUserModal, original);
 
 		aNewUser.signUpAs(Role.USER, usersPage);
 		verifyThat(newUserModal, containsText("Error! User exists!"));
@@ -150,7 +169,7 @@ public class UsersPageITCase extends ABCTestBase {
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
 		usersPage.closeModal();
-		verifyThat(usersPage.countNumberOfUsers(), is(2));
+		verifyThat(usersPage.countNumberOfUsers(), is(2 - defaultNoUsers));
 	}
 
 	@Test
@@ -160,10 +179,10 @@ public class UsersPageITCase extends ABCTestBase {
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 
 		User admin = aNewUser.signUpAs(Role.ADMIN, usersPage);
-		assertThat(newUserModal, containsText("Done! User " + admin.getUsername() + " successfully created"));
+		verifyUserAdded(newUserModal, admin);
 
 		User user = newUser2.signUpAs(Role.USER, usersPage);
-		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
+		verifyUserAdded(newUserModal, user);
 
 		usersPage.closeModal();
 		List<String> usernames = usersPage.getUsernames();
@@ -239,7 +258,7 @@ public class UsersPageITCase extends ABCTestBase {
 		User initialUser = singleSignUp();
 		User updatedUser = usersPage.changeAuth(initialUser, newUser2);
 
-		logout();
+		logoutAndNavigateToWebApp();
 		loginAs(initialUser);
 		usersPage.loadOrFadeWait();
 		assertThat("old password does not work", getDriver().getCurrentUrl(), containsString("login"));
@@ -250,7 +269,7 @@ public class UsersPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testCreateUserPermissionNoneAndTestLogin() {
+	public void testCreateUserPermissionNoneAndTestLogin() throws InterruptedException {
 		User user = singleSignUp();
 
 		assertThat(usersPage.roleLinkFor(user), displayed());
@@ -260,11 +279,18 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.NONE));
 
-		logout();
+		usersPage.waitForGritterToClear();
+
+		logoutAndNavigateToWebApp();
 		loginAs(user);
 		getElementFactory().getLoginPage();
         assertThat(getDriver().findElement(By.xpath("//*")), containsText("Please check your username and password."));
         assertThat(getDriver().getCurrentUrl(), containsString("login"));
+	}
+
+	private void logoutAndNavigateToWebApp(){
+		logout();
+		getDriver().get(getConfig().getWebappUrl());
 	}
 
 	@Test
@@ -302,7 +328,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.loadOrFadeWait();
 		Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
 
-		logout();
+		logoutAndNavigateToWebApp();
 		loginAs(config.getDefaultUser());
 		usersPage.loadOrFadeWait();
 		assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
