@@ -35,6 +35,14 @@ public class HSONewUser implements NewUser {
         hsoUsersPage.createButton().click();
         hsoUsersPage.loadOrFadeWait();
 
+        if(hsoUsersPage.getUsernameInput().getValue().equals("")) {
+            successfullyAdded(usersPage);
+        }
+
+        return new HSOUser(username,email,role);
+    }
+
+    private void successfullyAdded(UsersPage usersPage) {
         driver = usersPage.getDriver();
         browserHandles = usersPage.createAndListWindowHandles();
 
@@ -47,8 +55,6 @@ public class HSONewUser implements NewUser {
         }
 
         driver.switchTo().window(browserHandles.get(0));
-
-        return new HSOUser(username,email,role);
     }
 
     List<String> browserHandles;
