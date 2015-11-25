@@ -5,15 +5,20 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.users.NewUser;
+import com.autonomy.abc.selenium.users.Role;
+import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.UserService;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
@@ -36,7 +41,7 @@ public class UsersPageITCase extends ABCTestBase {
 	private final NewUser newUser2 = config.getNewUser("john");
 	private UsersPage usersPage;
 	private UserService userService;
-	private int defaultNoUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
+	private int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
@@ -143,7 +148,7 @@ public class UsersPageITCase extends ABCTestBase {
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
 		userService.deleteOtherUsers();
-		verifyThat("All users are deleted", usersPage.countNumberOfUsers(), is(defaultNoUsers));
+		verifyThat("All users are deleted", usersPage.countNumberOfUsers(), is(defaultNumberOfUsers));
 	}
 
 	private void verifyUserAdded(ModalView newUserModal, User user){
@@ -169,7 +174,7 @@ public class UsersPageITCase extends ABCTestBase {
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
 		usersPage.closeModal();
-		verifyThat(usersPage.countNumberOfUsers(), is(2 - defaultNoUsers));
+		verifyThat(usersPage.countNumberOfUsers(), is(2 - defaultNumberOfUsers));
 	}
 
 	@Test

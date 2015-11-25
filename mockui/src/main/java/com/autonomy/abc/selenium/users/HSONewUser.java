@@ -45,7 +45,7 @@ public class HSONewUser implements NewUser {
         hsoUsersPage.selectRole(role);
         hsoUsersPage.createButton().click();
 
-        new WebDriverWait(driver,15).until(GritterNotice.notificationContaining("Created user"));
+        new WebDriverWait(driver,15).withMessage("User hasn't been created").until(GritterNotice.notificationContaining("Created user"));
 
         if(hsoUsersPage.getUsernameInput().getValue().equals("")) {
             successfullyAdded(usersPage);
@@ -53,8 +53,7 @@ public class HSONewUser implements NewUser {
             return new HSOUser(username, email, role, provider);
         }
 
-        //TODO if user hasn't been successfully added return what?
-        return null;
+        throw new UserNotCreatedException(this);
     }
 
     private void successfullyAdded(UsersPage usersPage) {
@@ -147,5 +146,15 @@ public class HSONewUser implements NewUser {
     @Override
     public User replaceAuthFor(User user, UsersPage usersPage) {
         return null;
+    }
+
+    private class UserNotCreatedException extends RuntimeException {
+        public UserNotCreatedException(HSONewUser user){
+            this(user.username);
+        }
+
+        public UserNotCreatedException(String username){
+            super("User '" + username + "' was not created");
+        }
     }
 }
