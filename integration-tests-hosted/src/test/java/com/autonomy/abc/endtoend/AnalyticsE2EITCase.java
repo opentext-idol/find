@@ -4,6 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Removable;
+import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
@@ -152,12 +153,8 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         for (Term term : terms) {
             synonyms.add(term.getTerm());
         }
-        String synonymString = String.join(" ", synonyms);
-
-        getBody().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        getElementFactory().getKeywordsPage().createNewKeywordsButton().click();
-        getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(synonymString, "English");
-        LOGGER.info("added synonym group: " + synonymString);
+        new KeywordService(getApplication(), getElementFactory()).addSynonymGroup(synonyms);
+        LOGGER.info("added synonym group: " + synonyms);
     }
 
     private void verifyTermSearch(Term term) {

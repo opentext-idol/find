@@ -34,7 +34,6 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.*;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
-import static com.hp.autonomy.frontend.selenium.util.AppElement.getParent;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -706,9 +705,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		String synonymThree = "Skin";
 
 		String[] synonyms = new String[]{synonymOne, synonymTwo, synonymThree};
-		keywordsPage.createNewKeywordsButton().click();
-		CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.createSynonymGroup(String.join(" ", synonyms), "English");
+		keywordService.addSynonymGroup(synonyms);
 		Arrays.sort(synonyms);
 		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
@@ -783,16 +780,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		String synonym = "synonym";
 		String[] synonymGroup = new String[]{blacklist, synonym};
 
-		keywordsPage.createNewKeywordsButton().click();
-		CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.createSynonymGroup(String.join(" ", synonymGroup), "English");
-		getElementFactory().getSearchPage();
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.createNewKeywordsButton().click();
-		createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.createBlacklistedTerm(blacklist, "English");
-		getElementFactory().getKeywordsPage();
+		keywordService.addSynonymGroup(synonymGroup);
+		keywordService.addBlacklistTerms(blacklist);
 
 		body.getTopNavBar().search(blacklist);
 

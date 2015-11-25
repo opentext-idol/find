@@ -17,15 +17,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersPage extends AppElement implements AppPage {
+public abstract class UsersPage extends AppElement implements AppPage {
 
 	protected UsersPage(final WebDriver driver) {
 		super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
-	}
-
-	public static UsersPage make(final WebDriver driver) {
-		UsersPage.waitForLoad(driver);
-		return new UsersPage(driver);
 	}
 
 	public WebElement createUserButton() {
@@ -80,13 +75,7 @@ public class UsersPage extends AppElement implements AppPage {
 	}
 
 	// TODO: move to UserService.deleteUser(User)?
-	public void deleteUser(final String userName) {
-		loadOrFadeWait();
-		deleteButton(userName).click();
-		loadOrFadeWait();
-		findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
-		loadOrFadeWait();
-	}
+	public abstract void deleteUser(final String userName);
 
 	public WebElement deleteButton(final String userName) {
 		return getUserRow(userName).findElement(By.cssSelector(".users-deleteUser"));
@@ -109,9 +98,7 @@ public class UsersPage extends AppElement implements AppPage {
 		return usernames;
 	}
 
-	public Role getRoleOf(User user) {
-		return Role.fromString(getTableUserTypeLink(user.getUsername()).getText());
-	}
+	public abstract Role getRoleOf(User user);
 
 	public WebElement passwordLinkFor(User user) {
 		return getTableUserPasswordLink(user.getUsername());
@@ -121,21 +108,15 @@ public class UsersPage extends AppElement implements AppPage {
 		return new PasswordBox(getTableUserPasswordBox(user.getUsername()), getDriver());
 	}
 
-	public WebElement roleLinkFor(User user) {
-		return getTableUserTypeLink(user.getUsername());
-	}
+	public abstract WebElement roleLinkFor(User user);
 
-	public void setRoleValueFor(User user, Role newRole) {
-		selectTableUserType(user.getUsername(), newRole.toString());
-	}
+	public abstract void setRoleValueFor(User user, Role newRole);
 
 	public void cancelPendingEditFor(User user) {
-		getUserRow(user.getUsername()).findElement(By.cssSelector(".editable-cancel")).click();
+		getUserRow(user).findElement(By.cssSelector(".editable-cancel")).click();
 	}
 
-	public void submitPendingEditFor(User user) {
-		getUserRow(user.getUsername()).findElement(By.cssSelector(".editable-submit")).click();
-	}
+	public abstract void submitPendingEditFor(User user);
 
 	public User changeAuth(User user, NewUser replacementAuth) {
 		return replacementAuth.replaceAuthFor(user, this);
@@ -155,9 +136,12 @@ public class UsersPage extends AppElement implements AppPage {
 		return getUserRow(userName).findElement(By.cssSelector("td:nth-child(2)"));
 	}
 
+	@Deprecated //At some point move this down into OPUsersPage
 	public WebElement getUserRow(final String userName) {
 		return findElement(By.xpath(".//span[contains(text(), '" + userName + "')]/../.."));
 	}
+
+	public abstract WebElement getUserRow(User user);
 
 	public WebElement rowFor(final User user) {
 		return getUserRow(user.getUsername());

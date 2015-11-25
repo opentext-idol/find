@@ -49,17 +49,17 @@ public class HSOUserService extends UserService {
         }
     }
 
-    public void deleteUser(HSOUser user){
+    public void deleteUser(User user){
         usersPage.getUserRow(user).findElement(By.className("users-deleteUser")).click();
         usersPage.loadOrFadeWait();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
     }
 
-    public void changeRole(HSOUser user, Role newRole) {
+    public void changeRole(User user, Role newRole) {
         WebElement roleLink = usersPage.roleLinkFor(user);
         roleLink.click();
-        usersPage.selectRoleFor(user, newRole);
+        usersPage.setRoleValueFor(user, newRole);
         usersPage.submitPendingEditFor(user);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(roleLink));
     }

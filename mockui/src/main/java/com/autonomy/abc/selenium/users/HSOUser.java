@@ -6,7 +6,11 @@ public class HSOUser extends User {
     private String email;
 
     public HSOUser(String username, String email, Role role) {
-        super(null, username, role);
+        this(username, email, role, null);
+    }
+
+    public HSOUser(String username, String email, Role role, AuthProvider authProvider){
+        super(authProvider, username, role);
         this.email = email;
     }
 

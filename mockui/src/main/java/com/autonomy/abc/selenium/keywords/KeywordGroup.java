@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.util.Language;
+import org.apache.commons.lang3.StringUtils;
 
 class KeywordGroup {
     private String keywordString;
@@ -12,7 +13,7 @@ class KeywordGroup {
     private Language language;
 
     public KeywordGroup(KeywordWizardType type, Language language, Iterable<String> keywords) {
-        this.keywordString = String.join(" ", keywords);
+        this.keywordString = StringUtils.join(keywords, " ");
         this.type = type;
         this.language = language;
     }
