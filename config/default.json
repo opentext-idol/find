@@ -12,22 +12,42 @@
     "james": {
       "username": "james",
       "password": "bond",
-      "email": "hodtestqa401+newuser1@gmail.com"
+      "email": "hodtestqa401+newuser1@gmail.com",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
     },
     "john": {
       "username": "john",
       "password": "lennon",
-      "email": "hodtestqa401+newuser2@gmail.com"
+      "email": "hodtestqa401+newuser2@gmail.com",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
     },
     "bob": {
       "username": "bob",
       "password": "marley",
-      "email": "hodtestqa401+newuser3@gmail.com"
+      "email": "hodtestqa401+newuser3@gmail.com",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
     },
     "testAddDuplicateUser_james": {
       "username": "james",
       "password": "giantPeach",
-      "email": "hodtestqa401+newuser1@gmail.com"
+      "email": "hodtestqa401+newuser1@gmail.com",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      }
     }
   },
   "users": {

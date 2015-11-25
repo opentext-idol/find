@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
@@ -37,12 +38,14 @@ public class HSONewUser implements NewUser {
     @Override
     public HSOUser signUpAs(Role role, UsersPage usersPage) {
         HSOUsersPage hsoUsersPage = (HSOUsersPage) usersPage;
+        driver = usersPage.getDriver();
 
         hsoUsersPage.addUsername(username);
         hsoUsersPage.addEmail(email);
         hsoUsersPage.selectRole(role);
         hsoUsersPage.createButton().click();
-        hsoUsersPage.loadOrFadeWait();
+
+        new WebDriverWait(driver,15).until(GritterNotice.notificationContaining("Created user"));
 
         if(hsoUsersPage.getUsernameInput().getValue().equals("")) {
             successfullyAdded(usersPage);
@@ -55,7 +58,6 @@ public class HSONewUser implements NewUser {
     }
 
     private void successfullyAdded(UsersPage usersPage) {
-        driver = usersPage.getDriver();
         browserHandles = usersPage.createAndListWindowHandles();
 
         getGmail();
