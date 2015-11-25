@@ -45,7 +45,5 @@ public abstract class ElementFactory {
         return driver;
     }
 
-    public UsersPage getUsersPage(){
-        return UsersPage.make(driver);
-    }
+    public abstract UsersPage getUsersPage();
 }
