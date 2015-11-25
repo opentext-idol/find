@@ -65,18 +65,10 @@ define([
         viewDocumentTemplate: _.template(viewDocumentTemplate),
 
         events: {
-            'click .query-text': function(e) {
+            'click .entity-text': function(e) {
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
                 this.queryModel.set('queryText', queryText);
-            },
-            'mouseover .entity-to-summary': function(e) {
-                var title = $(e.currentTarget).find('a').html();
-                this.$('[data-title="' + title + '"]').addClass('label label-primary entity-to-summary').removeClass('label-info');
-            },
-            'mouseleave .entity-to-summary': function() {
-                this.$('.suggestions-content li a').removeClass('label label-primary entity-to-summary');
-                this.$('.main-results-content .entity-to-summary').removeClass('label-primary').addClass('label-info');
             }
         },
 
@@ -347,11 +339,19 @@ define([
 
             // Loop through entities again, replacing text with labels
             _.each(entities, function(entity) {
-                summary = this.replaceTextWithLabel(summary, entity.id, entity.text, "entity-to-summary");
+                summary = this.replaceTextWithLabel(summary, entity.id, {
+                    elementType: 'a',
+                    replacement: entity.text,
+                    elementClasses: 'entity-text clickable'
+                })
             }, this);
 
             // Add the search text label
-            summary = this.replaceTextWithLabel(summary, searchTextID, searchText, "entity-to-summary");
+            summary = this.replaceTextWithLabel(summary, searchTextID, {
+                elementType: 'span',
+                replacement: searchText,
+                elementClasses: 'search-text'
+            });
 
             return summary;
         },
@@ -368,20 +368,23 @@ define([
             return text.replace(new RegExp(startRegex + escapeRegex(textToFind) + endRegex, 'gi'), '$1' + replacement + '$2');
         },
 
+
+        /**
+         * @typedef EntityTemplateOptions
+         * @property elementType {string} The html element type the text should be in
+         * @property replacement {string} The text of the element
+         * @property elementClasses {string} The classes to apple to the html element defined in elementType
+         */
         /**
          * Finds a string and replaces it with an HTML label.
          * Used as part 2 of highlighting text in results summaries.
-         * @param text  The text to search in
-         * @param textToFind  The text to replace with a label
-         * @param replacement  The term or phrase to display in the label
-         * @param labelClasses Classes to add to the label
+         * @param {string} text  The text to search in
+         * @param {string} textToFind  The text to replace with a label
+         * @param {EntityTemplateOptions} templateOptions A hash of options to configure the template
          * @returns {string|XML|*}  `text`, but with replacements made
          */
-        replaceTextWithLabel: function(text, textToFind, replacement, labelClasses) {
-            var label = this.entityTemplate({
-                replacement: replacement,
-                labelClasses: labelClasses
-            });
+        replaceTextWithLabel: function(text, textToFind, templateOptions) {
+            var label = this.entityTemplate(templateOptions);
 
             return text.replace(new RegExp(startRegex + textToFind + endRegex, 'g'), '$1' + label + '$2');
         },
