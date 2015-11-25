@@ -3,49 +3,37 @@ package com.hp.autonomy.frontend.find.idol.indexes;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
-import com.autonomy.aci.client.services.ProcessorException;
-import com.autonomy.aci.client.transport.AciResponseInputStream;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.indexes.IndexesService;
+import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorCallback;
+import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
 import com.hp.autonomy.types.idol.Database;
 import com.hp.autonomy.types.idol.GetStatusResponseData;
-import com.hp.autonomy.types.idol.IdolResponseParser;
-import org.apache.commons.io.IOUtils;
+import com.hp.autonomy.types.requests.idol.actions.status.StatusActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
 public class IdolIndexesService implements IndexesService<Database, AciErrorException> {
     private final AciService contentAciService;
-    private final IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser;
+    private final Processor<List<Database>> responseProcessor;
 
     @Autowired
-    public IdolIndexesService(final AciService contentAciService, final IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser) {
+    public IdolIndexesService(final AciService contentAciService, final AciResponseProcessorFactory aciResponseProcessorFactory) {
         this.contentAciService = contentAciService;
-        this.idolResponseParser = idolResponseParser;
-    }
 
-    @SuppressWarnings("SerializableInnerClassWithNonSerializableOuterClass")
-    @Override
-    public List<Database> listVisibleIndexes() throws AciErrorException {
-        return contentAciService.executeAction(new AciParameters("GetStatus"), new Processor<List<Database>>() {
-            private static final long serialVersionUID = -1983490659468698548L;
-
+        responseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(GetStatusResponseData.class, new AciResponseProcessorCallback<GetStatusResponseData, List<Database>>() {
             @Override
-            public List<Database> process(final AciResponseInputStream aciResponseInputStream) {
-                final String xml;
-                try {
-                    xml = IOUtils.toString(aciResponseInputStream);
-                } catch (final IOException e) {
-                    throw new ProcessorException("Error running getstatus command", e);
-                }
-
-                final GetStatusResponseData responseData = idolResponseParser.parseIdolResponseData(xml, GetStatusResponseData.class);
+            public List<Database> process(final GetStatusResponseData responseData) {
                 return responseData.getDatabases().getDatabase();
             }
         });
+    }
+
+    @Override
+    public List<Database> listVisibleIndexes() throws AciErrorException {
+        return contentAciService.executeAction(new AciParameters(StatusActions.GetStatus.name()), responseProcessor);
     }
 }
