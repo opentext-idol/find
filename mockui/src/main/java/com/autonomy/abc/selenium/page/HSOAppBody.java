@@ -5,6 +5,8 @@ import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSOAppBody extends AppBody {
     public HSOAppBody(WebDriver driver){
@@ -18,6 +20,13 @@ public class HSOAppBody extends AppBody {
     @Override
     public void logout() {
         getTopNavBar().findElement(By.className("hp-settings")).click();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) { /**/ }
+
         getTopNavBar().findElement(By.className("navigation-logout")).click();
+
+        new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("haven-splash-header")));
     }
 }
