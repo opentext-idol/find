@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -39,6 +40,7 @@ public class HSONewUser implements NewUser {
             successfullyAdded(usersPage);
         }
 
+        //TODO if user hasn't been successfully added return what?
         return new HSOUser(username,email,role);
     }
 
@@ -46,8 +48,12 @@ public class HSONewUser implements NewUser {
         driver = usersPage.getDriver();
         browserHandles = usersPage.createAndListWindowHandles();
 
-        WebElement verificationPage = getGmail();
-        verifyUser(verificationPage);
+        getGmail();
+
+        try {
+            new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
+            verifyUser();
+        } catch (TimeoutException e) { /* User already verified */ }
 
         for(int i = driver.getWindowHandles().size() - 1; i > 0; i--){
             driver.switchTo().window(browserHandles.get(i));
@@ -60,7 +66,7 @@ public class HSONewUser implements NewUser {
     List<String> browserHandles;
     WebDriver driver;
 
-    private WebElement getGmail(){
+    private void getGmail(){
         driver.switchTo().window(browserHandles.get(1));
         driver.get("https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier");
 
@@ -82,14 +88,10 @@ public class HSONewUser implements NewUser {
 
         browserHandles = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(browserHandles.get(2));
-
-        new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
-
-        return driver.findElement(By.tagName("body"));
     }
 
-    private void verifyUser(WebElement verificationPage){
-        verificationPage.findElement(By.linkText("Google")).click();
+    private void verifyUser(){
+        driver.findElement(By.linkText("Google")).click();
 
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("noAccount")));
     }
