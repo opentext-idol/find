@@ -52,7 +52,7 @@ public class HSOUsersPage extends UsersPage {
         return getUserRow(user).findElement(By.cssSelector(".user-role a"));
     }
 
-    public void selectRoleFor(User user, Role newRole) {
+    public void setRoleValueFor(User user, Role newRole) {
         getUserRow(user).findElement(By.xpath(".//option[contains(text(),'"+newRole+"')]")).click();
     }
 

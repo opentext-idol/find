@@ -110,12 +110,10 @@ public abstract class UsersPage extends AppElement implements AppPage {
 
 	public abstract WebElement roleLinkFor(User user);
 
-	public void setRoleValueFor(User user, Role newRole) {
-		selectTableUserType(user.getUsername(), newRole.toString());
-	}
+	public abstract void setRoleValueFor(User user, Role newRole);
 
 	public void cancelPendingEditFor(User user) {
-		getUserRow(user.getUsername()).findElement(By.cssSelector(".editable-cancel")).click();
+		getUserRow(user).findElement(By.cssSelector(".editable-cancel")).click();
 	}
 
 	public abstract void submitPendingEditFor(User user);
@@ -138,9 +136,12 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		return getUserRow(userName).findElement(By.cssSelector("td:nth-child(2)"));
 	}
 
+	@Deprecated //At some point move this down into OPUsersPage
 	public WebElement getUserRow(final String userName) {
 		return findElement(By.xpath(".//span[contains(text(), '" + userName + "')]/../.."));
 	}
+
+	public abstract WebElement getUserRow(User user);
 
 	public WebElement rowFor(final User user) {
 		return getUserRow(user.getUsername());

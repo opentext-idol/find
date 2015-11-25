@@ -59,7 +59,7 @@ public class HSOUserService extends UserService {
     public void changeRole(HSOUser user, Role newRole) {
         WebElement roleLink = usersPage.roleLinkFor(user);
         roleLink.click();
-        usersPage.selectRoleFor(user, newRole);
+        usersPage.setRoleValueFor(user, newRole);
         usersPage.submitPendingEditFor(user);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(roleLink));
     }
