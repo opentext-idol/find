@@ -6,16 +6,16 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.types.Identifier;
-import com.hp.autonomy.types.query.Documents;
+import com.hp.autonomy.types.requests.Documents;
 
 import java.util.List;
 import java.util.Set;
 
 public interface DocumentsService<I extends Identifier, E extends Exception> {
 
-    Documents<FindDocument> queryTextIndex(final QueryParams<I> queryParams) throws E;
+    Documents<FindDocument> queryTextIndex(final FindQueryParams<I> findQueryParams) throws E;
 
-    Documents<FindDocument> queryTextIndexForPromotions(final QueryParams<I> queryParams) throws E;
+    Documents<FindDocument> queryTextIndexForPromotions(final FindQueryParams<I> findQueryParams) throws E;
 
     List<FindDocument> findSimilar(Set<I> indexes, String reference) throws E;
 

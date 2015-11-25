@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.types.Identifier;
-import com.hp.autonomy.types.query.Documents;
+import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,14 +26,14 @@ public class DocumentsController<I extends Identifier, E extends Exception> {
 
     @RequestMapping(value = "query-text-index/results", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<FindDocument> query(@RequestParam("queryParams") final QueryParams<I> queryParams) throws E {
-        return documentsService.queryTextIndex(queryParams);
+    public Documents<FindDocument> query(@RequestParam("queryParams") final FindQueryParams<I> findQueryParams) throws E {
+        return documentsService.queryTextIndex(findQueryParams);
     }
 
     @RequestMapping(value = "query-text-index/promotions", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<FindDocument> queryForPromotions(@RequestParam("queryParams") final QueryParams<I> queryParams) throws E {
-        return documentsService.queryTextIndexForPromotions(queryParams);
+    public Documents<FindDocument> queryForPromotions(@RequestParam("queryParams") final FindQueryParams<I> findQueryParams) throws E {
+        return documentsService.queryTextIndexForPromotions(findQueryParams);
     }
 
     @RequestMapping(value = "similar-documents", method = RequestMethod.GET)

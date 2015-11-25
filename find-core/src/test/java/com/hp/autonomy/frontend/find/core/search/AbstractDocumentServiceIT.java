@@ -2,7 +2,7 @@ package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.types.Identifier;
-import com.hp.autonomy.types.query.Documents;
+import com.hp.autonomy.types.requests.Documents;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,31 +28,31 @@ public class AbstractDocumentServiceIT<I extends Identifier, E extends Exception
 
     @Test
     public void query() throws E {
-        final QueryParams<I> queryParams = createSampleQuery();
-        final Documents<FindDocument> documents = documentsController.query(queryParams);
+        final FindQueryParams<I> findQueryParams = createSampleQuery();
+        final Documents<FindDocument> documents = documentsController.query(findQueryParams);
         assertThat(documents.getDocuments(), is(not(empty())));
     }
 
     @Test
     public void queryForPromotions() throws E {
-        final QueryParams<I> queryParams = createSampleQuery();
-        final Documents<FindDocument> documents = documentsController.queryForPromotions(queryParams);
+        final FindQueryParams<I> findQueryParams = createSampleQuery();
+        final Documents<FindDocument> documents = documentsController.queryForPromotions(findQueryParams);
         assertThat(documents.getDocuments(), is(empty())); // TODO: configure this later
     }
 
     @Test
     public void findSimilar() throws E {
-        final QueryParams<I> queryParams = createSampleQuery();
-        final Documents<FindDocument> documents = documentsController.query(queryParams);
+        final FindQueryParams<I> findQueryParams = createSampleQuery();
+        final Documents<FindDocument> documents = documentsController.query(findQueryParams);
         final List<FindDocument> results = documentsController.findSimilar(documents.getDocuments().get(0).getReference(), new HashSet<>(indexes));
         assertThat(results, is(not(empty())));
     }
 
-    private QueryParams<I> createSampleQuery() {
-        final QueryParams<I> queryParams = new QueryParams<>();
-        queryParams.setText("*");
-        queryParams.setMaxResults(50);
-        queryParams.setIndex(indexes);
-        return queryParams;
+    private FindQueryParams<I> createSampleQuery() {
+        final FindQueryParams<I> findQueryParams = new FindQueryParams<>();
+        findQueryParams.setText("*");
+        findQueryParams.setMaxResults(50);
+        findQueryParams.setIndex(indexes);
+        return findQueryParams;
     }
 }

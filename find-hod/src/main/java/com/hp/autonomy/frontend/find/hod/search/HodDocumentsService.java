@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
-import com.hp.autonomy.frontend.find.core.search.QueryParams;
+import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
@@ -22,7 +22,7 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
-import com.hp.autonomy.types.query.Documents;
+import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Conditional;
@@ -66,14 +66,14 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
 
     @Override
     @Cacheable(CacheNames.DOCUMENTS)
-    public Documents<FindDocument> queryTextIndex(final QueryParams<ResourceIdentifier> queryParams) throws HodErrorException {
-        return queryTextIndex(queryParams, false);
+    public Documents<FindDocument> queryTextIndex(final FindQueryParams<ResourceIdentifier> findQueryParams) throws HodErrorException {
+        return queryTextIndex(findQueryParams, false);
     }
 
     @Override
     @Cacheable(CacheNames.PROMOTED_DOCUMENTS)
-    public Documents<FindDocument> queryTextIndexForPromotions(final QueryParams<ResourceIdentifier> queryParams) throws HodErrorException {
-        return queryTextIndex(queryParams, true);
+    public Documents<FindDocument> queryTextIndexForPromotions(final FindQueryParams<ResourceIdentifier> findQueryParams) throws HodErrorException {
+        return queryTextIndex(findQueryParams, true);
     }
 
     @Override
@@ -95,27 +95,27 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
         return documents;
     }
 
-    private Documents<FindDocument> queryTextIndex(final QueryParams<ResourceIdentifier> queryParams, final boolean fetchPromotions) throws HodErrorException {
+    private Documents<FindDocument> queryTextIndex(final FindQueryParams<ResourceIdentifier> findQueryParams, final boolean fetchPromotions) throws HodErrorException {
         final String profileName = configService.getConfig().getQueryManipulation().getProfile();
 
         final QueryRequestBuilder params = new QueryRequestBuilder()
-                .setAbsoluteMaxResults(queryParams.getMaxResults())
-                .setSummary(queryParams.getSummary() != null ? Summary.valueOf(queryParams.getSummary()) : null)
-                .setIndexes(queryParams.getIndex())
-                .setFieldText(queryParams.getFieldText())
+                .setAbsoluteMaxResults(findQueryParams.getMaxResults())
+                .setSummary(findQueryParams.getSummary() != null ? Summary.valueOf(findQueryParams.getSummary()) : null)
+                .setIndexes(findQueryParams.getIndex())
+                .setFieldText(findQueryParams.getFieldText())
                 .setQueryProfile(new ResourceIdentifier(getDomain(), profileName))
-                .setSort(queryParams.getSort() != null ? Sort.valueOf(queryParams.getSort()) : null)
-                .setMinDate(queryParams.getMinDate())
-                .setMaxDate(queryParams.getMaxDate())
+                .setSort(findQueryParams.getSort() != null ? Sort.valueOf(findQueryParams.getSort()) : null)
+                .setMinDate(findQueryParams.getMinDate())
+                .setMaxDate(findQueryParams.getMaxDate())
                 .setPromotions(fetchPromotions)
                 .setPrint(Print.fields)
                 .setPrintFields(new ArrayList<>(FindDocument.ALL_FIELDS));
 
-        final Documents<FindDocument> hodDocuments = queryTextIndexService.queryTextIndexWithText(queryParams.getText(), params);
+        final Documents<FindDocument> hodDocuments = queryTextIndexService.queryTextIndexWithText(findQueryParams.getText(), params);
         final List<FindDocument> documentList = new LinkedList<>();
 
         for (final FindDocument hodDocument : hodDocuments.getDocuments()) {
-            documentList.add(addDomain(queryParams.getIndex(), hodDocument));
+            documentList.add(addDomain(findQueryParams.getIndex(), hodDocument));
         }
 
         return new Documents<>(documentList, hodDocuments.getTotalResults(), hodDocuments.getExpandedQuery());

@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.List;
 
 @Data
-public class QueryParams<I extends Identifier> {
+public class FindQueryParams<I extends Identifier> {
     private String text;
     private int maxResults;
     private String summary;
