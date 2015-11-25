@@ -15,16 +15,12 @@ import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Language;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -190,14 +186,13 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
             assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
             verifyThat(synonym + " synonym group complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
             verifyThat(searchPage.countSynonymLists(), is(1));
-            verifyThat(searchPage.countKeywords(), is(1));
+            verifyThat(searchPage.countKeywords(), is(synonymListBears.size()));
         }
 
-        searchPage.addSynonymToGroup("kodiak", "grizzly");
-        searchPage.loadOrFadeWait();
+        searchPage.addSynonymToGroup("kodiak", searchPage.synonymGroupContaining("grizzly"));
         for (final String synonym : synonymListBears) {
             assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym), containsItems(synonymListBears));
-            assertThat("kodiak not included in synonym group " + synonym, searchPage.getSynonymGroupSynonyms(synonym),hasItem("kodiak"));
+            assertThat("kodiak not included in synonym group " + synonym, searchPage.getSynonymGroupSynonyms(synonym), hasItem("kodiak"));
             assertEquals(1, searchPage.countSynonymLists());
             assertEquals(4, searchPage.countKeywords());
         }
@@ -283,85 +278,78 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
             search(synonym, Language.SWAHILI);
 
             assertEquals(1, searchPage.countSynonymLists());
-            assertEquals(3, createKeywordsPage.countKeywords());
-            assertThat("Synonym group does not contain all its members", searchPage.getSynonymGroupSynonyms(synonym),containsInAnyOrder(synonymListCars.toArray()));
+            assertEquals(3, searchPage.countKeywords());
+            assertThat("Synonym group does not contain all its members", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListCars));
         }
     }
 
     @Test
     public void testAddTwoSynonymsToSynonymGroupFromSearchPage() throws InterruptedException {
         assumeThat("Cannot modify keywords from search page in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
+        List<String> houses = new ArrayList<>(Arrays.asList("house", "home", "dwelling", "abode"));
 
-        try {
-            keywordService.addSynonymGroup("house home dwelling abode");
-            search("house", Language.ENGLISH);
-            searchPage.waitForSynonymsLoadingIndicatorToDisappear();
+        keywordService.addSynonymGroup(houses);
+        search("house", Language.ENGLISH);
+        searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 
-            assertEquals(1, searchPage.countSynonymLists());
-            assertEquals(4, createKeywordsPage.countKeywords());
-            verifyThat("Synonym group does not contain all its members", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode"));
+        verifyThat(searchPage.countSynonymLists(), is(1));
+        verifyThat(searchPage.countKeywords(), is(4));
+        verifyThat("Synonym group does not contain all its members", searchPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
-            searchPage.addSynonymToGroup("lodging", "house");
-            searchPage.waitForSynonymsLoadingIndicatorToDisappear();
-            assertThat("New synonym has not been added to the group", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode", "lodging"));
+        searchPage.addSynonymToGroup("lodging", searchPage.synonymGroupContaining("house"));
+        houses.add("lodging");
+        assertThat("New synonym has not been added to the group", searchPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
-            searchPage.addSynonymToGroup("residence", "house");
-            searchPage.waitForSynonymsLoadingIndicatorToDisappear();
-            assertThat("New synonym has not been added to the group", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode", "lodging", "residence"));
+        searchPage.addSynonymToGroup("residence", searchPage.synonymGroupContaining("house"));
+        houses.add("residence");
+        assertThat("New synonym has not been added to the group", searchPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
-            body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-            keywordsPage.loadOrFadeWait();
-            keywordsPage.filterView(KeywordFilter.ALL);
-            assertThat("New synonym has not been added to the group", keywordsPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode", "lodging", "residence"));
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        keywordsPage.loadOrFadeWait();
+        keywordsPage.filterView(KeywordFilter.ALL);
+        assertThat("New synonym has not been added to the group", keywordsPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
-            keywordService.deleteAll(KeywordFilter.ALL);
-            assertThat(keywordsPage.allKeywordGroups(), hasSize(0));
-        } finally {
-            getDriver().navigate().refresh();
-        }
+        keywordService.deleteAll(KeywordFilter.ALL);
+        assertThat(keywordsPage.allKeywordGroups(), hasSize(0));
     }
 
     @Test
     public void testRemoveTwoSynonymsFromSynonymGroupFromSearchPage() throws InterruptedException {
         assumeThat("Cannot modify keywords from search page in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
 
-        try {
-            keywordService.addSynonymGroup(Language.ENGLISH, "house home dwelling abode residence");
-            search("house", Language.ENGLISH);
+        keywordService.addSynonymGroup(Language.ENGLISH, "house home dwelling abode residence");
+        search("house", Language.ENGLISH);
 
-            verifyThat(searchPage.countSynonymLists(), is(1));
-            verifyThat(searchPage.countKeywords(), is(5));
-            verifyThat(searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode", "residence"));
+        verifyThat(searchPage.countSynonymLists(), is(1));
+        verifyThat(searchPage.countKeywords(), is(5));
+        verifyThat(searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode", "residence"));
 
-            searchPage.deleteSynonym("residence", "house");
-            searchPage.loadOrFadeWait();
-            verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
-            verifyThat("Synonym has not been deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("abode"));
-            verifyThat("1 synonym deleted", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode"));
+        searchPage.deleteSynonym("residence");
+        searchPage.loadOrFadeWait();
+        verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
+        verifyThat("Synonym has not been deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("abode"));
+        verifyThat("1 synonym deleted", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode"));
 
-            searchPage.deleteSynonym("abode", "house");
-            searchPage.loadOrFadeWait();
-            verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("abode")));
-            verifyThat("2 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling"));
+        searchPage.deleteSynonym("abode");
+        searchPage.loadOrFadeWait();
+        verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("abode")));
+        verifyThat("2 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling"));
 
-            searchPage.deleteSynonym("dwelling", "house");
-            searchPage.loadOrFadeWait();
-            verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("dwelling")));
-            verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("abode")));
-            verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
-            verifyThat("3 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("home"));
+        searchPage.deleteSynonym("dwelling");
+        searchPage.loadOrFadeWait();
+        verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("dwelling")));
+        verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("abode")));
+        verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
+        verifyThat("3 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("home"));
 
-            body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-            keywordsPage.loadOrFadeWait();
-            keywordsPage.filterView(KeywordFilter.ALL);
-            assertThat("Synonyms have been removed from the group", keywordsPage.getSynonymGroupSynonyms("house"), hasItems("home", "house"));
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        keywordsPage.loadOrFadeWait();
+        keywordsPage.filterView(KeywordFilter.ALL);
+        assertThat("Synonyms have been removed from the group", keywordsPage.getSynonymGroupSynonyms("house"), hasItems("home", "house"));
 
-            keywordService.deleteAll(KeywordFilter.ALL);
-            keywordsPage.filterView(KeywordFilter.SYNONYMS);
-            verifyThat(keywordsPage.countSynonymLists(), is(0));
-        } finally {
-            getDriver().navigate().refresh();
-        }
+        keywordService.deleteAll(KeywordFilter.ALL);
+        keywordsPage.filterView(KeywordFilter.SYNONYMS);
+        verifyThat(keywordsPage.countSynonymLists(), is(0));
     }
 
     @Test
@@ -381,10 +369,10 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         searchPage = getElementFactory().getSearchPage();
 
         search("Korea", Language.CHINESE);
-        verifyThat(searchPage.countSynonymLists(), is(1));
+        verifyThat("synonyms appear on search page for correct language", searchPage.countSynonymLists(), is(1));
 
         searchPage.selectLanguage(Language.FRENCH);
-        verifyThat(searchPage.countSynonymLists(), is(1));
+        verifyThat("synonyms do not appear on search page for wrong language", searchPage.countSynonymLists(), is(0));
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage.filterView(KeywordFilter.ALL);
@@ -403,7 +391,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         search(phrase, Language.ENGLISH);
         searchPage.createSynonymsLink().click();
 
-        assertThat(getDriver().getCurrentUrl(),containsString("keywords/create"));
+        assertThat(getDriver().getCurrentUrl(), containsString("keywords/create"));
 
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
@@ -416,7 +404,6 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat(prospectiveKeywords, not(hasItem("the")));
         assertThat(wordsInPhrase.size(), is(prospectiveKeywords.size()));
     }
-
 
     @Test
     //CSA1694
@@ -434,10 +421,9 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         }
     }
 
-
-    @Test
     //CSA-1719
     //CSA-1792
+    @Test
     public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
         String blacklistOne = "cheese";
         String blacklistTwo = "mouse";

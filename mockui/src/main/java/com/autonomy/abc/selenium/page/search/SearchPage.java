@@ -18,7 +18,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	public final static int RESULTS_PER_PAGE = 6;
 
 	public SearchPage(final WebDriver driver) {
-		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
+		// specify data-pagename to avoid invisible elements from other pages showing up
+		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content [data-pagename='search']"))), driver);
 		waitForLoad();
 	}
 
@@ -28,8 +29,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	@Override
 	public void waitForLoad() {
-		// there can be multiple search-page-contents (some invisible) due to e.g. edit document references
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-page-contents")));
+		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-page-contents")));
 	}
 
 	public WebElement modifiedResultsCheckBox() {
@@ -417,36 +417,40 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getSynonymGroupSynonyms(String synonym) {
-		return ElementUtil.getTexts(synonymGroupContaining(synonym).findElements(By.cssSelector(".term")));
+		return ElementUtil.getTexts(synonymGroupContaining(synonym).findElements(By.cssSelector(".search-for-keyword")));
 	}
 
 	public WebElement synonymGroupContaining(String term) {
-		WebElement termBox = keywordContainer().findElement(By.cssSelector("[data-id='" + term.toLowerCase() + "']"));
-		return ElementUtil.ancestor(termBox, 1);
+		WebElement termBox = keywordsContainer().findElement(By.cssSelector("[data-term='" + term.toLowerCase() + "']"));
+		return ElementUtil.ancestor(termBox, 2);
 	}
 
 	public int countKeywords() {
-		return keywordContainer().findElements(By.cssSelector(".search-terms-list .term")).size();
+		return keywordsContainer().findElements(By.cssSelector(".search-for-keyword")).size();
 	}
 
-	public void addSynonymToGroup(String newSynonym, String existing) {
-		getSynonymGroupSynonyms(existing);
+	public void addSynonymToGroup(String newSynonym, WebElement group) {
+		group.findElement(By.cssSelector(".hp-add")).click();
+		group.findElement(By.cssSelector("[name='new-synonym']")).sendKeys(newSynonym);
+		group.findElement(By.cssSelector(".fa-check")).click();
+		new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] [data-term='" + newSynonym + "']")));
 	}
 
-	public void deleteSynonym(String synonym, String group) {
-		deleteSynonym(synonym);
+	public void deleteSynonym(String toDelete, WebElement group) {
+		group.findElement(By.cssSelector("[data-term='" + toDelete + "'] .remove-keyword")).click();
+		new WebDriverWait(getDriver(), 30).until(ExpectedConditions.stalenessOf(group));
 	}
 
-	public void deleteSynonym(String synonym) {
-		LOGGER.warn("Cannot delete synonyms from search page");
+	public void deleteSynonym(String toDelete) {
+		deleteSynonym(toDelete, synonymGroupContaining(toDelete));
 	}
 
 	public List<String> getBlacklistedTerms() {
-		return ElementUtil.getTexts(keywordContainer().findElements(By.cssSelector(".blacklisted-word")));
+		return ElementUtil.getTexts(keywordsContainer().findElements(By.cssSelector(".blacklisted-word")));
 	}
 
-	private WebElement keywordContainer() {
-		return findElement(By.cssSelector(".search-results-synonyms"));
+	private WebElement keywordsContainer() {
+		return findElement(By.cssSelector(".search-results-synonyms .keywords-list-container"));
 	}
 
 	public List<String> getPromotedDocumentTitles(){
