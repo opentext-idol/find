@@ -19,7 +19,7 @@ public final class ElementUtil {
     }
 
     public static WebElement ancestor(WebElement element, int levels) {
-        String xpath = "./" + StringUtils.repeat("/..", levels);
+        String xpath = "." + StringUtils.repeat("/..", levels);
         return element.findElement(By.xpath(xpath));
     }
 }
