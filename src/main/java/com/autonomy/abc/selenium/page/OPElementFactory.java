@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.page.admin.AboutPage;
+import com.autonomy.abc.selenium.users.OPUsersPage;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.keywords.*;
@@ -60,7 +61,7 @@ public class OPElementFactory extends ElementFactory {
 
     @Override
     public UsersPage getUsersPage() {
-        return UsersPage.make(getDriver());
+        return new OPUsersPage(getDriver());
     }
 
     public AboutPage getAboutPage() {
