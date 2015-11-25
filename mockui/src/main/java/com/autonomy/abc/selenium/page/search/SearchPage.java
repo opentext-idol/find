@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
+import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Language;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -417,28 +419,23 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getSynonymGroupSynonyms(String synonym) {
-		return ElementUtil.getTexts(synonymGroupContaining(synonym).findElements(By.cssSelector(".search-for-keyword")));
+		return synonymGroupContaining(synonym).getSynonyms();
 	}
 
-	public WebElement synonymGroupContaining(String term) {
-		WebElement termBox = keywordsContainer().findElement(By.cssSelector("[data-term='" + term.toLowerCase() + "']"));
-		return ElementUtil.ancestor(termBox, 2);
+	public SynonymGroup synonymGroupContaining(String term) {
+		return keywordsContainer().synonymGroupContaining(term);
 	}
 
 	public int countKeywords() {
-		return keywordsContainer().findElements(By.cssSelector(".search-for-keyword")).size();
+		return keywordsContainer().keywords().size();
 	}
 
-	public void addSynonymToGroup(String newSynonym, WebElement group) {
-		group.findElement(By.cssSelector(".hp-add")).click();
-		group.findElement(By.cssSelector("[name='new-synonym']")).sendKeys(newSynonym);
-		group.findElement(By.cssSelector(".fa-check")).click();
-		new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] [data-term='" + newSynonym + "']")));
+	public void addSynonymToGroup(String newSynonym, SynonymGroup group) {
+		group.add(newSynonym);
 	}
 
-	public void deleteSynonym(String toDelete, WebElement group) {
-		group.findElement(By.cssSelector("[data-term='" + toDelete + "'] .remove-keyword")).click();
-		new WebDriverWait(getDriver(), 30).until(ExpectedConditions.stalenessOf(group));
+	public void deleteSynonym(String toDelete, SynonymGroup group) {
+		group.remove(toDelete);
 	}
 
 	public void deleteSynonym(String toDelete) {
@@ -446,11 +443,11 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getBlacklistedTerms() {
-		return ElementUtil.getTexts(keywordsContainer().findElements(By.cssSelector(".blacklisted-word")));
+		return ElementUtil.getTexts(keywordsContainer().blacklistTerms());
 	}
 
-	private WebElement keywordsContainer() {
-		return findElement(By.cssSelector(".search-results-synonyms .keywords-list-container"));
+	private KeywordsContainer keywordsContainer() {
+		return new KeywordsContainer(findElement(By.cssSelector(".search-results-synonyms .keywords-list-container")), getDriver());
 	}
 
 	public List<String> getPromotedDocumentTitles(){
