@@ -3,6 +3,8 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -20,10 +22,16 @@ public class HSONewUser implements NewUser {
 
     private final String username;
     private final String email;
+    private AuthProvider provider;
 
     public HSONewUser(String username, String email) {
         this.username = username;
-        this.email = email.replace("+","+" + Math.random());
+        this.email = email;
+    }
+
+    public HSONewUser(String username, String email, AuthProvider provider){
+        this(username, email);
+        this.provider = provider;
     }
 
     @Override
@@ -38,10 +46,12 @@ public class HSONewUser implements NewUser {
 
         if(hsoUsersPage.getUsernameInput().getValue().equals("")) {
             successfullyAdded(usersPage);
+
+            return new HSOUser(username, email, role, provider);
         }
 
         //TODO if user hasn't been successfully added return what?
-        return new HSOUser(username,email,role);
+        return null;
     }
 
     private void successfullyAdded(UsersPage usersPage) {
