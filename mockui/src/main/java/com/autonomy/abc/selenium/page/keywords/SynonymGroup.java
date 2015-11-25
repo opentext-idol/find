@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.LabelBox;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -21,9 +22,13 @@ public class SynonymGroup {
     }
 
     public void add(String synonym) {
-        synonymAddButton().click();
+        try {
+            synonymAddButton().click();
+        } catch (ElementNotVisibleException e) {
+            /* box already open */
+        }
         synonymInput().setAndSubmit(synonym);
-        new WebDriverWait(driver, 30).until(GritterNotice.notificationContaining("Added \"" + synonym + "\" to a synonym group"));
+        new WebDriverWait(driver, 30).until(GritterNotice.notificationContaining("Added \"" + synonym.toLowerCase() + "\" to a synonym group"));
     }
 
     public void remove(String synonym) {
@@ -35,11 +40,15 @@ public class SynonymGroup {
         return ElementUtil.getTexts(group.findElements(By.cssSelector("[data-term]")));
     }
 
-    private WebElement synonymAddButton() {
+    public WebElement synonymAddButton() {
         return group.findElement(By.cssSelector(".hp-add"));
     }
 
-    private FormInput synonymInput() {
+    public FormInput synonymInput() {
         return new FormInput(group.findElement(By.cssSelector("[name='new-synonym']")), driver);
+    }
+
+    public WebElement tickButton() {
+        return group.findElement(By.cssSelector(".fa-check"));
     }
 }

@@ -575,7 +575,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         for (final String hiddenBooleansProximity : hiddenSearchOperators) {
             LOGGER.info("Adding '"+hiddenBooleansProximity+"'");
 
-            keywordsPage.addSynonymToGroup(hiddenBooleansProximity, "holder");
+            keywordsPage.addSynonymToGroup(hiddenBooleansProximity, keywordsPage.synonymGroupContaining("holder"));
 
             new WebDriverWait(getDriver(),120).until(new ExpectedCondition<Boolean>() {     //This is too long but after sending lots of requests it slows down a loto
                 @Override

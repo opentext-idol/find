@@ -12,6 +12,7 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Language;
@@ -20,7 +21,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -256,9 +256,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 
 		keywordsPage.loadOrFadeWait();
-		keywordsPage.deleteSynonym("keyboard", "piano");
+		keywordsPage.deleteSynonym("keyboard");
 		notificationContents.add("Removed \"keyboard\" from a synonym group");
-		waitForNotification();
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		verifyNotifications(notificationContents);
@@ -271,7 +270,6 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.selectLanguage(Language.ENGLISH);
 		keywordsPage.deleteBlacklistedTerm("orange");
 		notificationContents.add("Removed \"orange\" from the blacklist");
-		waitForNotification();
 		if (config.getType().equals(ApplicationType.HOSTED)) {
 			// TODO: belongs in a hosted notifications test
 			body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
@@ -282,10 +280,6 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		wait.until(ExpectedConditions.visibilityOf(notifications.notificationNumber(1))).click();
 		verifyThat("clicking notifications does nothing", notifications, displayed());
-	}
-
-	private void waitForNotification() {
-		new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
 	}
 
 	private void verifyNotifications(List<String> contents) {
@@ -465,7 +459,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		getDriver().switchTo().window(browserHandles.get(0));
 		keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.loadOrFadeWait();
-		keywordsPage.deleteSynonym("couple", "two");
+		keywordsPage.deleteSynonym("couple");
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
@@ -474,7 +468,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		getDriver().switchTo().window(browserHandles.get(0));
 		keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.loadOrFadeWait();
-		keywordsPage.deleteSynonym("pair", "duo");
+		keywordsPage.deleteSynonym("pair");
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
@@ -555,7 +549,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.synonymGroupPlusButton("бір").click();
 		assertThat(keywordsPage.synonymGroupTextBox("бір"), displayed());
 
-		keywordsPage.deleteSynonym("екі", "үш");
+		keywordsPage.deleteSynonym("екі");
 		assertThat(keywordsPage.synonymGroupTextBox("бір"), displayed());
 	}
 
@@ -876,7 +870,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		synonyms.remove(toDelete);
 		int expectedGroups = keywordsPage.countSynonymLists();
 		int expectedKeywords = keywordsPage.countKeywords() - 1;
-		keywordsPage.deleteSynonym(toDelete, keywordsPage.getSynonymGroup(synonyms.get(0)));
+		keywordsPage.deleteSynonym(toDelete, keywordsPage.synonymGroupContaining(synonyms.get(0)));
 
 		verifySynonymGroup(synonyms);
 		verifyThat("'" + toDelete + "' is no longer in synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(toDelete)));
@@ -903,7 +897,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		synonyms.add(toAdd);
 		int expectedGroups = keywordsPage.countSynonymLists();
 		int expectedKeywords = keywordsPage.countKeywords() + 1;
-		keywordsPage.addSynonymToGroup(toAdd, keywordsPage.getSynonymGroup(synonyms.get(0)));
+		keywordsPage.addSynonymToGroup(toAdd, keywordsPage.synonymGroupContaining(synonyms.get(0)));
 
 		verifyThat("'" + toAdd + "' added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), hasItem(equalToIgnoringCase(toAdd)));
 		verifySynonymGroup(synonyms);
@@ -915,7 +909,9 @@ public class KeywordsPageITCase extends ABCTestBase {
 	private void verifyCannotAddToGroup(String toAdd, List<String> synonyms) {
 		int expectedGroups = keywordsPage.countSynonymLists();
 		int expectedKeywords = keywordsPage.countKeywords();
-		keywordsPage.addSynonymToGroup(toAdd, keywordsPage.getSynonymGroup(synonyms.get(0)));
+		SynonymGroup group = keywordsPage.synonymGroupContaining(synonyms.get(0));
+		group.synonymAddButton().click();
+		group.synonymInput().setAndSubmit(toAdd);
 
 		verifyThat("'" + toAdd + "' not added to synonym group", keywordsPage.getSynonymGroupSynonyms(synonyms.get(0)), not(hasItem(equalToIgnoringCase(toAdd))));
 		verifyThat("synonym box not closed", keywordsPage.synonymGroupTextBox(synonyms.get(0)), displayed());

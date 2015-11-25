@@ -35,6 +35,10 @@ public class KeywordsContainer extends AppElement {
         return groups;
     }
 
+    public List<WebElement> keywordGroups() {
+        return findElements(By.cssSelector(".keywords-sub-list"));
+    }
+
     public List<WebElement> blacklistTerms() {
         return findElements(By.cssSelector(".blacklisted-word"));
     }

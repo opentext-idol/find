@@ -94,7 +94,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public List<WebElement> allKeywordGroups() {
-        return findElements(By.cssSelector(".keywords-container .keywords-sub-list"));
+        return keywordsContainer().keywordGroups();
     }
 
     public List<WebElement> removeButtons(WebElement keywordGroup) {
@@ -129,18 +129,13 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElements(By.cssSelector(".keywords-list .remove-keyword")).size();
     }
 
-    public WebElement getSynonymGroup(String synonym) {
-        // li[data-keywords-cid=...]
-        return getSynonymIcon(synonym).findElement(By.xpath(".//../../../.."));
-    }
-
     @Deprecated
     public int countSynonymGroupsWithLeadSynonym(final String synonym) {
         return findElement(By.cssSelector(".keywords-list")).findElements(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']")).size();
     }
 
     public int countSynonymGroupsWithSynonym(final String synonym) {
-        return findElement(By.cssSelector(".keywords-container .keywords-list")).findElements(By.xpath(".//ul[contains(@class,'keywords-sub-list')]/li[@data-term='"+synonym+"']")).size();
+        return findElement(By.cssSelector(".keywords-container .keywords-list")).findElements(By.xpath(".//ul[contains(@class,'keywords-sub-list')]/li[@data-term='" + synonym + "']")).size();
     }
 
     public WebElement searchFilterTextBox() {
@@ -193,6 +188,5 @@ public abstract class KeywordsPage extends KeywordsBase {
         }
         return leadSynonyms;
     }
-
 }
 
