@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.page.keywords;
 
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.util.Language;
 import org.openqa.selenium.By;
@@ -90,11 +89,15 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public int countSynonymLists() {
-        return (findElement(By.className("keywords-list"))).findElements(By.cssSelector(".add-synonym")).size();
+        return keywordsContainer().synonymGroups().size();
     }
 
     public List<WebElement> allKeywordGroups() {
         return keywordsContainer().keywordGroups();
+    }
+
+    public List<String> getAllKeywords() {
+        return keywordsContainer().getKeywords();
     }
 
     public List<WebElement> removeButtons(WebElement keywordGroup) {

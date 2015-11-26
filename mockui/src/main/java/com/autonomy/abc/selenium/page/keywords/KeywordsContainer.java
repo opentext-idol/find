@@ -45,9 +45,17 @@ public class KeywordsContainer extends AppElement {
 
     public List<Removable> keywords() {
         List<Removable> keywords = new ArrayList<>();
-        for (WebElement element : findElements(By.cssSelector("[data-term]"))) {
+        for (WebElement element : keywordElements()) {
             keywords.add(new LabelBox(element, getDriver()));
         }
         return keywords;
+    }
+
+    public List<String> getKeywords() {
+        return ElementUtil.getTexts(keywordElements());
+    }
+
+    private List<WebElement> keywordElements() {
+        return findElements(By.cssSelector("[data-term]"));
     }
 }

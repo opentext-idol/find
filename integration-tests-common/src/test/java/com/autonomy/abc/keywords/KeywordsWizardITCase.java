@@ -138,7 +138,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         keywordsPage.filterView(KeywordFilter.ALL);
 
         keywordsPage.selectLanguage("French");
-        assertThat("synonym horse is not displayed", keywordsPage.leadSynonym("horse").isDisplayed());
+        assertThat("synonym horse is not displayed", keywordsPage.getAllKeywords(), hasItem("horse"));
 
         final List<String> synonymGroup = keywordsPage.getSynonymGroupSynonyms("horse");
         assertThat(synonymGroup,hasItems("stuff", "horse", "pony", "things"));
