@@ -31,7 +31,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	@Override
 	public void waitForLoad() {
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-page-contents")));
+		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-page-contents")));
 	}
 
 	public WebElement modifiedResultsCheckBox() {
@@ -394,6 +394,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	public void openParametricValuesList() {
 		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
 		loadOrFadeWait();
+	}
+
+	@Override
+	public WebElement searchResultCheckbox(int resultNumber) {
+		// TODO: find others like this, avoid repetition
+		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
 	public List<Checkbox> indexList() {

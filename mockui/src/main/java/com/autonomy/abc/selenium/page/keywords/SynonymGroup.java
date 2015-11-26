@@ -32,7 +32,7 @@ public class SynonymGroup {
     }
 
     public void remove(String synonym) {
-        WebElement synonymBox = group.findElement(By.cssSelector("[data-term='" + synonym + "']"));
+        WebElement synonymBox = group.findElement(By.cssSelector("[data-term='" + synonym.toLowerCase() + "']"));
         new LabelBox(synonymBox, driver).removeAndWait();
     }
 
