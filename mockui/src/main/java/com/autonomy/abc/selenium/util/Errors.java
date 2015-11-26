@@ -15,6 +15,7 @@ public class Errors {
         public static final String GENERAL = "An error occurred retrieving results";
         public static final String OPERATORS = "Invalid use of special tokens";
         public static final String STOPWORDS = "All terms were invalid, through being stopwords";
+        public static final String BACKEND = "Backend request failed";
     }
 
     public static class Keywords {

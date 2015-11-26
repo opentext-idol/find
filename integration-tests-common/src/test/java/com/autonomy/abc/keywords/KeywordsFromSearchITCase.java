@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Language;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -450,6 +451,52 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         search(blacklistOne, Language.ENGLISH);
         assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
+    }
+
+    // CCUK-3471
+    // CSA-1808
+    @Test
+    public void testCreateLargeSynonymGroup() {
+        List<String> synonyms = new ArrayList<>();
+        for (int i=0; i<10; i++) {
+            synonyms.add("term" + i);
+        }
+
+        searchPage = keywordService.addSynonymGroup(synonyms);
+        assertThat(searchPage, not(containsText(Errors.Search.BACKEND)));
+    }
+
+    @Test
+    public void testCreateLargeDuplicateSynonymGroups() {
+        List<String> synonyms;
+        for (int outer=0; outer<10; outer++) {
+            synonyms = new ArrayList<>();
+            synonyms.add("everywhere");
+            for (int inner=0; inner<10; inner++) {
+                synonyms.add("term" + outer + "" + inner);
+            }
+            keywordService.addSynonymGroup(synonyms);
+        }
+        search("everywhere", Language.ENGLISH);
+        assertThat(searchPage, not(containsText(Errors.Search.BACKEND)));
+    }
+
+    @Test
+    public void testCreateLargeDistinctSynonymGroups() {
+        List<String> synonyms;
+        for (int outer=0; outer<10; outer++) {
+            synonyms = new ArrayList<>();
+            for (int inner=0; inner<10; inner++) {
+                synonyms.add("term" + outer + "" + inner);
+            }
+            keywordService.addSynonymGroup(synonyms);
+        }
+        synonyms = new ArrayList<>();
+        for (int outer=0; outer<10; outer++) {
+            synonyms.add("term" + outer + "0");
+        }
+        search(StringUtils.join(synonyms, " "), Language.ENGLISH);
+        assertThat(searchPage, not(containsText(Errors.Search.BACKEND)));
     }
 
     private void search(String searchTerm, Language language) {
