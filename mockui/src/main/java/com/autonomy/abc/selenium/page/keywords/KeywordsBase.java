@@ -1,16 +1,19 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class KeywordsBase extends AppElement implements AppPage {
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public KeywordsBase(final WebElement element, final WebDriver driver) {
 		super(element, driver);
@@ -21,13 +24,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	}
 
 	public List<String> getBlacklistedTerms() {
-		final List<String> blacklistedTerms = new ArrayList<>();
-
-		for (final WebElement blacklistTerm : findElements(By.cssSelector(".blacklisted-word .keyword-label-text"))) {
-			blacklistedTerms.add(blacklistTerm.getText());
-		}
-
-		return blacklistedTerms;
+		return ElementUtil.getTexts(keywordsContainer().blacklistTerms());
 	}
 
 	@Deprecated
@@ -39,61 +36,37 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		return getParent(getParent(leadSynonym(synonymGroupLead)));
 	}
 
-	public void addSynonymToGroup(final String synonym, final String synonymGroupLead) {
-		synonymGroupPlusButton(synonymGroupLead).click();
-		synonymGroupTextBox(synonymGroupLead).clear();
-		synonymGroupTextBox(synonymGroupLead).sendKeys(synonym);
-		synonymGroupTickButton(synonymGroupLead).click();
-		waitForRefreshIconToDisappear();
-	}
-
-	public void addSynonymToGroup(final String synonym, final WebElement group) {
-		try {
-			group.findElement(By.cssSelector(".hp-add")).click();
-		} catch (ElementNotVisibleException e) {
-			/* box already open */
-		}
-		group.findElement(By.cssSelector("[name='new-synonym']")).sendKeys(synonym);
-		group.findElement(By.cssSelector(".fa-check")).click();
-		waitForRefreshIconToDisappear();
+	public void addSynonymToGroup(final String synonym, final SynonymGroup group) {
+		group.add(synonym);
 	}
 
 	public WebElement synonymGroupPlusButton(final String synonymGroupLead) {
-		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".hp-add"));
+		return synonymGroupContaining(synonymGroupLead).synonymAddButton();
 	}
 
 	public WebElement synonymGroupTickButton(final String synonymGroupLead) {
-		return synonymGroup(synonymGroupLead).findElement(By.cssSelector(".fa-check"));
+		return synonymGroupContaining(synonymGroupLead).tickButton();
 	}
 
 	public WebElement synonymGroupTextBox(final String synonymGroupLead) {
-		return synonymGroup(synonymGroupLead).findElement(By.cssSelector("[name='new-synonym']"));
+		return synonymGroupContaining(synonymGroupLead).synonymInput().getElement();
+	}
+
+	public void deleteSynonym(final String synonym) {
+		deleteSynonym(synonym, synonymGroupContaining(synonym));
 	}
 
 	public void deleteSynonym(final String synonym, final String synonymGroupLead) throws InterruptedException {
-		LoggerFactory.getLogger(KeywordsBase.class).info("Deleting '"+synonym+"' from '"+synonymGroupLead+"'");
-		getSynonymIcon(synonym, synonymGroupLead).click();
-		waitForRefreshIconToDisappear();
+		deleteSynonym(synonym, synonymGroupContaining(synonymGroupLead));
 	}
 
-	public void deleteSynonym(String synonym, WebElement synonymGroup){
-		LoggerFactory.getLogger(KeywordsBase.class).info("Deleting '"+synonym+"'");
-		getSynonymIcon(synonym,synonymGroup).click();
-		waitForRefreshIconToDisappear();
+	public void deleteSynonym(String synonym, SynonymGroup synonymGroup){
+		logger.info("Deleting '" + synonym + "'");
+		synonymGroup.remove(synonym);
 	}
 
 	public List<String> getSynonymGroupSynonyms(final String leadSynonym) {
-		loadOrFadeWait();
-		final List<WebElement> synonyms = synonymGroup(leadSynonym).findElements(By.cssSelector("li span span"));
-		final List<String> synonymNames = new ArrayList<>();
-
-		for (final WebElement synonym : synonyms){
-			if (!synonym.getText().equals("")) {
-				synonymNames.add(synonym.getText());
-			}
-		}
-
-		return synonymNames;
+		return synonymGroupContaining(leadSynonym).getSynonyms();
 	}
 
 	public void deleteBlacklistedTerm(final String blacklistedTerm) {
@@ -169,4 +142,12 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
             return 0;
         }
 	}
+
+	public SynonymGroup synonymGroupContaining(String synonym) {
+		return keywordsContainer().synonymGroupContaining(synonym);
+	}
+
+	protected KeywordsContainer keywordsContainer() {
+        return new KeywordsContainer(findElement(By.cssSelector(".keywords-container")), getDriver());
+    }
 }

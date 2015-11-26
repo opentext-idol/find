@@ -3,9 +3,11 @@ package com.autonomy.abc.selenium.util;
 // hardcoded strings can be problematic
 // add new languages here as necessary
 public enum Language {
+    ARABIC("Arabic"),
     CHINESE("Chinese"),
     ENGLISH("English"),
-    FRENCH("French");
+    FRENCH("French"),
+    SWAHILI("Swahili");
 
     private String name;
 
