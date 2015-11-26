@@ -15,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.InputStream;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -23,20 +24,17 @@ public class AciResponseProcessorTest {
     @Mock
     private IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser;
 
-    @Mock
-    private AciResponseProcessorCallback<GetStatusResponseData, String> callback;
-
-    private AciResponseProcessor<GetStatusResponseData, String> aciResponseProcessor;
+    private AciResponseProcessor<GetStatusResponseData> aciResponseProcessor;
 
     @Before
     public void setUp() {
-        aciResponseProcessor = new AciResponseProcessor<>(idolResponseParser, GetStatusResponseData.class, callback);
+        aciResponseProcessor = new AciResponseProcessor<>(idolResponseParser, GetStatusResponseData.class);
     }
 
     @Test
     public void process() {
         aciResponseProcessor.process(new MockAciResponseInputStream(IOUtils.toInputStream("Some data")));
-        verify(callback).process(any(GetStatusResponseData.class));
+        verify(idolResponseParser).parseIdolResponseData(anyString(), any(Class.class));
     }
 
     @Test(expected = ProcessorException.class)

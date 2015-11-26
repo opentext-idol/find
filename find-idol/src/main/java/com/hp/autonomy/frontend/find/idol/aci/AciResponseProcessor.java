@@ -13,21 +13,19 @@ import java.io.IOException;
  * Generic processor for handling Idol responses.
  * Note that this uses DOM processing behind the scenes so should not be used for very large responses.
  */
-public class AciResponseProcessor<T, R> implements Processor<R> {
+public class AciResponseProcessor<T> implements Processor<T> {
     private static final long serialVersionUID = -1983490659468698548L;
 
     private final IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser;
-    private final AciResponseProcessorCallback<T, R> callback;
     private final Class<T> responseDataType;
 
-    public AciResponseProcessor(final IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser, final Class<T> responseDataType, final AciResponseProcessorCallback<T, R> callback) {
+    public AciResponseProcessor(final IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser, final Class<T> responseDataType) {
         this.idolResponseParser = idolResponseParser;
-        this.callback = callback;
         this.responseDataType = responseDataType;
     }
 
     @Override
-    public R process(final AciResponseInputStream aciResponseInputStream) {
+    public T process(final AciResponseInputStream aciResponseInputStream) {
         final String xml;
         try {
             xml = IOUtils.toString(aciResponseInputStream);
@@ -35,7 +33,6 @@ public class AciResponseProcessor<T, R> implements Processor<R> {
             throw new ProcessorException("Error running getstatus command", e);
         }
 
-        final T responseData = idolResponseParser.parseIdolResponseData(xml, responseDataType);
-        return callback.process(responseData);
+        return idolResponseParser.parseIdolResponseData(xml, responseDataType);
     }
 }

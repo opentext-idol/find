@@ -10,7 +10,6 @@ import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorCallback;
 import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
 import com.hp.autonomy.frontend.find.idol.aci.DatabaseName;
 import com.hp.autonomy.types.idol.GetVersionResponseData;
@@ -42,37 +41,17 @@ import java.util.Set;
 @Service
 public class IdolDocumentService implements DocumentsService<DatabaseName, FindDocument, AciErrorException> {
     private final AciService contentAciService;
-    private final Processor<Documents<FindDocument>> queryResponseProcessor;
-    private final Processor<List<FindDocument>> suggestResponseProcessor;
-    private final Processor<List<String>> versionResponseProcessor;
+    private final Processor<QueryResponseData> queryResponseProcessor;
+    private final Processor<SuggestResponseData> suggestResponseProcessor;
+    private final Processor<GetVersionResponseData> versionResponseProcessor;
 
     @Autowired
     public IdolDocumentService(final AciService contentAciService, final AciResponseProcessorFactory aciResponseProcessorFactory) {
         this.contentAciService = contentAciService;
 
-        queryResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(QueryResponseData.class, new AciResponseProcessorCallback<QueryResponseData, Documents<FindDocument>>() {
-            @Override
-            public Documents<FindDocument> process(final QueryResponseData responseData) {
-                final List<Hit> hits = responseData.getHit();
-                final List<FindDocument> results = parseQueryHits(hits);
-                return new Documents<>(results, responseData.getTotalhits(), null);
-            }
-        });
-
-        suggestResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(SuggestResponseData.class, new AciResponseProcessorCallback<SuggestResponseData, List<FindDocument>>() {
-            @Override
-            public List<FindDocument> process(final SuggestResponseData responseData) {
-                final List<Hit> hits = responseData.getHit();
-                return parseQueryHits(hits);
-            }
-        });
-
-        versionResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(GetVersionResponseData.class, new AciResponseProcessorCallback<GetVersionResponseData, List<String>>() {
-            @Override
-            public List<String> process(final GetVersionResponseData responseData) {
-                return Arrays.asList(responseData.getProducttypecsv().split(","));
-            }
-        });
+        queryResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(QueryResponseData.class);
+        suggestResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(SuggestResponseData.class);
+        versionResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(GetVersionResponseData.class);
     }
 
     @Override
@@ -83,7 +62,9 @@ public class IdolDocumentService implements DocumentsService<DatabaseName, FindD
     @Override
     public Documents<FindDocument> queryTextIndexForPromotions(final FindQueryParams<DatabaseName> findQueryParams) throws AciErrorException {
         final Set<AciParameter> aciParameters = new AciParameters(GeneralActions.GetVersion.name());
-        final List<String> productTypes = contentAciService.executeAction(aciParameters, versionResponseProcessor);
+
+        final GetVersionResponseData versionResponseData = contentAciService.executeAction(aciParameters, versionResponseProcessor);
+        final List<String> productTypes = Arrays.asList(versionResponseData.getProducttypecsv().split(","));
 
         return productTypes.contains(ProductType.QMS.name()) ? queryTextIndex(findQueryParams, true) : new Documents<>(Collections.<FindDocument>emptyList(), 0, null);
     }
@@ -108,7 +89,10 @@ public class IdolDocumentService implements DocumentsService<DatabaseName, FindD
             aciParameters.add(QmsActionParams.Promotions.name(), true);
         }
 
-        return contentAciService.executeAction(aciParameters, queryResponseProcessor);
+        final QueryResponseData responseData = contentAciService.executeAction(aciParameters, queryResponseProcessor);
+        final List<Hit> hits = responseData.getHit();
+        final List<FindDocument> results = parseQueryHits(hits);
+        return new Documents<>(results, responseData.getTotalhits(), null);
     }
 
     private String convertCollectionToIdolCsv(final Collection<?> collection) {
@@ -121,7 +105,9 @@ public class IdolDocumentService implements DocumentsService<DatabaseName, FindD
         aciParameters.add(SuggestParams.Reference.name(), new Reference(reference));
         aciParameters.add(SuggestParams.DatabaseMatch.name(), convertCollectionToIdolCsv(indexes));
 
-        return contentAciService.executeAction(aciParameters, suggestResponseProcessor);
+        final SuggestResponseData responseData = contentAciService.executeAction(aciParameters, suggestResponseProcessor);
+        final List<Hit> hits = responseData.getHit();
+        return parseQueryHits(hits);
     }
 
     private List<FindDocument> parseQueryHits(final Collection<Hit> hits) {

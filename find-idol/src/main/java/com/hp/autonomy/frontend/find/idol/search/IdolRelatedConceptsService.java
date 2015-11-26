@@ -5,7 +5,6 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsService;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorCallback;
 import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
 import com.hp.autonomy.frontend.find.idol.aci.DatabaseName;
 import com.hp.autonomy.types.idol.QsElement;
@@ -26,17 +25,12 @@ public class IdolRelatedConceptsService implements RelatedConceptsService<QsElem
     private static final int MAX_RESULTS = 50;
 
     private final AciService contentAciService;
-    private final Processor<List<QsElement>> queryResponseProcessor;
+    private final Processor<QueryResponseData> queryResponseProcessor;
 
     @Autowired
     public IdolRelatedConceptsService(final AciService contentAciService, final AciResponseProcessorFactory aciResponseProcessorFactory) {
         this.contentAciService = contentAciService;
-        queryResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(QueryResponseData.class, new AciResponseProcessorCallback<QueryResponseData, List<QsElement>>() {
-            @Override
-            public List<QsElement> process(final QueryResponseData responseData) {
-                return responseData.getQs() != null ? responseData.getQs().getElement() : Collections.<QsElement>emptyList();
-            }
-        });
+        queryResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(QueryResponseData.class);
     }
 
     @Override
@@ -48,7 +42,9 @@ public class IdolRelatedConceptsService implements RelatedConceptsService<QsElem
         parameters.add(QueryParams.MaxResults.name(), MAX_RESULTS);
         parameters.add(QueryParams.Print.name(), PrintParam.NoResults);
         parameters.add(QueryParams.QuerySummary.name(), true);
-        return contentAciService.executeAction(parameters, queryResponseProcessor);
+
+        final QueryResponseData responseData = contentAciService.executeAction(parameters, queryResponseProcessor);
+        return responseData.getQs() != null ? responseData.getQs().getElement() : Collections.<QsElement>emptyList();
     }
 
     private String convertCollectionToIdolCsv(final Collection<?> collection) {

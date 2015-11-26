@@ -16,7 +16,7 @@ public class AciResponseProcessorFactory {
         this.idolResponseParser = idolResponseParser;
     }
 
-    public <T, R> Processor<R> createAciResponseProcessor(final Class<T> responseDataType, final AciResponseProcessorCallback<T, R> callback) {
-        return new AciResponseProcessor<>(idolResponseParser, responseDataType, callback);
+    public <T> Processor<T> createAciResponseProcessor(final Class<T> responseDataType) {
+        return new AciResponseProcessor<>(idolResponseParser, responseDataType);
     }
 }

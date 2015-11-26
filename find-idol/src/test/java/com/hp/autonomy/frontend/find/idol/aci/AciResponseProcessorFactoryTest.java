@@ -17,9 +17,6 @@ public class AciResponseProcessorFactoryTest {
     @Mock
     private IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser;
 
-    @Mock
-    private AciResponseProcessorCallback<GetStatusResponseData, String> callback;
-
     private AciResponseProcessorFactory aciResponseProcessorFactory;
 
     @Before
@@ -29,6 +26,6 @@ public class AciResponseProcessorFactoryTest {
 
     @Test
     public void createAciResponseProcessor() {
-        assertNotNull(aciResponseProcessorFactory.createAciResponseProcessor(GetStatusResponseData.class, callback));
+        assertNotNull(aciResponseProcessorFactory.createAciResponseProcessor(GetStatusResponseData.class));
     }
 }
