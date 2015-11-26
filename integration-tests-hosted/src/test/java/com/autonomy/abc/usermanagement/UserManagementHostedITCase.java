@@ -78,6 +78,20 @@ public class UserManagementHostedITCase extends HostedTestBase {
         verifyThat(usersPage.getRoleOf(user), is(Role.USER));
     }
 
+    @Test
+    public void testResettingAuthentication(){
+        HSONewUser newUser = new HSONewUser("authenticationtest","hodtestqa401+authenticationtest@gmail.com").validate();
+
+        HSOUser user = userService.createNewUser(newUser,Role.USER);
+
+        usersPage.refreshButton().click();
+        verifyThat(usersPage.getStatusOf(user),is(Status.CONFIRMED));
+
+        userService.resetAuthentication(user);
+
+        user.resetAuthentication(usersPage);
+    }
+
     private WebElement getContainingDiv(WebElement webElement){
         return webElement.findElement(By.xpath(".//../.."));
     }

@@ -35,6 +35,7 @@ public class HSOUser extends User {
         driver.switchTo().window(browserHandles.get(1));
 
         helper.goToGMail();
+        helper.tryLoggingInToEmail();
         helper.waitForNewEmail();
         helper.clickUnreadMessage();
         helper.expandCollapsedMessage();

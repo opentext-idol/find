@@ -424,7 +424,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 	@Test
 	public void testUserFilter(){
-		LoggerFactory.getLogger(UsersPageITCase.class).warn("CANNOT FILTER BY 'NONE' - NEEDS TO BE ADDED IN WHEN WORKING");
+		LoggerFactory.getLogger(UsersPageITCase.class).warn("CANNOT FILTER BY 'NONE' - NEEDS TO BE UNCOMMENTED WHEN WORKING");
 
 		NewUser newUser3 = getConfig().getNewUser("bob");
 
