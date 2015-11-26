@@ -23,6 +23,8 @@ import java.util.List;
 
 @Service
 public class IdolRelatedConceptsService implements RelatedConceptsService<QsElement, DatabaseName, AciErrorException> {
+    private static final int MAX_RESULTS = 50;
+
     private final AciService contentAciService;
     private final Processor<List<QsElement>> queryResponseProcessor;
 
@@ -43,7 +45,7 @@ public class IdolRelatedConceptsService implements RelatedConceptsService<QsElem
         parameters.add(QueryParams.Text.name(), text);
         parameters.add(QueryParams.DatabaseMatch.name(), convertCollectionToIdolCsv(indexes));
         parameters.add(QueryParams.FieldText.name(), fieldText);
-        parameters.add(QueryParams.MaxResults.name(), 50); //TODO
+        parameters.add(QueryParams.MaxResults.name(), MAX_RESULTS);
         parameters.add(QueryParams.Print.name(), PrintParam.NoResults);
         parameters.add(QueryParams.QuerySummary.name(), true);
         return contentAciService.executeAction(parameters, queryResponseProcessor);
