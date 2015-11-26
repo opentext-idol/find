@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
@@ -224,14 +226,14 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
 
-        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
-        Thread.sleep(5000); //Ensure all blacklist terms have shown up
+        FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 30).withMessage("creating blacklist terms");
+        wait.until(GritterNotice.notificationAppears());
+        wait.until(GritterNotice.notificationsDisappear());
         final List<String> blacklistTerms = keywordsPage.getBlacklistedTerms();
         createKeywordsPage.loadOrFadeWait();
-        assertThat(blacklistTerms, hasItems("danger", "warning", "beware", "scary"));
-        assertEquals("too many blacklist terms", 4, blacklistTerms.size());
+        assertThat(blacklistTerms, containsItems(Arrays.asList("danger", "warning", "beware", "scary")));
+        assertThat(blacklistTerms, hasSize(4));
     }
-
 
     //Duplicate blacklisted terms are not allowed to be created within the same language
     //CSA-1791

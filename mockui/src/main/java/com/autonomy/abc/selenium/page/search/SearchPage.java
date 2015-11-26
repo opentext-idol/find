@@ -186,7 +186,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> promotionsSummaryList(final boolean fullList) {
-		loadOrFadeWait();
+		waitForPromotionsLoadIndicatorToDisappear();
 		final List<String> promotionsList = new ArrayList<>();
 
 		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
@@ -220,13 +220,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	private List<String> getVisiblePromotedItems() {
-		final List<String> promotionsList = new LinkedList<>();
-
-		for (final WebElement promotionTitle : findElements(By.cssSelector(".promotions-list h3 a"))) {
-			promotionsList.add(promotionTitle.getText());
-		}
-
-		return promotionsList;
+		return ElementUtil.getTexts(findElements(By.cssSelector(".promotions-list h3 a")));
 	}
 
 	public List<WebElement> getPromotedResults() {

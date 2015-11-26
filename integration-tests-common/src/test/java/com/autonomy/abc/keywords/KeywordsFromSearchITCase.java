@@ -3,6 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
@@ -22,7 +23,9 @@ import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
@@ -89,7 +92,9 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
+        waitForKeywordCreation();
+        keywordsPage = getElementFactory().getKeywordsPage();
+
         assertThat("Blacklisted term not added", keywordsPage.getBlacklistedTerms().contains("noir"));
     }
 
@@ -126,7 +131,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
-        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+        searchPage.waitForSynonymsLoadingIndicatorToDisappear();
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
@@ -242,7 +247,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         keywordsPage.selectLanguageButton();	//Wait for select Language button
 
         if(getConfig().getType().equals(ApplicationType.ON_PREM)){
-            assertThat("Blacklist has been created in the wrong language", keywordsPage.getSelectedLanguage(), equalToIgnoringCase("Arabic"));
+            assertThat("blacklist has been created in the correct language", keywordsPage.getSelectedLanguage(), equalToIgnoringCase("Arabic"));
         }
 
         keywordsPage.loadOrFadeWait();
@@ -251,21 +256,19 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         keywordsPage.selectLanguage("Arabic");
 
-        assertThat("Blacklisted term not created", keywordsPage.getBlacklistedTerms(), hasItem("wizard"));
+        assertThat("blacklisted term created successfully", keywordsPage.getBlacklistedTerms(), hasItem("wizard"));
 
-        body.getTopNavBar().search("wizard");
-        new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-
-        searchPage.selectLanguage("Arabic");
+        search("wizard", Language.ARABIC);
 
         assertThat("'You searched for:' section incorrect", searchPage.youSearchedFor(), hasItem("wizard"));
-        verifyThat("Keywords incorrect", searchPage.getBlacklistedTerms(), hasItem("wizard"));
+        verifyThat("blacklist term appears in query analysis", searchPage.getBlacklistedTerms(), hasItem("wizard"));
         assertThat("link to blacklist or create synonyms should not be present", searchPage.getText(),
                 not(containsString("You can create synonyms or blacklist these search terms")));
 
-        searchPage.selectLanguage("English");
+        searchPage.selectLanguage(Language.ENGLISH);
+        searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 
-        assertThat("Term should not be blacklisted in English", searchPage.getText(),not(containsString("Any query terms were either blacklisted or stop words")));
+        assertThat("term is not blacklisted in English", searchPage.getText(),not(containsString("Any query terms were either blacklisted or stop words")));
     }
 
     @Test
@@ -505,5 +508,11 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
             search = search.applyFilter(new IndexFilter("news_eng"));
         }
         searchPage = search.apply();
+    }
+
+    private void waitForKeywordCreation() {
+        FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 30).withMessage("waiting for keywords to be created");
+        wait.until(GritterNotice.notificationAppears());
+        wait.until(GritterNotice.notificationsDisappear());
     }
 }
