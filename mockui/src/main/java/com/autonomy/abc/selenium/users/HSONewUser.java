@@ -58,6 +58,8 @@ public class HSONewUser implements NewUser {
 
         new WebDriverWait(driver,15).withMessage("User hasn't been created").until(GritterNotice.notificationContaining("Created user"));
 
+        hsoUsersPage.loadOrFadeWait();
+
         if (hsoUsersPage.getUsernameInput().getValue().equals("")) {
             if(validate) {
                 successfullyAdded(usersPage);

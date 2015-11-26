@@ -73,4 +73,8 @@ public class HSOUsersPage extends UsersPage {
         getUserRowByUsername(username).findElement(trashCan()).click();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
     }
+
+    public String getEmailOf(User user) {
+        return getUserRow(user).findElement(By.className("user-email")).getText();
+    }
 }
