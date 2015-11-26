@@ -3,14 +3,11 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.search;
+package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
-import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.types.Identifier;
+import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,19 +18,18 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/public/search/find-related-concepts")
-@Conditional(HodCondition.class) // TODO remove this
-public class RelatedConceptsController {
+public class RelatedConceptsController<Q extends QuerySummaryElement, I extends Identifier, E extends Exception> {
 
     @Autowired
-    private RelatedConceptsService relatedConceptsService;
+    private RelatedConceptsService<Q, I, E> relatedConceptsService;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Entity> findRelatedConcepts(
+    public List<Q> findRelatedConcepts(
             @RequestParam("text") final String text,
-            @RequestParam("index") final List<ResourceIdentifier> index,
+            @RequestParam("index") final List<I> index,
             @RequestParam("field_text") final String fieldText
-    ) throws HodErrorException {
+    ) throws E {
         return relatedConceptsService.findRelatedConcepts(text, index, fieldText);
     }
 }

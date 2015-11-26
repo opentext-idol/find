@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.search;
 
+import com.hp.autonomy.frontend.find.core.search.RelatedConceptsService;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
@@ -21,7 +22,7 @@ import java.util.List;
 
 @Service
 @Conditional(HodCondition.class)
-public class HodRelatedConceptsService implements RelatedConceptsService {
+public class HodRelatedConceptsService implements RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> {
 
     @Autowired
     private FindRelatedConceptsService findRelatedConceptsService;

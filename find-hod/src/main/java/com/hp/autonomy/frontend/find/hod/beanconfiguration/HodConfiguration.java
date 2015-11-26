@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableParametricValuesService;
+import com.hp.autonomy.frontend.find.hod.search.HodFindDocument;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
@@ -186,8 +187,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public QueryTextIndexService<FindDocument> queryTextIndexService() {
-        return new QueryTextIndexServiceImpl<>(hodServiceConfig(), FindDocument.class);
+    public QueryTextIndexService<HodFindDocument> queryTextIndexService() {
+        return new QueryTextIndexServiceImpl<>(hodServiceConfig(), HodFindDocument.class);
     }
 
     @Bean
@@ -250,8 +251,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public FindSimilarService<FindDocument> findSimilarService() {
-        return new FindSimilarServiceImpl<>(hodServiceConfig(), FindDocument.class);
+    public FindSimilarService<HodFindDocument> findSimilarService() {
+        return new FindSimilarServiceImpl<>(hodServiceConfig(), HodFindDocument.class);
     }
 
     @Bean
