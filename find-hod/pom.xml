@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.hp.autonomy.hod</groupId>
             <artifactId>java-hod-client</artifactId>
-            <version>0.14.1-SNAPSHOT</version>
+            <version>0.15.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.hod</groupId>
@@ -29,8 +29,8 @@
             <version>0.4.0</version>
         </dependency>
         <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>java-parametric-databases</artifactId>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>parametric-databases-hod</artifactId>
             <version>0.4.0-SNAPSHOT</version>
         </dependency>
         <dependency>

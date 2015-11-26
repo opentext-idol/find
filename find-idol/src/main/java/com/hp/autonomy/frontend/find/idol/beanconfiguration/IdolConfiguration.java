@@ -30,6 +30,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class IdolConfiguration {
+    private static final int HTTP_SOCKET_TIMEOUT = 90000;
+    private static final int HTTP_MAX_CONNECTIONS_PER_ROUTE = 20;
+    private static final int HTTP_MAX_CONNECTIONS_TOTAL = 120;
 
     @Autowired
     private TextEncryptor textEncryptor;
@@ -86,12 +89,12 @@ public class IdolConfiguration {
     @Bean
     public HttpClient httpClient() {
         final SocketConfig socketConfig = SocketConfig.custom()
-                .setSoTimeout(90000)
+                .setSoTimeout(HTTP_SOCKET_TIMEOUT)
                 .build();
 
         return HttpClientBuilder.create()
-                .setMaxConnPerRoute(20)
-                .setMaxConnTotal(120)
+                .setMaxConnPerRoute(HTTP_MAX_CONNECTIONS_PER_ROUTE)
+                .setMaxConnTotal(HTTP_MAX_CONNECTIONS_TOTAL)
                 .setDefaultSocketConfig(socketConfig)
                 .build();
     }

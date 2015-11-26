@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
-import com.hp.autonomy.frontend.configuration.AbstractConfig;
+import com.hp.autonomy.frontend.configuration.Config;
 import com.hp.autonomy.frontend.configuration.ValidationResults;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping({"/api/useradmin/config", "/api/config/config"})
-public class ValidationController<C extends AbstractConfig<C>> {
+public class ValidationController<C extends Config<C>> {
 
     @Autowired
     private ValidationService<C> validationService;

@@ -6,10 +6,6 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.autonomy.databases.DatabasesService;
-import com.hp.autonomy.databases.DatabasesServiceImpl;
-import com.hp.autonomy.fields.IndexFieldsService;
-import com.hp.autonomy.fields.IndexFieldsServiceImpl;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
@@ -48,13 +44,18 @@ import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
+import com.hp.autonomy.hod.databases.DatabasesService;
+import com.hp.autonomy.hod.databases.DatabasesServiceImpl;
+import com.hp.autonomy.hod.databases.ResourceMapper;
+import com.hp.autonomy.hod.databases.ResourceMapperImpl;
+import com.hp.autonomy.hod.fields.IndexFieldsService;
+import com.hp.autonomy.hod.fields.IndexFieldsServiceImpl;
+import com.hp.autonomy.hod.parametricvalues.HodParametricValuesService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
 import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
-import com.hp.autonomy.parametricvalues.ParametricValuesService;
-import com.hp.autonomy.parametricvalues.ParametricValuesServiceImpl;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -186,7 +187,12 @@ public class HodConfiguration extends CachingConfigurerSupport {
 
     @Bean
     public DatabasesService databasesService() {
-        return new DatabasesServiceImpl(resourcesService(), indexFieldsService());
+        return new DatabasesServiceImpl(resourcesService(), resourceMapper());
+    }
+
+    @Bean
+    public ResourceMapper resourceMapper() {
+        return new ResourceMapperImpl(indexFieldsService());
     }
 
     @Bean
@@ -195,8 +201,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public ParametricValuesService parametricValuesService() {
-        return new CacheableParametricValuesService(new ParametricValuesServiceImpl(getParametricValuesService()));
+    public CacheableParametricValuesService parametricValuesService() {
+        return new CacheableParametricValuesService(new HodParametricValuesService(getParametricValuesService()));
     }
 
     @Bean

@@ -5,10 +5,12 @@
 
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
-import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
+import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.client.token.TokenProxy;
+import com.hp.autonomy.hod.fields.IndexFieldsService;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Set;
@@ -25,5 +27,11 @@ public class CacheableIndexFieldsService implements IndexFieldsService {
     @Cacheable(CacheNames.PARAMETRIC_FIELDS)
     public Set<String> getParametricFields(final ResourceIdentifier index) throws HodErrorException {
         return indexFieldsService.getParametricFields(index);
+    }
+
+    @Override
+    @Cacheable(CacheNames.PARAMETRIC_FIELDS)
+    public Set<String> getParametricFields(final TokenProxy<?, TokenType.Simple> tokenProxy, final ResourceIdentifier resourceIdentifier) throws HodErrorException {
+        return indexFieldsService.getParametricFields(tokenProxy, resourceIdentifier);
     }
 }
