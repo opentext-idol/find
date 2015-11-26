@@ -7,7 +7,6 @@ import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
 import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
-import com.hp.autonomy.frontend.find.idol.aci.DatabaseName;
 import com.hp.autonomy.types.idol.DocContent;
 import com.hp.autonomy.types.idol.GetVersionResponseData;
 import com.hp.autonomy.types.idol.Hit;
@@ -89,14 +88,14 @@ public class IdolDocumentServiceTest {
 
         when(contentAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenReturn(responseData);
 
-        final List<FindDocument> results = idolDocumentService.findSimilar(Collections.<DatabaseName>emptySet(), "Some reference");
+        final List<FindDocument> results = idolDocumentService.findSimilar(Collections.<String>emptySet(), "Some reference");
         assertThat(results, is(not(empty())));
     }
 
-    private FindQueryParams<DatabaseName> mockQueryParams() {
-        final FindQueryParams<DatabaseName> queryParams = new FindQueryParams<>();
+    private FindQueryParams<String> mockQueryParams() {
+        final FindQueryParams<String> queryParams = new FindQueryParams<>();
         queryParams.setText("*");
-        queryParams.setIndex(Arrays.asList(new DatabaseName("Databse1"), new DatabaseName("Database2")));
+        queryParams.setIndex(Arrays.asList("Database1", "Database2"));
         return queryParams;
     }
 

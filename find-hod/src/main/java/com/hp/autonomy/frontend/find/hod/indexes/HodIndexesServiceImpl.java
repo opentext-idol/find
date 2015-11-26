@@ -1,8 +1,5 @@
 package com.hp.autonomy.frontend.find.hod.indexes;
 
-import com.hp.autonomy.databases.Database;
-import com.hp.autonomy.databases.DatabasesService;
-import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
@@ -16,6 +13,9 @@ import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
+import com.hp.autonomy.hod.databases.Database;
+import com.hp.autonomy.hod.databases.DatabasesService;
+import com.hp.autonomy.hod.fields.IndexFieldsService;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;

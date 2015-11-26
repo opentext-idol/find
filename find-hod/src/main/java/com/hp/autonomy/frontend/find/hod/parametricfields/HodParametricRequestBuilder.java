@@ -26,7 +26,7 @@ public class HodParametricRequestBuilder implements ParametricRequestBuilder<Hod
                 .setQueryProfile(new ResourceIdentifier(domain, profileName))
                 .setDatabases(databases)
                 .setFieldNames(fieldNames)
-                .setQuery(queryText)
+                .setQueryText(queryText)
                 .setFieldText(fieldText)
                 .build();
     }

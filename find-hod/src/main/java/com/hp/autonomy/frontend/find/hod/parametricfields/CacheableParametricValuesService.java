@@ -7,16 +7,16 @@ package com.hp.autonomy.frontend.find.hod.parametricfields;
 
 import com.hp.autonomy.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
-import com.hp.autonomy.hod.client.api.textindex.query.parametric.FieldNames;
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.parametricvalues.HodParametricRequest;
 import com.hp.autonomy.hod.parametricvalues.HodParametricValuesService;
-import com.hp.autonomy.hod.parametricvalues.ParametricFieldName;
+import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Set;
 
-public class CacheableParametricValuesService implements ParametricValuesService<HodParametricRequest, ParametricFieldName, FieldNames.ValueAndCount, HodErrorException> {
+public class CacheableParametricValuesService implements ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> {
 
     private final HodParametricValuesService parametricValuesService;
 
@@ -26,7 +26,7 @@ public class CacheableParametricValuesService implements ParametricValuesService
 
     @Override
     @Cacheable(CacheNames.PARAMETRIC_VALUES)
-    public Set<ParametricFieldName> getAllParametricValues(final HodParametricRequest parametricRequest) throws HodErrorException {
+    public Set<QueryTagInfo> getAllParametricValues(final HodParametricRequest parametricRequest) throws HodErrorException {
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 

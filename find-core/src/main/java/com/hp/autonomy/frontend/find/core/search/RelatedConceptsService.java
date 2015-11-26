@@ -5,13 +5,13 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.types.Identifier;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface RelatedConceptsService<Q extends QuerySummaryElement, I extends Identifier, E extends Exception> {
+public interface RelatedConceptsService<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
 
-    List<Q> findRelatedConcepts(String text, List<I> indexes, String fieldText) throws E;
+    List<Q> findRelatedConcepts(String text, List<S> indexes, String fieldText) throws E;
 
 }

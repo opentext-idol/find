@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.types.Identifier;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,31 +13,32 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 @Controller
 @RequestMapping("/api/public/search")
-public class DocumentsController<I extends Identifier, D extends FindDocument, E extends Exception> {
+public class DocumentsController<S extends Serializable, D extends FindDocument, E extends Exception> {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private DocumentsService<I, D, E> documentsService;
+    private DocumentsService<S, D, E> documentsService;
 
     @RequestMapping(value = "query-text-index/results", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<D> query(@RequestParam("queryParams") final FindQueryParams<I> findQueryParams) throws E {
+    public Documents<D> query(@RequestParam("queryParams") final FindQueryParams<S> findQueryParams) throws E {
         return documentsService.queryTextIndex(findQueryParams);
     }
 
     @RequestMapping(value = "query-text-index/promotions", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<D> queryForPromotions(@RequestParam("queryParams") final FindQueryParams<I> findQueryParams) throws E {
+    public Documents<D> queryForPromotions(@RequestParam("queryParams") final FindQueryParams<S> findQueryParams) throws E {
         return documentsService.queryTextIndexForPromotions(findQueryParams);
     }
 
     @RequestMapping(value = "similar-documents", method = RequestMethod.GET)
     @ResponseBody
-    public List<D> findSimilar(@RequestParam("reference") final String reference, @RequestParam("indexes") final Set<I> indexes) throws E {
+    public List<D> findSimilar(@RequestParam("reference") final String reference, @RequestParam("indexes") final Set<S> indexes) throws E {
         return documentsService.findSimilar(indexes, reference);
     }
 }
