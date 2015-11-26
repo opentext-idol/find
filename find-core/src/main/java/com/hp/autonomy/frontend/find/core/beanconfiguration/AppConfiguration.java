@@ -10,13 +10,18 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
+import com.hp.autonomy.frontend.configuration.Config;
+import com.hp.autonomy.frontend.configuration.ValidationService;
+import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
+import com.hp.autonomy.frontend.configuration.Validator;
 import com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter;
 import com.hp.autonomy.frontend.find.core.configuration.TextEncryptorPasswordFactory;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.MessageSource;
@@ -26,11 +31,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -39,21 +48,25 @@ import java.util.Set;
  */
 @Configuration
 @ComponentScan(
-    basePackages = "com.hp.autonomy.frontend.find",
-    excludeFilters = {
-        @ComponentScan.Filter(Controller.class),
-        @ComponentScan.Filter(RestController.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = DispatcherServletConfiguration.class)
-    }
+        basePackages = "com.hp.autonomy.frontend.find",
+        excludeFilters = {
+                @ComponentScan.Filter(Controller.class),
+                @ComponentScan.Filter(RestController.class),
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = DispatcherServletConfiguration.class)
+        }
 )
-public class AppConfiguration {
+public class AppConfiguration<C extends Config<C>> {
 
     @Autowired
-    private ConfigService<?> configService;
+    private BaseConfigFileService<C> configService;
+
+    @SuppressWarnings("FieldMayBeFinal")
+    @Autowired(required = false)
+    private Set<Validator<?>> validators = Collections.emptySet();
 
     @Bean
     public TextEncryptor textEncryptor() {
-        final TextEncryptorPasswordFactory passwordFactory = new TextEncryptorPasswordFactory();
+        final FactoryBean<String> passwordFactory = new TextEncryptorPasswordFactory();
 
         final BasicTextEncryptor basicTextEncryptor = new BasicTextEncryptor();
 
@@ -69,11 +82,11 @@ public class AppConfiguration {
     @Bean
     public SimpleFilterProvider filterProvider() {
         final Set<String> set = ImmutableSet.of(
-            "productType",
-            "indexErrorMessage",
-            "enabled",
-            "plaintextPassword",
-            "currentPassword"
+                "productType",
+                "indexErrorMessage",
+                "enabled",
+                "plaintextPassword",
+                "currentPassword"
         );
 
         final SimpleBeanPropertyFilter.SerializeExceptFilter filter = new SimpleBeanPropertyFilter.SerializeExceptFilter(set);
@@ -92,7 +105,7 @@ public class AppConfiguration {
         return getPropertiesFactoryBean(new ClassPathResource("/find.properties"));
     }
 
-    private PropertiesFactoryBean getPropertiesFactoryBean(final ClassPathResource location) {
+    private PropertiesFactoryBean getPropertiesFactoryBean(final Resource location) {
         final PropertiesFactoryBean bean = new PropertiesFactoryBean();
         bean.setLocation(location);
 
@@ -129,4 +142,16 @@ public class AppConfiguration {
         return configEnvironmentVariableFilter;
     }
 
+    @Bean
+    @Autowired
+    public ValidationService<C> validationService() {
+        final ValidationServiceImpl<C> validationService = new ValidationServiceImpl<>();
+
+        validationService.setValidators(validators);
+
+        // fix circular dependency
+        configService.setValidationService(validationService);
+
+        return validationService;
+    }
 }

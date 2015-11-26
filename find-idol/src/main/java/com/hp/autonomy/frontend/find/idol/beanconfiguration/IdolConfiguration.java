@@ -15,8 +15,6 @@ import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.types.idol.Error;
 import com.hp.autonomy.types.idol.IdolResponseParser;
@@ -42,7 +40,7 @@ public class IdolConfiguration {
     private FilterProvider filterProvider;
 
     @Bean
-    public ConfigService<IdolFindConfig> configFileService() {
+    public IdolFindConfigFileService configFileService() {
         final IdolFindConfigFileService configService = new IdolFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");

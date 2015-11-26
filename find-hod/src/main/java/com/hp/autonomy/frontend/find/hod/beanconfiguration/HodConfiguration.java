@@ -15,7 +15,6 @@ import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
-import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
@@ -107,19 +106,6 @@ public class HodConfiguration extends CachingConfigurerSupport {
         singleUserAuthenticationValidator.setConfigService(configService);
 
         return singleUserAuthenticationValidator;
-    }
-
-    @Bean
-    @Autowired
-    public ValidationService<HodFindConfig> validationService(final List<Validator<?>> validators) {
-        final ValidationServiceImpl<HodFindConfig> validationService = new ValidationServiceImpl<>();
-
-        validationService.setValidators(new HashSet<>(validators));
-
-        // fix circular dependency
-        configService.setValidationService(validationService);
-
-        return validationService;
     }
 
     @Override
