@@ -24,6 +24,7 @@ public class HSONewUser implements NewUser {
     private final String username;
     private final String email;
     private AuthProvider provider;
+    private boolean validate = false;
 
     public HSONewUser(String username, String email) {
         this.username = username;
@@ -33,6 +34,16 @@ public class HSONewUser implements NewUser {
     public HSONewUser(String username, String email, AuthProvider provider){
         this(username, email);
         this.provider = provider;
+    }
+
+    public HSONewUser(String username, String email, AuthProvider provider, boolean validate){
+        this(username, email, provider);
+        this.validate = validate;
+    }
+
+    public HSONewUser validate(){
+        validate = true;
+        return this;
     }
 
     @Override
@@ -47,8 +58,10 @@ public class HSONewUser implements NewUser {
 
         new WebDriverWait(driver,15).withMessage("User hasn't been created").until(GritterNotice.notificationContaining("Created user"));
 
-        if(hsoUsersPage.getUsernameInput().getValue().equals("")) {
-            successfullyAdded(usersPage);
+        if (hsoUsersPage.getUsernameInput().getValue().equals("")) {
+            if(validate) {
+                successfullyAdded(usersPage);
+            }
 
             return new HSOUser(username, email, role, provider);
         }
@@ -148,7 +161,7 @@ public class HSONewUser implements NewUser {
         return null;
     }
 
-    private class UserNotCreatedException extends RuntimeException {
+    public class UserNotCreatedException extends RuntimeException {
         public UserNotCreatedException(HSONewUser user){
             this(user.username);
         }
@@ -156,5 +169,17 @@ public class HSONewUser implements NewUser {
         public UserNotCreatedException(String username){
             super("User '" + username + "' was not created");
         }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public AuthProvider getProvider() {
+        return provider;
     }
 }

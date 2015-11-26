@@ -19,6 +19,8 @@ public abstract class UserService {
         this.elementFactory = elementFactory;
     }
 
+    public abstract void deleteUser(User user);
+
     public abstract UsersPage goToUsers();
 
     public abstract User createNewUser(NewUser newUser, Role role);
