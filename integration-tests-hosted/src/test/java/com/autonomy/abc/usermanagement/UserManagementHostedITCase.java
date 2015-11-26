@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -39,7 +40,10 @@ public class UserManagementHostedITCase extends HostedTestBase {
         HSONewUser newUser = new HSONewUser("jeremy","jeremy");
 
         usersPage.createUserButton().click();
-        User user = newUser.signUpAs(Role.ADMIN, usersPage);
+
+        try {
+            newUser.signUpAs(Role.ADMIN, usersPage);
+        } catch (TimeoutException | HSONewUser.UserNotCreatedException e){ /* Expected behaviour */ }
 
         verifyThat(getContainingDiv(usersPage.getUsernameInput()), not(hasClass("has-error")));
         verifyThat(getContainingDiv(usersPage.getEmailInput()), hasClass("has-error"));
@@ -51,40 +55,27 @@ public class UserManagementHostedITCase extends HostedTestBase {
         usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
 
-        verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
+        verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
 
         //TODO use own email addresses
         //Sometimes it requires us to add a valid user before invalid users show up
-        userService.createNewUser(new HSONewUser("Valid", "Valid@definitelynotarealaddress.com"), Role.ADMIN);
+        userService.createNewUser(new HSONewUser("Valid", "hodtestqa401+NonInvalidEmail@gmail.com"), Role.ADMIN);
 
         usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
 
-        verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
+        verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
     }
 
     @Test
-    public void testAddingUserShowsUpAsPending(){
-        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@definitelynotarealaddress.com");
+    public void testAddedUserShowsUpAsPending(){
+        HSONewUser newUser = new HSONewUser("VALIDUSER","hodtestqa401+NonInvalidEmail@gmail.com");
 
         HSOUser user = userService.createNewUser(newUser,Role.USER);
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
         verifyThat(usersPage.getRoleOf(user), is(Role.USER));
-    }
-
-    @Test
-    public void testDisablingAndDeletingUser(){
-        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@definitelynotarealaddress.com");
-
-        HSOUser user = userService.createNewUser(newUser,Role.USER);
-
-        userService.changeRole(user,Role.NONE);
-        verifyThat(usersPage.getRoleOf(user), is(Role.NONE));
-
-        userService.deleteUser(user);
-        verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
     }
 
     private WebElement getContainingDiv(WebElement webElement){

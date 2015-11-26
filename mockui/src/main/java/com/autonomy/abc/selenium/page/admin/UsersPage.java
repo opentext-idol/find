@@ -173,8 +173,8 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		return new Dropdown(findElement(By.cssSelector(".users-filters-view .dropdown")), getDriver());
 	}
 
-	public int getNumberOfUsersInTitle() {
+	public int getUserCountInTitle() {
 		String title = getDriver().findElement(By.tagName("h1")).getText();
-		return Integer.parseInt(title.replaceAll("\\D+",""));
+		return Integer.parseInt(title.replaceAll("\\D+", ""));
 	}
 }
