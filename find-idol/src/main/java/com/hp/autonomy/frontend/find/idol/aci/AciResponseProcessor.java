@@ -20,7 +20,7 @@ public class AciResponseProcessor<T, R> implements Processor<R> {
     private final AciResponseProcessorCallback<T, R> callback;
     private final Class<T> responseDataType;
 
-    public AciResponseProcessor(final IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser, Class<T> responseDataType, final AciResponseProcessorCallback<T, R> callback) {
+    public AciResponseProcessor(final IdolResponseParser<AciErrorException, ProcessorException> idolResponseParser, final Class<T> responseDataType, final AciResponseProcessorCallback<T, R> callback) {
         this.idolResponseParser = idolResponseParser;
         this.callback = callback;
         this.responseDataType = responseDataType;

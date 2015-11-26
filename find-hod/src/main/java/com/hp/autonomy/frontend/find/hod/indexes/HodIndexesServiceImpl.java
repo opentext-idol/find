@@ -5,7 +5,6 @@ import com.hp.autonomy.databases.DatabasesService;
 import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
@@ -20,7 +19,6 @@ import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -32,7 +30,6 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@Conditional(HodCondition.class)
 public class HodIndexesServiceImpl implements HodIndexesService {
 
     private static final Set<ResourceFlavour> FLAVOURS_TO_REMOVE = ResourceFlavour.of(ResourceFlavour.QUERY_MANIPULATION, ResourceFlavour.CATEGORIZATION);
@@ -82,7 +79,7 @@ public class HodIndexesServiceImpl implements HodIndexesService {
     public List<Database> listVisibleIndexes() throws HodErrorException {
         final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
-        if(activeIndexes.isEmpty()) {
+        if (activeIndexes.isEmpty()) {
             final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             final String domain = ((HodAuthenticationPrincipal) auth.getPrincipal()).getApplication().getDomain();
 
@@ -102,11 +99,10 @@ public class HodIndexesServiceImpl implements HodIndexesService {
             }
 
             return new ArrayList<>(validDatabases);
-        }
-        else {
+        } else {
             final List<Database> activeDatabases = new ArrayList<>();
 
-            for(final ResourceIdentifier index: activeIndexes) {
+            for (final ResourceIdentifier index : activeIndexes) {
                 activeDatabases.add(new Database.Builder()
                         .setDomain(index.getDomain())
                         .setName(index.getName())

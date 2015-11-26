@@ -5,6 +5,7 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.util.AciParameters;
+import com.hp.autonomy.aci.content.identifier.reference.Reference;
 import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
@@ -88,20 +89,23 @@ public class IdolDocumentService implements DocumentsService<DatabaseName, FindD
     }
 
     private Documents<FindDocument> queryTextIndex(final FindQueryParams<DatabaseName> findQueryParams, final boolean qms) {
-        final Set<AciParameter> aciParameters = new AciParameters(QueryActions.Query.name());
-        aciParameters.add(new AciParameter(QueryParams.MaxResults.name(), findQueryParams.getMaxResults()));
-        aciParameters.add(new AciParameter(QueryParams.Summary.name(), SummaryParam.fromValue(findQueryParams.getSummary(), null)));
-        aciParameters.add(new AciParameter(QueryParams.DatabaseMatch.name(), convertCollectionToIdolCsv(findQueryParams.getIndex())));
-        aciParameters.add(new AciParameter(QueryParams.FieldText.name(), findQueryParams.getFieldText()));
-        aciParameters.add(new AciParameter(QueryParams.Sort.name(), findQueryParams.getSort()));
-        aciParameters.add(new AciParameter(QueryParams.MinDate.name(), findQueryParams.getMinDate()));
-        aciParameters.add(new AciParameter(QueryParams.MaxDate.name(), findQueryParams.getMaxDate()));
-        aciParameters.add(new AciParameter(QueryParams.Print.name(), PrintParam.Fields));
-        aciParameters.add(new AciParameter(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS));
+        final AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
+        aciParameters.add(QueryParams.Text.name(), findQueryParams.getText());
+        aciParameters.add(QueryParams.MaxResults.name(), findQueryParams.getMaxResults());
+        aciParameters.add(QueryParams.Summary.name(), SummaryParam.fromValue(findQueryParams.getSummary(), null));
+        aciParameters.add(QueryParams.DatabaseMatch.name(), convertCollectionToIdolCsv(findQueryParams.getIndex()));
+        aciParameters.add(QueryParams.FieldText.name(), findQueryParams.getFieldText());
+        aciParameters.add(QueryParams.Sort.name(), findQueryParams.getSort());
+        aciParameters.add(QueryParams.MinDate.name(), findQueryParams.getMinDate());
+        aciParameters.add(QueryParams.MaxDate.name(), findQueryParams.getMaxDate());
+        aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
+        aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
+        aciParameters.add(QueryParams.XMLMeta.name(), true);
+//        aciParameters.add(QmsActionParams.Blacklist.name(), ); TODO
+//        aciParameters.add(QmsActionParams.ExpandQuery.name(), ); TODO
+
         if (qms) {
-//        aciParameters.add(new AciParameter(QmsActionParams.Blacklist.name(), )); TODO
-//        aciParameters.add(new AciParameter(QmsActionParams.ExpandQuery.name(), )); TODO
-            aciParameters.add(new AciParameter(QmsActionParams.Promotions.name(), true));
+            aciParameters.add(QmsActionParams.Promotions.name(), true);
         }
 
         return contentAciService.executeAction(aciParameters, queryResponseProcessor);
@@ -113,9 +117,9 @@ public class IdolDocumentService implements DocumentsService<DatabaseName, FindD
 
     @Override
     public List<FindDocument> findSimilar(final Set<DatabaseName> indexes, final String reference) throws AciErrorException {
-        final Set<AciParameter> aciParameters = new AciParameters(QueryActions.Suggest.name());
-        aciParameters.add(new AciParameter(SuggestParams.Reference.name(), reference));
-        aciParameters.add(new AciParameter(SuggestParams.DatabaseMatch.name(), convertCollectionToIdolCsv(indexes)));
+        final AciParameters aciParameters = new AciParameters(QueryActions.Suggest.name());
+        aciParameters.add(SuggestParams.Reference.name(), new Reference(reference));
+        aciParameters.add(SuggestParams.DatabaseMatch.name(), convertCollectionToIdolCsv(indexes));
 
         return contentAciService.executeAction(aciParameters, suggestResponseProcessor);
     }
@@ -130,7 +134,7 @@ public class IdolDocumentService implements DocumentsService<DatabaseName, FindD
                     .setIndex(hit.getDatabase())
                     .setTitle(hit.getTitle())
                     .setSummary(hit.getSummary())
-                    .setDate(hit.getDatestring(), hit.getDate())
+                    .setDate(hit.getDatestring())
                     .setContentType(parseFields(docContent, FindDocument.CONTENT_TYPE_FIELD))
                     .setUrl(parseFields(docContent, FindDocument.URL_FIELD))
                     .setAuthors(parseFields(docContent, FindDocument.AUTHOR_FIELD))

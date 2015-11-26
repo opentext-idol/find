@@ -14,7 +14,6 @@ import com.hp.autonomy.hod.sso.SsoAuthenticationFilter;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,7 +24,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 @Configuration
-@Conditional(HodCondition.class)
 @Order(99)
 public class HodSecurity extends WebSecurityConfigurerAdapter {
 

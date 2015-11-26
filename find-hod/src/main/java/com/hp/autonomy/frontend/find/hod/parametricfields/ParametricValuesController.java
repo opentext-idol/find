@@ -1,7 +1,6 @@
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -10,7 +9,6 @@ import com.hp.autonomy.parametricvalues.ParametricFieldName;
 import com.hp.autonomy.parametricvalues.ParametricRequest;
 import com.hp.autonomy.parametricvalues.ParametricValuesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +20,6 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/api/public/parametric")
-@Conditional(HodCondition.class)
 public class ParametricValuesController {
 
     @Autowired

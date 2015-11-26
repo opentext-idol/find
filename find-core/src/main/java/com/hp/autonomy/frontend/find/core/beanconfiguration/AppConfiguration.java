@@ -48,7 +48,7 @@ import java.util.Set;
  */
 @Configuration
 @ComponentScan(
-        basePackages = "com.hp.autonomy.frontend.find",
+        basePackages = {"com.hp.autonomy.frontend.find.core", "com.hp.autonomy.frontend.find.web"},
         excludeFilters = {
                 @ComponentScan.Filter(Controller.class),
                 @ComponentScan.Filter(RestController.class),
@@ -57,6 +57,7 @@ import java.util.Set;
 )
 public class AppConfiguration<C extends Config<C>> {
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private BaseConfigFileService<C> configService;
 

@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.beanconfiguration;
+package com.hp.autonomy.frontend.find.web;
 
 /**
  * What kind of backend to use

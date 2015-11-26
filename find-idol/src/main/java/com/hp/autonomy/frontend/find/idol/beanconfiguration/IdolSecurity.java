@@ -1,7 +1,6 @@
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.google.common.collect.ImmutableMap;
-import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationProvider;
@@ -10,11 +9,12 @@ import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler
 import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpleAuthorityMapper;
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
+import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Map;
 
 @Configuration
-@Conditional(IdolCondition.class)
 @Order(99)
 public class IdolSecurity extends WebSecurityConfigurerAdapter {
     public static final String USER_ROLE = "PUBLIC";
@@ -49,6 +48,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                 .authenticationProvider(communityAuthenticationProvider());
     }
 
+    @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         final AuthenticationSuccessHandler successHandler = new LoginSuccessHandler(role(CONFIG_ROLE), "/config", FindController.PUBLIC_PATH);
@@ -80,7 +80,7 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                 .sameOrigin();
     }
 
-    private CommunityAuthenticationProvider communityAuthenticationProvider() {
+    private AuthenticationProvider communityAuthenticationProvider() {
         final Role user = new Role.Builder()
                 .setName(IDOL_USER_ROLE)
                 .setPrivileges(Collections.singleton("login"))

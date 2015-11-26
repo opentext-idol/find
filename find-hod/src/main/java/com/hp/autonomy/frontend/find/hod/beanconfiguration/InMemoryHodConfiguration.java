@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
-import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
 import com.hp.autonomy.hod.client.token.InMemoryTokenRepository;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * Beans which only need to exist when using Haven OnDemand without Redis
  */
 @Configuration
-@Conditional({InMemoryCondition.class, HodCondition.class})
+@Conditional(InMemoryCondition.class)
 public class InMemoryHodConfiguration {
 
     @Bean

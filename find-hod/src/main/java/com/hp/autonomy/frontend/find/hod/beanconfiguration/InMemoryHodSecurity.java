@@ -1,12 +1,11 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
-import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
-import com.hp.autonomy.frontend.find.hod.web.HodFindController;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider;
+import com.hp.autonomy.frontend.find.hod.web.HodFindController;
 import com.hp.autonomy.frontend.find.hod.web.HodLogoutSuccessHandler;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
@@ -17,10 +16,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @Order(98)
-@Conditional({HodCondition.class, InMemoryCondition.class})
+@Conditional(InMemoryCondition.class)
 public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> configService;
@@ -38,7 +38,7 @@ public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final LoginSuccessHandler loginSuccessHandler = new LoginSuccessHandler("ROLE_DEFAULT", "/config/", "/p/");
+        final AuthenticationSuccessHandler loginSuccessHandler = new LoginSuccessHandler("ROLE_DEFAULT", "/config/", "/p/");
 
         http.regexMatcher("/p/.*|/config/.*|/authenticate|/logout")
                 .authorizeRequests()

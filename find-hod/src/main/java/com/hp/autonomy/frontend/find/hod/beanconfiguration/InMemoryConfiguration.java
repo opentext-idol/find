@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
-import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
 import com.hp.autonomy.frontend.find.hod.configuration.AutoCreatingEhCacheCacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;

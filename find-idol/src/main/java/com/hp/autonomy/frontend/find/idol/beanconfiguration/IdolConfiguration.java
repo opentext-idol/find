@@ -26,11 +26,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@Conditional(IdolCondition.class)
 public class IdolConfiguration {
 
     @Autowired

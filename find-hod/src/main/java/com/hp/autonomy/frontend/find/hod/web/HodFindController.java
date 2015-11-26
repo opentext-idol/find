@@ -5,18 +5,16 @@
 
 package com.hp.autonomy.frontend.find.hod.web;
 
-import com.hp.autonomy.frontend.find.core.web.ErrorController;
-import com.hp.autonomy.frontend.find.core.web.FindController;
-import com.hp.autonomy.frontend.find.hod.authentication.HodCombinedRequestController;
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.web.ErrorController;
+import com.hp.autonomy.frontend.find.core.web.FindController;
+import com.hp.autonomy.frontend.find.hod.authentication.HodCombinedRequestController;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@Conditional(HodCondition.class)
 public class HodFindController extends FindController {
 
     public static final String SSO_PAGE = "/sso";

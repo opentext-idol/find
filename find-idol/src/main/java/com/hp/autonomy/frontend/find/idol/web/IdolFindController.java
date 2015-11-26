@@ -6,14 +6,11 @@
 package com.hp.autonomy.frontend.find.idol.web;
 
 import com.hp.autonomy.frontend.find.core.web.FindController;
-import com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolCondition;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@Conditional(IdolCondition.class)
 public class IdolFindController extends FindController {
 
     @RequestMapping("/api/config/test")

@@ -11,13 +11,10 @@ import com.hp.autonomy.databases.DatabasesServiceImpl;
 import com.hp.autonomy.fields.IndexFieldsService;
 import com.hp.autonomy.fields.IndexFieldsServiceImpl;
 import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
-import com.hp.autonomy.frontend.configuration.ValidationService;
-import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
-import com.hp.autonomy.frontend.configuration.Validator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableIndexFieldsService;
 import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableParametricValuesService;
 import com.hp.autonomy.frontend.find.hod.search.HodFindDocument;
@@ -68,15 +65,10 @@ import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import java.util.HashSet;
-import java.util.List;
-
 @Configuration
-@Conditional({HodCondition.class})
 @EnableCaching
 public class HodConfiguration extends CachingConfigurerSupport {
     @Autowired
@@ -89,7 +81,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     private CacheManager cacheManager;
 
     @Autowired
-    private HodFindConfigFileService configService;
+    private ConfigFileService<HodFindConfig> configService;
 
     @Bean(name = "dispatcherObjectMapper")
     public ObjectMapper dispatcherObjectMapper() {

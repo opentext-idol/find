@@ -1,9 +1,8 @@
 package com.hp.autonomy.frontend.find.hod.view;
 
-import com.hp.autonomy.frontend.find.core.view.AbstractViewController;
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.view.AbstractViewController;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -30,9 +28,8 @@ import java.io.IOException;
 import java.util.Locale;
 
 @Controller
-@RequestMapping({"/api/public/view"})
+@RequestMapping("/api/public/view")
 @Slf4j
-@Conditional(HodCondition.class)
 public class HodViewController extends AbstractViewController {
     @Autowired
     private ConfigService<HodFindConfig> configService;
@@ -57,8 +54,8 @@ public class HodViewController extends AbstractViewController {
 
     @RequestMapping(value = "/viewStaticContentPromotion", method = RequestMethod.GET)
     public void viewStaticContentPromotion(
-        @RequestParam("reference") final String reference,
-        final HttpServletResponse response
+            @RequestParam("reference") final String reference,
+            final HttpServletResponse response
     ) throws IOException, HodErrorException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
@@ -90,21 +87,9 @@ public class HodViewController extends AbstractViewController {
             iodErrorMessage = messageSource.getMessage("error.unknownError", null, locale);
         }
 
-        final int errorCode;
+        final int errorCode = e.isServerError() ? 500 : 400;
 
-        if (e.isServerError()) {
-            errorCode = 500;
-        } else {
-            errorCode = 400;
-        }
-
-        final String subMessage;
-
-        if (iodErrorMessage != null) {
-            subMessage = messageSource.getMessage("error.iodErrorSub", new String[]{iodErrorMessage}, locale);
-        } else {
-            subMessage = messageSource.getMessage("error.iodErrorSubNull", null, locale);
-        }
+        final String subMessage = iodErrorMessage != null ? messageSource.getMessage("error.iodErrorSub", new String[]{iodErrorMessage}, locale) : messageSource.getMessage("error.iodErrorSubNull", null, locale);
 
         response.setStatus(errorCode);
 
@@ -117,9 +102,9 @@ public class HodViewController extends AbstractViewController {
 
     @ExceptionHandler
     public ModelAndView hodAuthenticationFailedException(
-        final HodAuthenticationFailedException e,
-        final HttpServletRequest request,
-        final HttpServletResponse response
+            final HodAuthenticationFailedException e,
+            final HttpServletRequest request,
+            final HttpServletResponse response
     ) throws IOException {
         response.reset();
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -127,10 +112,10 @@ public class HodViewController extends AbstractViewController {
         log.error("HodAuthenticationFailedException thrown while viewing document", e);
 
         return buildErrorModelAndView(
-            request,
-            messageSource.getMessage("error.iodErrorMain", null, Locale.ENGLISH),
-            messageSource.getMessage("error.iodTokenExpired", null, Locale.ENGLISH),
-            false
+                request,
+                messageSource.getMessage("error.iodErrorMain", null, Locale.ENGLISH),
+                messageSource.getMessage("error.iodTokenExpired", null, Locale.ENGLISH),
+                false
         );
     }
 }

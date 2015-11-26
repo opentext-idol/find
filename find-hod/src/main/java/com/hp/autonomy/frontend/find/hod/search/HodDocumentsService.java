@@ -11,7 +11,6 @@ import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
@@ -25,7 +24,6 @@ import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@Conditional(HodCondition.class)
 public class HodDocumentsService implements DocumentsService<ResourceIdentifier, HodFindDocument, HodErrorException> {
     private static final ImmutableSet<String> PUBLIC_INDEX_NAMES = ImmutableSet.of(
             ResourceIdentifier.WIKI_CHI.getName(),

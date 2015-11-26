@@ -15,12 +15,12 @@ public class HodFindConfigFileService extends AbstractAuthenticatingConfigFileSe
     }
 
     @Override
-    public void postUpdate(final HodFindConfig config) throws Exception {
+    public void postUpdate(final HodFindConfig config) {
 
     }
 
     @Override
-    public void postInitialise(final HodFindConfig config) throws Exception {
+    public void postInitialise(final HodFindConfig config) {
         postUpdate(config);
     }
 

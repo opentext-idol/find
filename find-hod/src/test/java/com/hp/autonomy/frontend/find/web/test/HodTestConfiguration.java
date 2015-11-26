@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.hod.test;
+package com.hp.autonomy.frontend.find.web.test;
 
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -13,20 +13,22 @@ import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Component
+@Configuration
+@ComponentScan("com.hp.autonomy.frontend.find.hod")
 public class HodTestConfiguration {
     private static final String TEST_APP_API_KEY = "03e5efd3-4ddb-47ed-811c-f74c7198f1a8";
     private static final String TEST_APPLICATION = "Find_Test";
-    private static final String TEST_DOMAIN      = "c46dfa57-0d8e-4f0f-b419-e3acd0a482e9";
+    private static final String TEST_DOMAIN = "c46dfa57-0d8e-4f0f-b419-e3acd0a482e9";
 
     @Autowired
     private TokenProxy<EntityType.Application, TokenType.Simple> tokenProxy;

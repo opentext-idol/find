@@ -7,7 +7,6 @@ package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsService;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsRequestBuilder;
@@ -15,13 +14,11 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConcepts
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@Conditional(HodCondition.class)
 public class HodRelatedConceptsService implements RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> {
 
     @Autowired

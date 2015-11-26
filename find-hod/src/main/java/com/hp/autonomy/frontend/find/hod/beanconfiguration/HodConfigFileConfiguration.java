@@ -5,22 +5,20 @@
 
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
-import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
+import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@Conditional(HodCondition.class)
 public class HodConfigFileConfiguration {
 
     @Autowired

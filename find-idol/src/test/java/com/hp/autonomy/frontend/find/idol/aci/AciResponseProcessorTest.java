@@ -56,7 +56,7 @@ public class AciResponseProcessorTest {
 
         @Override
         public int getStatusCode() {
-            return 0;
+            return 200;
         }
 
         @Override

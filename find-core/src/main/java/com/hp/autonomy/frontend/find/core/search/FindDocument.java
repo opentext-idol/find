@@ -142,11 +142,9 @@ public class FindDocument implements Serializable {
         }
 
         @SuppressWarnings("UseOfObsoleteDateTimeApi")
-        public Builder setDate(final Date date, final Long epoch) {
+        public Builder setDate(final Date date) {
             if (date != null) {
                 this.date = new DateTime(date);
-            } else if (epoch != null) {
-                this.date = new DateTime(epoch * 1000);
             }
 
             return this;

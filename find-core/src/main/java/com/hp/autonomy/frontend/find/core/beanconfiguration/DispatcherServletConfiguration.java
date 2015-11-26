@@ -21,7 +21,6 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
@@ -29,26 +28,22 @@ import java.util.List;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(
-    basePackages = {
-        "com.hp.autonomy.frontend.find"
-    },
-    includeFilters = {
+@ComponentScan(basePackages = {
+        "com.hp.autonomy.frontend.find.core", "com.hp.autonomy.frontend.find.web"
+}, includeFilters = {
         @ComponentScan.Filter(Controller.class),
         @ComponentScan.Filter(RestController.class),
-    },
-    excludeFilters = {
-        @ComponentScan.Filter(Configuration.class)
-    }
-)
+}, excludeFilters = @ComponentScan.Filter(Configuration.class))
 public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
 
     @Autowired
     private ObjectMapper dispatcherObjectMapper;
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @Autowired
     private Properties dispatcherProperties;
 
+    @SuppressWarnings("MismatchedReadAndWriteOfArray")
     @Autowired(required = false)
     private Converter<?, ?>[] converters;
 

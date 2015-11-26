@@ -88,11 +88,11 @@ public class IodConfig implements ConfigurationComponent {
         if (iod != null) {
             final Builder builder = new Builder();
 
-            builder.setApiKey(this.apiKey == null ? iod.apiKey : this.apiKey);
-            builder.setApplication(this.application == null ? iod.application : this.application);
-            builder.setDomain(this.domain == null ? iod.domain : this.domain);
-            builder.setActiveIndexes(this.activeIndexes == null ? iod.activeIndexes : this.activeIndexes);
-            builder.setPublicIndexesEnabled(this.publicIndexesEnabled == null ? iod.publicIndexesEnabled : this.publicIndexesEnabled);
+            builder.setApiKey(apiKey == null ? iod.apiKey : apiKey);
+            builder.setApplication(application == null ? iod.application : application);
+            builder.setDomain(domain == null ? iod.domain : domain);
+            builder.setActiveIndexes(activeIndexes == null ? iod.activeIndexes : activeIndexes);
+            builder.setPublicIndexesEnabled(publicIndexesEnabled == null ? iod.publicIndexesEnabled : publicIndexesEnabled);
 
             return builder.build();
         } else {

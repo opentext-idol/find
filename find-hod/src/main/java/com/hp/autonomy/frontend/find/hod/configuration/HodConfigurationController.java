@@ -5,16 +5,13 @@
 
 package com.hp.autonomy.frontend.find.hod.configuration;
 
-import com.hp.autonomy.frontend.find.hod.beanconfiguration.HodCondition;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.configuration.ConfigValidationException;
 import com.hp.autonomy.frontend.logging.Markers;
-import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,10 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
+
 @Controller
 @RequestMapping({"/api/useradmin/config", "/api/config/config"})
 @Slf4j
-@Conditional(HodCondition.class) // TODO have a think about this (maybe make it a generic type and instantiate in config class)
+// TODO have a think about this (maybe make it a generic type and instantiate in config class)
 public class HodConfigurationController {
 
     @Autowired

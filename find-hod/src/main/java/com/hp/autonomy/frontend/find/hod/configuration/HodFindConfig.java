@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.hod.configuration;
 
-import com.hp.autonomy.frontend.find.core.configuration.QueryManipulationConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -14,8 +13,9 @@ import com.hp.autonomy.frontend.configuration.Authentication;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.PasswordsConfig;
-import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.frontend.find.core.configuration.QueryManipulationConfig;
+import com.hp.autonomy.hod.sso.HodSsoConfig;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,22 +37,22 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     private final RedisConfig redis;
 
     private HodFindConfig(final Builder builder) {
-        this.login = builder.login;
-        this.hsod = builder.hsod;
-        this.iod = builder.iod;
-        this.allowedOrigins = builder.allowedOrigins;
-        this.redis = builder.redis;
-        this.queryManipulation = builder.queryManipulation;
+        login = builder.login;
+        hsod = builder.hsod;
+        iod = builder.iod;
+        allowedOrigins = builder.allowedOrigins;
+        redis = builder.redis;
+        queryManipulation = builder.queryManipulation;
     }
 
     @Override
     public HodFindConfig merge(final HodFindConfig config) {
         if (config != null) {
             return new Builder()
-                    .setLogin(this.login == null ? config.login : this.login.merge(config.login))
-                    .setIod(this.iod == null ? config.iod : this.iod.merge(config.iod))
-                    .setAllowedOrigins(this.allowedOrigins == null ? config.allowedOrigins : this.allowedOrigins)
-                    .setRedis(this.redis == null ? config.redis : this.redis.merge(config.redis))
+                    .setLogin(login == null ? config.login : login.merge(config.login))
+                    .setIod(iod == null ? config.iod : iod.merge(config.iod))
+                    .setAllowedOrigins(allowedOrigins == null ? config.allowedOrigins : allowedOrigins)
+                    .setRedis(redis == null ? config.redis : redis.merge(config.redis))
                     .setQueryManipulation(queryManipulation == null ? config.queryManipulation : queryManipulation.merge(config.queryManipulation))
                     .setHsod(hsod == null ? config.hsod : hsod.merge(config.hsod))
                     .build();
@@ -93,8 +93,8 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         redis.basicValidate();
         queryManipulation.basicValidate();
 
-        if (!this.login.getMethod().equalsIgnoreCase("default")) {
-            this.login.basicValidate();
+        if (!"default".equalsIgnoreCase(login.getMethod())) {
+            login.basicValidate();
         }
     }
 
@@ -126,7 +126,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
     @Override
     @JsonIgnore
     public String getApiKey() {
-        return getIod().getApiKey();
+        return iod.getApiKey();
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
@@ -141,15 +141,16 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         private RedisConfig redis;
         private QueryManipulationConfig queryManipulation;
 
-        public Builder() {}
+        public Builder() {
+        }
 
         public Builder(final HodFindConfig config) {
-            this.login = config.login;
-            this.hsod = config.hsod;
-            this.iod = config.iod;
-            this.allowedOrigins = config.allowedOrigins;
-            this.redis = config.redis;
-            this.queryManipulation = config.queryManipulation;
+            login = config.login;
+            hsod = config.hsod;
+            iod = config.iod;
+            allowedOrigins = config.allowedOrigins;
+            redis = config.redis;
+            queryManipulation = config.queryManipulation;
         }
 
         public HodFindConfig build() {
