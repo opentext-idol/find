@@ -63,4 +63,11 @@ public class HSOUserService extends UserService {
         usersPage.submitPendingEditFor(user);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(roleLink));
     }
+
+    public void resetAuthentication(HSOUser user) {
+        usersPage.resetAuthenticationButton(user).click();
+        usersPage.loadOrFadeWait();
+        ModalView.getVisibleModalView(getDriver()).okButton().click();
+        new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Reset authentication for " + user.getUsername()));
+    }
 }

@@ -77,4 +77,8 @@ public class HSOUsersPage extends UsersPage {
     public String getEmailOf(User user) {
         return getUserRow(user).findElement(By.className("user-email")).getText();
     }
+
+    public WebElement resetAuthenticationButton(User user) {
+        return getUserRow(user).findElement(By.className("reset-authentication"));
+    }
 }
