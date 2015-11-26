@@ -455,10 +455,10 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final String firstSearchResult = searchPage.getSearchResult(1).getText();
 		final String secondSearchResult = setUpPromotion(search("chat", "French"), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
 
-		promotionsDetailPage.triggerAddBox().setAndSubmit("purrr");
+		promotionsDetailPage.triggerAddBox().setAndSubmit("tigre");
 		promotionsDetailPage.waitForTriggerRefresh();
 		promotionsDetailPage.trigger("meow").removeAndWait();
-		search("purrr", "French").apply();
+		search("tigre", "French").apply();
 		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(secondSearchResult));
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
@@ -472,7 +472,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		queryText.setValueAndWait("kitty");
 		verifyThat(queryText.getValue(), is("kitty"));
 
-		search("purrr", "French").apply();
+		search("tigre", "French").apply();
 		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
 
 		getDriver().navigate().refresh();
