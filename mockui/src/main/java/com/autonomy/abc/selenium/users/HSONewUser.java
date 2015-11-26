@@ -81,7 +81,7 @@ public class HSONewUser implements NewUser {
             verifyUser();
         } catch (TimeoutException e) { /* User already verified */ }
 
-        for(int i = driver.getWindowHandles().size() - 1; i > 0; i--){
+        for(int i = browserHandles.size() - 1; i > 0; i--){
             driver.switchTo().window(browserHandles.get(i));
             driver.close();
         }
