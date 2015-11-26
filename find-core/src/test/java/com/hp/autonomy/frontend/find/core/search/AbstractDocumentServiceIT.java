@@ -16,9 +16,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public class AbstractDocumentServiceIT<I extends Identifier, E extends Exception> extends AbstractFindIT {
+public class AbstractDocumentServiceIT<I extends Identifier, D extends FindDocument, E extends Exception> extends AbstractFindIT {
     @Autowired
-    protected DocumentsController<I, E> documentsController;
+    protected DocumentsController<I, D, E> documentsController;
 
     protected final List<I> indexes;
 
@@ -29,22 +29,22 @@ public class AbstractDocumentServiceIT<I extends Identifier, E extends Exception
     @Test
     public void query() throws E {
         final FindQueryParams<I> findQueryParams = createSampleQuery();
-        final Documents<FindDocument> documents = documentsController.query(findQueryParams);
+        final Documents<D> documents = documentsController.query(findQueryParams);
         assertThat(documents.getDocuments(), is(not(empty())));
     }
 
     @Test
     public void queryForPromotions() throws E {
         final FindQueryParams<I> findQueryParams = createSampleQuery();
-        final Documents<FindDocument> documents = documentsController.queryForPromotions(findQueryParams);
+        final Documents<D> documents = documentsController.queryForPromotions(findQueryParams);
         assertThat(documents.getDocuments(), is(empty())); // TODO: configure this later
     }
 
     @Test
     public void findSimilar() throws E {
         final FindQueryParams<I> findQueryParams = createSampleQuery();
-        final Documents<FindDocument> documents = documentsController.query(findQueryParams);
-        final List<FindDocument> results = documentsController.findSimilar(documents.getDocuments().get(0).getReference(), new HashSet<>(indexes));
+        final Documents<D> documents = documentsController.query(findQueryParams);
+        final List<D> results = documentsController.findSimilar(documents.getDocuments().get(0).getReference(), new HashSet<>(indexes));
         assertThat(results, is(not(empty())));
     }
 

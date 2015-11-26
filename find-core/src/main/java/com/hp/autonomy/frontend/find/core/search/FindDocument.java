@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,7 +52,6 @@ public class FindDocument implements Serializable {
 
     private final String reference;
     private final String index;
-    private final String domain;
 
     private final String title;
     private final String summary;
@@ -68,7 +68,6 @@ public class FindDocument implements Serializable {
     protected FindDocument(final Builder builder) {
         reference = builder.reference;
         index = builder.index;
-        domain = builder.domain;
 
         title = builder.title;
         summary = builder.summary;
@@ -92,7 +91,6 @@ public class FindDocument implements Serializable {
     public static class Builder {
         private String reference;
         private String index;
-        private String domain;
 
         private String title;
         private String summary;
@@ -114,7 +112,6 @@ public class FindDocument implements Serializable {
         public Builder(final FindDocument document) {
             reference = document.reference;
             index = document.index;
-            domain = document.domain;
             title = document.title;
             summary = document.summary;
             contentType = document.contentType;
@@ -139,6 +136,17 @@ public class FindDocument implements Serializable {
         public Builder setUrl(final List<String> urls) {
             if (urls != null && !urls.isEmpty()) {
                 url = urls.get(0);
+            }
+
+            return this;
+        }
+
+        @SuppressWarnings("UseOfObsoleteDateTimeApi")
+        public Builder setDate(final Date date, final Long epoch) {
+            if (date != null) {
+                this.date = new DateTime(date);
+            } else if (epoch != null) {
+                this.date = new DateTime(epoch * 1000);
             }
 
             return this;

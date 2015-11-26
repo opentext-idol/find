@@ -17,10 +17,12 @@ import lombok.experimental.Accessors;
 public class HodFindDocument extends FindDocument {
     private static final long serialVersionUID = -7386227266595690038L;
 
+    private final String domain;
     private final PromotionType promotionType;
 
     public HodFindDocument(final Builder builder) {
         super(builder);
+        domain = builder.domain;
         promotionType = builder.promotionType == null ? PromotionType.NONE : builder.promotionType;
     }
 
@@ -29,12 +31,20 @@ public class HodFindDocument extends FindDocument {
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder extends FindDocument.Builder {
+        private String domain;
+
         @JsonProperty("promotion")
         private PromotionType promotionType;
 
         public Builder(final HodFindDocument document) {
             super(document);
+            domain = document.domain;
             promotionType = document.promotionType;
+        }
+
+        @Override
+        public HodFindDocument build() {
+            return new HodFindDocument(this);
         }
     }
 }

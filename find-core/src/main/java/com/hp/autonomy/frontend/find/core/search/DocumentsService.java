@@ -11,12 +11,12 @@ import com.hp.autonomy.types.requests.Documents;
 import java.util.List;
 import java.util.Set;
 
-public interface DocumentsService<I extends Identifier, E extends Exception> {
+public interface DocumentsService<I extends Identifier, D extends FindDocument, E extends Exception> {
 
-    Documents<FindDocument> queryTextIndex(final FindQueryParams<I> findQueryParams) throws E;
+    Documents<D> queryTextIndex(final FindQueryParams<I> findQueryParams) throws E;
 
-    Documents<FindDocument> queryTextIndexForPromotions(final FindQueryParams<I> findQueryParams) throws E;
+    Documents<D> queryTextIndexForPromotions(final FindQueryParams<I> findQueryParams) throws E;
 
-    List<FindDocument> findSimilar(Set<I> indexes, String reference) throws E;
+    List<D> findSimilar(Set<I> indexes, String reference) throws E;
 
 }

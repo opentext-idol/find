@@ -6,7 +6,7 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 
 import java.util.Arrays;
 
-public class HodDocumentServiceIT extends AbstractDocumentServiceIT<ResourceIdentifier, HodErrorException> {
+public class HodDocumentServiceIT extends AbstractDocumentServiceIT<ResourceIdentifier, HodFindDocument, HodErrorException> {
     public HodDocumentServiceIT() {
         super(Arrays.asList(ResourceIdentifier.WIKI_ENG, ResourceIdentifier.NEWS_ENG));
     }
