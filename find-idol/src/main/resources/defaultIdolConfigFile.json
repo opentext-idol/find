@@ -14,5 +14,9 @@
     "host": "find-idol",
     "port": 16000,
     "productType": ["AXE", "QMS", "DAH", "IDOLPROXY"]
+  },
+  "aciConfig": {
+    "expandQuery": true,
+    "blacklist": "ISO_BLACKLIST_englishUTF8"
   }
 }

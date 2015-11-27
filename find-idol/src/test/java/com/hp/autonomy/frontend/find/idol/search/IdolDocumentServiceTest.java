@@ -3,10 +3,13 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
 import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
+import com.hp.autonomy.frontend.find.idol.configuration.AciConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.types.idol.DocContent;
 import com.hp.autonomy.types.idol.GetVersionResponseData;
 import com.hp.autonomy.types.idol.Hit;
@@ -37,6 +40,12 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class IdolDocumentServiceTest {
     @Mock
+    private IdolFindConfig idolFindConfig;
+
+    @Mock
+    private ConfigService<IdolFindConfig> configService;
+
+    @Mock
     private AciService contentAciService;
 
     @Mock
@@ -46,7 +55,9 @@ public class IdolDocumentServiceTest {
 
     @Before
     public void setUp() {
-        idolDocumentService = new IdolDocumentService(contentAciService, aciResponseProcessorFactory);
+        when(idolFindConfig.getAciConfig()).thenReturn(new AciConfig.Builder().build());
+        when(configService.getConfig()).thenReturn(idolFindConfig);
+        idolDocumentService = new IdolDocumentService(configService, contentAciService, aciResponseProcessorFactory);
     }
 
     @Test
@@ -61,10 +72,7 @@ public class IdolDocumentServiceTest {
 
     @Test
     public void queryContentForPromotions() {
-
-
         mockResponsesForPromotions(ProductType.AXE);
-        idolDocumentService = new IdolDocumentService(contentAciService, aciResponseProcessorFactory);
 
         final Documents<FindDocument> results = idolDocumentService.queryTextIndexForPromotions(mockQueryParams());
         assertThat(results.getDocuments(), is(empty()));
@@ -73,7 +81,6 @@ public class IdolDocumentServiceTest {
     @Test
     public void queryQmsForPromotions() {
         mockResponsesForPromotions(ProductType.QMS);
-        idolDocumentService = new IdolDocumentService(contentAciService, aciResponseProcessorFactory);
 
         final Documents<FindDocument> results = idolDocumentService.queryTextIndexForPromotions(mockQueryParams());
         assertThat(results.getDocuments(), is(not(empty())));

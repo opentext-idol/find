@@ -7,11 +7,13 @@ import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.identifier.reference.Reference;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
 import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.types.idol.GetVersionResponseData;
 import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
@@ -39,13 +41,15 @@ import java.util.Set;
 
 @Service
 public class IdolDocumentService implements DocumentsService<String, FindDocument, AciErrorException> {
+    private final ConfigService<IdolFindConfig> configService;
     private final AciService contentAciService;
     private final Processor<QueryResponseData> queryResponseProcessor;
     private final Processor<SuggestResponseData> suggestResponseProcessor;
     private final Processor<GetVersionResponseData> versionResponseProcessor;
 
     @Autowired
-    public IdolDocumentService(final AciService contentAciService, final AciResponseProcessorFactory aciResponseProcessorFactory) {
+    public IdolDocumentService(final ConfigService<IdolFindConfig> configService, final AciService contentAciService, final AciResponseProcessorFactory aciResponseProcessorFactory) {
+        this.configService = configService;
         this.contentAciService = contentAciService;
 
         queryResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(QueryResponseData.class);
@@ -81,8 +85,8 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
         aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
         aciParameters.add(QueryParams.XMLMeta.name(), true);
-//        aciParameters.add(QmsActionParams.Blacklist.name(), ); TODO
-//        aciParameters.add(QmsActionParams.ExpandQuery.name(), ); TODO
+        aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getAciConfig().getBlacklist());
+        aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getAciConfig().getExpandQuery());
 
         if (qms) {
             aciParameters.add(QmsActionParams.Promotions.name(), true);
