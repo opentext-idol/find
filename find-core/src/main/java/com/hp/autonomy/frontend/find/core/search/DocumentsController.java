@@ -6,7 +6,9 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.types.requests.Documents;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,20 +21,38 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/api/public/search")
-public class DocumentsController<S extends Serializable, D extends FindDocument, E extends Exception> {
+public abstract class DocumentsController<S extends Serializable, D extends FindDocument, E extends Exception> {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private DocumentsService<S, D, E> documentsService;
+    protected DocumentsService<S, D, E> documentsService;
 
+    @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = "query-text-index/results", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<D> query(@RequestParam("queryParams") final FindQueryParams<S> findQueryParams) throws E {
+    public Documents<D> query(@RequestParam("text") final String text,
+                              @RequestParam("max_results") final int maxResults,
+                              @RequestParam("summary") final String summary,
+                              @RequestParam("index") final List<S> index,
+                              @RequestParam(value = "field_text", defaultValue = "") final String fieldText,
+                              @RequestParam(value = "sort", required = false) final String sort,
+                              @RequestParam(value = "min_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+                              @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
+        final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
         return documentsService.queryTextIndex(findQueryParams);
     }
 
+    @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = "query-text-index/promotions", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<D> queryForPromotions(@RequestParam("queryParams") final FindQueryParams<S> findQueryParams) throws E {
+    public Documents<D> queryForPromotions(@RequestParam("text") final String text,
+                                           @RequestParam("max_results") final int maxResults,
+                                           @RequestParam("summary") final String summary,
+                                           @RequestParam("index") final List<S> index,
+                                           @RequestParam(value = "field_text", defaultValue = "") final String fieldText,
+                                           @RequestParam(value = "sort", required = false) final String sort,
+                                           @RequestParam(value = "min_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+                                           @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
+        final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
         return documentsService.queryTextIndexForPromotions(findQueryParams);
     }
 

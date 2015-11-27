@@ -28,31 +28,20 @@ public class AbstractDocumentServiceIT<S extends Serializable, D extends FindDoc
 
     @Test
     public void query() throws E {
-        final FindQueryParams<S> findQueryParams = createSampleQuery();
-        final Documents<D> documents = documentsController.query(findQueryParams);
+        final Documents<D> documents = documentsController.query("*", 50, null, indexes, null, null, null, null);
         assertThat(documents.getDocuments(), is(not(empty())));
     }
 
     @Test
     public void queryForPromotions() throws E {
-        final FindQueryParams<S> findQueryParams = createSampleQuery();
-        final Documents<D> documents = documentsController.queryForPromotions(findQueryParams);
+        final Documents<D> documents = documentsController.queryForPromotions("*", 50, null, indexes, null, null, null, null);
         assertThat(documents.getDocuments(), is(empty())); // TODO: configure this later
     }
 
     @Test
     public void findSimilar() throws E {
-        final FindQueryParams<S> findQueryParams = createSampleQuery();
-        final Documents<D> documents = documentsController.query(findQueryParams);
+        final Documents<D> documents = documentsController.query("*", 50, null, indexes, null, null, null, null);
         final List<D> results = documentsController.findSimilar(documents.getDocuments().get(0).getReference(), new HashSet<>(indexes));
         assertThat(results, is(not(empty())));
-    }
-
-    private FindQueryParams<S> createSampleQuery() {
-        final FindQueryParams<S> findQueryParams = new FindQueryParams<>();
-        findQueryParams.setText("*");
-        findQueryParams.setMaxResults(50);
-        findQueryParams.setIndex(indexes);
-        return findQueryParams;
     }
 }

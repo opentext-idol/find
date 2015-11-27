@@ -14,11 +14,12 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConcepts
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Component
 public class HodRelatedConceptsService implements RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> {
 
     @Autowired

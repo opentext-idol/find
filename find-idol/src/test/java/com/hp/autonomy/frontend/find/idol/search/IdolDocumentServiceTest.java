@@ -100,10 +100,7 @@ public class IdolDocumentServiceTest {
     }
 
     private FindQueryParams<String> mockQueryParams() {
-        final FindQueryParams<String> queryParams = new FindQueryParams<>();
-        queryParams.setText("*");
-        queryParams.setIndex(Arrays.asList("Database1", "Database2"));
-        return queryParams;
+        return new FindQueryParams<>("*", 50, null, Arrays.asList("Database1", "Database2"), null, null, null, null);
     }
 
     private QueryResponseData mockQueryResponse() {

@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
@@ -55,6 +56,17 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
         viewResolver.setSuffix(".jsp");
 
         return viewResolver;
+    }
+
+    /**
+     * This ensures that we can access controllers in other contexts (such as those loaded in the idol/hod sub-contexts)
+     */
+    @Bean
+    @Override
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        final RequestMappingHandlerMapping requestMappingHandlerMapping = super.requestMappingHandlerMapping();
+        requestMappingHandlerMapping.setDetectHandlerMethodsInAncestorContexts(true);
+        return requestMappingHandlerMapping;
     }
 
     @Override

@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.Serializable;
 import java.util.List;
 
-@SuppressWarnings("SpringJavaAutowiringInspection")
 @Controller
+@SuppressWarnings("SpringJavaAutowiringInspection")
 @RequestMapping("/api/public/search/find-related-concepts")
-public class RelatedConceptsController<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
-
+public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
     @Autowired
-    private RelatedConceptsService<Q, S, E> relatedConceptsService;
+    protected RelatedConceptsService<Q, S, E> relatedConceptsService;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
