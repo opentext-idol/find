@@ -13,35 +13,32 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     public static final String USER_ROLE = "PUBLIC";
     public static final String ADMIN_ROLE = "ADMIN";
     public static final String CONFIG_ROLE = "DEFAULT";
 
-    @Configuration
-    public static class AppSecurity extends WebSecurityConfigurerAdapter {
-        @Override
-        public void configure(final WebSecurity web) {
-            web.ignoring()
-                    .antMatchers("/static-*/**");
-        }
+    @Override
+    public void configure(final WebSecurity web) {
+        web.ignoring()
+                .antMatchers("/static-*/**");
+    }
 
-        @SuppressWarnings("ProhibitedExceptionDeclared")
-        @Override
-        protected void configure(final HttpSecurity http) throws Exception {
-            http
-                    .authorizeRequests()
+    @SuppressWarnings("ProhibitedExceptionDeclared")
+    @Override
+    protected void configure(final HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
                     .antMatchers("/api/public/**").hasRole(USER_ROLE)
                     .antMatchers("/api/useradmin/**").hasRole(ADMIN_ROLE)
                     .antMatchers("/api/config/**").hasRole(CONFIG_ROLE)
                     .and()
-                    .csrf()
+                .csrf()
                     .disable()
-                    .headers()
+                .headers()
                     .defaultsDisabled()
                     .frameOptions()
                     .sameOrigin();
-        }
     }
 }

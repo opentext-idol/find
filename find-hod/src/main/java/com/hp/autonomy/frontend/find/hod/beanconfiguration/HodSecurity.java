@@ -65,17 +65,17 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
 
         http.regexMatcher("/public/.*|/sso|/authenticate-sso|/api/authentication/.*|/logout")
                 .csrf()
-                .disable()
+                    .disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(ssoEntryPoint)
-                .accessDeniedPage("/authentication-error")
-                .and()
+                    .authenticationEntryPoint(ssoEntryPoint)
+                    .accessDeniedPage("/authentication-error")
+                    .and()
                 .authorizeRequests()
-                .antMatchers("/public/**").hasRole("PUBLIC")
-                .and()
+                    .antMatchers("/public/**").hasRole("PUBLIC")
+                    .and()
                 .logout()
-                .logoutSuccessHandler(logoutSuccessHandler)
-                .and()
+                    .logoutSuccessHandler(logoutSuccessHandler)
+                    .and()
                 .addFilterAfter(ssoAuthenticationFilter, AbstractPreAuthenticatedProcessingFilter.class);
     }
 

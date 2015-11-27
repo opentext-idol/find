@@ -42,19 +42,19 @@ public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
 
         http.regexMatcher("/p/.*|/config/.*|/authenticate|/logout")
                 .authorizeRequests()
-                .antMatchers("/p/**").hasRole("ADMIN")
-                .antMatchers("/config/**").hasRole("DEFAULT")
-                .and()
+                    .antMatchers("/p/**").hasRole("ADMIN")
+                    .antMatchers("/config/**").hasRole("DEFAULT")
+                    .and()
                 .formLogin()
-                .loginPage("/loginPage")
-                .loginProcessingUrl("/authenticate")
-                .successHandler(loginSuccessHandler)
-                .failureUrl("/loginPage?error=auth")
-                .and()
+                    .loginPage("/loginPage")
+                    .loginProcessingUrl("/authenticate")
+                    .successHandler(loginSuccessHandler)
+                    .failureUrl("/loginPage?error=auth")
+                    .and()
                 .logout()
-                .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(HodFindController.SSO_LOGOUT_PAGE, tokenRepository), "/public/"))
-                .and()
+                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(HodFindController.SSO_LOGOUT_PAGE, tokenRepository), "/public/"))
+                    .and()
                 .csrf()
-                .disable();
+                    .disable();
     }
 }
