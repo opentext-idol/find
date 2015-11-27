@@ -44,7 +44,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     private EditDocumentReferencesPage editReferencesPage;
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
-    // must avoid duplicate titles
 
     @Before
     public void setUp() throws MalformedURLException {
