@@ -76,8 +76,17 @@ public class TestConfig {
 		return type;
 	}
 
+	@Deprecated
 	public WebDriver createWebDriver() {
 		return browser.createWebDriver(url, platform);
+	}
+
+	URL getHubUrl() {
+		return url;
+	}
+
+	public WebDriverFactory getWebDriverFactory() {
+		return new WebDriverFactory(this);
 	}
 
 	// used when running whole suite via mvn

@@ -8,10 +8,7 @@ import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.users.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
@@ -42,7 +39,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
         usersPage.createUserButton().click();
 
         try {
-            newUser.signUpAs(Role.ADMIN, usersPage);
+            newUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
         } catch (TimeoutException | HSONewUser.UserNotCreatedException e){ /* Expected behaviour */ }
 
         verifyThat(getContainingDiv(usersPage.getUsernameInput()), not(hasClass("has-error")));
@@ -59,7 +56,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
         //TODO use own email addresses
         //Sometimes it requires us to add a valid user before invalid users show up
-        userService.createNewUser(new HSONewUser("Valid", "hodtestqa401+NonInvalidEmail@gmail.com"), Role.ADMIN);
+        userService.createNewUser(new HSONewUser("Valid", "hodtestqa401+NonInvalidEmail@gmail.com"), Role.ADMIN, config.getWebDriverFactory());
 
         usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
@@ -71,7 +68,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
     public void testAddedUserShowsUpAsPending(){
         HSONewUser newUser = new HSONewUser("VALIDUSER","hodtestqa401+NonInvalidEmail@gmail.com");
 
-        HSOUser user = userService.createNewUser(newUser,Role.USER);
+        HSOUser user = userService.createNewUser(newUser, Role.USER, config.getWebDriverFactory());
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
@@ -82,14 +79,15 @@ public class UserManagementHostedITCase extends HostedTestBase {
     public void testResettingAuthentication(){
         HSONewUser newUser = new HSONewUser("authenticationtest","hodtestqa401+authenticationtest@gmail.com").validate();
 
-        HSOUser user = userService.createNewUser(newUser,Role.USER);
+        HSOUser user = userService.createNewUser(newUser,Role.USER, config.getWebDriverFactory());
 
         usersPage.refreshButton().click();
-        verifyThat(usersPage.getStatusOf(user),is(Status.CONFIRMED));
+        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
 
         userService.resetAuthentication(user);
 
-        user.resetAuthentication(usersPage);
+        WebDriver driver = config.createWebDriver();
+        user.resetAuthentication(driver);
     }
 
     private WebElement getContainingDiv(WebElement webElement){

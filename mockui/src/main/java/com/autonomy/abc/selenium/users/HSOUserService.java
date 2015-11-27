@@ -7,8 +7,10 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -30,10 +32,10 @@ public class HSOUserService extends UserService {
     }
 
     @Override
-    public HSOUser createNewUser(NewUser newUser, Role role) {
+    public HSOUser createNewUser(NewUser newUser, Role role, Factory<WebDriver> webDriverFactory) {
         UsersPage usersPage = goToUsers();
         usersPage.createUserButton().click();
-        HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage);
+        HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage, webDriverFactory);
         usersPage.closeModal();
         return user;
     }

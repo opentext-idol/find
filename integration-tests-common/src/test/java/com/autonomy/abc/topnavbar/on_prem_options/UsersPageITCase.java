@@ -56,7 +56,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-		User user = aNewUser.signUpAs(Role.USER, usersPage);
+		User user = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
 		verifyUserAdded(newUserModal, user);
 		usersPage.closeModal();
@@ -67,7 +67,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 
-		User user = newUser.signUpAs(Role.USER, usersPage);
+		User user = newUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		usersPage.closeModal();
 
 		try {
@@ -134,9 +134,9 @@ public class UsersPageITCase extends ABCTestBase {
 		final int initialNumberOfUsers = usersPage.countNumberOfUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User user = aNewUser.signUpAs(Role.USER, usersPage);
+		User user = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		usersPage.loadOrFadeWait();
-		User admin = newUser2.signUpAs(Role.ADMIN, usersPage);
+		User admin = newUser2.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -148,8 +148,8 @@ public class UsersPageITCase extends ABCTestBase {
 
 		usersPage.createUserButton().click();
 		verifyThat(usersPage.isModalShowing(), is(true));
-		aNewUser.signUpAs(Role.USER, usersPage);
-		newUser2.signUpAs(Role.ADMIN, usersPage);
+		aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+		newUser2.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -169,17 +169,17 @@ public class UsersPageITCase extends ABCTestBase {
 	public void testAddDuplicateUser() {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User original = aNewUser.signUpAs(Role.USER, usersPage);
+		User original = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		verifyUserAdded(newUserModal, original);
 
 		try {
-			aNewUser.signUpAs(Role.USER, usersPage);
+			aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		} catch (TimeoutException e) { /* Expected */}
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
 		try {
-			config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage);
+			config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		} catch (TimeoutException e) { /* Expected */}
 
 		verifyThat(newUserModal, containsText("Error! User exists!"));
@@ -194,10 +194,10 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 
-		User admin = aNewUser.signUpAs(Role.ADMIN, usersPage);
+		User admin = aNewUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
 		verifyUserAdded(newUserModal, admin);
 
-		User user = newUser2.signUpAs(Role.USER, usersPage);
+		User user = newUser2.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		verifyUserAdded(newUserModal, user);
 
 		usersPage.closeModal();
@@ -356,7 +356,7 @@ public class UsersPageITCase extends ABCTestBase {
 
 	@Test
 	public void testDisablingAndDeletingUser(){
-		User user = userService.createNewUser(aNewUser, Role.USER);
+		User user = userService.createNewUser(aNewUser, Role.USER, config.getWebDriverFactory());
 
 		userService.changeRole(user, Role.NONE);
 		verifyThat(usersPage.getRoleOf(user), is(Role.NONE));
@@ -390,9 +390,9 @@ public class UsersPageITCase extends ABCTestBase {
 
 		String[] addedUsers = new String[3];
 
-		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN).getUsername();
-		addedUsers[1] = userService.createNewUser(newUser2, Role.ADMIN).getUsername();
-		addedUsers[2] = userService.createNewUser(newUser3, Role.ADMIN).getUsername();
+		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory()).getUsername();
+		addedUsers[1] = userService.createNewUser(newUser2, Role.ADMIN, config.getWebDriverFactory()).getUsername();
+		addedUsers[2] = userService.createNewUser(newUser3, Role.ADMIN, config.getWebDriverFactory()).getUsername();
 
 		FormInput searchFilter = usersPage.userSearchFilter();
 
@@ -430,8 +430,8 @@ public class UsersPageITCase extends ABCTestBase {
 
 		String[] addedUsers = new String[2];
 
-		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN).getUsername();
-		addedUsers[1] = userService.createNewUser(newUser2, Role.USER).getUsername();
+		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory()).getUsername();
+		addedUsers[1] = userService.createNewUser(newUser2, Role.USER, config.getWebDriverFactory()).getUsername();
 //		addedUsers[2] = userService.createNewUser(newUser3, Role.USER).getUsername();
 
 		Dropdown dropdown = usersPage.userRoleFilter();
@@ -464,14 +464,14 @@ public class UsersPageITCase extends ABCTestBase {
 	public void testUserCount(){
 		verifyThat(usersPage.getUserCountInTitle(), is(0));
 
-		User user1 = userService.createNewUser(aNewUser, Role.ADMIN);
+		User user1 = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
 		verifyThat(usersPage.getUserCountInTitle(), is(1));
 
-		User user2 = userService.createNewUser(newUser2, Role.ADMIN);
+		User user2 = userService.createNewUser(newUser2, Role.ADMIN, config.getWebDriverFactory());
 		verifyThat(usersPage.getUserCountInTitle(), is(2));
 
 		try {
-			userService.createNewUser(aNewUser, Role.ADMIN);
+			userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
 		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) {
 			/* Expected */
 			usersPage.closeModal();

@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.openqa.selenium.By;
@@ -47,9 +48,8 @@ public class HSONewUser implements NewUser {
     }
 
     @Override
-    public HSOUser signUpAs(Role role, UsersPage usersPage) {
+    public HSOUser signUpAs(Role role, UsersPage usersPage, Factory<WebDriver> webDriverFactory) {
         HSOUsersPage hsoUsersPage = (HSOUsersPage) usersPage;
-        driver = usersPage.getDriver();
 
         hsoUsersPage.addUsername(username);
         hsoUsersPage.addEmail(email);
@@ -61,6 +61,8 @@ public class HSONewUser implements NewUser {
         hsoUsersPage.loadOrFadeWait();
 
         if (hsoUsersPage.getUsernameInput().getValue().equals("")) {
+            driver = webDriverFactory.create();
+
             if(validate) {
                 successfullyAdded(usersPage);
             }

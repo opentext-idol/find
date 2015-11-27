@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -27,13 +26,12 @@ public class HSOUser extends User {
         return email;
     }
 
-    public void resetAuthentication(UsersPage usersPage) {
-        WebDriver driver = usersPage.getDriver();
-        List<String> browserHandles = usersPage.createAndListWindowHandles();
-
+    /**
+     *
+     * @param driver  MUST BE A DIFFERENT WEB DRIVER FROM THE ONE THE ADMIN IS RUNNING IN
+     */
+    public void resetAuthentication(WebDriver driver) {
         GMailHelper helper = new GMailHelper(driver);
-
-        driver.switchTo().window(browserHandles.get(1));
 
         helper.goToGMail();
         helper.tryLoggingInToEmail();
@@ -48,9 +46,9 @@ public class HSOUser extends User {
             verifyUser(driver);
         } catch (TimeoutException e) { /* User already verified */ }
 
-        browserHandles = new ArrayList<>(driver.getWindowHandles());
+        List<String> browserHandles = new ArrayList<>(driver.getWindowHandles());
 
-        for(int i = browserHandles.size() - 1; i > 0; i--){
+        for(int i = browserHandles.size() - 1; i >= 0; i--){
             driver.switchTo().window(browserHandles.get(i));
             driver.close();
         }

@@ -75,7 +75,7 @@ public abstract class ABCTestBase {
 
 	private void initialiseTest() {
 		LOGGER.info(config.toString());
-		driver = config.createWebDriver();
+		driver = config.getWebDriverFactory().create();
 		ImplicitWaits.setImplicitWait(driver);
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
