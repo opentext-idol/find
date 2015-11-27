@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -63,11 +64,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			System.out.println("Initial thread.sleep failed");
-		}
 		topNavBar = body.getTopNavBar();
 		topNavBar.search("example");
 		searchPage = getElementFactory().getSearchPage();
@@ -92,7 +88,7 @@ public class SearchPageITCase extends ABCTestBase {
 		logger.info("Searching for: '" + searchTerm + "'");
 		topNavBar.search(searchTerm);
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertNotEquals(searchPage.getText(), contains(havenErrorMessage));
+		assertNotEquals(searchPage.getText(), contains(Errors.Search.HOD));
 	}
 
     @Test
@@ -370,7 +366,7 @@ public class SearchPageITCase extends ABCTestBase {
             for(String searchTerm : testSearchTerms){
                 search(searchTerm);
 
-                assertThat(searchPage.getText(),containsString(havenErrorMessage));
+                assertThat(searchPage.getText(),containsString(Errors.Search.HOD));
             }
         } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
             int searchTerm = 0;
@@ -408,7 +404,7 @@ public class SearchPageITCase extends ABCTestBase {
         if(getConfig().getType().equals(ApplicationType.HOSTED)){
             for (String searchTerm : testSearchTerms){
                 search(searchTerm);
-                assertThat(searchPage.getText(),containsString(havenErrorMessage));
+                assertThat(searchPage.getText(),containsString(Errors.Search.HOD));
             }
         } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
             String noValidQueryText = "No valid query text supplied";
@@ -685,7 +681,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextInput().sendKeys("WILD{*" + lastWordInTitle + "}:DRETITLE");
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
 		assertThat("Field text edit button not visible", searchPage.fieldTextEditButton().isDisplayed());
@@ -730,7 +726,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		assertThat(searchPage.getText(), not(containsString("No results found")));
 		assertEquals(firstSearchResult, searchPage.getSearchResultTitle(1));
 
@@ -740,7 +736,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(havenErrorMessage)));
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		assertEquals(secondSearchResult, searchPage.getSearchResultTitle(1));
 	}
 
@@ -1214,7 +1210,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.waitForSearchLoadIndicatorToDisappear();
 		//TODO failing here wrongly
         assertThat("Page should still have results", searchPage.getText(), not(containsString("No results found...")));
-		assertThat("Page should not have thrown an error", searchPage.getText(), not(containsString(havenErrorMessage)));
+		assertThat("Page should not have thrown an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		assertThat("Page number should not have changed", currentPage, is(searchPage.getCurrentPageNumber()));
 		assertThat("Url should have reverted to original url", url, is(getDriver().getCurrentUrl()));
 		assertThat("Error message should not be showing", searchPage.isErrorMessageShowing(), is(false));

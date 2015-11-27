@@ -16,6 +16,7 @@ public class Errors {
         public static final String OPERATORS = "Invalid use of special tokens";
         public static final String STOPWORDS = "All terms were invalid, through being stopwords";
         public static final String BACKEND = "Backend request failed";
+        public final static String HOD = "Haven OnDemand returned an error while executing the search action";
     }
 
     public static class Keywords {
