@@ -49,4 +49,9 @@ public class HSOUser extends User {
 
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("noAccount")));
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }
