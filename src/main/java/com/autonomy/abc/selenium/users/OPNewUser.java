@@ -2,6 +2,8 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
+import com.autonomy.abc.selenium.util.Factory;
+import org.openqa.selenium.WebDriver;
 
 public class OPNewUser implements NewUser {
     private final String username;
@@ -13,7 +15,7 @@ public class OPNewUser implements NewUser {
     }
 
     @Override
-    public User signUpAs(Role role, UsersPage usersPage) {
+    public User signUpAs(Role role, UsersPage usersPage, Factory<WebDriver> webDriverFactory) {
         usersPage.addUsername(username);
         usersPage.addAndConfirmPassword(password, password);
         usersPage.selectRole(role);
