@@ -79,7 +79,7 @@ public class HSOUserService extends UserService {
         usersPage.editUsernameInput(user).setAndSubmit(newUsername);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
         usersPage.loadOrFadeWait();
-        user.setUsername(newUsername);
+        ((HSOUser) user).setUsername(newUsername);
         return user;
     }
 }
