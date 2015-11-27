@@ -28,6 +28,8 @@ import java.util.Set;
 
 @Service
 public class IdolParametricValuesService implements ParametricValuesService<IdolParametricRequest, String, AciErrorException> {
+    private static final String VALUE_NODE_NAME = "value";
+
     private final AciService contentAciService;
     private final Processor<GetQueryTagValuesResponseData> responseProcessor;
 
@@ -52,7 +54,7 @@ public class IdolParametricValuesService implements ParametricValuesService<Idol
             final List<JAXBElement<? extends Serializable>> valueElements = field.getValueOrSubvalueOrValues();
             final LinkedHashSet<QueryTagCountInfo> values = new LinkedHashSet<>(valueElements.size());
             for (final JAXBElement<?> element : valueElements) {
-                if ("value".equals(element.getName().getLocalPart())) {
+                if (VALUE_NODE_NAME.equals(element.getName().getLocalPart())) {
                     final TagValue tagValue = (TagValue) element.getValue();
                     values.add(new QueryTagCountInfo(tagValue.getValue(), tagValue.getCount()));
                 }

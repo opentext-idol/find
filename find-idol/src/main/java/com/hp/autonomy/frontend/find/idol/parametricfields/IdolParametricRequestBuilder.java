@@ -1,6 +1,6 @@
 package com.hp.autonomy.frontend.find.idol.parametricfields;
 
-import com.hp.autonomy.frontend.find.core.parametricFields.ParametricRequestBuilder;
+import com.hp.autonomy.frontend.find.core.parametricfields.ParametricRequestBuilder;
 import com.hp.autonomy.idol.parametricvalues.IdolParametricRequest;
 import org.springframework.stereotype.Component;
 

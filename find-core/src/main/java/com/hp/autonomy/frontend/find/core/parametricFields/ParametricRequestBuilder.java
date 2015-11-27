@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.core.parametricFields;
+package com.hp.autonomy.frontend.find.core.parametricfields;
 
 import com.hp.autonomy.core.parametricvalues.ParametricRequest;
 

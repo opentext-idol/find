@@ -1,7 +1,7 @@
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.core.parametricFields.ParametricRequestBuilder;
+import com.hp.autonomy.frontend.find.core.parametricfields.ParametricRequestBuilder;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.parametricvalues.HodParametricRequest;
