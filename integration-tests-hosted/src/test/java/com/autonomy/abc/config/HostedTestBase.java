@@ -1,7 +1,5 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.page.HSOElementFactory;

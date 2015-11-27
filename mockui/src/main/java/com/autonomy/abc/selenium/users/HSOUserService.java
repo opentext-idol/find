@@ -74,8 +74,11 @@ public class HSOUserService extends UserService {
     }
 
     public User editUsername(User user, String newUsername) {
-        usersPage.editUsernameLink(user).click();
+        WebElement pencil = usersPage.editUsernameLink(user);
+        pencil.click();
         usersPage.editUsernameInput(user).setAndSubmit(newUsername);
+        new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
+        usersPage.loadOrFadeWait();
         user.setUsername(newUsername);
         return user;
     }

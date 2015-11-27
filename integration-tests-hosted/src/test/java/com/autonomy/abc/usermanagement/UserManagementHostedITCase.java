@@ -97,6 +97,24 @@ public class UserManagementHostedITCase extends HostedTestBase {
         }
     }
 
+    @Test
+    public void testEditingUsername(){
+        User user = userService.createNewUser(new HSONewUser("editUsername","hodtestqa401+editUsername@gmail.com"), Role.ADMIN, config.getWebDriverFactory());
+
+        verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
+
+        userService.editUsername(user, "Dave");
+
+        verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
+
+        try {
+            userService.editUsername(user, "");
+        } catch (TimeoutException e) { /* Should fail here as you're giving it an invalid username */ }
+
+        verifyThat(usersPage.editUsernameInput(user).getElement().isDisplayed(),is(true));
+        verifyThat(usersPage.editUsernameInput(user).getElement().findElement(By.xpath("./../..")), hasClass("has-error"));
+    }
+
     private WebElement getContainingDiv(WebElement webElement){
         return webElement.findElement(By.xpath(".//../.."));
     }
