@@ -4,7 +4,7 @@
  */
 
 define([
-    '../../../bower_components/backbone/backbone'
+    'backbone'
 ], function(Backbone) {
     var Router = Backbone.Router.extend({
 

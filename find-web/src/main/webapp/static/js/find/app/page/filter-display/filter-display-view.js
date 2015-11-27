@@ -1,11 +1,12 @@
 define([
-    '../../../../../bower_components/backbone/backbone',
+    'backbone',
     'js-whatever/js/list-view',
     'js-whatever/js/list-item-view',
     'find/app/model/search-filters-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/filter-display/filter-display.html',
-    'text!find/templates/app/page/filter-display/filter-display-item.html'
+    'text!find/templates/app/page/filter-display/filter-display-item.html',
+    'bootstrap'
 ], function(Backbone, ListView, ListItemView, SearchFiltersCollection, i18n, template, itemTemplate) {
 
     var FilterListItemView = ListItemView.extend({

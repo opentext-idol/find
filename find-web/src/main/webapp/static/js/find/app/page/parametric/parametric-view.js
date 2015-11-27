@@ -1,5 +1,5 @@
 define([
-    '../../../../../bower_components/backbone/backbone',
+    'backbone',
     'underscore',
     'jquery',
     'js-whatever/js/list-view',

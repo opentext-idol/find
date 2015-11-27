@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/backbone/backbone',
+    'backbone',
     'find/app/model/find-base-collection'
 ], function(Backbone, FindBaseCollection) {
 

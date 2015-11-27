@@ -1,5 +1,5 @@
 define([
-    '../../../../../bower_components/backbone/backbone',
+    'backbone',
     'moment',
     'i18n!find/nls/bundle',
     'find/app/model/dates-filter-model',

@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/backbone/backbone',
+    'backbone',
     'moment'
 ], function(Backbone, moment) {
 

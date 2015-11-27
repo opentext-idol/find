@@ -4,7 +4,7 @@
  */
 
 define([
-    '../../../../bower_components/backbone/backbone',
+    'backbone',
     'underscore',
     'moment'
 ], function(Backbone, _, moment) {

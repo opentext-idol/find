@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/backbone/backbone'
+    'backbone'
 ], function(Backbone) {
 
     var EventsProxy = function(queryModel) {

@@ -1,5 +1,5 @@
 define([
-    '../../../../../bower_components/backbone/backbone',
+    'backbone',
     'jquery',
     'find/app/model/document-model',
     'find/app/model/documents-collection',

@@ -1,5 +1,5 @@
 define([
-    '../../../../../bower_components/backbone/backbone',
+    'backbone',
     'text!find/templates/app/page/parametric/parametric-value-view.html'
 ], function(Backbone, template) {
 

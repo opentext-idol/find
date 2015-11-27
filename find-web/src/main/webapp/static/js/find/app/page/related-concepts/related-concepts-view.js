@@ -1,5 +1,5 @@
 define([
-    '../../../../../bower_components/backbone/backbone',
+    'backbone',
     'jquery',
     'underscore',
     'i18n!find/nls/bundle',

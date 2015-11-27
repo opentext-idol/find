@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/backbone/backbone',
+    'backbone',
     'underscore',
     'moment',
     'find/app/model/backbone-query-model',

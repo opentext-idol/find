@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/backbone/backbone',
+    'backbone',
     'text!find/templates/app/util/collapsible.html'
 ], function(Backbone, collapsibleTemplate) {
 

@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/jquery/jquery'
+    'jquery'
 ], function($) {
 
     // Logout is a POST request. This cannot be done with an href, so append a magic form to the body and submit it.

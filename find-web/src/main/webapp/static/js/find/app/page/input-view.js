@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/backbone/backbone',
+    'backbone',
     'jquery',
     'underscore',
     'text!find/templates/app/page/input-view.html'

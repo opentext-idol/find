@@ -1,5 +1,5 @@
 define([
-    '../../../bower_components/jquery/jquery'
+    'jquery'
 ], function() {
 
     var config;

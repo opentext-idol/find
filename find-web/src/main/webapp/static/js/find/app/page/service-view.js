@@ -1,5 +1,5 @@
 define([
-    '../../../../bower_components/backbone/backbone',
+    'backbone',
     'jquery',
     'underscore',
     'find/app/model/dates-filter-model',

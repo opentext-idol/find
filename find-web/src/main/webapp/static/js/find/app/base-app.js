@@ -4,7 +4,7 @@
  */
 
 define([
-    '../../../bower_components/backbone/backbone',
+    'backbone',
     'find/app/util/test-browser',
     'find/app/vent'
 ], function(Backbone, testBrowser, vent) {

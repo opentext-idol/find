@@ -1,5 +1,5 @@
 define([
-    '../../../../../bower_components/backbone/backbone',
+    'backbone',
     'find/app/model/backbone-query-model',
     'text!find/templates/app/page/sort/sort-view.html',
     'i18n!find/nls/bundle'
