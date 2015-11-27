@@ -8,9 +8,7 @@ import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.users.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
@@ -39,7 +37,10 @@ public class UserManagementHostedITCase extends HostedTestBase {
         HSONewUser newUser = new HSONewUser("jeremy","jeremy");
 
         usersPage.createUserButton().click();
-        User user = newUser.signUpAs(Role.ADMIN, usersPage);
+
+        try {
+            newUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+        } catch (TimeoutException | HSONewUser.UserNotCreatedException e){ /* Expected behaviour */ }
 
         verifyThat(getContainingDiv(usersPage.getUsernameInput()), not(hasClass("has-error")));
         verifyThat(getContainingDiv(usersPage.getEmailInput()), hasClass("has-error"));
@@ -51,40 +52,65 @@ public class UserManagementHostedITCase extends HostedTestBase {
         usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
 
-        verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
+        verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
 
         //TODO use own email addresses
         //Sometimes it requires us to add a valid user before invalid users show up
-        userService.createNewUser(new HSONewUser("Valid", "Valid@definitelynotarealaddress.com"), Role.ADMIN);
+        userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN, config.getWebDriverFactory());
 
         usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
 
-        verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
+        verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
     }
 
     @Test
-    public void testAddingUserShowsUpAsPending(){
-        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@definitelynotarealaddress.com");
+    public void testResettingAuthentication(){
+        HSONewUser newUser = new HSONewUser("resettingauthenticationtest",gmailString("resetauthtest")).authenticate();
 
-        HSOUser user = userService.createNewUser(newUser,Role.USER);
+        HSOUser user = userService.createNewUser(newUser,Role.USER, config.getWebDriverFactory());
+
+        usersPage.refreshButton().click();
+        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
+
+        userService.resetAuthentication(user);
+
+        WebDriver driver = config.createWebDriver();
+        try {
+            user.resetAuthentication(driver);
+        } finally {
+            for(String browserHandle : driver.getWindowHandles()){
+                driver.switchTo().window(browserHandle);
+                driver.close();
+            }
+        }
+    }
+
+    @Test
+    public void testEditingUsername(){
+        User user = userService.createNewUser(new HSONewUser("editUsername", gmailString("editUsername")), Role.ADMIN, config.getWebDriverFactory());
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
-        verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
-        verifyThat(usersPage.getRoleOf(user), is(Role.USER));
+
+        userService.editUsername(user, "Dave");
+
+        verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
+
+        try {
+            userService.editUsername(user, "");
+        } catch (TimeoutException e) { /* Should fail here as you're giving it an invalid username */ }
+
+        verifyThat(usersPage.editUsernameInput(user).getElement().isDisplayed(),is(true));
+        verifyThat(usersPage.editUsernameInput(user).getElement().findElement(By.xpath("./../..")), hasClass("has-error"));
     }
 
     @Test
-    public void testDisablingAndDeletingUser(){
-        HSONewUser newUser = new HSONewUser("VALIDUSER","Valid@definitelynotarealaddress.com");
+    public void testAddingAndAuthenticatingUser(){
+        User user = userService.createNewUser(new HSONewUser("authenticatetest", gmailString("authenticationtest")).authenticate(),
+                Role.USER, config.getWebDriverFactory());
 
-        HSOUser user = userService.createNewUser(newUser,Role.USER);
-
-        userService.changeRole(user,Role.NONE);
-        verifyThat(usersPage.getRoleOf(user), is(Role.NONE));
-
-        userService.deleteUser(user);
-        verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
+        usersPage.refreshButton().click();
+        verifyThat(usersPage.getStatusOf(user),is(Status.CONFIRMED));
     }
 
     private WebElement getContainingDiv(WebElement webElement){
@@ -93,5 +119,9 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
     private WebElement getContainingDiv(FormInput formInput){
         return getContainingDiv(formInput.getElement());
+    }
+
+    private String gmailString(String plus){
+        return "hodtestqa401+" + plus + "@gmail.com";
     }
 }

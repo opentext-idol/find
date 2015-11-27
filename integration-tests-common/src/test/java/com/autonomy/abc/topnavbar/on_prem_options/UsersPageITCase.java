@@ -3,23 +3,22 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.UnhandledAlertException;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -27,7 +26,10 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -54,7 +56,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-		User user = aNewUser.signUpAs(Role.USER, usersPage);
+		User user = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
 		verifyUserAdded(newUserModal, user);
 		usersPage.closeModal();
@@ -65,7 +67,7 @@ public class UsersPageITCase extends ABCTestBase {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 
-		User user = newUser.signUpAs(Role.USER, usersPage);
+		User user = newUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		usersPage.closeModal();
 
 		try {
@@ -76,7 +78,11 @@ public class UsersPageITCase extends ABCTestBase {
 
 		getDriver().get(getConfig().getWebappUrl());
 
-		loginAs(user);
+		try {
+			loginAs(user);
+		} catch (TimeoutException e) { /* Probably because of the sessions you're already logged in */ }
+
+		getElementFactory().getPromotionsPage();
 		assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
 	}
 
@@ -128,9 +134,9 @@ public class UsersPageITCase extends ABCTestBase {
 		final int initialNumberOfUsers = usersPage.countNumberOfUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User user = aNewUser.signUpAs(Role.USER, usersPage);
+		User user = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		usersPage.loadOrFadeWait();
-		User admin = newUser2.signUpAs(Role.ADMIN, usersPage);
+		User admin = newUser2.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -142,8 +148,8 @@ public class UsersPageITCase extends ABCTestBase {
 
 		usersPage.createUserButton().click();
 		verifyThat(usersPage.isModalShowing(), is(true));
-		aNewUser.signUpAs(Role.USER, usersPage);
-		newUser2.signUpAs(Role.ADMIN, usersPage);
+		aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+		newUser2.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -154,23 +160,28 @@ public class UsersPageITCase extends ABCTestBase {
 	private void verifyUserAdded(ModalView newUserModal, User user){
 		if(getConfig().getType().equals(ApplicationType.ON_PREM)){
 			verifyThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
-//		} else {
-//			new WebDriverWait(getDriver(),10).withMessage("User not added").until(GritterNotice.notificationContaining("Created user " + user.getUsername()));
 		}
+
+		//Hosted notifications are dealt with within the sign up method and there is no real way to ensure that a user's been created at the moment
 	}
 
 	@Test
 	public void testAddDuplicateUser() {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User original = aNewUser.signUpAs(Role.USER, usersPage);
+		User original = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		verifyUserAdded(newUserModal, original);
 
-		aNewUser.signUpAs(Role.USER, usersPage);
+		try {
+			aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+		} catch (TimeoutException e) { /* Expected */}
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
-		config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage);
+		try {
+			config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+		} catch (TimeoutException e) { /* Expected */}
+
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
 		usersPage.closeModal();
@@ -183,10 +194,10 @@ public class UsersPageITCase extends ABCTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 
-		User admin = aNewUser.signUpAs(Role.ADMIN, usersPage);
+		User admin = aNewUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
 		verifyUserAdded(newUserModal, admin);
 
-		User user = newUser2.signUpAs(Role.USER, usersPage);
+		User user = newUser2.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
 		verifyUserAdded(newUserModal, user);
 
 		usersPage.closeModal();
@@ -341,5 +352,138 @@ public class UsersPageITCase extends ABCTestBase {
 		executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
 		usersPage.loadOrFadeWait();
 		assertThat(usersPage.isAlertPresent(), is(false));
+	}
+
+	@Test
+	public void testDisablingAndDeletingUser(){
+		User user = userService.createNewUser(aNewUser, Role.USER, config.getWebDriverFactory());
+
+		userService.changeRole(user, Role.NONE);
+		verifyThat(usersPage.getRoleOf(user), is(Role.NONE));
+
+		userService.deleteUser(user);
+		verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
+	}
+
+	@Test
+	public void testAddUser(){
+		User user = singleSignUp();
+		verifyUserShowsUpInTable(user, Status.PENDING);
+	}
+
+	private void verifyUserShowsUpInTable(User user, Status expectedStatus){
+		verifyThat(usersPage.getUsernames(), CoreMatchers.hasItem(user.getUsername()));
+		verifyThat(usersPage.getRoleOf(user), is(Role.USER));
+
+		if(getConfig().getType().equals(ApplicationType.HOSTED)){
+			HSOUsersPage usersPage = (HSOUsersPage) this.usersPage;
+			HSOUser hsoUser = (HSOUser) user;
+
+			verifyThat(usersPage.getEmailOf(user), is(hsoUser.getEmail()));
+			verifyThat(usersPage.getStatusOf(user), is(expectedStatus));
+		}
+	}
+
+	@Test
+	public void testUserSearch(){
+		NewUser newUser3 = getConfig().getNewUser("bob");
+
+		String[] addedUsers = new String[3];
+
+		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory()).getUsername();
+		addedUsers[1] = userService.createNewUser(newUser2, Role.ADMIN, config.getWebDriverFactory()).getUsername();
+		addedUsers[2] = userService.createNewUser(newUser3, Role.ADMIN, config.getWebDriverFactory()).getUsername();
+
+		FormInput searchFilter = usersPage.userSearchFilter();
+
+		searchFilter.setValue("hodtestqa");
+
+		verifyThat(usersPage.getUsernames(), containsInAnyOrder(addedUsers));
+
+		searchFilter.setValue("newuser1");
+
+		List<String> usernames = usersPage.getUsernames();
+		verifyThat(usernames, hasItem(addedUsers[0]));
+		verifyThat(usernames, not(hasItem(addedUsers[1])));
+		verifyThat(usernames, not(hasItem(addedUsers[2])));
+
+		searchFilter.setValue("j");
+
+		usernames = usersPage.getUsernames();
+		verifyThat(usernames, hasItem(addedUsers[0]));
+		verifyThat(usernames, hasItem(addedUsers[1]));
+		verifyThat(usernames, not(hasItem(addedUsers[2])));
+
+		searchFilter.setValue("bob");
+
+		usernames = usersPage.getUsernames();
+		verifyThat(usernames, not(hasItem(addedUsers[0])));
+		verifyThat(usernames, not(hasItem(addedUsers[1])));
+		verifyThat(usernames, hasItem(addedUsers[2]));
+	}
+
+	@Test
+	public void testUserFilter(){
+		LoggerFactory.getLogger(UsersPageITCase.class).warn("CANNOT FILTER BY 'NONE' - NEEDS TO BE UNCOMMENTED WHEN WORKING");
+
+		NewUser newUser3 = getConfig().getNewUser("bob");
+
+		String[] addedUsers = new String[2];
+
+		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory()).getUsername();
+		addedUsers[1] = userService.createNewUser(newUser2, Role.USER, config.getWebDriverFactory()).getUsername();
+//		addedUsers[2] = userService.createNewUser(newUser3, Role.USER).getUsername();
+
+		Dropdown dropdown = usersPage.userRoleFilter();
+
+		verifyThat(usersPage.getUsernames(), containsInAnyOrder(addedUsers));
+
+		dropdown.select("Admin");
+
+		List<String> usernames = usersPage.getUsernames();
+		verifyThat(usernames, hasItem(addedUsers[0]));
+		verifyThat(usernames, not(hasItem(addedUsers[1])));
+//		verifyThat(usernames, not(hasItem(addedUsers[2])));
+
+		dropdown.select("User");
+
+		usernames = usersPage.getUsernames();
+		verifyThat(usernames, not(hasItem(addedUsers[0])));
+		verifyThat(usernames, hasItem(addedUsers[1]));
+//		verifyThat(usernames, not(hasItem(addedUsers[2])));
+
+//		dropdown.select("None");
+//
+//		usernames = usersPage.getUsernames();
+//		verifyThat(usernames, not(hasItem(addedUsers[0])));
+//		verifyThat(usernames, not(hasItem(addedUsers[1])));
+//		verifyThat(usernames, hasItem(addedUsers[2]));
+	}
+
+	@Test
+	public void testUserCount(){
+		verifyThat(usersPage.getUserCountInTitle(), is(0));
+
+		User user1 = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
+		verifyThat(usersPage.getUserCountInTitle(), is(1));
+
+		User user2 = userService.createNewUser(newUser2, Role.ADMIN, config.getWebDriverFactory());
+		verifyThat(usersPage.getUserCountInTitle(), is(2));
+
+		try {
+			userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
+		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) {
+			/* Expected */
+			usersPage.closeModal();
+		}
+
+		verifyThat(usersPage.getUserCountInTitle(), is(2));
+
+		userService.deleteUser(user2);
+		verifyThat(usersPage.getUserCountInTitle(), is(1));
+
+		userService.deleteUser(user1);
+		usersPage.loadOrFadeWait();
+		verifyThat(usersPage.getUserCountInTitle(), is(0));
 	}
 }

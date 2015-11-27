@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.users;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 
 public class User {
-    private final String username;
+    private String username;
     private final Role role;
     private final AuthProvider authProvider;
     public final static User NULL = NullUser.getInstance();
@@ -34,4 +34,9 @@ public class User {
         return "User<" + authProvider + '|' + role + '>';
     }
 
+    public void setUsername(String username) {
+        if(this instanceof HSOUser) {
+            this.username = username;
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.page.admin;
 
+import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.PasswordBox;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
@@ -161,5 +163,18 @@ public abstract class UsersPage extends AppElement implements AppPage {
 
 	private static void waitForLoad(WebDriver driver) {
 		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("create-user")));
+	}
+
+	public FormInput userSearchFilter() {
+		return new FormInput(findElement(By.className("users-search-filter")), getDriver());
+	}
+
+	public Dropdown userRoleFilter() {
+		return new Dropdown(findElement(By.cssSelector(".users-filters-view .dropdown")), getDriver());
+	}
+
+	public int getUserCountInTitle() {
+		String title = getDriver().findElement(By.tagName("h1")).getText();
+		return Integer.parseInt(title.replaceAll("\\D+", ""));
 	}
 }

@@ -7,8 +7,10 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -30,10 +32,10 @@ public class HSOUserService extends UserService {
     }
 
     @Override
-    public HSOUser createNewUser(NewUser newUser, Role role) {
+    public HSOUser createNewUser(NewUser newUser, Role role, Factory<WebDriver> webDriverFactory) {
         UsersPage usersPage = goToUsers();
         usersPage.createUserButton().click();
-        HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage);
+        HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage, webDriverFactory);
         usersPage.closeModal();
         return user;
     }
@@ -62,5 +64,22 @@ public class HSOUserService extends UserService {
         usersPage.setRoleValueFor(user, newRole);
         usersPage.submitPendingEditFor(user);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(roleLink));
+    }
+
+    public void resetAuthentication(HSOUser user) {
+        usersPage.resetAuthenticationButton(user).click();
+        usersPage.loadOrFadeWait();
+        ModalView.getVisibleModalView(getDriver()).okButton().click();
+        new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Reset authentication for " + user.getUsername()));
+    }
+
+    public User editUsername(User user, String newUsername) {
+        WebElement pencil = usersPage.editUsernameLink(user);
+        pencil.click();
+        usersPage.editUsernameInput(user).setAndSubmit(newUsername);
+        new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
+        usersPage.loadOrFadeWait();
+        user.setUsername(newUsername);
+        return user;
     }
 }

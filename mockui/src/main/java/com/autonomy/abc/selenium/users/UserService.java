@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.util.Factory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,9 +20,11 @@ public abstract class UserService {
         this.elementFactory = elementFactory;
     }
 
+    public abstract void deleteUser(User user);
+
     public abstract UsersPage goToUsers();
 
-    public abstract User createNewUser(NewUser newUser, Role role);
+    public abstract User createNewUser(NewUser newUser, Role role, Factory<WebDriver> webDriverFactory);
 
     protected WebDriver getDriver() {
         return getElementFactory().getDriver();
