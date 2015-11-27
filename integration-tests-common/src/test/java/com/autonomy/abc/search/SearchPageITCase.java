@@ -16,7 +16,7 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
-import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -37,6 +37,8 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
@@ -47,7 +49,8 @@ import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.hamcrest.number.OrderingComparison.lessThanOrEqualTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageITCase extends ABCTestBase {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -88,22 +91,22 @@ public class SearchPageITCase extends ABCTestBase {
 		logger.info("Searching for: '" + searchTerm + "'");
 		topNavBar.search(searchTerm);
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertNotEquals(searchPage.getText(), contains(Errors.Search.HOD));
+		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
 	}
 
     @Test
 	public void testUnmodifiedResultsToggleButton(){
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
 
-        assertTrue("Page should be showing modified results", searchPage.modifiedResultsShown());
+        assertThat("Page should be showing modified results", searchPage.modifiedResultsShown(), is(true));
 		assertThat("Url incorrect", getDriver().getCurrentUrl(), containsString("/modified"));
 
 		searchPage.modifiedResultsCheckBox().click();
-        assertTrue("Page should not be showing modified results", !searchPage.modifiedResultsShown());
+        assertThat("Page should not be showing modified results", searchPage.modifiedResultsShown(), is(false));
 		assertThat("Url incorrect", getDriver().getCurrentUrl(), containsString("/unmodified"));
 
 		searchPage.modifiedResultsCheckBox().click();
-        assertTrue("Page should be showing modified results", searchPage.modifiedResultsShown());
+        assertThat("Page should be showing modified results", searchPage.modifiedResultsShown(), is(true));
         assertThat("Url incorrect", getDriver().getCurrentUrl(), containsString("/modified"));
 	}
 
@@ -271,7 +274,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat("Summary size should equal 2", searchPage.getPromotionSummarySize(), is(2));
 
-		assertTrue("The show more promotions button is not visible", searchPage.showMorePromotionsButton().isDisplayed());
+		assertThat("The show more promotions button is not visible", searchPage.showMorePromotionsButton(), displayed());
 		searchPage.showMorePromotions();
 		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize(), is(5));
 
@@ -581,7 +584,7 @@ public class SearchPageITCase extends ABCTestBase {
 			assertThat(searchPage.getSelectedLanguage(), is(language.toString()));
 
 			searchPage.waitForSearchLoadIndicatorToDisappear();
-			assertNotEquals(docTitle, searchPage.getSearchResultTitle(1));
+			assertThat(searchPage.getSearchResultTitle(1), not(docTitle));
 
 			docTitle = searchPage.getSearchResultTitle(1);
 		}
@@ -598,14 +601,14 @@ public class SearchPageITCase extends ABCTestBase {
 			searchPage.searchResultCheckbox(i).click();
 		}
 
-		assertEquals(4, searchPage.promotionsBucketWebElements().size());
+		assertThat(searchPage.promotionsBucketWebElements(), hasSize(4));
 
 		final String url = getDriver().getCurrentUrl().replace("french", "arabic");
 		getDriver().get(url);
 		searchPage = getElementFactory().getSearchPage();
 		searchPage.loadOrFadeWait();
 		assertThat("Have not navigated back to search page with modified url " + url, searchPage.promoteThisQueryButton().isDisplayed());
-		assertEquals(0, searchPage.promotionsBucketWebElements().size());
+		assertThat(searchPage.promotionsBucketWebElements(), hasSize(0));
 	}
 
 	@Test
@@ -618,15 +621,15 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
-		assertEquals("There should be one document in the bucket", 1, searchPage.promotionsBucketList().size());
+		assertThat("There should be one document in the bucket", searchPage.promotionsBucketList(), hasSize(1));
 		searchPage.selectLanguage(Language.FRENCH);
-		assertFalse("The promotions bucket should close when the language is changed", searchPage.promotionsBucket().isDisplayed());
+		assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
 
 		searchPage.promoteTheseDocumentsButton().click();
-		assertEquals("There should be no documents in the bucket after changing language", 0, searchPage.promotionsBucketList().size());
+		assertThat("There should be no documents in the bucket after changing language", searchPage.promotionsBucketList(), hasSize(0));
 
 		searchPage.selectLanguage(Language.ENGLISH);
-		assertFalse("The promotions bucket should close when the language is changed", searchPage.promotionsBucket().isDisplayed());
+		assertThat("The promotions bucket should close when the language is changed", searchPage.promotionsBucket(), not(displayed()));
 	}
 
 	@Test
@@ -686,19 +689,19 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat("Field text edit button not visible", searchPage.fieldTextEditButton().isDisplayed());
 		assertThat("Field text remove button not visible", searchPage.fieldTextRemoveButton().isDisplayed());
-		assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
+		assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
 
 		try {
-			assertNotEquals(searchPage.getSearchResultTitle(comparisonIndex), comparisonString);
+			assertThat(searchPage.getSearchResultTitle(comparisonIndex), not(comparisonString));
 		} catch (final NoSuchElementException e) {
 			// The comparison document is not present
 		}
 
 		searchPage.fieldTextRemoveButton().click();
 		searchPage.loadOrFadeWait();
-		assertEquals(searchPage.getSearchResultTitle(comparisonIndex), comparisonString);
+		assertThat(searchPage.getSearchResultTitle(comparisonIndex), is(comparisonString));
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
-		assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
+		assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
 	}
 
 	@Test
@@ -728,7 +731,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		assertThat(searchPage.getText(), not(containsString("No results found")));
-		assertEquals(firstSearchResult, searchPage.getSearchResultTitle(1));
+		assertThat(searchPage.getSearchResultTitle(1), is(firstSearchResult));
 
 		searchPage.fieldTextEditButton().click();
 		searchPage.fieldTextInput().clear();
@@ -737,7 +740,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
-		assertEquals(secondSearchResult, searchPage.getSearchResultTitle(1));
+		assertThat(searchPage.getSearchResultTitle(1), is(secondSearchResult));
 	}
 
     @Test
@@ -839,10 +842,10 @@ public class SearchPageITCase extends ABCTestBase {
 		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
 
 //		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        searchPage.getDocLogo(1,new WebDriverWait(getDriver(),10));
+        searchPage.getDocLogo(1, new WebDriverWait(getDriver(), 10));
         searchPage.loadOrFadeWait();
-		assertEquals(2, searchPage.getPromotionSummarySize());
-		assertEquals(2, searchPage.getPromotionSummaryLabels().size());
+		assertThat(searchPage.getPromotionSummarySize(), is(2));
+		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(2));
 
 		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
 		searchPage.showFieldTextOptions();
@@ -851,9 +854,9 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 
-		assertEquals(1, searchPage.getPromotionSummarySize());
-		assertEquals(1, searchPage.getPromotionSummaryLabels().size());
-		assertEquals(initialPromotionsSummary.get(0), searchPage.promotionsSummaryList(false).get(0));
+		assertThat(searchPage.getPromotionSummarySize(), is(1));
+		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(1));
+		assertThat(searchPage.promotionsSummaryList(false).get(0), is(initialPromotionsSummary.get(0)));
 
 		searchPage.fieldTextEditButton().click();
 		searchPage.fieldTextInput().clear();
@@ -861,9 +864,9 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 
-		assertEquals(1, searchPage.getPromotionSummarySize());
-		assertEquals(1, searchPage.getPromotionSummaryLabels().size());
-		assertEquals(initialPromotionsSummary.get(1), searchPage.promotionsSummaryList(false).get(0));
+		assertThat(searchPage.getPromotionSummarySize(), is(1));
+		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(1));
+		assertThat(searchPage.promotionsSummaryList(false).get(0), is(initialPromotionsSummary.get(1)));
 	}
 
 	@Test
@@ -896,8 +899,8 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
 		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));	//TODO Seems like this shouldn't be visible
-		assertEquals("Wrong number of results displayed", 2, searchPage.countSearchResults());
-		assertEquals("Wrong number of pin to position labels displayed", 2, searchPage.countPinToPositionLabels());
+		assertThat("Wrong number of results displayed", searchPage.countSearchResults(), is(2));
+		assertThat("Wrong number of pin to position labels displayed", searchPage.countPinToPositionLabels(), is(2));
 
 		searchPage.fieldTextEditButton().click();
 		searchPage.fieldTextInput().clear();
@@ -905,9 +908,9 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 
-		assertEquals(promotedDocs.get(0), searchPage.getSearchResultTitle(1));
-		assertEquals(1, searchPage.countSearchResults());
-		assertEquals(1, searchPage.countPinToPositionLabels());
+		assertThat(searchPage.getSearchResultTitle(1), is(promotedDocs.get(0)));
+		assertThat(searchPage.countSearchResults(), is(1));
+		assertThat(searchPage.countPinToPositionLabels(), is(1));
 
 		searchPage.fieldTextEditButton().click();
 		searchPage.fieldTextInput().clear();
@@ -915,9 +918,9 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fieldTextTickConfirm().click();
 		searchPage.loadOrFadeWait();
 
-		assertEquals(promotedDocs.get(1) + " not visible in the search title", promotedDocs.get(1), searchPage.getSearchResultTitle(1));
-		assertEquals("Wrong number of search results", 1, searchPage.countSearchResults());
-		assertEquals("Wrong nu,ber of pin to position labels", 1, searchPage.countPinToPositionLabels());
+		assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResultTitle(1), is(promotedDocs.get(1)));
+		assertThat("Wrong number of search results", searchPage.countSearchResults(), is(1));
+		assertThat("Wrong number of pin to position labels", searchPage.countPinToPositionLabels(), is(1));
 	}
 
 	@Test
@@ -935,7 +938,7 @@ public class SearchPageITCase extends ABCTestBase {
 			searchPage.loadOrFadeWait();
 			final int numberOfPages = searchPage.getCurrentPageNumber();
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
-			assertEquals((numberOfPages - 1) * 6 + lastPageDocumentsCount, searchPage.countSearchResults());
+			assertThat(searchPage.countSearchResults(), is((numberOfPages - 1) * 6 + lastPageDocumentsCount));
 		}
 	}
 
@@ -948,7 +951,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.selectLanguage(Language.ENGLISH);
 
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-            List<String> allTerms = ListUtils.union(boolOperators,stopWords);
+            List<String> allTerms = ListUtils.union(boolOperators, stopWords);
 
             for (final String searchTerm : allTerms) {
 				search(searchTerm);
@@ -1029,25 +1032,25 @@ public class SearchPageITCase extends ABCTestBase {
 			for (final String label : searchPage.filterLabelList()) {
 				assertThat("A 'From' date filter has been applied while only an 'Until' filter was selected by the user", label,not(containsString("From: ")));
 			}
-			assertFalse("A 'From' date filter has been applied while only an 'Until' filter was selected by the user", searchPage.fromDateTextBox().getAttribute("value").isEmpty());
+			assertThat("A 'From' date filter has been applied while only an 'Until' filter was selected by the user", searchPage.fromDateTextBox().getAttribute("value"), not(isEmptyOrNullString()));
 			throw e;
 		}
 		searchPage.closeUntilDatePicker();
         logger.info(searchPage.untilDateTextBox().getAttribute("value"));
-		assertEquals("Document should still be displayed", firstResult, searchPage.getSearchResultTitle(1));
+		assertThat("Document should still be displayed", searchPage.getSearchResultTitle(1), is(firstResult));
 
 		searchPage.openUntilDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
 		searchPage.closeUntilDatePicker();
         logger.info(searchPage.untilDateTextBox().getAttribute("value"));
-        assertEquals("Document should not be visible. Date filter not working", firstResult, not(searchPage.getSearchResultTitle(1)));
+        assertThat("Document should not be visible. Date filter not working", searchPage.getSearchResultTitle(1), not(firstResult));
 
 		searchPage.openUntilDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, 1));
 		searchPage.closeUntilDatePicker();
-		assertEquals("Document should be visible. Date filter not working", firstResult, searchPage.getSearchResultTitle(1));
+		assertThat("Document should be visible. Date filter not working", searchPage.getSearchResultTitle(1), is(firstResult));
 	}
 
 	@Test
@@ -1058,7 +1061,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 12:00 PM");
         searchPage.sortByRelevance();
-		assertEquals("Dates should be equal", searchPage.fromDateTextBox().getAttribute("value"), searchPage.untilDateTextBox().getAttribute("value"));
+		assertThat("Dates should be equal", searchPage.fromDateTextBox().getAttribute("value"), is(searchPage.untilDateTextBox().getAttribute("value")));
 
 		searchPage.loadOrFadeWait();
 
@@ -1067,7 +1070,7 @@ public class SearchPageITCase extends ABCTestBase {
 		//clicking sort by relevance because an outside click is needed for the changes to take place
 		searchPage.sortByRelevance();
 //		assertNotEquals("From date cannot be after the until date", searchPage.fromDateTextBox().getAttribute("value"), "04/05/2000 12:01 PM");
-        assertEquals("From date should be blank", searchPage.fromDateTextBox().getAttribute("value").toString(), "");
+        assertThat("From date should be blank", searchPage.fromDateTextBox().getAttribute("value"), isEmptyOrNullString());
 
 		searchPage.fromDateTextBox().clear();
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
@@ -1075,7 +1078,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 11:59 AM");
 		searchPage.sortByRelevance();
 //		assertEquals("Until date cannot be before the from date", searchPage.untilDateTextBox().getAttribute("value"),is(not("04/05/2000 11:59 AM")));
-        assertEquals("Until date should be blank", searchPage.untilDateTextBox().getAttribute("value").toString(), "");
+        assertThat("Until date should be blank", searchPage.untilDateTextBox().getAttribute("value"), isEmptyOrNullString());
 	}
 
 	@Test
@@ -1091,7 +1094,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.fromDateTextBox().sendKeys("12/12/2012 12:12");
         searchPage.untilDateTextBox().sendKeys("12/12/2012 12:12");
 
-		assertEquals("Datepicker dates are not equal", searchPage.fromDateTextBox().getAttribute("value"), searchPage.untilDateTextBox().getAttribute("value"));
+		assertThat("Datepicker dates are not equal", searchPage.fromDateTextBox().getAttribute("value"), is(searchPage.untilDateTextBox().getAttribute("value")));
 		final Date date = searchPage.getDateFromFilter(searchPage.untilDateTextBox());
 
 		searchPage.sendDateToFilter(DateUtils.addMinutes(date, 1), searchPage.untilDateTextBox());
@@ -1101,7 +1104,7 @@ public class SearchPageITCase extends ABCTestBase {
         searchPage.sendDateToFilter(DateUtils.addMinutes(date, -1), searchPage.untilDateTextBox());
         //clicking sort by relevance because an outside click is needed for the changes to take place
 		searchPage.sortByRelevance();
-        assertEquals("", searchPage.untilDateTextBox().getAttribute("value"));
+        assertThat(searchPage.untilDateTextBox().getAttribute("value"), isEmptyOrNullString());
 	}
 
 	@Test
@@ -1145,14 +1148,14 @@ public class SearchPageITCase extends ABCTestBase {
 		getDriver().navigate().refresh();
 		body = getBody();
 		final String newSearchText = body.getTopNavBar().getSearchBarText();
-		assertEquals("search bar should be blank on refresh of a page that isn't the search page", newSearchText, searchText);
+		assertThat("search bar should be blank on refresh of a page that isn't the search page", newSearchText, is(searchText));
 	}
 
 	@Test
 	public void testRelatedConceptsLinks() {
 		String queryText = "frog";
 		search(queryText);
-		assertEquals("The search bar has not retained the query text", topNavBar.getSearchBarText(), queryText);
+		assertThat("The search bar has not retained the query text", topNavBar.getSearchBarText(), is(queryText));
 		assertThat("'You searched for' section does not include query text", searchPage.youSearchedFor(), hasItem(queryText));
 		assertThat("'Results for' heading text does not contain the query text", searchPage.getResultsForText(), containsString(queryText));
 
@@ -1166,7 +1169,7 @@ public class SearchPageITCase extends ABCTestBase {
 			searchPage.relatedConcept(queryText).click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
-			assertEquals("The search bar has not retained the query text", topNavBar.getSearchBarText(), queryText);
+			assertThat("The search bar has not retained the query text", topNavBar.getSearchBarText(), is(queryText));
 			final String[] words = queryText.split("\\s+");
 			for (final String word : words) {
 				assertThat("'You searched for' section does not include word: " + word + " for query text: " + queryText, searchPage.youSearchedFor(), hasItem(word));
@@ -1224,7 +1227,7 @@ public class SearchPageITCase extends ABCTestBase {
 
         String errorMessage = "Garbage text returned results. garbageQueryText string needs changed to be more garbage like";
 		assertThat(errorMessage, searchPage.getText(), containsString("No results found"));
-		assertEquals(errorMessage, 0, searchPage.countSearchResults());
+		assertThat(errorMessage, searchPage.countSearchResults(), is(0));
 
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
         assertThat("If there are no search results there should be no related concepts", searchPage.getText(), containsString("No related concepts found"));
