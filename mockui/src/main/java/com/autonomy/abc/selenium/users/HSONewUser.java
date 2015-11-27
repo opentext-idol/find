@@ -1,23 +1,18 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
-import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 // TODO: CSA-1663
 public class HSONewUser implements NewUser {
@@ -25,7 +20,7 @@ public class HSONewUser implements NewUser {
     private final String username;
     private final String email;
     private AuthProvider provider;
-    private boolean validate = false;
+    private boolean authenticate = false;
 
     public HSONewUser(String username, String email) {
         this.username = username;
@@ -37,13 +32,13 @@ public class HSONewUser implements NewUser {
         this.provider = provider;
     }
 
-    public HSONewUser(String username, String email, AuthProvider provider, boolean validate){
+    public HSONewUser(String username, String email, AuthProvider provider, boolean authenticate){
         this(username, email, provider);
-        this.validate = validate;
+        this.authenticate = authenticate;
     }
 
-    public HSONewUser validate(){
-        validate = true;
+    public HSONewUser authenticate(){
+        authenticate = true;
         return this;
     }
 
@@ -61,7 +56,7 @@ public class HSONewUser implements NewUser {
         hsoUsersPage.loadOrFadeWait();
 
         if (hsoUsersPage.getUsernameInput().getValue().equals("")) {
-            if(validate) {
+            if(authenticate) {
                 try {
                     driver = webDriverFactory.create();
                     successfullyAdded(usersPage);
@@ -83,7 +78,7 @@ public class HSONewUser implements NewUser {
         getGmail();
 
         try {
-            new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
+            new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
             verifyUser();
         } catch (TimeoutException e) { /* User already verified */ }
     }

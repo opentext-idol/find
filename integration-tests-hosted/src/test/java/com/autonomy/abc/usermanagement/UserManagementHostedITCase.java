@@ -56,7 +56,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
         //TODO use own email addresses
         //Sometimes it requires us to add a valid user before invalid users show up
-        userService.createNewUser(new HSONewUser("Valid", "hodtestqa401+NonInvalidEmail@gmail.com"), Role.ADMIN, config.getWebDriverFactory());
+        userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN, config.getWebDriverFactory());
 
         usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
@@ -65,19 +65,8 @@ public class UserManagementHostedITCase extends HostedTestBase {
     }
 
     @Test
-    public void testAddedUserShowsUpAsPending(){
-        HSONewUser newUser = new HSONewUser("VALIDUSER","hodtestqa401+NonInvalidEmail@gmail.com");
-
-        HSOUser user = userService.createNewUser(newUser, Role.USER, config.getWebDriverFactory());
-
-        verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
-        verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
-        verifyThat(usersPage.getRoleOf(user), is(Role.USER));
-    }
-
-    @Test
     public void testResettingAuthentication(){
-        HSONewUser newUser = new HSONewUser("authenticationtest","hodtestqa401+authenticationtest@gmail.com").validate();
+        HSONewUser newUser = new HSONewUser("resettingauthenticationtest",gmailString("resetauthtest")).authenticate();
 
         HSOUser user = userService.createNewUser(newUser,Role.USER, config.getWebDriverFactory());
 
@@ -99,7 +88,7 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
     @Test
     public void testEditingUsername(){
-        User user = userService.createNewUser(new HSONewUser("editUsername","hodtestqa401+editUsername@gmail.com"), Role.ADMIN, config.getWebDriverFactory());
+        User user = userService.createNewUser(new HSONewUser("editUsername", gmailString("editUsername")), Role.ADMIN, config.getWebDriverFactory());
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
 
@@ -115,11 +104,24 @@ public class UserManagementHostedITCase extends HostedTestBase {
         verifyThat(usersPage.editUsernameInput(user).getElement().findElement(By.xpath("./../..")), hasClass("has-error"));
     }
 
+    @Test
+    public void testAddingAndAuthenticatingUser(){
+        User user = userService.createNewUser(new HSONewUser("authenticatetest", gmailString("authenticationtest")).authenticate(),
+                Role.USER, config.getWebDriverFactory());
+
+        usersPage.refreshButton().click();
+        verifyThat(usersPage.getStatusOf(user),is(Status.CONFIRMED));
+    }
+
     private WebElement getContainingDiv(WebElement webElement){
         return webElement.findElement(By.xpath(".//../.."));
     }
 
     private WebElement getContainingDiv(FormInput formInput){
         return getContainingDiv(formInput.getElement());
+    }
+
+    private String gmailString(String plus){
+        return "hodtestqa401+" + plus + "@gmail.com";
     }
 }
