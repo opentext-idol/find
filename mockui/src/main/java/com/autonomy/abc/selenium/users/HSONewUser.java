@@ -56,15 +56,21 @@ public class HSONewUser implements NewUser {
         hsoUsersPage.selectRole(role);
         hsoUsersPage.createButton().click();
 
-        new WebDriverWait(driver,15).withMessage("User hasn't been created").until(GritterNotice.notificationContaining("Created user"));
+        new WebDriverWait(usersPage.getDriver(),15).withMessage("User hasn't been created").until(GritterNotice.notificationContaining("Created user"));
 
         hsoUsersPage.loadOrFadeWait();
 
         if (hsoUsersPage.getUsernameInput().getValue().equals("")) {
-            driver = webDriverFactory.create();
-
             if(validate) {
-                successfullyAdded(usersPage);
+                try {
+                    driver = webDriverFactory.create();
+                    successfullyAdded(usersPage);
+                } finally {
+                    for(int i = browserHandles.size() - 1; i >= 0; i--) {
+                        driver.switchTo().window(browserHandles.get(i));
+                        driver.close();
+                    }
+                }
             }
 
             return new HSOUser(username, email, role, provider);
@@ -74,29 +80,18 @@ public class HSONewUser implements NewUser {
     }
 
     private void successfullyAdded(UsersPage usersPage) {
-        browserHandles = usersPage.createAndListWindowHandles();
-
         getGmail();
 
         try {
             new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
             verifyUser();
         } catch (TimeoutException e) { /* User already verified */ }
-
-        for(int i = browserHandles.size() - 1; i > 0; i--){
-            driver.switchTo().window(browserHandles.get(i));
-            driver.close();
-        }
-
-        driver.switchTo().window(browserHandles.get(0));
     }
 
-    List<String> browserHandles;
-    WebDriver driver;
+    private List<String> browserHandles;
+    private WebDriver driver;
 
     private void getGmail(){
-        driver.switchTo().window(browserHandles.get(1));
-
         GMailHelper helper = new GMailHelper(driver);
 
         helper.goToGMail();
@@ -113,7 +108,7 @@ public class HSONewUser implements NewUser {
         } catch (Exception e) {/**/}
 
         browserHandles = new ArrayList<>(driver.getWindowHandles());
-        driver.switchTo().window(browserHandles.get(2));
+        driver.switchTo().window(browserHandles.get(1));
     }
 
     private void verifyUser(){

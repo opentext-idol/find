@@ -27,7 +27,7 @@ public class HSOUser extends User {
     }
 
     /**
-     *
+     * TODO now you can use WebDriverFactory and create/clean up within this method probably best to actually do that
      * @param driver  MUST BE A DIFFERENT WEB DRIVER FROM THE ONE THE ADMIN IS RUNNING IN
      */
     public void resetAuthentication(WebDriver driver) {
@@ -39,21 +39,12 @@ public class HSOUser extends User {
         helper.clickUnreadMessage();
         helper.expandCollapsedMessage();
 
-        driver.findElement(By.xpath("//a[text()='click here']")).click();
+        new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()='click here']"))).click();
 
         try {
             new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
             verifyUser(driver);
         } catch (TimeoutException e) { /* User already verified */ }
-
-        List<String> browserHandles = new ArrayList<>(driver.getWindowHandles());
-
-        for(int i = browserHandles.size() - 1; i >= 0; i--){
-            driver.switchTo().window(browserHandles.get(i));
-            driver.close();
-        }
-
-        driver.switchTo().window(browserHandles.get(0));
     }
 
     private void verifyUser(WebDriver driver){

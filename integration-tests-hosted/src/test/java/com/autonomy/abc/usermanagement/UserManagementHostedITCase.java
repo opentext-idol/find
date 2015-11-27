@@ -87,7 +87,14 @@ public class UserManagementHostedITCase extends HostedTestBase {
         userService.resetAuthentication(user);
 
         WebDriver driver = config.createWebDriver();
-        user.resetAuthentication(driver);
+        try {
+            user.resetAuthentication(driver);
+        } finally {
+            for(String browserHandle : driver.getWindowHandles()){
+                driver.switchTo().window(browserHandle);
+                driver.close();
+            }
+        }
     }
 
     private WebElement getContainingDiv(WebElement webElement){
