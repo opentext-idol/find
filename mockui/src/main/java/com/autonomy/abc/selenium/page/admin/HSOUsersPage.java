@@ -81,4 +81,12 @@ public class HSOUsersPage extends UsersPage {
     public WebElement resetAuthenticationButton(User user) {
         return getUserRow(user).findElement(By.className("reset-authentication"));
     }
+
+    public WebElement editUsernameLink(User user) {
+        return getUserRow(user).findElement(By.className("fa-pencil"));
+    }
+
+    public FormInput editUsernameInput(User user) {
+        return new FormInput(getUserRow(user).findElement(By.name("new-value")), getDriver());
+    }
 }

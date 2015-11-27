@@ -72,4 +72,11 @@ public class HSOUserService extends UserService {
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Reset authentication for " + user.getUsername()));
     }
+
+    public User editUsername(User user, String newUsername) {
+        usersPage.editUsernameLink(user).click();
+        usersPage.editUsernameInput(user).setAndSubmit(newUsername);
+        user.setUsername(newUsername);
+        return user;
+    }
 }
