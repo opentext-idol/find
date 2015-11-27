@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.page.keywords;
 
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.util.Language;
 import org.openqa.selenium.By;
@@ -90,11 +89,15 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public int countSynonymLists() {
-        return (findElement(By.className("keywords-list"))).findElements(By.cssSelector(".add-synonym")).size();
+        return keywordsContainer().synonymGroups().size();
     }
 
     public List<WebElement> allKeywordGroups() {
-        return findElements(By.cssSelector(".keywords-container .keywords-sub-list"));
+        return keywordsContainer().keywordGroups();
+    }
+
+    public List<String> getAllKeywords() {
+        return keywordsContainer().getKeywords();
     }
 
     public List<WebElement> removeButtons(WebElement keywordGroup) {
@@ -129,18 +132,13 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElements(By.cssSelector(".keywords-list .remove-keyword")).size();
     }
 
-    public WebElement getSynonymGroup(String synonym) {
-        // li[data-keywords-cid=...]
-        return getSynonymIcon(synonym).findElement(By.xpath(".//../../../.."));
-    }
-
     @Deprecated
     public int countSynonymGroupsWithLeadSynonym(final String synonym) {
         return findElement(By.cssSelector(".keywords-list")).findElements(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']")).size();
     }
 
     public int countSynonymGroupsWithSynonym(final String synonym) {
-        return findElement(By.cssSelector(".keywords-container .keywords-list")).findElements(By.xpath(".//ul[contains(@class,'keywords-sub-list')]/li[@data-term='"+synonym+"']")).size();
+        return findElement(By.cssSelector(".keywords-container .keywords-list")).findElements(By.xpath(".//ul[contains(@class,'keywords-sub-list')]/li[@data-term='" + synonym + "']")).size();
     }
 
     public WebElement searchFilterTextBox() {
@@ -193,6 +191,5 @@ public abstract class KeywordsPage extends KeywordsBase {
         }
         return leadSynonyms;
     }
-
 }
 

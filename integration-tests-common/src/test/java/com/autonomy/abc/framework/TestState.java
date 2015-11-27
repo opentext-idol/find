@@ -3,7 +3,6 @@ package com.autonomy.abc.framework;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.framework.statements.StatementHandler;
 import org.junit.runner.Description;
-import org.junit.runners.model.MultipleFailureException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,9 +56,9 @@ public class TestState {
         return timestamp;
     }
 
-    public void throwIfFailed() throws MultipleFailureException {
+    public void throwIfFailed() throws AssertionError {
         if (assertionErrors.size() > 0) {
-            throw new MultipleFailureException(assertionErrors);
+            throw new AssertionError(assertionErrors.size() + " verifications failed");
         }
     }
 

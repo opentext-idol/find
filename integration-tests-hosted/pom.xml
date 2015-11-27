@@ -27,11 +27,6 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.15</version>
-                <configuration>
-                    <dependenciesToScan>
-                        <dependency>com.hp.autonomy.frontend.havensearch:integration-tests-common</dependency>
-                    </dependenciesToScan>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>

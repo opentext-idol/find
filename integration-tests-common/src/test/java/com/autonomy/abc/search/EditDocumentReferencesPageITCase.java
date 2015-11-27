@@ -44,8 +44,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     private EditDocumentReferencesPage editReferencesPage;
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
-    // must avoid duplicate titles
-    private SearchFilter globalSearchFilter = new IndexFilter("default_index");
 
     @Before
     public void setUp() throws MalformedURLException {
@@ -55,7 +53,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     private List<String> setUpPromotion(final String searchTerm, final String trigger, final int numberOfDocs) {
-        Search search = searchActionFactory.makeSearch(searchTerm).applyFilter(globalSearchFilter);
+        Search search = searchActionFactory.makeSearch(searchTerm);
         final List<String> promotedDocTitles = promotionService.setUpPromotion(new SpotlightPromotion(trigger), search, numberOfDocs);
         promotionsDetailPage = promotionService.goToDetails(trigger.split(" ")[0]);
         promotionsDetailPage.addMoreButton().click();
@@ -67,7 +65,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     private void editDocumentSearch(final String searchTerm) {
         body.getTopNavBar().search(searchTerm);
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-        globalSearchFilter.apply(editReferencesPage);
         editReferencesPage.waitForSearchLoadIndicatorToDisappear();
     }
 
@@ -150,7 +147,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         getDriver().navigate().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
 
-        verifyThat(editReferencesPage.saveButton(), disabled());
+        verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
     }
 
