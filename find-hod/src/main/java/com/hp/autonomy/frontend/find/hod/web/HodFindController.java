@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.ErrorController;
-import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.hod.authentication.HodCombinedRequestController;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -22,14 +21,17 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
-public class HodFindController extends FindController {
+public class HodFindController {
 
     public static final String SSO_PAGE = "/sso";
     public static final String SSO_AUTHENTICATION_URI = "/authenticate-sso";
     public static final String SSO_LOGOUT_PAGE = "/sso-logout";
     private static final String HOD_ENDPOINT = System.getProperty("find.iod.api");
+    private static final Pattern PATTERN_TO_REPLACE = Pattern.compile("</", Pattern.LITERAL);
 
     @Autowired
     private HodAuthenticationRequestService hodAuthenticationRequestService;
@@ -70,4 +72,7 @@ public class HodFindController extends FindController {
         return new ModelAndView("sso-logout", attributes);
     }
 
+    private String convertToJson(final Object object) throws JsonProcessingException {
+        return PATTERN_TO_REPLACE.matcher(contextObjectMapper.writeValueAsString(object)).replaceAll(Matcher.quoteReplacement("<\\/"));
+    }
 }
