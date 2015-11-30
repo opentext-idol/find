@@ -210,21 +210,6 @@ public class UsersPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testEditUserPassword() {
-		// OP/HS split?
-		assumeThat(config.getType(), is(ApplicationType.ON_PREM));
-		User user = singleSignUp();
-
-		Editable passwordBox = usersPage.passwordBoxFor(user);
-		passwordBox.setValueAsync("");
-		assertThat(passwordBox.getElement(), containsText("Password must not be blank"));
-		assertThat(passwordBox.editButton(), not(displayed()));
-
-		passwordBox.setValueAndWait("valid");
-		assertThat(passwordBox.editButton(), displayed());
-	}
-
-	@Test
 	public void testEditUserType() {
 		User user = singleSignUp();
 
@@ -270,21 +255,6 @@ public class UsersPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testChangeOfPasswordWorksOnLogin() {
-		User initialUser = singleSignUp();
-		User updatedUser = usersPage.changeAuth(initialUser, newUser2);
-
-		logoutAndNavigateToWebApp();
-		loginAs(initialUser);
-		usersPage.loadOrFadeWait();
-		assertThat("old password does not work", getDriver().getCurrentUrl(), containsString("login"));
-
-		loginAs(updatedUser);
-		usersPage.loadOrFadeWait();
-		assertThat("new password works", getDriver().getCurrentUrl(), not(containsString("login")));
-	}
-
-	@Test
 	public void testCreateUserPermissionNoneAndTestLogin() throws InterruptedException {
 		User user = singleSignUp();
 
@@ -307,32 +277,6 @@ public class UsersPageITCase extends ABCTestBase {
 	private void logoutAndNavigateToWebApp(){
 		logout();
 		getDriver().get(getConfig().getWebappUrl());
-	}
-
-	@Test
-	public void testAnyUserCanNotAccessConfigPage() {
-		signUpAndLoginAs(aNewUser);
-
-		String baseUrl = config.getWebappUrl();
-		baseUrl = baseUrl.replace("/p/","/config");
-		getDriver().get(baseUrl);
-		usersPage.loadOrFadeWait();
-		assertThat("Users are not allowed to access the config page", getDriver().findElement(By.tagName("body")), containsText("Authentication Failed"));
-	}
-
-	@Test
-	public void testUserCannotAccessUsersPageOrSettingsPage() {
-		signUpAndLoginAs(aNewUser);
-
-		getDriver().get(config.getWebappUrl() + "settings");
-		usersPage.loadOrFadeWait();
-		assertThat(getDriver().getCurrentUrl(), not(containsString("settings")));
-		assertThat(getDriver().getCurrentUrl(), containsString("overview"));
-
-		getDriver().get(config.getWebappUrl() + "users");
-		usersPage.loadOrFadeWait();
-		assertThat(getDriver().getCurrentUrl(), not(containsString("users")));
-		assertThat(getDriver().getCurrentUrl(), containsString("overview"));
 	}
 
 	@Test
@@ -363,12 +307,6 @@ public class UsersPageITCase extends ABCTestBase {
 
 		userService.deleteUser(user);
 		verifyThat(usersPage.getUsernames(), not(hasItem(user.getUsername())));
-	}
-
-	@Test
-	public void testAddUser(){
-		User user = singleSignUp();
-		verifyUserShowsUpInTable(user, Status.PENDING);
 	}
 
 	private void verifyUserShowsUpInTable(User user, Status expectedStatus){
