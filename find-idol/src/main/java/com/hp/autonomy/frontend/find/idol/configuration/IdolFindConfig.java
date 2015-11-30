@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.AbstractConfig;
@@ -36,6 +37,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final CommunityAuthentication login;
     private final ServerConfig content;
     private final AciConfig aciConfig;
+    @JsonProperty("view")
     private final ViewConfig viewConfig;
 
     @Override
@@ -48,6 +50,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             .setContent(content == null ? other.content : content.merge(other.content))
             .setLogin(login == null ? other.login : login.merge(other.login))
             .setAciConfig(aciConfig == null ? other.aciConfig : aciConfig.merge(other.aciConfig))
+            .setView(viewConfig == null ? other.viewConfig : viewConfig.merge(other.viewConfig))
             .build();
     }
 

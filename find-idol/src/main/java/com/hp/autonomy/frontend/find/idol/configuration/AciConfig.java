@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
@@ -15,18 +16,13 @@ import lombok.experimental.Accessors;
 
 @Data
 @JsonDeserialize(builder = AciConfig.Builder.class)
-public class AciConfig implements ConfigurationComponent {
+public class AciConfig {
     private final Boolean expandQuery;
     private final String blacklist;
 
     private AciConfig(final Builder builder) {
         expandQuery = builder.expandQuery;
         blacklist = builder.blacklist;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
     public AciConfig merge(final AciConfig aciConfig) {

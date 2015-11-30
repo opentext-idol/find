@@ -17,7 +17,7 @@
   },
   "aciConfig": {
     "expandQuery": true,
-    "blacklist": "ISO_BLACKLIST_englishUTF8"
+    "blacklist": "ISO_BLACKLIST"
   },
   "view": {
     "protocol": "HTTP",
