@@ -15,20 +15,20 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Data
-@JsonDeserialize(builder = AciConfig.Builder.class)
-public class AciConfig {
+@JsonDeserialize(builder = QueryManipulation.Builder.class)
+public class QueryManipulation {
     private final Boolean expandQuery;
     private final String blacklist;
 
-    private AciConfig(final Builder builder) {
+    private QueryManipulation(final Builder builder) {
         expandQuery = builder.expandQuery;
         blacklist = builder.blacklist;
     }
 
-    public AciConfig merge(final AciConfig aciConfig) {
+    public QueryManipulation merge(final QueryManipulation queryManipulation) {
         final Builder builder = new Builder();
-        builder.setExpandQuery(expandQuery == null ? aciConfig.expandQuery : expandQuery);
-        builder.setBlacklist(blacklist == null ? aciConfig.blacklist : blacklist);
+        builder.setExpandQuery(expandQuery == null ? queryManipulation.expandQuery : expandQuery);
+        builder.setBlacklist(blacklist == null ? queryManipulation.blacklist : blacklist);
 
         return builder.build();
     }
@@ -41,13 +41,13 @@ public class AciConfig {
         private Boolean expandQuery;
         private String blacklist;
 
-        public Builder(final AciConfig aciConfig) {
-            expandQuery = aciConfig.expandQuery;
-            blacklist = aciConfig.blacklist;
+        public Builder(final QueryManipulation queryManipulation) {
+            expandQuery = queryManipulation.expandQuery;
+            blacklist = queryManipulation.blacklist;
         }
 
-        public AciConfig build() {
-            return new AciConfig(this);
+        public QueryManipulation build() {
+            return new QueryManipulation(this);
         }
     }
 }

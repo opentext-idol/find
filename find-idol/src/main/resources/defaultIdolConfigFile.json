@@ -15,7 +15,7 @@
     "port": 16000,
     "productType": ["AXE", "QMS", "DAH", "IDOLPROXY"]
   },
-  "aciConfig": {
+  "queryManipulation": {
     "expandQuery": true,
     "blacklist": "ISO_BLACKLIST"
   },
@@ -24,6 +24,6 @@
     "host": "find-idol",
     "port": 9080,
     "productType": ["VIEW", "IDOLPROXY", "DAH"],
-    "referenceField": ""
+    "referenceField": "DREREFERENCE"
   }
 }

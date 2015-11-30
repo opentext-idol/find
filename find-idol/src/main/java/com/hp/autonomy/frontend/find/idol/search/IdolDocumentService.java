@@ -10,6 +10,7 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.AciURLCodec;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.identifier.reference.Reference;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -47,6 +48,8 @@ import java.util.Set;
 
 @Service
 public class IdolDocumentService implements DocumentsService<String, FindDocument, AciErrorException> {
+    private static final int MAX_SIMILAR_DOCUMENTS = 3;
+
     private final ConfigService<IdolFindConfig> configService;
     private final AciService contentAciService;
     private final Processor<QueryResponseData> queryResponseProcessor;
@@ -91,8 +94,8 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
         aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
         aciParameters.add(QueryParams.XMLMeta.name(), true);
-        aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getAciConfig().getBlacklist());
-        aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getAciConfig().getExpandQuery());
+        aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getQueryManipulation().getBlacklist());
+        aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getQueryManipulation().getExpandQuery());
 
         if (qms) {
             aciParameters.add(QmsActionParams.Promotions.name(), true);
@@ -107,8 +110,11 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
     @Override
     public List<FindDocument> findSimilar(final Set<String> indexes, final String reference) throws AciErrorException {
         final AciParameters aciParameters = new AciParameters(QueryActions.Suggest.name());
-        aciParameters.add(SuggestParams.Reference.name(), new Reference(reference));
+        aciParameters.add(SuggestParams.Reference.name(), new Reference(AciURLCodec.getInstance().encode(reference)));
         aciParameters.add(SuggestParams.DatabaseMatch.name(), new Databases(indexes));
+        aciParameters.add(SuggestParams.Print.name(), PrintParam.None);
+        aciParameters.add(SuggestParams.MaxResults.name(), MAX_SIMILAR_DOCUMENTS);
+        aciParameters.add(SuggestParams.Summary.name(), SummaryParam.Concept);
 
         final SuggestResponseData responseData = contentAciService.executeAction(aciParameters, suggestResponseProcessor);
         final List<Hit> hits = responseData.getHit();

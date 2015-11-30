@@ -12,7 +12,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
-import com.hp.autonomy.frontend.find.idol.configuration.AciConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.QueryManipulation;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.DocContent;
@@ -60,7 +60,7 @@ public class IdolDocumentServiceTest {
 
     @Before
     public void setUp() {
-        when(idolFindConfig.getAciConfig()).thenReturn(new AciConfig.Builder().build());
+        when(idolFindConfig.getQueryManipulation()).thenReturn(new QueryManipulation.Builder().build());
         when(configService.getConfig()).thenReturn(idolFindConfig);
         idolDocumentService = new IdolDocumentService(configService, contentAciService, aciResponseProcessorFactory);
     }

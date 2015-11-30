@@ -36,7 +36,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
     private final CommunityAuthentication login;
     private final ServerConfig content;
-    private final AciConfig aciConfig;
+    private final QueryManipulation queryManipulation;
     @JsonProperty("view")
     private final ViewConfig viewConfig;
 
@@ -49,7 +49,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         return new IdolFindConfig.Builder()
             .setContent(content == null ? other.content : content.merge(other.content))
             .setLogin(login == null ? other.login : login.merge(other.login))
-            .setAciConfig(aciConfig == null ? other.aciConfig : aciConfig.merge(other.aciConfig))
+            .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
             .setView(viewConfig == null ? other.viewConfig : viewConfig.merge(other.viewConfig))
             .build();
     }
@@ -99,18 +99,18 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     public static class Builder {
         private CommunityAuthentication login;
         private ServerConfig content;
-        private AciConfig aciConfig;
+        private QueryManipulation queryManipulation;
         private ViewConfig view;
 
         public Builder(final IdolFindConfig config) {
             login = config.login;
             content = config.content;
-            aciConfig = config.aciConfig;
+            queryManipulation = config.queryManipulation;
             view = config.viewConfig;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, aciConfig, view);
+            return new IdolFindConfig(login, content, queryManipulation, view);
         }
     }
 

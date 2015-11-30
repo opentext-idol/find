@@ -9,20 +9,20 @@ import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
-import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.hp.autonomy.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.frontend.view.idol.IdolViewServerService;
 import com.hp.autonomy.frontend.view.idol.ViewServerService;
+import com.hp.autonomy.idol.parametricvalues.IdolParametricRequest;
+import com.hp.autonomy.idol.parametricvalues.IdolParametricValuesService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hp.autonomy.types.idol.Error;
-import com.hp.autonomy.types.idol.IdolResponseParser;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
 import org.apache.http.client.HttpClient;
@@ -76,8 +76,14 @@ public class IdolConfiguration {
 
     @Bean
     @Autowired
-    public ViewServerService viewServerService(final AciService contentAciService, final AciService viewAciService, final ConfigService<IdolFindConfig> configService) {
-        return new IdolViewServerService(contentAciService, viewAciService, aciResponseProcessorFactory(), configService);
+    public ParametricValuesService<IdolParametricRequest, String, AciErrorException> idolParametricValuesService(final AciService contentAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
+        return new IdolParametricValuesService(contentAciService, aciResponseProcessorFactory);
+    }
+
+    @Bean
+    @Autowired
+    public ViewServerService viewServerService(final AciService contentAciService, final AciService viewAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory, final ConfigService<IdolFindConfig> configService) {
+        return new IdolViewServerService(contentAciService, viewAciService, aciResponseProcessorFactory, configService);
     }
 
     @Bean
