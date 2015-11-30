@@ -1,22 +1,28 @@
 package com.autonomy.abc.usermanagement;
 
-import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class UserManagementHostedITCase extends HostedTestBase {
+public class UserManagementHostedITCase extends UsersPageTestBase {
 
     private HSOUserService userService;
     private HSOUsersPage usersPage;
@@ -26,10 +32,9 @@ public class UserManagementHostedITCase extends HostedTestBase {
     }
 
     @Before
-    public void setUp() {
-        userService = getApplication().createUserService(getElementFactory());
-        usersPage = userService.goToUsers();
-        userService.deleteOtherUsers();
+    public void hostedSetUp(){
+        userService = ((HSOApplication) getApplication()).createUserService(getElementFactory());
+        usersPage = ((HSOElementFactory) getElementFactory()).getUsersPage();
     }
 
     @Test
@@ -43,9 +48,11 @@ public class UserManagementHostedITCase extends HostedTestBase {
         } catch (TimeoutException | HSONewUser.UserNotCreatedException e){ /* Expected behaviour */ }
 
         verifyThat(getContainingDiv(usersPage.getUsernameInput()), not(hasClass("has-error")));
-        verifyThat(getContainingDiv(usersPage.getEmailInput()), hasClass("has-error"));
+        verifyThat(getContainingDiv(usersPage.getEmailInput()), not(hasClass("has-error")));
         verifyThat(getContainingDiv(usersPage.getUserLevelDropdown()), not(hasClass("has-error")));
         verifyThat(getContainingDiv(usersPage.createButton()), not(hasClass("has-error")));
+
+        verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), containsString("Error! New user profile creation failed."));
 
         usersPage.closeModal();
 
@@ -54,7 +61,6 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
 
-        //TODO use own email addresses
         //Sometimes it requires us to add a valid user before invalid users show up
         userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN, config.getWebDriverFactory());
 
@@ -70,10 +76,11 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
         HSOUser user = userService.createNewUser(newUser,Role.USER, config.getWebDriverFactory());
 
-        usersPage.refreshButton().click();
-        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
+        waitForUserConfirmed(user);
 
         userService.resetAuthentication(user);
+
+        verifyThat(usersPage.getText(), containsString("Done! A reset authentication email has been sent to " + user.getUsername()));
 
         WebDriver driver = config.createWebDriver();
         try {
@@ -106,11 +113,33 @@ public class UserManagementHostedITCase extends HostedTestBase {
 
     @Test
     public void testAddingAndAuthenticatingUser(){
-        User user = userService.createNewUser(new HSONewUser("authenticatetest", gmailString("authenticationtest")).authenticate(),
+        final User user = userService.createNewUser(new HSONewUser("authenticatetest", gmailString("authenticationtest")).authenticate(),
                 Role.USER, config.getWebDriverFactory());
 
-        usersPage.refreshButton().click();
-        verifyThat(usersPage.getStatusOf(user),is(Status.CONFIRMED));
+        waitForUserConfirmed(user);
+
+        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
+    }
+
+    private void waitForUserConfirmed(User user){
+        new WebDriverWait(getDriver(),20).withMessage("User not showing as confirmed").until(new waitForUserToBeConfirmed(getDriver(), user));
+    }
+
+    private class waitForUserToBeConfirmed implements ExpectedCondition<Boolean>{
+
+        private final WebDriver driver;
+        private final User user;
+
+        waitForUserToBeConfirmed(WebDriver driver, User user){
+            this.driver = driver;
+            this.user = user;
+        }
+
+        @Override
+        public Boolean apply(WebDriver driver) {
+            usersPage.refreshButton().click();
+            return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
+        }
     }
 
     private WebElement getContainingDiv(WebElement webElement){

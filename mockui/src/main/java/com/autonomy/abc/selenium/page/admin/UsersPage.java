@@ -76,11 +76,19 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		return getTable().findElements(By.cssSelector("tbody tr")).size();
 	}
 
-	// TODO: move to UserService.deleteUser(User)?
+	@Deprecated
+	/**
+	 * @deprecated  Use userService.deleteUser(User) instead
+	 */
 	public abstract void deleteUser(final String userName);
 
+	@Deprecated
 	public WebElement deleteButton(final String userName) {
 		return getUserRow(userName).findElement(By.cssSelector(".users-deleteUser"));
+	}
+
+	public WebElement deleteButton(User user){
+		return getUserRow(user).findElement(By.cssSelector(".users-deleteUser"));
 	}
 
 	public WebElement getTable() {

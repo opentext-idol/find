@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.users.HSOUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.Status;
@@ -9,6 +10,7 @@ import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSOUsersPage extends UsersPage {
     public HSOUsersPage(WebDriver driver) {
@@ -72,6 +74,7 @@ public class HSOUsersPage extends UsersPage {
     public void deleteUser(String username){
         getUserRowByUsername(username).findElement(trashCan()).click();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
+        new WebDriverWait(getDriver(),20).until(GritterNotice.notificationContaining("Deleted user " + username));
     }
 
     public String getEmailOf(User user) {

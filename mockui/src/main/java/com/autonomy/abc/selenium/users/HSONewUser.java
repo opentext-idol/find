@@ -61,8 +61,8 @@ public class HSONewUser implements NewUser {
                     driver = webDriverFactory.create();
                     successfullyAdded(usersPage);
                 } finally {
-                    for(int i = browserHandles.size() - 1; i >= 0; i--) {
-                        driver.switchTo().window(browserHandles.get(i));
+                    for(String handle : new ArrayList<>(driver.getWindowHandles())) {
+                        driver.switchTo().window(handle);
                         driver.close();
                     }
                 }
@@ -83,7 +83,6 @@ public class HSONewUser implements NewUser {
         } catch (TimeoutException e) { /* User already verified */ }
     }
 
-    private List<String> browserHandles;
     private WebDriver driver;
 
     private void getGmail(){
@@ -102,8 +101,7 @@ public class HSONewUser implements NewUser {
             Thread.sleep(1000);
         } catch (Exception e) {/**/}
 
-        browserHandles = new ArrayList<>(driver.getWindowHandles());
-        driver.switchTo().window(browserHandles.get(1));
+        driver.switchTo().window(new ArrayList<>(driver.getWindowHandles()).get(1));
     }
 
     private void verifyUser(){
