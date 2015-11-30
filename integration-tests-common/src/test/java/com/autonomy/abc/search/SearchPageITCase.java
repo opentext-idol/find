@@ -13,11 +13,9 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchFilter;
 import com.autonomy.abc.selenium.util.Errors;
-import com.autonomy.abc.selenium.util.Language;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -759,69 +757,35 @@ public class SearchPageITCase extends ABCTestBase {
     //TODO
 	@Test
 	public void testIdolSearchTypes() {
-//        searchPage.waitForSearchLoadIndicatorToDisappear();
-//        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-//            selectNewsEngIndex();
-//        }
+		final int redCount = getResultCount("red");
+		final int starCount = getResultCount("star");
+		final int unquotedCount = getResultCount("red star");
+		final int quotedCount = getResultCount("\"red star\"");
+		final int orCount = getResultCount("red OR star");
+		final int andCount = getResultCount("red AND star");
+		final int redNotStarCount = getResultCount("red NOT star");
+		final int starNotRedCount = getResultCount("star NOT red");
 
-        search("leg");
+		verifyThat(redCount, lessThanOrEqualTo(unquotedCount));
+        verifyThat(quotedCount, lessThanOrEqualTo(unquotedCount));
 
-        searchPage.selectLanguage(Language.ENGLISH);
+		verifyThat(redNotStarCount, lessThanOrEqualTo(redCount));
+		verifyThat(starNotRedCount, lessThanOrEqualTo(starCount));
 
-        int initialSearchCount = searchPage.countSearchResults();
-		search("leg[2:2]");
-		searchPage.loadOrFadeWait();
-		assertThat("Failed with the following search term: leg[2:2]  Search count should have reduced on initial search 'leg'",
-				initialSearchCount, greaterThan(searchPage.countSearchResults()));
+		verifyThat(quotedCount, lessThanOrEqualTo(andCount));
+		verifyThat(andCount, lessThanOrEqualTo(unquotedCount));
 
-		search("red");
-		searchPage.loadOrFadeWait();
-		initialSearchCount = searchPage.countSearchResults();
-		search("red star");
-		searchPage.loadOrFadeWait();
-		final int secondSearchCount = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: red star  Search count should have increased on initial search: red",
-                initialSearchCount, lessThan(secondSearchCount));
-
-		search("\"red star\"");
-		searchPage.loadOrFadeWait();
-		final int thirdSearchCount = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: '\"red star\"'  Search count should have reduced on initial search: red star",
-				secondSearchCount, greaterThan(thirdSearchCount));
-
-		search("red NOT star");
-		searchPage.loadOrFadeWait();
-		final int redNotStar = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
-				initialSearchCount, greaterThan(redNotStar));
-
-        search("star");
-        searchPage.loadOrFadeWait();
-        final int star = searchPage.countSearchResults();
-
-		search("star NOT red");
-		searchPage.loadOrFadeWait();
-		final int starNotRed = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: star NOT red  Search count should have reduced on initial search: star",
-				star, greaterThan(starNotRed));
-
-		search("red OR star");
-		searchPage.loadOrFadeWait();
-		assertThat("Failed with the following search term: red OR star  Search count should be the same as initial search: red star",
-				secondSearchCount, is(searchPage.countSearchResults()));
-
-		search("red AND star");
-		searchPage.loadOrFadeWait();
-		final int fourthSearchCount = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: red AND star  Search count should have reduced on initial search: red star",
-				secondSearchCount, greaterThan(fourthSearchCount));
-        assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
-				thirdSearchCount, lessThan(fourthSearchCount));
-		assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
-				fourthSearchCount + redNotStar + starNotRed, is(secondSearchCount));
+		verifyThat(orCount, lessThanOrEqualTo(redCount + starCount));
+		verifyThat(andCount + redNotStarCount + starNotRedCount, is(orCount));
+		verifyThat(orCount, is(unquotedCount));
 	}
 
-    //TODO
+	private int getResultCount(String searchTerm) {
+		search(searchTerm);
+		return searchPage.countSearchResults();
+	}
+
+	//TODO
 	@Test
 	public void testFieldTextRestrictionOnPromotions(){
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
@@ -918,22 +882,22 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Wrong number of pin to position labels", searchPage.countPinToPositionLabels(), is(1));
 	}
 
+	// CSA-1818
 	@Test
 	public void testSearchResultsCount() {
-//        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-//            selectNewsEngIndex();
-//        }
-
 		searchPage.selectLanguage(Language.ENGLISH);
 		for (final String query : Arrays.asList("dog", "chips", "dinosaur", "melon", "art")) {
-			logger.info("String = '" + query + "'");
 			search(query);
-			searchPage.loadOrFadeWait();
+			final int firstPageResultsCount = searchPage.countSearchResults();
+
 			searchPage.forwardToLastPageButton().click();
-			searchPage.loadOrFadeWait();
-			final int numberOfPages = searchPage.getCurrentPageNumber();
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+			verifyThat("number of results in title is consistent", searchPage.countSearchResults(), is(firstPageResultsCount));
+
+			final int completePages = searchPage.getCurrentPageNumber() - 1;
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
-			assertThat(searchPage.countSearchResults(), is((numberOfPages - 1) * 6 + lastPageDocumentsCount));
+			final int expectedCount = completePages * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
+			verifyThat("number of results is as expected", searchPage.countSearchResults(), is(expectedCount));
 		}
 	}
 
