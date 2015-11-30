@@ -18,5 +18,12 @@
   "aciConfig": {
     "expandQuery": true,
     "blacklist": "ISO_BLACKLIST_englishUTF8"
+  },
+  "view": {
+    "protocol": "HTTP",
+    "host": "find-idol",
+    "port": 9080,
+    "productType": ["VIEW", "IDOLPROXY", "DAH"],
+    "referenceField": ""
   }
 }
