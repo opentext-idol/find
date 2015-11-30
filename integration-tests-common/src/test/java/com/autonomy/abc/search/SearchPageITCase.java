@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.DatePicker;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
@@ -26,12 +27,12 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -48,17 +49,17 @@ import static org.hamcrest.number.OrderingComparison.lessThanOrEqualTo;
 import static org.junit.Assert.*;
 
 public class SearchPageITCase extends ABCTestBase {
-	public SearchPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
-	}
-
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private SearchPage searchPage;
 	private TopNavBar topNavBar;
 	private CreateNewPromotionsPage createPromotionsPage;
 	private PromotionsPage promotionsPage;
 	DatePicker datePicker;
+	String havenErrorMessage = "Haven OnDemand returned an error while executing the search action";
 
-    String havenErrorMessage = "Haven OnDemand returned an error while executing the search action";
+	public SearchPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
+		super(config, browser, appType, platform);
+	}
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -88,7 +89,7 @@ public class SearchPageITCase extends ABCTestBase {
     }
 
 	private void search(String searchTerm){
-		logger.info("Searching for: '"+searchTerm+"'");
+		logger.info("Searching for: '" + searchTerm + "'");
 		topNavBar.search(searchTerm);
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		assertNotEquals(searchPage.getText(), contains(havenErrorMessage));
@@ -541,7 +542,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testViewFromBucketLabel() throws InterruptedException {
         search("جيمس");
-		searchPage.selectLanguage("Arabic");
+		searchPage.selectLanguage(Language.ARABIC);
         logger.warn("Using Trimmed Titles");
 
         search("Engineer");
@@ -578,9 +579,10 @@ public class SearchPageITCase extends ABCTestBase {
 		String docTitle = searchPage.getSearchResultTitle(1);
 		search("1");
 
-		for (final String language : Arrays.asList("English", "Afrikaans", "French", "Arabic", "Urdu", "Hindi", "Chinese", "Swahili")) {
+		List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
+		for (final Language language : languages) {
 			searchPage.selectLanguage(language);
-			assertEquals(language, searchPage.getSelectedLanguage());
+			assertThat(searchPage.getSelectedLanguage(), is(language.toString()));
 
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 			assertNotEquals(docTitle, searchPage.getSearchResultTitle(1));
@@ -592,7 +594,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testBucketEmptiesWhenLanguageChangedInURL() {
 		search("arc");
-		searchPage.selectLanguage("French");
+		searchPage.selectLanguage(Language.FRENCH);
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.promoteTheseDocumentsButton().click();
 
@@ -613,7 +615,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testLanguageDisabledWhenBucketOpened() {
 		//This test currently fails because language dropdown is not disabled when the promotions bucket is open
-		searchPage.selectLanguage("English");
+		searchPage.selectLanguage(Language.ENGLISH);
 		search("al");
 		searchPage.loadOrFadeWait();
 		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
@@ -621,19 +623,20 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		assertEquals("There should be one document in the bucket", 1, searchPage.promotionsBucketList().size());
-		searchPage.selectLanguage("French");
+		searchPage.selectLanguage(Language.FRENCH);
 		assertFalse("The promotions bucket should close when the language is changed", searchPage.promotionsBucket().isDisplayed());
 
 		searchPage.promoteTheseDocumentsButton().click();
 		assertEquals("There should be no documents in the bucket after changing language", 0, searchPage.promotionsBucketList().size());
 
-		searchPage.selectLanguage("English");
+		searchPage.selectLanguage(Language.ENGLISH);
 		assertFalse("The promotions bucket should close when the language is changed", searchPage.promotionsBucket().isDisplayed());
 	}
 
 	@Test
 	public void testSearchAlternateScriptToSelectedLanguage() {
-		for (final String language : Arrays.asList("French", "English", "Arabic", "Urdu", "Hindi", "Chinese")) {
+		List<Language> languages = Arrays.asList(Language.FRENCH, Language.ENGLISH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE);
+		for (final Language language : languages) {
 			searchPage.selectLanguage(language);
 
 			for (final String script : Arrays.asList("निर्वाण", "العربية", "עברית", "сценарий", "latin", "ελληνικά", "ქართული", "བོད་ཡིག")) {
@@ -644,8 +647,6 @@ public class SearchPageITCase extends ABCTestBase {
 		}
 	}
 
-    org.slf4j.Logger logger = LoggerFactory.getLogger(SearchPageITCase.class);
-
 	@Test
 	public void testFieldTextFilter() {
 		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
@@ -655,7 +656,7 @@ public class SearchPageITCase extends ABCTestBase {
 			new Search(getApplication(), getElementFactory(), "*").applyFilter(new IndexFilter("sitesearch")).apply();
 		}
 		
-		searchPage.selectLanguage("English");
+		searchPage.selectLanguage(Language.ENGLISH);
 
 		final String searchResultTitle = searchPage.getSearchResultTitle(1);
 		final String lastWordInTitle = searchPage.getLastWord(searchResultTitle);
@@ -713,7 +714,7 @@ public class SearchPageITCase extends ABCTestBase {
 			new Search(getApplication(), getElementFactory(), "*").applyFilter(new IndexFilter("sitesearch")).apply();
 		}
 
-		searchPage.selectLanguage("Afrikaans");
+		searchPage.selectLanguage(Language.AFRIKAANS);
 
 
         searchPage.showFieldTextOptions();
@@ -771,7 +772,7 @@ public class SearchPageITCase extends ABCTestBase {
 
         search("leg");
 
-        searchPage.selectLanguage("English");
+        searchPage.selectLanguage(Language.ENGLISH);
 
         int initialSearchCount = searchPage.countSearchResults();
 		search("leg[2:2]");
@@ -835,7 +836,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		search("darth");
 
-        searchPage.selectLanguage("English");
+        searchPage.selectLanguage(Language.ENGLISH);
 
         searchPage.createAMultiDocumentPromotion(2);
 		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
@@ -876,7 +877,7 @@ public class SearchPageITCase extends ABCTestBase {
 		promotionsPage.deleteAllPromotions();
 
 		search("horse");
-		searchPage.selectLanguage("English");
+		searchPage.selectLanguage(Language.ENGLISH);
 
 		final List<String> promotedDocs = searchPage.createAMultiDocumentPromotion(2);
 		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
@@ -929,7 +930,7 @@ public class SearchPageITCase extends ABCTestBase {
 //            selectNewsEngIndex();
 //        }
 
-		searchPage.selectLanguage("English");
+		searchPage.selectLanguage(Language.ENGLISH);
 		for (final String query : Arrays.asList("dog", "chips", "dinosaur", "melon", "art")) {
 			logger.info("String = '" + query + "'");
 			search(query);
@@ -948,7 +949,7 @@ public class SearchPageITCase extends ABCTestBase {
 
         List<String> boolOperators = Arrays.asList("OR", "WHEN", "SENTENCE", "DNEAR");
         List<String> stopWords = Arrays.asList("a", "the", "of", "SOUNDEX"); //According to IDOL team SOUNDEX isn't considered a boolean operator without brackets
-		searchPage.selectLanguage("English");
+		searchPage.selectLanguage(Language.ENGLISH);
 
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
             List<String> allTerms = ListUtils.union(boolOperators,stopWords);
@@ -1078,7 +1079,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 11:59 AM");
 		searchPage.sortByRelevance();
 //		assertEquals("Until date cannot be before the from date", searchPage.untilDateTextBox().getAttribute("value"),is(not("04/05/2000 11:59 AM")));
-        assertEquals("Until date should be blank",searchPage.untilDateTextBox().getAttribute("value").toString(),"");
+        assertEquals("Until date should be blank", searchPage.untilDateTextBox().getAttribute("value").toString(), "");
 	}
 
 	@Test
@@ -1116,7 +1117,7 @@ public class SearchPageITCase extends ABCTestBase {
         logger.info("Weight of 0: " + weights.get(0));
 
         for (int i = 0; i < weights.size() - 1; i++) {
-            logger.info("Weight of "+(i+1)+": "+weights.get(i+1));
+            logger.info("Weight of " + (i + 1) + ": " + weights.get(i + 1));
 
 			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
 		}
@@ -1184,14 +1185,14 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> englishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
-		searchPage.selectLanguage("French");
+		searchPage.selectLanguage(Language.FRENCH);
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> frenchConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
 
 		assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
 
-		searchPage.selectLanguage("English");
+		searchPage.selectLanguage(Language.ENGLISH);
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> secondEnglishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());

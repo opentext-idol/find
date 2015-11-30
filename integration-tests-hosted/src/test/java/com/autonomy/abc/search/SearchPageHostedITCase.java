@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.ABCAssert;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.hamcrest.Matcher;
@@ -55,7 +56,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	@Test
 	public void testIndexSelection() {
 		topNavBar.search("car");
-		searchPage.selectLanguage("English");
+		searchPage.selectLanguage(Language.ENGLISH);
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 		//TODO add a matcher
 		assertThat("All databases not showing", searchPage.allIndexesCheckbox().isChecked(), is(true));
