@@ -82,8 +82,13 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	 */
 	public abstract void deleteUser(final String userName);
 
+	@Deprecated
 	public WebElement deleteButton(final String userName) {
 		return getUserRow(userName).findElement(By.cssSelector(".users-deleteUser"));
+	}
+
+	public WebElement deleteButton(User user){
+		return getUserRow(user).findElement(By.cssSelector(".users-deleteUser"));
 	}
 
 	public WebElement getTable() {

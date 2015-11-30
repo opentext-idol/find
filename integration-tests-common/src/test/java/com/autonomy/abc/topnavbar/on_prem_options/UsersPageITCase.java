@@ -35,35 +35,6 @@ public class UsersPageITCase extends UsersPageTestBase {
 	}
 
 	@Test
-	public void testCreateUser() {
-		// TODO: split into HS/OP?
-		assumeThat(config.getType(), is(ApplicationType.ON_PREM));
-
-		usersPage.createUserButton().click();
-		assertThat(usersPage, modalIsDisplayed());
-		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-		verifyThat(newUserModal, hasTextThat(startsWith("Create New Users")));
-
-		usersPage.createButton().click();
-		verifyThat(newUserModal, containsText("Error! Username must not be blank"));
-
-		usersPage.addUsername("Andrew");
-		usersPage.clearPasswords();
-		usersPage.createButton().click();
-		verifyThat(newUserModal, containsText("Error! Password must not be blank"));
-
-		usersPage.addAndConfirmPassword("password", "wordpass");
-		usersPage.createButton().click();
-		verifyThat(newUserModal, containsText("Error! Password confirmation failed"));
-
-		usersPage.createNewUser("Andrew", "qwerty", "Admin");
-		verifyThat(newUserModal, containsText("Done! User Andrew successfully created"));
-
-		usersPage.closeModal();
-		verifyThat(usersPage, not(containsText("Create New Users")));
-	}
-
-	@Test
 	public void testWontDeleteSelf() {
 		assertThat(usersPage.deleteButton(getCurrentUser().getUsername()), disabled());
 	}
@@ -106,12 +77,12 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		try {
 			aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
-		} catch (TimeoutException e) { /* Expected */}
+		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
 		try {
 			config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
-		} catch (TimeoutException e) { /* Expected */}
+		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
 
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
@@ -165,16 +136,22 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 	@Test
 	public void testAddStupidlyLongUsername() {
-		assumeThat(config.getType(), is(ApplicationType.ON_PREM));
 		final String longUsername = StringUtils.repeat("a", 100);
 
-		usersPage.createUserButton().click();
-		assertThat(usersPage, modalIsDisplayed());
-		usersPage.createNewUser(longUsername, "b", "User");
-		usersPage.closeModal();
+		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
+			usersPage.createUserButton().click();
+			assertThat(usersPage, modalIsDisplayed());
+
+			usersPage.createNewUser(longUsername, "b", "User");
+
+			usersPage.closeModal();
+
+			assertThat(usersPage.deleteButton(longUsername), displayed());
+		} else {
+			userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN, config.getWebDriverFactory());
+		}
 
 		assertThat(usersPage.getTable(), containsText(longUsername));
-		assertThat(usersPage.deleteButton(longUsername), displayed());
 
 		usersPage.deleteUser(longUsername);
 		assertThat(usersPage.getTable(), not(containsText(longUsername)));

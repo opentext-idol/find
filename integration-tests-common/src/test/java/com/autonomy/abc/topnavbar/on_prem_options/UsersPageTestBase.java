@@ -15,6 +15,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
+import java.util.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -70,7 +71,7 @@ public class UsersPageTestBase extends ABCTestBase {
 
         try {
             loginAs(user);
-        } catch (TimeoutException e) { /* Probably because of the sessions you're already logged in */ }
+        } catch (TimeoutException | NoSuchElementException e) { /* Probably because of the sessions you're already logged in */ }
 
         getElementFactory().getPromotionsPage();
         assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
