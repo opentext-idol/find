@@ -1,0 +1,27 @@
+{
+  "name": "hp-autonomy-hod-sso-js",
+  "authors": [
+    "Matthew Gordon <matthew.gordon2@hpe.com>",
+    "Alex Scown <alex.scown@hpe.com>",
+    "Itsik Avidan <itsik.avidan@hpe.com>"
+  ],
+  "description": "Javascript  for handling the client side aspects of HP Haven OnDemand SSO",
+  "main": "sso.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "HP",
+    "Haven",
+    "OnDemand"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
+

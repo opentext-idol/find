@@ -1,0 +1,10 @@
+<div class="control-group">
+    <%-strings.prefix%>
+    <select name="locale">
+
+    <% _.each(locales, function(string, key) { %>
+        <option value="<%-key%>"><%-string%></option>
+    <% }); %>
+
+    </select>
+</div>

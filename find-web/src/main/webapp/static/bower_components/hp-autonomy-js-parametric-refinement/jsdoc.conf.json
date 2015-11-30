@@ -1,0 +1,28 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "plugins": [
+        "plugins/markdown"
+    ],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "dateFormat": "ddd MMM Do HH:mm YYYY",
+        "outputSourceFiles": true,
+        "outputSourcePath": true,
+        "systemName": "HP Autonomy JS Parametric Refinement",
+        "footer": "",
+        "copyright": "Copyright 2015 Hewlett-Packard Development Company, L.P. Licensed under the MIT License (the \"License\"); you may not use this file except in compliance with the License.",
+        "navType": "vertical",
+        "theme": "cerulean",
+        "linenums": true,
+        "collapseSymbols": false,
+        "inverseNav": false,
+        "highlightTutorialCode": true
+    },
+    "markdown": {
+        "parser": "gfm",
+        "hardwrap": true
+    }
+}

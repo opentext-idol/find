@@ -1,0 +1,10 @@
+<div class="indexes-list-group">
+    <% if(indexes) { %>
+        <label class="settings-label">Indexes list: </label>
+        <% _.each(indexes, function(index) { %>
+            <label class="checkbox">
+                <input type="checkbox" value="<%- index.resource %>"><%- index.resource %> <%= index.private ? '(private)' : '' %>
+            </label>
+        <% }) %>
+    <% } %>
+</div>

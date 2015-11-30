@@ -1,0 +1,37 @@
+{
+  "name": "hp-autonomy-hod-sso-js",
+  "authors": [
+    "Matthew Gordon <matthew.gordon2@hpe.com>",
+    "Alex Scown <alex.scown@hpe.com>",
+    "Itsik Avidan <itsik.avidan@hpe.com>"
+  ],
+  "description": "Javascript  for handling the client side aspects of HP Haven OnDemand SSO",
+  "main": "sso.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "HP",
+    "Haven",
+    "OnDemand"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/hpautonomy/hod-sso-js",
+  "version": "0.5.0",
+  "_release": "0.5.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.5.0",
+    "commit": "524baeecfb379ab06483793ffe6ff3ba754e9679"
+  },
+  "_source": "https://github.com/hpautonomy/hod-sso-js.git",
+  "_target": "~0.5.0",
+  "_originalSource": "hp-autonomy-hod-sso-js"
+}

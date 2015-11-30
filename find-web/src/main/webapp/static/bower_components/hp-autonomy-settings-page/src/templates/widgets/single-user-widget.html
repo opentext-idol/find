@@ -1,0 +1,9 @@
+<% var uniqueId = _.uniqueId('single-user') %>
+<div class="control-group">
+    <label class="single-user-settings-label" for="username-<%=uniqueId%>"><%- strings.username %>:</label>
+    <input id="username-<%=uniqueId%>" type="text" name="username" value=""/>
+    <span class="settings-required-flag"><i class="icon-asterisk"></i></span>
+    <span class="settings-client-validation settings-info hide"><%-strings.validateUsernameBlank%></span>
+</div>
+<div class="passwords"></div>
+<div class="password-mismatch settings-client-validation hide text-error"><%-strings.passwordMismatch%></div>

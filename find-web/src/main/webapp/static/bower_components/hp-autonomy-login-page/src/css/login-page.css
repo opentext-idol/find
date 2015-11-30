@@ -1,0 +1,47 @@
+/*
+ * Copyright 2013-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+h2 .icon {
+    margin: 0.3em 0;
+}
+
+.loginform h3.heading {
+    text-align: center;
+    font-weight: 100;
+    color: #333;
+}
+
+.loginform {
+    margin: 50px auto;
+    width: 380px;
+    padding: 20px;
+    background: #eee;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 -10px 30px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.loginform .form {
+    margin-bottom: 10px;
+}
+
+.loginform .form-actions {
+    background-color: transparent;
+    padding: 15px 0 0;
+    clear: none;
+    margin: 0;
+}
+
+.config-info .more-info {
+    margin-top: 10px;
+}
+
+.config-info a {
+    color:#AD4503;
+}
+
+.login-header {
+    margin-bottom: 30px;
+}

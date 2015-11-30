@@ -1,0 +1,29 @@
+{
+  "login": {
+    "method": "autonomy",
+    "community": {
+      "protocol": "HTTP",
+      "host": "find-backend",
+      "port": 9030,
+      "productType": ["UASERVER", "DAH", "IDOLPROXY"]
+    },
+    "name": "CommunityAuthentication"
+  },
+  "content": {
+    "protocol": "HTTP",
+    "host": "find-idol",
+    "port": 16000,
+    "productType": ["AXE", "QMS", "DAH", "IDOLPROXY"]
+  },
+  "queryManipulation": {
+    "expandQuery": true,
+    "blacklist": "ISO_BLACKLIST"
+  },
+  "view": {
+    "protocol": "HTTP",
+    "host": "find-idol",
+    "port": 9080,
+    "productType": ["VIEW", "IDOLPROXY", "DAH"],
+    "referenceField": "DREREFERENCE"
+  }
+}

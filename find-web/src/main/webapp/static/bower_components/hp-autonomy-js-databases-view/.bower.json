@@ -1,0 +1,53 @@
+{
+  "name": "hp-autonomy-js-databases-view",
+  "version": "0.4.0",
+  "authors": [
+    "Alex Scown <alex.scown@hpe.com>",
+    "Daniel Grayling <daniel.grayling@hpe.com>",
+    "Matthew Gordon <matthew.gordon2@hpe.com"
+  ],
+  "description": "Backbone view for managing the selection of HP Haven OnDemand resources",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "databases",
+    "indexes",
+    "hp",
+    "haven"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.2.1",
+    "jquery": "~1.10.0",
+    "underscore": "~1.8.3",
+    "hp-autonomy-js-whatever": "~2.3.0"
+  },
+  "resolutions": {
+    "backbone": "~1.2.1",
+    "underscore": "~1.8.3",
+    "jquery": "~1.10.0",
+    "jasmine": ">=2"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "~2.1.0",
+    "hp-autonomy-js-testing-utils": "~1.1.0"
+  },
+  "homepage": "https://github.com/hpautonomy/js-databases-view",
+  "_release": "0.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.4.0",
+    "commit": "2f9fa2e6a5f74b2b3ad2604bda8620b04bce8904"
+  },
+  "_source": "https://github.com/hpautonomy/js-databases-view.git",
+  "_target": "~0.4.0",
+  "_originalSource": "hp-autonomy-js-databases-view"
+}

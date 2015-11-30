@@ -1,0 +1,22 @@
+{
+  "login": {
+    "method": "singleUser",
+    "singleUser": {
+      "username": "admin"
+    },
+    "className": "com.autonomy.frontend.configuration.SingleUserAuthentication"
+  },
+  "iod": {
+    "apiKey": "abf29824-22b4-4358-891e-ea4664965f5c",
+    "publicIndexesEnabled": true
+  },
+  "allowedOrigins": [
+    "http://localhost:8080"
+  ],
+  "redis": {
+    "database": 1,
+    "address": {
+      "host": "iso-backend"
+    }
+  }
+}

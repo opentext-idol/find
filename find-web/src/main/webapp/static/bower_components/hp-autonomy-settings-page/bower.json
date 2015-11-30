@@ -1,0 +1,51 @@
+{
+  "name": "hp-autonomy-settings-page",
+  "authors": [
+    "Alessando Galli",
+    "Tung Jin Chew <tung-jin.chew@hp.com>",
+    "Matthew Gordon <matthew.gordon2@hp.com>",
+    "Xiaochen Guo",
+    "Alyona Ivanova <alyona.ivanova@hp.com>",
+    "David Knipe <david.knipe@hp.com>",
+    "Luca Mandrioli",
+    "Alex Scown <alex.scown@hp.com>"
+  ],
+  "description": "An application settings page and a collection of widgets",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "configuration",
+    "backbone",
+    "bootstrap"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/hpautonomy/settings-page",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "travis.sh"
+  ],
+  "dependencies": {
+    "underscore": "~1.5.2",
+    "backbone": "~1.1.0",
+    "hp-autonomy-js-whatever": "~1.0.14",
+    "requirejs": "~2.1.15",
+    "bootstrap": "components/bootstrap#~2.3",
+    "requirejs-text": "~2.0.12",
+    "jquery": "~1.10.0"
+  },
+  "devDependencies": {
+    "hp-autonomy-js-testing-utils": "~1.0.1",
+    "sinon": "http://sinonjs.org/releases/sinon-1.9.1.js",
+    "jasmine-jquery": "~1.5.8"
+  },
+  "resolutions": {
+    "underscore": "~1.5.2",
+    "jquery": "~1.10.0",
+    "bootstrap": "~2.3"
+  }
+}
