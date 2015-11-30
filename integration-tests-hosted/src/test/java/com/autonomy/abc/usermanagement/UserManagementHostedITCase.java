@@ -1,18 +1,18 @@
 package com.autonomy.abc.usermanagement;
 
-import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import org.apache.xpath.operations.Bool;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -22,7 +22,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class UserManagementHostedITCase extends HostedTestBase {
+public class UserManagementHostedITCase extends UsersPageTestBase {
 
     private HSOUserService userService;
     private HSOUsersPage usersPage;
@@ -32,10 +32,9 @@ public class UserManagementHostedITCase extends HostedTestBase {
     }
 
     @Before
-    public void setUp() {
-        userService = getApplication().createUserService(getElementFactory());
-        usersPage = userService.goToUsers();
-        userService.deleteOtherUsers();
+    public void hostedSetUp(){
+        userService = ((HSOApplication) getApplication()).createUserService(getElementFactory());
+        usersPage = ((HSOElementFactory) getElementFactory()).getUsersPage();
     }
 
     @Test
