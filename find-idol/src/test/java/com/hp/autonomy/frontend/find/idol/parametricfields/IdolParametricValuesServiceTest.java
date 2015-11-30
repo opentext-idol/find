@@ -3,8 +3,8 @@ package com.hp.autonomy.frontend.find.idol.parametricfields;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
 import com.hp.autonomy.idol.parametricvalues.IdolParametricRequest;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.FlatField;
 import com.hp.autonomy.types.idol.GetQueryTagValuesResponseData;
 import com.hp.autonomy.types.idol.TagValue;
@@ -35,7 +35,7 @@ public class IdolParametricValuesServiceTest {
     private AciService contentAciService;
 
     @Mock
-    private AciResponseProcessorFactory aciResponseProcessorFactory;
+    private AciResponseJaxbProcessorFactory aciResponseProcessorFactory;
 
     @Mock
     private JAXBElement<? extends Serializable> element;

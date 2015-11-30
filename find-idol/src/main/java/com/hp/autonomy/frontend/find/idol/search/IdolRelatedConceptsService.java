@@ -6,7 +6,7 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsService;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.QsElement;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
@@ -26,7 +26,7 @@ public class IdolRelatedConceptsService implements RelatedConceptsService<QsElem
     private final Processor<QueryResponseData> queryResponseProcessor;
 
     @Autowired
-    public IdolRelatedConceptsService(final AciService contentAciService, final AciResponseProcessorFactory aciResponseProcessorFactory) {
+    public IdolRelatedConceptsService(final AciService contentAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
         this.contentAciService = contentAciService;
         queryResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(QueryResponseData.class);
     }

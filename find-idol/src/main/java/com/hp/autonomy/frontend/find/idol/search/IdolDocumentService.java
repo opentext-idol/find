@@ -12,8 +12,8 @@ import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.GetVersionResponseData;
 import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
@@ -48,7 +48,7 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
     private final Processor<GetVersionResponseData> versionResponseProcessor;
 
     @Autowired
-    public IdolDocumentService(final ConfigService<IdolFindConfig> configService, final AciService contentAciService, final AciResponseProcessorFactory aciResponseProcessorFactory) {
+    public IdolDocumentService(final ConfigService<IdolFindConfig> configService, final AciService contentAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
         this.configService = configService;
         this.contentAciService = contentAciService;
 

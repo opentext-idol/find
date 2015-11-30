@@ -7,9 +7,9 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
 import com.hp.autonomy.frontend.find.idol.configuration.AciConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.DocContent;
 import com.hp.autonomy.types.idol.GetVersionResponseData;
 import com.hp.autonomy.types.idol.Hit;
@@ -49,7 +49,7 @@ public class IdolDocumentServiceTest {
     private AciService contentAciService;
 
     @Mock
-    private AciResponseProcessorFactory aciResponseProcessorFactory;
+    private AciResponseJaxbProcessorFactory aciResponseProcessorFactory;
 
     private IdolDocumentService idolDocumentService;
 

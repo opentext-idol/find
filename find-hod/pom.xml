@@ -43,11 +43,6 @@
             <artifactId>hod-spring-caching</artifactId>
             <version>0.2.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.view</groupId>
-            <artifactId>view-proxy-components</artifactId>
-            <version>0.3.0</version>
-        </dependency>
 
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>

@@ -5,7 +5,7 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.indexes.IndexesService;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.Database;
 import com.hp.autonomy.types.idol.GetStatusResponseData;
 import com.hp.autonomy.types.requests.idol.actions.status.StatusActions;
@@ -20,7 +20,7 @@ public class IdolIndexesService implements IndexesService<Database, AciErrorExce
     private final Processor<GetStatusResponseData> responseProcessor;
 
     @Autowired
-    public IdolIndexesService(final AciService contentAciService, final AciResponseProcessorFactory aciResponseProcessorFactory) {
+    public IdolIndexesService(final AciService contentAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
         this.contentAciService = contentAciService;
 
         responseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(GetStatusResponseData.class);

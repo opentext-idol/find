@@ -3,7 +3,7 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.Qs;
 import com.hp.autonomy.types.idol.QsElement;
 import com.hp.autonomy.types.idol.QueryResponseData;
@@ -30,7 +30,7 @@ public class IdolRelatedConceptsServiceTest {
     private AciService contentAciService;
 
     @Mock
-    private AciResponseProcessorFactory aciResponseProcessorFactory;
+    private AciResponseJaxbProcessorFactory aciResponseProcessorFactory;
 
     private IdolRelatedConceptsService idolRelatedConceptsService;
 

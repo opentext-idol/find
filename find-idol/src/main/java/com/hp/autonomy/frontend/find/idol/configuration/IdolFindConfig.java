@@ -15,6 +15,8 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
+import com.hp.autonomy.frontend.view.idol.configuration.ViewCapable;
+import com.hp.autonomy.frontend.view.idol.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,11 +31,12 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = false)
 @JsonDeserialize(builder = IdolFindConfig.Builder.class)
-public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig> {
+public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig>, ViewCapable {
 
     private final CommunityAuthentication login;
     private final ServerConfig content;
     private final AciConfig aciConfig;
+    private final ViewConfig viewConfig;
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig other) {
@@ -94,15 +97,17 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private CommunityAuthentication login;
         private ServerConfig content;
         private AciConfig aciConfig;
+        private ViewConfig view;
 
         public Builder(final IdolFindConfig config) {
             login = config.login;
             content = config.content;
             aciConfig = config.aciConfig;
+            view = config.viewConfig;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, aciConfig);
+            return new IdolFindConfig(login, content, aciConfig, view);
         }
     }
 

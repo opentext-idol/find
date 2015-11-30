@@ -30,8 +30,8 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
-            <artifactId>idol-types</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <artifactId>idol-utils</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.user</groupId>

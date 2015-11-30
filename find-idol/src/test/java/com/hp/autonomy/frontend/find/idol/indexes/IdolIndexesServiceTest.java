@@ -3,7 +3,7 @@ package com.hp.autonomy.frontend.find.idol.indexes;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.frontend.find.idol.aci.AciResponseProcessorFactory;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.Database;
 import com.hp.autonomy.types.idol.Databases;
 import com.hp.autonomy.types.idol.GetStatusResponseData;
@@ -26,7 +26,7 @@ public class IdolIndexesServiceTest {
     private AciService contentAciService;
 
     @Mock
-    private AciResponseProcessorFactory aciResponseProcessorFactory;
+    private AciResponseJaxbProcessorFactory aciResponseProcessorFactory;
 
     private IdolIndexesService idolIndexesService;
 
