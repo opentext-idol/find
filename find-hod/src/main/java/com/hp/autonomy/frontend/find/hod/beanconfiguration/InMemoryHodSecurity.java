@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
 import com.hp.autonomy.frontend.find.hod.web.HodFindController;
 import com.hp.autonomy.frontend.find.hod.web.HodLogoutSuccessHandler;
 import com.hp.autonomy.hod.client.token.TokenRepository;

@@ -3,9 +3,8 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.beanconfiguration;
+package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
-import com.hp.autonomy.frontend.find.hod.configuration.AutoCreatingEhCacheCacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.springframework.cache.CacheManager;
@@ -53,10 +52,4 @@ public class InMemoryConfiguration {
 
         return new net.sf.ehcache.CacheManager(configuration);
     }
-
-    @Bean
-    public CacheManager cacheManager() {
-        return new AutoCreatingEhCacheCacheManager(ehCacheManager(), defaultCacheConfiguration());
-    }
-
 }

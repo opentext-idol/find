@@ -3,9 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.beanconfiguration;
-
-import com.hp.autonomy.frontend.find.core.beanconfiguration.AbstractEnumCondition;
+package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
 public abstract class AbstractPersistentStateCondition extends AbstractEnumCondition<PersistentStateConfig> {
 

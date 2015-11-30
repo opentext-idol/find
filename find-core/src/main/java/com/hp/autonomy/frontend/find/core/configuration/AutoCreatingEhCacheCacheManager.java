@@ -3,21 +3,23 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.configuration;
+package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
-import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.cache.Cache;
 import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.context.annotation.Conditional;
 
-public class AutoCreatingEhCacheCacheManager extends EhCacheCacheManager {
+@Conditional(InMemoryCondition.class)
+public abstract class AutoCreatingEhCacheCacheManager extends EhCacheCacheManager {
 
     private final CacheConfiguration defaults;
 
-    public AutoCreatingEhCacheCacheManager(final CacheManager cacheManager, final CacheConfiguration defaults) {
+    protected AutoCreatingEhCacheCacheManager(final CacheManager cacheManager, final CacheConfiguration defaults) {
         super(cacheManager);
         this.defaults = defaults;
     }
@@ -26,13 +28,12 @@ public class AutoCreatingEhCacheCacheManager extends EhCacheCacheManager {
     protected Cache getMissingCache(final String name) {
         final Cache missingCache = super.getMissingCache(name);
 
-        if(missingCache == null) {
-            final CacheConfiguration cacheConfiguration = defaults.clone()
-                .name(name);
+        if (missingCache == null) {
+            final CacheConfiguration cacheConfiguration = defaults.clone().name(name);
 
-            final String cacheName = HodApplicationCacheResolver.getOriginalName(name);
+            final String cacheName = getCacheName(name);
 
-            if(CacheNames.CACHE_EXPIRES.containsKey(cacheName)) {
+            if (CacheNames.CACHE_EXPIRES.containsKey(cacheName)) {
                 cacheConfiguration.setTimeToLiveSeconds(CacheNames.CACHE_EXPIRES.get(cacheName));
             }
 
@@ -40,9 +41,10 @@ public class AutoCreatingEhCacheCacheManager extends EhCacheCacheManager {
             ehcache.initialise();
 
             return new EhCacheCache(ehcache);
-        }
-        else {
+        } else {
             return missingCache;
         }
     }
+
+    protected abstract String getCacheName(final String name);
 }
