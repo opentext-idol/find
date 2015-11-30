@@ -6,16 +6,20 @@
 define([
     'databases-view/js/databases-collection',
     'underscore'
-], function(DatabasesCollection, _) {
+], function (DatabasesCollection, _) {
 
     return DatabasesCollection.extend({
         url: '../api/public/search/list-indexes',
 
-        parse: function(response) {
-            return _.map(response, function(responseItem) {
+        parse: function (response) {
+            return _.map(response, function (responseItem) {
                 responseItem.id = responseItem.domain ? encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name) : responseItem.name;
                 return responseItem;
             });
+        },
+
+        modelId: function (attributes) {
+            return attributes.domain ? DatabasesCollection.prototype.modelId.call(this, attributes) : attributes.id;
         }
     });
 

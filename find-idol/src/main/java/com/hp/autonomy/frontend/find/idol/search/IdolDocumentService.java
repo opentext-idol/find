@@ -19,6 +19,7 @@ import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.types.idol.DocContent;
 import com.hp.autonomy.types.idol.GetVersionResponseData;
 import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
@@ -117,22 +118,26 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
     private List<FindDocument> parseQueryHits(final Collection<Hit> hits) {
         final List<FindDocument> results = new ArrayList<>(hits.size());
         for (final Hit hit : hits) {
-            final Element docContent = (Element) hit.getContent().getContent().get(0);
-
             final FindDocument.Builder findDocumentBuilder = new FindDocument.Builder()
                     .setReference(hit.getReference())
                     .setIndex(hit.getDatabase())
                     .setTitle(hit.getTitle())
                     .setSummary(hit.getSummary())
-                    .setDate(hit.getDatestring())
-                    .setContentType(parseFields(docContent, FindDocument.CONTENT_TYPE_FIELD))
-                    .setUrl(parseFields(docContent, FindDocument.URL_FIELD))
-                    .setAuthors(parseFields(docContent, FindDocument.AUTHOR_FIELD))
-                    .setCategories(parseFields(docContent, FindDocument.CATEGORY_FIELD))
-                    .setDateCreated(parseFields(docContent, FindDocument.DATE_CREATED_FIELD))
-                    .setCreatedDate(parseFields(docContent, FindDocument.CREATED_DATE_FIELD))
-                    .setModifiedDate(parseFields(docContent, FindDocument.MODIFIED_DATE_FIELD))
-                    .setDateModified(parseFields(docContent, FindDocument.DATE_MODIFIED_FIELD));
+                    .setDate(hit.getDatestring());
+
+            final DocContent content = hit.getContent();
+            if (content != null) {
+                final Element docContent = (Element) content.getContent().get(0);
+                findDocumentBuilder
+                        .setContentType(parseFields(docContent, FindDocument.CONTENT_TYPE_FIELD))
+                        .setUrl(parseFields(docContent, FindDocument.URL_FIELD))
+                        .setAuthors(parseFields(docContent, FindDocument.AUTHOR_FIELD))
+                        .setCategories(parseFields(docContent, FindDocument.CATEGORY_FIELD))
+                        .setDateCreated(parseFields(docContent, FindDocument.DATE_CREATED_FIELD))
+                        .setCreatedDate(parseFields(docContent, FindDocument.CREATED_DATE_FIELD))
+                        .setModifiedDate(parseFields(docContent, FindDocument.MODIFIED_DATE_FIELD))
+                        .setDateModified(parseFields(docContent, FindDocument.DATE_MODIFIED_FIELD));
+            }
             results.add(findDocumentBuilder.build());
         }
         return results;

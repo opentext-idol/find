@@ -72,7 +72,7 @@ define([
 
             this.listenTo(this.selectedIndexesCollection, 'update reset', _.debounce(_.bind(function() {
                 this.queryModel.set('indexes', this.selectedIndexesCollection.map(function(model) {
-                    return encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name'));
+                    return model.get('domain') ? encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name')) : encodeURIComponent(model.get('name'));
                 }));
             }, this), 500));
 
