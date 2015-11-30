@@ -23,6 +23,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
 @Configuration
 @Order(98)
@@ -45,11 +48,20 @@ public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         final AuthenticationSuccessHandler loginSuccessHandler = new LoginSuccessHandler("ROLE_DEFAULT", "/config/", "/p/");
+        final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+
+        requestCache.setRequestMatcher(new OrRequestMatcher(
+                new AntPathRequestMatcher("/p/**"),
+                new AntPathRequestMatcher("/config/**")
+        ));
 
         http.regexMatcher("/p/.*|/config/.*|/authenticate|/logout")
                 .authorizeRequests()
                     .antMatchers("/p/**").hasRole("ADMIN")
                     .antMatchers("/config/**").hasRole("DEFAULT")
+                    .and()
+                .requestCache()
+                    .requestCache(requestCache)
                     .and()
                 .formLogin()
                     .loginPage("/loginPage")

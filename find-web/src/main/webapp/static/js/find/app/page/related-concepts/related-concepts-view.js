@@ -52,7 +52,7 @@ define([
         loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
 
         events: {
-            'click .query-text' : function(e) {
+            'click .entity-text' : function(e) {
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
                 this.queryModel.set('queryText', queryText);
@@ -81,7 +81,7 @@ define([
                         this.$list.append(this.listItemTemplate({entities: entities}));
                     }, this);
 
-                    popover(this.$list.find('.query-text'), handlePopover);
+                    popover(this.$list.find('.entity-text'), handlePopover);
                 }
             });
 
