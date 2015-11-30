@@ -13,12 +13,16 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchFilter;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Language;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,18 +42,9 @@ import java.util.*;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
-import static org.hamcrest.number.OrderingComparison.lessThan;
-import static org.hamcrest.number.OrderingComparison.lessThanOrEqualTo;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageITCase extends ABCTestBase {
@@ -71,13 +66,6 @@ public class SearchPageITCase extends ABCTestBase {
 		topNavBar.search("example");
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
-
-        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-            //Select news_ing index because I'm tired of adding lots of files to indexes
-            searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
-            selectNewsEngIndex();
-            searchPage.waitForSearchLoadIndicatorToDisappear();
-        }
 	}
 
 	//TODO move this to SearchBase (and refactor code)
@@ -92,6 +80,11 @@ public class SearchPageITCase extends ABCTestBase {
 		topNavBar.search(searchTerm);
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
+	}
+
+	private void applyFilter(SearchFilter filter) {
+		filter.apply(searchPage);
+		searchPage.waitForSearchLoadIndicatorToDisappear();
 	}
 
     @Test
@@ -575,6 +568,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testChangeLanguage() {
+		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
 		String docTitle = searchPage.getSearchResultTitle(1);
 		search("1");
 
@@ -613,6 +607,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testLanguageDisabledWhenBucketOpened() {
+		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
 		//This test currently fails because language dropdown is not disabled when the promotions bucket is open
 		searchPage.selectLanguage(Language.ENGLISH);
 		search("al");
@@ -955,7 +950,7 @@ public class SearchPageITCase extends ABCTestBase {
 
             for (final String searchTerm : allTerms) {
 				search(searchTerm);
-                assertThat("Correct error message not present for searchterm: " + searchTerm, searchPage.getText(), containsString("Haven OnDemand returned an error while executing the search action"));
+                assertThat("Correct error message not present for searchterm: " + searchTerm, searchPage.getText(), containsString(Errors.Search.HOD));
             }
 
         } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
@@ -988,8 +983,10 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testFromDateFilter() throws ParseException {
-//		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 		search("Dog");
+		// some indexes do not have dates
+		new IndexFilter("wiki_eng").apply(searchPage);
+		searchPage.waitForSearchLoadIndicatorToDisappear();
 		final String firstResult = searchPage.getSearchResultTitle(1);
 		final Date date = searchPage.getDateFromResult(1);
 		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
@@ -1014,13 +1011,14 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Document should be visible. Date filter not working", searchPage.getSearchResultTitle(1), is(firstResult));
 	}
 
-	//TODO - doesn't seem to be functioning properly
 	@Test
 	public void testUntilDateFilter() throws ParseException {
 //		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 		search("Dog");
 		final String firstResult = searchPage.getSearchResultTitle(1);
 		final Date date = searchPage.getDateFromResult(1);
+		// plus 1 minute to be inclusive
+		date.setTime(date.getTime() + 60000);
         logger.info("First Result: " + firstResult + " " + date);
 		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
 		searchPage.expandSubFilter(SearchBase.Filter.DATES);
@@ -1180,6 +1178,8 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testRelatedConceptsDifferentInDifferentLanguages() {
+		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
+
 		search("France");
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
@@ -1198,6 +1198,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
 	}
 
+	// CSA-1819
 	@Test
 	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
         search("nice");
@@ -1207,13 +1208,14 @@ public class SearchPageITCase extends ABCTestBase {
 		final String docTitle = searchPage.getSearchResultTitle(1);
 		final String url = getDriver().getCurrentUrl();
 		assertThat("Url and current page number are out of sync", url, containsString("nice/" + currentPage));
+
 		final String illegitimateUrl = url.replace("nice/" + currentPage, "nice/" + (currentPage + 5));
 		getDriver().navigate().to(illegitimateUrl);
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
-		//TODO failing here wrongly
-        assertThat("Page should still have results", searchPage.getText(), not(containsString("No results found...")));
-		assertThat("Page should not have thrown an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
+
+        assertThat("Page should still have results", searchPage, not(containsText(Errors.Search.NO_RESULTS)));
+		assertThat("Page should not have thrown an error", searchPage, not(containsText(Errors.Search.HOD)));
 		assertThat("Page number should not have changed", currentPage, is(searchPage.getCurrentPageNumber()));
 		assertThat("Url should have reverted to original url", url, is(getDriver().getCurrentUrl()));
 		assertThat("Error message should not be showing", searchPage.isErrorMessageShowing(), is(false));
