@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.page.keywords;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
-import com.autonomy.abc.selenium.util.Language;
+import com.autonomy.abc.selenium.language.Language;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

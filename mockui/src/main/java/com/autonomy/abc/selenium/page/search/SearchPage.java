@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Language;
+import com.autonomy.abc.selenium.language.Language;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;

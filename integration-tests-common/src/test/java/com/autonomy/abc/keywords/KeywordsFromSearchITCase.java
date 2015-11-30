@@ -15,7 +15,7 @@ import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
-import com.autonomy.abc.selenium.util.Language;
+import com.autonomy.abc.selenium.language.Language;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.util;
+package com.autonomy.abc.selenium.language;
 
 // hardcoded strings can be problematic
 // add new languages here as necessary
