@@ -5,11 +5,14 @@
 
 package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
+import com.hp.autonomy.frontend.find.core.web.FindController;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -28,11 +31,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
+        final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+        requestCache.setRequestMatcher(new AntPathRequestMatcher(FindController.PUBLIC_PATH));
+
         http
                 .authorizeRequests()
                     .antMatchers("/api/public/**").hasRole(USER_ROLE)
                     .antMatchers("/api/useradmin/**").hasRole(ADMIN_ROLE)
                     .antMatchers("/api/config/**").hasRole(CONFIG_ROLE)
+                    .and()
+                .requestCache()
+                    .requestCache(requestCache)
                     .and()
                 .csrf()
                     .disable()
