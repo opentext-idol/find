@@ -7,11 +7,17 @@ import java.util.Map;
 // add new languages here as necessary
 public enum Language {
     AFRIKAANS("Afrikaans"),
+    ALBANIAN("Albanian"),
     ARABIC("Arabic"),
     CHINESE("Chinese"),
+    CROATIAN("Croatian"),
     ENGLISH("English"),
     FRENCH("French"),
+    GEORGIAN("Georgian"),
+    GERMAN("German"),
     HINDI("Hindi"),
+    KAZAKH("Kazakh"),
+    KOREAN("Korean"),
     SWAHILI("Swahili"),
     URDU("Urdu");
 

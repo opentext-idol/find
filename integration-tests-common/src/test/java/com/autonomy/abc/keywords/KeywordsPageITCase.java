@@ -212,7 +212,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-		keywordsPage.selectLanguage("English");
+		keywordsPage.selectLanguage(Language.ENGLISH);
 		keywordsPage.synonymGroupPlusButton("three").click();
 		keywordsPage.synonymGroupTextBox("three").clear();
 		keywordsPage.synonymGroupTextBox("three").sendKeys("four and five");
@@ -411,15 +411,15 @@ public class KeywordsPageITCase extends ABCTestBase {
 		}
 
 		keywordsPage.filterView(KeywordFilter.ALL);
-		keywordsPage.selectLanguage("Georgian");
+		keywordsPage.selectLanguage(Language.GEORGIAN);
 		assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
 		assertThat(keywordsPage.countSynonymLists(), is(0));
 
-		keywordsPage.selectLanguage("Albanian");
+		keywordsPage.selectLanguage(Language.ALBANIAN);
 		assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
 		assertThat(keywordsPage.countSynonymLists(), is(0));
 
-		keywordsPage.selectLanguage("Croatian");
+		keywordsPage.selectLanguage(Language.CROATIAN);
 		assertThat(keywordsPage.getBlacklistedTerms().size(), is(0));
 		assertThat(keywordsPage.countSynonymLists(), is(1));
 		assertThat(keywordsPage.countKeywords(), is(3));
@@ -434,7 +434,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
-		keywordsPage.selectLanguage("Urdu");
+		keywordsPage.selectLanguage(Language.URDU);
 
 		keywordsPage.loadOrFadeWait();
 
@@ -472,7 +472,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
-		createKeywordsPage.selectLanguage("English");
+		createKeywordsPage.selectLanguage(Language.ENGLISH);
 
 		createKeywordsPage.continueWizardButton().click();
 		createKeywordsPage.loadOrFadeWait();
@@ -506,7 +506,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 		createKeywordsPage.createSynonymGroup("ying yang", "Korean");
 
-		//keywordsPage.selectLanguage("Korean");
+		//keywordsPage.selectLanguage(Language.KOREAN);
 		LOGGER.warn("Cannot select language for blacklists yet");
 
 		new WebDriverWait(getDriver(),40).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
@@ -535,7 +535,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.loadOrFadeWait();
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
-		keywordsPage.selectLanguage("Kazakh");
+		keywordsPage.selectLanguage(Language.KAZAKH);
 
 		keywordsPage.synonymGroupPlusButton("бір").click();
 		assertThat(keywordsPage.synonymGroupTextBox("бір"), displayed());
@@ -555,7 +555,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.loadOrFadeWait();
 
-		keywordsPage.selectLanguage("German");
+		keywordsPage.selectLanguage(Language.GERMAN);
 
 		try {
 			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"));
