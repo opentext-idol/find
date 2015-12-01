@@ -29,6 +29,9 @@ public class IndexFilter implements SearchFilter {
 
     @Override
     public void apply(SearchBase searchBase) {
+        searchBase.expandFilter(SearchBase.Filter.FILTER_BY);
+        searchBase.expandSubFilter(SearchBase.Filter.INDEXES);
+        searchBase.openPublicFilter();
         for (Checkbox checkbox : searchBase.indexList()) {
             if (indexes.contains(checkbox.getName().trim())) {
                 checkbox.check();

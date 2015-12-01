@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -353,6 +354,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 				return !promotionsBox.isDisplayed() || resultsAreLoaded(promotionsBox);
 			}
 		});
+		loadOrFadeWait();
     }
 
 	private boolean resultsAreLoaded(WebElement promotionsBox) {
@@ -425,7 +427,9 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 	//TODO is this actually what it's looking for?
 	public String getResultsForText() {
-		return getDriver().findElement(By.cssSelector(".heading b")).getText();
+		WebElement heading = getDriver().findElement(By.cssSelector(".heading b"));
+		scrollIntoView(heading, getDriver());
+		return heading.getText();
 	}
 
 	public int countRelatedConcepts() {
@@ -541,11 +545,9 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	}
 
 	public List<String> youSearchedFor() {
-		final List<String> youSearchedFor = new ArrayList<>();
-		for (final WebElement word : findElements(By.cssSelector(".search-terms-list span"))) {
-			youSearchedFor.add(word.getText());
-		}
-		return youSearchedFor;
+		WebElement searchTermsList = findElement(By.cssSelector(".search-terms-list"));
+		scrollIntoView(searchTermsList, getDriver());
+		return ElementUtil.getTexts(searchTermsList.findElements(By.tagName("span")));
 	}
 
 	public void deselectIndex(String index) {
