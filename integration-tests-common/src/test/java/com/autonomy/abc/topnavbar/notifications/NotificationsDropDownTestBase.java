@@ -6,7 +6,6 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import org.junit.Before;
 import org.openqa.selenium.Platform;
@@ -18,7 +17,6 @@ import static org.hamcrest.core.Is.is;
 public class NotificationsDropDownTestBase extends ABCTestBase {
     protected com.autonomy.abc.selenium.menu.NotificationsDropDown notifications;
     protected KeywordsPage keywordsPage;
-    protected CreateNewKeywordsPage createNewKeywordsPage;
     protected TopNavBar topNavBar;
     protected SideNavBar sideNavBar;
 

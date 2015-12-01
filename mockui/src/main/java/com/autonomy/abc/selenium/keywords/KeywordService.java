@@ -9,7 +9,7 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.util.Language;
+import com.autonomy.abc.selenium.language.Language;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -80,7 +80,8 @@ public class KeywordService extends ServiceBase {
         return getElementFactory().getKeywordsPage();
     }
 
-    private void addKeywords(KeywordWizardType type, Language language, Iterable<String> keywords) {
+    // this does not wait at the end, generally not the one you want
+    public void addKeywords(KeywordWizardType type, Language language, Iterable<String> keywords) {
         goToKeywordsWizard();
         if (getApplication().getType().equals(ApplicationType.HOSTED) && !language.equals(Language.ENGLISH)) {
             LOGGER.warn("hosted mode does not support foreign keywords, using English instead");
@@ -94,11 +95,14 @@ public class KeywordService extends ServiceBase {
         keywordsPage.filterView(type);
         int count = 0;
         for (final String language : keywordsPage.getLanguageList()) {
-            count += keywordsPage.countKeywords();
-            try {
-                tryDeleteAll(language);
-            } catch (StaleElementReferenceException e) {
-                return deleteAll(type);
+            int current = keywordsPage.countKeywords();
+            if (current > 0) {
+                count += current;
+                try {
+                    tryDeleteAll(language);
+                } catch (StaleElementReferenceException e) {
+                    return deleteAll(type);
+                }
             }
         }
         new WebDriverWait(getDriver(), 10 * (count + 1)).withMessage("deleting keywords").until(ExpectedConditions.textToBePresentInElement(keywordsPage, "No keywords found"));

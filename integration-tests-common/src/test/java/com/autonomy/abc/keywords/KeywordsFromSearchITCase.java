@@ -15,7 +15,7 @@ import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
-import com.autonomy.abc.selenium.util.Language;
+import com.autonomy.abc.selenium.language.Language;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -138,7 +138,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(keywordsPage.selectLanguageButton()));
         //assertEquals("Blacklist has been created in the wrong language", "French", keywordsPage.getSelectedLanguage());
 
-        keywordsPage.selectLanguage("French");
+        keywordsPage.selectLanguage(Language.FRENCH);
 
         assertThat("Synonym, group not added", keywordsPage.getSynonymGroupSynonyms("rouge"),hasItem("red"));
         assertThat("Synonym, group not added", keywordsPage.getSynonymGroupSynonyms("red"), hasItem("rouge"));
@@ -170,7 +170,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         keywordsPage.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
-        keywordsPage.selectLanguage("English");
+        keywordsPage.selectLanguage(Language.ENGLISH);
 
         assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("lodge"), hasItems("lodge", "dodge", "podge"));
         assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("podge"), hasItems("lodge", "dodge", "podge"));
@@ -216,7 +216,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage.loadOrFadeWait();
-        keywordsPage.selectLanguage("English");
+        keywordsPage.selectLanguage(Language.ENGLISH);
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
         assertEquals(1, keywordsPage.countSynonymLists());
         assertEquals(3, keywordsPage.countKeywords());
@@ -254,7 +254,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
         keywordsPage.filterView(KeywordFilter.BLACKLIST);
 
-        keywordsPage.selectLanguage("Arabic");
+        keywordsPage.selectLanguage(Language.ARABIC);
 
         assertThat("blacklisted term created successfully", keywordsPage.getBlacklistedTerms(), hasItem("wizard"));
 

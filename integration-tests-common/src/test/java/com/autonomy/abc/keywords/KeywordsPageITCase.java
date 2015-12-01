@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.keywords.KeywordWizardType;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
@@ -15,7 +16,7 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
-import com.autonomy.abc.selenium.util.Language;
+import com.autonomy.abc.selenium.language.Language;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -204,15 +205,12 @@ public class KeywordsPageITCase extends ABCTestBase {
 	//Phrases should be able to be added as synonyms from the keywords page
 	@Test
 	public void testPhrasesCanBeAddedAsSynonymsOnKeywordsPage() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("one two three", "English");
-		searchPage = getElementFactory().getSearchPage();
+		searchPage = keywordService.addSynonymGroup(Language.ENGLISH, "one two three");
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-		keywordsPage.selectLanguage("English");
+		keywordsPage.selectLanguage(Language.ENGLISH);
 		keywordsPage.synonymGroupPlusButton("three").click();
 		keywordsPage.synonymGroupTextBox("three").clear();
 		keywordsPage.synonymGroupTextBox("three").sendKeys("four and five");
@@ -288,12 +286,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	// This only tests the notifications dropdown and not the gritters
 	@Test
 	public void testHTMLEscapedInNotifications() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("<h1>Hi</h1>", "English");
-//		body.waitForGritterToClear();
-
-		getElementFactory().getKeywordsPage();
+		keywordService.addBlacklistTerms("<h1>Hi</h1>");
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
@@ -372,9 +365,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testOnlyLanguagesWithDocumentsAvailableOnSearchPage() {
 		assumeThat("Language not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
 
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("Baku", "Azeri");
+		keywordService.addBlacklistTerms(Language.AZERI, "Baku");
 
 		body.getTopNavBar().search("Baku");
 		searchPage = getElementFactory().getSearchPage();
@@ -385,41 +376,21 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testKeywordsLanguage() {
 		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), not(ApplicationType.HOSTED));
 
-		WebDriverWait wait = new WebDriverWait(getDriver(),30);
-
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("Atlanta", "Georgian");
-
-		getElementFactory().getKeywordsPage();
-
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("Tirana", "Albanian");
-
-		getElementFactory().getKeywordsPage();
-
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("Croatia Kroatia Hrvatska", "Croatian");
-
-		if(getConfig().getType().equals(ApplicationType.ON_PREM)){
-			getElementFactory().getKeywordsPage();
-		} else {
-			getElementFactory().getSearchPage();
-			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		}
+		keywordService.addBlacklistTerms(Language.GEORGIAN, "Atlanta");
+		keywordService.addBlacklistTerms(Language.ALBANIAN, "Tirana");
+		keywordService.addSynonymGroup(Language.CROATIAN, "Croatia Kroatia Hrvatska");
+		keywordService.goToKeywords();
 
 		keywordsPage.filterView(KeywordFilter.ALL);
-		keywordsPage.selectLanguage("Georgian");
+		keywordsPage.selectLanguage(Language.GEORGIAN);
 		assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
 		assertThat(keywordsPage.countSynonymLists(), is(0));
 
-		keywordsPage.selectLanguage("Albanian");
+		keywordsPage.selectLanguage(Language.ALBANIAN);
 		assertThat(keywordsPage.getBlacklistedTerms().size(), is(1));
 		assertThat(keywordsPage.countSynonymLists(), is(0));
 
-		keywordsPage.selectLanguage("Croatian");
+		keywordsPage.selectLanguage(Language.CROATIAN);
 		assertThat(keywordsPage.getBlacklistedTerms().size(), is(0));
 		assertThat(keywordsPage.countSynonymLists(), is(1));
 		assertThat(keywordsPage.countKeywords(), is(3));
@@ -427,15 +398,11 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testKeywordsCreationAndDeletionOnSecondWindow() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("double duo two pair couple", "Urdu");
-		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordService.addSynonymGroup(Language.URDU, "double duo two pair couple");
+		keywordsPage = keywordService.goToKeywords();
+
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-
-		keywordsPage.selectLanguage("Urdu");
-
+		keywordsPage.selectLanguage(Language.URDU);
 		keywordsPage.loadOrFadeWait();
 
 		final String url = getDriver().getCurrentUrl();
@@ -467,52 +434,10 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testSynonymsNotCaseSensitive() {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
-
-		createKeywordsPage.selectLanguage("English");
-
-		createKeywordsPage.continueWizardButton().click();
-		createKeywordsPage.loadOrFadeWait();
-
-		createKeywordsPage.addSynonyms("bear");
-		assertThat(createKeywordsPage.countKeywords(), is(1));
-
-		for (final String bearVariant : Arrays.asList("Bear", "beaR", "BEAR", "beAR", "BEar")) {
-			createKeywordsPage.addSynonyms(bearVariant);
-			assertThat(createKeywordsPage.countKeywords(), is(1));
-			assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(),hasItem("bear"));
-			assertThat("correct error message not showing", createKeywordsPage.getText(), containsString(bearVariant.toLowerCase() + " is a duplicate of an existing keyword."));
-
-		}
-
-		// disallows any adding of synonyms if disallowed synonym found
-		createKeywordsPage.addSynonyms("Polar Bear");
-		assertThat(createKeywordsPage.countKeywords(), is(1));
-		assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(), hasItem("bear"));
-		assertThat("correct error message not showing", createKeywordsPage.getText(), containsString("bear is a duplicate of an existing keyword."));
-
-		//jam and jaM are case variants so none should be added
-		createKeywordsPage.addSynonyms("jam jaM");
-		assertThat(createKeywordsPage.countKeywords(), is(1));
-	}
-
-
-	@Test
 	public void testSpinnerPresentOnLastSynonymWhilePenultimateSynonymSpinnerPresent() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("ying yang", "Korean");
+		keywordService.addSynonymGroup(Language.KOREAN, "ying yang");
+		keywordsPage = keywordService.goToKeywords();
 
-		//keywordsPage.selectLanguage("Korean");
-		LOGGER.warn("Cannot select language for blacklists yet");
-
-		new WebDriverWait(getDriver(),40).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
-
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.loadOrFadeWait();
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		assertThat(keywordsPage.countSynonymLists(), is(1));
 		assertThat(keywordsPage.countKeywords(), is(2));
@@ -525,17 +450,11 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testAddKeywordsBoxOpenClickDelete() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("бір екі үш төрт бес", "Kazakh");
+		keywordService.addSynonymGroup(Language.KAZAKH, "бір екі үш төрт бес");
+		keywordService.goToKeywords();
 
-		new WebDriverWait(getDriver(),40).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
-
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.loadOrFadeWait();
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-
-		keywordsPage.selectLanguage("Kazakh");
+		keywordsPage.selectLanguage(Language.KAZAKH);
 
 		keywordsPage.synonymGroupPlusButton("бір").click();
 		assertThat(keywordsPage.synonymGroupTextBox("бір"), displayed());
@@ -547,15 +466,12 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	//CCUK-3243
 	public void testQuickSynonymDelete() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createSynonymGroup("string strong strang streng strung", "German");
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.loadOrFadeWait();
-		keywordsPage.filterView(KeywordFilter.SYNONYMS);
-		keywordsPage.loadOrFadeWait();
+		keywordService.addSynonymGroup(Language.GERMAN, "string strong strang streng strung");
+		keywordService.goToKeywords();
 
-		keywordsPage.selectLanguage("German");
+		keywordsPage.filterView(KeywordFilter.SYNONYMS);
+		keywordsPage.selectLanguage(Language.GERMAN);
+		keywordsPage.loadOrFadeWait();
 
 		try {
 			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"));
@@ -593,12 +509,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	public void testSynonymsDisplayedInAlphabeticalOrder() throws InterruptedException {
 		for (final String synonyms : Arrays.asList("aa ba ca da", "ab bb cb db", "dc cc bc ac", "ca ba da aa")) {
-			keywordsPage.createNewKeywordsButton().click();
-			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			createKeywordsPage.createSynonymGroup(synonyms, "English");
-
-			searchPage = getElementFactory().getSearchPage();
-			searchPage.waitForSearchLoadIndicatorToDisappear();
+			searchPage = keywordService.addSynonymGroup(Language.ENGLISH, synonyms);
 			final List<String> keywords = searchPage.getLeadSynonymsList();
 
 			for (int i = 0; i < keywords.size() - 1; i++) {
@@ -621,15 +532,9 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testBlacklistedKeywordsDisplayedInAlphabeticalOrder() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createKeywordsPage.createBlacklistedTerm("aa ba ca da ab bb cb db", "English");
-
-		getElementFactory().getKeywordsPage();
+		keywordService.addBlacklistTerms(Language.ENGLISH, "aa ba ca da ab bb cb db");
 
 		keywordsPage.filterView(KeywordFilter.BLACKLIST);
-
-		Thread.sleep(10000);    //TODO Need to find a better way to do this -- need to wait for all blacklist terms to be added
 
 		final List<String> keywords = keywordsPage.getBlacklistedTerms();
 		assertThat("Wrong number of blacklist items created", keywords.size(), is(8));
@@ -709,12 +614,9 @@ public class KeywordsPageITCase extends ABCTestBase {
 		String blacklistOne = "Aardvark";
 		String blacklistTwo = "Aardwolf";
 
-		keywordsPage.createNewKeywordsButton().click();
-		CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-		createNewKeywordsPage.createBlacklistedTerm(blacklistOne + " " + blacklistTwo, "English");
-		body.getTopNavBar().notificationsDropdown();
+		keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
 		notifications = body.getTopNavBar().getNotifications();
-		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));
+
 		assertThat(notifications.notificationNumber(1).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
 		assertThat(notifications.notificationNumber(2).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
 		assertThat(notifications.notificationNumber(1).getText(), not(notifications.notificationNumber(2).getText()));
@@ -788,8 +690,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	//CSA-1440
 	public void testNavigatingAwayBeforeKeywordAdded() throws InterruptedException {
-		keywordsPage.createNewKeywordsButton().click();
-		getElementFactory().getCreateNewKeywordsPage().createBlacklistedTerm("Jeff", "English");
+		keywordService.addKeywords(KeywordWizardType.BLACKLIST, Language.ENGLISH, Collections.singletonList("Jeff"));
+
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));

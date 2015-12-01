@@ -7,6 +7,8 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
@@ -37,6 +39,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     private ConnectionService connectionService;
     private SearchActionFactory searchActionFactory;
     private PromotionActionFactory promotionActionFactory;
+    private KeywordService keywordService;
     private final WebConnector connector = new WebConnector("http://www.fifa.com", "fifa");
     private final String indexName = "fifa";
     private final String searchTerm = "football";
@@ -55,6 +58,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         connectionService = new ConnectionService(getApplication(), getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
         promotionActionFactory = new PromotionActionFactory(getApplication(),getElementFactory());
+        keywordService = new KeywordService(getApplication(), getElementFactory());
     }
 
     @Test
@@ -62,9 +66,8 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         connectionService.setUpConnection(connector);
         Search search = searchActionFactory.makeSearch(searchTerm);
         search.applyFilter(new IndexFilter(indexName));
-        search.apply();
+        searchPage = search.apply();
 
-        searchPage = getElementFactory().getSearchPage();
         verifyThat("index shows up on search page", searchPage.getSelectedDatabases(), hasItem(indexName));
         verifyThat("index has search results", searchPage.countSearchResults(), greaterThan(0));
 
@@ -73,12 +76,8 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
         assertThat(searchPage.getPromotedDocumentTitles(), containsInAnyOrder(promotedTitles.toArray()));
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-        keywordsPage.createNewKeywordsButton().click();
-        getElementFactory().getCreateNewKeywordsPage().createSynonymGroup(StringUtils.join(synonyms, " "), "English");
+        searchPage = keywordService.addSynonymGroup(Language.ENGLISH, synonyms);
 
-        searchPage = getElementFactory().getSearchPage();
         assertThat(searchPage.getPromotedDocumentTitles(), containsInAnyOrder(promotedTitles.toArray()));
 
         assertPromotedItemsForEverySynonym();

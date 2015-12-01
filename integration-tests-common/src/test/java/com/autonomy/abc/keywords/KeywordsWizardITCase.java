@@ -11,7 +11,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.util.Errors;
-import com.autonomy.abc.selenium.util.Language;
+import com.autonomy.abc.selenium.language.Language;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +89,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("languages select should be visible", createKeywordsPage.languagesSelectBox().isDisplayed());
 
         if(getConfig().getType() == ApplicationType.ON_PREM) {
-            createKeywordsPage.selectLanguage("French");
+            createKeywordsPage.selectLanguage(Language.FRENCH);
             assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("French"));
         } else {
             LOGGER.warn("Cannot select language for synonyms yet");
@@ -122,7 +122,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         searchPage = getElementFactory().getSearchPage();
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
-        searchPage.selectLanguage("French");
+        searchPage.selectLanguage(Language.FRENCH);
 
         searchPage.waitForSearchLoadIndicatorToDisappear();
 
@@ -139,7 +139,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
         keywordsPage.filterView(KeywordFilter.ALL);
 
-        keywordsPage.selectLanguage("French");
+        keywordsPage.selectLanguage(Language.FRENCH);
         assertThat("synonym horse is not displayed", keywordsPage.getAllKeywords(), hasItem("horse"));
 
         final List<String> synonymGroup = keywordsPage.getSynonymGroupSynonyms("horse");
@@ -192,10 +192,10 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("Wizard did not navigate to languages page", createKeywordsPage.languagesSelectBox().isDisplayed());
 
         if(getConfig().getType() == ApplicationType.ON_PREM) {
-            createKeywordsPage.selectLanguage("Swahili");
+            createKeywordsPage.selectLanguage(Language.SWAHILI);
             assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("Swahili"));
 
-            createKeywordsPage.selectLanguage("English");
+            createKeywordsPage.selectLanguage(Language.ENGLISH);
             assertThat(createKeywordsPage.languagesSelectBox().getText(), equalToIgnoringCase("English"));
         } else {
             LOGGER.warn("Cannot select language for blacklists yet");
@@ -298,7 +298,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 
-        createKeywordsPage.selectLanguage("English");
+        createKeywordsPage.selectLanguage(Language.ENGLISH);
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -323,7 +323,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
-        createKeywordsPage.selectLanguage("English");
+        createKeywordsPage.selectLanguage(Language.ENGLISH);
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -358,7 +358,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
-        createKeywordsPage.selectLanguage("English");
+        createKeywordsPage.selectLanguage(Language.ENGLISH);
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -399,9 +399,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-
-        //createKeywordsPage.selectLanguage("English");
-        LOGGER.warn("Cannot select language for blacklists yet");
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -470,9 +467,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
-        //createKeywordsPage.selectLanguage("English");
-        LOGGER.warn("Cannot select language for blacklists yet");
-
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
         createKeywordsPage.addSynonyms("holder");
@@ -496,9 +490,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST))).click();
-
-        //createKeywordsPage.selectLanguage("English");
-        LOGGER.warn("Cannot select language for blacklists yet");
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -525,7 +516,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
-        createKeywordsPage.selectLanguage("English");
+        createKeywordsPage.selectLanguage(Language.ENGLISH);
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -547,7 +538,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 
-        createKeywordsPage.selectLanguage("English");
+        createKeywordsPage.selectLanguage(Language.ENGLISH);
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
@@ -563,15 +554,10 @@ public class KeywordsWizardITCase extends ABCTestBase {
         }
 
         createKeywordsPage.cancelWizardButton().click();
-        keywordsPage.loadOrFadeWait();
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createKeywordsPage.createSynonymGroup("place holder", "English");
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage.loadOrFadeWait();
-
-        keywordsPage.selectLanguage("English");
-
+        keywordService.addSynonymGroup(Language.ENGLISH, "place holder");
+        keywordService.goToKeywords();
+        
+        keywordsPage.selectLanguage(Language.ENGLISH);
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
         for (final String hiddenBooleansProximity : hiddenSearchOperators) {
@@ -591,5 +577,35 @@ public class KeywordsWizardITCase extends ABCTestBase {
         }
     }
 
+    @Test
+    public void testSynonymsNotCaseSensitive() {
+        keywordsPage.createNewKeywordsButton().click();
+        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
+        createKeywordsPage.selectLanguage(Language.ENGLISH);
+
+        createKeywordsPage.continueWizardButton().click();
+        createKeywordsPage.loadOrFadeWait();
+
+        createKeywordsPage.addSynonyms("bear");
+        assertThat(createKeywordsPage.countKeywords(), is(1));
+
+        for (final String bearVariant : Arrays.asList("Bear", "beaR", "BEAR", "beAR", "BEar")) {
+            createKeywordsPage.addSynonyms(bearVariant);
+            assertThat(createKeywordsPage.countKeywords(), is(1));
+            assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(),hasItem("bear"));
+            assertThat("correct error message not showing", createKeywordsPage.getText(), containsString(bearVariant.toLowerCase() + " is a duplicate of an existing keyword."));
+        }
+
+        // disallows any adding of synonyms if disallowed synonym found
+        createKeywordsPage.addSynonyms("Polar Bear");
+        assertThat(createKeywordsPage.countKeywords(), is(1));
+        assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(), hasItem("bear"));
+        assertThat("correct error message not showing", createKeywordsPage.getText(), containsString("bear is a duplicate of an existing keyword."));
+
+        //jam and jaM are case variants so none should be added
+        createKeywordsPage.addSynonyms("jam jaM");
+        assertThat(createKeywordsPage.countKeywords(), is(1));
+    }
 }

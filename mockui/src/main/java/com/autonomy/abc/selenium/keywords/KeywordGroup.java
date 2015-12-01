@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.util.Language;
+import com.autonomy.abc.selenium.language.Language;
 import org.apache.commons.lang3.StringUtils;
 
 class KeywordGroup {
@@ -63,7 +63,7 @@ class KeywordGroup {
         @Override
         public Object apply() {
             super.apply();
-            page.selectLanguage(language.toString());
+            page.selectLanguage(language);
             return null;
         }
     }
