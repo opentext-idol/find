@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
+import com.autonomy.abc.selenium.language.LanguageDropdown;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.LoggerFactory;
 
@@ -12,5 +14,10 @@ public class HSOSearchPage extends SearchPage {
     @Override
     public void selectLanguage(final String language) {
         LoggerFactory.getLogger(HSOSearchPage.class).warn("Cannot select language on hosted yet");
+    }
+
+    @Override
+    protected LanguageDropdown languageDropdown() {
+        return new WarningLanguageDropdown();
     }
 }

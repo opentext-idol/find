@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page.keywords;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.language.LanguageDropdown;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -149,14 +150,15 @@ public abstract class KeywordsPage extends KeywordsBase {
         return new FormInput(searchFilterTextBox(), getDriver());
     }
 
+    @Deprecated
     public abstract void selectLanguage(final String language);
 
     public final void selectLanguage(final Language language) {
-        selectLanguage(language.toString());
+        languageDropdown().select(language);
     }
 
     public String getSelectedLanguage() {
-        return selectLanguageButton().getText();
+        return languageDropdown().getSelected().toString();
     }
 
     public WebElement selectLanguageButton() {
@@ -182,6 +184,8 @@ public abstract class KeywordsPage extends KeywordsBase {
             return languages;
         }
     }
+
+    protected abstract LanguageDropdown languageDropdown();
 
     @Deprecated
     public List<String> getLeadSynonymsList() {

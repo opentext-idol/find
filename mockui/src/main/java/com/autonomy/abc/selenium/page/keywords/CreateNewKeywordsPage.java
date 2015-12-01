@@ -200,6 +200,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.cssSelector("[data-step='type'] .dropdown-toggle"));
 	}
 
+	@Deprecated
 	public abstract void selectLanguage(final String language);
 
 	public void selectLanguage(final Language language) {

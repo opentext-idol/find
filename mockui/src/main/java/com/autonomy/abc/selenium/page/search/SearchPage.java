@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.util.ElementUtil;
@@ -169,16 +170,14 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
 	}
 
+	@Deprecated
 	public abstract void selectLanguage(final String language);
 
 	public void selectLanguage(final Language language) {
-		selectLanguage(language.toString());
+		languageDropdown().select(language);
 	}
 
-    @Deprecated
-    public void selectLanguage(final String language, final String type){
-        selectLanguage(language);
-    }
+	protected abstract LanguageDropdown languageDropdown();
 
 	public WebElement promoteThisQueryButton() {
 		//The space is deliberate!
