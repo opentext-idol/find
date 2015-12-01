@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.page.keywords;
 
+import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.language.OPLanguageDropdown;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -11,13 +13,7 @@ public class OPCreateNewKeywordsPage extends CreateNewKeywordsPage {
     }
 
     @Override
-    public void selectLanguage(String language) {
-            languagesSelectBox().click();
-            loadOrFadeWait();
-            final WebElement element = findElement(By.cssSelector("[data-step='type'] .dropdown-menu")).findElement(By.xpath(".//a[contains(text(), '" + language + "')]"));
-            // IE doesn't want to click the dropdown elements
-            final JavascriptExecutor executor = (JavascriptExecutor)getDriver();
-            executor.executeScript("arguments[0].click();", element);
-            loadOrFadeWait();
+    protected LanguageDropdown languageDropdown() {
+        return new OPLanguageDropdown(findElement(By.cssSelector(".wizard-steps .language-select-view-container")), getDriver());
     }
 }
