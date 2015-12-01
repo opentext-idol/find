@@ -108,6 +108,10 @@ public class HSONewUser implements NewUser {
         driver.findElement(By.linkText("Google")).click();
 
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("noAccount")));
+
+        driver.findElement(By.linkText("Google")).click();
+
+        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-logo-large")));
     }
 
     @Override
