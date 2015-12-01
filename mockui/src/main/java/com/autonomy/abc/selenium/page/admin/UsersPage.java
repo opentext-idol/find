@@ -38,11 +38,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-username']")).sendKeys(userName);
 	}
 
-	public void clearPasswords() {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password")).clear();
-		ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm")).clear();
-	}
-
 	public void addAndConfirmPassword(final String password, final String passwordConfirm) {
 		final WebElement passwordElement = ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password"));
 		passwordElement.clear();

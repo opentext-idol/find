@@ -87,7 +87,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
 		usersPage.closeModal();
-		verifyThat(usersPage.countNumberOfUsers(), is(2 - defaultNumberOfUsers));
+		verifyThat(usersPage.countNumberOfUsers(), is(2 - numberOfUsersExpected));
 	}
 
 	@Test
@@ -155,11 +155,6 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		usersPage.deleteUser(longUsername);
 		assertThat(usersPage.getTable(), not(containsText(longUsername)));
-	}
-
-	@Test
-	public void testLogOutAndLogInWithNewUser() {
-		signUpAndLoginAs(aNewUser);
 	}
 
 	@Test
