@@ -10,8 +10,12 @@ import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchFilter;
@@ -39,7 +43,10 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
@@ -52,7 +59,6 @@ public class SearchPageITCase extends ABCTestBase {
 	private CreateNewPromotionsPage createPromotionsPage;
 	private PromotionsPage promotionsPage;
 	DatePicker datePicker;
-	String havenErrorMessage = "Haven OnDemand returned an error while executing the search action";
 
 	public SearchPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -110,7 +116,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("cat"));
 
 		search("ElEPhanT");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText(),is("ElEPhanT"));
+		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("ElEPhanT"));
 	}
 
 	@Test
@@ -132,7 +138,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
 		assertThat("Promote these items button should not be enabled", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
-		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount(),is(0));
+		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount(), is(0));
 	}
 
 	@Test
@@ -211,11 +217,11 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.forwardToLastPageButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Forward to last page button is not disabled", searchPage.forwardToLastPageButton().getAttribute("class"),containsString("disabled"));
-		assertThat("Forward a page button is not disabled", searchPage.forwardPageButton().getAttribute("class"),containsString("disabled"));
+		assertThat("Forward a page button is not disabled", searchPage.forwardPageButton().getAttribute("class"), containsString("disabled"));
 		final int lastPage = searchPage.getCurrentPageNumber();
 
 		getDriver().navigate().back();
-		assertThat("Back button has not brought the user back to the first page", searchPage.getCurrentPageNumber(),is(1));
+		assertThat("Back button has not brought the user back to the first page", searchPage.getCurrentPageNumber(), is(1));
 
 		getDriver().navigate().forward();
 		assertThat("Forward button has not brought the user back to the last page", searchPage.getCurrentPageNumber(), is(lastPage));
@@ -241,79 +247,79 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testMultiDocPromotionDrawerExpandAndPagination() {
-		search("freeze");
-        searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.createAMultiDocumentPromotion(18);
-		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
+		Promotion promotion = new SpotlightPromotion("boat");
+		Search search = new Search(getApplication(), getElementFactory(), "freeze");
 
-		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
+		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		promotionService.setUpPromotion(promotion, search, 18);
 
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage = getElementFactory().getPromotionsPage();
-		promotionsPage.getPromotionLinkWithTitleContaining("boat").click();
-		PromotionsDetailPage promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-        assertThat(promotionsDetailPage.getText(), containsString("Trigger terms"));
- 		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(promotionsDetailPage.triggerAddButton()));
+		try {
+			PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(promotion);
 
-		promotionsDetailPage.trigger("boat").click();
-		promotionsDetailPage.loadOrFadeWait();
+			promotionsDetailPage.trigger("boat").click();
+			searchPage = getElementFactory().getSearchPage();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
 
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-        searchPage.loadOrFadeWait();
+			assertThat("two promotions visible", searchPage.getPromotionSummarySize(), is(2));
+			assertThat("can show more", searchPage.showMorePromotionsButton(), displayed());
 
-		assertThat("Summary size should equal 2", searchPage.getPromotionSummarySize(), is(2));
+			searchPage.showMorePromotions();
+			assertThat("showing more", searchPage.getPromotionSummarySize(), is(5));
 
-		assertThat("The show more promotions button is not visible", searchPage.showMorePromotionsButton(), displayed());
-		searchPage.showMorePromotions();
-		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize(), is(5));
+			searchPage.showLessPromotions();
+			assertThat("showing less", searchPage.getPromotionSummarySize(), is(2));
 
-		searchPage.showLessPromotions();
-		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize(), is(2));
+			searchPage.showMorePromotions();
+			assertThat("showing more again", searchPage.getPromotionSummarySize(), is(5));
 
-		searchPage.showMorePromotions();
-		assertThat("Summary size should equal 5", searchPage.getPromotionSummarySize(), is(5));
+			searchPage.promotionSummaryForwardButton().click();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			logger.info("on page 2");
+			verifyPromotionPagination(true, true);
 
-		assertThat("Back to start button should be disabled", searchPage.promotionSummaryBackToStartButton().getAttribute("class"),containsString("disabled"));
-		assertThat("Back button should be disabled", searchPage.promotionSummaryBackButton().getAttribute("class"),containsString("disabled"));
-		assertThat("Forward button should be enabled", searchPage.promotionSummaryForwardButton().getAttribute("class"), not(containsString("disabled")));
-		assertThat("Forward to end button should be enabled", searchPage.promotionSummaryForwardToEndButton().getAttribute("class"), not(containsString("disabled")));
+			searchPage.promotionSummaryForwardButton().click();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.promotionSummaryForwardButton().click();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			logger.info("on last page");
+			verifyPromotionPagination(true, false);
 
-		searchPage.promotionSummaryForwardButton().click();
-		searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Back to start button should be enabled", searchPage.promotionSummaryBackToStartButton().getAttribute("class"), not(containsString("disabled")));
-		assertThat("Back button should be enabled", searchPage.promotionSummaryBackButton().getAttribute("class"),not(containsString("disabled")));
-		assertThat("Forward button should be enabled", searchPage.promotionSummaryForwardButton().getAttribute("class"), not(containsString("disabled")));
-		assertThat("Forward to end button should be enabled", searchPage.promotionSummaryForwardToEndButton().getAttribute("class"), not(containsString("disabled")));
+			searchPage.promotionSummaryBackButton().click();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.promotionSummaryBackButton().click();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.promotionSummaryBackButton().click();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			logger.info("on first page");
+			verifyPromotionPagination(false, true);
 
-		searchPage.promotionSummaryForwardButton().click();
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		searchPage.promotionSummaryForwardButton().click();
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Back to start button should be enabled", searchPage.promotionSummaryBackToStartButton().getAttribute("class"),not(containsString("disabled")));
-		assertThat("Back button should be enabled", searchPage.promotionSummaryBackButton().getAttribute("class"), not(containsString("disabled")));
-		assertThat("Forward button should be disabled", searchPage.promotionSummaryForwardButton().getAttribute("class"), containsString("disabled"));
-        assertThat("Forward to end button should be disabled", searchPage.promotionSummaryForwardToEndButton().getAttribute("class"), containsString("disabled"));
+			searchPage.promotionSummaryForwardToEndButton().click();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			logger.info("on last page");
+			verifyPromotionPagination(true, false);
 
-		searchPage.promotionSummaryBackButton().click();
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		searchPage.promotionSummaryBackButton().click();
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		searchPage.promotionSummaryBackButton().click();
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Back to start button should be disabled", searchPage.promotionSummaryBackToStartButton().getAttribute("class"), containsString("disabled"));
+			searchPage.promotionSummaryBackToStartButton().click();
+			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			logger.info("on first page");
+			verifyPromotionPagination(false, true);
+		} finally {
+			promotionService.deleteAll();
+		}
+	}
 
-		searchPage.promotionSummaryForwardToEndButton().click();
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Forward to end button should be disabled", searchPage.promotionSummaryForwardToEndButton().getAttribute("class"), containsString("disabled"));
+	private void verifyPromotionPagination(boolean previousEnabled, boolean nextEnabled) {
+		verifyButtonEnabled("back to start", searchPage.promotionSummaryBackToStartButton(), previousEnabled);
+		verifyButtonEnabled("back", searchPage.promotionSummaryBackButton(), previousEnabled);
+		verifyButtonEnabled("forward", searchPage.promotionSummaryForwardButton(), nextEnabled);
+		verifyButtonEnabled("forward to end", searchPage.promotionSummaryForwardToEndButton(), nextEnabled);
+	}
 
-		searchPage.promotionSummaryBackToStartButton().click();
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-		assertThat("Back button should be disabled", searchPage.promotionSummaryBackButton().getAttribute("class"),containsString("disabled"));
-
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage.deleteAllPromotions();
+	private void verifyButtonEnabled(String name, WebElement element, boolean enabled) {
+		if (enabled) {
+			verifyThat(name + " button enabled", element, not(hasClass("disabled")));
+		} else {
+			verifyThat(name + " button disabled", element, hasClass("disabled"));
+		}
 	}
 
 	@Test
@@ -505,28 +511,28 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
 		for (final boolean clickLogo : Arrays.asList(true, false)) {
-			for (int j = 1; j <= 2; j++) {
-				for (int i = 1; i <= 6; i++) {
-					final String handle = getDriver().getWindowHandle();
-					final String searchResultTitle = searchPage.getSearchResultTitle(i);
+			for (int page = 1; page <= 2; page++) {
+				for (int result = 1; result <= 6; result++) {
 					searchPage.loadOrFadeWait();
-					searchPage.viewFrameClick(clickLogo, i);
-
-					Thread.sleep(5000);
-
-					getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
-					assertThat("View frame does not contain document: " + searchResultTitle, getDriver().findElement(By.xpath(".//*")).getText(),
-                            containsString(searchResultTitle));
-
-					getDriver().switchTo().window(handle);
-					getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
-					searchPage.loadOrFadeWait();
+					searchPage.viewFrameClick(clickLogo, result);
+					checkViewResult();
 				}
 
 				searchPage.javascriptClick(searchPage.forwardPageButton());
 				searchPage.loadOrFadeWait();
 			}
 		}
+	}
+
+	private void checkViewResult() {
+		final String handle = getDriver().getWindowHandle();
+		DocumentViewer docViewer = DocumentViewer.make(getDriver());
+
+		getDriver().switchTo().frame(docViewer.frame());
+		verifyThat(getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
+
+		getDriver().switchTo().window(handle);
+		docViewer.close();
 	}
 
 	@Test
@@ -754,7 +760,6 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Field text input visible", !searchPage.fieldTextInput().isDisplayed());
 	}
 
-    //TODO
 	@Test
 	public void testIdolSearchTypes() {
 		final int redCount = getResultCount("red");
@@ -977,8 +982,12 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testUntilDateFilter() throws ParseException {
-//		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 		search("Dog");
+		// not all indexes have times configured
+		new IndexFilter("news_eng").apply(searchPage);
+		searchPage.loadOrFadeWait();
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+
 		final String firstResult = searchPage.getSearchResultTitle(1);
 		final Date date = searchPage.getDateFromResult(1);
 		// plus 1 minute to be inclusive
@@ -1115,28 +1124,32 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testRelatedConceptsLinks() {
-		String queryText = "frog";
+		String queryText = "elephant";
 		search(queryText);
-		assertThat("The search bar has not retained the query text", topNavBar.getSearchBarText(), is(queryText));
-		assertThat("'You searched for' section does not include query text", searchPage.youSearchedFor(), hasItem(queryText));
-		assertThat("'Results for' heading text does not contain the query text", searchPage.getResultsForText(), containsString(queryText));
+		assertThat(topNavBar.getSearchBarText(), is(queryText));
+		assertThat(searchPage.youSearchedFor(), hasItem(queryText));
+		assertThat(searchPage.getResultsForText(), containsString(queryText));
 
 		for (int i = 0; i < 5; i++) {
 			searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
 			searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 			final int conceptsCount = searchPage.countRelatedConcepts();
-			assertThat("Number of related concepts exceeds 50", conceptsCount, lessThanOrEqualTo(50));
+			assertThat(conceptsCount, lessThanOrEqualTo(50));
 			final int index = new Random().nextInt(conceptsCount);
 			queryText = searchPage.getRelatedConcepts().get(index).getText();
 			searchPage.relatedConcept(queryText).click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
-			assertThat("The search bar has not retained the query text", topNavBar.getSearchBarText(), is(queryText));
-			final String[] words = queryText.split("\\s+");
-			for (final String word : words) {
-				assertThat("'You searched for' section does not include word: " + word + " for query text: " + queryText, searchPage.youSearchedFor(), hasItem(word));
+			assertThat(topNavBar.getSearchBarText(), is(queryText));
+			List<String> words = new ArrayList<>();
+			// HACK: avoid stopwords
+			for (String word : queryText.split("\\s+")) {
+				if (word.length() > 3) {
+					words.add(word);
+				}
 			}
-			assertThat("'Results for' heading text does not contain the query text: " + queryText, searchPage.getResultsForText(), containsString(queryText));
+			assertThat(searchPage.youSearchedFor(), containsItems(words));
+			assertThat(searchPage.getResultsForText(), containsString(queryText));
 		}
 	}
 
