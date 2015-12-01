@@ -73,7 +73,13 @@ define([
 
                 var fieldNames = this.selectedIndexesCollection.chain()
                     .map(function(database) {
-                        return this.indexesCollection.findWhere(database.pick('name','domain')).get('fieldNames')
+                        var findArguments = {name: database.get('name')};
+
+                        if (database.get('domain')) {
+                            findArguments.domain = database.get('domain');
+                        }
+
+                        return this.indexesCollection.findWhere(findArguments).get('fieldNames');
                     }, this)
                     .flatten()
                     .uniq()

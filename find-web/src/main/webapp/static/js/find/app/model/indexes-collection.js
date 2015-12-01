@@ -16,10 +16,6 @@ define([
                 responseItem.id = responseItem.domain ? encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name) : responseItem.name;
                 return responseItem;
             });
-        },
-
-        modelId: function (attributes) {
-            return attributes.domain ? DatabasesCollection.prototype.modelId.call(this, attributes) : attributes.id;
         }
     });
 
