@@ -130,6 +130,9 @@ public abstract class KeywordsPage extends KeywordsBase {
     }
 
     public int countKeywords() {
+        if (findElement(By.cssSelector(".keyword-list-message")).isDisplayed()) {
+            return 0;
+        }
         return findElements(By.cssSelector(".keywords-list .remove-keyword")).size();
     }
 
