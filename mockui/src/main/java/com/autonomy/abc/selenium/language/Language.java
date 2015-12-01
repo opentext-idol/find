@@ -20,12 +20,27 @@ public enum Language {
     KAZAKH("Kazakh"),
     KOREAN("Korean"),
     SWAHILI("Swahili"),
-    URDU("Urdu");
+    URDU("Urdu"),
+    DEFAULT("Select Language"),
+    UNKNOWN("???");
 
+    private final static Map<String, Language> inverse;
     private String name;
+
+    static {
+        inverse = new HashMap<>();
+        for (Language language : Language.values()) {
+            inverse.put(language.toString().toLowerCase(), language);
+        }
+    }
 
     Language(String name) {
         this.name = name;
+    }
+
+    static Language fromString(String language) {
+        Language found = inverse.get(language.toLowerCase());
+        return found == null ? UNKNOWN : found;
     }
 
     @Override

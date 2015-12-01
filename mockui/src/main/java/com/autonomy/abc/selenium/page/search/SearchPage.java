@@ -175,6 +175,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void selectLanguage(final Language language) {
 		languageDropdown().select(language);
+		waitForSearchLoadIndicatorToDisappear();
 	}
 
 	protected abstract LanguageDropdown languageDropdown();
