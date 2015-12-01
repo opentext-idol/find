@@ -12,12 +12,19 @@
   "content": {
     "protocol": "HTTP",
     "host": "find-idol",
-    "port": 16000,
-    "productType": ["AXE", "QMS", "DAH", "IDOLPROXY"]
+    "port": 9000,
+    "productType": ["AXE", "DAH", "IDOLPROXY"]
   },
   "queryManipulation": {
+    "server": {
+      "protocol": "HTTP",
+      "host": "find-idol",
+      "port": 16000,
+      "productType": ["QMS", "DAH", "IDOLPROXY"]
+    },
     "expandQuery": true,
-    "blacklist": "ISO_BLACKLIST"
+    "blacklist": "ISO_BLACKLIST",
+    "enabled": true
   },
   "view": {
     "protocol": "HTTP",

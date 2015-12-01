@@ -90,6 +90,9 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     public void basicValidate() throws ConfigException {
         login.basicValidate();
         content.basicValidate("content");
+        if (queryManipulation != null) {
+            queryManipulation.basicValidate();
+        }
     }
 
     @Setter

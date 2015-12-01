@@ -8,25 +8,21 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
-import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.util.AciParameters;
-import com.autonomy.aci.client.util.AciURLCodec;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.identifier.reference.Reference;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.OptionalAciService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.DocContent;
-import com.hp.autonomy.types.idol.GetVersionResponseData;
 import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.idol.SuggestResponseData;
 import com.hp.autonomy.types.requests.Documents;
-import com.hp.autonomy.types.requests.idol.actions.general.GeneralActions;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
@@ -40,7 +36,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -52,36 +47,31 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
 
     private final ConfigService<IdolFindConfig> configService;
     private final AciService contentAciService;
+    private final OptionalAciService qmsAciService;
     private final Processor<QueryResponseData> queryResponseProcessor;
     private final Processor<SuggestResponseData> suggestResponseProcessor;
-    private final Processor<GetVersionResponseData> versionResponseProcessor;
 
     @Autowired
-    public IdolDocumentService(final ConfigService<IdolFindConfig> configService, final AciService contentAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
+    public IdolDocumentService(final ConfigService<IdolFindConfig> configService, final AciService contentAciService, final OptionalAciService qmsAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
         this.configService = configService;
         this.contentAciService = contentAciService;
+        this.qmsAciService = qmsAciService;
 
         queryResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(QueryResponseData.class);
         suggestResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(SuggestResponseData.class);
-        versionResponseProcessor = aciResponseProcessorFactory.createAciResponseProcessor(GetVersionResponseData.class);
     }
 
     @Override
     public Documents<FindDocument> queryTextIndex(final FindQueryParams<String> findQueryParams) throws AciErrorException {
-        return queryTextIndex(findQueryParams, false);
+        return queryTextIndex(qmsAciService.isEnabled() ? qmsAciService : contentAciService, findQueryParams, false);
     }
 
     @Override
     public Documents<FindDocument> queryTextIndexForPromotions(final FindQueryParams<String> findQueryParams) throws AciErrorException {
-        final Set<AciParameter> aciParameters = new AciParameters(GeneralActions.GetVersion.name());
-
-        final GetVersionResponseData versionResponseData = contentAciService.executeAction(aciParameters, versionResponseProcessor);
-        final List<String> productTypes = Arrays.asList(versionResponseData.getProducttypecsv().split(","));
-
-        return productTypes.contains(ProductType.QMS.name()) ? queryTextIndex(findQueryParams, true) : new Documents<>(Collections.<FindDocument>emptyList(), 0, null);
+        return qmsAciService.isEnabled() ? queryTextIndex(qmsAciService, findQueryParams, true) : new Documents<>(Collections.<FindDocument>emptyList(), 0, null);
     }
 
-    private Documents<FindDocument> queryTextIndex(final FindQueryParams<String> findQueryParams, final boolean qms) {
+    private Documents<FindDocument> queryTextIndex(final AciService aciService, final FindQueryParams<String> findQueryParams, final boolean promotions) {
         final AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
         aciParameters.add(QueryParams.Text.name(), findQueryParams.getText());
         aciParameters.add(QueryParams.MaxResults.name(), findQueryParams.getMaxResults());
@@ -97,11 +87,11 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getQueryManipulation().getBlacklist());
         aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getQueryManipulation().getExpandQuery());
 
-        if (qms) {
+        if (promotions) {
             aciParameters.add(QmsActionParams.Promotions.name(), true);
         }
 
-        final QueryResponseData responseData = contentAciService.executeAction(aciParameters, queryResponseProcessor);
+        final QueryResponseData responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
         final List<Hit> hits = responseData.getHit();
         final List<FindDocument> results = parseQueryHits(hits);
         return new Documents<>(results, responseData.getTotalhits(), null);
@@ -110,7 +100,7 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
     @Override
     public List<FindDocument> findSimilar(final Set<String> indexes, final String reference) throws AciErrorException {
         final AciParameters aciParameters = new AciParameters(QueryActions.Suggest.name());
-        aciParameters.add(SuggestParams.Reference.name(), new Reference(AciURLCodec.getInstance().encode(reference)));
+        aciParameters.add(SuggestParams.Reference.name(), new Reference(reference));
         aciParameters.add(SuggestParams.DatabaseMatch.name(), new Databases(indexes));
         aciParameters.add(SuggestParams.Print.name(), PrintParam.None);
         aciParameters.add(SuggestParams.MaxResults.name(), MAX_SIMILAR_DOCUMENTS);

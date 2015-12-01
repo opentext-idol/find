@@ -9,14 +9,13 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.ProductType;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
 import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
-import com.hp.autonomy.frontend.find.idol.configuration.QueryManipulation;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.OptionalAciService;
+import com.hp.autonomy.frontend.find.idol.configuration.QueryManipulation;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.types.idol.DocContent;
-import com.hp.autonomy.types.idol.GetVersionResponseData;
 import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.idol.SuggestResponseData;
@@ -54,6 +53,9 @@ public class IdolDocumentServiceTest {
     private AciService contentAciService;
 
     @Mock
+    private OptionalAciService qmsAciService;
+
+    @Mock
     private AciResponseJaxbProcessorFactory aciResponseProcessorFactory;
 
     private IdolDocumentService idolDocumentService;
@@ -62,13 +64,12 @@ public class IdolDocumentServiceTest {
     public void setUp() {
         when(idolFindConfig.getQueryManipulation()).thenReturn(new QueryManipulation.Builder().build());
         when(configService.getConfig()).thenReturn(idolFindConfig);
-        idolDocumentService = new IdolDocumentService(configService, contentAciService, aciResponseProcessorFactory);
+        idolDocumentService = new IdolDocumentService(configService, contentAciService, qmsAciService, aciResponseProcessorFactory);
     }
 
     @Test
-    public void queryTextIndex() {
+    public void queryContent() {
         final QueryResponseData responseData = mockQueryResponse();
-
         when(contentAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenReturn(responseData);
 
         final Documents<FindDocument> results = idolDocumentService.queryTextIndex(mockQueryParams());
@@ -76,16 +77,26 @@ public class IdolDocumentServiceTest {
     }
 
     @Test
-    public void queryContentForPromotions() {
-        mockResponsesForPromotions(ProductType.AXE);
+    public void queryQms() {
+        when(qmsAciService.isEnabled()).thenReturn(true);
+        final QueryResponseData responseData = mockQueryResponse();
+        when(qmsAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenReturn(responseData);
 
+        final Documents<FindDocument> results = idolDocumentService.queryTextIndex(mockQueryParams());
+        assertThat(results.getDocuments(), is(not(empty())));
+    }
+
+    @Test
+    public void queryContentForPromotions() {
         final Documents<FindDocument> results = idolDocumentService.queryTextIndexForPromotions(mockQueryParams());
         assertThat(results.getDocuments(), is(empty()));
     }
 
     @Test
     public void queryQmsForPromotions() {
-        mockResponsesForPromotions(ProductType.QMS);
+        when(qmsAciService.isEnabled()).thenReturn(true);
+        final QueryResponseData responseData = mockQueryResponse();
+        when(qmsAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenReturn(responseData);
 
         final Documents<FindDocument> results = idolDocumentService.queryTextIndexForPromotions(mockQueryParams());
         assertThat(results.getDocuments(), is(not(empty())));
@@ -115,15 +126,6 @@ public class IdolDocumentServiceTest {
         responseData.getHit().add(hit);
 
         return responseData;
-    }
-
-    private void mockResponsesForPromotions(final ProductType productType) {
-        final GetVersionResponseData versionResponseData = new GetVersionResponseData();
-        versionResponseData.setProducttypecsv(productType.name());
-
-        final QueryResponseData queryResponseData = mockQueryResponse();
-
-        when(contentAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenReturn(versionResponseData).thenReturn(queryResponseData);
     }
 
     private Hit mockHit() {
