@@ -52,6 +52,10 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[contains(text(),'" + role + "')]")).click();
 	}
 
+	@Deprecated
+	/**
+	 * @deprecated Use UserService instead
+	 */
 	public void createNewUser(final String userName, final String password, final String userLevel) {
 		loadOrFadeWait();
 		addUsername(userName);

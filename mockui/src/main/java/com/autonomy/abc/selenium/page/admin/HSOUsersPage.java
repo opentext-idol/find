@@ -92,4 +92,8 @@ public class HSOUsersPage extends UsersPage {
     public FormInput editUsernameInput(User user) {
         return new FormInput(getUserRow(user).findElement(By.name("new-value")), getDriver());
     }
+
+    public void clearEmail() {
+        getEmailInput().clear();
+    }
 }
