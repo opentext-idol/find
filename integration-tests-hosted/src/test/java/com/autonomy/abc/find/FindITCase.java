@@ -6,9 +6,9 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.Input;
 import com.autonomy.abc.selenium.find.Service;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
+import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
@@ -67,6 +67,7 @@ public class FindITCase extends HostedTestBase {
     private final Matcher<String> noDocs = containsString("No results found");
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
+    private KeywordService keywordService;
 
     public FindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -76,6 +77,7 @@ public class FindITCase extends HostedTestBase {
     public void setUp(){
         promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+        keywordService = new KeywordService(getApplication(), getElementFactory());
 
         promotions = getElementFactory().getPromotionsPage();
 
@@ -637,9 +639,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testSynonyms() throws InterruptedException {
         getDriver().switchTo().window(browserHandles.get(0));
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-        keywordsPage.deleteKeywords();
+        keywordService.deleteAll(KeywordFilter.ALL);
 
         find.loadOrFadeWait();
 
@@ -655,15 +655,7 @@ public class FindITCase extends HostedTestBase {
         String firstTitle = service.getSearchResultTitle(1).getText();
 
         getDriver().switchTo().window(browserHandles.get(0));
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-
-        keywordsPage = getElementFactory().getKeywordsPage();
-        keywordsPage.createNewKeywordsButton().click();
-
-        CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createNewKeywordsPage.createSynonymGroup("cat iuhdsafsaubfdja", "English");
-
-        getElementFactory().getSearchPage();
+        keywordService.addSynonymGroup(Language.ENGLISH, "cat iuhdsafsaubfdja");
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("iuhdsafsaubfdja");
@@ -675,9 +667,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testBlacklist() throws InterruptedException {
         getDriver().switchTo().window(browserHandles.get(0));
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-        keywordsPage.deleteKeywords();
+        keywordService.deleteAll(KeywordFilter.ALL);
 
         find.loadOrFadeWait();
 
@@ -690,15 +680,7 @@ public class FindITCase extends HostedTestBase {
 
         getDriver().switchTo().window(browserHandles.get(0));
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-
-        keywordsPage = getElementFactory().getKeywordsPage();
-        keywordsPage.createNewKeywordsButton().click();
-
-        CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createNewKeywordsPage.createBlacklistedTerm("Cat", "English");
-
-        getElementFactory().getKeywordsPage();
+        keywordService.addBlacklistTerms(Language.ENGLISH, "cat");
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("Cat");

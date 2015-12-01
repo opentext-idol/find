@@ -9,6 +9,7 @@ public enum Language {
     AFRIKAANS("Afrikaans"),
     ALBANIAN("Albanian"),
     ARABIC("Arabic"),
+    AZERI("Azeri"),
     CHINESE("Chinese"),
     CROATIAN("Croatian"),
     ENGLISH("English"),

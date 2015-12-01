@@ -5,6 +5,8 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
@@ -32,6 +34,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 //CSA-1590
 public class AnalyticsToFindITCase extends HostedTestBase {
     private PromotionService promotionService;
+    private KeywordService keywordService;
 
     public AnalyticsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -40,6 +43,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     @Before
     public void setUp(){
         promotionService = getApplication().createPromotionService(getElementFactory());
+        keywordService = new KeywordService(getApplication(), getElementFactory());
 
         PromotionsPage promotions = getElementFactory().getPromotionsPage();
         browserHandles = promotions.createAndListWindowHandles();
@@ -84,13 +88,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         createNewPromotionsPage.addSpotlightPromotion("Spotlight", trigger);
         getElementFactory().getSearchPage(); //Wait for search page
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-        keywordsPage.createNewKeywordsButton().click();
-        CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createNewKeywordsPage.createSynonymGroup(trigger + " " + synonym, "English");
-
-        getElementFactory().getSearchPage();
+        keywordService.addSynonymGroup(Language.ENGLISH, trigger, synonym);
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search(trigger);

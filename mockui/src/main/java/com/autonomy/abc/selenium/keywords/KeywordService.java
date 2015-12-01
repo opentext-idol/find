@@ -80,7 +80,8 @@ public class KeywordService extends ServiceBase {
         return getElementFactory().getKeywordsPage();
     }
 
-    private void addKeywords(KeywordWizardType type, Language language, Iterable<String> keywords) {
+    // this does not wait at the end, generally not the one you want
+    public void addKeywords(KeywordWizardType type, Language language, Iterable<String> keywords) {
         goToKeywordsWizard();
         if (getApplication().getType().equals(ApplicationType.HOSTED) && !language.equals(Language.ENGLISH)) {
             LOGGER.warn("hosted mode does not support foreign keywords, using English instead");

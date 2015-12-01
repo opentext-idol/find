@@ -63,7 +63,7 @@ class KeywordGroup {
         @Override
         public Object apply() {
             super.apply();
-            page.selectLanguage(language.toString());
+            page.selectLanguage(language);
             return null;
         }
     }

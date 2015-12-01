@@ -144,6 +144,8 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
         return keywords.findElements(By.cssSelector(".remove-word")).size();
     }
 
+	// use KeywordService.addSynonymGroup
+	@Deprecated
 	public void createSynonymGroup(final String synonymGroup, final String language) {
 		loadOrFadeWait();
 
@@ -157,6 +159,8 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		(new WebDriverWait(getDriver(),10)).until(ExpectedConditions.elementToBeClickable(enabledFinishWizardButton())).click();
 	}
 
+	// use KeywordService.addBlacklistTerms
+	@Deprecated
 	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
 		keywordsType(KeywordType.BLACKLIST).click();
         selectLanguage(language);

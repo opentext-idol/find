@@ -563,15 +563,10 @@ public class KeywordsWizardITCase extends ABCTestBase {
         }
 
         createKeywordsPage.cancelWizardButton().click();
-        keywordsPage.loadOrFadeWait();
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createKeywordsPage.createSynonymGroup("place holder", "English");
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage.loadOrFadeWait();
-
+        keywordService.addSynonymGroup(Language.ENGLISH, "place holder");
+        keywordService.goToKeywords();
+        
         keywordsPage.selectLanguage(Language.ENGLISH);
-
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
         for (final String hiddenBooleansProximity : hiddenSearchOperators) {
@@ -591,5 +586,35 @@ public class KeywordsWizardITCase extends ABCTestBase {
         }
     }
 
+    @Test
+    public void testSynonymsNotCaseSensitive() {
+        keywordsPage.createNewKeywordsButton().click();
+        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
+        createKeywordsPage.selectLanguage(Language.ENGLISH);
+
+        createKeywordsPage.continueWizardButton().click();
+        createKeywordsPage.loadOrFadeWait();
+
+        createKeywordsPage.addSynonyms("bear");
+        assertThat(createKeywordsPage.countKeywords(), is(1));
+
+        for (final String bearVariant : Arrays.asList("Bear", "beaR", "BEAR", "beAR", "BEar")) {
+            createKeywordsPage.addSynonyms(bearVariant);
+            assertThat(createKeywordsPage.countKeywords(), is(1));
+            assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(),hasItem("bear"));
+            assertThat("correct error message not showing", createKeywordsPage.getText(), containsString(bearVariant.toLowerCase() + " is a duplicate of an existing keyword."));
+        }
+
+        // disallows any adding of synonyms if disallowed synonym found
+        createKeywordsPage.addSynonyms("Polar Bear");
+        assertThat(createKeywordsPage.countKeywords(), is(1));
+        assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(), hasItem("bear"));
+        assertThat("correct error message not showing", createKeywordsPage.getText(), containsString("bear is a duplicate of an existing keyword."));
+
+        //jam and jaM are case variants so none should be added
+        createKeywordsPage.addSynonyms("jam jaM");
+        assertThat(createKeywordsPage.countKeywords(), is(1));
+    }
 }
