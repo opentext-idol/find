@@ -30,16 +30,6 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../.."));
 	}
 
-	public WebElement keywordsType(final KeywordType type, final WebDriverWait wait) {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(
-				By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../..")));
-	}
-
-	@Deprecated // no longer exists
-	public WebElement backButton() {
-		return new WebDriverWait(getDriver(),4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()[contains(.,'Back')]]")));
-	}
-
 	public enum KeywordType {
 		SYNONYM("Synonyms"),
 		BLACKLIST("Blacklisted Terms");
@@ -145,41 +135,6 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
         return keywords.findElements(By.cssSelector(".remove-word")).size();
     }
 
-	// use KeywordService.addSynonymGroup
-	@Deprecated
-	public void createSynonymGroup(final String synonymGroup, final String language) {
-		loadOrFadeWait();
-
-		keywordsType(KeywordType.SYNONYM, new WebDriverWait(getDriver(),15)).click();
-		selectLanguage(language);
-		loadOrFadeWait();
-		continueWizardButton().click();
-		loadOrFadeWait();
-		addSynonyms(synonymGroup);
-		loadOrFadeWait();
-		(new WebDriverWait(getDriver(),10)).until(ExpectedConditions.elementToBeClickable(enabledFinishWizardButton())).click();
-	}
-
-	// use KeywordService.addBlacklistTerms
-	@Deprecated
-	public void createBlacklistedTerm(final String blacklistedTerm, final String language) {
-		keywordsType(KeywordType.BLACKLIST).click();
-        selectLanguage(language);
-        continueWizardButton().click();
-		loadOrFadeWait();
-		addBlacklistedTerm(blacklistedTerm);
-		loadOrFadeWait();
-		enabledFinishWizardButton().click();
-	}
-
-	private void addBlacklistedTerm(final String blacklistedTerm) {
-		blacklistAddTextBox().clear();
-		blacklistAddTextBox().sendKeys(blacklistedTerm);
-		loadOrFadeWait();
-		blacklistAddButton().click();
-		loadOrFadeWait();
-	}
-
 	public void deleteKeyword(final String keyword) {
 		findElement(By.xpath(".//span[contains(text(), '" + keyword + "')]/i")).click();
 		loadOrFadeWait();
@@ -200,9 +155,6 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	public WebElement languagesSelectBox() {
 		return findElement(By.cssSelector("[data-step='type'] .dropdown-toggle"));
 	}
-
-	@Deprecated
-	public abstract void selectLanguage(final String language);
 
 	public void selectLanguage(final Language language) {
 		languageDropdown().select(language);

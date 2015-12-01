@@ -170,9 +170,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
 	}
 
-	@Deprecated
-	public abstract void selectLanguage(final String language);
-
 	public void selectLanguage(final Language language) {
 		languageDropdown().select(language);
 		waitForSearchLoadIndicatorToDisappear();

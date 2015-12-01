@@ -12,12 +12,6 @@ public class HSOCreateNewKeywordsPage extends CreateNewKeywordsPage {
     }
 
     @Override
-    public void selectLanguage(String language) {
-        LoggerFactory.getLogger(HSOCreateNewKeywordsPage.class).warn("Cannot select language for Hosted");
-        return;
-    }
-
-    @Override
     protected LanguageDropdown languageDropdown() {
         return new WarningLanguageDropdown();
     }

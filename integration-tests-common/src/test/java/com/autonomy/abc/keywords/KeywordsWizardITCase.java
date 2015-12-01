@@ -400,9 +400,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
 
-        //createKeywordsPage.selectLanguage(Language.ENGLISH);
-        LOGGER.warn("Cannot select language for blacklists yet");
-
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
 
@@ -470,9 +467,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
-        //createKeywordsPage.selectLanguage(Language.ENGLISH);
-        LOGGER.warn("Cannot select language for blacklists yet");
-
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
         createKeywordsPage.addSynonyms("holder");
@@ -496,9 +490,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOf(createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST))).click();
-
-        //createKeywordsPage.selectLanguage(Language.ENGLISH);
-        LOGGER.warn("Cannot select language for blacklists yet");
 
         createKeywordsPage.continueWizardButton().click();
         createKeywordsPage.loadOrFadeWait();
