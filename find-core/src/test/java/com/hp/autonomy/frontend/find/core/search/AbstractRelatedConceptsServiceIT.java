@@ -20,13 +20,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public class AbstractRelatedConceptsServiceIT<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> extends AbstractFindIT {
+public abstract class AbstractRelatedConceptsServiceIT<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> extends AbstractFindIT {
     @Autowired
     protected RelatedConceptsController<Q, S, E> relatedConceptsController;
 
     protected final List<S> indexes;
 
-    public AbstractRelatedConceptsServiceIT(final List<S> indexes) {
+    protected AbstractRelatedConceptsServiceIT(final List<S> indexes) {
         this.indexes = new ArrayList<>(indexes);
     }
 

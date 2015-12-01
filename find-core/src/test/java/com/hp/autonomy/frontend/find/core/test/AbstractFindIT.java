@@ -22,7 +22,7 @@ import java.io.IOException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DispatcherServletConfiguration.class, AppConfiguration.class})
 @TestPropertySource(properties = {"hp.find.persistentState = INMEMORY", "hp.find.home = ./target/test", "find.https.proxyHost = web-proxy.sdc.hpecorp.net", "find.https.proxyPort: 8080", "find.iod.api = https://api.havenondemand.com", "find.hod.sso = https://dev.havenondemand.com/sso.html"})
-public class AbstractFindIT {
+public abstract class AbstractFindIT {
     private static final String TEST_DIR = "./target/test";
 
     @BeforeClass

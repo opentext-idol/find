@@ -21,13 +21,13 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public class AbstractDocumentServiceIT<S extends Serializable, D extends FindDocument, E extends Exception> extends AbstractFindIT {
+public abstract class AbstractDocumentServiceIT<S extends Serializable, D extends FindDocument, E extends Exception> extends AbstractFindIT {
     @Autowired
     protected DocumentsController<S, D, E> documentsController;
 
     protected final List<S> indexes;
 
-    public AbstractDocumentServiceIT(final List<S> indexes) {
+    protected AbstractDocumentServiceIT(final List<S> indexes) {
         this.indexes = new ArrayList<>(indexes);
     }
 

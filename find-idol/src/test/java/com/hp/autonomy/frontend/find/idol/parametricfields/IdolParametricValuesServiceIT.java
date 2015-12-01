@@ -13,6 +13,6 @@ import java.util.Collections;
 
 public class IdolParametricValuesServiceIT extends AbstractParametricValuesServiceIT<IdolParametricRequest, String, AciErrorException> {
     public IdolParametricValuesServiceIT() {
-        super(Collections.<String>emptyList(), Collections.singleton("Some field")); //TODO get real field name
+        super(Collections.<String>emptyList(), Collections.singleton("CATEGORY"));
     }
 }

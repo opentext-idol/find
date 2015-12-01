@@ -19,8 +19,6 @@ import com.hp.autonomy.frontend.configuration.ServerConfig;
 import com.hp.autonomy.frontend.view.idol.configuration.ViewCapable;
 import com.hp.autonomy.frontend.view.idol.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -29,7 +27,6 @@ import lombok.experimental.Accessors;
 
 @SuppressWarnings("InstanceVariableOfConcreteClass")
 @Data
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = false)
 @JsonDeserialize(builder = IdolFindConfig.Builder.class)
 public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig>, ViewCapable {
@@ -47,11 +44,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         }
 
         return new IdolFindConfig.Builder()
-            .setContent(content == null ? other.content : content.merge(other.content))
-            .setLogin(login == null ? other.login : login.merge(other.login))
-            .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
-            .setView(viewConfig == null ? other.viewConfig : viewConfig.merge(other.viewConfig))
-            .build();
+                .setContent(content == null ? other.content : content.merge(other.content))
+                .setLogin(login == null ? other.login : login.merge(other.login))
+                .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
+                .setView(viewConfig == null ? other.viewConfig : viewConfig.merge(other.viewConfig))
+                .build();
     }
 
     @JsonIgnore
@@ -69,15 +66,15 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @Override
     public IdolFindConfig withoutDefaultLogin() {
         return new Builder(this)
-            .setLogin(login.withoutDefaultLogin())
-            .build();
+                .setLogin(login.withoutDefaultLogin())
+                .build();
     }
 
     @Override
     public IdolFindConfig generateDefaultLogin() {
         return new Builder(this)
-            .setLogin(login.generateDefaultLogin())
-            .build();
+                .setLogin(login.generateDefaultLogin())
+                .build();
     }
 
     @Override

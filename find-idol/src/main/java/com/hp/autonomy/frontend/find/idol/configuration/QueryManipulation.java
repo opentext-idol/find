@@ -32,12 +32,17 @@ public class QueryManipulation implements ConfigurationComponent {
     }
 
     public QueryManipulation merge(final QueryManipulation queryManipulation) {
-        final Builder builder = new Builder();
-        builder.setServer(server == null ? queryManipulation.server : server.merge(queryManipulation.server));
-        builder.setExpandQuery(expandQuery == null ? queryManipulation.expandQuery : expandQuery);
-        builder.setBlacklist(blacklist == null ? queryManipulation.blacklist : blacklist);
+        if (queryManipulation == null) {
+            return this;
+        } else {
+            final Builder builder = new Builder();
+            builder.setServer(server == null ? queryManipulation.server : server.merge(queryManipulation.server));
+            builder.setExpandQuery(expandQuery == null ? queryManipulation.expandQuery : expandQuery);
+            builder.setBlacklist(blacklist == null ? queryManipulation.blacklist : blacklist);
+            builder.setEnabled(enabled == null ? queryManipulation.enabled : enabled);
 
-        return builder.build();
+            return builder.build();
+        }
     }
 
     @Override
@@ -46,10 +51,12 @@ public class QueryManipulation implements ConfigurationComponent {
     }
 
     public void basicValidate() throws ConfigException {
-        if (isEnabled() && server == null) {
-            throw new ConfigException("QMS", "QMS is enabled but no corresponding server details have been provided");
+        if (isEnabled()) {
+            if (server == null) {
+                throw new ConfigException("QMS", "QMS is enabled but no corresponding server details have been provided");
+            }
+            server.basicValidate("QMS");
         }
-        server.basicValidate("QMS");
     }
 
     @Setter
@@ -61,13 +68,6 @@ public class QueryManipulation implements ConfigurationComponent {
         private Boolean expandQuery;
         private String blacklist;
         private Boolean enabled;
-
-        public Builder(final QueryManipulation queryManipulation) {
-            server = queryManipulation.server;
-            expandQuery = queryManipulation.expandQuery;
-            blacklist = queryManipulation.blacklist;
-            enabled = queryManipulation.enabled;
-        }
 
         public QueryManipulation build() {
             return new QueryManipulation(this);
