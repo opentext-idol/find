@@ -8,21 +8,23 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class OPUserService extends UserService {
+    private OPUsersPage usersPage;
+
     public OPUserService(Application application, ElementFactory elementFactory) {
         super(application, elementFactory);
     }
 
     @Override
-    public UsersPage goToUsers() {
+    public OPUsersPage goToUsers() {
         getBody().getTopNavBar().findElement(By.cssSelector(".dropdown-toggle .hp-settings")).click();
         getBody().getTopNavBar().findElement(By.cssSelector("li[data-pagename='users'] a")).click();
         setUsersPage(getElementFactory().getUsersPage());
-        return getUsersPage();
+        return (OPUsersPage) getUsersPage();
     }
 
     @Override
     public User createNewUser(NewUser newUser, Role role, Factory<WebDriver> webDriverFactory) {
-        UsersPage usersPage = goToUsers();
+        usersPage = goToUsers();
         usersPage.createButton().click();
         User user = newUser.signUpAs(role, usersPage, null);
         usersPage.closeModal();
@@ -32,5 +34,13 @@ public class OPUserService extends UserService {
     @Override
     public void deleteUser(User user){
         getUsersPage().deleteUser(user.getUsername());
+    }
+
+    public User changeRole(User user, Role newRole) {
+        usersPage.roleLinkFor(user).click();
+        usersPage.setRoleValueFor(user, newRole);
+        usersPage.submitPendingEditFor(user);
+        user.setRole(newRole);
+        return user;
     }
 }
