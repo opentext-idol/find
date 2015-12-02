@@ -190,7 +190,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 			try {
 				if(getDriver().findElement(By.tagName("body")).getText().contains("401")){
-					fail("401 Page error")
+					fail("401 Page error");
 				}
 
 				if(getDriver().findElement(By.linkText("Google")).isDisplayed()){

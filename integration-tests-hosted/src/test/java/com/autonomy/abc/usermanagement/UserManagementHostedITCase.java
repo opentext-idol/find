@@ -33,7 +33,6 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.fail;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserManagementHostedITCase extends UsersPageTestBase {
 
