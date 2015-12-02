@@ -64,8 +64,7 @@ public class HSOUserService extends UserService {
         WebElement roleLink = usersPage.roleLinkFor(user);
         roleLink.click();
         usersPage.setRoleValueFor(user, newRole);
-        usersPage.submitPendingEditFor(user);
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(roleLink));
+        new WebDriverWait(getDriver(),5).until(ExpectedConditions.textToBePresentInElement(roleLink, newRole.toString()));
     }
 
     public void resetAuthentication(HSOUser user) {

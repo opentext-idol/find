@@ -125,8 +125,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		getUserRow(user).findElement(By.cssSelector(".editable-cancel")).click();
 	}
 
-	public abstract void submitPendingEditFor(User user);
-
 	public User changeAuth(User user, NewUser replacementAuth) {
 		return replacementAuth.replaceAuthFor(user, this);
 	}

@@ -13,7 +13,7 @@ public abstract class UserService {
 
     private final Application application;
     private final ElementFactory elementFactory;
-    private UsersPage usersPage;
+    protected UsersPage usersPage;
 
     public UserService(Application application, ElementFactory elementFactory) {
         this.application = application;
@@ -62,9 +62,5 @@ public abstract class UserService {
         }
     }
 
-    public void changeRole(User user, Role newRole) {
-        usersPage.roleLinkFor(user).click();
-        usersPage.setRoleValueFor(user, newRole);
-        usersPage.submitPendingEditFor(user);
-    }
+    public abstract void changeRole(User user, Role newRole);
 }
