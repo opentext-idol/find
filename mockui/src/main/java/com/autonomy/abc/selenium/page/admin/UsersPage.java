@@ -121,10 +121,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 
 	public abstract void setRoleValueFor(User user, Role newRole);
 
-	public void cancelPendingEditFor(User user) {
-		getUserRow(user).findElement(By.cssSelector(".editable-cancel")).click();
-	}
-
 	public User changeAuth(User user, NewUser replacementAuth) {
 		return replacementAuth.replaceAuthFor(user, this);
 	}

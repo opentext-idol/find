@@ -59,12 +59,19 @@ public class HSOUserService extends UserService {
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
     }
 
-    public void changeRole(User user, Role newRole) {
+    public HSOUser changeRole(User user, Role newRole) {
         usersPage = goToUsers();
+
+        if(user.getRole().equals(newRole)){
+            return (HSOUser) user;
+        }
+
         WebElement roleLink = usersPage.roleLinkFor(user);
         roleLink.click();
         usersPage.setRoleValueFor(user, newRole);
         new WebDriverWait(getDriver(),5).until(ExpectedConditions.textToBePresentInElement(roleLink, newRole.toString()));
+        user.setRole(newRole);
+        return (HSOUser) user;
     }
 
     public void resetAuthentication(HSOUser user) {

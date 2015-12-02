@@ -4,7 +4,7 @@ import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 
 public class User {
     protected String username;
-    private final Role role;
+    private Role role;
     private final AuthProvider authProvider;
     public final static User NULL = NullUser.getInstance();
 
@@ -32,5 +32,9 @@ public class User {
 
     public String toString() {
         return "User<" + authProvider + '|' + role + '>';
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

@@ -62,5 +62,5 @@ public abstract class UserService {
         }
     }
 
-    public abstract void changeRole(User user, Role newRole);
+    public abstract User changeRole(User user, Role newRole);
 }
