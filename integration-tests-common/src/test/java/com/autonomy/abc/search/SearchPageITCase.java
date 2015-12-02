@@ -83,7 +83,6 @@ public class SearchPageITCase extends ABCTestBase {
 		logger.info("Searching for: '" + searchTerm + "'");
 		topNavBar.search(searchTerm);
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
 	}
 
 	private void applyFilter(SearchFilter filter) {
