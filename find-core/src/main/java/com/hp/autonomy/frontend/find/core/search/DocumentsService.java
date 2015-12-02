@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface DocumentsService<S extends Serializable, D extends FindDocument, E extends Exception> {
+    String HIGHLIGHT_START_TAG = "<Find-IOD-QueryText-Placeholder>";
+    String HIGHLIGHT_END_TAG = "</Find-IOD-QueryText-Placeholder>";
 
     Documents<D> queryTextIndex(final FindQueryParams<S> findQueryParams) throws E;
 

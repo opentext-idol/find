@@ -313,13 +313,23 @@ define([
         },
 
         addLinksToSummary: function(summary) {
-            // Protect us from XSS
-            summary = _.escape(summary);
+            // Find highlighted query terms
+            var queryTextRegex = /<Find-IOD-QueryText-Placeholder>(.*?)<\/Find-IOD-QueryText-Placeholder>/g;
+            var queryText = [];
+            var resultsArray;
+            while ((resultsArray = queryTextRegex.exec(summary)) !==null) {
+                queryText.push(resultsArray[1]);
+            }
 
-            // Process the search text first
-            var searchText = this.queryModel.get("queryText");
-            var searchTextID = _.uniqueId('Find-IOD-QueryText-Placeholder');
-            summary = this.replaceBoundedText(summary, searchText, searchTextID);
+            // Protect us from XSS (but leave injected highlight tags alone)
+            var otherText = summary.split(/<Find-IOD-QueryText-Placeholder>.*?<\/Find-IOD-QueryText-Placeholder>/);
+            var escapedSummaryElements = [];
+            escapedSummaryElements.push(_.escape(otherText[0]));
+            for (var i = 0; i < queryText.length; i++) {
+                escapedSummaryElements.push('<span class="search-text">' + _.escape(queryText[i]) + '</span>');
+                escapedSummaryElements.push(_.escape(otherText[i + 1]));
+            }
+            var escapedSummary = escapedSummaryElements.join('');
 
             // Create an array of the entity titles, longest first
             var entities = this.entityCollection.map(function(entity) {
@@ -334,26 +344,19 @@ define([
             // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
             // changed here and messing things up badly
             _.each(entities, function(entity) {
-                summary = this.replaceBoundedText(summary, entity.text, entity.id);
+                escapedSummary = this.replaceBoundedText(escapedSummary, entity.text, entity.id);
             }, this);
 
             // Loop through entities again, replacing text with labels
             _.each(entities, function(entity) {
-                summary = this.replaceTextWithLabel(summary, entity.id, {
+                escapedSummary = this.replaceTextWithLabel(escapedSummary, entity.id, {
                     elementType: 'a',
                     replacement: entity.text,
                     elementClasses: 'entity-text clickable'
                 })
             }, this);
 
-            // Add the search text label
-            summary = this.replaceTextWithLabel(summary, searchTextID, {
-                elementType: 'span',
-                replacement: searchText,
-                elementClasses: 'search-text'
-            });
-
-            return summary;
+            return escapedSummary;
         },
 
         /**

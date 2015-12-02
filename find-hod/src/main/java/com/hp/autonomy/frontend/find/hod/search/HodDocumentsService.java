@@ -14,6 +14,7 @@ import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Highlight;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
@@ -106,7 +107,10 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
                 .setMaxDate(findQueryParams.getMaxDate())
                 .setPromotions(fetchPromotions)
                 .setPrint(Print.fields)
-                .setPrintFields(new ArrayList<>(FindDocument.ALL_FIELDS));
+                .setPrintFields(new ArrayList<>(FindDocument.ALL_FIELDS))
+                .setHighlight(Highlight.terms)
+                .setStartTag(HIGHLIGHT_START_TAG)
+                .setEndTag(HIGHLIGHT_END_TAG);
 
         final Documents<HodFindDocument> hodDocuments = queryTextIndexService.queryTextIndexWithText(findQueryParams.getText(), params);
         final List<HodFindDocument> documentList = new LinkedList<>();
