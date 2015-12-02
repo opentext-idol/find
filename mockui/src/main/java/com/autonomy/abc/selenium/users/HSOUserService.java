@@ -33,7 +33,7 @@ public class HSOUserService extends UserService {
 
     @Override
     public HSOUser createNewUser(NewUser newUser, Role role, Factory<WebDriver> webDriverFactory) {
-        UsersPage usersPage = goToUsers();
+        usersPage = goToUsers();
         usersPage.createUserButton().click();
         HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage, webDriverFactory);
         usersPage.closeModal();
@@ -52,21 +52,30 @@ public class HSOUserService extends UserService {
     }
 
     public void deleteUser(User user){
+        usersPage = goToUsers();
         usersPage.getUserRow(user).findElement(By.className("users-deleteUser")).click();
         usersPage.loadOrFadeWait();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
     }
 
-    public void changeRole(User user, Role newRole) {
+    public HSOUser changeRole(User user, Role newRole) {
+        usersPage = goToUsers();
+
+        if(user.getRole().equals(newRole)){
+            return (HSOUser) user;
+        }
+
         WebElement roleLink = usersPage.roleLinkFor(user);
         roleLink.click();
         usersPage.setRoleValueFor(user, newRole);
-        usersPage.submitPendingEditFor(user);
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(roleLink));
+        new WebDriverWait(getDriver(),5).until(ExpectedConditions.textToBePresentInElement(roleLink, newRole.toString()));
+        user.setRole(newRole);
+        return (HSOUser) user;
     }
 
     public void resetAuthentication(HSOUser user) {
+        usersPage = goToUsers();
         usersPage.resetAuthenticationButton(user).click();
         usersPage.loadOrFadeWait();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
@@ -74,6 +83,7 @@ public class HSOUserService extends UserService {
     }
 
     public User editUsername(User user, String newUsername) {
+        usersPage = goToUsers();
         WebElement pencil = usersPage.editUsernameLink(user);
         pencil.click();
         usersPage.editUsernameInput(user).setAndSubmit(newUsername);

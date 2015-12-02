@@ -51,15 +51,11 @@ public class HSOUsersPage extends UsersPage {
     }
 
     public WebElement roleLinkFor(User user){
-        return getUserRow(user).findElement(By.cssSelector(".user-role a"));
+        return getUserRow(user).findElement(By.cssSelector(".user-role .user-role-cell"));
     }
 
     public void setRoleValueFor(User user, Role newRole) {
-        getUserRow(user).findElement(By.xpath(".//option[contains(text(),'"+newRole+"')]")).click();
-    }
-
-    public void submitPendingEditFor(User user) {
-        getUserRow(user).findElement(By.cssSelector(".editable-submit")).click();
+        getUserRow(user).findElement(By.xpath(".//a[contains(text(),'"+newRole+"')]")).click();
     }
 
     private WebElement getUserRowByUsername(String username){
@@ -91,5 +87,9 @@ public class HSOUsersPage extends UsersPage {
 
     public FormInput editUsernameInput(User user) {
         return new FormInput(getUserRow(user).findElement(By.name("new-value")), getDriver());
+    }
+
+    public void clearEmail() {
+        getEmailInput().clear();
     }
 }

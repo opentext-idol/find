@@ -62,4 +62,7 @@ public class GMailHelper {
         driver.findElement(By.cssSelector(".zA.zE")).click();
     }
 
+    public static String gmailString(String plus){
+        return "hodtestqa401+" + plus + "@gmail.com";
+    }
 }

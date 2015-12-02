@@ -36,7 +36,7 @@ public class HSOUser extends User {
         helper.clickUnreadMessage();
         helper.expandCollapsedMessage();
 
-        new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()='click here']"))).click();
+        new WebDriverWait(driver,20).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()='click here']"))).click();
 
         try {
             new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
