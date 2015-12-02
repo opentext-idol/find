@@ -4,22 +4,22 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.UnhandledAlertException;
 
 import java.net.MalformedURLException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
-import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
@@ -111,7 +111,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
         verifyThat(newUserModal, containsText("Error! Username must not be blank"));
 
         usersPage.addUsername("Andrew");
-        usersPage.clearPasswords();
+        ((OPUsersPage) usersPage).clearPasswords();
         usersPage.createButton().click();
         verifyThat(newUserModal, containsText("Error! Password must not be blank"));
 
@@ -124,5 +124,54 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
 
         usersPage.closeModal();
         verifyThat(usersPage, not(containsText("Create New Users")));
+    }
+
+    @Test
+    //TO BE MOVED BACK TO COMMON IF FUNCTIONALITY IS IMPLEMENTED
+    public void testWontDeleteSelf() {
+        assertThat(usersPage.deleteButton(getCurrentUser().getUsername()), disabled());
+    }
+
+    @Test
+    public void testXmlHttpRequestToUserConfigBlockedForInadequatePermissions() throws UnhandledAlertException {
+        signUpAndLoginAs(aNewUser);
+
+        final JavascriptExecutor executor = (JavascriptExecutor) getDriver();
+        executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function(xhr) {$('body').attr('data-status', xhr.status);});");
+        usersPage.loadOrFadeWait();
+        Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
+
+        logoutAndNavigateToWebApp();
+        loginAs(config.getDefaultUser());
+        usersPage.loadOrFadeWait();
+        assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
+
+        executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
+        usersPage.loadOrFadeWait();
+        assertThat(usersPage.isAlertPresent(), is(false));
+    }
+
+    @Test
+    public void testAddStupidlyLongUsername() {
+        final String longUsername = StringUtils.repeat("a", 100);
+
+        usersPage.createUserButton().click();
+        assertThat(usersPage, modalIsDisplayed());
+
+        usersPage.createNewUser(longUsername, "b", "User");
+
+        usersPage.closeModal();
+
+        assertThat(usersPage.deleteButton(longUsername), displayed());
+
+        assertThat(usersPage.getTable(), containsText(longUsername));
+        usersPage.deleteUser(longUsername);
+
+        assertThat(usersPage.getTable(), not(containsText(longUsername)));
+    }
+
+    @Test
+    public void testLogOutAndLogInWithNewUser() {
+        signUpAndLoginAs(aNewUser);
     }
 }
