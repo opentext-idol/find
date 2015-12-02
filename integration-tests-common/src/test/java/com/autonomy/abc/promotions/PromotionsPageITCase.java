@@ -6,7 +6,9 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -16,12 +18,14 @@ import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -577,5 +581,27 @@ public class PromotionsPageITCase extends ABCTestBase {
 		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
 		verifyThat("third document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
 		getDriver().switchTo().window(handle);
+	}
+
+	@Test
+	public void testMultipleTriggersNotifications() {
+		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE,"moscow");
+		Search search = new Search(getApplication(), getElementFactory(), "Mother Russia");
+
+		promotionService.setUpPromotion(promotion, search, 4);
+		promotionsDetailPage = promotionService.goToDetails(promotion);
+
+		String[] triggers = {"HC", "Sochi", "CKSA", "SKA", "Dinamo", "Riga"};
+		promotionsDetailPage.addTrigger(StringUtils.join(triggers, ' '));
+
+		body.getTopNavBar().notificationsDropdown();
+
+		verifyThat(body.getTopNavBar().getNotifications().getAllNotificationMessages(), hasItem("Edited a spotlight promotion"));
+
+		for(String notification : body.getTopNavBar().getNotifications().getAllNotificationMessages()){
+			for(String trigger : triggers){
+				verifyThat(notification, not(containsString(trigger)));
+			}
+		}
 	}
 }
