@@ -30,6 +30,8 @@ import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.SuggestParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.SummaryParam;
 import com.hp.autonomy.types.requests.qms.QmsActionParams;
+import org.joda.time.ReadableInstant;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
@@ -44,6 +46,7 @@ import java.util.Set;
 
 @Service
 public class IdolDocumentService implements DocumentsService<String, FindDocument, AciErrorException> {
+    private static final String IDOL_DATE_PARAMETER_FORMAT = "HH:mm:ss dd/MM/yyyy";
     private static final int MAX_SIMILAR_DOCUMENTS = 3;
 
     private final ConfigService<IdolFindConfig> configService;
@@ -80,8 +83,8 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.DatabaseMatch.name(), new Databases(findQueryParams.getIndex()));
         aciParameters.add(QueryParams.FieldText.name(), findQueryParams.getFieldText());
         aciParameters.add(QueryParams.Sort.name(), findQueryParams.getSort());
-        aciParameters.add(QueryParams.MinDate.name(), findQueryParams.getMinDate());
-        aciParameters.add(QueryParams.MaxDate.name(), findQueryParams.getMaxDate());
+        aciParameters.add(QueryParams.MinDate.name(), formatDate(findQueryParams.getMinDate()));
+        aciParameters.add(QueryParams.MaxDate.name(), formatDate(findQueryParams.getMaxDate()));
         aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
         aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
         aciParameters.add(QueryParams.XMLMeta.name(), true);
@@ -113,6 +116,10 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         final SuggestResponseData responseData = contentAciService.executeAction(aciParameters, suggestResponseProcessor);
         final List<Hit> hits = responseData.getHit();
         return parseQueryHits(hits);
+    }
+
+    private String formatDate(final ReadableInstant date) {
+        return date == null ? null : DateTimeFormat.forPattern(IDOL_DATE_PARAMETER_FORMAT).print(date);
     }
 
     private List<FindDocument> parseQueryHits(final Collection<Hit> hits) {

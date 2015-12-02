@@ -20,6 +20,7 @@ import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.idol.SuggestResponseData;
 import com.hp.autonomy.types.requests.Documents;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -116,7 +117,7 @@ public class IdolDocumentServiceTest {
     }
 
     private FindQueryParams<String> mockQueryParams() {
-        return new FindQueryParams<>("*", 50, null, Arrays.asList("Database1", "Database2"), null, null, null, null);
+        return new FindQueryParams<>("*", 50, null, Arrays.asList("Database1", "Database2"), null, null, null, DateTime.now());
     }
 
     private QueryResponseData mockQueryResponse() {
