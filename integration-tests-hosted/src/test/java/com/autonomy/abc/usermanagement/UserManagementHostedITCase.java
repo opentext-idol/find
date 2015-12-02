@@ -12,6 +12,7 @@ import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
@@ -32,6 +33,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.fail;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UserManagementHostedITCase extends UsersPageTestBase {
 
@@ -181,6 +183,17 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         if(!new FindHasLoggedIn((HSOElementFactory) getElementFactory()).hasLoggedIn()){
             fail("Haven't been logged in to find");
         }
+    }
+
+    @Test
+    public void testAddStupidlyLongUsername() {
+        final String longUsername = StringUtils.repeat("a", 100);
+
+        User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN, config.getWebDriverFactory());
+        assertThat(usersPage.getTable(), containsText(longUsername));
+        userService.deleteUser(user);
+
+        assertThat(usersPage.getTable(), not(containsText(longUsername)));
     }
 
     private void waitForUserConfirmed(User user){
