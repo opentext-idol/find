@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page.keywords;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.LabelBox;
+import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -32,8 +33,12 @@ public class SynonymGroup {
     }
 
     public void remove(String synonym) {
+        synonymBox(synonym).removeAndWait();
+    }
+
+    public Removable synonymBox(String synonym) {
         WebElement synonymBox = group.findElement(By.cssSelector("[data-term='" + synonym.toLowerCase() + "']"));
-        new LabelBox(synonymBox, driver).removeAndWait();
+        return new LabelBox(synonymBox, driver);
     }
 
     public List<String> getSynonyms() {

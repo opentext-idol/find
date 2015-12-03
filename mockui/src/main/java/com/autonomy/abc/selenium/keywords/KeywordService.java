@@ -12,6 +12,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.language.Language;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,9 +75,11 @@ public class KeywordService extends ServiceBase {
 
     public KeywordsPage addBlacklistTerms(Language language, Iterable<String> blacklists) {
         addKeywords(KeywordWizardType.BLACKLIST, language, blacklists);
-        new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining("to the blacklist"));
+        FluentWait<WebDriver> wait = new WebDriverWait(getDriver(), 40)
+                .withMessage("adding " + blacklists + " to the blacklist");
+        wait.until(GritterNotice.notificationContaining("to the blacklist"));
         // terms appear asynchronously - must wait until they have ALL been added
-        new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationsDisappear());
+        wait.until(GritterNotice.notificationsDisappear());
         return getElementFactory().getKeywordsPage();
     }
 
@@ -105,7 +108,7 @@ public class KeywordService extends ServiceBase {
                 }
             }
         }
-        new WebDriverWait(getDriver(), 10 * (count + 1)).withMessage("deleting keywords").until(ExpectedConditions.textToBePresentInElement(keywordsPage, "No keywords found"));
+        waitUntilNoKeywords(10 * (count + 1));
         return keywordsPage;
     }
 
@@ -129,6 +132,12 @@ public class KeywordService extends ServiceBase {
         for (WebElement removeButton : removeButtons) {
             removeButton.click();
         }
+    }
+
+    private void waitUntilNoKeywords(int timeout) {
+        new WebDriverWait(getDriver(), timeout)
+                .withMessage("deleting keywords")
+                .until(ExpectedConditions.textToBePresentInElement(keywordsPage, "No keywords found"));
     }
 
     public void removeKeywordGroup(WebElement group) {
