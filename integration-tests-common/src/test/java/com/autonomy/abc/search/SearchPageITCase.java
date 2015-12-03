@@ -646,60 +646,51 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testFieldTextFilter() {
-		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			search("war");
-			searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		} else {
-			new Search(getApplication(), getElementFactory(), "*").applyFilter(new IndexFilter("sitesearch")).apply();
+		search("text");
+		if (config.getType().equals(ApplicationType.HOSTED)) {
+			applyFilter(new IndexFilter("sitesearch"));
 		}
-		
-		searchPage.selectLanguage(Language.ENGLISH);
 
 		final String searchResultTitle = searchPage.getSearchResultTitle(1);
-		final String lastWordInTitle = searchPage.getLastWord(searchResultTitle);
-		int comparisonIndex = 0;
-		String comparisonString = null;
+		final String firstWord = getFirstWord(searchResultTitle);
 
-		for (int i = 2; i <=6; i++) {
-			if (!searchPage.getLastWord(searchPage.getSearchResultTitle(i)).equals(lastWordInTitle)) {
-				comparisonIndex = i;
-				comparisonString = searchPage.getSearchResultTitle(i);
-				break;
-			}
-		}
-
-		if (comparisonIndex == 0) {
-			throw new IllegalStateException("This query is not suitable for this field text filter test");
-		}
+		final int comparisonResult = searchResultNotStarting(firstWord);
+		final String comparisonString = searchPage.getSearchResultTitle(comparisonResult);
 
 		searchPage.showFieldTextOptions();
 		searchPage.fieldTextAddButton().click();
 		searchPage.loadOrFadeWait();
-		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
-		assertThat("Field text confirm/tick not visible", searchPage.fieldTextTickConfirm().isDisplayed());
+		assertThat("input visible", searchPage.fieldTextInput(), displayed());
+		assertThat("confirm button visible", searchPage.fieldTextTickConfirm(), displayed());
 
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("WILD{*" + lastWordInTitle + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.setFieldText("WILD{" + firstWord + "*}:DRETITLE");
+		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
 
-		assertThat("Field text edit button not visible", searchPage.fieldTextEditButton().isDisplayed());
-		assertThat("Field text remove button not visible", searchPage.fieldTextRemoveButton().isDisplayed());
+		assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
+		assertThat("remove button visible", searchPage.fieldTextRemoveButton(), displayed());
 		assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
 
 		try {
-			assertThat(searchPage.getSearchResultTitle(comparisonIndex), not(comparisonString));
+			assertThat(searchPage.getSearchResultTitle(comparisonResult), not(comparisonString));
 		} catch (final NoSuchElementException e) {
 			// The comparison document is not present
 		}
 
 		searchPage.fieldTextRemoveButton().click();
 		searchPage.loadOrFadeWait();
-		assertThat(searchPage.getSearchResultTitle(comparisonIndex), is(comparisonString));
+		assertThat(searchPage.getSearchResultTitle(comparisonResult), is(comparisonString));
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 		assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
+	}
+
+	private int searchResultNotStarting(String prefix) {
+		for (int result = 1; result <= SearchPage.RESULTS_PER_PAGE; result++) {
+			String comparisonString = searchPage.getSearchResultTitle(result);
+			if (!comparisonString.startsWith(prefix)) {
+				return result;
+			}
+		}
+		throw new IllegalStateException("Cannot test field text filter with this search");
 	}
 
 	@Test
@@ -1295,5 +1286,9 @@ public class SearchPageITCase extends ABCTestBase {
 		for(WebElement filter : searchPage.findElements(By.cssSelector(".filter-display-view span"))){
 			assertThat(filter.getText().toLowerCase(),not(containsString("undefined")));
 		}
+	}
+
+	private String getFirstWord(String string) {
+		return string.substring(0, string.indexOf(' '));
 	}
 }
