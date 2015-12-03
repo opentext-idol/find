@@ -30,8 +30,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -71,13 +69,6 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
 	}
-
-	//TODO move this to SearchBase (and refactor code)
-    private void selectNewsEngIndex() {
-		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()[contains(.,'news_eng')]]"))).click();
-		}
-    }
 
 	private void search(String searchTerm){
 		logger.info("Searching for: '" + searchTerm + "'");
@@ -1213,44 +1204,21 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testContentType(){
-		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-			selectNewsEngIndex();
-			searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
-		}
-
 		search("Alexis");
 
 		searchPage.openParametricValuesList();
 		searchPage.loadOrFadeWait();
-
-		try {
-			new WebDriverWait(getDriver(), 30)
-					.withMessage("Waiting for parametric values list to load")
-					.until(new ExpectedCondition<Boolean>() {
-						@Override
-						public Boolean apply(WebDriver driver) {
-							return !searchPage.parametricValueLoadIndicator().isDisplayed();
-						}
-					});
-		} catch (TimeoutException e) {
-			fail("Parametric values did not load");
-		}
+		searchPage.waitForParametricValuesToLoad();
 
 		int results = searchPage.filterByContentType("TEXT/PLAIN");
-
-		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
-
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
 
-		assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
+		assertThat(searchPage.countSearchResults(), is(results));
 
 		searchPage.forwardToLastPageButton().click();
-
-		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * 6;
+		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE;
 		resultsTotal += searchPage.visibleDocumentsCount();
-
 		assertThat(resultsTotal, is(results));
 	}
 
