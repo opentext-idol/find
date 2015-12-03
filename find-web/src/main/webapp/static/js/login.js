@@ -6,9 +6,16 @@
 require(['require-config'], function() {
     require([
         'login-page/js/login',
+        'text!find/templates/app/page/login/login.html',
         'i18n!find/nls/bundle'
-    ], function(Login, i18n) {
-        new Login({
+    ], function(Login, template, i18n) {
+        var FindLogin = Login.extend({
+            template: _.template(template),
+            controlGroupClass: 'form-group',
+            errorClass: 'has-error'
+        });
+
+        new FindLogin({
             configURL: '/config/',
             url: 'authenticate',
             strings: {

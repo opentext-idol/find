@@ -1,0 +1,52 @@
+<div class="login-parent">
+    <div class="loginform form">
+        <div class="login-header">
+            <h3 class="heading">
+                <i class="icon icon-home"></i>
+                <%-strings['title']%>
+            </h3>
+        </div>
+        <% if (isNewLogin) {%>
+        <div class="alert alert-warning">
+            <strong><%-strings['important']%>:</strong> <%-strings['newCreds']%>
+        </div>
+        <% } else if (isDefaultLogin) {%>
+        <div class="alert alert-warning config-info">
+            <p><strong><%-strings['important']%>:</strong> <%-strings['defaultLogin']%>.</p>
+            <p class="more-info hide"><%-strings['infoSearchConfig']%></p>
+            <p class="more-info hide"><%-strings['infoDefaultLogin']%></p>
+            <p class="more-info hide"><%-strings['infoPasswordCopyPaste']%></p>
+            <a href="#"><%= expandTemplate %></a>
+        </div>
+        <% } %>
+        <form class="form" method="POST" action="<%-url%>" autocomplete="off">
+            <div class="form-group">
+                <label class="control-label" for="username"> <%-strings['username']%>:  </label>
+                <div class="controls">
+                    <input class="form-control"
+                           name="username"
+                           type="text"
+                           id="username"
+                           class="span5"
+                           placeholder="<%-defaultUsername ? defaultUsername : strings['username']%>"
+                           value="<%- defaultUsername ? defaultUsername : username %>"
+                            <%=isDefaultLogin ? 'readonly' : ''%>
+                            >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="password"> <%-strings['password']%>:  </label>
+                <div class="controls"><input class="form-control" name="password" type="password" id="password" class="span5" placeholder="<%-strings['password']%>"></div>
+            </div>
+            <% if (error) {%>
+            <div class="alert alert-danger">
+                <%- error %>
+            </div>
+            <% } %>
+            <div class="btn-toolbar">
+                <button type="submit" class="btn btn-primary pull-right"> <i class="icon icon-white icon-hand-right"></i> <%-strings['login']%></button>
+            </div>
+        </form>
+
+    </div>
+</div>
