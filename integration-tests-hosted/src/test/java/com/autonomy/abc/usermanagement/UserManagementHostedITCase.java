@@ -3,12 +3,12 @@ package com.autonomy.abc.usermanagement;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.HSOApplication;
-import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -30,6 +30,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.autonomy.abc.selenium.users.GMailHelper.gmailString;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -51,28 +52,13 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage = ((HSOElementFactory) getElementFactory()).getUsersPage();
     }
 
+    // CSA-1775
+    // CSA-1800
     @Test
     public void testCannotAddInvalidEmail(){
         HSONewUser newUser = new HSONewUser("jeremy","jeremy");
 
-        usersPage.createUserButton().click();
-
-        try {
-            newUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
-        } catch (TimeoutException | HSONewUser.UserNotCreatedException e){ /* Expected behaviour */ }
-
-        verifyThat(getContainingDiv(usersPage.getUsernameInput()), not(hasClass("has-error")));
-        verifyThat(getContainingDiv(usersPage.getEmailInput()), not(hasClass("has-error")));
-        verifyThat(getContainingDiv(usersPage.getUserLevelDropdown()), not(hasClass("has-error")));
-        verifyThat(getContainingDiv(usersPage.createButton()), not(hasClass("has-error")));
-
-        verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), containsString("Error! New user profile creation failed."));
-
-        usersPage.closeModal();
-
-        usersPage.refreshButton().click();
-        usersPage.loadOrFadeWait();
-
+        verifyAddingInvalidUser(newUser);
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
 
         //Sometimes it requires us to add a valid user before invalid users show up
@@ -82,6 +68,75 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage.loadOrFadeWait();
 
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
+    }
+
+    // unlike on-prem, duplicate usernames (display names) are allowed
+    @Test
+    public void testDuplicateUsername() {
+        User user = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
+        assertThat(usersPage.getUsernames(), hasSize(1));
+        verifyAddingValidUser(new HSONewUser(user.getUsername(), gmailString("isValid")));
+    }
+
+    //CSA-1776
+    //CSA-1800
+    @Test
+    public void testAddingValidDuplicateAfterInvalid() {
+        final String username = "bob";
+        verifyAddingInvalidUser(new HSONewUser(username, "INVALID_EMAIL"));
+        verifyAddingValidUser(new HSONewUser(username, gmailString("isValid")));
+        verifyAddingValidUser(new HSONewUser(username, gmailString("alsoValid")));
+    }
+
+    private void verifyAddingInvalidUser(HSONewUser invalidUser) {
+        int existingUsers = usersPage.getUsernames().size();
+        usersPage.createUserButton().click();
+
+        try {
+            invalidUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+        } catch (TimeoutException | HSONewUser.UserNotCreatedException e){
+            /* Expected behaviour */
+        }
+
+        verifyModalElements();
+        verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), containsString(Errors.User.CREATING));
+        usersPage.closeModal();
+
+        verifyThat("number of users has not increased", usersPage.getUsernames(), hasSize(existingUsers));
+
+        usersPage.refreshButton().click();
+        usersPage.loadOrFadeWait();
+
+        verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
+    }
+
+    private HSOUser verifyAddingValidUser(HSONewUser validUser) {
+        int existingUsers = usersPage.getUsernames().size();
+        usersPage.createUserButton().click();
+
+        HSOUser user = validUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+
+        verifyModalElements();
+        verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), not(containsString(Errors.User.CREATING)));
+        usersPage.closeModal();
+
+        verifyThat(usersPage.getUsernames(), hasItem(validUser.getUsername()));
+
+        usersPage.refreshButton().click();
+        usersPage.loadOrFadeWait();
+        verifyThat("exactly one new user appears", usersPage.getUsernames(), hasSize(existingUsers + 1));
+        return user;
+    }
+
+    private void verifyModalElements() {
+        verifyModalElement(usersPage.getUsernameInput().getElement());
+        verifyModalElement(usersPage.getEmailInput().getElement());
+        verifyModalElement(usersPage.getUserLevelDropdown());
+        verifyModalElement(usersPage.createButton());
+    }
+
+    private void verifyModalElement(WebElement input) {
+        verifyThat(getContainingDiv(input), not(hasClass("has-error")));
     }
 
     @Test
@@ -216,10 +271,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     }
 
     private WebElement getContainingDiv(WebElement webElement){
-        return webElement.findElement(By.xpath(".//../.."));
-    }
-
-    private WebElement getContainingDiv(FormInput formInput){
-        return getContainingDiv(formInput.getElement());
+        return ElementUtil.ancestor(webElement, 2);
     }
 }
