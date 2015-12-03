@@ -605,4 +605,25 @@ public class PromotionsPageITCase extends ABCTestBase {
 			}
 		}
 	}
+
+	@Test
+	//CSA-1769
+	public void testUpdatingAndDeletingPinToPosition(){
+		PinToPositionPromotion pinToPositionPromotion = new PinToPositionPromotion(1, "say anything");
+		Search search = new Search(getApplication(), getElementFactory(), "Max Bemis");
+
+		promotionService.setUpPromotion(pinToPositionPromotion, search, 2);
+		promotionsDetailPage = promotionService.goToDetails(pinToPositionPromotion);
+
+		promotionsDetailPage.pinPosition().setValueAndWait("4");
+		verifyThat(promotionsDetailPage.pinPosition().getValue(), is("4"));
+
+		String newTitle = "Admit It!!!";
+
+		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
+		verifyThat(promotionsDetailPage.promotionTitle().getValue(), is(newTitle));
+
+		promotionService.delete(newTitle);
+		verifyThat(promotionsPage.getPromotionTitles(), not(hasItem(newTitle)));
+	}
 }
