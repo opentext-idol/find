@@ -585,7 +585,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	//CSA-1494
-	public void testMultipleTriggersNotifications() {
+	public void testAddingMultipleTriggersNotifications() {
 		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE,"moscow");
 		Search search = new Search(getApplication(), getElementFactory(), "Mother Russia");
 
