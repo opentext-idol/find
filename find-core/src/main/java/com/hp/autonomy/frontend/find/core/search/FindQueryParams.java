@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class FindQueryParams<S extends Serializable> {
+public class FindQueryParams<S extends Serializable> implements Serializable {
     private final String text;
     private final int maxResults;
     private final String summary;
