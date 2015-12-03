@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
@@ -153,12 +154,12 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         verifyThat(newUserModal, hasTextThat(startsWith("Create New Users")));
 
         usersPage.createButton().click();
-        verifyThat(newUserModal, containsText("Error! Email address must not be blank"));
+        verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
 
         usersPage.addUsername("Andrew");
         usersPage.clearEmail();
         usersPage.createButton().click();
-        verifyThat(newUserModal, containsText("Error! Email address must not be blank"));
+        verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
 
         usersPage.getEmailInput().setValue("hodtestqa401+CreateUserTest@gmail.com");
         usersPage.selectRole(Role.USER);
