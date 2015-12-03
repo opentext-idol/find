@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -18,7 +19,7 @@ import java.util.List;
 public abstract class CreateNewKeywordsPage extends AppElement implements AppPage {
 
 	public CreateNewKeywordsPage(final WebDriver driver) {
-		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
+		super(containerElement(driver), driver);
 	}
 
 	@Override
@@ -161,4 +162,11 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	protected abstract LanguageDropdown languageDropdown();
+
+	private static WebElement containerElement(WebDriver driver) {
+		// this ensures that we get the keywords wizard, not any other (promotions) wizard
+		WebElement keywordsContainer = driver.findElement(By.className("keywords-container"));
+		WebElement parent = ElementUtil.ancestor(keywordsContainer, 1);
+		return parent.findElement(By.className("pd-wizard"));
+	}
 }

@@ -7,11 +7,7 @@ import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -244,6 +240,20 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 	public int countSynonymLists() {
 		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
+	}
+
+	public void setFieldText(String value) {
+		showFieldTextOptions();
+		try {
+			fieldTextAddButton().click();
+			loadOrFadeWait();
+		} catch (ElementNotVisibleException e) {
+			/* already clicked */
+		}
+		fieldTextInput().clear();
+		fieldTextInput().sendKeys(value);
+		fieldTextTickConfirm().click();
+		waitForSearchLoadIndicatorToDisappear();
 	}
 
 	public WebElement fieldTextAddButton() {
