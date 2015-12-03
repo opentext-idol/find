@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.contains;
@@ -77,16 +78,21 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Test
 	public void testNotificationsRemainAfterPageRefresh() throws InterruptedException {
-		keywordService.addBlacklistTerms("one two three four five");
-		topNavBar.notificationsDropdown();
-		notifications = topNavBar.getNotifications();
-		assertThat("There should be 5 notifications in the drop down", notifications.countNotifications(), is(5));
+		keywordService.deleteAll(KeywordFilter.ALL);
+		try {
+			keywordService.addBlacklistTerms("one two three four five");
+			topNavBar.notificationsDropdown();
+			notifications = topNavBar.getNotifications();
+			assertThat("5 notifications before page refresh", notifications.countNotifications(), is(5));
 
-		getDriver().navigate().refresh();
-		newBody();
-		body.getTopNavBar().notificationsDropdown();
-		notifications = topNavBar.getNotifications();
-		assertThat("After page refresh there should still be 5 notifications in the drop down", notifications.countNotifications(), is(5));
+			getDriver().navigate().refresh();
+			newBody();
+			body.getTopNavBar().notificationsDropdown();
+			notifications = topNavBar.getNotifications();
+			assertThat("5 notifications after page refresh", notifications.countNotifications(), is(5));
+		} finally {
+			keywordService.deleteAll(KeywordFilter.ALL);
+		}
 	}
 
 	//Fails because of CSA-1542
@@ -170,14 +176,15 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			for(int i = 0; i < 6; i += 2) {
 				getDriver().switchTo().window(browserHandles.get(1));
 				keywordService.addSynonymGroup(i + " " + (i + 1));
-				body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+				keywordService.goToKeywords();
+
 				bodyWindowTwo.getTopNavBar().notificationsDropdown();
-				assertThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
+				verifyThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
 				notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
 				getDriver().switchTo().window(browserHandles.get(0));
-				assertThat(notifications.countNotifications(), is(Math.min(notificationsCount, 5)));
-				assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
+				verifyThat(notifications.countNotifications(), is(Math.min(notificationsCount, 5)));
+				verifyThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 			}
 		} finally {
 			getDriver().switchTo().window(browserHandles.get(1));
@@ -324,16 +331,15 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		keywordsPage = keywordService.goToKeywords();
 
 		try {
-			//Now try deleting
 			String removeSynonymOneNotification = "Removed \"" + synonymOne + "\" from a synonym group";
-			keywordsPage.deleteSynonym(synonymOne, synonymOne);
+			keywordsPage.synonymGroupContaining(synonymOne).synonymBox(synonymOne).removeAsync();
 			checkForNotification(removeSynonymOneNotification);
 			body.getTopNavBar().notificationsDropdown(); //Close notifications dropdown
 			String removeSynonymGroupNotification = "Removed a synonym group";
-			keywordsPage.deleteSynonym(synonymTwo, synonymTwo);
+			keywordsPage.synonymGroupContaining(synonymTwo).synonymBox(synonymTwo).removeAsync();
 			checkForNotification(removeSynonymGroupNotification);
 		} finally {
-			keywordsPage.deleteKeywords();
+			keywordService.deleteAll(KeywordFilter.ALL);
 		}
 	}
 
