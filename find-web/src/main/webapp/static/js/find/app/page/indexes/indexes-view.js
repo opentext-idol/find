@@ -33,13 +33,18 @@ define([
                 this.selectDatabase(index, domain, !checked);
             },
             'click .category-input': function(e) {
-                // data-target means they've clicked a chevron, so we want to collapse stuff
-                if (!$(e.target).attr('data-target')) {
-                    e.stopPropagation();
+                e.stopPropagation();
+                var dataTarget = $(e.target).attr('data-target');
 
-                    var $target = $(e.currentTarget);
-                    var category = $target.attr('data-category-id');
-                    var checked = $target.find('i').hasClass('icon-ok');
+                // data-target means they've clicked a chevron, so we want to collapse stuff
+                if (dataTarget) {
+                    var $target = this.$(dataTarget);
+                    $target.collapse('toggle');
+                }
+                else {
+                    var $currentTarget = $(e.currentTarget);
+                    var category = $currentTarget.attr('data-category-id');
+                    var checked = $currentTarget.find('i').hasClass('icon-ok');
 
                     this.selectCategory(category, !checked);
                 }

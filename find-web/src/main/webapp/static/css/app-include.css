@@ -814,10 +814,6 @@ input:-moz-placeholder::before {
     border-bottom: none !important;
 }
 
-.child-categories ul {
-    margin-bottom: 20px;
-}
-
 .child-categories li {
     border-bottom: 1px solid #ddd;
     word-break: break-all;
