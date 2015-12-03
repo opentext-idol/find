@@ -381,6 +381,19 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
+	// TODO: move all these waits into an enum
+	// e.g. waitUntilLoaded(SearchBase.Section.PARAMETRIC_VALUES)
+	public void waitForParametricValuesToLoad() {
+		new WebDriverWait(getDriver(), 30)
+				.withMessage("loading parametric values list")
+				.until(new ExpectedCondition<Boolean>() {
+					@Override
+					public Boolean apply(WebDriver driver) {
+						return !parametricValueLoadIndicator().isDisplayed();
+					}
+				});
+	}
+
 	protected List<String> bucketList(final WebElement element) {
 		final List<String> bucketDocTitles = new ArrayList<>();
 		for (final WebElement bucketDoc : element.findElements(By.cssSelector(".promotions-bucket-document"))) {
