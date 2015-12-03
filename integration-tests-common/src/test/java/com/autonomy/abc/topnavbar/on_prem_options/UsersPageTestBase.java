@@ -35,7 +35,6 @@ public class UsersPageTestBase extends ABCTestBase {
     protected UsersPage usersPage;
     protected UserService userService;
     protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
-    protected int numberOfUsersExpected = 1 - defaultNumberOfUsers;
 
     @Before
     public void setUp() throws MalformedURLException, InterruptedException {
