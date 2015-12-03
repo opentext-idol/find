@@ -59,4 +59,8 @@ public class IndexesDetailPage extends SAASPageBase {
         String fullUrl = url.startsWith("http://") ? url : "http://" + url;
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Document \"" + fullUrl + "\" was uploaded successfully"));
     }
+
+    public String sizeString() {
+        return findElement(By.className("index-md-docs")).getText();
+    }
 }
