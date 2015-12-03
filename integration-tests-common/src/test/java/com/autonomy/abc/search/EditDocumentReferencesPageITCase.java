@@ -315,6 +315,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     @Test
+    //CSA-1761
     public void testAddedDocumentsNotUnknown(){
         setUpPromotion("smiles", "fun happiness", 2);
 
