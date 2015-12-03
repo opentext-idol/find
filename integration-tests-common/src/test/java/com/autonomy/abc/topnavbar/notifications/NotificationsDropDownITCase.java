@@ -225,7 +225,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			assertThat(notifications.notificationNumber(2).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
 			assertThat(notifications.notificationNumber(2).getText(), not(is(notifications.notificationNumber(1).getText())));
 		} finally {
-			keywordsPage.deleteKeywords();
+			keywordService.deleteAll(KeywordFilter.ALL);
 		}
 	}
 
