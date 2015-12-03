@@ -217,6 +217,7 @@
                                 <argument>${project.basedir}/node_modules/grunt-cli/bin/grunt</argument>
                                 <argument>test</argument>
                             </arguments>
+                            <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                 </executions>

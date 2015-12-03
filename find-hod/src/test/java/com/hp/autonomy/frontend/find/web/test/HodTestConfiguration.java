@@ -18,7 +18,6 @@ import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,7 +28,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Configuration
-@ComponentScan("com.hp.autonomy.frontend.find.hod")
 public class HodTestConfiguration {
     private static final String TEST_APP_API_KEY = "03e5efd3-4ddb-47ed-811c-f74c7198f1a8";
     private static final String TEST_APPLICATION = "Find_Test";

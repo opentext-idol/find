@@ -2,12 +2,13 @@ define([
     'backbone',
     'underscore',
     'jquery',
+    'find/app/configuration',
     'databases-view/js/databases-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/indexes/indexes-view.html',
     'text!find/templates/app/page/indexes/index-list.html',
     'text!find/templates/app/page/indexes/index-item.html'
-], function(Backbone, _, $, DatabasesView, i18n, template, listTemplate, itemTemplate) {
+], function(Backbone, _, $, configuration, DatabasesView, i18n, template, listTemplate, itemTemplate) {
 
     var CHECKED_CLASS = 'icon-ok';
     var INDETERMINATE_CLASS = 'icon-minus';
@@ -56,28 +57,29 @@ define([
         },
 
         initialize: function (options) {
+            var hodChildCategories = [
+                {
+                    name: 'public',
+                    displayName: i18n['search.indexes.publicIndexes'],
+                    className: 'list-unstyled',
+                    filter: function(model) {
+                        return model.get('domain') === 'PUBLIC_INDEXES';
+                    }
+                }, {
+                    name: 'private',
+                    displayName: i18n['search.indexes.privateIndexes'],
+                    className: 'list-unstyled',
+                    filter: function(model) {
+                        return model.get('domain') !== 'PUBLIC_INDEXES';
+                    }
+                }
+            ];
             DatabasesView.prototype.initialize.call(this, {
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
                 selectedDatabasesCollection: options.selectedDatabasesCollection,
                 topLevelDisplayName: i18n['search.indexes.all'],
-                childCategories: [
-                    {
-                        name: 'public',
-                        displayName: i18n['search.indexes.publicIndexes'],
-                        className: 'list-unstyled',
-                        filter: function(model) {
-                            return model.get('domain') === 'PUBLIC_INDEXES';
-                        }
-                    }, {
-                        name: 'private',
-                        displayName: i18n['search.indexes.privateIndexes'],
-                        className: 'list-unstyled',
-                        filter: function(model) {
-                            return model.get('domain') !== 'PUBLIC_INDEXES';
-                        }
-                    }
-                ]
+                childCategories: configuration().hosted ? hodChildCategories : null
             });
 
             var setInitialSelection = _.bind(function() {

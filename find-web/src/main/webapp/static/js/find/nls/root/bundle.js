@@ -41,6 +41,7 @@ define([
         'placeholder.port': 'port',
         'search.selected': 'Selected',
         'search.noResults': 'No results found',
+        'search.databases': 'Databases',
         'search.indexes': 'Indexes',
         'search.indexes.all': 'All',
         'search.indexes.publicIndexes': 'Public Indexes',

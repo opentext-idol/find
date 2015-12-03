@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigurationLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,9 @@ public class FindController {
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
 
     @Autowired
+    private ConfigurationLoader configurationLoader;
+
+    @Autowired
     private ObjectMapper contextObjectMapper;
 
     @RequestMapping("/")
@@ -49,9 +53,10 @@ public class FindController {
     }
 
     @RequestMapping(value = PUBLIC_PATH, method = RequestMethod.GET)
-    public ModelAndView userName() throws JsonProcessingException {
+    public ModelAndView mainPage() throws JsonProcessingException {
         final String username = SecurityContextHolder.getContext().getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
+        config.put("hosted", configurationLoader.isHosted());
         config.put("username", username);
 
         final Map<String, Object> attributes = new HashMap<>();

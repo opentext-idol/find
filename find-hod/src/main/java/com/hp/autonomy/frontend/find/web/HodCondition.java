@@ -5,6 +5,9 @@
 
 package com.hp.autonomy.frontend.find.web;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.AbstractBackendCondition;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BackendConfig;
+
 public class HodCondition extends AbstractBackendCondition {
     protected HodCondition() {
         super(BackendConfig.HAVEN_ON_DEMAND);

@@ -2,6 +2,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/configuration',
     'find/app/model/dates-filter-model',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
@@ -17,7 +18,7 @@ define([
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection,
+], function(Backbone, $, _, configuration, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
             IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, template) {
 
@@ -119,7 +120,7 @@ define([
             });
 
             // Collapse wrappers
-            this.indexesViewWrapper = collapseView('search.indexes', this.indexesView);
+            this.indexesViewWrapper = collapseView(configuration().hosted ? 'search.indexes' : 'search.databases', this.indexesView);
             this.dateViewWrapper = collapseView('search.dates', this.dateView);
             this.relatedConceptsViewWrapper = collapseView('search.relatedConcepts', this.relatedConceptsView);
         },

@@ -6,22 +6,13 @@
 package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
 
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.configuration.Config;
 import com.hp.autonomy.frontend.configuration.ValidationService;
 import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
 import com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter;
-import com.hp.autonomy.frontend.find.core.configuration.TextEncryptorPasswordFactory;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
-import org.jasypt.util.text.BasicTextEncryptor;
-import org.jasypt.util.text.TextEncryptor;
-import org.springframework.beans.factory.BeanInitializationException;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.MessageSource;
@@ -62,36 +53,6 @@ public class AppConfiguration<C extends Config<C>> {
     @SuppressWarnings("FieldMayBeFinal")
     @Autowired(required = false)
     private Set<Validator<?>> validators = Collections.emptySet();
-
-    @Bean
-    public TextEncryptor textEncryptor() {
-        final FactoryBean<String> passwordFactory = new TextEncryptorPasswordFactory();
-
-        final BasicTextEncryptor basicTextEncryptor = new BasicTextEncryptor();
-
-        try {
-            basicTextEncryptor.setPassword(passwordFactory.getObject());
-        } catch (final Exception e) {
-            throw new BeanInitializationException("Failed to initialize TextEncryptor for some reason", e);
-        }
-
-        return basicTextEncryptor;
-    }
-
-    @Bean
-    public SimpleFilterProvider filterProvider() {
-        final Set<String> set = ImmutableSet.of(
-                "productType",
-                "indexErrorMessage",
-                "enabled",
-                "plaintextPassword",
-                "currentPassword"
-        );
-
-        final SimpleBeanPropertyFilter.SerializeExceptFilter filter = new SimpleBeanPropertyFilter.SerializeExceptFilter(set);
-
-        return new SimpleFilterProvider(ImmutableMap.of("configurationFilter", filter));
-    }
 
     //TODO: merge properties files
     @Bean

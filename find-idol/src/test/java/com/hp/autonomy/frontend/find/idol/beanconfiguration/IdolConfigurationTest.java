@@ -8,9 +8,11 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.assertNotNull;
 
+@TestPropertySource(properties = "hp.find.backend = IDOL")
 public class IdolConfigurationTest extends AbstractFindIT {
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired

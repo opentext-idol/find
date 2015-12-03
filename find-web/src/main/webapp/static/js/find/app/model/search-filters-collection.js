@@ -2,11 +2,12 @@ define([
     'backbone',
     'underscore',
     'moment',
+    'find/app/configuration',
     'find/app/model/backbone-query-model',
     'find/app/model/dates-filter-model',
     'find/app/page/date/dates-filter-view',
     'i18n!find/nls/bundle'
-], function(Backbone, _, moment, QueryModel, DatesFilterModel, datesFilterView, i18n) {
+], function(Backbone, _, moment, configuration, QueryModel, DatesFilterModel, datesFilterView, i18n) {
 
     var FilterTypes = {
         indexes: 'indexes',
@@ -124,7 +125,7 @@ define([
 
         getDatabasesFilterText: function() {
             var selectedIndexNames = this.selectedIndexesCollection.pluck('name');
-            return i18n['search.indexes'] + ': ' + selectedIndexNames.join(', ');
+            return i18n[configuration().hosted ? 'search.indexes' : 'search.databases'] + ': ' + selectedIndexNames.join(', ');
         },
 
         allIndexesSelected: function() {
