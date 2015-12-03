@@ -33,7 +33,7 @@ public class HSOUserService extends UserService {
 
     @Override
     public HSOUser createNewUser(NewUser newUser, Role role, Factory<WebDriver> webDriverFactory) {
-        UsersPage usersPage = goToUsers();
+        usersPage = goToUsers();
         usersPage.createUserButton().click();
         HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage, webDriverFactory);
         usersPage.closeModal();
@@ -52,6 +52,7 @@ public class HSOUserService extends UserService {
     }
 
     public void deleteUser(User user){
+        usersPage = goToUsers();
         usersPage.getUserRow(user).findElement(By.className("users-deleteUser")).click();
         usersPage.loadOrFadeWait();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
@@ -59,6 +60,7 @@ public class HSOUserService extends UserService {
     }
 
     public void changeRole(User user, Role newRole) {
+        usersPage = goToUsers();
         WebElement roleLink = usersPage.roleLinkFor(user);
         roleLink.click();
         usersPage.setRoleValueFor(user, newRole);
@@ -67,6 +69,7 @@ public class HSOUserService extends UserService {
     }
 
     public void resetAuthentication(HSOUser user) {
+        usersPage = goToUsers();
         usersPage.resetAuthenticationButton(user).click();
         usersPage.loadOrFadeWait();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
@@ -74,6 +77,7 @@ public class HSOUserService extends UserService {
     }
 
     public User editUsername(User user, String newUsername) {
+        usersPage = goToUsers();
         WebElement pencil = usersPage.editUsernameLink(user);
         pencil.click();
         usersPage.editUsernameInput(user).setAndSubmit(newUsername);
