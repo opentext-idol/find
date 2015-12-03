@@ -8,9 +8,11 @@ import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
@@ -29,8 +31,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static junit.framework.TestCase.fail;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -173,6 +178,22 @@ public class IndexesPageITCase extends HostedTestBase {
         for(String message : body.getTopNavBar().getNotifications().getAllNotificationMessages()){
             assertThat(message,not(errorMessage));
         }
+    }
+
+    @Test
+    //CSA-1689
+    public void testNewlyCreatedIndexSize (){
+        IndexService indexService = getApplication().createIndexService(getElementFactory());
+        indexService.deleteAllIndexes();
+
+        Index index = new Index("yellow cat red cat");
+
+        indexService.setUpIndex(index);
+        indexService.goToDetails(index);
+
+        IndexesDetailPage indexesDetailPage = getElementFactory().getIndexesDetailPage();
+
+        verifyThat(indexesDetailPage.sizeString(), allOf(containsString("128 B"), containsString("(0 items)")));
     }
 
     @After
