@@ -5,9 +5,12 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,27 +26,30 @@ import java.util.UUID;
 
 @Controller
 @Slf4j
-public class ErrorController {
-
-    public static final String CLIENT_AUTHENTICATION_ERROR = "/client-authentication-error";
-
+public class CustomErrorController implements ErrorController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping("/authentication-error")
+    @Value("${application.version}")
+    private String applicationVersion;
+
+    @Value("${error.path:/error}")
+    private String errorPath;
+
+    @RequestMapping(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
     public ModelAndView authenticationErrorPage(final HttpServletRequest request) throws ServletException, IOException {
         return buildModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null, null, false);
     }
 
-    @RequestMapping(CLIENT_AUTHENTICATION_ERROR)
+    @RequestMapping(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)
     public ModelAndView clientAuthenticationErrorPage(
-        @RequestParam("statusCode") final int statusCode,
-        final HttpServletRequest request
+            @RequestParam("statusCode") final int statusCode,
+            final HttpServletRequest request
     ) throws ServletException, IOException {
         return buildModelAndView(request, "error.clientAuthenticationErrorMain", "error.clientAuthenticationErrorSub", null, statusCode, false);
     }
 
-    @RequestMapping("/server-error")
+    @RequestMapping(DispatcherServletConfiguration.SERVER_ERROR_PATH)
     public ModelAndView serverErrorPage(final HttpServletRequest request) {
         final Exception exception = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
         final String subMessageCode;
@@ -63,55 +69,43 @@ public class ErrorController {
         return buildModelAndView(request, "error.internalServerErrorMain", subMessageCode, subMessageArguments, null, true);
     }
 
-    @RequestMapping("/not-found-error")
+    @RequestMapping(DispatcherServletConfiguration.NOT_FOUND_ERROR_PATH)
     public ModelAndView notFoundError(final HttpServletRequest request) {
         return buildModelAndView(request, "error.notFoundMain", "error.notFoundSub", null, null, true);
     }
 
     private ModelAndView buildModelAndView(
-        final HttpServletRequest request,
-        final String mainMessageCode,
-        final String subMessageCode,
-        final Object[] subMessageArguments,
-        final Integer statusCode,
-        final boolean contactSupport
+            final HttpServletRequest request,
+            final String mainMessageCode,
+            final String subMessageCode,
+            final Object[] subMessageArguments,
+            final Integer statusCode,
+            final boolean contactSupport
     ) {
         final Locale locale = Locale.ENGLISH;
 
         final ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addObject("mainMessage", messageSource.getMessage(mainMessageCode, null, locale));
-        modelAndView.addObject("subMessage",  messageSource.getMessage(subMessageCode, subMessageArguments, locale));
+        modelAndView.addObject("subMessage", messageSource.getMessage(subMessageCode, subMessageArguments, locale));
         modelAndView.addObject("baseUrl", getBaseUrl(request));
         modelAndView.addObject("statusCode", statusCode);
         modelAndView.addObject("contactSupport", contactSupport);
+        modelAndView.addObject("applicationVersion", applicationVersion);
 
         return modelAndView;
     }
 
     private String getBaseUrl(final HttpServletRequest request) {
         final String originalUri = (String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
-        final String requestUri;
-
-        if (originalUri != null) {
-            requestUri = originalUri;
-        }
-        else {
-            requestUri = request.getRequestURI();
-        }
-
+        final String requestUri = originalUri != null ? originalUri : request.getRequestURI();
         final String path = requestUri.replaceFirst(request.getContextPath(), "");
-
         final int depth = StringUtils.countMatches(path, "/") - 1;
 
-        final String baseUrl;
-
-        if (depth <= 0) {
-            baseUrl = ".";
-        } else {
-            baseUrl = StringUtils.repeat("../", depth);
-        }
-
-        return baseUrl;
+        return depth <= 0 ? "." : StringUtils.repeat("../", depth);
     }
 
+    @Override
+    public String getErrorPath() {
+        return errorPath;
+    }
 }

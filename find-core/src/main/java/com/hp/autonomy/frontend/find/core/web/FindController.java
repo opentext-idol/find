@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigurationLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +35,11 @@ public class FindController {
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
 
-    @Autowired
-    private ConfigurationLoader configurationLoader;
+    @Value("${application.hosted}")
+    private boolean hosted;
+
+    @Value("${application.version}")
+    private String applicationVersion;
 
     @Autowired
     private ObjectMapper contextObjectMapper;
@@ -56,13 +59,21 @@ public class FindController {
     public ModelAndView mainPage() throws JsonProcessingException {
         final String username = SecurityContextHolder.getContext().getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
-        config.put("hosted", configurationLoader.isHosted());
+        config.put("hosted", hosted);
         config.put("username", username);
 
         final Map<String, Object> attributes = new HashMap<>();
+        attributes.put("applicationVersion", applicationVersion);
         attributes.put("configJson", convertToJson(config));
 
         return new ModelAndView("public", attributes);
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView login() {
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put("applicationVersion", applicationVersion);
+        return new ModelAndView("login", attributes);
     }
 
     protected String convertToJson(final Object object) throws JsonProcessingException {

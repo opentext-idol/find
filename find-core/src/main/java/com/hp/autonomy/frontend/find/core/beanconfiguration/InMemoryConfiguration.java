@@ -11,27 +11,10 @@ import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.session.ExpiringSession;
-import org.springframework.session.MapSessionRepository;
-import org.springframework.session.SessionRepository;
-import org.springframework.session.web.http.SessionRepositoryFilter;
 
 @Configuration
 @Conditional(InMemoryCondition.class)
 public class InMemoryConfiguration {
-
-    @Bean
-    @Conditional(InMemoryCondition.class)
-    public SessionRepositoryFilter<ExpiringSession> springSessionRepositoryFilter() {
-        return new SessionRepositoryFilter<>(sessionRepository());
-    }
-
-    @Bean
-    @Conditional(InMemoryCondition.class)
-    public SessionRepository<ExpiringSession> sessionRepository() {
-        return new MapSessionRepository();
-    }
-
     @Bean
     public CacheConfiguration defaultCacheConfiguration() {
         return new CacheConfiguration()

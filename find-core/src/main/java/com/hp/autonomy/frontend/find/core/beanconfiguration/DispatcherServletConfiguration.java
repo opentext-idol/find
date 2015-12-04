@@ -7,67 +7,35 @@ package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ViewResolver;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.List;
-import java.util.Properties;
 
-@Configuration
-@ComponentScan(basePackages = {
-        "com.hp.autonomy.frontend.find.core", "com.hp.autonomy.frontend.find.web"
-}, includeFilters = {
-        @ComponentScan.Filter(Controller.class),
-        @ComponentScan.Filter(RestController.class),
-}, excludeFilters = @ComponentScan.Filter(Configuration.class))
-public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
+@Component
+public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
+    public static final String AUTHENTICATION_ERROR_PATH = "/authentication-error";
+    public static final String CLIENT_AUTHENTICATION_ERROR_PATH = "/client-authentication-error";
+    public static final String NOT_FOUND_ERROR_PATH = "/not-found-error";
+    public static final String SERVER_ERROR_PATH = "/server-error";
 
     @Autowired
     private ObjectMapper dispatcherObjectMapper;
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    @Autowired
-    private Properties dispatcherProperties;
+    @Value("${application.version}")
+    private String applicationVersion;
 
     @SuppressWarnings("MismatchedReadAndWriteOfArray")
     @Autowired(required = false)
     private Converter<?, ?>[] converters;
-
-    @Bean
-    public ViewResolver internalResourceViewResolver() {
-        final InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/WEB-INF/jsps/");
-        viewResolver.setSuffix(".jsp");
-
-        return viewResolver;
-    }
-
-    /**
-     * This ensures that we can access controllers in other contexts (such as those loaded in the idol/hod sub-contexts)
-     */
-    @Bean
-    @Override
-    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-        final RequestMappingHandlerMapping requestMappingHandlerMapping = super.requestMappingHandlerMapping();
-        requestMappingHandlerMapping.setDetectHandlerMethodsInAncestorContexts(true);
-        return requestMappingHandlerMapping;
-    }
 
     @Override
     public void extendMessageConverters(final List<HttpMessageConverter<?>> converters) {
@@ -90,7 +58,7 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static-" + dispatcherProperties.getProperty("application.version") + "/**").addResourceLocations("/static/");
+        registry.addResourceHandler("/static-" + applicationVersion + "/**").addResourceLocations("classpath:/static/");
     }
 
     @Override
@@ -100,5 +68,4 @@ public class DispatcherServletConfiguration extends WebMvcConfigurationSupport {
         registry.addViewController("/login").setViewName("login");
         registry.addViewController("/configError").setViewName("configError");
     }
-
 }
