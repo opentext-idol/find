@@ -48,6 +48,8 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static com.autonomy.abc.matchers.ElementMatchers.hasTagName;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -849,8 +851,9 @@ public class FindITCase extends HostedTestBase {
         assertThat(results.getResultsDiv().getText(),not(containsString("Loading")));
     }
 
+    // CSA-1665
     @Test
-    public void testSearchTermHighlightedInResults(){
+    public void testSearchTermInResults(){
         String searchTerm = "Tiger";
 
         find.search(searchTerm);
@@ -859,33 +862,25 @@ public class FindITCase extends HostedTestBase {
             if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText(), containsString(searchTerm));
             }
-            verifyThat(searchElement.getTagName(), is("span"));
-            verifyThat(searchElement.getAttribute("class"), is("search-text"));
-
-//            WebElement parent = searchElement.findElement(By.xpath(".//.."));
-//            verifyThat(parent.getTagName(),is("span"));
-//            verifyThat(parent.getAttribute("data-title"), is(searchTerm));
+            verifyThat(searchElement, not(hasTagName("a")));
+            verifyThat(searchElement, hasClass("search-text"));
         }
-
-        //TODO what happens when more than one word search term
     }
 
+    // TODO: testMultiWordSearchTermInResults
+
     @Test
-    public void testRelatedConceptsHighlightedInResults(){
+    public void testRelatedConceptsInResults(){
         find.search("Tiger");
 
         for(WebElement relatedConceptLink : results.getRelatedConcepts().findElements(By.tagName("a"))){
             String relatedConcept = relatedConceptLink.getText();
-            for(WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'"+relatedConcept+"')]"))){
-                if(relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+            for (WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'" + relatedConcept + "')]"))) {
+                if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                     verifyThat(relatedConceptElement.getText(), containsString(relatedConcept));
                 }
-                verifyThat(relatedConceptElement.getTagName(), is("a"));
-                verifyThat(relatedConceptElement.getAttribute("class"), is("entity-text clickable"));
-
-                WebElement parent = ElementUtil.ancestor(relatedConceptElement, 1);
-                verifyThat(parent.getTagName(),is("span"));
-                verifyThat(parent.getAttribute("data-title"), is(relatedConcept));
+                verifyThat(relatedConceptElement, hasTagName("a"));
+                verifyThat(relatedConceptElement, hasClass("clickable"));
             }
         }
     }

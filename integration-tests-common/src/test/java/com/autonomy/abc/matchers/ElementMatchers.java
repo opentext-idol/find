@@ -77,6 +77,25 @@ public class ElementMatchers {
         };
     }
 
+    public static Matcher<? super WebElement> hasTagName(final String tagName) {
+        return new TypeSafeMatcher<WebElement>() {
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return item.getTagName().equals(tagName);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("<" + tagName + "> tag");
+            }
+
+            @Override
+            public void describeMismatchSafely(final WebElement item, final Description description) {
+                description.appendText("element was ").appendText(item.toString());
+            }
+        };
+    }
+
     public static Matcher<? super WebElement> hasAttribute(final String text) {
         return new TypeSafeMatcher<WebElement>() {
 
