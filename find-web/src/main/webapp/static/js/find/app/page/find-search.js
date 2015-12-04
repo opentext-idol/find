@@ -5,6 +5,7 @@
 
 define([
     'js-whatever/js/base-page',
+    'find/app/configuration',
     'find/app/model/backbone-query-model',
     'find/app/model/query-model',
     'find/app/page/input-view',
@@ -13,7 +14,7 @@ define([
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
+], function(BasePage, Configuration, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
 
     return BasePage.extend({
         className: 'search-page',
@@ -53,7 +54,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template);
+            this.$el.html(this.template({backend: Configuration().hosted ? 'hosted' : 'on-premise'}));
 
             this.inputView.setElement(this.$('.input-view-container')).render();
             this.serviceView.setElement(this.$('.service-view-container')).render();
