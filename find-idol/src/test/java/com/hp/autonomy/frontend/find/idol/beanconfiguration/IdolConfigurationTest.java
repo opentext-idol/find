@@ -5,15 +5,28 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigFileConfiguration;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryConfiguration;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertNotNull;
 
-@TestPropertySource(properties = "hp.find.backend = IDOL")
-public class IdolConfigurationTest extends AbstractFindIT {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {ConfigFileConfiguration.class, InMemoryConfiguration.class, IdolConfiguration.class})
+@TestPropertySource(properties = "hp.find.persistentState = INMEMORY")
+public class IdolConfigurationTest {
+    @BeforeClass
+    public static void init() {
+        System.setProperty("hp.find.home", "./src/test/resources");
+    }
+
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
     private IdolConfiguration idolConfiguration;

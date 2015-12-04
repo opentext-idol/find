@@ -22,6 +22,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -44,6 +45,12 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserService userService;
+
+    @Override
+    public void configure(final WebSecurity web)
+    {
+        web.ignoring().antMatchers("/static-*/**");
+    }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override

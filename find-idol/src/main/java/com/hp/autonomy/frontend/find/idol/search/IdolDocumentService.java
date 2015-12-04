@@ -80,7 +80,9 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.Text.name(), findQueryParams.getText());
         aciParameters.add(QueryParams.MaxResults.name(), findQueryParams.getMaxResults());
         aciParameters.add(QueryParams.Summary.name(), SummaryParam.fromValue(findQueryParams.getSummary(), null));
-        aciParameters.add(QueryParams.DatabaseMatch.name(), new Databases(findQueryParams.getIndex()));
+        if (!findQueryParams.getIndex().isEmpty()) {
+            aciParameters.add(QueryParams.DatabaseMatch.name(), new Databases(findQueryParams.getIndex()));
+        }
         aciParameters.add(QueryParams.FieldText.name(), findQueryParams.getFieldText());
         aciParameters.add(QueryParams.Sort.name(), findQueryParams.getSort());
         aciParameters.add(QueryParams.MinDate.name(), formatDate(findQueryParams.getMinDate()));
@@ -108,7 +110,9 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
     public List<FindDocument> findSimilar(final Set<String> indexes, final String reference) throws AciErrorException {
         final AciParameters aciParameters = new AciParameters(QueryActions.Suggest.name());
         aciParameters.add(SuggestParams.Reference.name(), new Reference(reference));
-        aciParameters.add(SuggestParams.DatabaseMatch.name(), new Databases(indexes));
+        if (!indexes.isEmpty()) {
+            aciParameters.add(SuggestParams.DatabaseMatch.name(), new Databases(indexes));
+        }
         aciParameters.add(SuggestParams.Print.name(), PrintParam.None);
         aciParameters.add(SuggestParams.MaxResults.name(), MAX_SIMILAR_DOCUMENTS);
         aciParameters.add(SuggestParams.Summary.name(), SummaryParam.Concept);
