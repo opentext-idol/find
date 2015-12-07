@@ -12,7 +12,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
-import java.util.List;
 
 // TODO: CSA-1663
 public class HSONewUser implements NewUser {
@@ -20,7 +19,6 @@ public class HSONewUser implements NewUser {
     private final String username;
     private final String email;
     private AuthProvider provider;
-    private boolean authenticate = false;
 
     public HSONewUser(String username, String email) {
         this.username = username;
@@ -30,16 +28,6 @@ public class HSONewUser implements NewUser {
     public HSONewUser(String username, String email, AuthProvider provider){
         this(username, email);
         this.provider = provider;
-    }
-
-    public HSONewUser(String username, String email, AuthProvider provider, boolean authenticate){
-        this(username, email, provider);
-        this.authenticate = authenticate;
-    }
-
-    public HSONewUser authenticate(){
-        authenticate = true;
-        return this;
     }
 
     @Override
@@ -56,18 +44,6 @@ public class HSONewUser implements NewUser {
         hsoUsersPage.loadOrFadeWait();
 
         if (hsoUsersPage.getUsernameInput().getValue().equals("")) {
-            if(authenticate) {
-                try {
-                    driver = webDriverFactory.create();
-                    successfullyAdded(usersPage);
-                } finally {
-                    for(String handle : new ArrayList<>(driver.getWindowHandles())) {
-                        driver.switchTo().window(handle);
-                        driver.close();
-                    }
-                }
-            }
-
             return new HSOUser(username, email, role, provider);
         }
 
