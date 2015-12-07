@@ -4,8 +4,12 @@ import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FindPage extends SearchBase implements AppPage {
     private final Input input;
@@ -36,4 +40,13 @@ public class FindPage extends SearchBase implements AppPage {
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
     }
 
+    public List<String> getSelectedPublicIndexes() {
+        List<String> indexes = new ArrayList<>();
+
+        for(WebElement selectedIndex : findElements(By.cssSelector("[data-category-id='public'] .icon-ok.database-icon"))){
+            indexes.add(selectedIndex.findElement(By.xpath("./../../span[@class='database-name' or @class='category-name']")).getText());
+        }
+
+        return indexes;
+    }
 }

@@ -958,6 +958,14 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
+    @Test
+    //CSA-1763
+    public void testPublicIndexesNotSelectedByDefault(){
+        find.search("Marina and the Diamonds");
+
+        verifyThat(find.getSelectedPublicIndexes().size(), is(0));
+    }
+
     private enum Index {
         DEFAULT("default_index"),
         FIFA("fifa"),
