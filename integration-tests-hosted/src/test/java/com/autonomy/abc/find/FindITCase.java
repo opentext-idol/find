@@ -383,6 +383,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    //TODO update this based on CSA-1657
     public void testCheckMetadata(){
         find.search("stars");
         service.filterByIndex(Index.DEFAULT.getTitle());
@@ -955,6 +956,14 @@ public class FindITCase extends HostedTestBase {
             getDriver().switchTo().window(browserHandles.get(0));
             promotionService.deleteAll();
         }
+    }
+
+    @Test
+    //CSA-1763
+    public void testPublicIndexesNotSelectedByDefault(){
+        find.search("Marina and the Diamonds");
+
+        verifyThat(find.getSelectedPublicIndexes().size(), is(0));
     }
 
     private enum Index {

@@ -117,6 +117,7 @@ public abstract class ABCTestBase {
 				try {
 					new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Signed in']")));
 					getDriver().get(config.getWebappUrl());
+					currentUser = initialUser;
 					postLogin();
 				} catch (Exception f){
 					LOGGER.error("Unable to login");
