@@ -175,6 +175,20 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     }
 
     @Test
+    public void testNoneUserConfirmation() {
+        User user = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
+        user.setRole(Role.NONE);
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        logout();
+        getDriver().get(config.getWebappUrl());
+        try {
+            loginAs(user);
+        } catch (Exception e) {
+            LOGGER.info(e.toString());
+        }
+    }
+
+    @Test
     public void testEditingUsername(){
         User user = userService.createNewUser(new HSONewUser("editUsername", gmailString("editUsername")), Role.ADMIN, config.getWebDriverFactory());
 
