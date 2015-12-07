@@ -3,15 +3,20 @@ package com.autonomy.abc.usermanagement;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.HSOApplication;
-import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.page.ErrorPage;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
+import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
+import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,9 +31,9 @@ import java.util.concurrent.TimeUnit;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
-import static com.autonomy.abc.selenium.users.GMailHelper.gmailString;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -39,9 +44,11 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private HSOUserService userService;
     private HSOUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
+    private final SignupEmailHandler emailHandler;
 
     public UserManagementHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
     }
 
     @Before
@@ -50,28 +57,13 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage = ((HSOElementFactory) getElementFactory()).getUsersPage();
     }
 
+    // CSA-1775
+    // CSA-1800
     @Test
     public void testCannotAddInvalidEmail(){
         HSONewUser newUser = new HSONewUser("jeremy","jeremy");
 
-        usersPage.createUserButton().click();
-
-        try {
-            newUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
-        } catch (TimeoutException | HSONewUser.UserNotCreatedException e){ /* Expected behaviour */ }
-
-        verifyThat(getContainingDiv(usersPage.getUsernameInput()), not(hasClass("has-error")));
-        verifyThat(getContainingDiv(usersPage.getEmailInput()), not(hasClass("has-error")));
-        verifyThat(getContainingDiv(usersPage.getUserLevelDropdown()), not(hasClass("has-error")));
-        verifyThat(getContainingDiv(usersPage.createButton()), not(hasClass("has-error")));
-
-        verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), containsString("Error! New user profile creation failed."));
-
-        usersPage.closeModal();
-
-        usersPage.refreshButton().click();
-        usersPage.loadOrFadeWait();
-
+        verifyAddingInvalidUser(newUser);
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
 
         //Sometimes it requires us to add a valid user before invalid users show up
@@ -81,6 +73,75 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage.loadOrFadeWait();
 
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
+    }
+
+    // unlike on-prem, duplicate usernames (display names) are allowed
+    @Test
+    public void testDuplicateUsername() {
+        User user = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
+        assertThat(usersPage.getUsernames(), hasSize(1));
+        verifyAddingValidUser(new HSONewUser(user.getUsername(), gmailString("isValid")));
+    }
+
+    //CSA-1776
+    //CSA-1800
+    @Test
+    public void testAddingValidDuplicateAfterInvalid() {
+        final String username = "bob";
+        verifyAddingInvalidUser(new HSONewUser(username, "INVALID_EMAIL"));
+        verifyAddingValidUser(new HSONewUser(username, gmailString("isValid")));
+        verifyAddingValidUser(new HSONewUser(username, gmailString("alsoValid")));
+    }
+
+    private void verifyAddingInvalidUser(HSONewUser invalidUser) {
+        int existingUsers = usersPage.getUsernames().size();
+        usersPage.createUserButton().click();
+
+        try {
+            invalidUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+        } catch (TimeoutException | HSONewUser.UserNotCreatedException e){
+            /* Expected behaviour */
+        }
+
+        verifyModalElements();
+        verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), containsString(Errors.User.CREATING));
+        usersPage.closeModal();
+
+        verifyThat("number of users has not increased", usersPage.getUsernames(), hasSize(existingUsers));
+
+        usersPage.refreshButton().click();
+        usersPage.loadOrFadeWait();
+
+        verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
+    }
+
+    private HSOUser verifyAddingValidUser(HSONewUser validUser) {
+        int existingUsers = usersPage.getUsernames().size();
+        usersPage.createUserButton().click();
+
+        HSOUser user = validUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+
+        verifyModalElements();
+        verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), not(containsString(Errors.User.CREATING)));
+        usersPage.closeModal();
+
+        verifyThat(usersPage.getUsernames(), hasItem(validUser.getUsername()));
+
+        usersPage.refreshButton().click();
+        usersPage.loadOrFadeWait();
+        verifyThat("exactly one new user appears", usersPage.getUsernames(), hasSize(existingUsers + 1));
+        return user;
+    }
+
+    private void verifyModalElements() {
+        verifyModalElement(usersPage.getUsernameInput().getElement());
+        verifyModalElement(usersPage.getEmailInput().getElement());
+        verifyModalElement(usersPage.getUserLevelDropdown());
+        verifyModalElement(usersPage.createButton());
+    }
+
+    private void verifyModalElement(WebElement input) {
+        verifyThat(getContainingDiv(input), not(hasClass("has-error")));
     }
 
     @Test
@@ -115,6 +176,38 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
                 driver.close();
             }
         }
+    }
+
+    @Test
+    public void testNoneUserConfirmation() {
+        NewUser somebody = config.getNewUserFactory().create();
+        User user = userService.createNewUser(somebody, Role.ADMIN, config.getWebDriverFactory());
+        userService.changeRole(user, Role.NONE);
+        verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
+
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        usersPage.refreshButton().click();
+        usersPage.loadOrFadeWait();
+        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
+
+        // TODO: use a single driver once 401 page has logout button
+        WebDriver secondDriver = config.getWebDriverFactory().create();
+        try {
+            secondDriver.get(config.getWebappUrl());
+            LoginPage loginPage = new HSOLoginPage(secondDriver, new AbcHasLoggedIn(secondDriver));
+            loginTo(loginPage, secondDriver, user);
+            ErrorPage errorPage = new ErrorPage(secondDriver);
+            verifyThat(errorPage.getErrorCode(), is("401"));
+        } finally {
+            secondDriver.quit();
+        }
+        usersPage.refreshButton().click();
+        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
     }
 
     @Test
@@ -153,14 +246,14 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         verifyThat(newUserModal, hasTextThat(startsWith("Create New Users")));
 
         usersPage.createButton().click();
-        verifyThat(newUserModal, containsText("Error! Email address must not be blank"));
+        verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
 
         String username = "Andrew";
 
         usersPage.addUsername(username);
         usersPage.clearEmail();
         usersPage.createButton().click();
-        verifyThat(newUserModal, containsText("Error! Email address must not be blank"));
+        verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
 
         usersPage.getEmailInput().setValue("hodtestqa401+CreateUserTest@gmail.com");
         usersPage.selectRole(Role.USER);
@@ -220,10 +313,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     }
 
     private WebElement getContainingDiv(WebElement webElement){
-        return webElement.findElement(By.xpath(".//../.."));
+        return ElementUtil.ancestor(webElement, 2);
     }
 
-    private WebElement getContainingDiv(FormInput formInput){
-        return getContainingDiv(formInput.getElement());
+    public static String gmailString(String plus){
+        return "hodtestqa401+" + plus + "@gmail.com";
     }
 }

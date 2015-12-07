@@ -23,4 +23,9 @@ public class Errors {
         public static final String CREATING = "Error occurred creating keywords";
         public static final String DUPLICATE_BLACKLIST = "already blacklisted";
     }
+
+    public static class User {
+        public static final String CREATING = "Error! New user profile creation failed.";
+        public static final String BLANK_EMAIL = "Error! Email address must not be blank";
+    }
 }

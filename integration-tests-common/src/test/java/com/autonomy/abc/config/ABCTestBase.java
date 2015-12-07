@@ -9,9 +9,10 @@ import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
+import com.autonomy.abc.selenium.page.login.SSOFailureException;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.ImplicitWaits;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -20,12 +21,8 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,18 +110,9 @@ public abstract class ABCTestBase {
 				loginAs(initialUser);
 				postLogin();
 			} catch (Exception e) {
-
-				try {
-					new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Signed in']")));
-					getDriver().get(config.getWebappUrl());
-					currentUser = initialUser;
-					postLogin();
-				} catch (Exception f){
-					LOGGER.error("Unable to login");
-					LOGGER.error(e.toString());
-					fail("Unable to login");
-				}
-
+				LOGGER.error("Unable to login");
+				LOGGER.error(e.toString());
+				fail("Unable to login");
 			}
 		}
 	}
@@ -163,8 +151,26 @@ public abstract class ABCTestBase {
 	}
 
 	protected final void loginAs(User user) {
-		getElementFactory().getLoginPage().loginWith(user.getAuthProvider());
+		loginTo(getElementFactory().getLoginPage(), driver, user);
 		currentUser = user;
+	}
+
+	protected final void loginTo(LoginPage loginPage, WebDriver webDriver, User user) {
+		String redirectUrl = extractRedirectUrl(webDriver.getCurrentUrl());
+		try {
+			loginPage.loginWith(user.getAuthProvider());
+		} catch (SSOFailureException e) {
+			LOGGER.info("Login failed, redirecting to " + redirectUrl);
+			webDriver.get(redirectUrl);
+		}
+	}
+
+	private String extractRedirectUrl(String fullUrl) {
+		int startIndex = fullUrl.indexOf("redirect_url=") + "redirect_url=".length();
+		String redirectUrl = fullUrl.substring(startIndex);
+		return redirectUrl
+				.replaceAll("%3A", ":")
+				.replaceAll("%2F", "/");
 	}
 
 	protected final void logout() {
