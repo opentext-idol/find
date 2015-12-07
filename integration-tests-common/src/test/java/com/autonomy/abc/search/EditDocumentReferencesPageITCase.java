@@ -15,22 +15,26 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.search.SearchFilter;
+import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
-import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
@@ -140,13 +144,22 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
     }
 
+    // CSA-1755
     @Test
     public void testRefreshEditPromotionPage() throws InterruptedException {
-        setUpPromotion("Luke", "jedi master", 1);
+        String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
+        verifyRefreshing();
 
+        editDocumentSearch("solo");
+        editReferencesPage.deleteDocFromWithinBucket(originalDoc);
+        editReferencesPage.searchResultCheckbox(1).click();
+        verifyRefreshing();
+    }
+
+    private void verifyRefreshing() {
         getDriver().navigate().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-
+        body = getBody();
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
     }
@@ -308,5 +321,39 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
             verifyThat(promotionsList, not(hasItem(equalToIgnoringCase(bucketList.get(i)))));
             verifyThat(promotionsList, hasItem(equalToIgnoringCase(bucketList.get(i + 4))));
         }
+    }
+
+    @Test
+    //CSA-1761
+    public void testAddedDocumentsNotUnknown(){
+        setUpPromotion("smiles", "fun happiness", 2);
+
+        editDocumentSearch("Friday");
+
+        String title = editReferencesPage.getSearchResultTitle(5);
+        editReferencesPage.searchResultCheckbox(5).click();
+
+        editReferencesPage.saveButton().click();
+
+        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+
+        new WebDriverWait(getDriver(),5).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return !promotionsDetailPage.getPromotedTitles().contains("Unknown Document");
+            }
+        });
+
+        List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
+
+        verifyThat(promotedTitles, hasItem(title));
+        verifyThat(promotedTitles, not(hasItem("Unknown Document")));
+
+        promotionsDetailPage.viewDocument(title);
+
+        new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#cboxLoadedContent .icon-spin")));
+
+        verifyThat(getDriver().findElement(By.id("cboxLoadedContent")), displayed());
+        verifyThat(getDriver().findElement(By.id("cboxLoadedContent")), not(containsText("500")));
     }
 }

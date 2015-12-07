@@ -608,4 +608,21 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.addSynonyms("jam jaM");
         assertThat(createKeywordsPage.countKeywords(), is(1));
     }
+
+    @Test
+    //CSA-1712
+    public void testCursorDoesNotMoveToEndOfText(){
+        keywordsPage.createNewKeywordsButton().click();
+        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+
+        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
+        createKeywordsPage.continueWizardButton().click();
+
+        createKeywordsPage.synonymAddTextBox().sendKeys("TESTING");
+
+        createKeywordsPage.synonymAddTextBox().sendKeys(Keys.ARROW_LEFT, Keys.ARROW_LEFT, Keys.BACK_SPACE, Keys.BACK_SPACE);
+
+        verifyThat(createKeywordsPage.synonymAddTextBox().getAttribute("value"), is("TESNG"));
+        verifyThat(createKeywordsPage.synonymAddTextBox().getAttribute("vakye"),is(not("TESTN")));
+    }
 }

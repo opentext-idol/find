@@ -700,6 +700,22 @@ public class KeywordsPageITCase extends ABCTestBase {
 		assertThat(getDriver().getCurrentUrl(), containsString("promotions"));
 	}
 
+	@Test
+	//CSA-1686
+	public void testBlacklistTermsNotOverwritten(){
+		String blacklistOne = "uno";
+		String blacklistTwo = "duo";
+
+		keywordService.addBlacklistTerms(blacklistOne);
+
+		verifyBlacklisted(blacklistOne);
+
+		keywordService.addBlacklistTerms(blacklistTwo);
+
+		verifyBlacklisted(blacklistTwo);
+		verifyBlacklisted(blacklistOne);
+	}
+
 	private void verifyBlacklisted(String blacklist) {
 		verifyThat("'" + blacklist + "' is blacklisted", keywordsPage.getBlacklistedTerms(), hasItem(blacklist));
 	}

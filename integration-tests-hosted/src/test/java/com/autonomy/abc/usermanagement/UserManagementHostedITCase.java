@@ -226,7 +226,9 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage.createButton().click();
         verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
 
-        usersPage.addUsername("Andrew");
+        String username = "Andrew";
+
+        usersPage.addUsername(username);
         usersPage.clearEmail();
         usersPage.createButton().click();
         verifyThat(newUserModal, containsText(Errors.User.BLANK_EMAIL));
@@ -237,7 +239,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 //        verifyThat(newUserModal, containsText("Done! User Andrew successfully created"));
 
         usersPage.closeModal();
-        verifyThat(usersPage, not(containsText("Create New Users")));   //Not sure what this is meant to be doing?
+        verifyThat(usersPage, not(containsText("Create New Users")));   //Not sure what this is meant to be doing? Verifying modal no longer open??
+
+        //CSA-1766
+        verifyThat(usersPage.getUsernames(),hasItem(username));
     }
 
     @Test

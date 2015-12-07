@@ -6,7 +6,9 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -16,12 +18,14 @@ import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -577,5 +581,49 @@ public class PromotionsPageITCase extends ABCTestBase {
 		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
 		verifyThat("third document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
 		getDriver().switchTo().window(handle);
+	}
+
+	@Test
+	//CSA-1494
+	public void testAddingMultipleTriggersNotifications() {
+		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE,"moscow");
+		Search search = new Search(getApplication(), getElementFactory(), "Mother Russia");
+
+		promotionService.setUpPromotion(promotion, search, 4);
+		promotionsDetailPage = promotionService.goToDetails(promotion);
+
+		String[] triggers = {"HC", "Sochi", "CKSA", "SKA", "Dinamo", "Riga"};
+		promotionsDetailPage.addTrigger(StringUtils.join(triggers, ' '));
+
+		body.getTopNavBar().notificationsDropdown();
+
+		verifyThat(body.getTopNavBar().getNotifications().getAllNotificationMessages(), hasItem("Edited a spotlight promotion"));
+
+		for(String notification : body.getTopNavBar().getNotifications().getAllNotificationMessages()){
+			for(String trigger : triggers){
+				verifyThat(notification, not(containsString(trigger)));
+			}
+		}
+	}
+
+	@Test
+	//CSA-1769
+	public void testUpdatingAndDeletingPinToPosition(){
+		PinToPositionPromotion pinToPositionPromotion = new PinToPositionPromotion(1, "say anything");
+		Search search = new Search(getApplication(), getElementFactory(), "Max Bemis");
+
+		promotionService.setUpPromotion(pinToPositionPromotion, search, 2);
+		promotionsDetailPage = promotionService.goToDetails(pinToPositionPromotion);
+
+		promotionsDetailPage.pinPosition().setValueAndWait("4");
+		verifyThat(promotionsDetailPage.pinPosition().getValue(), is("4"));
+
+		String newTitle = "Admit It!!!";
+
+		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
+		verifyThat(promotionsDetailPage.promotionTitle().getValue(), is(newTitle));
+
+		promotionService.delete(newTitle);
+		verifyThat(promotionsPage.getPromotionTitles(), not(hasItem(newTitle)));
 	}
 }

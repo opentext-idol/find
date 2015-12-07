@@ -80,7 +80,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		verifyThat(newUserModal, containsText("Error! User exists!"));
 
 		usersPage.closeModal();
-		verifyThat(usersPage.countNumberOfUsers(), is(2 - numberOfUsersExpected));
+		verifyThat(usersPage.countNumberOfUsers(), is(1 + defaultNumberOfUsers));
 	}
 
 	@Test
