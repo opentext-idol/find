@@ -585,7 +585,10 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	}
 
 	public void openPublicFilter(){
-		findElement(By.cssSelector("[data-category-id=public] i")).click();
+		WebElement publicChevron = findElement(By.cssSelector("[data-category-id=public] i"));
+		if(publicChevron.getAttribute("class").contains("collapsed")) {
+			publicChevron.click();
+		}
 	}
 
 	public void selectIndex(String index) {
