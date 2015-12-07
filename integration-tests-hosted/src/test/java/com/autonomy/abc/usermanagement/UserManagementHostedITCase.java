@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
-import static com.autonomy.abc.selenium.users.GMailHelper.gmailString;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasSize;
@@ -41,9 +40,11 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private HSOUserService userService;
     private HSOUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
+    private final SignupEmailHandler emailHandler;
 
     public UserManagementHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
     }
 
     @Before
@@ -272,5 +273,9 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     private WebElement getContainingDiv(WebElement webElement){
         return ElementUtil.ancestor(webElement, 2);
+    }
+
+    public static String gmailString(String plus){
+        return "hodtestqa401+" + plus + "@gmail.com";
     }
 }
