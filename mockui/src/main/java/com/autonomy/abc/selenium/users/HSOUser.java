@@ -1,6 +1,10 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.page.login.AuthHasLoggedIn;
+import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -50,8 +54,20 @@ public class HSOUser extends User {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("noAccount")));
     }
 
-    public void setUsername(String username) {
+    void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public void authenticate(Factory<WebDriver> driverFactory, SignupEmailHandler emailParser) {
+        WebDriver driver = driverFactory.create();
+        try {
+            emailParser.goToUrl(driver);
+            LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
+            loginPage.loginWith(getAuthProvider());
+        } finally {
+            driver.quit();
+        }
     }
 
 }
