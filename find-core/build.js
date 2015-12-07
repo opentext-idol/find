@@ -1,9 +1,14 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 ({
-    appDir: "${basedir}/src/main/webapp",
+    appDir: "${basedir}/src/main/public",
     baseUrl: "static/js",
     dir: "${basedir}/target/${build.finalName}",
     keepBuildDir: "true",
-    mainConfigFile: '${basedir}/src/main/webapp/static/js/require-config.js',
+    mainConfigFile: '${basedir}/src/main/public/static/js/require-config.js',
     modules: [
         {
             name: "main",

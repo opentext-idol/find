@@ -11,11 +11,81 @@
 
     <artifactId>find-idol</artifactId>
 
+    <packaging>war</packaging>
+
+    <properties>
+        <artifactName>${project.parent.artifactId}-on-premise</artifactName>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <attachClasses>true</attachClasses>
+                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                    <overlays>
+                        <overlay>
+                            <id>find-core</id>
+                            <groupId>com.hp.autonomy.frontend.find</groupId>
+                            <artifactId>find-core</artifactId>
+                            <type>war</type>
+                        </overlay>
+                    </overlays>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.3-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec-war-only</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <path>/${project.build.finalName}</path>
+                    <finalName>${artifactName}.jar</finalName>
+                    <uriEncoding>UTF-8</uriEncoding>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.tomcat.embed</groupId>
+                        <artifactId>tomcat-embed-websocket</artifactId>
+                        <version>${tomcatEmbedWebsocket.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/public</directory>
+            </resource>
+        </resources>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>find-core</artifactId>
             <version>${project.version}</version>
+            <classifier>classes</classifier>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>find-core</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -68,4 +138,22 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>dev</id>
+            <build>
+                <finalName>${artifactName}-${env}</finalName>
+            </build>
+        </profile>
+        <profile>
+            <id>production</id>
+            <build>
+                <finalName>${artifactName}</finalName>
+            </build>
+        </profile>
+    </profiles>
 </project>

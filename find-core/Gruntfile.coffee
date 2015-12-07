@@ -3,12 +3,12 @@ module.exports = (grunt) ->
 
   jasmineSpecRunner = 'spec-runner.html'
 
-  sourcePath = 'src/main/webapp/static/js/find/**/*.js'
+  sourcePath = 'src/main/public/static/js/find/**/*.js'
 
   documentation = 'doc'
 
   testRequireConfig = [
-    'src/main/webapp/static/js/require-config.js'
+    'src/main/public/static/js/require-config.js'
     'src/test/js/test-require-config.js'
   ]
 

@@ -19,10 +19,10 @@ filter-dev.properties
 find-web/src/test/js/lib/
 .vagrant/
 
-find-web/src/main/public/static/bower_components/
-find-web/node_modules/
-find-web/.grunt/
-find-web/spec-runner.html
+find-core/.grunt/
+find-core/node_modules/
+find-core/src/main/public/static/bower_components/
+find-core/spec-runner.html
 
 # Vagrant
 cookbooks/

@@ -15,7 +15,7 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "src/main/webapp/static/bower_components",
+    "src/main/public/static/bower_components",
     "src/main/test",
     "mockups"
   ],
