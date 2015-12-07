@@ -64,7 +64,11 @@ public class HSOUser extends User {
         try {
             emailParser.goToUrl(driver);
             LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
-            loginPage.loginWith(getAuthProvider());
+            try {
+                loginPage.loginWith(getAuthProvider());
+            } catch (TimeoutException e) {
+                /* already signed in to auth account */
+            }
         } finally {
             driver.quit();
         }

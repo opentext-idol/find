@@ -63,7 +63,7 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         driver.findElement(By.xpath("//a[text()='here']")).click();
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             /* NOOP */
         }

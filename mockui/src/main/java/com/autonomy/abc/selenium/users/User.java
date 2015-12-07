@@ -36,7 +36,8 @@ public class User {
         return "User<" + authProvider + '|' + role + '>';
     }
 
-    public void setRole(Role role) {
+    // changed in the app via UsersPage/UserService
+    void setRole(Role role) {
         this.role = role;
     }
 
