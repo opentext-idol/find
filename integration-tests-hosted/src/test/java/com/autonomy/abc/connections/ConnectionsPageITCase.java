@@ -172,6 +172,8 @@ public class ConnectionsPageITCase extends HostedTestBase {
         updateAndVerifyConnectorName(connectorTypeStep, "HTTP://www.ExAMPle.com", "example");
         updateAndVerifyConnectorName(connectorTypeStep, "http://www.TAkingBAckSuNDAy.com", "takingbacksunday");
         updateAndVerifyConnectorName(connectorTypeStep, "HTTP://WWW.FLICKERFLICKERFADE.COM", "flickerflickerfade");
+        updateAndVerifyConnectorName(connectorTypeStep, "hTTp://www.itTAKESMORE.com", "ittakesmore");
+        updateAndVerifyConnectorName(connectorTypeStep, "http://WWW.LOUDERNOW.com", "loudernow");
     }
 
     private void updateAndVerifyConnectorName(ConnectorTypeStepTab connectorTypeStep, String url, String name){
