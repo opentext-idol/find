@@ -20,8 +20,12 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,9 +113,17 @@ public abstract class ABCTestBase {
 				loginAs(initialUser);
 				postLogin();
 			} catch (Exception e) {
-				LOGGER.error("Unable to login");
-				LOGGER.error(e.toString());
-				fail("Unable to login");
+
+				try {
+					new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Signed in']")));
+					getDriver().get(config.getWebappUrl());
+					postLogin();
+				} catch (Exception f){
+					LOGGER.error("Unable to login");
+					LOGGER.error(e.toString());
+					fail("Unable to login");
+				}
+
 			}
 		}
 	}
