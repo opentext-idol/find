@@ -11,7 +11,7 @@ import com.hp.autonomy.frontend.configuration.authentication.DefaultLoginAuthent
 import com.hp.autonomy.frontend.configuration.authentication.LoginSuccessHandler;
 import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationProvider;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
-import com.hp.autonomy.frontend.find.hod.web.HodFindController;
+import com.hp.autonomy.frontend.find.hod.web.SsoController;
 import com.hp.autonomy.frontend.find.hod.web.HodLogoutSuccessHandler;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
@@ -70,7 +70,7 @@ public class InMemoryHodSecurity extends WebSecurityConfigurerAdapter {
                     .failureUrl("/loginPage?error=auth")
                     .and()
                 .logout()
-                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(HodFindController.SSO_LOGOUT_PAGE, tokenRepository), "/public/"))
+                    .logoutSuccessHandler(new HodLogoutSuccessHandler(new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository), "/public/"))
                     .and()
                 .csrf()
                     .disable();

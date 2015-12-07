@@ -5,20 +5,15 @@
 
 package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import java.util.List;
 
 @Component
 public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
@@ -27,23 +22,12 @@ public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
     public static final String NOT_FOUND_ERROR_PATH = "/not-found-error";
     public static final String SERVER_ERROR_PATH = "/server-error";
 
-    @Autowired
-    private ObjectMapper dispatcherObjectMapper;
-
     @Value("${application.version}")
     private String applicationVersion;
 
     @SuppressWarnings("MismatchedReadAndWriteOfArray")
     @Autowired(required = false)
     private Converter<?, ?>[] converters;
-
-    @Override
-    public void extendMessageConverters(final List<HttpMessageConverter<?>> converters) {
-        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(dispatcherObjectMapper);
-
-        converters.add(converter);
-    }
 
     @Override
     public void addFormatters(final FormatterRegistry registry) {

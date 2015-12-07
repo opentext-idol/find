@@ -33,6 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
+
 @Configuration
 public class IdolConfiguration {
     private static final int HTTP_SOCKET_TIMEOUT = 90000;
@@ -45,28 +47,26 @@ public class IdolConfiguration {
     @Autowired
     private FilterProvider filterProvider;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @PostConstruct
+    public void init() {
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        // TODO add mixins
+    }
+
     @Bean
     public IdolFindConfigFileService configFileService() {
         final IdolFindConfigFileService configService = new IdolFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
         configService.setDefaultConfigFile("/defaultIdolConfigFile.json");
-        configService.setMapper(objectMapper());
+        configService.setMapper(objectMapper);
         configService.setTextEncryptor(textEncryptor);
         configService.setFilterProvider(filterProvider);
 
         return configService;
-    }
-
-    @Bean(name = "contextObjectMapper")
-    public ObjectMapper objectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
-
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        // TODO add mixins
-
-        return mapper;
     }
 
     @Bean

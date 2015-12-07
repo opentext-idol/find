@@ -6,8 +6,11 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
@@ -69,9 +72,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import javax.annotation.PostConstruct;
+
 @Configuration
 @EnableCaching
 public class HodConfiguration extends CachingConfigurerSupport {
+    public static final String SSO_PAGE_PROPERTY = "${find.hod.sso:https://www.idolondemand.com/sso.html}";
+    public static final String HOD_API_URL_PROPERTY = "${find.iod.api:https://api.havenondemand.com}";
+
     @Autowired
     private Environment environment;
 
@@ -84,13 +92,14 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Autowired
     private ConfigFileService<HodFindConfig> configService;
 
-    @Bean(name = "dispatcherObjectMapper")
-    public ObjectMapper dispatcherObjectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
-        mapper.addMixIn(Authentication.class, HodAuthenticationMixins.class);
-
-        return mapper;
+    @PostConstruct
+    public void init() {
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.addMixIn(Authentication.class, HodAuthenticationMixins.class);
+        objectMapper.addMixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class);
     }
 
     @Bean

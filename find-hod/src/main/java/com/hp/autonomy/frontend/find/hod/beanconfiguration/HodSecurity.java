@@ -5,9 +5,10 @@
 
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import com.hp.autonomy.frontend.find.hod.authentication.HavenSearchUserMetadata;
 import com.hp.autonomy.frontend.find.hod.authentication.HsodUsernameResolver;
-import com.hp.autonomy.frontend.find.hod.web.HodFindController;
+import com.hp.autonomy.frontend.find.hod.web.SsoController;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
@@ -61,19 +62,19 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final AuthenticationEntryPoint ssoEntryPoint = new SsoAuthenticationEntryPoint(HodFindController.SSO_PAGE);
+        final AuthenticationEntryPoint ssoEntryPoint = new SsoAuthenticationEntryPoint(SsoController.SSO_PAGE);
 
-        final SsoAuthenticationFilter ssoAuthenticationFilter = new SsoAuthenticationFilter(HodFindController.SSO_AUTHENTICATION_URI);
+        final SsoAuthenticationFilter ssoAuthenticationFilter = new SsoAuthenticationFilter(SsoController.SSO_AUTHENTICATION_URI);
         ssoAuthenticationFilter.setAuthenticationManager(authenticationManager());
 
-        final LogoutSuccessHandler logoutSuccessHandler = new HodTokenLogoutSuccessHandler(HodFindController.SSO_LOGOUT_PAGE, tokenRepository);
+        final LogoutSuccessHandler logoutSuccessHandler = new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository);
 
         http.regexMatcher("/public/.*|/sso|/authenticate-sso|/api/authentication/.*|/logout")
                 .csrf()
                     .disable()
                 .exceptionHandling()
                     .authenticationEntryPoint(ssoEntryPoint)
-                    .accessDeniedPage("/authentication-error")
+                    .accessDeniedPage(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
                     .and()
                 .authorizeRequests()
                     .antMatchers("/public/**").hasRole("PUBLIC")
