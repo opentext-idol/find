@@ -9,7 +9,7 @@ define([
     'find/app/util/test-browser',
     'i18n!find/nls/bundle',
     'text!find/templates/config/config.html',
-    '../../../bower_components/underscore/underscore'
+    'underscore'
 ], function(SettingsPage, EmptyNavbar, testBrowser, i18n, template, _) {
     return function () {
         jQuery.ajaxSetup({ cache: false });

@@ -6,7 +6,7 @@
   ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
   --%>
 
-<spring:eval expression="@dispatcherProperties['application.version']" var="applicationVersion"/>
+<spring:eval expression="@environment.getProperty('application.version')" var="applicationVersion"/>
 
 <!DOCTYPE html>
 <html>

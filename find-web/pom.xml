@@ -223,20 +223,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.1.0.v20131115</version>
-                <configuration>
-                    <scanIntervalSeconds>3</scanIntervalSeconds>
-                    <webApp>
-                        <overrideDescriptor>./web-override.xml</overrideDescriptor>
-                        <contextPath>/${project.parent.artifactId}</contextPath>
-                    </webApp>
-                    <stopPort>59991</stopPort>
-                    <stopKey>test</stopKey>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
@@ -250,6 +236,14 @@
                 <version>2.1</version>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/public</directory>
+            </resource>
+        </resources>
     </build>
 
     <dependencies>
@@ -263,11 +257,11 @@
             <artifactId>find-hod</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.find</groupId>
-            <artifactId>find-idol</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.hp.autonomy.frontend.find</groupId>-->
+            <!--<artifactId>find-idol</artifactId>-->
+            <!--<version>${project.version}</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>commons-io</groupId>

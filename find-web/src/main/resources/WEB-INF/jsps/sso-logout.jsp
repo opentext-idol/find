@@ -5,7 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<spring:eval expression="@dispatcherProperties['application.version']" var="applicationVersion"/>
+<spring:eval expression="@environment.getProperty('application.version')" var="applicationVersion"/>
 <c:set var="staticPath" value="static-${applicationVersion}"/>
 <html>
 <head>
