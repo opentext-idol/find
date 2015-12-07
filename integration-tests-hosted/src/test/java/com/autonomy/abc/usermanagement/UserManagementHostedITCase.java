@@ -4,15 +4,19 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.page.ErrorPage;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
+import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
+import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -174,18 +178,37 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         }
     }
 
+    // CSA-1890
     @Test
     public void testNoneUserConfirmation() {
-        User user = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
-        user.setRole(Role.NONE);
+        NewUser somebody = config.getNewUserFactory().create();
+        User user = userService.createNewUser(somebody, Role.ADMIN, config.getWebDriverFactory());
+        userService.changeRole(user, Role.NONE);
+        verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
+
         user.authenticate(config.getWebDriverFactory(), emailHandler);
-        logout();
-        getDriver().get(config.getWebappUrl());
         try {
-            loginAs(user);
-        } catch (Exception e) {
-            LOGGER.info(e.toString());
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        usersPage.refreshButton().click();
+        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
+
+        // TODO: use a single driver once 401 page has logout button
+        WebDriver secondDriver = config.getWebDriverFactory().create();
+        try {
+            secondDriver.get(config.getWebappUrl());
+            LoginPage loginPage = new HSOLoginPage(secondDriver, new AbcHasLoggedIn(secondDriver));
+            loginTo(loginPage, secondDriver, user);
+            ErrorPage errorPage = new ErrorPage(secondDriver);
+            verifyThat(errorPage.getErrorCode(), is("401"));
+
+        } finally {
+            secondDriver.quit();
+        }
+        usersPage.refreshButton().click();
+        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
     }
 
     @Test
