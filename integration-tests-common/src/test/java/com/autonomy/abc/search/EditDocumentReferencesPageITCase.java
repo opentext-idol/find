@@ -144,13 +144,22 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
     }
 
+    // CSA-1755
     @Test
     public void testRefreshEditPromotionPage() throws InterruptedException {
-        setUpPromotion("Luke", "jedi master", 1);
+        String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
+        verifyRefreshing();
 
+        editDocumentSearch("solo");
+        editReferencesPage.deleteDocFromWithinBucket(originalDoc);
+        editReferencesPage.searchResultCheckbox(1).click();
+        verifyRefreshing();
+    }
+
+    private void verifyRefreshing() {
         getDriver().navigate().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-
+        body = getBody();
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
     }

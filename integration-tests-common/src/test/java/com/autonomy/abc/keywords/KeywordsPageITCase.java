@@ -615,6 +615,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		String blacklistTwo = "Aardwolf";
 
 		keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
+		body.getTopNavBar().notificationsDropdown();
 		notifications = body.getTopNavBar().getNotifications();
 
 		assertThat(notifications.notificationNumber(1).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
