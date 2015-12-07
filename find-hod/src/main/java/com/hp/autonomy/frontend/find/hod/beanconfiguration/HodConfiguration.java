@@ -130,6 +130,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
             builder.setProxy(new HttpHost(proxyHost, proxyPort));
         }
 
+        builder.disableCookieManagement();
+
         return builder.build();
     }
 
