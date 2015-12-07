@@ -1,9 +1,9 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.users.HSONewUser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.util.Factory;
-import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
 
 import java.util.UUID;
 

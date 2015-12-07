@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.hp.autonomy.frontend.selenium.sso.GoogleAuth;
+import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
