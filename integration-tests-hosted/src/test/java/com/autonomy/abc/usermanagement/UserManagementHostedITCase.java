@@ -178,7 +178,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         }
     }
 
-    // CSA-1890
     @Test
     public void testNoneUserConfirmation() {
         NewUser somebody = config.getNewUserFactory().create();
@@ -193,6 +192,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
             e.printStackTrace();
         }
         usersPage.refreshButton().click();
+        usersPage.loadOrFadeWait();
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
 
         // TODO: use a single driver once 401 page has logout button
@@ -203,7 +203,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
             loginTo(loginPage, secondDriver, user);
             ErrorPage errorPage = new ErrorPage(secondDriver);
             verifyThat(errorPage.getErrorCode(), is("401"));
-
         } finally {
             secondDriver.quit();
         }
