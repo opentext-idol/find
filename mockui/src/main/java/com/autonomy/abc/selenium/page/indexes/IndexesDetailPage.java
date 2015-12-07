@@ -63,8 +63,4 @@ public class IndexesDetailPage extends SAASPageBase {
     public String sizeString() {
         return findElement(By.className("index-md-docs")).getText();
     }
-
-    public AppElement getPage(){
-        return super.getPage();
-    }
 }
