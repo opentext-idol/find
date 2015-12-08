@@ -69,6 +69,9 @@ public class IndexService {
         goToIndexes();
 
         indexesPage.deleteIndex(index.getName());
+
+        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Index " + index.getName() + " successfully deleted"));
+
         return indexesPage;
     }
 
