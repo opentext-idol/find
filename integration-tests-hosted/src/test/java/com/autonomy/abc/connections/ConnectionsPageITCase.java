@@ -3,31 +3,28 @@ package com.autonomy.abc.connections;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.connections.*;
+import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.ConnectionStatistics;
+import com.autonomy.abc.selenium.connections.Credentials;
+import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
-import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class ConnectionsPageITCase extends HostedTestBase {
     private ConnectionsPage connectionsPage;
@@ -158,32 +155,6 @@ public class ConnectionsPageITCase extends HostedTestBase {
             } catch (Exception e) { /* No visible modal */ }
 
             indexService.deleteAllIndexes();
-        }
-    }
-
-    @Test
-    //CSA-1700
-    public void testConnectorName(){
-        connectionsPage.newConnectionButton().click();
-        newConnectionPage = getElementFactory().getNewConnectionPage();
-
-        ConnectorTypeStepTab connectorTypeStep = newConnectionPage.getConnectorTypeStep();
-
-        updateAndVerifyConnectorName(connectorTypeStep, "HTTP://www.ExAMPle.com", "example");
-        updateAndVerifyConnectorName(connectorTypeStep, "http://www.TAkingBAckSuNDAy.com", "takingbacksunday");
-        updateAndVerifyConnectorName(connectorTypeStep, "HTTP://WWW.FLICKERFLICKERFADE.COM", "flickerflickerfade");
-        updateAndVerifyConnectorName(connectorTypeStep, "hTTp://www.itTAKESMORE.com", "ittakesmore");
-        updateAndVerifyConnectorName(connectorTypeStep, "http://WWW.LOUDERNOW.com", "loudernow");
-    }
-
-    private void updateAndVerifyConnectorName(ConnectorTypeStepTab connectorTypeStep, String url, String name){
-        connectorTypeStep.connectorName().clear();
-        connectorTypeStep.connectorUrl().setValue(url);
-        connectorTypeStep.connectorName().getElement().click();
-
-        verifyThat(connectorTypeStep.connectorName().getValue(), is(name.toLowerCase()));
-        for(WebElement error : connectorTypeStep.connectorName().getElement().findElements(By.xpath("./../p[contains(@class,'help-block')]"))) {
-            verifyThat(error, not(displayed()));
         }
     }
 

@@ -6,23 +6,28 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebElement;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 /**
  * Created by avidan on 10-11-15.
@@ -130,7 +135,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA1562
+    //CSA-1562
     public void testAdvancedConfigurations() throws InterruptedException {
         connectorUrl.setValue("http://www.w.ww");
         connectorName.setValue("jeremy");
@@ -173,6 +178,51 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
 
         newConnectionPage.nextButton().click();
         assertThat(connectorConfigStep.advancedConfigurations().isDisplayed(), is(false));
+    }
+
+    @Test
+    //CSA-1700
+    public void testConnectorName(){
+        updateAndVerifyConnectorName("HTTP://www.ExAMPle.com", "example");
+        updateAndVerifyConnectorName("http://www.TAkingBAckSuNDAy.com", "takingbacksunday");
+        updateAndVerifyConnectorName("HTTP://WWW.FLICKERFLICKERFADE.COM", "flickerflickerfade");
+        updateAndVerifyConnectorName("hTTp://www.itTAKESMORE.com", "ittakesmore");
+        updateAndVerifyConnectorName("http://WWW.LOUDERNOW.com", "loudernow");
+    }
+
+    @Test
+    //CSA-1789
+    public void testURLValidation(){
+        verifyURL("http://a.com", true);
+        verifyURL("http://subdomain.a.com", true);
+        verifyURL("http://my-site.com", true);
+        verifyURL("http://sub-domain.mysite.com", true);
+        verifyURL("http://subdomain.my-site.com", true);
+
+        verifyURL("http://http://", false);
+    }
+
+    private void verifyURL(String url, boolean pass){
+        connectorUrl.setValue(url);
+
+        WebElement error = connectorUrl.getElement().findElement(By.xpath("./../p"));
+
+        if(pass) {
+            verifyThat(error, hasClass("ng-hide"));
+        } else {
+            verifyThat(error, not(hasClass("ng-hide")));
+        }
+    }
+
+    private void updateAndVerifyConnectorName(String url, String name){
+        connectorName.clear();
+        connectorUrl.setValue(url);
+        connectorName.getElement().click();
+
+        verifyThat(connectorName.getValue(), is(name.toLowerCase()));
+        for(WebElement error : connectorName.getElement().findElements(By.xpath("./../p[contains(@class,'help-block')]"))) {
+            verifyThat(error, CoreMatchers.not(displayed()));
+        }
     }
 
     private void checkFormInputError(FormInput form, int minimum){
