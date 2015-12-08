@@ -70,7 +70,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
 
         //Sometimes it requires us to add a valid user before invalid users show up
-        userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN, config.getWebDriverFactory());
+        userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
 
         usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
@@ -81,7 +81,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     // unlike on-prem, duplicate usernames (display names) are allowed
     @Test
     public void testDuplicateUsername() {
-        User user = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
+        User user = userService.createNewUser(aNewUser, Role.ADMIN);
         assertThat(usersPage.getUsernames(), hasSize(1));
         verifyAddingValidUser(new HSONewUser(user.getUsername(), gmailString("isValid")));
     }
@@ -151,7 +151,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     public void testResettingAuthentication(){
         NewUser newUser = newUserFactory.create();
 
-        final HSOUser user = userService.createNewUser(newUser,Role.USER, config.getWebDriverFactory());
+        final HSOUser user = userService.createNewUser(newUser,Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
@@ -176,18 +176,12 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     @Test
     public void testNoneUserConfirmation() {
         NewUser somebody = newUserFactory.create();
-        User user = userService.createNewUser(somebody, Role.ADMIN, config.getWebDriverFactory());
+        User user = userService.createNewUser(somebody, Role.ADMIN);
         userService.changeRole(user, Role.NONE);
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
 
         user.authenticate(config.getWebDriverFactory(), emailHandler);
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        usersPage.refreshButton().click();
-        usersPage.loadOrFadeWait();
+        waitForUserConfirmed(user);
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
 
         // TODO: use a single driver once 401 page has logout button
@@ -201,13 +195,11 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         } finally {
             secondDriver.quit();
         }
-        usersPage.refreshButton().click();
-        verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
     }
 
     @Test
     public void testEditingUsername(){
-        User user = userService.createNewUser(new HSONewUser("editUsername", gmailString("editUsername")), Role.ADMIN, config.getWebDriverFactory());
+        User user = userService.createNewUser(new HSONewUser("editUsername", gmailString("editUsername")), Role.ADMIN);
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
 
@@ -225,7 +217,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testAddingAndAuthenticatingUser(){
-        final User user = userService.createNewUser(newUserFactory.create(), Role.USER, config.getWebDriverFactory());
+        final User user = userService.createNewUser(newUserFactory.create(), Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
@@ -263,7 +255,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testLogOutAndLogInWithNewUser() {
-        final User user = userService.createNewUser(newUserFactory.create(), Role.ADMIN, config.getWebDriverFactory());
+        final User user = userService.createNewUser(newUserFactory.create(), Role.ADMIN);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         logout();
@@ -280,7 +272,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
 
-        User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN, config.getWebDriverFactory());
+        User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN);
         assertThat(usersPage.getTable(), containsText(longUsername));
         userService.deleteUser(user);
 

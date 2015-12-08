@@ -170,7 +170,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 			assertThat(usersPage.getTable(), containsText(longUsername));
 			usersPage.deleteUser(longUsername);
 		} else {
-			User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN, config.getWebDriverFactory());
+			User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN);
 			assertThat(usersPage.getTable(), containsText(longUsername));
 			userService.deleteUser(user);
 		}
@@ -233,7 +233,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 	@Test
 	public void testDisablingAndDeletingUser(){
-		User user = userService.createNewUser(aNewUser, Role.USER, config.getWebDriverFactory());
+		User user = userService.createNewUser(aNewUser, Role.USER);
 
 		userService.changeRole(user, Role.NONE);
 		verifyThat(usersPage.getRoleOf(user), is(Role.NONE));
@@ -248,9 +248,9 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		String[] addedUsers = new String[3];
 
-		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory()).getUsername();
-		addedUsers[1] = userService.createNewUser(newUser2, Role.ADMIN, config.getWebDriverFactory()).getUsername();
-		addedUsers[2] = userService.createNewUser(newUser3, Role.ADMIN, config.getWebDriverFactory()).getUsername();
+		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN).getUsername();
+		addedUsers[1] = userService.createNewUser(newUser2, Role.ADMIN).getUsername();
+		addedUsers[2] = userService.createNewUser(newUser3, Role.ADMIN).getUsername();
 
 		FormInput searchFilter = usersPage.userSearchFilter();
 
@@ -288,8 +288,8 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		String[] addedUsers = new String[2];
 
-		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory()).getUsername();
-		addedUsers[1] = userService.createNewUser(newUser2, Role.USER, config.getWebDriverFactory()).getUsername();
+		addedUsers[0] = userService.createNewUser(aNewUser, Role.ADMIN).getUsername();
+		addedUsers[1] = userService.createNewUser(newUser2, Role.USER).getUsername();
 //		addedUsers[2] = userService.createNewUser(newUser3, Role.USER).getUsername();
 
 		Dropdown dropdown = usersPage.userRoleFilter();
@@ -322,14 +322,14 @@ public class UsersPageITCase extends UsersPageTestBase {
 	public void testUserCount(){
 		verifyThat(usersPage.getUserCountInTitle(), is(0));
 
-		User user1 = userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
+		User user1 = userService.createNewUser(aNewUser, Role.ADMIN);
 		verifyThat(usersPage.getUserCountInTitle(), is(1));
 
-		User user2 = userService.createNewUser(newUser2, Role.ADMIN, config.getWebDriverFactory());
+		User user2 = userService.createNewUser(newUser2, Role.ADMIN);
 		verifyThat(usersPage.getUserCountInTitle(), is(2));
 
 		try {
-			userService.createNewUser(aNewUser, Role.ADMIN, config.getWebDriverFactory());
+			userService.createNewUser(aNewUser, Role.ADMIN);
 		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) {
 			/* Expected */
 			usersPage.closeModal();
