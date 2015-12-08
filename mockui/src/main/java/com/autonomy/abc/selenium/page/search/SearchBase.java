@@ -234,10 +234,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return selected;
 	}
 
-	public WebElement synonymInGroup(final String synonym){
-		return findElement(By.cssSelector(".search-synonyms-keywords")).findElement(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[@data-term='" + synonym.toLowerCase() + "']"));
-	}
-
 	public int countSynonymLists() {
 		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
 	}
