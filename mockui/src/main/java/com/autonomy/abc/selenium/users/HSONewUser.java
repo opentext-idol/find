@@ -25,8 +25,14 @@ public class HSONewUser implements NewUser {
         this.provider = provider;
     }
 
+    @Deprecated
     @Override
     public HSOUser signUpAs(Role role, UsersPage usersPage, Factory<WebDriver> webDriverFactory) {
+        return signUpAs(role, usersPage);
+    }
+
+    @Override
+    public HSOUser signUpAs(Role role, UsersPage usersPage) {
         HSOUsersPage hsoUsersPage = (HSOUsersPage) usersPage;
 
         hsoUsersPage.addUsername(username);
