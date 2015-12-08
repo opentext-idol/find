@@ -11,16 +11,14 @@
 </head>
 <body>
 <div class="error-body">
-    {{#statusCode}}
-        <h1>{{statusCode}}</h1>
-    {{/statusCode}}
+    <h1>{{statusCode}}</h1>
     <h3>{{mainMessage}}</h3>
     <div>
         <p>{{subMessage}}</p>
+        {{#contactSupport}}
+            <p>{{contactSupport}}</p>
+        {{/contactSupport}}
     </div>
-    {{#contactSupport}}
-        <p>{{contactSupport}}</p>
-    {{/contactSupport}}
 </div>
 </body>
 </html>

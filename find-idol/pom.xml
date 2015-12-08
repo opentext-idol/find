@@ -14,10 +14,11 @@
     <packaging>war</packaging>
 
     <properties>
-        <artifactName>${project.parent.artifactId}-on-premise</artifactName>
+        <artifactName>${project.parent.artifactId}-on-premise-${project.version}</artifactName>
     </properties>
 
     <build>
+        <finalName>${artifactName}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -33,6 +34,7 @@
                             <type>war</type>
                         </overlay>
                     </overlays>
+                    <packagingExcludes>**/tomcat-embed-*.jar</packagingExcludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -41,12 +43,19 @@
                 <configuration>
                     <classifier>executable</classifier>
                     <finalName>${artifactName}</finalName>
+                    <excludes>
+                        <exclude>
+                            <groupId>com.hp.autonomy.frontend.find</groupId>
+                            <artifactId>find-core</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
             </resource>
             <resource>
                 <directory>src/main/public</directory>
