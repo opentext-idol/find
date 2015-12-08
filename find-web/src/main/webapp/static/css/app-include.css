@@ -48,6 +48,10 @@ html, body {
     z-index: 1000;
 }
 
+.check-cell {
+    width: 29px;
+}
+
 .break-all {
     word-break: break-all;
 }
