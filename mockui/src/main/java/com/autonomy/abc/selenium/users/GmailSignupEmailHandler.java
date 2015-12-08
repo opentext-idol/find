@@ -60,7 +60,7 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
     }
 
     private void clickLink(WebDriver driver) {
-        driver.findElement(By.xpath("//a[text()='here']")).click();
+        driver.findElement(By.partialLinkText("here")).click();
 
         try {
             Thread.sleep(1000);

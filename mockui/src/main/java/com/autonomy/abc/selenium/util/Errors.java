@@ -27,5 +27,7 @@ public class Errors {
     public static class User {
         public static final String CREATING = "Error! New user profile creation failed.";
         public static final String BLANK_EMAIL = "Error! Email address must not be blank";
+        public static final String DUPLICATE_EMAIL = "Error! A user with this email address already exists";
+        public static final String DUPLICATE_USER = "Error! User exists!";
     }
 }

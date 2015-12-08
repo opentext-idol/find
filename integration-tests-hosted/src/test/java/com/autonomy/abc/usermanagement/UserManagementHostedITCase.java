@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
@@ -45,10 +46,12 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private HSOUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
     private final SignupEmailHandler emailHandler;
+    private final Factory<NewUser> newUserFactory;
 
     public UserManagementHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
         emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+        newUserFactory = config.getNewUserFactory();
     }
 
     @Before
@@ -98,7 +101,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage.createUserButton().click();
 
         try {
-            invalidUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+            invalidUser.signUpAs(Role.ADMIN, usersPage);
         } catch (TimeoutException | HSONewUser.UserNotCreatedException e){
             /* Expected behaviour */
         }
@@ -119,7 +122,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
-        HSOUser user = validUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+        HSOUser user = validUser.signUpAs(Role.ADMIN, usersPage);
 
         verifyModalElements();
         verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), not(containsString(Errors.User.CREATING)));
@@ -146,9 +149,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testResettingAuthentication(){
-        HSONewUser newUser = new HSONewUser("resettingauthenticationtest",gmailString("resetauthtest")).authenticate();
+        NewUser newUser = newUserFactory.create();
 
         final HSOUser user = userService.createNewUser(newUser,Role.USER, config.getWebDriverFactory());
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
 
@@ -156,31 +160,22 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         verifyThat(usersPage.getText(), containsString("Done! A reset authentication email has been sent to " + user.getUsername()));
 
-        WebDriver driver = config.createWebDriver();
+        new Thread(){
+            @Override
+            public void run() {
+                new WebDriverWait(getDriver(),180)
+                        .withMessage("User never reset their authentication")
+                        .until(GritterNotice.notificationContaining("User " + user.getUsername() + " reset their authentication"));
 
-        try {
-            new Thread(){
-                @Override
-                public void run() {
-                    new WebDriverWait(getDriver(),180)
-                            .withMessage("User never reset their authentication")
-                            .until(GritterNotice.notificationContaining("User " + user.getUsername() + " reset their authentication"));
-
-                    LOGGER.info("User reset their authentication notification shown");
-                }
-            }.start();
-            user.resetAuthentication(driver);
-        } finally {
-            for(String browserHandle : driver.getWindowHandles()){
-                driver.switchTo().window(browserHandle);
-                driver.close();
+                LOGGER.info("User reset their authentication notification shown");
             }
-        }
+        }.start();
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
     }
 
     @Test
     public void testNoneUserConfirmation() {
-        NewUser somebody = config.getNewUserFactory().create();
+        NewUser somebody = newUserFactory.create();
         User user = userService.createNewUser(somebody, Role.ADMIN, config.getWebDriverFactory());
         userService.changeRole(user, Role.NONE);
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
@@ -230,11 +225,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testAddingAndAuthenticatingUser(){
-        final User user = userService.createNewUser(new HSONewUser("authenticatetest", gmailString("authenticationtest")).authenticate(),
-                Role.USER, config.getWebDriverFactory());
+        final User user = userService.createNewUser(newUserFactory.create(), Role.USER, config.getWebDriverFactory());
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
-
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
     }
 
@@ -269,8 +263,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testLogOutAndLogInWithNewUser() {
-        HSOUser user = userService.createNewUser(new HSONewUser("YouTestYourLoggingIn", gmailString("YourLoggingOut"),
-                new GoogleAuth("hodtestqa401@gmail.com", "qoxntlozubjaamyszerfk")).authenticate(), Role.ADMIN, config.getWebDriverFactory());
+        final User user = userService.createNewUser(newUserFactory.create(), Role.ADMIN, config.getWebDriverFactory());
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         logout();
 

@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.hamcrest.CoreMatchers;
@@ -26,15 +27,17 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
 public class UsersPageTestBase extends ABCTestBase {
-    public UsersPageTestBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
-    }
-
     protected final NewUser aNewUser = config.getNewUser("james");
     protected final NewUser newUser2 = config.getNewUser("john");
+    protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
     protected UsersPage usersPage;
     protected UserService userService;
-    protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
+    private final SignupEmailHandler emailHandler;
+
+    public UsersPageTestBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
+        super(config, browser, type, platform);
+        emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+    }
 
     @Before
     public void setUp() throws MalformedURLException, InterruptedException {
@@ -47,7 +50,8 @@ public class UsersPageTestBase extends ABCTestBase {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
         final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-        User user = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+        User user = aNewUser.signUpAs(Role.USER, usersPage);
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         verifyUserAdded(newUserModal, user);
         usersPage.closeModal();
@@ -58,7 +62,8 @@ public class UsersPageTestBase extends ABCTestBase {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
 
-        User user = newUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+        User user = newUser.signUpAs(Role.USER, usersPage);
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
         usersPage.closeModal();
 
         try {
