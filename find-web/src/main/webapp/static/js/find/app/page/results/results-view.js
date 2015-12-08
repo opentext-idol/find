@@ -1,6 +1,7 @@
 define([
     'backbone',
     'jquery',
+    'underscore',
     'find/app/model/document-model',
     'find/app/model/documents-collection',
     'find/app/model/promotions-collection',
@@ -9,6 +10,7 @@ define([
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
     'js-whatever/js/escape-regex',
+    'find/app/configuration',
     'text!find/templates/app/page/results-popover.html',
     'text!find/templates/app/page/popover-message.html',
     'text!find/templates/app/page/results/results-view.html',
@@ -21,8 +23,8 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'colorbox'
-], function(Backbone, $, DocumentModel, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover,
-            viewClient, documentMimeTypes, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
+], function(Backbone, $, _, DocumentModel, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover,
+            viewClient, documentMimeTypes, escapeRegex, configuration, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate,
             moment, i18n) {
 
@@ -112,6 +114,9 @@ define([
                         },
                         reset: false
                     }, this);
+                } else {
+                    this.$loadingSpinner.addClass('hide');
+                    this.$('.main-results-content .results').html(this.messageTemplate({message: configuration().hosted ? i18n["search.error.noIndexes"] : i18n["search.error.noDatabases"]}));
                 }
             });
         },
