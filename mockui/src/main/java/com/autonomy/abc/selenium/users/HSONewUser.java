@@ -5,13 +5,8 @@ import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.ArrayList;
 
 // TODO: CSA-1663
 public class HSONewUser implements NewUser {
@@ -48,46 +43,6 @@ public class HSONewUser implements NewUser {
         }
 
         throw new UserNotCreatedException(this);
-    }
-
-    private void successfullyAdded(UsersPage usersPage) {
-        getGmail();
-
-        try {
-            new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
-            verifyUser();
-        } catch (TimeoutException e) { /* User already verified */ }
-    }
-
-    private WebDriver driver;
-
-    private void getGmail(){
-        GMailHelper helper = new GMailHelper(driver);
-
-        helper.goToGMail();
-        helper.tryLoggingInToEmail();
-        helper.waitForNewEmail();
-        helper.clickUnreadMessage();
-        helper.expandCollapsedMessage();
-
-        //Click on link to verify
-        driver.findElement(By.xpath("//a[text()='here']")).click();
-
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {/**/}
-
-        driver.switchTo().window(new ArrayList<>(driver.getWindowHandles()).get(1));
-    }
-
-    private void verifyUser(){
-        driver.findElement(By.linkText("Google")).click();
-
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("noAccount")));
-
-        driver.findElement(By.linkText("Google")).click();
-
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-logo-large")));
     }
 
     @Override
