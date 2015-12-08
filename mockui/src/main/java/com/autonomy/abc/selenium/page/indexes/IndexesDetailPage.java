@@ -60,4 +60,8 @@ public class IndexesDetailPage extends SAASPageBase {
     public String sizeString() {
         return findElement(By.className("index-md-docs")).getText();
     }
+
+    public WebElement newConnectionButton() {
+        return findElement(By.xpath("//button[text()='New connection']"));
+    }
 }

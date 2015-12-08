@@ -182,6 +182,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
 
     @Test
     //CSA-1700
+    //CSA-1889
     public void testConnectorName(){
         updateAndVerifyConnectorName("HTTP://www.ExAMPle.com", "example");
         updateAndVerifyConnectorName("http://www.TAkingBAckSuNDAy.com", "takingbacksunday");

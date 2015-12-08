@@ -3,10 +3,7 @@ package com.autonomy.abc.connections;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.connections.ConnectionService;
-import com.autonomy.abc.selenium.connections.ConnectionStatistics;
-import com.autonomy.abc.selenium.connections.Credentials;
-import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -15,6 +12,7 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -154,6 +152,35 @@ public class ConnectionsPageITCase extends HostedTestBase {
                 connectorIndexStepTab.closeModal();
             } catch (Exception e) { /* No visible modal */ }
 
+            indexService.deleteAllIndexes();
+        }
+    }
+
+    @Test
+    //CSA-1679
+    public void testCreateFromIndexAutoSelectsIndex(){
+        Index index = new Index("index");
+        IndexService indexService = getApplication().createIndexService(getElementFactory());
+
+        try {
+            indexService.setUpIndex(index);
+            IndexesDetailPage indexDetailPage = indexService.goToDetails(index);
+
+            indexDetailPage.newConnectionButton().click();
+
+            newConnectionPage = getElementFactory().getNewConnectionPage();
+
+            ConnectorTypeStepTab connectorTypeStep = newConnectionPage.getConnectorTypeStep();
+            connectorTypeStep.connectorUrl().setValue("http://waitinginthefor.est");
+            connectorTypeStep.connectorName().setValue("i am lost");
+            newConnectionPage.nextButton().click();
+            newConnectionPage.loadOrFadeWait();
+            newConnectionPage.nextButton().click();
+
+            ConnectorIndexStepTab connectorIndexStep = newConnectionPage.getIndexStep();
+
+            verifyThat(connectorIndexStep.getChosenIndexOnPage(), is(index));
+        } finally {
             indexService.deleteAllIndexes();
         }
     }
