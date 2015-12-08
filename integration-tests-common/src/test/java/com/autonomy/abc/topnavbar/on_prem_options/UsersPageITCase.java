@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -71,16 +72,26 @@ public class UsersPageITCase extends UsersPageTestBase {
 		try {
 			aNewUser.signUpAs(Role.USER, usersPage);
 		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
-		verifyThat(newUserModal, containsText("Error! User exists!"));
+		verifyDuplicateError(newUserModal);
 
 		try {
 			config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage);
 		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
 
-		verifyThat(newUserModal, containsText("Error! User exists!"));
+		verifyDuplicateError(newUserModal);
 
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(1 + defaultNumberOfUsers));
+	}
+
+	private void verifyDuplicateError(ModalView newUserModal) {
+		String expectedError;
+		if (config.getType().equals(ApplicationType.HOSTED)) {
+			expectedError = Errors.User.DUPLICATE_EMAIL;
+		} else {
+			expectedError = Errors.User.DUPLICATE_USER;
+		}
+		verifyThat(newUserModal, containsText(expectedError));
 	}
 
 	@Test
