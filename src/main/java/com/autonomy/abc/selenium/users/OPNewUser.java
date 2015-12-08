@@ -15,7 +15,7 @@ public class OPNewUser implements NewUser {
     }
 
     @Override
-    public User signUpAs(Role role, UsersPage usersPage, Factory<WebDriver> webDriverFactory) {
+    public User signUpAs(Role role, UsersPage usersPage) {
         usersPage.addUsername(username);
         usersPage.addAndConfirmPassword(password, password);
         usersPage.selectRole(role);
