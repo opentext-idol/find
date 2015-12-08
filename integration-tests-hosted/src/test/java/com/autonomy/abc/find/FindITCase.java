@@ -384,7 +384,7 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     //TODO update this based on CSA-1657
-    public void testCheckMetadata(){
+    public void testMetadata(){
         find.search("stars");
         service.filterByIndex(Index.DEFAULT.getTitle());
 

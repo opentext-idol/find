@@ -31,6 +31,20 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.xpath(".//h4[contains(text(), '" + type.getTitle() + "')]/../.."));
 	}
 
+	public List<List<String>> getExistingSynonymGroups() {
+		List<List<String>> groups = new ArrayList<>();
+		for(WebElement group : findElements(By.cssSelector(".keywords-existing-synonyms-list .keywords-sub-list"))){
+			List<String> terms = new ArrayList<>();
+			for(WebElement term : group.findElements(By.tagName("li"))){
+				terms.add(term.getText());
+			}
+
+			groups.add(terms);
+		}
+
+		return groups;
+	}
+
 	public enum KeywordType {
 		SYNONYM("Synonyms"),
 		BLACKLIST("Blacklisted Terms");
