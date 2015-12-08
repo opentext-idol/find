@@ -1,17 +1,15 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/find-pages',
-    'find/app/page/find-search',
-    'i18n!find/nls/bundle'
-], function(FindPages, FindSearch) {
-    "use strict";
+    'find/public/pages',
+    'find/idol/app/page/idol-find-search'
+], function(Pages, FindSearch) {
+    'use strict';
 
-    return FindPages.extend({
-
+    return Pages.extend({
         initializePages: function() {
             this.pages = [
                 {

@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
@@ -24,8 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Controller
 public class FindController {
@@ -34,11 +31,9 @@ public class FindController {
     public static final String LOGIN_PATH = "/login";
     private static final String DEFAULT_LOGIN_PAGE = "/loginPage";
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
-
-    @Value(AppConfiguration.HOSTED_PROPERTY)
-    private boolean hosted;
 
     @Value(AppConfiguration.APPLICATION_VERSION_PROPERTY)
     private String applicationVersion;
@@ -61,7 +56,6 @@ public class FindController {
     public ModelAndView mainPage() throws JsonProcessingException {
         final String username = SecurityContextHolder.getContext().getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
-        config.put(MvcConstants.HOSTED.value(), hosted);
         config.put(MvcConstants.USERNAME.value(), username);
 
         final Map<String, Object> attributes = new HashMap<>();

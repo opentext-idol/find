@@ -5,7 +5,6 @@
 
 define([
     'js-whatever/js/base-page',
-    'find/app/configuration',
     'find/app/model/backbone-query-model',
     'find/app/model/query-model',
     'find/app/page/input-view',
@@ -14,11 +13,18 @@ define([
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Configuration, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
+], function(BasePage, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
 
     return BasePage.extend({
         className: 'search-page',
         template: _.template(template),
+
+        // will be overridden
+        constructServiceView: function (model) {
+            return new ServiceView({
+                queryModel: model
+            });
+        },
 
         initialize: function() {
             var backboneQueryModel = new BackboneQueryModel();
@@ -39,9 +45,7 @@ define([
                 queryModel: this.queryModel
             });
 
-            this.serviceView = new ServiceView({
-                queryModel: this.queryModel
-            });
+            this.serviceView = this.constructServiceView(this.queryModel);
 
             router.on('route:search', function(text) {
                 if (text) {
@@ -54,7 +58,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({backend: Configuration().hosted ? 'hosted' : 'on-premise'}));
+            this.$el.html(this.template);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
             this.serviceView.setElement(this.$('.service-view-container')).render();

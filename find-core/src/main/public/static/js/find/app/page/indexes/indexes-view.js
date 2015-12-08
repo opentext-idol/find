@@ -2,13 +2,12 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'find/app/configuration',
     'databases-view/js/databases-view',
-    'i18n!find/nls/bundle',
+    'i18n!find/nls/indexes',
     'text!find/templates/app/page/indexes/indexes-view.html',
     'text!find/templates/app/page/indexes/index-list.html',
     'text!find/templates/app/page/indexes/index-item.html'
-], function(Backbone, _, $, configuration, DatabasesView, i18n, template, listTemplate, itemTemplate) {
+], function(Backbone, _, $, DatabasesView, i18n, template, listTemplate, itemTemplate) {
 
     var CHECKED_CLASS = 'icon-ok';
     var INDETERMINATE_CLASS = 'icon-minus';
@@ -17,6 +16,9 @@ define([
     var ICON_SELECTOR = '> span > .database-icon';
 
     return DatabasesView.extend({
+        // will be overridden
+        getIndexCategories: $.noop,
+
         template: _.template(template),
         categoryTemplate: _.template(listTemplate),
         databaseTemplate: _.template(itemTemplate),
@@ -62,29 +64,13 @@ define([
         },
 
         initialize: function (options) {
-            var hodChildCategories = [
-                {
-                    name: 'public',
-                    displayName: i18n['search.indexes.publicIndexes'],
-                    className: 'list-unstyled',
-                    filter: function(model) {
-                        return model.get('domain') === 'PUBLIC_INDEXES';
-                    }
-                }, {
-                    name: 'private',
-                    displayName: i18n['search.indexes.privateIndexes'],
-                    className: 'list-unstyled',
-                    filter: function(model) {
-                        return model.get('domain') !== 'PUBLIC_INDEXES';
-                    }
-                }
-            ];
+            var childCategories = this.getIndexCategories();
             DatabasesView.prototype.initialize.call(this, {
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
                 selectedDatabasesCollection: options.selectedDatabasesCollection,
                 topLevelDisplayName: i18n['search.indexes.all'],
-                childCategories: configuration().hosted ? hodChildCategories : null
+                childCategories: childCategories
             });
 
             var setInitialSelection = _.bind(function() {

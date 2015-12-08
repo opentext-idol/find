@@ -24,7 +24,6 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <attachClasses>true</attachClasses>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                     <overlays>
                         <overlay>
@@ -37,29 +36,12 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.3-SNAPSHOT</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec-war-only</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <path>/${project.build.finalName}</path>
-                    <finalName>${artifactName}.jar</finalName>
-                    <uriEncoding>UTF-8</uriEncoding>
+                    <classifier>executable</classifier>
+                    <finalName>${artifactName}</finalName>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.tomcat.embed</groupId>
-                        <artifactId>tomcat-embed-websocket</artifactId>
-                        <version>${tomcatEmbedWebsocket.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
         <resources>
@@ -141,19 +123,10 @@
 
     <profiles>
         <profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <id>dev</id>
-            <build>
-                <finalName>${artifactName}-${env}</finalName>
-            </build>
         </profile>
         <profile>
             <id>production</id>
-            <build>
-                <finalName>${artifactName}</finalName>
-            </build>
         </profile>
     </profiles>
 </project>

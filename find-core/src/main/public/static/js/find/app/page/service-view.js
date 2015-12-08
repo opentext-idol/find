@@ -2,7 +2,6 @@ define([
     'backbone',
     'jquery',
     'underscore',
-    'find/app/configuration',
     'find/app/model/dates-filter-model',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
@@ -17,21 +16,31 @@ define([
     'find/app/util/collapsible',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
+    'i18n!find/nls/indexes',
     'text!find/templates/app/page/service-view.html'
-], function(Backbone, $, _, configuration, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection,
+], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
-            IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, template) {
+            IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
 
-    var collapseView = function(titleKey, view) {
+    var collapseView = function (title, view) {
         return new Collapsible({
             view: view,
             collapsed: false,
-            title: i18n[titleKey]
+            title: title
         });
     };
 
     return Backbone.View.extend({
         template: _.template(template)({i18n: i18n}),
+
+        // will be overridden
+        constructIndexesView: function (queryModel, indexesCollection, selectedIndexesCollection) {
+            return new IndexesView({
+                queryModel: queryModel,
+                indexesCollection: indexesCollection,
+                selectedDatabasesCollection: selectedIndexesCollection
+            });
+        },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
@@ -97,11 +106,7 @@ define([
             });
 
             // Left Collapsed Views
-            this.indexesView = new IndexesView({
-                queryModel: this.queryModel,
-                indexesCollection: this.indexesCollection,
-                selectedDatabasesCollection: this.selectedIndexesCollection
-            });
+            this.indexesView = this.constructIndexesView(this.queryModel, this.indexesCollection, this.selectedIndexesCollection);
 
             this.dateView = new DateView({
                 queryModel: this.queryModel,
@@ -120,9 +125,9 @@ define([
             });
 
             // Collapse wrappers
-            this.indexesViewWrapper = collapseView(configuration().hosted ? 'search.indexes' : 'search.databases', this.indexesView);
-            this.dateViewWrapper = collapseView('search.dates', this.dateView);
-            this.relatedConceptsViewWrapper = collapseView('search.relatedConcepts', this.relatedConceptsView);
+            this.indexesViewWrapper = collapseView(i18n_indexes['search.indexes'], this.indexesView);
+            this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
+            this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], this.relatedConceptsView);
         },
 
         render: function() {

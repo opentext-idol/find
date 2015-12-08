@@ -10,7 +10,13 @@ define([
     'find/public/pages',
     'text!find/templates/app/app.html'
 ], function(BaseApp, logout, configuration, Pages, template) {
+    "use strict";
+
     return BaseApp.extend({
+        // will be overridden
+        constructPages: function () {
+            return new Pages();
+        },
 
         template: _.template(template),
 
@@ -23,7 +29,7 @@ define([
         },
 
         initialize: function() {
-            this.pages = new Pages();
+            this.pages = this.constructPages();
 
             BaseApp.prototype.initialize.apply(this, arguments);
         },

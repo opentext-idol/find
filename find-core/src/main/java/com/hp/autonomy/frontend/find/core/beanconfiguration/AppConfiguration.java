@@ -40,7 +40,6 @@ import java.util.Set;
 @PropertySource("classpath:/version.properties")
 public class AppConfiguration<C extends Config<C>> {
     public static final String APPLICATION_VERSION_PROPERTY = "${application.version}";
-    public static final String HOSTED_PROPERTY = "${application.hosted}";
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired

@@ -273,19 +273,12 @@ html, body {
 }
 
 .find-logo-large {
+    background-image: url('../img/Find_logo.png');
     background-size: 170px 102px;
     width: 170px;
     height: 102px;
     display: inline-block;
     vertical-align: middle;
-}
-
-.find-logo-on-premise {
-    background-image: url('../img/Find_logo_onprem.png');
-}
-
-.find-logo-hosted {
-    background-image: url('../img/Find_logo_hosted.png');
 }
 
 .find-banner {

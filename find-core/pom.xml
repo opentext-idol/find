@@ -159,9 +159,6 @@
 
     <profiles>
         <profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <id>dev</id>
         </profile>
         <profile>
