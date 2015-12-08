@@ -28,7 +28,9 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	}
 
 	public WebElement searchResultCheckbox(final int resultNumber) {
-		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + resultNumber + ") label")));
+		return new WebDriverWait(getDriver(), 20)
+				.withMessage("waiting for #" + resultNumber + " search result to appear")
+				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
 	public WebElement getResultsBoxByTitle(final String docTitle) {
