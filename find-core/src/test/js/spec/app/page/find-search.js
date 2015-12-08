@@ -1,11 +1,9 @@
 define([
-    'find/app/configuration',
     'find/app/page/find-search'
-], function (configuration, FindSearch) {
+], function (FindSearch) {
 
     describe('Find Search', function() {
         beforeEach(function() {
-            configuration.and.returnValue({hosted: true});
             this.findSearch = new FindSearch();
         });
 

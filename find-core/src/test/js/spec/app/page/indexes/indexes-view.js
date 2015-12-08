@@ -2,10 +2,9 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'find/app/configuration',
     'find/app/page/indexes/indexes-view',
     'databases-view/js/databases-collection'
-], function(Backbone, _, $, configuration, IndexesView, DatabasesCollection) {
+], function(Backbone, _, $, IndexesView, DatabasesCollection) {
 
     describe('Indexes View', function() {
         var DOMAIN = 'TEST';
@@ -22,8 +21,6 @@ define([
         var toResourceIdentifier = _.partial(_.pick, _, 'domain', 'name');
 
         beforeEach(function() {
-            configuration.and.returnValue({hosted: true});
-
             this.indexesCollection = new DatabasesCollection();
             this.selectedIndexesCollection = new DatabasesCollection();
 
