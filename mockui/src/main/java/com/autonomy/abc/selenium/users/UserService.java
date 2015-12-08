@@ -24,7 +24,7 @@ public abstract class UserService {
 
     public abstract UsersPage goToUsers();
 
-    public abstract User createNewUser(NewUser newUser, Role role, Factory<WebDriver> webDriverFactory);
+    public abstract User createNewUser(NewUser newUser, Role role);
 
     protected WebDriver getDriver() {
         return getElementFactory().getDriver();

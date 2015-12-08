@@ -3,9 +3,7 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 // TODO: CSA-1663
@@ -23,12 +21,6 @@ public class HSONewUser implements NewUser {
     public HSONewUser(String username, String email, AuthProvider provider){
         this(username, email);
         this.provider = provider;
-    }
-
-    @Deprecated
-    @Override
-    public HSOUser signUpAs(Role role, UsersPage usersPage, Factory<WebDriver> webDriverFactory) {
-        return signUpAs(role, usersPage);
     }
 
     @Override

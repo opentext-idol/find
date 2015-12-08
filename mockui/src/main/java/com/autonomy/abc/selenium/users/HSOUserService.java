@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
@@ -32,10 +33,10 @@ public class HSOUserService extends UserService {
     }
 
     @Override
-    public HSOUser createNewUser(NewUser newUser, Role role, Factory<WebDriver> webDriverFactory) {
+    public HSOUser createNewUser(NewUser newUser, Role role) {
         usersPage = goToUsers();
         usersPage.createUserButton().click();
-        HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage, webDriverFactory);
+        HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage);
         usersPage.closeModal();
         return user;
     }
