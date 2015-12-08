@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+import org.openqa.selenium.WebDriver;
 
 public class User {
     protected String username;
@@ -34,7 +36,12 @@ public class User {
         return "User<" + authProvider + '|' + role + '>';
     }
 
-    public void setRole(Role role) {
+    // changed in the app via UsersPage/UserService
+    void setRole(Role role) {
         this.role = role;
+    }
+
+    public void authenticate(Factory<WebDriver> driver, SignupEmailHandler handler) {
+        /* NOOP by default */
     }
 }

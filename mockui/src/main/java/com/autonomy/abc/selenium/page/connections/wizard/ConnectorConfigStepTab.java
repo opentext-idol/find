@@ -6,6 +6,7 @@ import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -144,5 +145,12 @@ public class ConnectorConfigStepTab extends SAASPageBase {
 
     public FormInput notificationEmailBox(){
         return new FormInput(findElement(By.name("notification_email")), getDriver());
+    }
+
+    public void scrollAndClickAdvancedConfig() {
+        Actions actions = new Actions(getDriver());
+        actions.moveToElement(advancedConfigurations());
+        actions.click();
+        actions.perform();
     }
 }

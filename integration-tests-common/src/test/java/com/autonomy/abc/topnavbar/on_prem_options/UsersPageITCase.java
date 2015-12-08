@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -37,9 +38,9 @@ public class UsersPageITCase extends UsersPageTestBase {
 		final int initialNumberOfUsers = usersPage.countNumberOfUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User user = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+		User user = aNewUser.signUpAs(Role.USER, usersPage);
 		usersPage.loadOrFadeWait();
-		User admin = newUser2.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+		User admin = newUser2.signUpAs(Role.ADMIN, usersPage);
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -51,8 +52,8 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		usersPage.createUserButton().click();
 		verifyThat(usersPage.isModalShowing(), is(true));
-		aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
-		newUser2.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+		aNewUser.signUpAs(Role.USER, usersPage);
+		newUser2.signUpAs(Role.ADMIN, usersPage);
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -64,23 +65,33 @@ public class UsersPageITCase extends UsersPageTestBase {
 	public void testAddDuplicateUser() {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User original = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+		User original = aNewUser.signUpAs(Role.USER, usersPage);
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		verifyUserAdded(newUserModal, original);
 
 		try {
-			aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+			aNewUser.signUpAs(Role.USER, usersPage);
 		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
-		verifyThat(newUserModal, containsText("Error! User exists!"));
+		verifyDuplicateError(newUserModal);
 
 		try {
-			config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+			config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage);
 		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
 
-		verifyThat(newUserModal, containsText("Error! User exists!"));
+		verifyDuplicateError(newUserModal);
 
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(1 + defaultNumberOfUsers));
+	}
+
+	private void verifyDuplicateError(ModalView newUserModal) {
+		String expectedError;
+		if (config.getType().equals(ApplicationType.HOSTED)) {
+			expectedError = Errors.User.DUPLICATE_EMAIL;
+		} else {
+			expectedError = Errors.User.DUPLICATE_USER;
+		}
+		verifyThat(newUserModal, containsText(expectedError));
 	}
 
 	@Test
@@ -89,10 +100,10 @@ public class UsersPageITCase extends UsersPageTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 
-		User admin = aNewUser.signUpAs(Role.ADMIN, usersPage, config.getWebDriverFactory());
+		User admin = aNewUser.signUpAs(Role.ADMIN, usersPage);
 		verifyUserAdded(newUserModal, admin);
 
-		User user = newUser2.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+		User user = newUser2.signUpAs(Role.USER, usersPage);
 		verifyUserAdded(newUserModal, user);
 
 		usersPage.closeModal();
