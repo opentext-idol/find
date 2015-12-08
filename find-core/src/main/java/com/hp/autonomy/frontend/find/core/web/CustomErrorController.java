@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.UUID;
@@ -37,8 +38,8 @@ public class CustomErrorController implements ErrorController {
     private String errorPath;
 
     @RequestMapping(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
-    public ModelAndView authenticationErrorPage(final HttpServletRequest request) throws ServletException, IOException {
-        return buildModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null, null, false);
+    public ModelAndView authenticationErrorPage(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        return buildModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null, response.getStatus(), false);
     }
 
     @RequestMapping(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)
@@ -50,7 +51,7 @@ public class CustomErrorController implements ErrorController {
     }
 
     @RequestMapping(DispatcherServletConfiguration.SERVER_ERROR_PATH)
-    public ModelAndView serverErrorPage(final HttpServletRequest request) {
+    public ModelAndView serverErrorPage(final HttpServletRequest request, final HttpServletResponse response) {
         final Exception exception = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
         final String subMessageCode;
         final Object[] subMessageArguments;
@@ -66,12 +67,12 @@ public class CustomErrorController implements ErrorController {
             subMessageArguments = null;
         }
 
-        return buildModelAndView(request, "error.internalServerErrorMain", subMessageCode, subMessageArguments, null, true);
+        return buildModelAndView(request, "error.internalServerErrorMain", subMessageCode, subMessageArguments, response.getStatus(), true);
     }
 
     @RequestMapping(DispatcherServletConfiguration.NOT_FOUND_ERROR_PATH)
-    public ModelAndView notFoundError(final HttpServletRequest request) {
-        return buildModelAndView(request, "error.notFoundMain", "error.notFoundSub", null, null, true);
+    public ModelAndView notFoundError(final HttpServletRequest request, final HttpServletResponse response) {
+        return buildModelAndView(request, "error.notFoundMain", "error.notFoundSub", null, response.getStatus(), true);
     }
 
     private ModelAndView buildModelAndView(
@@ -89,7 +90,7 @@ public class CustomErrorController implements ErrorController {
         modelAndView.addObject("subMessage", messageSource.getMessage(subMessageCode, subMessageArguments, locale));
         modelAndView.addObject("baseUrl", getBaseUrl(request));
         modelAndView.addObject("statusCode", statusCode);
-        modelAndView.addObject("contactSupport", contactSupport);
+        modelAndView.addObject("contactSupport", messageSource.getMessage("error.contactSupport", null, locale));
         modelAndView.addObject("applicationVersion", applicationVersion);
 
         return modelAndView;
