@@ -8,6 +8,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IndexesDetailPage extends SAASPageBase {
     public IndexesDetailPage(WebDriver driver) {
         super(driver);
@@ -63,5 +66,15 @@ public class IndexesDetailPage extends SAASPageBase {
 
     public WebElement newConnectionButton() {
         return findElement(By.xpath("//button[text()='New connection']"));
+    }
+
+    public List<String> getAssociatedConnectors() {
+        List<String> connectors = new ArrayList<>();
+
+        for(WebElement associatedConnector : findElements(By.cssSelector(".connectorsTableContainer table td.text-left .pipeline-name"))){
+            connectors.add(associatedConnector.getText());
+        }
+
+        return connectors;
     }
 }

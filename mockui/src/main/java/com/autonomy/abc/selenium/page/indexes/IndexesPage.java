@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.indexes;
 
+import com.autonomy.abc.selenium.indexes.Index;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -62,5 +63,9 @@ public class IndexesPage extends AppElement implements AppPage {
         }
 
         return names;
+    }
+
+    public int getNumberOfConnections(Index index) {
+        return Integer.parseInt(findIndex(index.getName()).findElement(By.cssSelector(".listItemNormalText>.ng-scope")).getText().split(" ")[1]);
     }
 }

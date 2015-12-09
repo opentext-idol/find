@@ -68,4 +68,8 @@ public class ConnectionsDetailPage extends SAASPageBase {
     public WebElement webConnectorURL() {
         return findElement(By.cssSelector(".breakWord a"));
     }
+
+    public String indexName() {
+        return findElement(By.cssSelector("#indexPane h3")).getText();
+    }
 }
