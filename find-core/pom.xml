@@ -94,10 +94,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <filters>
-            <filter>src/main/filters/filter-common.properties</filter>
-            <filter>src/main/filters/filter-${env}.properties</filter>
-        </filters>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
