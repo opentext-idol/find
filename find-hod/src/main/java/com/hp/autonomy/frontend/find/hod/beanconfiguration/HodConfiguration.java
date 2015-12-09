@@ -71,8 +71,7 @@ import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-
-import javax.annotation.PostConstruct;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 @EnableCaching
@@ -92,14 +91,15 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Autowired
     private ConfigFileService<HodFindConfig> configService;
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Bean
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @PostConstruct
-    public void init() {
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        objectMapper.addMixIn(Authentication.class, HodAuthenticationMixins.class);
-        objectMapper.addMixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class);
+    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder) {
+        return builder.createXmlMapper(false)
+                .mixIn(Authentication.class, HodAuthenticationMixins.class)
+                .mixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
+                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+                .build();
     }
 
     @Bean

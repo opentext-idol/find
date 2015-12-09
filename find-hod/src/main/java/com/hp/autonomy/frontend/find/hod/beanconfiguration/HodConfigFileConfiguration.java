@@ -6,10 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +26,6 @@ public class HodConfigFileConfiguration {
 
     @Bean
     public HodFindConfigFileService configService() {
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        objectMapper.addMixIn(Authentication.class, HodAuthenticationMixins.class);
-
         final HodFindConfigFileService configService = new HodFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");
