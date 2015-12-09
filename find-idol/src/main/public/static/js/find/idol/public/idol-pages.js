@@ -5,18 +5,21 @@
 
 define([
     'find/public/pages',
-    'find/idol/app/page/idol-find-search'
-], function(Pages, FindSearch) {
+    'find/idol/app/page/idol-find-search',
+    'find/idol/app/page/find-about-page'
+], function(Pages, FindSearch, AboutPage) {
     'use strict';
 
     return Pages.extend({
         initializePages: function() {
-            this.pages = [
+            Pages.prototype.initializePages.call(this);
+
+            this.pages = this.pages.concat([
                 {
-                    constructor: FindSearch
-                    , pageName: 'search'
+                    constructor: AboutPage,
+                    pageName: 'about'
                 }
-            ];
+            ]);
         }
     });
 });

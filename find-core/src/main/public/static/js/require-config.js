@@ -5,12 +5,15 @@
 
 require.config({
     paths: {
+        'about-page': '../bower_components/hp-autonomy-about-page/src',
         backbone: 'find/lib/backbone/backbone-extensions',
         'backbone-base': '../bower_components/backbone/backbone',
         bootstrap: '../lib/bootstrap/js/bootstrap',
         colorbox: '../bower_components/colorbox/jquery.colorbox',
         'bootstrap-datetimepicker': '../bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
         'databases-view': '../bower_components/hp-autonomy-js-databases-view/src',
+        'datatables.net': '../bower_components/datatables.net/js/jquery.dataTables',
+        'datatables.net-bs': '../bower_components/datatables.net-bs/js/dataTables.bootstrap',
         i18n: '../bower_components/requirejs-i18n/i18n',
         iCheck: '../bower_components/icheck/icheck',
         'peg': '../bower_components/pegjs/peg-0.8.0',
