@@ -17,11 +17,14 @@ define([
 
         router: router,
 
-        template: _.template(template),
+        template: _.template(template, {variable: 'data'}),
+
+        menuItems: $.noop,
 
         getTemplateParameters: function() {
             return {
                 i18n: i18n,
+                menuItems: this.menuItems,
                 username: configuration().username
             }
         }

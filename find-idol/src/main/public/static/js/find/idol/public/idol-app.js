@@ -5,11 +5,15 @@
 
 define([
     'find/public/app',
-    'find/idol/public/idol-pages'
-], function(BaseApp, Pages) {
+    'find/idol/public/idol-pages',
+    'find/idol/public/idol-navigation'
+], function(BaseApp, Pages, Navigation) {
     'use strict';
 
     return BaseApp.extend({
+
+        Navigation: Navigation,
+
         constructPages: function() {
             return new Pages();
         }

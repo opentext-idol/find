@@ -5,11 +5,12 @@
             <a class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cog"></i></a>
             <ul class="dropdown-menu" role="menu">
                 <li class="not-clickable">
-                    <a class="bold username"><%- username %></a>
+                    <a class="bold username"><%- data.username %></a>
                 </li>
                 <li class="divider"></li>
+                <%= data.menuItems(data) %>
                 <li>
-                    <a class="clickable navigation-logout"><i class="fa fa-sign-out"></i> <%-i18n['app.logout']%></a>
+                    <a class="clickable navigation-logout"><i class="fa fa-sign-out"></i> <%-data.i18n['app.logout']%></a>
                 </li>
             </ul>
         </li>

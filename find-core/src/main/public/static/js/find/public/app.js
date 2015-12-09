@@ -13,14 +13,12 @@ define([
 ], function(BaseApp, Pages, Navigation, configuration, logout, template) {
 
     return BaseApp.extend({
-        // will be overridden
-        constructPages: function () {
-            return new Pages();
-        },
 
         template: _.template(template),
 
         defaultRoute: 'find/search',
+
+        Navigation: Navigation,
 
         events: {
             'click .navigation-logout': function() {
@@ -31,11 +29,16 @@ define([
         initialize: function() {
             this.pages = this.constructPages();
 
-            this.navigation = new Navigation({
+            this.navigation = new this.Navigation({
                 pages: this.pages
             });
 
             BaseApp.prototype.initialize.apply(this, arguments);
+        },
+
+        // will be overridden
+        constructPages: function () {
+            return new Pages();
         },
 
         render: function() {
