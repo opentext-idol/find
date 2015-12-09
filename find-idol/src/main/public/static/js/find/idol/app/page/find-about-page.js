@@ -27,6 +27,7 @@ define([
                     library: 'Library',
                     license: 'License',
                     tagLine: 'We did it',
+                    title: 'About',
                     version: 'Version'
                 }
             });
