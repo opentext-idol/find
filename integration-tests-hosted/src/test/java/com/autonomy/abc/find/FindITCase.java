@@ -63,7 +63,7 @@ public class FindITCase extends HostedTestBase {
     private Logger logger = LoggerFactory.getLogger(FindITCase.class);
     private PromotionsPage promotions;
     private List<String> browserHandles;
-    private final String domain = "2b7725de-bd04-4341-a4a0-5754f0655de8";
+    private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
     private final Matcher<String> noDocs = containsString("No results found");
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
@@ -880,12 +880,12 @@ public class FindITCase extends HostedTestBase {
             if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText(), containsString(searchTerm));
             }
-            verifyThat(searchElement.getTagName(), is("a"));
-            verifyThat(searchElement.getAttribute("class"), is("query-text"));
+            verifyThat(searchElement.getTagName(), is("span"));
+            verifyThat(searchElement.getAttribute("class"), is("search-text"));
 
             WebElement parent = searchElement.findElement(By.xpath(".//.."));
             verifyThat(parent.getTagName(),is("span"));
-            verifyThat(parent.getAttribute("class"), containsString("label"));
+            verifyThat(parent.getAttribute("data-title"), is(searchTerm));
         }
 
         //TODO what happens when more than one word search term
@@ -902,11 +902,11 @@ public class FindITCase extends HostedTestBase {
                     verifyThat(relatedConceptElement.getText(), containsString(relatedConcept));
                 }
                 verifyThat(relatedConceptElement.getTagName(), is("a"));
-                verifyThat(relatedConceptElement.getAttribute("class"), is("query-text"));
+                verifyThat(relatedConceptElement.getAttribute("class"), is("entity-text clickable"));
 
                 WebElement parent = relatedConceptElement.findElement(By.xpath(".//.."));
                 verifyThat(parent.getTagName(),is("span"));
-                verifyThat(parent.getAttribute("class"), containsString("label"));
+                verifyThat(parent.getAttribute("data-title"), is(relatedConcept));
             }
         }
     }
