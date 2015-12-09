@@ -14,7 +14,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <artifactName>${project.parent.artifactId}-hosted</artifactName>
+        <artifactName>${project.parent.artifactId}-hosted-${project.version}</artifactName>
     </properties>
 
     <build>

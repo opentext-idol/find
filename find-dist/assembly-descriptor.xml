@@ -14,6 +14,10 @@
 
     <dependencySets>
         <dependencySet>
+            <includes>
+                <include>${project.groupId}:find-idol:war:*</include>
+            </includes>
+            <outputFileNameMapping>${project.parent.artifactId}${dashClassifier?}-${artifact.version}.${artifact.extension}</outputFileNameMapping>
             <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>false</useTransitiveDependencies>
         </dependencySet>

@@ -14,7 +14,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <artifactName>${project.parent.artifactId}-on-premise-${project.version}</artifactName>
+        <artifactName>${project.parent.artifactId}-${project.version}</artifactName>
     </properties>
 
     <build>
