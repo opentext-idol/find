@@ -64,4 +64,8 @@ public class ConnectionsDetailPage extends SAASPageBase {
     public WebElement cancelButton() {
         return findElement(By.xpath("//a[contains(text(),'Cancel')]"));
     }
+
+    public WebElement webConnectorURL() {
+        return findElement(By.cssSelector(".breakWord a"));
+    }
 }
