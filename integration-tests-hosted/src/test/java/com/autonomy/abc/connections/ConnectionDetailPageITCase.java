@@ -66,6 +66,17 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         }
     }
 
+    @Test
+    //CSA-1470
+    public void testCancellingConnectorScheduling(){
+        connector = new WebConnector("http://www.google.co.uk","google").withDuration(60);
+
+        connectionService.setUpConnection(connector);
+        connectionsDetailPage = connectionService.cancelConnectionScheduling(connector);
+
+        verifyThat(connectionsDetailPage.scheduleString(), is("The connector is not scheduled to run."));
+    }
+
     @After
     public void tearDown(){
         connectionService.deleteAllConnections(true);
