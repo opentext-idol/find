@@ -29,20 +29,12 @@ public class SideNavBar extends AppElement {
         return new SideNavBarTab(activeTabs.get(0), getDriver());
     }
 
-    public String getPageName() {
-        return getSelectedTab().getName();
-    }
-
-    public String getPageId() {
-        return getSelectedTab().getId();
-    }
-
     public void switchPage(final NavBarTabId tab) {
         if (!this.isDisplayed()) {
             toggle();
         }
-        tryClickThenTryParentClick(new WebDriverWait(getDriver(),30).until(
-                ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul//li//*[text()=' " + tab.toString() + "']"))));
+
+        tab.click(getDriver());
     }
 
     public void toggle() {
