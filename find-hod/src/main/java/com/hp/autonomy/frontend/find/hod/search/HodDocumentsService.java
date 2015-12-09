@@ -67,8 +67,7 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
     @Override
     @Cacheable(CacheNames.DOCUMENTS)
     public Documents<HodFindDocument> queryTextIndex(final FindQueryParams<ResourceIdentifier> findQueryParams) throws HodErrorException {
-        throw new HodErrorException(new HodError.Builder().setErrorCode(HodErrorCode.INTERNAL_CRYPTO_ERROR).build(), 500);
-//        return queryTextIndex(findQueryParams, false);
+        return queryTextIndex(findQueryParams, false);
     }
 
     @Override
