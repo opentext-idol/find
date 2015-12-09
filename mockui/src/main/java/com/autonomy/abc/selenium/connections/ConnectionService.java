@@ -15,6 +15,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConnectionService {
     private Application application;
     private HSOElementFactory elementFactory;
@@ -94,8 +97,14 @@ public class ConnectionService {
 
     public ConnectionsPage deleteAllConnections(boolean deleteIndex) {
         goToConnections();
+
+        List<String> titles = new ArrayList<>();
         for(WebElement connector : getDriver().findElements(By.className("listItemTitle"))){
-            WebConnector webConnector = new WebConnector(null, connector.getText().split("\\(")[0].trim());
+            titles.add(connector.getText().split("\\(")[0].trim());
+        }
+
+        for(String title : titles){
+            WebConnector webConnector = new WebConnector(null, title);
 
             beginDelete(webConnector);
 
@@ -107,6 +116,7 @@ public class ConnectionService {
 
             confirmDelete(webConnector);
         }
+        
         return connectionsPage;
     }
 
