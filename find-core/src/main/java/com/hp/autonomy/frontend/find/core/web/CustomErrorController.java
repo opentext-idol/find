@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,15 +26,12 @@ import java.util.UUID;
 
 @Controller
 @Slf4j
-public class CustomErrorController implements ErrorController {
+public class CustomErrorController {
     @Autowired
     private MessageSource messageSource;
 
     @Value("${application.version}")
     private String applicationVersion;
-
-    @Value("${error.path:/error}")
-    private String errorPath;
 
     @RequestMapping(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
     public ModelAndView authenticationErrorPage(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -103,10 +99,5 @@ public class CustomErrorController implements ErrorController {
         final int depth = StringUtils.countMatches(path, "/") - 1;
 
         return depth <= 0 ? "." : StringUtils.repeat("../", depth);
-    }
-
-    @Override
-    public String getErrorPath() {
-        return errorPath;
     }
 }
