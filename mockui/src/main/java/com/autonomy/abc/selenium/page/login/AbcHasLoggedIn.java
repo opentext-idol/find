@@ -17,7 +17,7 @@ public class AbcHasLoggedIn implements HasLoggedIn {
     @Override
     public boolean hasLoggedIn() {
         try {
-            new WebDriverWait(driver, 20).until(new LoginCondition());
+            new WebDriverWait(driver, 60).until(new LoginCondition());
         } catch (final TimeoutException e) {
             return false;
         }

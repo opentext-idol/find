@@ -2,9 +2,6 @@ package com.autonomy.abc.selenium.page.indexes;
 
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.SAASPageBase;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -62,5 +59,9 @@ public class IndexesDetailPage extends SAASPageBase {
 
     public String sizeString() {
         return findElement(By.className("index-md-docs")).getText();
+    }
+
+    public WebElement newConnectionButton() {
+        return findElement(By.xpath("//button[text()='New connection']"));
     }
 }

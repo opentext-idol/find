@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
@@ -625,5 +626,23 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionService.delete(newTitle);
 		verifyThat(promotionsPage.getPromotionTitles(), not(hasItem(newTitle)));
+	}
+
+	@Test
+	//CCUK-3457
+	public void testPromotingItemsWithBrackets(){
+		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
+		Search search = new Search(getApplication(), getElementFactory(), "\"Selenium (software)\"").applyFilter(new IndexFilter("wiki_eng"));
+
+		SearchPage searchPage = search.apply();
+		assumeThat("Was expecting Selenium (Software) to be the first result",searchPage.getSearchResultTitle(1), is("Selenium (software)"));
+
+		promotionService.setUpPromotion(spotlightPromotion, search, 1);
+		PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(spotlightPromotion);
+
+		List<String> promotedDocuments = promotionsDetailPage.getPromotedTitles();
+
+		verifyThat(promotedDocuments.size(), is(1));
+		verifyThat(promotedDocuments.get(0), is("Selenium (software)"));
 	}
 }

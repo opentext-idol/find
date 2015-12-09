@@ -83,4 +83,8 @@ public class ConnectorIndexStepTab extends SAASPageBase {
             getDriver().findElement(By.xpath("//div[contains(@class,'modal-footer')]/button[text()='Cancel']")).click();
         }
     }
+
+    public Index getChosenIndexOnPage() {
+        return new Index(findElement(By.cssSelector(".selectedIndexNameContainer .ng-binding")).getText());
+    }
 }

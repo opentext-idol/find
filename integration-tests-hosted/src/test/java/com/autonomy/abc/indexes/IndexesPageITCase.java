@@ -44,7 +44,8 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class IndexesPageITCase extends HostedTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexesPageITCase.class);
-    IndexesPage indexesPage;
+    private IndexService indexService;
+    private IndexesPage indexesPage;
 
     public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -57,10 +58,24 @@ public class IndexesPageITCase extends HostedTestBase {
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
         indexesPage = getElementFactory().getIndexesPage();
         body = getBody();
+        indexService = getApplication().createIndexService(getElementFactory());
     }
 
     @Test
-    //CSA1720
+    //CSA-1450
+    public void testDeletingIndex(){
+        Index index = new Index("index");
+        indexesPage = indexService.setUpIndex(index);
+
+        verifyThat(indexesPage.getIndexNames(), hasItem(index.getName()));
+
+        indexService.deleteIndex(index);
+
+        verifyThat(indexesPage.getIndexNames(), not(hasItem(index.getName())));
+    }
+
+    @Test
+    //CSA-1720
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = getApplication().createConnectionService(getElementFactory());
         Index default_index = new Index("default_index");
