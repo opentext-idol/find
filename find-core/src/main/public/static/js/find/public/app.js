@@ -5,12 +5,12 @@
 
 define([
     'find/app/base-app',
-    'find/app/util/logout',
-    'find/app/configuration',
     'find/public/pages',
+    'find/public/navigation',
+    'find/app/configuration',
+    'find/app/util/logout',
     'text!find/templates/app/app.html'
-], function(BaseApp, logout, configuration, Pages, template) {
-    "use strict";
+], function(BaseApp, Pages, Navigation, configuration, logout, template) {
 
     return BaseApp.extend({
         // will be overridden
@@ -31,7 +31,19 @@ define([
         initialize: function() {
             this.pages = this.constructPages();
 
+            this.navigation = new Navigation({
+                pages: this.pages
+            });
+
             BaseApp.prototype.initialize.apply(this, arguments);
+        },
+
+        render: function() {
+            BaseApp.prototype.render.apply(this, arguments);
+
+            this.navigation.render();
+
+            this.$('.header').prepend(this.navigation.el);
         },
 
         getTemplateParameters: function() {
