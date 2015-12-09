@@ -22,6 +22,7 @@
     <fileSets>
         <fileSet>
             <directory>install</directory>
+            <lineEnding>unix</lineEnding>
         </fileSet>
     </fileSets>
 </assembly>
