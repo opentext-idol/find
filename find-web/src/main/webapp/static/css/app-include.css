@@ -486,6 +486,14 @@ input.find-input {
     text-align: center;
 }
 
+.error.well {
+    margin-left: 14px;
+}
+
+.error-message > span {
+    font-weight: bold;
+}
+
 .suggestion-head-text {
     font-size: 14px;
     font-weight: 800;

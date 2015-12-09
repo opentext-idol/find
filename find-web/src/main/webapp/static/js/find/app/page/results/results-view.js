@@ -57,10 +57,12 @@ define([
     };
 
     return Backbone.View.extend({
+        template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
         popoverMessageTemplate: _.template(popoverMessageTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
+        errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         popoverTemplate: _.template(popoverTemplate),
         entityTemplate: _.template(entityTemplate),
@@ -128,7 +130,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(template);
+            this.$el.html(this.template({i18n:i18n}));
 
             this.$loadingSpinner = $(this.loadingTemplate);
 
@@ -153,13 +155,15 @@ define([
                 this.promotionsFinished = true;
                 this.clearLoadingSpinner();
 
-                this.$('.main-results-content .promotions').append(this.errorMessage(i18n["search.error.promotions"], xhr));
+                this.$('.main-results-content .promotions').append(this.handleError(i18n['app.feature.promotions'], xhr));
             });
 
             /*main results content*/
             this.listenTo(this.documentsCollection, 'request', function() {
                 this.resultsFinished = false;
                 this.$loadingSpinner.removeClass('hide');
+                this.toggleError(false);
+                this.$('.main-results-content .error .error-list').empty();
                 this.$('.main-results-content .results').empty();
             });
 
@@ -180,7 +184,7 @@ define([
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
 
-                this.$('.main-results-content .results').append(this.errorMessage(i18n["search.error.results"], xhr));
+                this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
 
             this.listenTo(this.entityCollection, 'reset', function() {
@@ -417,16 +421,34 @@ define([
             });
         },
 
-        errorMessage: function(serviceErrorMessage, xhr) {
-            var messageTemplate;
+        handleError: function(feature, xhr) {
 
-            if (xhr.responseJSON && i18n["hod.error." + xhr.responseJSON.hodErrorCode]) {
-                messageTemplate = this.messageTemplate({message: serviceErrorMessage + ': ' + i18n["hod.error." + xhr.responseJSON.hodErrorCode]});
-            } else {
-                messageTemplate = this.messageTemplate({message: serviceErrorMessage});
+            var message = i18n['error.default.message'];;
+
+            this.toggleError(true);
+
+            if (xhr.responseJSON) {
+                if (xhr.responseJSON.hodErrorCode) {
+                    if (i18n["hod.error." + xhr.responseJSON.hodErrorCode]) {
+                        message = i18n["hod.error." + xhr.responseJSON.hodErrorCode];
+                    }
+                    else if (xhr.responseJSON.uuid) {
+                        message = i18n['error.default.message.uuid'](xhr.responseJSON.uuid);
+                    }
+                }
+                else if (xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
             }
 
-            return messageTemplate;
+            var messageTemplate = this.errorTemplate({feature: feature, error: message});
+            this.$('.main-results-content .error .error-list').append(messageTemplate);
+        },
+
+        toggleError: function(on) {
+            this.$('.main-results-content .promotions').toggleClass('hide', on);
+            this.$('.main-results-content .results').toggleClass('hide', on);
+            this.$('.main-results-content .error').toggleClass('hide', !on);
         }
     });
 });

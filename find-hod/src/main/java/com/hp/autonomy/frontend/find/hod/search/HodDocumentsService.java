@@ -20,6 +20,8 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
+import com.hp.autonomy.hod.client.error.HodError;
+import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.types.requests.Documents;
@@ -65,7 +67,8 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
     @Override
     @Cacheable(CacheNames.DOCUMENTS)
     public Documents<HodFindDocument> queryTextIndex(final FindQueryParams<ResourceIdentifier> findQueryParams) throws HodErrorException {
-        return queryTextIndex(findQueryParams, false);
+        throw new HodErrorException(new HodError.Builder().setErrorCode(HodErrorCode.INTERNAL_CRYPTO_ERROR).build(), 500);
+//        return queryTextIndex(findQueryParams, false);
     }
 
     @Override
