@@ -15,7 +15,6 @@ import org.openqa.selenium.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.Matchers.containsString;

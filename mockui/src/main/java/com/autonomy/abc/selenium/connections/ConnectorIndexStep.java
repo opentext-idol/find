@@ -33,28 +33,8 @@ public class ConnectorIndexStep implements WizardStep {
         }
 
         connectorIndexStepTab.selectIndexButton().click();
-        connectorIndexStepTab.getIndexSearchBox().click();
+        connectorIndexStepTab.selectIndex(index);
 
-        for(WebElement existingIndex : connectorIndexStepTab.getExistingIndexes()){
-            if(existingIndex.getText().equals(index.getName())){
-                existingIndex.click();
-                connectorIndexStepTab.modalOKButton().click();
-                //Need to wait for modal to disappear
-                try{Thread.sleep(1000);} catch (Exception e) {/*NO OP*/}
-                return null;
-            }
-        }
-
-        throw new IndexNotFoundException(index);
-    }
-
-    private class IndexNotFoundException extends RuntimeException {
-        public IndexNotFoundException(String index){
-            super("Index: '"+index+"' not found");
-        }
-
-        public IndexNotFoundException(Index index){
-            this(index.getName());
-        }
+        return null;
     }
 }
