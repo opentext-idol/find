@@ -19,11 +19,9 @@ import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletCont
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.ErrorPage;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.LocaleResolver;
@@ -103,14 +101,6 @@ public class AppConfiguration<C extends Config<C>> {
         sessionLocaleResolver.setDefaultLocale(Locale.ENGLISH);
 
         return sessionLocaleResolver;
-    }
-
-    @Bean
-    public MessageSource messageSource() {
-        final ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-        resourceBundleMessageSource.setBasename("com.hp.autonomy.frontend.find.i18n");
-
-        return resourceBundleMessageSource;
     }
 
     @Bean

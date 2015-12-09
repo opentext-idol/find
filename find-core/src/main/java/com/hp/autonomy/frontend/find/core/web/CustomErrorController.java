@@ -86,7 +86,9 @@ public class CustomErrorController {
         modelAndView.addObject("subMessage", messageSource.getMessage(subMessageCode, subMessageArguments, locale));
         modelAndView.addObject("baseUrl", getBaseUrl(request));
         modelAndView.addObject("statusCode", statusCode);
-        modelAndView.addObject("contactSupport", messageSource.getMessage("error.contactSupport", null, locale));
+        if (contactSupport) {
+            modelAndView.addObject("contactSupport", messageSource.getMessage("error.contactSupport", null, locale));
+        }
         modelAndView.addObject("applicationVersion", applicationVersion);
 
         return modelAndView;
