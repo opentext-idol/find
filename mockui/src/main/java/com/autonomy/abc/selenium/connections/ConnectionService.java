@@ -138,4 +138,25 @@ public class ConnectionService {
 
         return connector;
     }
+
+    public ConnectionsDetailPage cancelConnectionScheduling(Connector connector) {
+        goToDetails(connector);
+
+        connectionsDetailPage.editButton().click();
+
+        NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
+
+        newConnectionPage.nextButton().click();
+        newConnectionPage.loadOrFadeWait();
+
+        newConnectionPage.getConnectorConfigStep().skipSchedulingCheckbox().click();
+
+        newConnectionPage.nextButton().click();
+        newConnectionPage.loadOrFadeWait();
+        newConnectionPage.finishButton().click();
+
+        new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining("Connector " + connector.getName() + " schedule has been cancelled successfully"));
+
+        return connectionsDetailPage;
+    }
 }
