@@ -206,7 +206,7 @@ html, body {
 }
 
 .main-content .container-fluid {
-    height:80%;
+    height: calc(100% - 70px); /* height of page - height of .header - margin-bottom of .header */
 }
 
 .find-main-subcontainer,
@@ -251,10 +251,8 @@ html, body {
 
 .find {
     text-align: center;
-}
-
-.app-logo {
-    width: 72%;
+    /* We need to be on top of the static navbar */
+    z-index: 9999;
 }
 
 .find-logo {
@@ -285,19 +283,12 @@ html, body {
     vertical-align: middle;
 }
 
-.find-banner {
-    background-image: url('../img/Find_banner.png');
-    height: 125px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-}
-
 .hp-logo-footer {
     background: url('../img/HPE_logo.png') no-repeat center;
     background-size: 140px 55px;
     height: 55px;
+    width: 140px;
+    margin: 33% auto 0;
 }
 
 a.unstyled {
@@ -397,11 +388,6 @@ input.find-input {
     position: relative;
 }
 
-.find {
-    /* We need to be on top of the static navbar */
-    z-index: 9999;
-}
-
 /* username */
 .username {
     max-width: 250px;
@@ -431,12 +417,11 @@ input.find-input {
 /* fancy reverse animation */
 .reverse-animated-container {
     position: absolute;
-    top: 30%;
+    top: 25%;
     transition: all 1000ms ease;
 }
 
 .reverse-animated-container .find-form {
-    width:75%;
     transition: all 1000ms ease;
     transition-property:width;
 }
@@ -653,17 +638,16 @@ input:-moz-placeholder::before {
 }
 
 .find-navbar {
-    border-bottom: 3px solid #425563;
     background-color: #425563;
     color: #fff;
-    opacity: 0;
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    height: 50px;
 }
 
-
-.find-navbar.visible {
-    opacity: 1;
+.find-navbar.reduced {
+    background: #49B59B url('../img/Find_banner.png');
+    height: 125px;
 }
 
 .navbar .nav > .active > a {
