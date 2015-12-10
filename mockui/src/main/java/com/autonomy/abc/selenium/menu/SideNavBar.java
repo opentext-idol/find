@@ -15,10 +15,6 @@ public class SideNavBar extends AppElement {
         super(driver.findElement(By.cssSelector(".navbar-static-side")), driver);
     }
 
-    public Tab getTab(NavBarTabId id){
-        return null;
-    }
-
     public Tab getSelectedTab(){
         final List<WebElement> activeTabs = $el().findElements(By.cssSelector("li.active"));
 

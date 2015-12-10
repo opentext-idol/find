@@ -74,7 +74,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         connectionService.setUpConnection(connector);
         connectionsDetailPage = connectionService.cancelConnectionScheduling(connector);
 
-        verifyThat(connectionsDetailPage.scheduleString(), is("The connector is not scheduled to run."));
+        verifyThat(connectionsDetailPage.getScheduleString(), is("The connector is not scheduled to run."));
     }
 
     @After
