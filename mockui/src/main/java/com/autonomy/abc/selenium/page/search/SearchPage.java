@@ -43,8 +43,17 @@ public abstract class SearchPage extends SearchBase implements AppPage {
         return findElement(By.className("search-type-toggle")).findElement(By.className("checkbox-input")).isSelected();
     }
 
+	// TODO: same as getResultsForText() ?
 	public WebElement searchTitle() {
 		return getDriver().findElement(By.cssSelector(".heading > b"));
+	}
+
+	//TODO is this actually what it's looking for?
+	// "Results for _____ (123)"
+	public String getResultsForText() {
+		WebElement heading = getDriver().findElement(By.cssSelector(".heading b"));
+		scrollIntoView(heading, getDriver());
+		return heading.getText();
 	}
 
 	public WebElement promoteTheseDocumentsButton() {
@@ -176,6 +185,16 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	protected abstract LanguageDropdown languageDropdown();
+
+	// TODO: use LanguageDropdown
+	public WebElement languageButton() {
+		return findElement(By.cssSelector(".search-language .dropdown-toggle"));
+	}
+
+	// TODO: use languageDropdown
+	public String getSelectedLanguage() {
+		return findElement(By.cssSelector(".current-language-selection")).getText();
+	}
 
 	public WebElement promoteThisQueryButton() {
 		//The space is deliberate!
@@ -407,6 +426,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return checkboxes;
 	}
 
+	public List<String> youSearchedFor() {
+		WebElement searchTermsList = findElement(By.cssSelector(".search-terms-list"));
+		scrollIntoView(searchTermsList, getDriver());
+		return ElementUtil.getTexts(searchTermsList.findElements(By.tagName("span")));
+	}
+
 	public WebElement blacklistLink() {
 		return findElement(By.xpath(".//a[text() = 'blacklist']"));
 	}
@@ -425,6 +450,20 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public int countKeywords() {
 		return keywordsContainer().keywords().size();
+	}
+
+	// TODO: use keywordsContainer
+	public int countSynonymLists() {
+		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
+	}
+
+	// TODO: use keywordsContainer / deprecate
+	public List<String> getLeadSynonymsList() {
+		final List<String> leadSynonyms = new ArrayList<>();
+		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {
+			leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());
+		}
+		return leadSynonyms;
 	}
 
 	public void addSynonymToGroup(String newSynonym, SynonymGroup group) {
@@ -453,5 +492,11 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 			titles.add(promotion.getText());
 		}
 		return titles;
+	}
+
+	public int countSearchResults() {
+        ((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
+		final String bracketedSearchResultsTotal = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
+		return Integer.parseInt(bracketedSearchResultsTotal.substring(1, bracketedSearchResultsTotal.length() - 1));
 	}
 }

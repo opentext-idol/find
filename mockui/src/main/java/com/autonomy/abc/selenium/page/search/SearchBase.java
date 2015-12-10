@@ -2,8 +2,6 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.indexes.IndexesTree;
-import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
-import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -125,24 +123,10 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return  getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
 	}
 
-	public WebElement languageButton() {
-		return findElement(By.cssSelector(".search-language .dropdown-toggle"));
-	}
-
-	public int countSearchResults() {
-        ((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
-		final String bracketedSearchResultsTotal = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
-		return Integer.parseInt(bracketedSearchResultsTotal.substring(1, bracketedSearchResultsTotal.length() - 1));
-	}
-
 	public void emptyBucket() {
 		for (final WebElement bucketItem : promotionsBucketWebElements()) {
 			bucketItem.findElement(By.cssSelector(".remove-bucket-item")).click();
 		}
-	}
-
-	public String getSelectedLanguage() {
-		return findElement(By.cssSelector(".current-language-selection")).getText();
 	}
 
 	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
@@ -245,10 +229,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 
 		return selected;
-	}
-
-	public int countSynonymLists() {
-		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
 	}
 
 	public void setFieldText(String value) {
@@ -457,13 +437,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return DATE_FORMAT.parse(dateString.split(", ")[1]);
 	}
 
-	//TODO is this actually what it's looking for?
-	public String getResultsForText() {
-		WebElement heading = getDriver().findElement(By.cssSelector(".heading b"));
-		scrollIntoView(heading, getDriver());
-		return heading.getText();
-	}
-
 	public int countRelatedConcepts() {
 		return getRelatedConcepts().size();
 	}
@@ -550,14 +523,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}
 
-	public List<String> getLeadSynonymsList() {
-		final List<String> leadSynonyms = new ArrayList<>();
-		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {
-			leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());
-		}
-		return leadSynonyms;
-	}
-
 	public List<Checkbox> indexList() {
 		List<Checkbox> checkboxes = new ArrayList<>();
 		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
@@ -574,12 +539,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 	public Checkbox allIndexesCheckbox() {
 		return new Checkbox(findElement(By.cssSelector(".checkbox[data-category-id='all']")), getDriver());
-	}
-
-	public List<String> youSearchedFor() {
-		WebElement searchTermsList = findElement(By.cssSelector(".search-terms-list"));
-		scrollIntoView(searchTermsList, getDriver());
-		return ElementUtil.getTexts(searchTermsList.findElements(By.tagName("span")));
 	}
 
 	public void deselectIndex(String index) {
