@@ -26,6 +26,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		super(element, driver);
 	}
 
+	/* search results */
 	public WebElement searchResultCheckbox(final int resultNumber) {
 		return new WebDriverWait(getDriver(), 20)
 				.withMessage("waiting for #" + resultNumber + " search result to appear")
@@ -53,6 +54,30 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return getParent(getSearchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
 	}
 
+	public int visibleDocumentsCount() {
+		return findElements(By.cssSelector(".search-page-contents .search-result-item")).size();
+	}
+
+	public Date getDateFromResult(final int index) throws ParseException {
+		final String dateString = getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
+		if (dateString.isEmpty()) {
+			return null;
+		}
+		return DATE_FORMAT.parse(dateString.split(", ")[1]);
+	}
+
+	public List<Float> getWeightsOnPage(final int numberOfPages) {
+		final List<Float> weights = new ArrayList<>();
+		for (int i = 1; i <= numberOfPages; i++) {
+			for (final WebElement weight : findElements(By.cssSelector(".weight"))) {
+				weights.add(Float.parseFloat(weight.getText().substring(8)));
+			}
+			javascriptClick(forwardPageButton());
+		}
+		return weights;
+	}
+
+	/* promotions bucket */
 	public int promotedItemsCount() {
 		return findElements(By.cssSelector(".promotions-bucket-document")).size();
 	}
@@ -69,6 +94,10 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return findElement(By.cssSelector(".promotions-bucket-well"));
 	}
 
+	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
+		return findElement(By.cssSelector(".promotions-bucket-items")).findElement(new Locator().containingCaseInsensitive(docTitle));
+	}
+
 	public void deleteDocFromWithinBucket(final String docTitle) {
 		for (WebElement document : promotionsBucketWebElements()) {
 			if (document.getText().compareToIgnoreCase(docTitle) == 0) {
@@ -80,6 +109,29 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		throw new NoSuchElementException("promotion bucket document with title " + docTitle);
 	}
 
+	public void emptyBucket() {
+		for (final WebElement bucketItem : promotionsBucketWebElements()) {
+			bucketItem.findElement(By.cssSelector(".remove-bucket-item")).click();
+		}
+	}
+
+	protected List<String> bucketList(final WebElement element) {
+		final List<String> bucketDocTitles = new ArrayList<>();
+		for (final WebElement bucketDoc : element.findElements(By.cssSelector(".promotions-bucket-document"))) {
+			bucketDocTitles.add(bucketDoc.getText());
+		}
+		return bucketDocTitles;
+	}
+
+	public String getTopPromotedLinkTitle() {
+		return findElement(By.cssSelector(".promotions .search-result-title")).getText();
+	}
+
+	public String getTopPromotedSpotlightType() {
+		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
+	}
+
+	/* pagination */
 	public WebElement backToFirstPageButton() {
 		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous-chapter")));
 	}
@@ -115,16 +167,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return  getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
 	}
 
-	public void emptyBucket() {
-		for (final WebElement bucketItem : promotionsBucketWebElements()) {
-			bucketItem.findElement(By.cssSelector(".remove-bucket-item")).click();
-		}
-	}
-
-	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
-        return findElement(By.cssSelector(".promotions-bucket-items")).findElement(new Locator().containingCaseInsensitive(docTitle));
-	}
-
+	/* indexes/databases */
 	public IndexesTree indexesTree() {
 		return new IndexesTree(findElement(By.cssSelector(".databases-list")), getDriver());
 	}
@@ -132,6 +175,18 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	@Deprecated
 	public WebElement getDatabasesList() {
 		return findElement(By.cssSelector(".databases-list"));
+	}
+
+	public List<String> getAllDatabases() {
+		return webElementListToStringList(findElements(By.cssSelector(".child-categories label")));
+	}
+
+	public List<WebElement> getDatabaseCheckboxes() {
+		return findElements(By.cssSelector(".child-categories input"));
+	}
+
+	public WebElement allDatabasesCheckbox() {
+		return findElement(By.cssSelector(".checkbox input[data-category-id='all']"));
 	}
 
 	@Deprecated
@@ -197,6 +252,127 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return selected;
 	}
 
+	public List<Checkbox> indexList() {
+		List<Checkbox> checkboxes = new ArrayList<>();
+		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
+			if (element.isDisplayed()) {
+				checkboxes.add(new Checkbox(element, getDriver()));
+			}
+		}
+		return checkboxes;
+	}
+
+	public Checkbox indexCheckbox(String indexName) {
+		return new Checkbox(findElement(By.cssSelector(".checkbox[data-name='" + indexName + "']")), getDriver());
+	}
+
+	public Checkbox allIndexesCheckbox() {
+		return new Checkbox(findElement(By.cssSelector(".checkbox[data-category-id='all']")), getDriver());
+	}
+
+	public void deselectIndex(String index) {
+		Checkbox checkbox = indexCheckbox(index);
+
+		if(checkbox.isChecked()){
+			checkbox.toggle();
+		}
+
+		loadOrFadeWait();
+		waitForSearchLoadIndicatorToDisappear();
+	}
+
+	public void openPublicFilter(){
+		findElement(By.cssSelector("[data-category-id=public] i")).click();
+	}
+
+	public void selectIndex(String index) {
+		Checkbox checkbox = indexCheckbox(index);
+
+		if(checkbox.isChecked()){
+			return;
+		}
+
+		if(!checkbox.isDisplayed()){
+			openPublicFilter();
+			loadOrFadeWait();
+		}
+
+		checkbox.toggle();
+
+		loadOrFadeWait();
+		waitForSearchLoadIndicatorToDisappear();
+	}
+
+	public void selectNewsEngIndex() {
+		//TODO click the filter dropdown
+		findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
+		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()[contains(.,'news_eng')]]"))).click();
+	}
+
+	/* date filter */
+	public void openFromDatePicker() {
+		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
+		loadOrFadeWait();
+	}
+
+	public void closeFromDatePicker() {
+		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
+			findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
+			loadOrFadeWait();
+			waitForSearchLoadIndicatorToDisappear();
+		}
+	}
+
+	public WebElement fromDateTextBox() {
+		return findElement(By.cssSelector("[data-filter-name=\"minDate\"] input"));
+	}
+
+	public WebElement untilDateTextBox() {
+		return findElement(By.cssSelector("[data-filter-name=\"maxDate\"] input"));
+	}
+
+	public void openUntilDatePicker() {
+		findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
+		loadOrFadeWait();
+	}
+
+	public void closeUntilDatePicker() {
+		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
+			findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
+			loadOrFadeWait();
+			waitForSearchLoadIndicatorToDisappear();
+		}
+	}
+
+	public Date getDateFromFilter(final WebElement filter) throws ParseException {
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		return dateFormat.parse(filter.getAttribute("value"));
+	}
+
+	public void sendDateToFilter(final Date date, final WebElement filter) {
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		filter.clear();
+		filter.sendKeys(dateFormat.format(date));
+	}
+
+	/* related concepts */
+	public void showRelatedConcepts() {
+		expandFilter(Filter.RELATED_CONCEPTS);
+	}
+
+	public int countRelatedConcepts() {
+		return getRelatedConcepts().size();
+	}
+
+	public List<WebElement> getRelatedConcepts() {
+		return findElements(By.cssSelector(".concepts li"));
+	}
+
+	public WebElement relatedConcept(final String conceptText) {
+		return findElement(By.cssSelector(".concepts")).findElement(By.xpath(".//a[text()=\"" + conceptText + "\"]"));
+	}
+
+	/* field text */
 	public void setFieldText(String value) {
 		showFieldTextOptions();
 		try {
@@ -238,14 +414,11 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
-	public int visibleDocumentsCount() {
-		return findElements(By.cssSelector(".search-page-contents .search-result-item")).size();
-	}
-
 	public void showFieldTextOptions() {
 		expandFilter(Filter.FIELD_TEXT);
 	}
 
+	/* side bar */
 	public WebElement getFilter(final String filter) {
 		return findElement(By.xpath(".//h4[contains(text(), '" + filter + "')]/.."));
 	}
@@ -269,18 +442,29 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
-	public void showRelatedConcepts() {
-		expandFilter(Filter.RELATED_CONCEPTS);
+	public enum Filter {
+		FILTER_BY("Filter By"),
+		RELATED_CONCEPTS("Related Concepts"),
+		FIELD_TEXT("Field Text"),
+		INDEXES("Indexes"),
+		DATABASES("Databases"),
+		DATES("Dates"),
+		PARAMETRIC_VALUES("Parametric Values");
+
+		private final String name;
+
+		Filter(final String filterName) {
+			name = filterName;
+		}
+
+		public String getName() {
+			return name;
+		}
 	}
 
+	/* waits */
 	public WebElement waitForDocLogo() {
 		return new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fa-file-o")));
-	}
-
-	public void selectNewsEngIndex() {
-		//TODO click the filter dropdown
-		findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()[contains(.,'news_eng')]]"))).click();
 	}
 
 	public void waitForSearchLoadIndicatorToDisappear() {
@@ -338,94 +522,13 @@ public abstract class SearchBase extends AppElement implements AppPage {
 				});
 	}
 
-	protected List<String> bucketList(final WebElement element) {
-		final List<String> bucketDocTitles = new ArrayList<>();
-		for (final WebElement bucketDoc : element.findElements(By.cssSelector(".promotions-bucket-document"))) {
-			bucketDocTitles.add(bucketDoc.getText());
-		}
-		return bucketDocTitles;
-	}
-
-	public void openFromDatePicker() {
-		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
-		loadOrFadeWait();
-	}
-
-	public void closeFromDatePicker() {
-		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
-			findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
-			loadOrFadeWait();
-			waitForSearchLoadIndicatorToDisappear();
-		}
-	}
-
-	public WebElement fromDateTextBox() {
-		return findElement(By.cssSelector("[data-filter-name=\"minDate\"] input"));
-	}
-
-	public WebElement untilDateTextBox() {
-		return findElement(By.cssSelector("[data-filter-name=\"maxDate\"] input"));
-	}
-
-	public void openUntilDatePicker() {
-		findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
-		loadOrFadeWait();
-	}
-
-	public void closeUntilDatePicker() {
-		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
-			findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
-			loadOrFadeWait();
-			waitForSearchLoadIndicatorToDisappear();
-		}
-	}
-
-	public Date getDateFromResult(final int index) throws ParseException {
-		final String dateString = getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
-		if (dateString.isEmpty()) {
-			return null;
-		}
-		return DATE_FORMAT.parse(dateString.split(", ")[1]);
-	}
-
-	public int countRelatedConcepts() {
-		return getRelatedConcepts().size();
-	}
-
-	public List<WebElement> getRelatedConcepts() {
-		return findElements(By.cssSelector(".concepts li"));
-	}
-
-	public WebElement relatedConcept(final String conceptText) {
-		return findElement(By.cssSelector(".concepts")).findElement(By.xpath(".//a[text()=\"" + conceptText + "\"]"));
-	}
-
 	public WebElement parametricValueLoadIndicator() {
 		return findElement(By.cssSelector(".search-parametric .processing-indicator"));
 	}
 
-	public List<String> getAllDatabases() {
-		return webElementListToStringList(findElements(By.cssSelector(".child-categories label")));
-	}
-
-	public List<WebElement> getDatabaseCheckboxes() {
-		return findElements(By.cssSelector(".child-categories input"));
-	}
-
-	public WebElement allDatabasesCheckbox() {
-		return findElement(By.cssSelector(".checkbox input[data-category-id='all']"));
-	}
-
+	/* general */
 	public boolean isErrorMessageShowing() {
 		return !findElement(By.cssSelector(".search-information")).getAttribute("class").contains("hide");
-	}
-
-	public String getTopPromotedLinkTitle() {
-		return findElement(By.cssSelector(".promotions .search-result-title")).getText();
-	}
-
-	public String getTopPromotedSpotlightType() {
-		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
 	}
 
 	public void sortByRelevance() {
@@ -448,100 +551,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		waitForSearchLoadIndicatorToDisappear();
 	}
 
-	public List<Float> getWeightsOnPage(final int numberOfPages) {
-		final List<Float> weights = new ArrayList<>();
-		for (int i = 1; i <= numberOfPages; i++) {
-			for (final WebElement weight : findElements(By.cssSelector(".weight"))) {
-				weights.add(Float.parseFloat(weight.getText().substring(8)));
-			}
-			javascriptClick(forwardPageButton());
-		}
-		return weights;
-	}
-
-	public Date getDateFromFilter(final WebElement filter) throws ParseException {
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		return dateFormat.parse(filter.getAttribute("value"));
-	}
-
-	public void sendDateToFilter(final Date date, final WebElement filter) {
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		filter.clear();
-		filter.sendKeys(dateFormat.format(date));
-	}
-
 	public List<String> filterLabelList() {
 		return webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
-	}
-
-	public List<Checkbox> indexList() {
-		List<Checkbox> checkboxes = new ArrayList<>();
-		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
-			if (element.isDisplayed()) {
-				checkboxes.add(new Checkbox(element, getDriver()));
-			}
-		}
-		return checkboxes;
-	}
-
-	public Checkbox indexCheckbox(String indexName) {
-		return new Checkbox(findElement(By.cssSelector(".checkbox[data-name='" + indexName + "']")), getDriver());
-	}
-
-	public Checkbox allIndexesCheckbox() {
-		return new Checkbox(findElement(By.cssSelector(".checkbox[data-category-id='all']")), getDriver());
-	}
-
-	public void deselectIndex(String index) {
-		Checkbox checkbox = indexCheckbox(index);
-
-		if(checkbox.isChecked()){
-			checkbox.toggle();
-		}
-
-		loadOrFadeWait();
-		waitForSearchLoadIndicatorToDisappear();
-	}
-
-	public void openPublicFilter(){
-		findElement(By.cssSelector("[data-category-id=public] i")).click();
-	}
-
-	public void selectIndex(String index) {
-		Checkbox checkbox = indexCheckbox(index);
-
-		if(checkbox.isChecked()){
-			return;
-		}
-
-		if(!checkbox.isDisplayed()){
-			openPublicFilter();
-			loadOrFadeWait();
-		}
-
-		checkbox.toggle();
-
-		loadOrFadeWait();
-		waitForSearchLoadIndicatorToDisappear();
-	}
-
-	public enum Filter {
-		FILTER_BY("Filter By"),
-		RELATED_CONCEPTS("Related Concepts"),
-		FIELD_TEXT("Field Text"),
-		INDEXES("Indexes"),
-		DATABASES("Databases"),
-		DATES("Dates"),
-		PARAMETRIC_VALUES("Parametric Values");
-
-		private final String name;
-
-		Filter(final String filterName) {
-			name = filterName;
-		}
-
-		public String getName() {
-			return name;
-		}
 	}
 }
