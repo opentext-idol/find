@@ -16,6 +16,6 @@ import java.util.Collections;
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolDocumentServiceIT extends AbstractDocumentServiceIT<String, FindDocument, AciErrorException> {
     public IdolDocumentServiceIT() {
-        super(Collections.<String>emptyList());
+        super(Collections.singletonList("Wookiepedia"));
     }
 }

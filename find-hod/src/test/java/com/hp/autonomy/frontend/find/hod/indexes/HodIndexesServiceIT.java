@@ -5,9 +5,12 @@
 
 package com.hp.autonomy.frontend.find.hod.indexes;
 
+import com.hp.autonomy.frontend.find.HostedFindApplication;
 import com.hp.autonomy.frontend.find.core.indexes.AbstractIndexesServiceIT;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.databases.Database;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 
+@SpringApplicationConfiguration(classes = HostedFindApplication.class)
 public class HodIndexesServiceIT extends AbstractIndexesServiceIT<Database, HodErrorException> {
 }
