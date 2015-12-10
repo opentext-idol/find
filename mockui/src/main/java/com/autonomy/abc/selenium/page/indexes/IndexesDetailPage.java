@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.indexes;
 
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -76,5 +77,9 @@ public class IndexesDetailPage extends SAASPageBase {
         }
 
         return connectors;
+    }
+
+    public WebElement getFilesIngestedGraph() {
+        return ElementUtil.ancestor(findElement(By.cssSelector("[for='filesIngestedOption']")),1).findElement(By.cssSelector("wait-for-promise>div>div"));
     }
 }

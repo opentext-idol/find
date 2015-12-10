@@ -8,17 +8,20 @@ import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -27,6 +30,8 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     private IndexService indexService;
     private IndexesPage indexesPage;
     private IndexesDetailPage indexesDetailPage;
+    private Index indexOne = new Index("one");
+    private Index indexTwo = new Index("two");
 
     public IndexDetailsPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -43,9 +48,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     //CSA-1643
     public void testAssociatedConnections(){
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
-        Index indexOne = new Index("one");
-        Index indexTwo = new Index("two");
-        Connector connector = new WebConnector("http://www.bbc.co.uk","connector",indexOne).withDuration(60);
+        Connector connector = new WebConnector("http://www.bbc.co.uk", "connector", indexOne).withDuration(60);
 
         indexService.setUpIndex(indexOne);
         indexService.setUpIndex(indexTwo);
@@ -79,6 +82,17 @@ public class IndexDetailsPageITCase extends HostedTestBase {
         } finally {
             connectionService.deleteAllConnections(true);
         }
+    }
+
+    @Test
+    //CSA-1703
+    public void testGraphNoDataMessage(){
+        indexService.setUpIndex(indexOne);
+        indexesDetailPage = indexService.goToDetails(indexOne);
+
+        new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIconSmall")));
+
+        verifyThat(indexesDetailPage.getFilesIngestedGraph(), containsText("There is no data for this time period"));
     }
 
     @After
