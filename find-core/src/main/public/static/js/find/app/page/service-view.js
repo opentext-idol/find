@@ -63,13 +63,15 @@ define([
             this.indexesCollection.fetch();
 
             var fetchEntities = _.bind(function() {
-                this.entityCollection.fetch({
-                    data: {
-                        text: this.queryModel.get('queryText'),
-                        index: this.queryModel.get('indexes'),
-                        field_text: this.queryModel.get('fieldText')
-                    }
-                });
+                if (this.queryModel.get('indexes').length !== 0) {
+                    this.entityCollection.fetch({
+                        data: {
+                            text: this.queryModel.get('queryText'),
+                            index: this.queryModel.get('indexes'),
+                            field_text: this.queryModel.get('fieldText')
+                        }
+                    });
+                }
             }, this);
 
             this.listenTo(this.queryModel, 'refresh', fetchEntities);

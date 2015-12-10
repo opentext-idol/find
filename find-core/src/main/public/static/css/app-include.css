@@ -48,6 +48,10 @@ html, body {
     z-index: 1000;
 }
 
+.check-cell {
+    width: 29px;
+}
+
 .break-all {
     word-break: break-all;
 }
@@ -473,6 +477,14 @@ input.find-input {
 .error-body {
     margin-top: 250px;
     text-align: center;
+}
+
+.error.well {
+    margin-left: 14px;
+}
+
+.error-message > span {
+    font-weight: bold;
 }
 
 .suggestion-head-text {

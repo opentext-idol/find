@@ -16,10 +16,10 @@ define([
             }, this);
         });
 
-        it("should not change with just query text set", function() {
+        it("should change with query text set", function() {
             this.queryModel.set('queryText', 'text');
 
-            expect(this.changed).toBe(false);
+            expect(this.changed).toBe(true);
         });
 
         it("should not change with just indexes set", function() {
@@ -29,11 +29,11 @@ define([
         });
 
         it("should change with both queryText and indexes set", function() {
-            this.queryModel.set('queryText', 'text');
+            this.queryModel.set('indexes', ['index1','index2']);
 
             expect(this.changed).toBe(false);
 
-            this.queryModel.set('indexes', ['index1','index2']);
+            this.queryModel.set('queryText', 'text');
 
             expect(this.changed).toBe(true);
         });

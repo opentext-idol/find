@@ -68,26 +68,34 @@ define([
             var handlePopover = _.debounce(_.bind(popoverHandler, this), 500);
 
             this.listenTo(this.entityCollection, 'reset', function() {
-                this.$list.empty();
-
-                if (this.entityCollection.isEmpty()) {
-                    this.selectViewState(['none']);
+                if (this.indexesCollection.isEmpty()) {
+                    this.selectViewState(['notLoading']);
                 } else {
-                    this.selectViewState(['list']);
+                    this.$list.empty();
 
-                    var clusters = this.entityCollection.groupBy('cluster');
+                    if (this.entityCollection.isEmpty()) {
+                        this.selectViewState(['none']);
+                    } else {
+                        this.selectViewState(['list']);
 
-                    _.each(clusters, function(entities) {
-                        this.$list.append(this.listItemTemplate({entities: entities}));
-                    }, this);
+                        var clusters = this.entityCollection.groupBy('cluster');
 
-                    popover(this.$list.find('.entity-text'), handlePopover);
+                        _.each(clusters, function (entities) {
+                            this.$list.append(this.listItemTemplate({entities: entities}));
+                        }, this);
+
+                        popover(this.$list.find('.entity-text'), handlePopover);
+                    }
                 }
             });
 
             /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
-                this.selectViewState(['processing']);
+                if (this.indexesCollection.isEmpty()) {
+                    this.selectViewState(['notLoading']);
+                } else {
+                    this.selectViewState(['processing']);
+                }
             });
 
             this.listenTo(this.entityCollection, 'error', function() {
@@ -117,6 +125,11 @@ define([
                 none: this.$none,
                 notLoading: this.$notLoading
             });
+            if (this.indexesCollection.isEmpty()) {
+                this.selectViewState(['notLoading']);
+            } else {
+                this.selectViewState(['processing'])
+            }
         }
     });
 
