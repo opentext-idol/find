@@ -32,15 +32,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.12.4</version>
                 <executions>
@@ -104,13 +95,13 @@
             </activation>
             <id>dev</id>
             <properties>
-                <env>dev</env>
+                <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
             </properties>
         </profile>
         <profile>
             <id>production</id>
             <properties>
-                <env>production</env>
+                <static-resources-dir>${project.build.directory}/webapp</static-resources-dir>
             </properties>
         </profile>
     </profiles>

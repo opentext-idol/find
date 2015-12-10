@@ -16,25 +16,35 @@
 
     <artifactId>find-core</artifactId>
 
-    <packaging>war</packaging>
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <attachClasses>true</attachClasses>
-                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
                     <execution>
+                        <id>default-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>static/**/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jar-full</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>full</classifier>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-jar</id>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
@@ -203,51 +213,6 @@
         </profile>
         <profile>
             <id>production</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.mcheely</groupId>
-                        <artifactId>requirejs-maven-plugin</artifactId>
-                        <version>2.0.0</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>optimize</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <configFile>${basedir}/build.js</configFile>
-                            <optimizerFile>${basedir}/node_modules/requirejs/bin/r.js</optimizerFile>
-                            <filterConfig>true</filterConfig>
-                            <skip>false</skip>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.3.1</version>
-                        <executions>
-                            <execution>
-                                <id>bless</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>node</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
-                                    <arguments>
-                                        <argument>${basedir}/node_modules/bless/bin/blessc</argument>
-                                        <argument>-f</argument>
-                                        <argument>target/${project.parent.artifactId}/static/css/app.css</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>

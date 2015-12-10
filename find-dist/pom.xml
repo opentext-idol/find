@@ -60,4 +60,13 @@
             <classifier>executable</classifier>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+        </profile>
+        <profile>
+            <id>production</id>
+        </profile>
+    </profiles>
 </project>

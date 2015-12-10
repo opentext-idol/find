@@ -21,19 +21,62 @@
         <finalName>${artifactName}</finalName>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <id>npm-install</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <workingDirectory>${basedir}</workingDirectory>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>find-core</includeArtifactIds>
+                            <includeTypes>jar</includeTypes>
+                            <includeClassifiers>full</includeClassifiers>
+                            <includes>static/**/*</includes>
+                            <outputDirectory>${static-resources-dir}</outputDirectory>
+                            <overWriteIfNewer>false</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <overwrite>true</overwrite>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                    <overlays>
-                        <overlay>
-                            <id>find-core</id>
-                            <groupId>com.hp.autonomy.frontend.find</groupId>
-                            <artifactId>find-core</artifactId>
-                            <type>war</type>
-                        </overlay>
-                    </overlays>
                     <packagingExcludes>**/tomcat-embed-*.jar</packagingExcludes>
                 </configuration>
             </plugin>
@@ -43,12 +86,6 @@
                 <configuration>
                     <classifier>executable</classifier>
                     <finalName>${artifactName}</finalName>
-                    <excludes>
-                        <exclude>
-                            <groupId>com.hp.autonomy.frontend.find</groupId>
-                            <artifactId>find-core</artifactId>
-                        </exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -68,15 +105,13 @@
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>find-core</artifactId>
             <version>${project.version}</version>
-            <classifier>classes</classifier>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>find-core</artifactId>
             <version>${project.version}</version>
-            <type>war</type>
-            <scope>runtime</scope>
+            <classifier>full</classifier>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -136,6 +171,67 @@
         </profile>
         <profile>
             <id>production</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.7</version>
+                        <executions>
+                            <execution>
+                                <id>static-resources</id>
+                                <goals>
+                                    <goal>resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${static-resources-dir}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.mcheely</groupId>
+                        <artifactId>requirejs-maven-plugin</artifactId>
+                        <version>2.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>optimize</id>
+                                <goals>
+                                    <goal>optimize</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <configFile>${basedir}/build.js</configFile>
+                            <optimizerFile>${basedir}/node_modules/requirejs/bin/r.js</optimizerFile>
+                            <filterConfig>true</filterConfig>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>bless</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>node</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>${basedir}/node_modules/bless/bin/blessc</argument>
+                                        <argument>-f</argument>
+                                        <argument>target/classes/static/css/app.css</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

@@ -4,11 +4,11 @@
  */
 
 ({
-    appDir: "${basedir}/src/main/public",
+    appDir: "${static-resources-dir}",
     baseUrl: "static/js",
-    dir: "${basedir}/target/${build.finalName}",
-    keepBuildDir: "true",
-    mainConfigFile: '${basedir}/src/main/public/static/js/require-config.js',
+    dir: "${project.build.outputDirectory}",
+    keepBuildDir: true,
+    mainConfigFile: '${static-resources-dir}/static/js/require-config.js',
     modules: [
         {
             name: "main",
@@ -33,7 +33,7 @@
             name: "public",
             include: [
                 'require-config',
-                'find/public/app'
+                'find/idol/public/idol-app'
             ]
         }
     ]
