@@ -98,7 +98,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Make sure default index is still there
-        assertThat(indexesPage.getIndexNames(),hasItem(default_index.getName()));
+        assertThat(indexesPage.getIndexNames(), hasItem(default_index.getName()));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Ensure the index wasn't deleted
-        assertThat(indexesPage.getIndexNames(),hasItem(index.getName()));
+        assertThat(indexesPage.getIndexNames(), hasItem(index.getName()));
     }
 
     @Test
@@ -220,6 +220,21 @@ public class IndexesPageITCase extends HostedTestBase {
         getDriver().get("https://search.dev.idolondemand.com/search/#/index/doesntexistmate");
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
         verifyThat(new AppElement(getDriver().findElement(By.className("wrapper-content")),getDriver()), containsText("Index doesntexistmate does not exist"));
+    }
+
+    @Test
+    //CSA-1886
+    public void testDeletingDefaultIndex(){
+        IndexService indexService = getApplication().createIndexService(getElementFactory());
+
+        indexService.deleteIndexViaAPICalls(Index.DEFAULT);
+
+        getDriver().navigate().refresh();
+
+        indexesPage = getElementFactory().getIndexesPage();
+        body = getBody();
+
+        verifyThat(indexesPage.getIndexNames(), hasItem(Index.DEFAULT.getName()));
     }
 
     @After
