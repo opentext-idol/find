@@ -42,6 +42,15 @@ define([
             });
         },
 
+        // will be overridden
+        constructResultsView: function (entityCollection, indexesCollection, queryModel) {
+            return new ResultsView({
+                entityCollection: entityCollection,
+                indexesCollection: indexesCollection,
+                queryModel: queryModel
+            });
+        },
+
         initialize: function(options) {
             this.queryModel = options.queryModel;
 
@@ -88,11 +97,7 @@ define([
                 }));
             }, this), 500));
 
-            this.resultsView = new ResultsView({
-                entityCollection: this.entityCollection,
-                indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel
-            });
+            this.resultsView = this.constructResultsView(this.entityCollection, this.indexesCollection, this.queryModel);
 
             // Left Views
             this.filterDisplayView = new FilterDisplayView({

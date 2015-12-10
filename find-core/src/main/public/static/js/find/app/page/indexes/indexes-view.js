@@ -67,7 +67,7 @@ define([
             var childCategories = this.getIndexCategories();
             DatabasesView.prototype.initialize.call(this, {
                 databasesCollection: options.indexesCollection,
-                emptyMessage: configuration().hosted ? i18n['search.indexes.empty'] : i18n['search.databases.empty'],
+                emptyMessage: i18n['search.indexes.empty'],
                 selectedDatabasesCollection: options.selectedDatabasesCollection,
                 topLevelDisplayName: i18n['search.indexes.all'],
                 childCategories: childCategories

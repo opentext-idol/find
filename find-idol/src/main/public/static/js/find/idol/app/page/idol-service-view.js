@@ -5,8 +5,9 @@
 
 define([
     'find/app/page/service-view',
-    'find/idol/app/page/indexes/idol-indexes-view'
-], function(ServiceView, IndexesView) {
+    'find/idol/app/page/indexes/idol-indexes-view',
+    'find/idol/app/page/results/idol-results-view'
+], function(ServiceView, IndexesView, ResultsView) {
     'use strict';
 
     return ServiceView.extend({
@@ -15,6 +16,14 @@ define([
                 queryModel: queryModel,
                 indexesCollection: indexesCollection,
                 selectedDatabasesCollection: selectedIndexesCollection
+            });
+        },
+
+        constructResultsView: function (entityCollection, indexesCollection, queryModel) {
+            return new ResultsView({
+                entityCollection: entityCollection,
+                indexesCollection: indexesCollection,
+                queryModel: queryModel
             });
         }
     });

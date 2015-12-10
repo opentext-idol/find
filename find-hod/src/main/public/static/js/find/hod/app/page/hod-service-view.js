@@ -5,8 +5,9 @@
 
 define([
     'find/app/page/service-view',
-    'find/hod/app/page/indexes/hod-indexes-view'
-], function(ServiceView, IndexesView) {
+    'find/hod/app/page/indexes/hod-indexes-view',
+    'find/hod/app/page/results/hod-results-view'
+], function(ServiceView, IndexesView, ResultsView) {
     'use strict';
 
     return ServiceView.extend({
@@ -15,6 +16,14 @@ define([
                 queryModel: queryModel,
                 indexesCollection: indexesCollection,
                 selectedDatabasesCollection: selectedIndexesCollection
+            });
+        },
+
+        constructResultsView: function (entityCollection, indexesCollection, queryModel) {
+            return new ResultsView({
+                entityCollection: entityCollection,
+                indexesCollection: indexesCollection,
+                queryModel: queryModel
             });
         }
     });

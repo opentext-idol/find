@@ -20,8 +20,6 @@ import com.hp.autonomy.hod.client.api.textindex.query.search.QueryRequestBuilder
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
-import com.hp.autonomy.hod.client.error.HodError;
-import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.types.requests.Documents;

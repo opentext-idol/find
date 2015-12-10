@@ -9,10 +9,11 @@ define([
     'use strict';
 
     return substitution({
+        'search.error.noIndexes': 'The list of indexes has not yet been retrieved',
         'search.indexes': 'Indexes',
         'search.indexes.all': 'All',
         'search.indexes.publicIndexes': 'Public Indexes',
         'search.indexes.privateIndexes': 'Private Indexes',
-        'search.indexes.empty': 'Waiting for Indexes...'
+        'search.indexes.empty': 'No Available Indexes'
     });
 });

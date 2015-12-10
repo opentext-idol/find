@@ -9,9 +9,7 @@ define([
     'use strict';
 
     return substitution({
-        'search.error.noIndexes': 'The list of databases has not yet been retrieved',
-        'search.indexes': 'Databases',
-        'search.indexes.all': 'All',
-        'search.indexes.empty': 'No Available Databases'
+        'error.default.message.uuid': 'Unknown error with UUID: {0}, please contact support.',
+        'error.default.message': 'Unknown error, please contact support.'
     });
 });

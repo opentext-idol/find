@@ -10,7 +10,6 @@ define([
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
     'js-whatever/js/escape-regex',
-    'find/app/configuration',
     'text!find/templates/app/page/results-popover.html',
     'text!find/templates/app/page/popover-message.html',
     'text!find/templates/app/page/results/results-view.html',
@@ -22,11 +21,12 @@ define([
     'text!find/templates/app/page/results/entity-label.html',
     'moment',
     'i18n!find/nls/bundle',
+    'i18n!find/nls/indexes',
     'colorbox'
 ], function(Backbone, $, _, DocumentModel, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover,
-            viewClient, documentMimeTypes, escapeRegex, configuration, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
+            viewClient, documentMimeTypes, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate,
-            moment, i18n) {
+            moment, i18n, i18n_indexes) {
 
     /** Whitespace OR character in set bounded by [] */
     var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
@@ -57,6 +57,9 @@ define([
     };
 
     return Backbone.View.extend({
+        //to be overridden
+        generateErrorMessage: _.noop,
+
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
@@ -118,7 +121,7 @@ define([
                     }, this);
                 } else {
                     this.$loadingSpinner.addClass('hide');
-                    this.$('.main-results-content .results').html(this.messageTemplate({message: configuration().hosted ? i18n["search.error.noIndexes"] : i18n["search.error.noDatabases"]}));
+                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
                 }
             });
         },
@@ -422,24 +425,8 @@ define([
         },
 
         handleError: function(feature, xhr) {
-
-            var message = i18n['error.default.message'];;
-
             this.toggleError(true);
-
-            if (xhr.responseJSON) {
-                if (xhr.responseJSON.hodErrorCode) {
-                    if (i18n["hod.error." + xhr.responseJSON.hodErrorCode]) {
-                        message = i18n["hod.error." + xhr.responseJSON.hodErrorCode];
-                    }
-                    else if (xhr.responseJSON.uuid) {
-                        message = i18n['error.default.message.uuid'](xhr.responseJSON.uuid);
-                    }
-                }
-                else if (xhr.responseJSON.message) {
-                    message = xhr.responseJSON.message;
-                }
-            }
+            var message = this.generateErrorMessage(xhr);
 
             var messageTemplate = this.errorTemplate({feature: feature, error: message});
             this.$('.main-results-content .error .error-list').append(messageTemplate);
