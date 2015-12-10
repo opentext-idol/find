@@ -10,7 +10,6 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,11 +20,11 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.tools.JavaCompiler;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -113,7 +112,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
 
         indexesDetailPage.backButton().click();
 
-        verifyThat(getDriver().getCurrentUrl(), is("https://search.dev.idolondemand.com/search/#/indexes"));
+        verifyThat(getDriver().getCurrentUrl(), containsString("indexes"));
     }
 
     @After

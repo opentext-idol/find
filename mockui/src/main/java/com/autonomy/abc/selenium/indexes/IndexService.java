@@ -91,9 +91,10 @@ public class IndexService {
         return indexesPage;
     }
 
-    public void deleteIndexViaAPICalls(Index indexOne) {
+    public void deleteIndexViaAPICalls(Index index) {
+        //TODO prod apikey, find a nice way y'know
         String apiKey = "9711e4b0-ec2c-409c-908b-d5e8ed20ebec";
-        String url = "https://api.int.havenondemand.com/1/api/sync/deletetextindex/v1?index=" + indexOne.getName() + "&";
+        String url = "https://api.int.havenondemand.com/1/api/sync/deletetextindex/v1?index=" + index.getName() + "&";
 
         ((JavascriptExecutor) getDriver()).executeScript("window.open('your url','_blank');");
 
