@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.language.Language;
 import org.junit.After;
@@ -127,8 +128,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         searchPage.waitForSearchLoadIndicatorToDisappear();
 
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-            searchPage.selectNewsEngIndex();
-            searchPage.waitForSearchLoadIndicatorToDisappear();
+            new IndexFilter("news_eng").apply(searchPage);
         }
 
         searchPage.waitForDocLogo();

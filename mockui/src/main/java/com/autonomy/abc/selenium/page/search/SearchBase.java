@@ -303,12 +303,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		waitForSearchLoadIndicatorToDisappear();
 	}
 
-	public void selectNewsEngIndex() {
-		//TODO click the filter dropdown
-		findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
-		new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()[contains(.,'news_eng')]]"))).click();
-	}
-
 	/* date filter */
 	public void openFromDatePicker() {
 		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
@@ -419,11 +413,11 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	}
 
 	/* side bar */
-	public WebElement getFilter(final String filter) {
+	private WebElement getFilter(final String filter) {
 		return findElement(By.xpath(".//h4[contains(text(), '" + filter + "')]/.."));
 	}
 
-	public WebElement getSubFilter(final Filter filter) {
+	private WebElement getSubFilter(final Filter filter) {
 		return findElement(By.xpath(".//h5[contains(text(), '" + filter.getName() + "')]/.."));
 	}
 
@@ -539,7 +533,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		sortBy("by date");
 	}
 
-	public void sortBy(final String sortBy) {
+	private void sortBy(final String sortBy) {
 		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".current-search-sort"))).click();
 
 		final WebElement element = findElement(By.cssSelector(".search-results-sort")).findElement(By.xpath(".//a[text()='" + sortBy + "']"));
