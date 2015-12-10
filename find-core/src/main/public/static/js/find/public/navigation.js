@@ -25,6 +25,7 @@ define([
             return {
                 i18n: i18n,
                 menuItems: this.menuItems,
+                pages: this.pages.pages,
                 username: configuration().username
             }
         }

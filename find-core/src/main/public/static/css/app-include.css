@@ -396,28 +396,28 @@ input.find-input {
 .animated-container {
     position: absolute;
     top: -60px;
-    transition: all 1000ms ease;
+    transition: all 1s ease;
 }
 
 .animated-container .find-form {
     width: 97.5% !important;
-    transition: all 1000ms ease;
+    transition: all 1s ease;
     transition-property:width;
 }
 
 .animated-container .find-input {
     font-size: 18px;
     border-bottom: none;
-    transition: all 1000ms ease;
+    transition: all 1s ease;
 }
 /* fancy reverse animation */
 .reverse-animated-container {
     margin-top: 10%;
-    transition: all 1000ms ease;
+    transition: all 1s ease;
 }
 
 .reverse-animated-container .find-form {
-    transition: all 1000ms ease;
+    transition: all 1s ease;
     transition-property:width;
 }
 
@@ -425,7 +425,7 @@ input.find-input {
     height: 45px !important;
     font-size: 23px !important;
     border: 2px solid #CCC !important;
-    transition: all 1000ms ease;
+    transition: all 1s ease;
     padding: 10px;
     font-family: inherit;
     font-style: italic;

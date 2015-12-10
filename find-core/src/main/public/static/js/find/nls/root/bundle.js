@@ -6,17 +6,19 @@ define([
     'js-whatever/js/substitution'
 ], function(substitution) {
     return substitution({
+        'app.about': 'About',
         'app.cancel': 'Cancel',
+        'app.from': 'From',
         'app.loading': 'Loading...',
         'app.logout': 'Logout',
         'app.name': "Find",
         'app.ok': 'OK',
         'app.roles': 'Roles',
+        'app.search': 'Search',
         'app.settings': 'Settings',
+        'app.until': 'Until',
         'app.user': 'User',
         'app.users': 'Users',
-        'app.from': 'From',
-        'app.until': 'Until',
         'app.feature.search': 'Search',
         'app.feature.promotions': 'Promotions',
         'datepicker.language': 'en',

@@ -1,11 +1,8 @@
-<li data-pagename="search">
-    <a href="#search">
-        <i class="icon-search"></i> Search
-    </a>
-</li>
-<li data-pagename="about">
-    <a href="#about">
-        <i class="icon-cog"></i> About
-    </a>
-</li>
+<% _.each(pages, function(page) { %>
+    <li data-pagename="<%-page.pageName%>">
+        <a href="#<%-page.pageName%>">
+            <i class="<%-page.icon%>"></i> <%-page.title%>
+        </a>
+    </li>
+<% }) %>
 <li class="divider"></li>
