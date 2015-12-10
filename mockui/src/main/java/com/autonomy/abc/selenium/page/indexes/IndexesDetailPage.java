@@ -82,4 +82,12 @@ public class IndexesDetailPage extends SAASPageBase {
     public WebElement filesIngestedGraph() {
         return ElementUtil.ancestor(findElement(By.cssSelector("[for='filesIngestedOption']")),1).findElement(By.cssSelector("wait-for-promise>div>div"));
     }
+
+    public WebElement searches() {
+        return ElementUtil.ancestor(findElement(By.xpath("//*[text()='Searches']")), 2);
+    }
+
+    public WebElement backButton() {
+        return findElement(By.cssSelector("div:not(.affix-clone)>div>#nav-back"));
+    }
 }
