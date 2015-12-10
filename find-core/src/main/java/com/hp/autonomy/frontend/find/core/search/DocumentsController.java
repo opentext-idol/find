@@ -20,45 +20,61 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-@RequestMapping("/api/public/search")
+@RequestMapping(DocumentsController.SEARCH_PATH)
 public abstract class DocumentsController<S extends Serializable, D extends FindDocument, E extends Exception> {
+    public static final String SEARCH_PATH = "/api/public/search";
+    public static final String QUERY_PATH = "query-text-index/results";
+    public static final String PROMOTIONS_PATH = "query-text-index/promotions";
+    public static final String SIMILAR_DOCUMENTS_PATH = "similar-documents";
+
+    public static final String TEXT_PARAM = "text";
+    public static final String MAX_RESULTS_PARAM = "max_results";
+    public static final String SUMMARY_PARAM = "summary";
+    public static final String INDEX_PARAM = "index";
+    public static final String FIELD_TEXT_PARAM = "field_text";
+    public static final String SORT_PARAM = "sort";
+    public static final String MIN_DATE_PARAM = "min_date";
+    public static final String MAX_DATE_PARAM = "max_date";
+    public static final String REFERENCE_PARAM = "reference";
+    public static final String INDEXES_PARAM = "indexes";
+
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     protected DocumentsService<S, D, E> documentsService;
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(value = "query-text-index/results", method = RequestMethod.GET)
+    @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public Documents<D> query(@RequestParam("text") final String text,
-                              @RequestParam("max_results") final int maxResults,
-                              @RequestParam("summary") final String summary,
-                              @RequestParam("index") final List<S> index,
-                              @RequestParam(value = "field_text", defaultValue = "") final String fieldText,
-                              @RequestParam(value = "sort", required = false) final String sort,
-                              @RequestParam(value = "min_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-                              @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
+    public Documents<D> query(@RequestParam(TEXT_PARAM) final String text,
+                              @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
+                              @RequestParam(SUMMARY_PARAM) final String summary,
+                              @RequestParam(INDEX_PARAM) final List<S> index,
+                              @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+                              @RequestParam(value = SORT_PARAM, required = false) final String sort,
+                              @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+                              @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
         final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
         return documentsService.queryTextIndex(findQueryParams);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(value = "query-text-index/promotions", method = RequestMethod.GET)
+    @RequestMapping(value = PROMOTIONS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public Documents<D> queryForPromotions(@RequestParam("text") final String text,
-                                           @RequestParam("max_results") final int maxResults,
-                                           @RequestParam("summary") final String summary,
-                                           @RequestParam("index") final List<S> index,
-                                           @RequestParam(value = "field_text", defaultValue = "") final String fieldText,
-                                           @RequestParam(value = "sort", required = false) final String sort,
-                                           @RequestParam(value = "min_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-                                           @RequestParam(value = "max_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
+    public Documents<D> queryForPromotions(@RequestParam(TEXT_PARAM) final String text,
+                                           @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
+                                           @RequestParam(SUMMARY_PARAM) final String summary,
+                                           @RequestParam(INDEX_PARAM) final List<S> index,
+                                           @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+                                           @RequestParam(value = SORT_PARAM, required = false) final String sort,
+                                           @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+                                           @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
         final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
         return documentsService.queryTextIndexForPromotions(findQueryParams);
     }
 
-    @RequestMapping(value = "similar-documents", method = RequestMethod.GET)
+    @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<D> findSimilar(@RequestParam("reference") final String reference, @RequestParam("indexes") final Set<S> indexes) throws E {
+    public List<D> findSimilar(@RequestParam(REFERENCE_PARAM) final String reference, @RequestParam(INDEXES_PARAM) final Set<S> indexes) throws E {
         return documentsService.findSimilar(indexes, reference);
     }
 }
