@@ -167,14 +167,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
 	}
 
-	public List<String> getSearchTermsList() {
-		final List<String> searchTerms = new ArrayList<>();
-		for (final WebElement searchTerm : findElements(By.cssSelector(".search-terms-list span"))) {
-				searchTerms.add(searchTerm.getText());
-		}
-		return searchTerms;
-	}
-
 	public boolean isPromotionsBoxVisible() {
 		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
 	}

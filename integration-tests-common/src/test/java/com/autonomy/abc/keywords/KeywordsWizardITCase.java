@@ -134,8 +134,9 @@ public class KeywordsWizardITCase extends ABCTestBase {
         }
 
         searchPage.waitForDocLogo();
-        final List<String> searchTerms = searchPage.getSearchTermsList();
-        assertThat(searchTerms, hasItems("stuff", "horse", "pony", "things"));
+        final List<String> searchTerms = searchPage.youSearchedFor();
+        assertThat("search for 1 synonym after creating synonym group", searchTerms, hasSize(1));
+        assertThat(searchTerms.get(0), isIn(Arrays.asList("stuff", "horse", "pony", "things")));
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
