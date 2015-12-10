@@ -205,10 +205,6 @@ html, body {
     overflow-x: hidden;
 }
 
-.main-content .container-fluid {
-    height: calc(100% - 70px); /* height of page - height of .header - margin-bottom of .header */
-}
-
 .find-main-subcontainer,
 .main-content .content {
     height:100%;
@@ -416,8 +412,7 @@ input.find-input {
 }
 /* fancy reverse animation */
 .reverse-animated-container {
-    position: absolute;
-    top: 25%;
+    margin-top: 10%;
     transition: all 1000ms ease;
 }
 
