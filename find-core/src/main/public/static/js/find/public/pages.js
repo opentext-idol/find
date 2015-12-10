@@ -6,9 +6,8 @@
 define([
     'find/app/find-pages',
     'find/app/page/find-search',
-    'find/app/configuration',
     'i18n!find/nls/bundle'
-], function(FindPages, FindSearch, AboutPage, configuration, i18n) {
+], function(FindPages, FindSearch, i18n) {
     return FindPages.extend({
 
         initializePages: function() {
@@ -20,15 +19,6 @@ define([
                     title: i18n['app.search']
                 }
             ];
-
-            if (!configuration().hod) {
-                this.pages.push({
-                    constructor: AboutPage,
-                    icon: 'fa fa-cog',
-                    pageName: 'about',
-                    title: i18n['app.about']
-                })
-            }
         }
     });
 });

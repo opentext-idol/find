@@ -35,11 +35,14 @@ public class FindController {
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
 
-    @Value(AppConfiguration.APPLICATION_VERSION_PROPERTY)
-    private String applicationVersion;
+    @Value(AppConfiguration.APPLICATION_BUILD_NUMBER_PROPERTY)
+    private String buildNumber;
 
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommit;
+
+    @Value(AppConfiguration.APPLICATION_RELEASE_VERSION_PROPERTY)
+    private String releaseVersion;
 
     @Autowired
     private ControllerUtils controllerUtils;
@@ -60,9 +63,11 @@ public class FindController {
         final String username = SecurityContextHolder.getContext().getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.USERNAME.value(), username);
+        config.put(MvcConstants.BUILD_NUMBER.value(), buildNumber);
+        config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
+        config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(config));
 
@@ -72,7 +77,7 @@ public class FindController {
     @RequestMapping(value = LOGIN_PATH, method = RequestMethod.GET)
     public ModelAndView login() {
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
+        attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         return new ModelAndView(ViewNames.LOGIN.value(), attributes);
     }
 }

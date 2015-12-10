@@ -30,8 +30,8 @@ public class CustomErrorController {
     @Autowired
     private MessageSource messageSource;
 
-    @Value("${application.version}")
-    private String applicationVersion;
+    @Value("${application.commit}")
+    private String commit;
 
     @RequestMapping(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
     public ModelAndView authenticationErrorPage(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -89,7 +89,7 @@ public class CustomErrorController {
         if (contactSupport) {
             modelAndView.addObject("contactSupport", messageSource.getMessage("error.contactSupport", null, locale));
         }
-        modelAndView.addObject("applicationVersion", applicationVersion);
+        modelAndView.addObject("commit", commit);
 
         return modelAndView;
     }

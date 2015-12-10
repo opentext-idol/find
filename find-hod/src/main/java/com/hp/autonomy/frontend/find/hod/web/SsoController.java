@@ -44,7 +44,7 @@ public class SsoController {
     @Autowired
     private ControllerUtils controllerUtils;
 
-    @Value(AppConfiguration.APPLICATION_VERSION_PROPERTY)
+    @Value(AppConfiguration.APPLICATION_BUILD_NUMBER_PROPERTY)
     private String applicationVersion;
 
     @Value(HodConfiguration.SSO_PAGE_PROPERTY)
@@ -65,7 +65,7 @@ public class SsoController {
         ssoConfig.put(SsoMvcConstants.SSO_ENTRY_PAGE.value(), SSO_PAGE);
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
+        attributes.put(MvcConstants.BUILD_NUMBER.value(), applicationVersion);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(ssoConfig));
         attributes.put(ControllerUtils.SPRING_CSRF_ATTRIBUTE, request.getAttribute(ControllerUtils.SPRING_CSRF_ATTRIBUTE));
 
@@ -81,7 +81,7 @@ public class SsoController {
         ssoConfig.put(SsoMvcConstants.LOGOUT_REDIRECT_URL.value(), hodFindConfig.getHsod().getLandingPageUrl());
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
+        attributes.put(MvcConstants.BUILD_NUMBER.value(), applicationVersion);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(ssoConfig));
         attributes.put(ControllerUtils.SPRING_CSRF_ATTRIBUTE, request.getAttribute(ControllerUtils.SPRING_CSRF_ATTRIBUTE));
         return new ModelAndView(ViewNames.SSO_LOGOUT.value(), attributes);
