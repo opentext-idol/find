@@ -10,14 +10,18 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.tools.JavaCompiler;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -42,6 +46,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     @Before
     public void setUp(){
         indexService = getApplication().createIndexService(getElementFactory());
+        indexesPage = indexService.setUpIndex(indexOne);
     }
 
     @Test
@@ -50,7 +55,6 @@ public class IndexDetailsPageITCase extends HostedTestBase {
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
         Connector connector = new WebConnector("http://www.bbc.co.uk", "connector", indexOne).withDuration(60);
 
-        indexService.setUpIndex(indexOne);
         indexService.setUpIndex(indexTwo);
         try {
             connectionService.setUpConnection(connector);
@@ -87,12 +91,29 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     @Test
     //CSA-1703
     public void testGraphNoDataMessage(){
-        indexService.setUpIndex(indexOne);
         indexesDetailPage = indexService.goToDetails(indexOne);
 
         new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIconSmall")));
 
         verifyThat(indexesDetailPage.filesIngestedGraph(), containsText("There is no data for this time period"));
+    }
+
+    @Test
+    //CSA-1685
+    public void testButtonsNotObscuredAfterScroll(){
+        indexesDetailPage = indexService.goToDetails(indexOne);
+
+        getDriver().manage().window().setSize(new Dimension(1100, 700));
+
+        ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight)");
+        indexesPage.loadOrFadeWait();
+
+        ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, -document.body.scrollHeight)");
+        indexesPage.loadOrFadeWait();
+
+        indexesDetailPage.backButton().click();
+
+        verifyThat(getDriver().getCurrentUrl(), is("https://search.dev.idolondemand.com/search/#/indexes"));
     }
 
     @After

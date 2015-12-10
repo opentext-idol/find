@@ -6,19 +6,28 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.remote.http.HttpClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class ConnectionDetailPageITCase extends HostedTestBase {
 
@@ -75,6 +84,41 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         connectionsDetailPage = connectionService.cancelConnectionScheduling(connector);
 
         verifyThat(connectionsDetailPage.getScheduleString(), is("The connector is not scheduled to run."));
+    }
+
+    @Test
+    //CSA-1469
+    public void testEditConnectorWithNoIndex(){
+        IndexService indexService = getApplication().createIndexService(getElementFactory());
+        Index indexOne = new Index("one");
+        Index indexTwo = new Index("two");
+
+        indexService.setUpIndex(indexOne);
+        indexService.setUpIndex(indexTwo);
+
+        connector = new WebConnector("http://www.bbc.co.uk", "bbc", indexOne).withDuration(60);
+
+        connectionService.setUpConnection(connector);
+        connectionService.goToDetails(connector);
+
+        verifyIndexNameForConnector();
+
+        indexService.deleteIndexViaAPICalls(indexOne);
+
+        indexService.goToIndexes();
+
+        getDriver().navigate().refresh();
+        body = getBody();
+
+        verifyThat(getElementFactory().getIndexesPage().getIndexNames(), not(hasItem(indexOne.getName())));
+
+        connector = connectionService.changeIndex(connector, indexTwo);
+
+        verifyIndexNameForConnector();
+    }
+
+    private void verifyIndexNameForConnector() {
+        verifyThat(getElementFactory().getConnectionsDetailPage().getIndexName(), is(connector.getIndex().getName()));
     }
 
     @After

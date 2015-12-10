@@ -9,9 +9,13 @@ import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IndexService {
     private Application application;
@@ -85,5 +89,24 @@ public class IndexService {
             deleteIndex(new Index(indexName));
         }
         return indexesPage;
+    }
+
+    public void deleteIndexViaAPICalls(Index indexOne) {
+        String apiKey = "9711e4b0-ec2c-409c-908b-d5e8ed20ebec";
+        String url = "https://api.int.havenondemand.com/1/api/sync/deletetextindex/v1?index=" + indexOne.getName() + "&";
+
+        ((JavascriptExecutor) getDriver()).executeScript("window.open('your url','_blank');");
+
+        List<String> windowHandles = new ArrayList<>(getDriver().getWindowHandles());
+        getDriver().switchTo().window(windowHandles.get(1));
+
+        getDriver().get(url + "apikey=" + apiKey);
+
+        String confirm = getDriver().findElement(By.tagName("pre")).getText().split("\"")[5];
+
+        getDriver().get(url + "confirm=" + confirm + "&apikey=" + apiKey);
+
+        getDriver().close();
+        getDriver().switchTo().window(windowHandles.get(0));
     }
 }
