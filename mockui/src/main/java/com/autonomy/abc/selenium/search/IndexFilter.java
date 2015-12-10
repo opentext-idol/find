@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.search;
 
-import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 
 import java.util.Collection;
@@ -12,6 +12,8 @@ public class IndexFilter implements SearchFilter {
     private Set<String> indexes;
     public final static IndexFilter ALL = new AllIndexFilter();
     public final static IndexFilter NONE = new EmptyIndexFilter();
+    public final static IndexFilter PUBLIC = new PublicIndexFilter();
+    public final static IndexFilter PRIVATE = new PrivateIndexFilter();
 
     public IndexFilter(String index) {
         indexes = new HashSet<>();
@@ -29,15 +31,10 @@ public class IndexFilter implements SearchFilter {
 
     @Override
     public void apply(SearchBase searchBase) {
-        searchBase.expandFilter(SearchBase.Filter.FILTER_BY);
-        searchBase.expandSubFilter(SearchBase.Filter.INDEXES);
-        searchBase.openPublicFilter();
-        for (Checkbox checkbox : searchBase.indexList()) {
-            if (indexes.contains(checkbox.getName().trim())) {
-                checkbox.check();
-            } else {
-                checkbox.uncheck();
-            }
+        IndexesTree indexesTree = searchBase.indexesTree();
+        indexesTree.allIndexes().deselect();
+        for (String index : indexes) {
+            indexesTree.select(index);
         }
     }
 
@@ -48,7 +45,7 @@ public class IndexFilter implements SearchFilter {
 
         @Override
         public void apply(SearchBase searchBase) {
-            searchBase.allIndexesCheckbox().check();
+            searchBase.indexesTree().allIndexes().select();
         }
     }
 
@@ -59,8 +56,31 @@ public class IndexFilter implements SearchFilter {
 
         @Override
         public void apply(SearchBase searchBase) {
-            searchBase.allIndexesCheckbox().check();
-            searchBase.allIndexesCheckbox().uncheck();
+            searchBase.indexesTree().allIndexes().deselect();
+        }
+    }
+
+    private static class PublicIndexFilter extends IndexFilter {
+        private PublicIndexFilter() {
+            super("Public");
+        }
+
+        @Override
+        public void apply(SearchBase searchBase) {
+            searchBase.indexesTree().privateIndexes().deselect();
+            searchBase.indexesTree().publicIndexes().select();
+        }
+    }
+
+    private static class PrivateIndexFilter extends IndexFilter {
+        private PrivateIndexFilter() {
+            super("Private");
+        }
+
+        @Override
+        public void apply(SearchBase searchBase) {
+            searchBase.indexesTree().privateIndexes().select();
+            searchBase.indexesTree().publicIndexes().deselect();
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.indexes.IndexesTree;
 import com.autonomy.abc.selenium.page.keywords.KeywordsBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
@@ -174,10 +175,16 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + trimmedTitle.trim() + "')]"));
 	}
 
+	public IndexesTree indexesTree() {
+		return new IndexesTree(findElement(By.cssSelector(".databases-list")), getDriver());
+	}
+
+	@Deprecated
 	public WebElement getDatabasesList() {
 		return findElement(By.cssSelector(".databases-list"));
 	}
 
+	@Deprecated
 	public void selectDatabase(final String databaseName) {
 		expandFilter(Filter.FILTER_BY);
 		expandSubFilter(Filter.DATABASES);
@@ -188,6 +195,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
+	@Deprecated
 	public void selectAllIndexesOrDatabases(final String type) {
 		expandFilter(Filter.FILTER_BY);
 		if (type.equals("Hosted")) {
@@ -204,6 +212,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
         waitForSearchLoadIndicatorToDisappear();
 	}
 
+	@Deprecated
 	public void selectAllIndexes() {
 		expandFilter(Filter.FILTER_BY);
 		expandSubFilter(Filter.INDEXES);
@@ -213,6 +222,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
+	@Deprecated
 	public void deselectDatabase(final String databaseName) {
 		final List<String> selectedDatabases = getSelectedDatabases();
 
@@ -226,6 +236,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
+	@Deprecated
 	public List<String> getSelectedDatabases() {
 		final List<String> selected = new ArrayList<>();
 
