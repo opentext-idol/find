@@ -44,4 +44,8 @@ public abstract class Connector {
     public void setStatistics(ConnectionStatistics connectionStatistics) {
         this.connectionStatistics = connectionStatistics;
     }
+
+    public void setIndex(Index index) {
+        this.index = index;
+    }
 }

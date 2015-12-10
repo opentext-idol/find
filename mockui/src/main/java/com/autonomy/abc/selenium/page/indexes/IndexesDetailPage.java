@@ -2,11 +2,15 @@ package com.autonomy.abc.selenium.page.indexes;
 
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IndexesDetailPage extends SAASPageBase {
     public IndexesDetailPage(WebDriver driver) {
@@ -63,5 +67,19 @@ public class IndexesDetailPage extends SAASPageBase {
 
     public WebElement newConnectionButton() {
         return findElement(By.xpath("//button[text()='New connection']"));
+    }
+
+    public List<String> getAssociatedConnectors() {
+        List<String> connectors = new ArrayList<>();
+
+        for(WebElement associatedConnector : findElements(By.cssSelector(".connectorsTableContainer table td.text-left .pipeline-name"))){
+            connectors.add(associatedConnector.getText());
+        }
+
+        return connectors;
+    }
+
+    public WebElement getFilesIngestedGraph() {
+        return ElementUtil.ancestor(findElement(By.cssSelector("[for='filesIngestedOption']")),1).findElement(By.cssSelector("wait-for-promise>div>div"));
     }
 }

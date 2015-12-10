@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.connections.wizard;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -152,5 +153,9 @@ public class ConnectorConfigStepTab extends SAASPageBase {
         actions.moveToElement(advancedConfigurations());
         actions.click();
         actions.perform();
+    }
+
+    public WebElement skipSchedulingCheckbox() {
+        return findElement(By.cssSelector("[for='noSchedule'] ins"));
     }
 }
