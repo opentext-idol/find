@@ -32,14 +32,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
-	public WebElement getResultsBoxByTitle(final String docTitle) {
-		return findElement(By.xpath(".//a[contains(text(), '" + docTitle + "')]/../../../div/div/label/div"));
-	}
-
-	public WebElement searchResultCheckbox(final String docTitle) {
-		return getResultsBoxByTitle(docTitle);
-	}
-
 	public Checkbox searchCheckboxForTitle(final String docTitle) {
 		WebElement element = findElement(By.cssSelector(".search-page-contents"));
 		element = element.findElement(new Locator().withTagName("a").containingCaseInsensitive(docTitle));
@@ -131,32 +123,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
         return findElement(By.cssSelector(".promotions-bucket-items")).findElement(new Locator().containingCaseInsensitive(docTitle));
-	}
-
-    /**
-     * Takes a document title, and finds a document on the page with the same first five words
-     * - this is to counteract the issue with Latin encoding where they cannot be found via xpath
-     *
-     * @param docTitle   Document title to attempt to find
-     * @return           Web Element with the same first five words as the docTitle
-     */
-    public WebElement getPromotionBucketElementByTrimmedTitle(final String docTitle) {
-        String trimmedTitle = "";
-        int count = 0;
-
-        //Get the first five words
-        for(final String word : docTitle.split(" ")){
-            trimmedTitle = trimmedTitle + ' ' + word;
-
-            if(count == 5){
-                break;
-            }
-
-            count++;
-        }
-
-        //Find web element using trimmedTitle string. This will have a trailing space, and so you need to .trim() the String
-		return findElement(By.cssSelector(".promotions-bucket-items")).findElement(By.xpath(".//*[contains(text(), '" + trimmedTitle.trim() + "')]"));
 	}
 
 	public IndexesTree indexesTree() {
@@ -280,10 +246,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		expandFilter(Filter.FIELD_TEXT);
 	}
 
-	public void collapseFieldTextOptions() {
-		collapseFilter("Field Text");
-	}
-
 	public WebElement getFilter(final String filter) {
 		return findElement(By.xpath(".//h4[contains(text(), '" + filter + "')]/.."));
 	}
@@ -303,13 +265,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	public void expandSubFilter(final Filter filterName) {
 		if (getSubFilter(filterName).getAttribute("class").contains("collapsed")) {
 			scrollIntoViewAndClick(getSubFilter(filterName));
-			loadOrFadeWait();
-		}
-	}
-
-	public void collapseFilter(final String filterName) {
-		if (!getFilter(filterName).getAttribute("class").contains("collapsed")) {
-			getFilter(filterName).click();
 			loadOrFadeWait();
 		}
 	}
@@ -389,10 +344,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 			bucketDocTitles.add(bucketDoc.getText());
 		}
 		return bucketDocTitles;
-	}
-
-	protected List<WebElement> bucketListWebElements(final WebElement element){
-		return element.findElements(By.cssSelector(".promotions-bucket-document"));
 	}
 
 	public void openFromDatePicker() {
