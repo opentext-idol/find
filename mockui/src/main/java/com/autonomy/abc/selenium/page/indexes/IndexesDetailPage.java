@@ -79,7 +79,7 @@ public class IndexesDetailPage extends SAASPageBase {
         return connectors;
     }
 
-    public WebElement getFilesIngestedGraph() {
+    public WebElement filesIngestedGraph() {
         return ElementUtil.ancestor(findElement(By.cssSelector("[for='filesIngestedOption']")),1).findElement(By.cssSelector("wait-for-promise>div>div"));
     }
 }

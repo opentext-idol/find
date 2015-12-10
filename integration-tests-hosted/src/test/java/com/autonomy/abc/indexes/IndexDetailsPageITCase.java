@@ -66,7 +66,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
 
             connectionService.changeIndex(connector, indexTwo);
 
-            verifyThat(getElementFactory().getConnectionsDetailPage().indexName(), is(indexTwo.getName()));
+            verifyThat(getElementFactory().getConnectionsDetailPage().getIndexName(), is(indexTwo.getName()));
 
             indexesPage = indexService.goToIndexes();
             verifyThat(indexesPage.getNumberOfConnections(indexOne), is(0));
@@ -92,7 +92,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
 
         new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIconSmall")));
 
-        verifyThat(indexesDetailPage.getFilesIngestedGraph(), containsText("There is no data for this time period"));
+        verifyThat(indexesDetailPage.filesIngestedGraph(), containsText("There is no data for this time period"));
     }
 
     @After

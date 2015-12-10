@@ -70,11 +70,11 @@ public class ConnectionsDetailPage extends SAASPageBase {
         return findElement(By.cssSelector(".breakWord a"));
     }
 
-    public String indexName() {
+    public String getIndexName() {
         return findElement(By.cssSelector("#indexPane h3")).getText();
     }
 
-    public String scheduleString() {
+    public String getScheduleString() {
         return ElementUtil.ancestor(findElement(By.className("hp-schedule")),1).findElement(By.cssSelector("div:nth-child(1)")).getText();
     }
 }
