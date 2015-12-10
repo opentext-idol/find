@@ -20,15 +20,15 @@ define([
                     version: '42'
                 },
                 strings: {
-                    build: 'Build',
-                    copyright: 'Copyright HP 2015',
-                    foss: 'FOSS Acknowledgements',
-                    fossVersion: 'Version',
-                    library: 'Library',
-                    license: 'License',
-                    tagLine: 'We did it',
-                    title: 'About',
-                    version: 'Version'
+                    build: i18n['about.app.build'],
+                    copyright: i18n['about.copyright'],
+                    foss: i18n['about.foss'],
+                    fossVersion: i18n['about.lib.version'],
+                    library: i18n['about.lib.name'],
+                    license: i18n['about.lib.licence'],
+                    tagLine: i18n['about.tagLine'],
+                    title: i18n['app.about'],
+                    version: i18n['about.app.version']
                 }
             });
         }
