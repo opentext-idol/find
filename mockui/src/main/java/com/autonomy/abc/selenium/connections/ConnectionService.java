@@ -2,16 +2,21 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionService {
     private Application application;
@@ -92,8 +97,14 @@ public class ConnectionService {
 
     public ConnectionsPage deleteAllConnections(boolean deleteIndex) {
         goToConnections();
+
+        List<String> titles = new ArrayList<>();
         for(WebElement connector : getDriver().findElements(By.className("listItemTitle"))){
-            WebConnector webConnector = new WebConnector(null, connector.getText().split("\\(")[0].trim());
+            titles.add(connector.getText().split("\\(")[0].trim());
+        }
+
+        for(String title : titles){
+            WebConnector webConnector = new WebConnector(null, title);
 
             beginDelete(webConnector);
 
@@ -105,12 +116,57 @@ public class ConnectionService {
 
             confirmDelete(webConnector);
         }
+        
         return connectionsPage;
     }
 
     public ConnectionsDetailPage updateLastRun(WebConnector webConnector) {
         goToDetails(webConnector);
         webConnector.setStatistics(new ConnectionStatistics(connectionsDetailPage.lastRun()));
+        return connectionsDetailPage;
+    }
+
+    public Connector changeIndex(Connector connector, Index index) {
+        goToDetails(connector);
+        connectionsDetailPage.editButton().click();
+
+        NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
+        newConnectionPage.nextButton().click();
+        newConnectionPage.loadOrFadeWait();
+        newConnectionPage.nextButton().click();
+        newConnectionPage.loadOrFadeWait();
+        ConnectorIndexStepTab connectorIndexStep = newConnectionPage.getIndexStep();
+
+        connectorIndexStep.selectIndexButton().click();
+        connectorIndexStep.selectIndex(index);
+
+        newConnectionPage.finishButton().click();
+
+        connector.setIndex(index);
+
+        new WebDriverWait(getDriver(), 300).withMessage("connection " + connector + " timed out").until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
+
+        return connector;
+    }
+
+    public ConnectionsDetailPage cancelConnectionScheduling(Connector connector) {
+        goToDetails(connector);
+
+        connectionsDetailPage.editButton().click();
+
+        NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
+
+        newConnectionPage.nextButton().click();
+        newConnectionPage.loadOrFadeWait();
+
+        newConnectionPage.getConnectorConfigStep().skipSchedulingCheckbox().click();
+
+        newConnectionPage.nextButton().click();
+        newConnectionPage.loadOrFadeWait();
+        newConnectionPage.finishButton().click();
+
+        new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining("Connector " + connector.getName() + " schedule has been cancelled successfully"));
+
         return connectionsDetailPage;
     }
 }

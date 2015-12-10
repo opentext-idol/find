@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.connections;
 
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -63,5 +64,17 @@ public class ConnectionsDetailPage extends SAASPageBase {
     //TODO does it belong here?
     public WebElement cancelButton() {
         return findElement(By.xpath("//a[contains(text(),'Cancel')]"));
+    }
+
+    public WebElement webConnectorURL() {
+        return findElement(By.cssSelector(".breakWord a"));
+    }
+
+    public String getIndexName() {
+        return findElement(By.cssSelector("#indexPane h3")).getText();
+    }
+
+    public String getScheduleString() {
+        return ElementUtil.ancestor(findElement(By.className("hp-schedule")),1).findElement(By.cssSelector("div:nth-child(1)")).getText();
     }
 }

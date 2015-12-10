@@ -44,7 +44,8 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class IndexesPageITCase extends HostedTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexesPageITCase.class);
-    IndexesPage indexesPage;
+    private IndexService indexService;
+    private IndexesPage indexesPage;
 
     public IndexesPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -57,10 +58,24 @@ public class IndexesPageITCase extends HostedTestBase {
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
         indexesPage = getElementFactory().getIndexesPage();
         body = getBody();
+        indexService = getApplication().createIndexService(getElementFactory());
     }
 
     @Test
-    //CSA1720
+    //CSA-1450
+    public void testDeletingIndex(){
+        Index index = new Index("index");
+        indexesPage = indexService.setUpIndex(index);
+
+        verifyThat(indexesPage.getIndexNames(), hasItem(index.getName()));
+
+        indexService.deleteIndex(index);
+
+        verifyThat(indexesPage.getIndexNames(), not(hasItem(index.getName())));
+    }
+
+    @Test
+    //CSA-1720
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = getApplication().createConnectionService(getElementFactory());
         Index default_index = new Index("default_index");
@@ -83,7 +98,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Make sure default index is still there
-        assertThat(indexesPage.getIndexNames(),hasItem(default_index.getName()));
+        assertThat(indexesPage.getIndexNames(), hasItem(default_index.getName()));
     }
 
     @Test
@@ -116,7 +131,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Ensure the index wasn't deleted
-        assertThat(indexesPage.getIndexNames(),hasItem(index.getName()));
+        assertThat(indexesPage.getIndexNames(), hasItem(index.getName()));
     }
 
     @Test
@@ -205,6 +220,21 @@ public class IndexesPageITCase extends HostedTestBase {
         getDriver().get("https://search.dev.idolondemand.com/search/#/index/doesntexistmate");
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
         verifyThat(new AppElement(getDriver().findElement(By.className("wrapper-content")),getDriver()), containsText("Index doesntexistmate does not exist"));
+    }
+
+    @Test
+    //CSA-1886
+    public void testDeletingDefaultIndex(){
+        IndexService indexService = getApplication().createIndexService(getElementFactory());
+
+        indexService.deleteIndexViaAPICalls(Index.DEFAULT);
+
+        getDriver().navigate().refresh();
+
+        indexesPage = getElementFactory().getIndexesPage();
+        body = getBody();
+
+        verifyThat(indexesPage.getIndexNames(), hasItem(Index.DEFAULT.getName()));
     }
 
     @After

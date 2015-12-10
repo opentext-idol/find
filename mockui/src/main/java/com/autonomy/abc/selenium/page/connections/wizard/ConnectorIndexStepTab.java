@@ -83,4 +83,34 @@ public class ConnectorIndexStepTab extends SAASPageBase {
             getDriver().findElement(By.xpath("//div[contains(@class,'modal-footer')]/button[text()='Cancel']")).click();
         }
     }
+
+    public Index getChosenIndexOnPage() {
+        return new Index(findElement(By.cssSelector(".selectedIndexNameContainer .ng-binding")).getText());
+    }
+
+    public void selectIndex(Index index) {
+        getIndexSearchBox().click();
+
+        for(WebElement existingIndex : getExistingIndexes()){
+            if(existingIndex.getText().equals(index.getName())){
+                existingIndex.click();
+                modalOKButton().click();
+                //Need to wait for modal to disappear
+                try{Thread.sleep(1000);} catch (Exception e) {/*NO OP*/}
+                return;
+            }
+        }
+
+        throw new IndexNotFoundException(index);
+    }
+
+    private class IndexNotFoundException extends RuntimeException {
+        public IndexNotFoundException(String index){
+            super("Index: '"+index+"' not found");
+        }
+
+        public IndexNotFoundException(Index index){
+            this(index.getName());
+        }
+    }
 }

@@ -53,6 +53,8 @@ public class KeywordsWizardITCase extends ABCTestBase {
         keywordService = new KeywordService(getApplication(), getElementFactory());
 
         keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
+
+        //TODO keywordsPage.createNewKeywordsButton().click(); up here?
     }
 
     @After
@@ -623,6 +625,60 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.synonymAddTextBox().sendKeys(Keys.ARROW_LEFT, Keys.ARROW_LEFT, Keys.BACK_SPACE, Keys.BACK_SPACE);
 
         verifyThat(createKeywordsPage.synonymAddTextBox().getAttribute("value"), is("TESNG"));
-        verifyThat(createKeywordsPage.synonymAddTextBox().getAttribute("vakye"),is(not("TESTN")));
+        verifyThat(createKeywordsPage.synonymAddTextBox().getAttribute("value"), is(not("TESTN")));
+    }
+
+    @Test
+    //CSA-1812
+    public void testExistingSynonymsShowInWizard(){
+        String[] existingSynonyms = {"pentimento", "mayday", "parade"};
+        String duplicate = existingSynonyms[0];
+        String unrelated = "unrelated";
+
+        keywordService.addSynonymGroup(existingSynonyms);
+
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getKeywordsPage();
+
+        goToSynonymWizardPage();
+
+        createKeywordsPage.addSynonyms(duplicate);
+        verifyExistingGroups(duplicate, 1);
+
+        createKeywordsPage.addSynonyms(unrelated);
+        createKeywordsPage.finishWizardButton().click();
+
+        getElementFactory().getSearchPage();
+
+        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getKeywordsPage();
+
+        goToSynonymWizardPage();
+
+        createKeywordsPage.addSynonyms(duplicate);
+        verifyExistingGroups(duplicate, 2);
+
+        createKeywordsPage.addSynonyms(unrelated);
+        verifyExistingGroups(duplicate, 2);
+
+        createKeywordsPage.deleteKeyword(duplicate);
+        verifyExistingGroups(unrelated, 1);
+    }
+
+    private void goToSynonymWizardPage(){
+        keywordsPage.createNewKeywordsButton().click();
+        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+
+        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
+        createKeywordsPage.continueWizardButton().click();
+    }
+
+    private void verifyExistingGroups(String existingSynonym, int size){
+        List<List<String>> existingGroups = createKeywordsPage.getExistingSynonymGroups();
+
+        verifyThat(existingGroups.size(), is(size));
+        for(List<String> group : existingGroups){
+            verifyThat(group, hasItem(existingSynonym));
+        }
     }
 }
