@@ -15,7 +15,6 @@ require.config({
         'datatables.net': '../bower_components/datatables.net/js/jquery.dataTables',
         'datatables.net-bs': '../bower_components/datatables.net-bs/js/dataTables.bootstrap',
         i18n: '../bower_components/requirejs-i18n/i18n',
-        iCheck: '../bower_components/icheck/icheck',
         'peg': '../bower_components/pegjs/peg-0.8.0',
         'fieldtext': '../bower_components/hp-autonomy-fieldtext-js/src',
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
@@ -35,7 +34,6 @@ require.config({
         bootstrap: ['jquery'],
         'bootstrap-datetimepicker': ['jquery'],
         colorbox: ['jquery'],
-        iCheck: ['jquery'],
         peg: {
             exports: 'PEG'
         },
