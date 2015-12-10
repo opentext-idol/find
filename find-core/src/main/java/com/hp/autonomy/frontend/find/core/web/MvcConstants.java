@@ -9,6 +9,7 @@ public enum MvcConstants
 {
     APPLICATION_VERSION("applicationVersion"),
     CONFIG("configJson"),
+    GIT_COMMIT("commit"),
     USERNAME("username");
 
     private final String value;

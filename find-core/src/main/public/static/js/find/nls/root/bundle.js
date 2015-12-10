@@ -7,6 +7,7 @@ define([
 ], function(substitution) {
     return substitution({
         'about.app.build': 'build',
+        'about.app.commit': 'commit',
         'about.app.version': 'Version',
         'about.copyright': "Find © Copyright 2014-2015 Hewlett-Packard Development Company, L.P.",
         'about.foss': 'FOSS Acknowledgements',

@@ -38,6 +38,9 @@ public class FindController {
     @Value(AppConfiguration.APPLICATION_VERSION_PROPERTY)
     private String applicationVersion;
 
+    @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
+    private String gitCommit;
+
     @Autowired
     private ControllerUtils controllerUtils;
 
@@ -60,6 +63,7 @@ public class FindController {
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
+        attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(config));
 
         return new ModelAndView(ViewNames.PUBLIC.value(), attributes);

@@ -6,21 +6,18 @@
 define([
     'about-page/js/about-page',
     'find/idol/app/page/about/lib-list',
+    'find/app/configuration',
     'i18n!find/nls/bundle'
-], function(AboutPage, libList, i18n) {
+], function(AboutPage, libList, configuration, i18n) {
 
     return AboutPage.extend({
 
         initialize: function() {
-            // TODO: placeholder
+            var config = configuration();
+
             AboutPage.prototype.initialize.call(this, {
                 libraries: libList,
-                about: {
-                    build: 'Awesome',
-                    version: '42'
-                },
                 strings: {
-                    build: i18n['about.app.build'],
                     copyright: i18n['about.copyright'],
                     foss: i18n['about.foss'],
                     fossVersion: i18n['about.lib.version'],
@@ -29,7 +26,8 @@ define([
                     search: i18n['about.search'],
                     tagLine: i18n['about.tagLine'],
                     title: i18n['app.about'],
-                    version: i18n['about.app.version']
+                    version: i18n['about.app.version'],
+                    versionString: [config.version, i18n['about.app.build'], config.build, i18n['about.app.commit'], config.commit].join(' ')
                 }
             });
         }
