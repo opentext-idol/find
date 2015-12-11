@@ -13,6 +13,8 @@ import java.util.List;
 
 @Data
 public class FindQueryParams<S extends Serializable> implements Serializable {
+    private static final long serialVersionUID = -6338199353489914631L;
+
     private final String text;
     private final int maxResults;
     private final String summary;
@@ -21,4 +23,5 @@ public class FindQueryParams<S extends Serializable> implements Serializable {
     private final String sort;
     private final DateTime minDate;
     private final DateTime maxDate;
+    private final boolean highlight;
 }

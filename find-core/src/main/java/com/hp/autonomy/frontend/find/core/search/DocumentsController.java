@@ -35,6 +35,7 @@ public abstract class DocumentsController<S extends Serializable, D extends Find
     public static final String SORT_PARAM = "sort";
     public static final String MIN_DATE_PARAM = "min_date";
     public static final String MAX_DATE_PARAM = "max_date";
+    public static final String HIGHLIGHT_PARAM = "highlight";
     public static final String REFERENCE_PARAM = "reference";
     public static final String INDEXES_PARAM = "indexes";
 
@@ -52,8 +53,9 @@ public abstract class DocumentsController<S extends Serializable, D extends Find
                               @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
                               @RequestParam(value = SORT_PARAM, required = false) final String sort,
                               @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-                              @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
-        final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
+                              @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+                              @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
+        final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
         return documentsService.queryTextIndex(findQueryParams);
     }
 
@@ -67,8 +69,9 @@ public abstract class DocumentsController<S extends Serializable, D extends Find
                                            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
                                            @RequestParam(value = SORT_PARAM, required = false) final String sort,
                                            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-                                           @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
-        final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate);
+                                           @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+                                           @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
+        final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
         return documentsService.queryTextIndexForPromotions(findQueryParams);
     }
 

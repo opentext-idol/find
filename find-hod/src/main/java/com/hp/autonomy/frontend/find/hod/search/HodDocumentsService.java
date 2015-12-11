@@ -53,14 +53,16 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
 
     private static final int MAX_SIMILAR_DOCUMENTS = 3;
 
-    @Autowired
-    private FindSimilarService<HodFindDocument> findSimilarService;
+    private final FindSimilarService<HodFindDocument> findSimilarService;
+    private final ConfigService<HodFindConfig> configService;
+    private final QueryTextIndexService<HodFindDocument> queryTextIndexService;
 
     @Autowired
-    private ConfigService<HodFindConfig> configService;
-
-    @Autowired
-    private QueryTextIndexService<HodFindDocument> queryTextIndexService;
+    public HodDocumentsService(final FindSimilarService<HodFindDocument> findSimilarService, final ConfigService<HodFindConfig> configService, final QueryTextIndexService<HodFindDocument> queryTextIndexService) {
+        this.findSimilarService = findSimilarService;
+        this.configService = configService;
+        this.queryTextIndexService = queryTextIndexService;
+    }
 
     @Override
     @Cacheable(CacheNames.DOCUMENTS)

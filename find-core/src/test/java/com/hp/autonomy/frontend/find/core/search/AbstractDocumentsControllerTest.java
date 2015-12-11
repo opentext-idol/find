@@ -40,13 +40,13 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, D 
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null);
+        documentsController.query("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
         verify(documentsService).queryTextIndex(Matchers.<FindQueryParams<S>>any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.queryForPromotions("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null);
+        documentsController.queryForPromotions("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
         verify(documentsService).queryTextIndexForPromotions(Matchers.<FindQueryParams<S>>any());
     }
 

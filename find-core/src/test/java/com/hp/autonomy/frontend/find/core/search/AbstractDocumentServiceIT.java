@@ -58,7 +58,7 @@ public abstract class AbstractDocumentServiceIT<S extends Serializable, D extend
     @Test
     public void findSimilar() throws Exception {
         //TODO currently not making (many) assumptions about content we are querying so we don't know a valid reference in advance...
-        final Documents<D> documents = documentsController.query("*", 50, null, indexes, null, null, null, null);
+        final Documents<D> documents = documentsController.query("*", 50, null, indexes, null, null, null, null, false);
         final String reference = documents.getDocuments().get(0).getReference();
         mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.SIMILAR_DOCUMENTS_PATH).param(DocumentsController.REFERENCE_PARAM, reference).param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andExpect(status().isOk())

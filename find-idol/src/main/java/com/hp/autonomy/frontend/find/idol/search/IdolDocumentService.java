@@ -90,9 +90,11 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
         aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
         aciParameters.add(QueryParams.XMLMeta.name(), true);
-        aciParameters.add(QueryParams.Highlight.name(), HighlightParam.SummaryTerms);
-        aciParameters.add(QueryParams.StartTag.name(), HIGHLIGHT_START_TAG);
-        aciParameters.add(QueryParams.EndTag.name(), HIGHLIGHT_END_TAG);
+        if (findQueryParams.isHighlight()) {
+            aciParameters.add(QueryParams.Highlight.name(), HighlightParam.SummaryTerms);
+            aciParameters.add(QueryParams.StartTag.name(), HIGHLIGHT_START_TAG);
+            aciParameters.add(QueryParams.EndTag.name(), HIGHLIGHT_END_TAG);
+        }
         aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getQueryManipulation().getBlacklist());
         aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getQueryManipulation().getExpandQuery());
 

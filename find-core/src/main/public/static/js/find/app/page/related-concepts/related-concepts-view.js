@@ -27,7 +27,8 @@ define([
                 text: queryText,
                 max_results: 3,
                 summary: 'context',
-                index: this.queryModel.get('indexes')
+                index: this.queryModel.get('indexes'),
+                highlight: false
             },
             error: _.bind(function() {
                 $content.html(this.popoverMessageTemplate({message: i18n['search.relatedConcepts.topResults.error']}));
