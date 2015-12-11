@@ -15,8 +15,8 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.web.WebApplicationInitializer;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class, SessionAutoConfiguration.class, ErrorMvcAutoConfiguration.class})
-public class HostedFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
+public class HodFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
     public static void main(final String[] args) {
-        SpringApplication.run(HostedFindApplication.class, args);
+        SpringApplication.run(HodFindApplication.class, args);
     }
 }

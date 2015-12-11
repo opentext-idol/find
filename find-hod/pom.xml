@@ -13,12 +13,7 @@
 
     <packaging>war</packaging>
 
-    <properties>
-        <artifactName>${project.parent.artifactId}-hosted-${project.version}</artifactName>
-    </properties>
-
     <build>
-        <finalName>${artifactName}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -85,7 +80,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <classifier>executable</classifier>
-                    <finalName>${artifactName}</finalName>
                 </configuration>
             </plugin>
         </plugins>

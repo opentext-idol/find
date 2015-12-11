@@ -9,7 +9,6 @@ public enum MvcConstants
 {
     APPLICATION_VERSION("applicationVersion"),
     CONFIG("configJson"),
-    HOSTED("hosted"),
     USERNAME("username");
 
     private final String value;
