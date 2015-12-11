@@ -18,8 +18,6 @@ define([
 
     return Backbone.Model.extend({
         defaults: {
-            minDate: null,
-            maxDate: null,
             dateRange: null
         },
 
@@ -51,8 +49,8 @@ define([
                 });
             } else {
                 this.set({
-                    minDate: null,
-                    maxDate: null,
+                    minDate: undefined,
+                    maxDate: undefined,
                     dateRange: null
                 });
             }
