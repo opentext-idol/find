@@ -139,7 +139,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private void verifyModalElements() {
         verifyModalElement(usersPage.getUsernameInput().getElement());
         verifyModalElement(usersPage.getEmailInput().getElement());
-        verifyModalElement(usersPage.getUserLevelDropdown());
+        verifyModalElement(usersPage.userLevelDropdown());
         verifyModalElement(usersPage.createButton());
     }
 

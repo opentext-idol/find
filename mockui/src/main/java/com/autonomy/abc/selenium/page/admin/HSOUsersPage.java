@@ -15,6 +15,10 @@ public class HSOUsersPage extends HSOUserManagement {
         waitForLoad();
     }
 
+    public WebElement getUserRow(User user){
+        return findElement(By.xpath("//*[contains(@class,'user-email') and text()='" + ((HSOUser) user).getEmail() + "']/.."));
+    }
+
     public FormInput getUsernameInput(){
         return new FormInput(getDriver().findElement(By.id("create-users-username")), getDriver());
     }
@@ -23,7 +27,7 @@ public class HSOUsersPage extends HSOUserManagement {
         return new FormInput(getDriver().findElement(By.className("create-user-email-input")), getDriver());
     }
 
-    public WebElement getUserLevelDropdown(){
+    public WebElement userLevelDropdown(){
         return getDriver().findElement(By.id("create-users-role"));
     }
 
