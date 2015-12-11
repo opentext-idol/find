@@ -22,8 +22,10 @@ public class NotificationsDropDown extends AppElement {
 
     public List<Notification> getAllNotifications(){
         List<Notification> notifications = new ArrayList<>();
-        for(WebElement notification : findElements(By.cssSelector("li:nth-child(1) a"))){
-            notifications.add(new Notification(notification));
+        for(WebElement notification : findElements(By.cssSelector("li:not(.no-notifications) a"))){
+            if(notification.isDisplayed()) {
+                notifications.add(new Notification(notification));
+            }
         }
         return notifications;
     }

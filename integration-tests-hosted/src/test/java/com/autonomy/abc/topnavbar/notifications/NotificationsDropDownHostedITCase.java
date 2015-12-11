@@ -2,19 +2,27 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
+import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.menu.Notification;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.users.*;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.usermanagement.UserManagementHostedITCase.gmailString;
 import static org.hamcrest.core.Is.is;
 
 public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
@@ -139,5 +147,30 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
         assertThat(notifications.notificationNumber(1).getText(), is(successfulNotification));
         assertThat(notifications.notificationNumber(2).getText(), is(deletingNotification));
+    }
+
+    @Test
+    //CSA-1698 || CSA-1687
+    public void testUsernameShowsInNotifications(){
+        body.getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
+        String devUsername = getElementFactory().getDevsPage().getUsernames().get(0);
+
+        KeywordService keywordService = new KeywordService(getApplication(), getElementFactory());
+
+        try {
+            keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
+
+            body.getTopNavBar().notificationsDropdown();
+            getElementFactory().getSearchPage().loadOrFadeWait();
+            for (Notification notification : body.getTopNavBar().getNotifications().getAllNotifications()) {
+                System.out.println(notification.getMessage());
+                verifyThat(notification.getUsername(), is(devUsername));
+            }
+
+//            UserService userService = getApplication().createUserService(getElementFactory());
+//            userService.createNewUser(new HSONewUser("david", gmailString("mymateDave")), Role.USER);
+        } finally {
+            keywordService.deleteAll(KeywordFilter.ALL);
+        }
     }
 }

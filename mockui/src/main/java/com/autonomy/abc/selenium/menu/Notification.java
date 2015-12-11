@@ -18,7 +18,7 @@ public class Notification {
     public Notification(WebElement notification){
         this(
                 notification.findElement(By.className("notification-message")).getText(),
-                notification.findElement(By.className("small")).getText(),
+                notification.findElement(By.cssSelector(".small:not(.notification-time)")).getText(),
                 notification.findElement(By.className("notification-time")).getText()
         );
     }
