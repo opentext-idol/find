@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.RedisCondition;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -33,8 +34,8 @@ public class RedisConfiguration {
     @Autowired
     private ConfigService<HodFindConfig> configService;
 
-    @Autowired
-    private Properties dispatcherProperties;
+    @Value("${application.version}")
+    private String applicationVersion;
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
@@ -70,7 +71,7 @@ public class RedisConfiguration {
     public CacheManager cacheManager() {
         final RedisCacheManager cacheManager = new RedisCacheManager(cachingRedisTemplate());
         cacheManager.setUsePrefix(true);
-        cacheManager.setCachePrefix(new DefaultRedisCachePrefix(":cache:" + dispatcherProperties.getProperty("application.version") + ':'));
+        cacheManager.setCachePrefix(new DefaultRedisCachePrefix(":cache:" + applicationVersion + ':'));
 
         cacheManager.setDefaultExpiration(30 * 60);
         cacheManager.setExpires(CacheNames.CACHE_EXPIRES);

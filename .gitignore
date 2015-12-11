@@ -12,17 +12,26 @@
 
 # Maven
 log/
-target/
+find-core/target/
+find-hod/target/
+find-idol/target/
+find-dist/target/
 
 # Archetype
 filter-dev.properties
-find-web/src/test/js/lib/
+find-core/src/test/js/lib/
 .vagrant/
 
-find-web/src/main/webapp/static/bower_components/
-find-web/node_modules/
-find-web/.grunt/
-find-web/spec-runner.html
+find-core/.grunt/
+find-core/node_modules/
+find-core/src/main/public/static/bower_components/
+find-core/spec-runner.html
+find-hod/.grunt/
+find-hod/node_modules/
+find-hod/spec-runner.html
+find-idol/.grunt/
+find-idol/node_modules/
+find-idol/spec-runner.html
 
 # Vagrant
 cookbooks/

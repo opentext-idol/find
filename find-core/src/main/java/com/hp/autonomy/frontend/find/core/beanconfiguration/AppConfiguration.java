@@ -13,18 +13,17 @@ import com.hp.autonomy.frontend.configuration.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.Validator;
 import com.hp.autonomy.frontend.configuration.filter.ConfigEnvironmentVariableFilter;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
+import com.hp.autonomy.frontend.logging.UserLoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
-import org.springframework.context.MessageSource;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.ErrorPage;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -36,15 +35,9 @@ import java.util.Set;
  * Contains beans useful in all configurations
  */
 @Configuration
-@ComponentScan(
-        basePackages = {"com.hp.autonomy.frontend.find.core", "com.hp.autonomy.frontend.find.web"},
-        excludeFilters = {
-                @ComponentScan.Filter(Controller.class),
-                @ComponentScan.Filter(RestController.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = DispatcherServletConfiguration.class)
-        }
-)
+@PropertySource("classpath:/version.properties")
 public class AppConfiguration<C extends Config<C>> {
+    public static final String APPLICATION_VERSION_PROPERTY = "${application.version}";
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
@@ -54,22 +47,47 @@ public class AppConfiguration<C extends Config<C>> {
     @Autowired(required = false)
     private Set<Validator<?>> validators = Collections.emptySet();
 
-    //TODO: merge properties files
+    @SuppressWarnings("ReturnOfInnerClass")
     @Bean
-    public PropertiesFactoryBean dispatcherProperties() {
-        return getPropertiesFactoryBean(new ClassPathResource("/dispatcher.properties"));
+    public EmbeddedServletContainerCustomizer containerCustomizer() {
+
+        return new EmbeddedServletContainerCustomizer() {
+            @Override
+            public void customize(final ConfigurableEmbeddedServletContainer container) {
+
+                final ErrorPage error401Page = new ErrorPage(HttpStatus.UNAUTHORIZED, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
+                final ErrorPage error403Page = new ErrorPage(HttpStatus.FORBIDDEN, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
+                final ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, DispatcherServletConfiguration.NOT_FOUND_ERROR_PATH);
+                final ErrorPage error500Page = new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, DispatcherServletConfiguration.SERVER_ERROR_PATH);
+
+                container.addErrorPages(error401Page, error403Page, error404Page, error500Page);
+            }
+        };
+    }
+
+    /**
+     * This is needed to force Tomcat to interpret POST bodies as UTF-8 by default, otherwise it'll use ISO-8859-1,
+     * since that's apparently what the servlet spec specifies,
+     * It's required despite URIEncoding="UTF-8" on the connector since that only works on GET parameters.
+     * Jetty doesn't have this problem, it seems to use UTF-8 as the default.
+     */
+    @Bean
+    public CharacterEncodingFilter characterEncodingFilter() {
+        final CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        return characterEncodingFilter;
     }
 
     @Bean
-    public PropertiesFactoryBean applicationProperties() {
-        return getPropertiesFactoryBean(new ClassPathResource("/find.properties"));
-    }
+    public FilterRegistrationBean userLoggingFilter() {
+        final UserLoggingFilter userLoggingFilter = new UserLoggingFilter();
+        userLoggingFilter.setUsePrincipal(true);
 
-    private PropertiesFactoryBean getPropertiesFactoryBean(final Resource location) {
-        final PropertiesFactoryBean bean = new PropertiesFactoryBean();
-        bean.setLocation(location);
+        final FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(userLoggingFilter);
+        filterRegistrationBean.addUrlPatterns("/api/*");
 
-        return bean;
+        return filterRegistrationBean;
     }
 
     @Bean
@@ -83,14 +101,6 @@ public class AppConfiguration<C extends Config<C>> {
         sessionLocaleResolver.setDefaultLocale(Locale.ENGLISH);
 
         return sessionLocaleResolver;
-    }
-
-    @Bean
-    public MessageSource messageSource() {
-        final ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-        resourceBundleMessageSource.setBasename("com.hp.autonomy.frontend.find.i18n");
-
-        return resourceBundleMessageSource;
     }
 
     @Bean

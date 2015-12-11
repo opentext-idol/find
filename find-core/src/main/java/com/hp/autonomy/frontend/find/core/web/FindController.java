@@ -6,12 +6,12 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigurationLoader;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,30 +23,30 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Controller
 public class FindController {
 
     public static final String PUBLIC_PATH = "/public/";
-    private static final Pattern PATTERN_TO_REPLACE = Pattern.compile("</", Pattern.LITERAL);
+    public static final String LOGIN_PATH = "/login";
+    private static final String DEFAULT_LOGIN_PAGE = "/loginPage";
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
 
-    @Autowired
-    private ConfigurationLoader configurationLoader;
+    @Value(AppConfiguration.APPLICATION_VERSION_PROPERTY)
+    private String applicationVersion;
 
     @Autowired
-    private ObjectMapper contextObjectMapper;
+    private ControllerUtils controllerUtils;
 
     @RequestMapping("/")
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final String contextPath = request.getContextPath();
 
         if (LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
-            response.sendRedirect(contextPath + "/loginPage");
+            response.sendRedirect(contextPath + DEFAULT_LOGIN_PAGE);
         } else {
             response.sendRedirect(contextPath + PUBLIC_PATH);
         }
@@ -56,16 +56,19 @@ public class FindController {
     public ModelAndView mainPage() throws JsonProcessingException {
         final String username = SecurityContextHolder.getContext().getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
-        config.put("hosted", configurationLoader.isHosted());
-        config.put("username", username);
+        config.put(MvcConstants.USERNAME.value(), username);
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put("configJson", convertToJson(config));
+        attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
+        attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(config));
 
-        return new ModelAndView("public", attributes);
+        return new ModelAndView(ViewNames.PUBLIC.value(), attributes);
     }
 
-    protected String convertToJson(final Object object) throws JsonProcessingException {
-        return PATTERN_TO_REPLACE.matcher(contextObjectMapper.writeValueAsString(object)).replaceAll(Matcher.quoteReplacement("<\\/"));
+    @RequestMapping(value = LOGIN_PATH, method = RequestMethod.GET)
+    public ModelAndView login() {
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
+        return new ModelAndView(ViewNames.LOGIN.value(), attributes);
     }
 }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015 Hewlett-Packard Development Company, L.P.
+  ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.autonomy.frontend</groupId>
+        <artifactId>master</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>com.hp.autonomy.frontend</groupId>
+    <artifactId>find-sonar</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <profiles>
+        <profile>
+            <id>sonar-js</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sonar.branch>javascript</sonar.branch>
+                <sonar.language>js</sonar.language>
+                <sonar.tests>${basedir}/src/test/js</sonar.tests>
+                <sonar.exclusions>file:**/lib/**</sonar.exclusions>
+                <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+                <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+                <sonar.javascript.lcov.reportPath>${basedir}/target/coverage/jsTestDriver.conf-coverage.dat</sonar.javascript.lcov.reportPath>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <version>2.2</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <sourceDirectory>${basedir}/src/main/public</sourceDirectory>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

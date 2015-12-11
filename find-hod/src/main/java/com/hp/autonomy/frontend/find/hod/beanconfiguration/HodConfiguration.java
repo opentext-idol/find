@@ -6,8 +6,11 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
@@ -68,10 +71,14 @@ import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 @EnableCaching
 public class HodConfiguration extends CachingConfigurerSupport {
+    public static final String SSO_PAGE_PROPERTY = "${find.hod.sso:https://www.idolondemand.com/sso.html}";
+    public static final String HOD_API_URL_PROPERTY = "${find.iod.api:https://api.havenondemand.com}";
+
     @Autowired
     private Environment environment;
 
@@ -84,13 +91,15 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Autowired
     private ConfigFileService<HodFindConfig> configService;
 
-    @Bean(name = "dispatcherObjectMapper")
-    public ObjectMapper dispatcherObjectMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
-
-        mapper.addMixIn(Authentication.class, HodAuthenticationMixins.class);
-
-        return mapper;
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Bean
+    @Autowired
+    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder) {
+        return builder.createXmlMapper(false)
+                .mixIn(Authentication.class, HodAuthenticationMixins.class)
+                .mixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
+                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+                .build();
     }
 
     @Bean
@@ -120,6 +129,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
             final Integer proxyPort = Integer.valueOf(environment.getProperty("find.https.proxyPort", "8080"));
             builder.setProxy(new HttpHost(proxyHost, proxyPort));
         }
+
+        builder.disableCookieManagement();
 
         return builder.build();
     }

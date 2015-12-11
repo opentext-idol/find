@@ -40,7 +40,9 @@ public class IdolRelatedConceptsService implements RelatedConceptsService<QsElem
     public List<QsElement> findRelatedConcepts(final String text, final List<String> indexes, final String fieldText) throws AciErrorException {
         final AciParameters parameters = new AciParameters(QueryActions.Query.name());
         parameters.add(QueryParams.Text.name(), text);
-        parameters.add(QueryParams.DatabaseMatch.name(), new Databases(indexes));
+        if (!indexes.isEmpty()) {
+            parameters.add(QueryParams.DatabaseMatch.name(), new Databases(indexes));
+        }
         parameters.add(QueryParams.FieldText.name(), fieldText);
         parameters.add(QueryParams.MaxResults.name(), MAX_RESULTS);
         parameters.add(QueryParams.Print.name(), PrintParam.NoResults);

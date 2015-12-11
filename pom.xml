@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.hp.autonomy.frontend</groupId>
-        <artifactId>foss-master-pom</artifactId>
-        <version>1.0.0</version>
+        <groupId>com.hp.autonomy</groupId>
+        <artifactId>foss-spring-boot-master-pom</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <inceptionYear>2014</inceptionYear>
@@ -21,14 +21,11 @@
         <module>find-core</module>
         <module>find-idol</module>
         <module>find-hod</module>
-        <module>find-web</module>
+        <module>find-dist</module>
     </modules>
 
     <properties>
-        <org.springframework.version>4.1.6.RELEASE</org.springframework.version>
-        <org.springsecurity.version>4.0.1.RELEASE</org.springsecurity.version>
         <application.buildNumber>dev</application.buildNumber>
-        <tomcatEmbedWebsocket.version>7.0.54</tomcatEmbedWebsocket.version>
     </properties>
 
     <build>
@@ -49,45 +46,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
         </plugins>
     </build>
 
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.12.2</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -97,21 +69,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.5</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${org.springframework.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.1.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -128,4 +93,22 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>dev</id>
+            <properties>
+                <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
+            </properties>
+        </profile>
+        <profile>
+            <id>production</id>
+            <properties>
+                <static-resources-dir>${project.build.directory}/webapp</static-resources-dir>
+            </properties>
+        </profile>
+    </profiles>
 </project>
