@@ -20,6 +20,14 @@ public class NotificationsDropDown extends AppElement {
         return findElement(By.cssSelector("li:nth-child(" + (index * 2 - 1) + ") a .notification-message"));
     }
 
+    public List<Notification> getAllNotifications(){
+        List<Notification> notifications = new ArrayList<>();
+        for(WebElement notification : findElements(By.cssSelector("li:nth-child(1) a"))){
+            notifications.add(new Notification(notification));
+        }
+        return notifications;
+    }
+
     public List<String> getAllNotificationMessages(){
         List<String> messages = new ArrayList<>();
         for(WebElement notification : findElements(By.cssSelector("li a .notification-message"))){
