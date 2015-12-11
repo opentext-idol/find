@@ -932,26 +932,26 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		final String firstResult = searchPage.getSearchResultTitle(1);
 		final Date date = searchPage.getDateFromResult(1);
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		searchPage.expand(SearchBase.Section.FILTER_BY);
+		searchPage.expand(SearchBase.Section.DATES);
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(date);
 		searchPage.closeFromDatePicker();
-		assertThat("Document should still be displayed", searchPage.getSearchResultTitle(1), is(firstResult));
+		assertThat("displayed with filter = $time", searchPage.getSearchResultTitle(1), is(firstResult));
 
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, 1));
 		searchPage.closeFromDatePicker();
 
-		assertThat("Document should not be visible. Date filter not working", searchPage.getSearchResultTitle(1), not(firstResult));
+		assertThat("not displayed with filter = $time + 1min", searchPage.getSearchResultTitle(1), not(firstResult));
 
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
 		searchPage.closeFromDatePicker();
-		assertThat("Document should be visible. Date filter not working", searchPage.getSearchResultTitle(1), is(firstResult));
+		assertThat("displayed with filter = $time - 1min", searchPage.getSearchResultTitle(1), is(firstResult));
 	}
 
 	@Test

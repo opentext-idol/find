@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.element.ChevronContainer;
+import com.autonomy.abc.selenium.element.Collapsible;
 import com.autonomy.abc.selenium.indexes.IndexesTree;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
@@ -456,6 +458,38 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 		public String getName() {
 			return name;
+		}
+	}
+
+	public void expand(Section section) {
+		section.locateOn(this).expand();
+	}
+
+	public void collapse(Section section) {
+		section.locateOn(this).collapse();
+	}
+
+	public enum Section {
+		KEYWORDS("h4", "Keywords"),
+		FILTER_BY("h4", "Filter By"),
+			INDEXES(By.cssSelector(".search-databases>a")),
+			DATES("h5", "Dates"),
+			PARAMETRIC_VALUES("h5", "Parametric Values"),
+		RELATED_CONCEPTS("h4", "Related Concepts"),
+		FIELD_TEXT("h4", "Field Text");
+
+		private final By locator;
+
+		Section(String tagName, String content) {
+			this(By.xpath(".//" + tagName + "[contains(text(), '" + content + "')]/../.."));
+		}
+
+		Section(By by) {
+			locator = by;
+		}
+
+		private Collapsible locateOn(SearchBase page) {
+			return new ChevronContainer(page.findElement(locator));
 		}
 	}
 
