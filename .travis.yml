@@ -6,4 +6,4 @@ branches:
   - master
   - develop
 install: true
-script: mvn install -P production
+script: mvn package -P production
