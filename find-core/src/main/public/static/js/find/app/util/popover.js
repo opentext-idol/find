@@ -21,12 +21,12 @@ define([
      * @param {Jquery} $el
      * @param {Function} callback
      */
-    return function($el, callback) {
+    return function($el, trigger, callback) {
         $el.popover({
             content: initialContent,
             html: true,
             placement: 'bottom',
-            trigger: 'hover'
+            trigger: trigger
         }).on('inserted.bs.popover', function(e) {
             var $target = $(e.currentTarget);
 

@@ -244,11 +244,19 @@ define([
                 }, this)
             };
 
-            if (options.media) {
+            var contentType = options.model.get('contentType') || '';
+
+            var media = _.find(mediaTypes, function(mediaType) {
+                return contentType.indexOf(mediaType) === 0;
+            });
+
+            var url = options.model.get('url');
+
+            if (media && url) {
                 args.html = this.mediaPlayerTemplate({
-                    media: options.media,
-                    url: options.url,
-                    offset: options.offset
+                    media: media,
+                    url: url,
+                    offset: options.model.get('offset')
                 });
             } else {
                 args.html = this.viewDocumentTemplate({
@@ -293,35 +301,14 @@ define([
                 this.$('.main-results-content .results').append($newResult);
             }
 
-            var contentType = model.get('contentType') || '';
-
-            var media = _.find(mediaTypes, function(mediaType) {
-                return contentType.indexOf(mediaType) === 0;
-            });
-
-            var url = model.get('url');
-            var colorboxOptions;
-
-            if (media && url) {
-                // This is a multimedia file
-                colorboxOptions = {
-                    media: media,
-                    url: url,
-                    offset: model.get('offset')
-                };
-            } else {
-                // Use the standard display
-                colorboxOptions = {model: model, href: href};
-            }
-
-            $newResult.find('.result-header').colorbox(this.colorboxArguments(colorboxOptions));
+            $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
 
             $newResult.find('.dots').click(function (e) {
                 e.preventDefault();
                 $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
             });
 
-            popover($newResult.find('.similar-documents-trigger'), this.handlePopover);
+            popover($newResult.find('.similar-documents-trigger'), 'focus', this.handlePopover);
         },
 
         addLinksToSummary: function(summary) {
@@ -418,7 +405,22 @@ define([
                     if (collection.isEmpty()) {
                         $content.html(this.popoverMessageTemplate({message: i18n['search.similarDocuments.none']}));
                     } else {
-                        $content.html(this.popoverTemplate({collection: collection}));
+                        $content.html('<ul class="list-unstyled"></ul>');
+                        _.each(collection.models, function(model) {
+                            var listItem = $(this.popoverTemplate({
+                                title: model.get('title'),
+                                summary: model.get('summary').trim().substring(0, 100) + '...'
+                            }));
+                            var reference = model.get('reference');
+                            var href;
+                            if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
+                                href = viewClient.getStaticContentPromotionHref(reference);
+                            } else {
+                                href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
+                            }
+                            $(listItem).find('a').colorbox(this.colorboxArguments({model: model, href: href}));
+                            $content.find('ul').append(listItem);
+                        }, this);
                     }
                 }, this)
             });

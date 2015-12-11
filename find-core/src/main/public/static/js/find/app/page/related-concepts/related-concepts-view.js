@@ -37,7 +37,14 @@ define([
                 if (topResultsCollection.isEmpty()) {
                     $content.html(this.popoverMessageTemplate({message: i18n['search.relatedConcepts.topResults.none']}));
                 } else {
-                    $content.html(this.popoverTemplate({collection: topResultsCollection}));
+                    $content.html('<ul class="list-unstyled"></ul>');
+                    _.each(topResultsCollection.models, function(model) {
+                        var listItem = $(this.popoverTemplate({
+                            title: model.get('title'),
+                            summary: model.get('summary').trim().substring(0, 100) + '...'
+                        }));
+                        $content.find('ul').append(listItem);
+                    }, this);
                 }
             }, this)
         });
@@ -85,7 +92,7 @@ define([
                             this.$list.append(this.listItemTemplate({entities: entities}));
                         }, this);
 
-                        popover(this.$list.find('.entity-text'), handlePopover);
+                        popover(this.$list.find('.entity-text'), 'hover', handlePopover);
                     }
                 }
             });

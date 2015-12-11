@@ -553,7 +553,7 @@ input.find-input {
     width: 250px;
 }
 
-.popover-content h5 {
+.popover-content a {
     margin:0;
     font-weight: 700;
 }
@@ -670,7 +670,7 @@ input:-moz-placeholder::before {
     background: none;
 }
 
-.popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 {
+.popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 , .popover a{
     color: #00b388;
 }
 
