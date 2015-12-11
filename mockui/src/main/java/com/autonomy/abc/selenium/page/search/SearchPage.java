@@ -26,23 +26,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		waitForLoad();
 	}
 
-	public List<String> promotionsBucketList() {
-		return bucketList(this);
-	}
-
 	@Override
 	public void waitForLoad() {
 		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-page-contents")));
 	}
 
-	public WebElement modifiedResultsCheckBox() {
-        return findElement(By.className("search-type-toggle"));
-	}
-
-    public boolean modifiedResultsShown(){
-        return findElement(By.className("search-type-toggle")).findElement(By.className("checkbox-input")).isSelected();
-    }
-
+	/* title */
 	// TODO: same as getResultsForText() ?
 	public WebElement searchTitle() {
 		return getDriver().findElement(By.cssSelector(".heading > b"));
@@ -56,119 +45,29 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return heading.getText();
 	}
 
+	// "Results for searchterm (___)"
+	public int countSearchResults() {
+		((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
+		final String bracketedSearchResultsTotal = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
+		return Integer.parseInt(bracketedSearchResultsTotal.substring(1, bracketedSearchResultsTotal.length() - 1));
+	}
+
+	/* page controls */
 	public WebElement promoteTheseDocumentsButton() {
 		return findElement(By.xpath(".//button[contains(text(), 'Promote documents')]"));
 	}
 
-	public WebElement promoteTheseItemsButton() {
-		return findElement(By.xpath(".//*[contains(text(), 'Promote items')]"));
+	public WebElement promoteThisQueryButton() {
+		//The space is deliberate!
+		return findElement(By.xpath("//button[text()=' Promote query']"));
 	}
 
-	public void promotionsBucketClose() {
-		promotionsBucket().findElement(By.cssSelector(".close-link")).click();
-		loadOrFadeWait();
+	public WebElement modifiedResultsCheckBox() {
+		return findElement(By.className("search-type-toggle"));
 	}
 
-	public String createAPromotion() {
-		promoteTheseDocumentsButton().click();
-		searchResultCheckbox(1).click();
-		final String promotedDocTitle = getSearchResultTitle(1);
-		promoteTheseItemsButton().click();
-		return promotedDocTitle;
-	}
-
-	public List<String> createAMultiDocumentPromotion(final int numberOfDocs) {
-		promoteTheseDocumentsButton().click();
-		loadOrFadeWait();
-		List<String> promotedDocTitles = addToBucket(numberOfDocs);
-		scrollIntoViewAndClick(promoteTheseItemsButton());
-		loadOrFadeWait();
-		return promotedDocTitles;
-	}
-
-	public List<String> addToBucket(int finalNumberOfDocs) {
-		final List<String> promotedDocTitles = new ArrayList<>();
-		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteTheseItemsButton()));
-		waitForSearchLoadIndicatorToDisappear(60);
-		for (int i = 0; i < finalNumberOfDocs; i++) {
-			final int checkboxIndex = i % RESULTS_PER_PAGE + 1;
-			searchResultCheckbox(checkboxIndex).click();
-			promotedDocTitles.add(getSearchResultTitle(checkboxIndex));
-
-			// Change page when we have checked all boxes on the current page, if we have more to check
-			if (i < finalNumberOfDocs - 1 && checkboxIndex == RESULTS_PER_PAGE) {
-				// TODO: does this need to be javascriptClick?
-				forwardPageButton().click();
-				waitForSearchLoadIndicatorToDisappear();
-			}
-		}
-		return promotedDocTitles;
-	}
-
-	public void paginateWait() {
-		try {
-			waitForSearchLoadIndicatorToDisappear();
-		} catch (final StaleElementReferenceException|NoSuchElementException n) {
-			loadOrFadeWait();
-		}
-	}
-
-	public void showMorePromotions() {
-		showMorePromotionsButton().click();
-		loadOrFadeWait();
-	}
-
-	public void showLessPromotions() {
-		showLessPromotionsButton().click();
-		loadOrFadeWait();
-	}
-
-	public WebElement showMorePromotionsButton() {
-		return findElement(By.cssSelector(".show-more"));
-	}
-
-	public WebElement showLessPromotionsButton() {
-		return findElement(By.cssSelector(".show-less"));
-	}
-
-	public WebElement promotionsLabel() {
-		return findElement(By.cssSelector(".promotions .promotion-name"));
-	}
-
-	public WebElement promotionsSummary() {
-		return findElement(By.cssSelector(".promotions-summary"));
-	}
-
-	public int getPromotionSummarySize() {
-		int summaryItemsTotal = 0;
-
-		for (final WebElement searchResult : findElements(By.cssSelector(".promotions-list li"))) {
-			if (searchResult.isDisplayed()) {
-				summaryItemsTotal++;
-			}
-		}
-
-		return summaryItemsTotal;
-	}
-
-	public WebElement promotionSummaryBackToStartButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
-	}
-
-	public WebElement promotionSummaryBackButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
-	}
-
-	public WebElement promotionSummaryForwardButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
-	}
-
-	public WebElement promotionSummaryForwardToEndButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
-	}
-
-	public boolean isPromotionsBoxVisible() {
-		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
+	public boolean modifiedResultsShown(){
+		return findElement(By.className("search-type-toggle")).findElement(By.className("checkbox-input")).isSelected();
 	}
 
 	public void selectLanguage(final Language language) {
@@ -188,9 +87,52 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".current-language-selection")).getText();
 	}
 
-	public WebElement promoteThisQueryButton() {
-		//The space is deliberate!
-		return findElement(By.xpath("//button[text()=' Promote query']"));
+	public List<String> getLanguageList() {
+		languageButton().click();
+		final List<String> languageList = new ArrayList<>();
+
+		for (final WebElement language : findElements(By.cssSelector(".search-page-controls [role='menuitem']"))) {
+			languageList.add(language.getText());
+		}
+
+		return languageList;
+	}
+
+	/* promotions bucket */
+	public List<String> promotionsBucketList() {
+		return bucketList(this);
+	}
+
+	public WebElement promoteTheseItemsButton() {
+		return findElement(By.xpath(".//*[contains(text(), 'Promote items')]"));
+	}
+
+	public void promotionsBucketClose() {
+		promotionsBucket().findElement(By.cssSelector(".close-link")).click();
+		loadOrFadeWait();
+	}
+
+	/* promoted results */
+	// TODO: no longer appears?
+	public WebElement promotionsLabel() {
+		return findElement(By.cssSelector(".promotions .promotion-name"));
+	}
+
+	// TODO: no longer appears?
+	public WebElement promotionsSummary() {
+		return findElement(By.cssSelector(".promotions-summary"));
+	}
+
+	public int getPromotionSummarySize() {
+		int summaryItemsTotal = 0;
+
+		for (final WebElement searchResult : findElements(By.cssSelector(".promotions-list li"))) {
+			if (searchResult.isDisplayed()) {
+				summaryItemsTotal++;
+			}
+		}
+
+		return summaryItemsTotal;
 	}
 
 	public List<String> promotionsSummaryList(final boolean fullList) {
@@ -239,20 +181,11 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ") h3")));
 	}
 
-	public List<String> getSearchResultTitles(int numberOfResults){
-        List<String> titles = new ArrayList<>();
-
-        for(int i = 0; i < numberOfResults; i++){
-            titles.add(getSearchResultTitle((i % 6) + 1));
-
-            if((i + 1) % 6 == 0){
-                forwardPageButton().click();
-                loadOrFadeWait();
-                waitForSearchLoadIndicatorToDisappear();
-                loadOrFadeWait();
-            }
-        }
-
+	public List<String> getPromotedDocumentTitles(){
+		List<String> titles = new ArrayList<>();
+		for(WebElement promotion : getPromotedResults()){
+			titles.add(promotion.getText());
+		}
 		return titles;
 	}
 
@@ -334,15 +267,66 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return labelList;
 	}
 
-	public List<String> getLanguageList() {
-		languageButton().click();
-		final List<String> languageList = new ArrayList<>();
+	public boolean isPromotionsBoxVisible() {
+		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
+	}
 
-		for (final WebElement language : findElements(By.cssSelector(".search-page-controls [role='menuitem']"))) {
-			languageList.add(language.getText());
-		}
+	public void showMorePromotions() {
+		showMorePromotionsButton().click();
+		loadOrFadeWait();
+	}
 
-		return languageList;
+	public void showLessPromotions() {
+		showLessPromotionsButton().click();
+		loadOrFadeWait();
+	}
+
+	public WebElement showMorePromotionsButton() {
+		return findElement(By.cssSelector(".show-more"));
+	}
+
+	public WebElement showLessPromotionsButton() {
+		return findElement(By.cssSelector(".show-less"));
+	}
+
+	public WebElement promotionSummaryBackToStartButton() {
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
+	}
+
+	public WebElement promotionSummaryBackButton() {
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
+	}
+
+	public WebElement promotionSummaryForwardButton() {
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
+	}
+
+	public WebElement promotionSummaryForwardToEndButton() {
+		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
+	}
+
+	/* search results */
+	public List<String> getSearchResultTitles(int numberOfResults){
+        List<String> titles = new ArrayList<>();
+
+        for(int i = 0; i < numberOfResults; i++){
+            titles.add(getSearchResultTitle((i % 6) + 1));
+
+            if((i + 1) % 6 == 0){
+                forwardPageButton().click();
+                loadOrFadeWait();
+                waitForSearchLoadIndicatorToDisappear();
+                loadOrFadeWait();
+            }
+        }
+
+		return titles;
+	}
+
+	@Override
+	public WebElement searchResultCheckbox(int resultNumber) {
+		// TODO: find others like this, avoid repetition
+		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
 	public void viewFrameClick(final boolean clickLogo, final int resultIndex) {
@@ -365,59 +349,15 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
 	}
 
-	private WebElement getContentTypeDiv() {
-		return findElement(By.cssSelector("[data-field='content_type']"));
-	}
-
-	/**
-	 *
-	 * @param contentType		String to filter by
-	 * @return					Number of results in filtered search
-	 */
-	public int filterByContentType(String contentType) {
-		WebElement li = getContentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "']"));
-
-		if(!li.isDisplayed()){
-			openParametricValuesList();
+	public void paginateWait() {
+		try {
+			waitForSearchLoadIndicatorToDisappear();
+		} catch (final StaleElementReferenceException|NoSuchElementException n) {
+			loadOrFadeWait();
 		}
-
-		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
-		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
-		li.findElement(By.tagName("ins")).click();
-		return resultCount;
 	}
 
-	private WebElement getAuthorDiv(){
-		return findElement(By.cssSelector("[data-field='author']"));
-	}
-
-	public int filterByAuthor(String author) {
-		WebElement li = getAuthorDiv().findElement(By.cssSelector("[data-value='" + author + "']"));
-		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
-		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
-		li.findElement(By.tagName("ins")).click();
-		return resultCount;
-	}
-
-	public void openParametricValuesList() {
-		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
-		loadOrFadeWait();
-	}
-
-	@Override
-	public WebElement searchResultCheckbox(int resultNumber) {
-		// TODO: find others like this, avoid repetition
-		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
-	}
-
-	public List<Checkbox> indexList() {
-		List<Checkbox> checkboxes = new ArrayList<>();
-		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
-			checkboxes.add(new Checkbox(element, getDriver()));
-		}
-		return checkboxes;
-	}
-
+	/* keywords */
 	public List<String> youSearchedFor() {
 		WebElement searchTermsList = findElement(By.cssSelector(".search-terms-list"));
 		scrollIntoView(searchTermsList, getDriver());
@@ -478,17 +418,91 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return new KeywordsContainer(findElement(By.cssSelector(".search-results-synonyms .keywords-list-container")), getDriver());
 	}
 
-	public List<String> getPromotedDocumentTitles(){
-		List<String> titles = new ArrayList<>();
-		for(WebElement promotion : getPromotedResults()){
-			titles.add(promotion.getText());
+	// TODO: same as parent?
+	@Override
+	public List<Checkbox> indexList() {
+		List<Checkbox> checkboxes = new ArrayList<>();
+		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
+			checkboxes.add(new Checkbox(element, getDriver()));
 		}
-		return titles;
+		return checkboxes;
 	}
 
-	public int countSearchResults() {
-        ((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
-		final String bracketedSearchResultsTotal = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
-		return Integer.parseInt(bracketedSearchResultsTotal.substring(1, bracketedSearchResultsTotal.length() - 1));
+	/* parametric values */
+	private WebElement getContentTypeDiv() {
+		return findElement(By.cssSelector("[data-field='content_type']"));
+	}
+
+	/**
+	 *
+	 * @param contentType		String to filter by
+	 * @return					Number of results in filtered search
+	 */
+	public int filterByContentType(String contentType) {
+		WebElement li = getContentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "']"));
+
+		if(!li.isDisplayed()){
+			openParametricValuesList();
+		}
+
+		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
+		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
+		li.findElement(By.tagName("ins")).click();
+		return resultCount;
+	}
+
+	private WebElement getAuthorDiv(){
+		return findElement(By.cssSelector("[data-field='author']"));
+	}
+
+	public int filterByAuthor(String author) {
+		WebElement li = getAuthorDiv().findElement(By.cssSelector("[data-value='" + author + "']"));
+		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
+		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
+		li.findElement(By.tagName("ins")).click();
+		return resultCount;
+	}
+
+	public void openParametricValuesList() {
+		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
+		loadOrFadeWait();
+	}
+
+	/* helper methods */
+	// TODO: move to service?
+	public String createAPromotion() {
+		promoteTheseDocumentsButton().click();
+		searchResultCheckbox(1).click();
+		final String promotedDocTitle = getSearchResultTitle(1);
+		promoteTheseItemsButton().click();
+		return promotedDocTitle;
+	}
+
+	public List<String> createAMultiDocumentPromotion(final int numberOfDocs) {
+		promoteTheseDocumentsButton().click();
+		loadOrFadeWait();
+		List<String> promotedDocTitles = addToBucket(numberOfDocs);
+		scrollIntoViewAndClick(promoteTheseItemsButton());
+		loadOrFadeWait();
+		return promotedDocTitles;
+	}
+
+	public List<String> addToBucket(int finalNumberOfDocs) {
+		final List<String> promotedDocTitles = new ArrayList<>();
+		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteTheseItemsButton()));
+		waitForSearchLoadIndicatorToDisappear(60);
+		for (int i = 0; i < finalNumberOfDocs; i++) {
+			final int checkboxIndex = i % RESULTS_PER_PAGE + 1;
+			searchResultCheckbox(checkboxIndex).click();
+			promotedDocTitles.add(getSearchResultTitle(checkboxIndex));
+
+			// Change page when we have checked all boxes on the current page, if we have more to check
+			if (i < finalNumberOfDocs - 1 && checkboxIndex == RESULTS_PER_PAGE) {
+				// TODO: does this need to be javascriptClick?
+				forwardPageButton().click();
+				waitForSearchLoadIndicatorToDisappear();
+			}
+		}
+		return promotedDocTitles;
 	}
 }
