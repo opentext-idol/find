@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class HSODevsPage extends HSOUserManagement {
-    protected HSODevsPage(WebDriver driver) {
+    public HSODevsPage(WebDriver driver) {
         super(driver);
     }
 

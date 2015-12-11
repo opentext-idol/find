@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.page.admin.HSODevsPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
+import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
@@ -101,5 +103,9 @@ public class HSOElementFactory extends ElementFactory {
 
     public GettingStartedPage getGettingStartedPage() {
         return new GettingStartedPage(getDriver());
+    }
+
+    public HSODevsPage getDevsPage() {
+        return new HSODevsPage(getDriver());
     }
 }
