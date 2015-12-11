@@ -100,13 +100,13 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testSearchBasic(){
 		search("dog");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("dog"));
+		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("dog"));
 
 		search("cat");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("cat"));
+		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("cat"));
 
 		search("ElEPhanT");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("ElEPhanT"));
+		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("ElEPhanT"));
 	}
 
 	@Test
@@ -768,7 +768,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	private int getResultCount(String searchTerm) {
 		search(searchTerm);
-		return searchPage.countSearchResults();
+		return searchPage.getHeadingResultsCount();
 	}
 
 	//TODO
@@ -844,7 +844,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
 		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));	//TODO Seems like this shouldn't be visible
-		assertThat("Wrong number of results displayed", searchPage.countSearchResults(), is(2));
+		assertThat("Wrong number of results displayed", searchPage.getHeadingResultsCount(), is(2));
 		assertThat("Wrong number of pin to position labels displayed", searchPage.countPinToPositionLabels(), is(2));
 
 		searchPage.fieldTextEditButton().click();
@@ -854,7 +854,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 
 		assertThat(searchPage.getSearchResultTitle(1), is(promotedDocs.get(0)));
-		assertThat(searchPage.countSearchResults(), is(1));
+		assertThat(searchPage.getHeadingResultsCount(), is(1));
 		assertThat(searchPage.countPinToPositionLabels(), is(1));
 
 		searchPage.fieldTextEditButton().click();
@@ -864,7 +864,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 
 		assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResultTitle(1), is(promotedDocs.get(1)));
-		assertThat("Wrong number of search results", searchPage.countSearchResults(), is(1));
+		assertThat("Wrong number of search results", searchPage.getHeadingResultsCount(), is(1));
 		assertThat("Wrong number of pin to position labels", searchPage.countPinToPositionLabels(), is(1));
 	}
 
@@ -874,16 +874,16 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.selectLanguage(Language.ENGLISH);
 		for (final String query : Arrays.asList("dog", "chips", "dinosaur", "melon", "art")) {
 			search(query);
-			final int firstPageResultsCount = searchPage.countSearchResults();
+			final int firstPageResultsCount = searchPage.getHeadingResultsCount();
 
 			searchPage.forwardToLastPageButton().click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
-			verifyThat("number of results in title is consistent", searchPage.countSearchResults(), is(firstPageResultsCount));
+			verifyThat("number of results in title is consistent", searchPage.getHeadingResultsCount(), is(firstPageResultsCount));
 
 			final int completePages = searchPage.getCurrentPageNumber() - 1;
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
 			final int expectedCount = completePages * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
-			verifyThat("number of results is as expected", searchPage.countSearchResults(), is(expectedCount));
+			verifyThat("number of results is as expected", searchPage.getHeadingResultsCount(), is(expectedCount));
 		}
 	}
 
@@ -1109,7 +1109,7 @@ public class SearchPageITCase extends ABCTestBase {
 		search(queryText);
 		assertThat(topNavBar.getSearchBarText(), is(queryText));
 		assertThat(searchPage.youSearchedFor(), hasItem(queryText));
-		assertThat(searchPage.getResultsForText(), containsString(queryText));
+		assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
 
 		for (int i = 0; i < 5; i++) {
 			searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
@@ -1130,7 +1130,7 @@ public class SearchPageITCase extends ABCTestBase {
 				}
 			}
 			assertThat(searchPage.youSearchedFor(), containsItems(words));
-			assertThat(searchPage.getResultsForText(), containsString(queryText));
+			assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
 		}
 	}
 
@@ -1187,7 +1187,7 @@ public class SearchPageITCase extends ABCTestBase {
 
         String errorMessage = "Garbage text returned results. garbageQueryText string needs changed to be more garbage like";
 		assertThat(errorMessage, searchPage.getText(), containsString("No results found"));
-		assertThat(errorMessage, searchPage.countSearchResults(), is(0));
+		assertThat(errorMessage, searchPage.getHeadingResultsCount(), is(0));
 
 		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
         assertThat("If there are no search results there should be no related concepts", searchPage.getText(), containsString("No related concepts found"));
@@ -1214,7 +1214,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
-		assertThat(searchPage.countSearchResults(), is(results));
+		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
 		searchPage.forwardToLastPageButton().click();
 		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE;

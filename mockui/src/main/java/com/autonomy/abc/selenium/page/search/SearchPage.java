@@ -32,21 +32,15 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* title */
-	// TODO: same as getResultsForText() ?
-	public WebElement searchTitle() {
-		return getDriver().findElement(By.cssSelector(".heading > b"));
-	}
-
-	//TODO is this actually what it's looking for?
 	// "Results for _____ (123)"
-	public String getResultsForText() {
-		WebElement heading = getDriver().findElement(By.cssSelector(".heading b"));
+	public String getHeadingSearchTerm() {
+		WebElement heading = getDriver().findElement(By.cssSelector(".heading > b"));
 		scrollIntoView(heading, getDriver());
 		return heading.getText();
 	}
 
-	// "Results for searchterm (___)"
-	public int countSearchResults() {
+	// "Results for term (___)"
+	public int getHeadingResultsCount() {
 		((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
 		final String bracketedSearchResultsTotal = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
 		return Integer.parseInt(bracketedSearchResultsTotal.substring(1, bracketedSearchResultsTotal.length() - 1));
