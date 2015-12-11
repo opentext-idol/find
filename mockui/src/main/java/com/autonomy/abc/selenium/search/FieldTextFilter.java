@@ -15,22 +15,10 @@ public class FieldTextFilter implements SearchFilter {
 
     @Override
     public void apply(SearchBase searchBase) {
-        searchBase.expandFilter(SearchBase.Filter.FIELD_TEXT);
-        searchBase.loadOrFadeWait();
-        searchBase.fieldTextAddButton().click();
-        searchBase.fieldTextInput().sendKeys(fieldText);
-        searchBase.fieldTextTickConfirm().click();
-        searchBase.loadOrFadeWait();
+        searchBase.setFieldText(fieldText);
     }
 
     public void clear(SearchBase searchBase) {
-        searchBase.expandFilter(SearchBase.Filter.FIELD_TEXT);
-        searchBase.loadOrFadeWait();
-        try {
-            searchBase.fieldTextRemoveButton().click();
-            searchBase.loadOrFadeWait();
-        } catch (ElementNotVisibleException e) {
-            logger.warn("Field text already cleared");
-        }
+        searchBase.clearFieldText();
     }
 }

@@ -31,8 +31,8 @@ public class IndexFilter implements SearchFilter {
 
     @Override
     public void apply(SearchBase searchBase) {
+        NONE.apply(searchBase);
         IndexesTree indexesTree = searchBase.indexesTree();
-        indexesTree.allIndexes().deselect();
         for (String index : indexes) {
             indexesTree.select(index);
         }
@@ -56,6 +56,7 @@ public class IndexFilter implements SearchFilter {
 
         @Override
         public void apply(SearchBase searchBase) {
+            searchBase.indexesTree().allIndexes().select();
             searchBase.indexesTree().allIndexes().deselect();
         }
     }
