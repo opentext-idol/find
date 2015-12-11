@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = HostedFindApplication.class)
-@WebIntegrationTest({"server.port=0", "hp.find.persistentState = INMEMORY", "application.buildNumber=test", "find.https.proxyHost = web-proxy.sdc.hpecorp.net", "find.https.proxyPort: 8080"})
+@WebIntegrationTest({"server.port=0", "hp.find.persistentState = INMEMORY", "application.buildNumber=test"})
 public class HostedFindApplicationTest {
     @BeforeClass
     public static void init() {

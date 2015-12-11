@@ -17,6 +17,7 @@ import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +28,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @Configuration
+@ConditionalOnProperty(name = "find.https.proxyHost")
 public class HodTestConfiguration {
+    // TODO: pull these out
     private static final String TEST_APP_API_KEY = "03e5efd3-4ddb-47ed-811c-f74c7198f1a8";
     private static final String TEST_APPLICATION = "Find_Test";
     private static final String TEST_DOMAIN = "c46dfa57-0d8e-4f0f-b419-e3acd0a482e9";
