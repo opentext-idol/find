@@ -2,7 +2,6 @@ package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.ErrorPage;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
@@ -56,8 +55,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Before
     public void hostedSetUp(){
-        userService = ((HSOApplication) getApplication()).createUserService(getElementFactory());
-        usersPage = ((HSOElementFactory) getElementFactory()).getUsersPage();
+        userService = (HSOUserService) super.userService;
+        usersPage = (HSOUsersPage) super.usersPage;
     }
 
     // CSA-1775
@@ -139,7 +138,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private void verifyModalElements() {
         verifyModalElement(usersPage.getUsernameInput().getElement());
         verifyModalElement(usersPage.getEmailInput().getElement());
-        verifyModalElement(usersPage.getUserLevelDropdown());
+        verifyModalElement(usersPage.userLevelDropdown());
         verifyModalElement(usersPage.createButton());
     }
 
