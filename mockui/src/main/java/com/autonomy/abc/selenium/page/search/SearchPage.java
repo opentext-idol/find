@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.page.search;
 
-import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;

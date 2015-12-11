@@ -648,7 +648,7 @@ public class SearchPageITCase extends ABCTestBase {
 		final int comparisonResult = searchResultNotStarting(firstWord);
 		final String comparisonString = searchPage.getSearchResultTitle(comparisonResult);
 
-		searchPage.showFieldTextOptions();
+		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		searchPage.fieldTextAddButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("input visible", searchPage.fieldTextInput(), displayed());
@@ -695,8 +695,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.selectLanguage(Language.AFRIKAANS);
 
-
-        searchPage.showFieldTextOptions();
 		searchPage.clearFieldText();
 
 		final String firstSearchResult = searchPage.getSearchResultTitle(1);
@@ -725,7 +723,7 @@ public class SearchPageITCase extends ABCTestBase {
 
     @Test
 	public void testFieldTextInputDisappearsOnOutsideClick() {
-		searchPage.showFieldTextOptions();
+		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 
 		searchPage.fieldTextAddButton().click();
@@ -736,7 +734,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
 		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
 
-		searchPage.showRelatedConcepts();
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 		assertThat("Field text input visible", !searchPage.fieldTextInput().isDisplayed());
 	}
@@ -786,11 +784,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(2));
 
 		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
-		searchPage.showFieldTextOptions();
-		searchPage.fieldTextAddButton().click();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		searchPage.loadOrFadeWait();
+		searchPage.setFieldText("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
 
 		assertThat(searchPage.getPromotionSummarySize(), is(1));
 		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(1));
@@ -826,11 +820,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
 		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
 
-		searchPage.showFieldTextOptions();
-		searchPage.fieldTextAddButton().click();
-		searchPage.fieldTextInput().sendKeys("WILD{*horse*}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		searchPage.loadOrFadeWait();
+		searchPage.setFieldText("WILD{*horse*}:DRETITLE");
 
         searchPage.waitForSearchLoadIndicatorToDisappear();
         searchPage.loadOrFadeWait();
@@ -1000,8 +990,8 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testFromDateAlwaysBeforeUntilDate() {
 		search("food");
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		searchPage.expand(SearchBase.Facet.FILTER_BY);
+		searchPage.expand(SearchBase.Facet.DATES);
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 12:00 PM");
         searchPage.sortBy(SearchBase.Sort.RELEVANCE);
@@ -1028,8 +1018,8 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testFromDateEqualsUntilDate() throws ParseException {
 		search("Search");
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		searchPage.expand(SearchBase.Facet.FILTER_BY);
+		searchPage.expand(SearchBase.Facet.DATES);
 //		searchPage.openFromDatePicker();
 //		searchPage.closeFromDatePicker();
 //		searchPage.openUntilDatePicker();
@@ -1104,7 +1094,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
 
 		for (int i = 0; i < 5; i++) {
-			searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+			searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 			searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 			final int conceptsCount = searchPage.countRelatedConcepts();
 			assertThat(conceptsCount, lessThanOrEqualTo(50));
@@ -1131,18 +1121,18 @@ public class SearchPageITCase extends ABCTestBase {
 		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
 
 		search("France");
-		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> englishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
 		searchPage.selectLanguage(Language.FRENCH);
-		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> frenchConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
 
 		assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
 
 		searchPage.selectLanguage(Language.ENGLISH);
-		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> secondEnglishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
 		assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
@@ -1181,15 +1171,15 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(errorMessage, searchPage.getText(), containsString("No results found"));
 		assertThat(errorMessage, searchPage.getHeadingResultsCount(), is(0));
 
-		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         assertThat("If there are no search results there should be no related concepts", searchPage.getText(), containsString("No related concepts found"));
 	}
 
 	@Test
 	//TODO parametric values aren't working - file ticket
 	public void testParametricValuesLoads() throws InterruptedException {
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.PARAMETRIC_VALUES);
+		searchPage.expand(SearchBase.Facet.FILTER_BY);
+		searchPage.expand(SearchBase.Facet.PARAMETRIC_VALUES);
 		Thread.sleep(20000);
 		assertThat("Load indicator still visible after 20 seconds", searchPage.parametricValueLoadIndicator().isDisplayed(), is(false));
 	}

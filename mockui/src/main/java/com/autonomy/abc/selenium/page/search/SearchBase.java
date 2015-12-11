@@ -193,40 +193,21 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 	@Deprecated
 	public void selectDatabase(final String databaseName) {
-		expandFilter(Filter.FILTER_BY);
-		expandSubFilter(Filter.DATABASES);
-
-		if (!getSelectedDatabases().contains(databaseName) ) {
-			getParent(getDatabaseCheckboxes().get(getAllDatabases().indexOf(databaseName))).click();
-			loadOrFadeWait();
-		}
+		indexesTree().select(databaseName);
+		loadOrFadeWait();
 	}
 
 	@Deprecated
 	public void selectAllIndexesOrDatabases(final String type) {
-		expandFilter(Filter.FILTER_BY);
-		if (type.equals("Hosted")) {
-			selectAllIndexes();
-		} else {
-			expandSubFilter(Filter.DATABASES);
-			for (final WebElement checkbox : getDatabaseCheckboxes()) {
-				if (!checkbox.isSelected()) {
-					getParent(checkbox).click();
-				}
-			}
-		}
-		//new AppBody(getDriver()).getSearchPage().waitForSearchLoadIndicatorToDisappear();
-        waitForSearchLoadIndicatorToDisappear();
+		selectAllIndexes();
 	}
 
 	@Deprecated
 	public void selectAllIndexes() {
-		expandFilter(Filter.FILTER_BY);
-		expandSubFilter(Filter.INDEXES);
-		if (!findElement(By.xpath(".//label[text()[contains(., 'All')]]/div")).getAttribute("class").contains("checked")) {
-			findElement(By.xpath(".//label[text()[contains(., 'All')]]/div/ins")).click();
-			waitForSearchLoadIndicatorToDisappear();
-		}
+		expand(Facet.FILTER_BY);
+		expand(Facet.INDEXES);
+		indexesTree().allIndexes().select();
+		waitForSearchLoadIndicatorToDisappear();
 	}
 
 	@Deprecated
@@ -359,10 +340,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	}
 
 	/* related concepts */
-	public void showRelatedConcepts() {
-		expandFilter(Filter.RELATED_CONCEPTS);
-	}
-
 	public int countRelatedConcepts() {
 		return getRelatedConcepts().size();
 	}
@@ -377,7 +354,7 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 	/* field text */
 	public void setFieldText(String value) {
-		showFieldTextOptions();
+		expand(Facet.FIELD_TEXT);
 		try {
 			fieldTextAddButton().click();
 			loadOrFadeWait();
@@ -411,14 +388,11 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	}
 
 	public void clearFieldText() {
+		expand(Facet.FIELD_TEXT);
 		if (!fieldTextAddButton().isDisplayed()) {
 			getDatabasesList().click();
 			fieldTextRemoveButton().click();
 		}
-	}
-
-	public void showFieldTextOptions() {
-		expandFilter(Filter.FIELD_TEXT);
 	}
 
 	/* side bar */
