@@ -395,50 +395,6 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
-	/* side bar */
-	private WebElement getFilter(final String filter) {
-		return findElement(By.xpath(".//h4[contains(text(), '" + filter + "')]/.."));
-	}
-
-	private WebElement getSubFilter(final Filter filter) {
-		return findElement(By.xpath(".//h5[contains(text(), '" + filter.getName() + "')]/.."));
-	}
-
-	public void expandFilter(final Filter filterName) {
-		if (getFilter(filterName.getName()).getAttribute("class").contains("collapsed")) {
-			scrollIntoView(getFilter(filterName.getName()), getDriver());
-			getFilter(filterName.getName()).click();
-			loadOrFadeWait();
-		}
-	}
-
-	public void expandSubFilter(final Filter filterName) {
-		if (getSubFilter(filterName).getAttribute("class").contains("collapsed")) {
-			scrollIntoViewAndClick(getSubFilter(filterName));
-			loadOrFadeWait();
-		}
-	}
-
-	public enum Filter {
-		FILTER_BY("Filter By"),
-		RELATED_CONCEPTS("Related Concepts"),
-		FIELD_TEXT("Field Text"),
-		INDEXES("Indexes"),
-		DATABASES("Databases"),
-		DATES("Dates"),
-		PARAMETRIC_VALUES("Parametric Values");
-
-		private final String name;
-
-		Filter(final String filterName) {
-			name = filterName;
-		}
-
-		public String getName() {
-			return name;
-		}
-	}
-
 	public void expand(FacetFilter section) {
 		section.findInside(this).expand();
 	}
