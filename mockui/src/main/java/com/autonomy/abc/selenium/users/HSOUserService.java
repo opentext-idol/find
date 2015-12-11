@@ -27,7 +27,7 @@ public class HSOUserService extends UserService {
 
     @Override
     public HSOUsersPage goToUsers() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.USER_MGMT);
+        getBody().getSideNavBar().switchPage(NavBarTabId.USERS);
         setUsersPage(elementFactory.getUsersPage());
         return elementFactory.getUsersPage();
     }

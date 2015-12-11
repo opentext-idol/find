@@ -2,17 +2,14 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.users.HSOUser;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.Status;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSOUsersPage extends UsersPage {
+public class HSOUsersPage extends HSOUserManagement {
     public HSOUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
@@ -38,28 +35,8 @@ public class HSOUsersPage extends UsersPage {
         return findElement(By.id("refresh-users"));
     }
 
-    public WebElement getUserRow(User user){
-        return findElement(By.xpath("//*[contains(@class,'user-email') and text()='" + ((HSOUser) user).getEmail() + "']/.."));
-    }
-
-    public Status getStatusOf(User user) {
-        return Status.fromString(getUserRow(user).findElement(By.className("account-status")).getText());
-    }
-
-    public Role getRoleOf(User user) {
-        return Role.fromString(roleLinkFor(user).getText());
-    }
-
-    public WebElement roleLinkFor(User user){
-        return getUserRow(user).findElement(By.cssSelector(".user-role .user-role-cell"));
-    }
-
     public void setRoleValueFor(User user, Role newRole) {
         getUserRow(user).findElement(By.xpath(".//a[contains(text(),'"+newRole+"')]")).click();
-    }
-
-    private WebElement getUserRowByUsername(String username){
-        return findElement(By.xpath("//*[contains(@class,'user-name') and text()='" + username + "']/.."));
     }
 
     private By trashCan(){
@@ -79,14 +56,6 @@ public class HSOUsersPage extends UsersPage {
 
     public WebElement resetAuthenticationButton(User user) {
         return getUserRow(user).findElement(By.className("reset-authentication"));
-    }
-
-    public WebElement editUsernameLink(User user) {
-        return getUserRow(user).findElement(By.className("fa-pencil"));
-    }
-
-    public FormInput editUsernameInput(User user) {
-        return new FormInput(getUserRow(user).findElement(By.name("new-value")), getDriver());
     }
 
     public void clearEmail() {
