@@ -65,4 +65,9 @@ public class HSOUsersPage extends HSOUserManagement {
     public void clearEmail() {
         getEmailInput().clear();
     }
+
+    @Override
+    protected WebElement getUserRowByUsername(String username){
+        return findElement(By.xpath("//*[contains(@class,'user-name') and text()='" + username + "']/.."));
+    }
 }

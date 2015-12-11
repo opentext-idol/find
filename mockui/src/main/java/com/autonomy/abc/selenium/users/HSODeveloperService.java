@@ -32,7 +32,7 @@ public class HSODeveloperService {
     }
 
     public HSODevelopersPage goToDevs(){
-        getBody().getSideNavBar().switchPage(NavBarTabId.USERS);
+        getBody().getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
         devsPage = elementFactory.getDevsPage();
         return devsPage;
     }

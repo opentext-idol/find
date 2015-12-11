@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.users.HSODeveloperService;
+import com.autonomy.abc.selenium.users.HSOUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -26,15 +27,16 @@ public class DevelopersITCase extends HostedTestBase {
         devsPage = devService.goToDevs();
     }
 
-
     @Test
     public void testEditDevUsername(){
+        HSOUser dev = devService.DEVELOPER;
+        String originalUsername = dev.getUsername();
+        String newUsername = "Jeremy Clarkson";
         try {
-            String newUsername = "Jeremy Clarkson";
-            devService.editUsername(devService.DEVELOPER, newUsername);
+            devService.editUsername(dev, newUsername);
             verifyThat(devsPage.getUsernames(), hasItem(newUsername));
         } finally {
-            devService.editUsername(devService.DEVELOPER, "Aero Bubbles");
+            devService.editUsername(dev, originalUsername);
         }
     }
 }

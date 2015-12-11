@@ -25,10 +25,6 @@ abstract class HSOUserManagement extends UsersPage {
         return getUserRow(user).findElement(By.cssSelector(".user-role .user-role-cell"));
     }
 
-    protected WebElement getUserRowByUsername(String username){
-        return findElement(By.xpath("//*[contains(@class,'user-name') and text()='" + username + "']/.."));
-    }
-
     public WebElement editUsernameLink(User user) {
         return getUserRow(user).findElement(By.className("fa-pencil"));
     }
@@ -36,4 +32,6 @@ abstract class HSOUserManagement extends UsersPage {
     public FormInput editUsernameInput(User user) {
         return new FormInput(getUserRow(user).findElement(By.name("new-value")), getDriver());
     }
+
+    protected abstract WebElement getUserRowByUsername(String username);
 }
