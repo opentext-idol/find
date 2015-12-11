@@ -8,8 +8,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-abstract class HSOUserManagement extends UsersPage {
-    protected HSOUserManagement(WebDriver driver) {
+abstract class HSOUserManagementPage extends UsersPage {
+    protected HSOUserManagementPage(WebDriver driver) {
         super(driver);
     }
 

@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HSODevelopersPage extends HSOUserManagement {
+public class HSODevelopersPage extends HSOUserManagementPage {
     public HSODevelopersPage(WebDriver driver) {
         super(driver);
     }
@@ -18,18 +18,12 @@ public class HSODevelopersPage extends HSOUserManagement {
 
     @Override
     public void deleteUser(String userName) {
-        throw new InvalidActionException("deleteUser");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setRoleValueFor(User user, Role newRole) {
-        throw new InvalidActionException("setRoleValueFor");
-    }
-
-    private class InvalidActionException extends RuntimeException {
-        public InvalidActionException(String reason){
-            super("Cannot perform " + reason + "() on a developer" );
-        }
+        throw new UnsupportedOperationException();
     }
 
     @Override
