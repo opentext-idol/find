@@ -112,7 +112,7 @@ public class IdolDocumentServiceTest {
 
         when(contentAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenReturn(responseData);
 
-        final List<FindDocument> results = idolDocumentService.findSimilar(Collections.<String>emptySet(), "Some reference");
+        final List<FindDocument> results = idolDocumentService.findSimilar(Collections.singleton("Database1"), "Some reference");
         assertThat(results, is(not(empty())));
     }
 
