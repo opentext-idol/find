@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -39,17 +38,18 @@ public class HodIndexesServiceImpl implements HodIndexesService {
 
     private static final Set<ResourceFlavour> FLAVOURS_TO_REMOVE = ResourceFlavour.of(ResourceFlavour.QUERY_MANIPULATION, ResourceFlavour.CATEGORIZATION);
 
-    @Autowired
-    private ConfigService<HodFindConfig> configService;
+    private final ConfigService<HodFindConfig> configService;
+    private final ResourcesService resourcesService;
+    private final IndexFieldsService indexFieldsService;
+    private final DatabasesService databasesService;
 
     @Autowired
-    private ResourcesService resourcesService;
-
-    @Autowired
-    private IndexFieldsService indexFieldsService;
-
-    @Autowired
-    private DatabasesService databasesService;
+    public HodIndexesServiceImpl(final ConfigService<HodFindConfig> configService, final ResourcesService resourcesService, final IndexFieldsService indexFieldsService, final DatabasesService databasesService) {
+        this.configService = configService;
+        this.resourcesService = resourcesService;
+        this.indexFieldsService = indexFieldsService;
+        this.databasesService = databasesService;
+    }
 
     @Override
     @Cacheable(CacheNames.INDEXES)  // TODO: the caching here doesn't work from the settings page
@@ -62,16 +62,14 @@ public class HodIndexesServiceImpl implements HodIndexesService {
 
         final Resources indexes = resourcesService.list(tokenProxy, params);
 
-        final Iterator<Resource> iterator = indexes.getResources().iterator();
-
-        while (iterator.hasNext()) {
-            final Resource resource = iterator.next();
-            if (FLAVOURS_TO_REMOVE.contains(resource.getFlavour())) {
-                iterator.remove();
+        final List<Resource> resources = new ArrayList<>(indexes.getResources().size());
+        for (final Resource resource : indexes.getResources()) {
+            if (!FLAVOURS_TO_REMOVE.contains(resource.getFlavour())) {
+                resources.add(resource);
             }
         }
 
-        return indexes;
+        return new Resources(resources, indexes.getPublicResources());
     }
 
     @Override

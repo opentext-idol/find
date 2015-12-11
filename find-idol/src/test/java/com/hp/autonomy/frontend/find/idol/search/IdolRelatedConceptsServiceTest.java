@@ -53,7 +53,7 @@ public class IdolRelatedConceptsServiceTest {
 
         when(contentAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenReturn(responseData);
 
-        final List<QsElement> results = idolRelatedConceptsService.findRelatedConcepts("Some text", Collections.singletonList("Database 1"), "Some field text");
+        final List<QsElement> results = idolRelatedConceptsService.findRelatedConcepts("Some text", Collections.singletonList("Database1"), "Some field text");
         assertThat(results, is(not(empty())));
     }
 }

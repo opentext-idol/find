@@ -21,6 +21,8 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
 import lombok.Data;
 import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -101,6 +103,7 @@ public class IodConfig implements ConfigurationComponent {
     }
 
     @Setter
+    @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder {
         private String apiKey;
