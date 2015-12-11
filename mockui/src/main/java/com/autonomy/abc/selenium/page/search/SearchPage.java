@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
@@ -22,7 +23,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public SearchPage(final WebDriver driver) {
 		// specify data-pagename to avoid invisible elements from other pages showing up
-		super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content [data-pagename='search']"))), driver);
+		super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".wrapper-content [data-pagename='search']"))), driver);
 		waitForLoad();
 	}
 
@@ -62,6 +63,15 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public boolean modifiedResultsShown(){
 		return findElement(By.className("search-type-toggle")).findElement(By.className("checkbox-input")).isSelected();
+	}
+
+	public void sortBy(final Sort sort) {
+		sortDropdown().select(sort.toString());
+	}
+
+	private Dropdown sortDropdown() {
+		WebElement dropdownContainer = new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results-sort")));
+		return new Dropdown(dropdownContainer, getDriver());
 	}
 
 	public void selectLanguage(final Language language) {

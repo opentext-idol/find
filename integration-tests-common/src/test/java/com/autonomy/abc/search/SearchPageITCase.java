@@ -1005,7 +1005,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expandSubFilter(SearchBase.Filter.DATES);
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 12:00 PM");
-        searchPage.sortByRelevance();
+        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 		assertThat("Dates should be equal", searchPage.fromDateTextBox().getAttribute("value"), is(searchPage.untilDateTextBox().getAttribute("value")));
 
 		searchPage.loadOrFadeWait();
@@ -1013,7 +1013,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fromDateTextBox().clear();
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:01 PM");
 		//clicking sort by relevance because an outside click is needed for the changes to take place
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 //		assertNotEquals("From date cannot be after the until date", searchPage.fromDateTextBox().getAttribute("value"), "04/05/2000 12:01 PM");
         assertThat("From date should be blank", searchPage.fromDateTextBox().getAttribute("value"), isEmptyOrNullString());
 
@@ -1021,7 +1021,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
 		searchPage.untilDateTextBox().clear();
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 11:59 AM");
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 //		assertEquals("Until date cannot be before the from date", searchPage.untilDateTextBox().getAttribute("value"),is(not("04/05/2000 11:59 AM")));
         assertThat("Until date should be blank", searchPage.untilDateTextBox().getAttribute("value"), isEmptyOrNullString());
 	}
@@ -1043,19 +1043,19 @@ public class SearchPageITCase extends ABCTestBase {
 		final Date date = searchPage.getDateFromFilter(searchPage.untilDateTextBox());
 
 		searchPage.sendDateToFilter(DateUtils.addMinutes(date, 1), searchPage.untilDateTextBox());
-        searchPage.sortByRelevance();
+        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         assertThat(searchPage.untilDateTextBox().getAttribute("value"), is("12/12/2012 12:13"));
 
         searchPage.sendDateToFilter(DateUtils.addMinutes(date, -1), searchPage.untilDateTextBox());
         //clicking sort by relevance because an outside click is needed for the changes to take place
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         assertThat(searchPage.untilDateTextBox().getAttribute("value"), isEmptyOrNullString());
 	}
 
 	@Test
 	public void testSortByRelevance() {
 		search("string");
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 		List<Float> weights = searchPage.getWeightsOnPage(5);
 
         logger.info("Weight of 0: " + weights.get(0));
@@ -1066,16 +1066,16 @@ public class SearchPageITCase extends ABCTestBase {
 			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
 		}
 
-		searchPage.sortByDate();
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.DATE);
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 		weights = searchPage.getWeightsOnPage(5);
 		for (int i = 0; i < weights.size() - 1; i++) {
 			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
 		}
 
-		searchPage.sortByDate();
+		searchPage.sortBy(SearchBase.Sort.DATE);
 		search("paper packages");
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 		weights = searchPage.getWeightsOnPage(5);
 		for (int i = 0; i < weights.size() - 1; i++) {
 			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));

@@ -562,24 +562,20 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		return !findElement(By.cssSelector(".search-information")).getAttribute("class").contains("hide");
 	}
 
-	public void sortByRelevance() {
-		sortBy("by relevance");
-	}
+	public enum Sort {
+		DATE("by date"),
+		RELEVANCE("by relevance");
 
-	public void sortByDate() {
-		sortBy("by date");
-	}
+		private final String name;
 
-	private void sortBy(final String sortBy) {
-		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".current-search-sort"))).click();
+		Sort(String content) {
+			name = content;
+		}
 
-		final WebElement element = findElement(By.cssSelector(".search-results-sort")).findElement(By.xpath(".//a[text()='" + sortBy + "']"));
-		// IE doesn't like clicking dropdown elements
-		final JavascriptExecutor executor = (JavascriptExecutor)getDriver();
-		executor.executeScript("arguments[0].click();", element);
-
-		loadOrFadeWait();
-		waitForSearchLoadIndicatorToDisappear();
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 
 	public List<String> filterLabelList() {

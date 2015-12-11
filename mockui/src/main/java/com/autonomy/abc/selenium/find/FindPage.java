@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.page.search.SearchBase;
+import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -11,7 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindPage extends SearchBase implements AppPage {
+public class FindPage extends AppElement implements AppPage {
     private final Input input;
     private final Service service;
 
@@ -48,5 +50,14 @@ public class FindPage extends SearchBase implements AppPage {
         }
 
         return indexes;
+    }
+
+    public void sortBy(SearchBase.Sort sort) {
+        sortDropdown().select(sort.toString());
+    }
+
+    private Dropdown sortDropdown() {
+        WebElement dropdownContainer = findElement(By.cssSelector(".sort-container"));
+        return new Dropdown(dropdownContainer, getDriver());
     }
 }

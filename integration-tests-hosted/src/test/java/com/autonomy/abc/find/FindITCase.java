@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.Search;
@@ -137,7 +138,7 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
         body.getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
-        searchPage.sortByRelevance();
+        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
         getDriver().switchTo().window(browserHandles.get(1));
@@ -157,14 +158,14 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
         body.getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
-        searchPage.sortByDate();
+        searchPage.sortBy(SearchBase.Sort.DATE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("stars bbc");
 
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        find.sortByDate();
+        find.sortBy(SearchBase.Sort.DATE);
 
         List<String> findSearchTitles = service.getResultTitles();
 
