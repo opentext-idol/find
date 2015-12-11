@@ -932,8 +932,9 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		final String firstResult = searchPage.getSearchResultTitle(1);
 		final Date date = searchPage.getDateFromResult(1);
-		searchPage.expand(SearchBase.Section.FILTER_BY);
-		searchPage.expand(SearchBase.Section.DATES);
+		if (date == null) {
+			throw new IllegalStateException("testFromDateFilter requires first search result to have a date");
+		}
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(date);
@@ -967,8 +968,6 @@ public class SearchPageITCase extends ABCTestBase {
 		// plus 1 minute to be inclusive
 		date.setTime(date.getTime() + 60000);
         logger.info("First Result: " + firstResult + " " + date);
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.DATES);
 		searchPage.openUntilDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		try {

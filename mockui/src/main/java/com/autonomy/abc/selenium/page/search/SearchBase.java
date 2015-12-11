@@ -310,6 +310,8 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 	/* date filter */
 	public void openFromDatePicker() {
+		expand(Facet.FILTER_BY);
+		expand(Facet.DATES);
 		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
 		loadOrFadeWait();
 	}
@@ -331,6 +333,8 @@ public abstract class SearchBase extends AppElement implements AppPage {
 	}
 
 	public void openUntilDatePicker() {
+		expand(Facet.FILTER_BY);
+		expand(Facet.DATES);
 		findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
 		loadOrFadeWait();
 	}
@@ -461,15 +465,19 @@ public abstract class SearchBase extends AppElement implements AppPage {
 		}
 	}
 
-	public void expand(Section section) {
-		section.locateOn(this).expand();
+	public void expand(FacetFilter section) {
+		section.findInside(this).expand();
 	}
 
-	public void collapse(Section section) {
-		section.locateOn(this).collapse();
+	public void collapse(FacetFilter section) {
+		section.findInside(this).collapse();
 	}
 
-	public enum Section {
+	protected interface FacetFilter {
+		Collapsible findInside(WebElement container);
+	}
+
+	public enum Facet implements FacetFilter {
 		KEYWORDS("h4", "Keywords"),
 		FILTER_BY("h4", "Filter By"),
 			INDEXES(By.cssSelector(".search-databases>a")),
@@ -480,17 +488,22 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 		private final By locator;
 
-		Section(String tagName, String content) {
-			this(By.xpath(".//" + tagName + "[contains(text(), '" + content + "')]/../.."));
+		Facet(String tagName, String content) {
+			this(getFacetLocator(tagName, content));
 		}
 
-		Section(By by) {
+		Facet(By by) {
 			locator = by;
 		}
 
-		private Collapsible locateOn(SearchBase page) {
-			return new ChevronContainer(page.findElement(locator));
+		@Override
+		public Collapsible findInside(WebElement container) {
+			return new ChevronContainer(container.findElement(locator));
 		}
+	}
+
+	protected static By getFacetLocator(final String tagName, final String content) {
+		return By.xpath(".//" + tagName + "[contains(text(), '" + content + "')]/../..");
 	}
 
 	/* waits */
