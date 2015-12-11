@@ -16,6 +16,8 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.search.Search;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,12 +83,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         body = getBody();
 
-        body.getTopNavBar().search(searchTerm);
-        SearchPage searchPage = getElementFactory().getSearchPage();
-        List<String> createdPromotions = searchPage.createAMultiDocumentPromotion(3);
-        CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-        createNewPromotionsPage.addSpotlightPromotion("Spotlight", trigger);
-        getElementFactory().getSearchPage(); //Wait for search page
+        List<String> createdPromotions = promotionService.setUpPromotion(new SpotlightPromotion(trigger), searchTerm, 3);
 
         keywordService.addSynonymGroup(Language.ENGLISH, trigger, synonym);
 

@@ -107,12 +107,11 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* promoted results */
-	// TODO: no longer appears?
+	// TODO: on-prem only
 	public WebElement promotionsLabel() {
 		return findElement(By.cssSelector(".promotions .promotion-name"));
 	}
 
-	// TODO: no longer appears?
 	public WebElement promotionsSummary() {
 		return findElement(By.cssSelector(".promotions-summary"));
 	}
@@ -335,10 +334,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
 	}
 
-	public WebElement getDocLogo(final int searchResultNumber, WebDriverWait wait) {
-		return wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o")));
-	}
-
 	public int countPinToPositionLabels() {
 		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
 	}
@@ -410,16 +405,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	private KeywordsContainer keywordsContainer() {
 		return new KeywordsContainer(findElement(By.cssSelector(".search-results-synonyms .keywords-list-container")), getDriver());
-	}
-
-	// TODO: same as parent?
-	@Override
-	public List<Checkbox> indexList() {
-		List<Checkbox> checkboxes = new ArrayList<>();
-		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
-			checkboxes.add(new Checkbox(element, getDriver()));
-		}
-		return checkboxes;
 	}
 
 	/* parametric values */

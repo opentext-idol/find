@@ -774,21 +774,14 @@ public class SearchPageITCase extends ABCTestBase {
 	//TODO
 	@Test
 	public void testFieldTextRestrictionOnPromotions(){
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage = getElementFactory().getPromotionsPage();
-		promotionsPage.deleteAllPromotions();
+		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		promotionService.deleteAll();
 
-		search("darth");
-
-        searchPage.selectLanguage(Language.ENGLISH);
-
-        searchPage.createAMultiDocumentPromotion(2);
-		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
-
-//		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        searchPage.getDocLogo(1, new WebDriverWait(getDriver(), 10));
+		promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "boat"), "darth", 2);
+		searchPage = getElementFactory().getSearchPage();
+		searchPage.waitForPromotionsLoadIndicatorToDisappear();
         searchPage.loadOrFadeWait();
+
 		assertThat(searchPage.getPromotionSummarySize(), is(2));
 		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(2));
 

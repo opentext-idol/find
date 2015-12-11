@@ -71,6 +71,10 @@ public class PromotionService {
         return promotedDocTitles;
     }
 
+    public List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {
+        return setUpPromotion(promotion, new Search(application, elementFactory, searchTerm), numberOfDocs);
+    }
+
     public PromotionsPage delete(Promotion promotion) {
         goToPromotions();
         promotionsPage.promotionDeleteButton(promotion.getTrigger()).click();

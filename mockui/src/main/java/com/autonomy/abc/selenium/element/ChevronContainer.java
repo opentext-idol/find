@@ -15,6 +15,7 @@ public class ChevronContainer implements Collapsible {
     public void expand() {
         if (isCollapsed()) {
             chevronIcon().click();
+            loadOrFadeWait();
         }
     }
 
@@ -22,6 +23,7 @@ public class ChevronContainer implements Collapsible {
     public void collapse() {
         if (!isCollapsed()) {
             chevronIcon().click();
+            loadOrFadeWait();
         }
     }
 
@@ -32,5 +34,13 @@ public class ChevronContainer implements Collapsible {
 
     private WebElement chevronIcon() {
         return container.findElement(By.cssSelector("[data-toggle='collapse']"));
+    }
+
+    private void loadOrFadeWait() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

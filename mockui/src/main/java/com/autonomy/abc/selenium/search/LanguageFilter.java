@@ -12,7 +12,7 @@ public class LanguageFilter implements SearchFilter {
     private Logger logger = LoggerFactory.getLogger(LanguageFilter.class);
 
     public LanguageFilter(String language) {
-        this.language = Language.valueOf(language);
+        this.language = Language.fromString(language);
     }
 
     public LanguageFilter(Language language) {
