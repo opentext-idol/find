@@ -5,8 +5,8 @@ import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HSODevsPage extends HSOUserManagement {
-    public HSODevsPage(WebDriver driver) {
+public class HSODevelopersPage extends HSOUserManagement {
+    public HSODevelopersPage(WebDriver driver) {
         super(driver);
     }
 
