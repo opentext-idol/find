@@ -122,11 +122,11 @@ define([
 
             new Confirm({
                 cancelClass: 'btn-default',
-                cancelIcon: 'icon-remove',
+                cancelIcon: 'fa fa-times',
                 cancelText: this.strings.cancelCancel,
                 okText: this.strings.cancelOk,
                 okClass: 'btn-primary',
-                okIcon: 'icon-undo',
+                okIcon: 'fa fa-undo',
                 message: this.strings.cancelMessage,
                 title: this.strings.cancelTitle,
                 hiddenEvent: 'hidden.bs.modal',

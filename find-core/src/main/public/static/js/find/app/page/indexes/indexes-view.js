@@ -9,8 +9,8 @@ define([
     'text!find/templates/app/page/indexes/index-item.html'
 ], function(Backbone, _, $, DatabasesView, i18n, template, listTemplate, itemTemplate) {
 
-    var CHECKED_CLASS = 'icon-ok';
-    var INDETERMINATE_CLASS = 'icon-minus';
+    var CHECKED_CLASS = 'fa-check';
+    var INDETERMINATE_CLASS = 'fa-minus';
     var DISABLED_CLASS = 'disabled';
 
     var ICON_SELECTOR = '> span > .database-icon';
@@ -30,7 +30,7 @@ define([
                 var $target = $(e.currentTarget).find('.database-input');
                 var index = $target.attr('data-name');
                 var domain = $target.attr('data-domain');
-                var checked = $target.find('i').hasClass('icon-ok');
+                var checked = $target.find('i').hasClass('fa-check');
 
                 this.selectDatabase(index, domain, !checked);
             },
@@ -46,7 +46,7 @@ define([
                 else {
                     var $currentTarget = $(e.currentTarget);
                     var category = $currentTarget.attr('data-category-id');
-                    var checked = $currentTarget.find('i').hasClass('icon-ok');
+                    var checked = $currentTarget.find('i').hasClass('fa-check');
 
                     this.selectCategory(category, !checked);
                 }

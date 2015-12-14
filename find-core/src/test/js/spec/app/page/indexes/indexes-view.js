@@ -60,7 +60,7 @@ define([
             });
 
             it('does not select indexes in the UI', function() {
-                expect(this.indexesView.$('i.icon-ok')).toHaveLength(0);
+                expect(this.indexesView.$('i.fa fa-check')).toHaveLength(0);
             });
 
             describe('clicking an index once', function() {
@@ -77,9 +77,9 @@ define([
                     var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
                     var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
-                    expect(checkedCheckbox).toHaveClass('icon-ok');
-                    expect(uncheckedCheckboxOne).not.toHaveClass('icon-ok');
-                    expect(uncheckedCheckboxTwo).not.toHaveClass('icon-ok');
+                    expect(checkedCheckbox).toHaveClass('fa-check');
+                    expect(uncheckedCheckboxOne).not.toHaveClass('fa-check');
+                    expect(uncheckedCheckboxTwo).not.toHaveClass('fa-check');
                 });
             });
 
@@ -97,7 +97,7 @@ define([
                 });
 
                 it('should leave the indexes selected in the ui unchanged', function() {
-                    expect(this.indexesView.$('i.icon-ok')).toHaveLength(0);
+                    expect(this.indexesView.$('i.fa fa-check')).toHaveLength(0);
                 });
             });
 
@@ -114,9 +114,9 @@ define([
                     var checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
                     var checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
-                    expect(uncheckedCheckbox).not.toHaveClass('icon-ok');
-                    expect(checkedCheckboxOne).toHaveClass('icon-ok');
-                    expect(checkedCheckboxTwo).toHaveClass('icon-ok');
+                    expect(uncheckedCheckbox).not.toHaveClass('fa-check');
+                    expect(checkedCheckboxOne).toHaveClass('fa-check');
+                    expect(checkedCheckboxTwo).toHaveClass('fa-check');
                 });
             });
 
@@ -130,9 +130,9 @@ define([
                     var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
                     var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
-                    expect(checkedCheckbox).toHaveClass('icon-ok');
-                    expect(uncheckedCheckboxOne).not.toHaveClass('icon-ok');
-                    expect(uncheckedCheckboxTwo).not.toHaveClass('icon-ok');
+                    expect(checkedCheckbox).toHaveClass('fa-check');
+                    expect(uncheckedCheckboxOne).not.toHaveClass('fa-check');
+                    expect(uncheckedCheckboxTwo).not.toHaveClass('fa-check');
                 });
             });
         });

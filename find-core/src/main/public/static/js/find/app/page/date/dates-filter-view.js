@@ -102,12 +102,12 @@ define([
             this.$minDate.datetimepicker({
                 format: DATES_DISPLAY_FORMAT,
                 icons: {
-                    time: 'icon-time',
-                    date: 'icon-calendar',
-                    up: 'icon-chevron-up',
-                    down:'icon-chevron-down',
-                    next: 'icon-chevron-right',
-                    previous: 'icon-chevron-left'
+                    time: 'fa fa-clock-o',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down:'fa fa-chevron-down',
+                    next: 'fa fa-chevron-right',
+                    previous: 'fa fa-chevron-left'
                 }
             }).on('dp.change', _.bind(function(ev) {
                 this.setMinDate(ev.date);
@@ -116,12 +116,12 @@ define([
             this.$maxDate.datetimepicker({
                 format: DATES_DISPLAY_FORMAT,
                 icons: {
-                    time: 'icon-time',
-                    date: 'icon-calendar',
-                    up: 'icon-chevron-up',
-                    down:'icon-chevron-down',
-                    next: 'icon-chevron-right',
-                    previous: 'icon-chevron-left'
+                    time: 'fa fa-clock-o',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down:'fa fa-chevron-down',
+                    next: 'fa fa-chevron-right',
+                    previous: 'fa fa-chevron-left'
                 }
             }).on('dp.change', _.bind(function(ev) {
                 this.setMaxDate(ev.date);

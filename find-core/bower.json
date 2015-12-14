@@ -22,7 +22,7 @@
   "dependencies": {
     "backbone": "~1.2.3",
     "colorbox": "colorbox#~1.5.10",
-    "fontawesome": "components-font-awesome#~3.2.1",
+    "fontawesome": "components-font-awesome#~4.5.0",
     "jquery": "components/jquery#~1.10.2",
     "json": "json2#*",
     "underscore": "~1.8.3",
