@@ -64,6 +64,7 @@ define([
         'search.document.reference': 'Reference',
         'search.document.staticContent': 'Static Content',
         'search.document.weight': 'Weight',
+        'search.filters': 'Filters',
         'search.relatedConcepts': 'Related Concepts',
         'search.relatedConcepts.topResults.error': 'An error occurred fetching top results',
         'search.relatedConcepts.topResults.none': 'No top results found',

@@ -116,6 +116,10 @@ html, body {
     font-weight: 600 !important;
 }
 
+.uppercase {
+    text-transform: uppercase;
+}
+
 .no-box-shadow {
     box-shadow: none !important;
 }
