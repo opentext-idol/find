@@ -351,7 +351,7 @@ define([
                 escapedSummary = this.replaceTextWithLabel(escapedSummary, entity.id, {
                     elementType: 'a',
                     replacement: entity.text,
-                    elementClasses: 'entity-text clickable'
+                    elementClasses: 'entity-text entity-label label clickable'
                 })
             }, this);
 

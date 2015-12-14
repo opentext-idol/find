@@ -785,6 +785,9 @@ input:-moz-placeholder::before {
     border: 1px solid #e7eaec;
 }
 
+.entity-label {
+    background-color: #6b7984;
+}
 /* Rotating chevrons on collapsible panels *******************/
 .collapsed .rotating-chevron,
 .collapsed.rotating-chevron {
