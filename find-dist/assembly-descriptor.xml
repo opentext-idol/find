@@ -27,6 +27,7 @@
         <fileSet>
             <directory>install</directory>
             <lineEnding>unix</lineEnding>
+            <filtered>true</filtered>
         </fileSet>
     </fileSets>
 </assembly>
