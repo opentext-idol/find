@@ -50,6 +50,15 @@ public class CreateNewIndexPage extends SAASPageBase {
         return findElement(By.cssSelector("[for='parametricFields'] + div i"));
     }
 
+
+    public WebElement summaryStepIndexDescriptionLabel(){
+        return findElement(By.id("indexWizardSummaryStepDescription")).findElement(By.tagName("label"));
+    }
+
+    public WebElement summaryStepIndexConfigurationsLabel(){
+        return findElement(By.id("indexWizardSummaryStepConfigurations")).findElement(By.tagName("label"));
+    }
+
     private WebElement chooseTab(int tab){
         return findElement(By.cssSelector("[role='tablist'] li:nth-child(" + tab + ")"));
     }
