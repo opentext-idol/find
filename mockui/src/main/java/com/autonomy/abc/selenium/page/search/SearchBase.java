@@ -4,6 +4,8 @@ import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.ChevronContainer;
 import com.autonomy.abc.selenium.element.Collapsible;
 import com.autonomy.abc.selenium.indexes.IndexesTree;
+import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchFilter;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -20,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public abstract class SearchBase extends AppElement implements AppPage {
+public abstract class SearchBase extends AppElement implements AppPage, SearchFilter.Filterable, IndexFilter.Filterable {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
@@ -523,5 +525,10 @@ public abstract class SearchBase extends AppElement implements AppPage {
 
 	public List<String> filterLabelList() {
 		return webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
+	}
+
+	public void filterBy(SearchFilter filter) {
+		filter.apply(this);
+		waitForSearchLoadIndicatorToDisappear();
 	}
 }

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FieldTextFilter implements SearchFilter {
-    private Logger logger = LoggerFactory.getLogger(FieldTextFilter.class);
     private String fieldText;
 
     public FieldTextFilter(String fieldText) {
@@ -14,11 +13,15 @@ public class FieldTextFilter implements SearchFilter {
     }
 
     @Override
-    public void apply(SearchBase searchBase) {
-        searchBase.setFieldText(fieldText);
+    public void apply(SearchFilter.Filterable page) {
+        if (page instanceof SearchBase) {
+            ((SearchBase) page).setFieldText(fieldText);
+        }
     }
 
-    public void clear(SearchBase searchBase) {
-        searchBase.clearFieldText();
+    public void clear(SearchFilter.Filterable page) {
+        if (page instanceof SearchBase) {
+            ((SearchBase) page).clearFieldText();
+        }
     }
 }

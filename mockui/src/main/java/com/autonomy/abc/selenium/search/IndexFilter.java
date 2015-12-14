@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexesTree;
-import com.autonomy.abc.selenium.page.search.SearchBase;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,9 +29,15 @@ public class IndexFilter implements SearchFilter {
     }
 
     @Override
-    public void apply(SearchBase searchBase) {
-        NONE.apply(searchBase);
-        IndexesTree indexesTree = searchBase.indexesTree();
+    public final void apply(SearchFilter.Filterable page) {
+        if (page instanceof Filterable) {
+            apply((Filterable) page);
+        }
+    }
+
+    protected void apply(Filterable page) {
+        NONE.apply(page);
+        IndexesTree indexesTree = page.indexesTree();
         for (String index : indexes) {
             indexesTree.select(index);
         }
@@ -44,8 +49,8 @@ public class IndexFilter implements SearchFilter {
         }
 
         @Override
-        public void apply(SearchBase searchBase) {
-            searchBase.indexesTree().allIndexes().select();
+        public void apply(Filterable page) {
+            page.indexesTree().allIndexes().select();
         }
     }
 
@@ -55,9 +60,9 @@ public class IndexFilter implements SearchFilter {
         }
 
         @Override
-        public void apply(SearchBase searchBase) {
-            searchBase.indexesTree().allIndexes().select();
-            searchBase.indexesTree().allIndexes().deselect();
+        protected void apply(Filterable page) {
+            page.indexesTree().allIndexes().select();
+            page.indexesTree().allIndexes().deselect();
         }
     }
 
@@ -67,9 +72,9 @@ public class IndexFilter implements SearchFilter {
         }
 
         @Override
-        public void apply(SearchBase searchBase) {
-            searchBase.indexesTree().privateIndexes().deselect();
-            searchBase.indexesTree().publicIndexes().select();
+        protected void apply(Filterable page) {
+            page.indexesTree().privateIndexes().deselect();
+            page.indexesTree().publicIndexes().select();
         }
     }
 
@@ -79,9 +84,13 @@ public class IndexFilter implements SearchFilter {
         }
 
         @Override
-        public void apply(SearchBase searchBase) {
-            searchBase.indexesTree().privateIndexes().select();
-            searchBase.indexesTree().publicIndexes().deselect();
+        protected void apply(Filterable page) {
+            page.indexesTree().privateIndexes().select();
+            page.indexesTree().publicIndexes().deselect();
         }
+    }
+
+    public interface Filterable extends SearchFilter.Filterable {
+        IndexesTree indexesTree();
     }
 }
