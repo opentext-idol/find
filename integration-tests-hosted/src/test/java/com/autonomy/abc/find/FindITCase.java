@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.Input;
 import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
@@ -13,6 +14,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
@@ -387,7 +389,7 @@ public class FindITCase extends HostedTestBase {
     //TODO update this based on CSA-1657
     public void testMetadata(){
         find.search("stars");
-        service.filterByIndex(Index.DEFAULT.getTitle());
+        find.filterBy(new IndexFilter(Index.DEFAULT));
 
         for(WebElement searchResult : service.getResults()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
@@ -433,8 +435,7 @@ public class FindITCase extends HostedTestBase {
         service.closeViewBox();
         service.loadOrFadeWait();
 
-        service.filterByIndex(index);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        find.filterBy(new IndexFilter(index));
 
         assertThat(service.getSearchResultTitle(1).getText(), is(titleString));
     }
@@ -443,10 +444,8 @@ public class FindITCase extends HostedTestBase {
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        String indexTitle = Index.values()[1].getTitle();
-
-        service.filterByIndex(indexTitle);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        String indexTitle = find.getPrivateIndexNames().get(1);
+        find.filterBy(new IndexFilter(indexTitle));
         service.getSearchResultTitle(1).click();
         do{
             assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(indexTitle));
@@ -457,8 +456,10 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
         find.search("index");
-        service.filterByIndex(Index.DEFAULT.title);
-        service.filterByIndex(Index.DEFAULT.title);
+        // async filters
+        new IndexFilter(Index.DEFAULT).apply(find);
+        IndexFilter.PRIVATE.apply(find);
+        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
     }
 
@@ -536,14 +537,14 @@ public class FindITCase extends HostedTestBase {
 
         Set<String> parametricFields = new HashSet<>();
 
-        for(Index i : Index.values()) {
+        find.search("Something");
+
+        for (String indexName : find.getPrivateIndexNames()) {
             RetrieveIndexFieldsResponse retrieveIndexFieldsResponse = retrieveIndexFieldsService.retrieveIndexFields(tokenProxy,
-                    new ResourceIdentifier(domain, i.title), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
+                    new ResourceIdentifier(domain, indexName), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
 
             parametricFields.addAll(retrieveIndexFieldsResponse.getAllFields());
         }
-
-        find.search("Something");
 
         for(String field : parametricFields) {
             try {
@@ -965,23 +966,6 @@ public class FindITCase extends HostedTestBase {
         find.search("Marina and the Diamonds");
 
         verifyThat(find.getSelectedPublicIndexes().size(), is(0));
-    }
-
-    private enum Index {
-        DEFAULT("default_index"),
-        FIFA("fifa"),
-        SIMPSONS_ARCHIVE("simpsonsarchive");
-
-        private final String title;
-
-        Index(String index){
-            this.title = index;
-        }
-
-
-        public String getTitle() {
-            return title;
-        }
     }
 
     private enum FileType {

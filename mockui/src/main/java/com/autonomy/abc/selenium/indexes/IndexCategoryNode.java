@@ -8,9 +8,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class IndexCategoryNode extends IndexLeafNode implements Collapsible {
+public class IndexCategoryNode extends IndexLeafNode implements Collapsible, Iterable<IndexNodeElement> {
     private final WebElement container;
     private final WebDriver driver;
     private final Collapsible collapsible;
@@ -58,5 +59,10 @@ public class IndexCategoryNode extends IndexLeafNode implements Collapsible {
     IndexCategoryNode findCategory(String name) {
         WebElement childElement = ElementUtil.ancestor(container.findElement(By.cssSelector(".checkbox[data-category-id='" + name.toLowerCase() + "']")), 1);
         return new IndexCategoryNode(childElement, driver);
+    }
+
+    @Override
+    public Iterator<IndexNodeElement> iterator() {
+        return getIndexNodes().iterator();
     }
 }

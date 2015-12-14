@@ -1,7 +1,11 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.indexes.IndexNodeElement;
+import com.autonomy.abc.selenium.indexes.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;
+import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchFilter;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -13,7 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindPage extends AppElement implements AppPage {
+public class FindPage extends AppElement implements AppPage, IndexFilter.Filterable {
     private final Input input;
     private final Service service;
 
@@ -52,6 +56,11 @@ public class FindPage extends AppElement implements AppPage {
         return indexes;
     }
 
+    @Override
+    public IndexesTree indexesTree() {
+        return new IndexesTree(findElement(By.cssSelector(".indexes-container")), getDriver());
+    }
+
     public void sortBy(SearchBase.Sort sort) {
         sortDropdown().select(sort.toString());
     }
@@ -59,5 +68,20 @@ public class FindPage extends AppElement implements AppPage {
     private Dropdown sortDropdown() {
         WebElement dropdownContainer = findElement(By.cssSelector(".sort-container"));
         return new Dropdown(dropdownContainer, getDriver());
+    }
+
+    public List<String> getPrivateIndexNames() {
+        List<String> names = new ArrayList<>();
+        indexesTree().privateIndexes().expand();
+        for (IndexNodeElement element : indexesTree().privateIndexes()) {
+            names.add(element.getName());
+        }
+        return names;
+    }
+
+    @Override
+    public void filterBy(SearchFilter filter) {
+        filter.apply(this);
+        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
     }
 }
