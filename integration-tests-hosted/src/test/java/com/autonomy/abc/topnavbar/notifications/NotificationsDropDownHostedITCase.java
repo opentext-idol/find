@@ -10,14 +10,22 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.Notification;
+import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import com.autonomy.abc.selenium.page.login.AuthHasLoggedIn;
+import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.users.*;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
+import com.hp.autonomy.frontend.selenium.sso.TwitterAuth;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -151,11 +159,13 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     //CSA-1698 || CSA-1687
-    public void testUsernameShowsInNotifications(){
+    public void testUsernameShowsInNotifications() throws Exception {
         body.getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
         String devUsername = getElementFactory().getDevsPage().getUsernames().get(0);
 
         KeywordService keywordService = new KeywordService(getApplication(), getElementFactory());
+        UserService userService = getApplication().createUserService(getElementFactory());
+        WebDriver adminDriver = null;
 
         try {
             keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
@@ -163,13 +173,40 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             body.getTopNavBar().notificationsDropdown();
             getElementFactory().getSearchPage().loadOrFadeWait();
             for (Notification notification : body.getTopNavBar().getNotifications().getAllNotifications()) {
-                System.out.println(notification.getMessage());
                 verifyThat(notification.getUsername(), is(devUsername));
             }
 
-//            UserService userService = getApplication().createUserService(getElementFactory());
-//            userService.createNewUser(new HSONewUser("david", gmailString("mymateDave")), Role.USER);
+            User user = userService.createNewUser(config.getNewUserFactory().create(), Role.ADMIN);
+
+            user.authenticate(config.getWebDriverFactory(), new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider()));
+
+            adminDriver = config.getWebDriverFactory().create();
+            adminDriver.get(config.getWebappUrl());
+            LoginPage loginPage = new HSOLoginPage(adminDriver, new AuthHasLoggedIn(adminDriver));
+
+            loginPage.loginWith(user.getAuthProvider());
+
+            HSOElementFactory elementFactory = new HSOElementFactory(adminDriver);
+            elementFactory.getPromotionsPage();
+            AppBody secondScreen = getApplication().createAppBody(adminDriver);
+
+            new KeywordService(getApplication(),elementFactory).addSynonymGroup("Messi", "Campbell");
+
+            secondScreen.getTopNavBar().notificationsDropdown();
+            elementFactory.getSearchPage().loadOrFadeWait();
+            verifyThat(secondScreen.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
+
+            keywordService.addSynonymGroup("Joel", "Lionel");
+
+            verifyThat(body.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
+            verifyThat(secondScreen.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
+
         } finally {
+            if(adminDriver != null){
+                adminDriver.quit();
+            }
+
+            userService.deleteOtherUsers();
             keywordService.deleteAll(KeywordFilter.ALL);
         }
     }

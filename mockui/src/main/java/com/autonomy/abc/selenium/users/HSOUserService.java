@@ -33,9 +33,11 @@ public class HSOUserService extends UserService {
     public HSOUser createNewUser(NewUser newUser, Role role) {
         usersPage = goToUsers();
         usersPage.createUserButton().click();
-        HSOUser user = (HSOUser) newUser.signUpAs(role, usersPage);
-        usersPage.closeModal();
-        return user;
+        try {
+            return (HSOUser) newUser.signUpAs(role, usersPage);
+        } finally {
+            usersPage.closeModal();
+        }
     }
 
     @Override
