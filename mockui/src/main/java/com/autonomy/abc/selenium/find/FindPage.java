@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.indexes.FindIndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;
@@ -58,7 +59,7 @@ public class FindPage extends AppElement implements AppPage, IndexFilter.Filtera
 
     @Override
     public IndexesTree indexesTree() {
-        return new IndexesTree(findElement(By.cssSelector(".indexes-container")), getDriver());
+        return new IndexesTree(new FindIndexCategoryNode(findElement(By.cssSelector(".databases-list [data-category-id='all']")), getDriver()));
     }
 
     public void sortBy(SearchBase.Sort sort) {

@@ -9,7 +9,11 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     private final IndexCategoryNode allIndexesNode;
 
     public IndexesTree(WebElement element, WebDriver driver) {
-        allIndexesNode = new IndexCategoryNode(element, driver);
+        this(new IndexCategoryNode(element, driver));
+    }
+
+    public IndexesTree(IndexCategoryNode node) {
+        allIndexesNode = node;
     }
 
     public void select(Index index) {
@@ -18,7 +22,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
 
     public void select(String indexName) {
         expandAll();
-        allIndexesNode.find(indexName).select();
+        allIndexes().find(indexName).select();
     }
 
     public void deselect(Index index) {
@@ -27,11 +31,11 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
 
     public void deselect(String indexName) {
         expandAll();
-        allIndexesNode.find(indexName).deselect();
+        allIndexes().find(indexName).deselect();
     }
 
-    private void expandAll() {
-        allIndexesNode.expand();
+    protected void expandAll() {
+        allIndexes().expand();
         publicIndexes().expand();
         privateIndexes().expand();
     }
@@ -41,7 +45,7 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     }
 
     public boolean isSelected(String indexName) {
-        return allIndexesNode.find(indexName).isSelected();
+        return allIndexes().find(indexName).isSelected();
     }
 
     public IndexCategoryNode allIndexes() {
@@ -49,16 +53,16 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
     }
 
     public IndexCategoryNode publicIndexes() {
-        return allIndexesNode.findCategory("public");
+        return allIndexes().findCategory("public");
     }
 
     public IndexCategoryNode privateIndexes() {
-        return allIndexesNode.findCategory("private");
+        return allIndexes().findCategory("private");
     }
 
     @Override
     public Iterator<IndexNodeElement> iterator() {
-        return allIndexesNode.getIndexNodes().iterator();
+        return allIndexes().iterator();
     }
 
 }

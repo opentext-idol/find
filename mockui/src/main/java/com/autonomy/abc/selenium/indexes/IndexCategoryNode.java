@@ -11,16 +11,36 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class IndexCategoryNode extends IndexLeafNode implements Collapsible, Iterable<IndexNodeElement> {
+public class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterable<IndexNodeElement> {
     private final WebElement container;
     private final WebDriver driver;
     private final Collapsible collapsible;
+    private final IndexNodeElement delegate;
 
     public IndexCategoryNode(WebElement element, WebDriver webDriver) {
-        super(element, webDriver);
+        this(new IndexLeafNode(element, webDriver), element, webDriver);
+    }
+
+    public IndexCategoryNode(IndexNodeElement inside, WebElement element, WebDriver webDriver) {
+        delegate = inside;
         container = element;
         driver = webDriver;
         collapsible = new ChevronContainer(element);
+    }
+
+    @Override
+    public void select() {
+        delegate.select();
+    }
+
+    @Override
+    public void deselect() {
+        delegate.deselect();
+    }
+
+    @Override
+    public boolean isSelected() {
+        return delegate.isSelected();
     }
 
     @Override
