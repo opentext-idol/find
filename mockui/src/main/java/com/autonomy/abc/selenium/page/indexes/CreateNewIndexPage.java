@@ -26,6 +26,10 @@ public class CreateNewIndexPage extends SAASPageBase {
         return findElement(By.cssSelector("[name='indexName']"));
     }
 
+    public WebElement indexDisplayNameInputElement(){
+        return findElement(By.cssSelector("[name='indexDisplayName']"));
+    }
+
     public WebElement advancedOptionsTab(){
         return findElement(By.id("advancedIndexPanelHeading"));
     }
@@ -64,6 +68,10 @@ public class CreateNewIndexPage extends SAASPageBase {
 
     public void inputIndexName(String name){
         indexNameInputElement().sendKeys(name);
+    }
+
+    public void inputIndexDisplayName(String displayName){
+        indexDisplayNameInputElement().sendKeys(displayName);
     }
 
     private boolean isAdvancedOptionsCollapsed(){
