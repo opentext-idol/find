@@ -246,6 +246,7 @@ html, body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    width: 50%;
 }
 
 .find {
@@ -500,6 +501,10 @@ input.find-input {
     color: #425563;
 }
 
+.results-contents {
+    display: block;
+    overflow: hidden;
+}
 /* Loading spinner */
 .loading-spinner {
     text-align: center;
