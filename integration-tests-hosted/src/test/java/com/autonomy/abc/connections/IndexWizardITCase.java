@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -37,6 +38,55 @@ public class IndexWizardITCase extends HostedTestBase {
         body = getBody();
 
         createNewIndexPage = getElementFactory().getCreateNewIndexPage();
+    }
+
+    @Test
+    //CSA-949 - test the input validator which supports only A-Za-Z0-9, space and underscore characters - shouldn't be valid
+    public void testIndexDisplayNameValidatorsFail(){
+        createNewIndexPage.inputIndexName("name");
+
+        createNewIndexPage.inputIndexDisplayName("displayName #$%");
+        String error = "Please enter a valid name that contains only alphanumeric characters";
+        WebElement errorMessage = configErrorMessage(createNewIndexPage.indexDisplayNameInputElement());
+        WebElement displayNameFormGroup = inputFormGroup(createNewIndexPage.indexDisplayNameInputElement());
+        verifyThat(displayNameFormGroup,hasClass("has-error"));
+        verifyThat(errorMessage, displayed());
+        verifyThat(errorMessage, containsText(error));
+    }
+
+    @Test
+    //CSA-949 - test the input validator which supports only A-Za-Z0-9, space and underscore characters - should be valid
+    public void testIndexDisplayNameValidatorsPass(){
+        createNewIndexPage.inputIndexName("name");
+        createNewIndexPage.inputIndexDisplayName("displayName 7894");
+        WebElement errorMessage = configErrorMessage(createNewIndexPage.indexDisplayNameInputElement());
+        verifyThat(errorMessage, not(displayed()));
+        WebElement displayNameFormGroup = inputFormGroup(createNewIndexPage.indexDisplayNameInputElement());
+
+        verifyThat(displayNameFormGroup, not(hasClass("has-error")));
+
+    }
+
+    @Test
+    //CSA-949 - test that the index meta-data with the index display name is set properly according to the summary step
+    public void testIndexDisplayNameOnSummary(){
+        String name = "name";
+        String displayName = "displayName 7894";
+        createNewIndexPage.inputIndexName(name);
+        createNewIndexPage.inputIndexDisplayName(displayName);
+
+        WebElement indexNameFormGroup = inputFormGroup(createNewIndexPage.indexNameInputElement());
+        WebElement displayNameFormGroup = inputFormGroup(createNewIndexPage.indexDisplayNameInputElement());
+
+        verifyThat(indexNameFormGroup, not(hasClass("has-error")));
+        verifyThat(displayNameFormGroup, not(hasClass("has-error")));
+
+        createNewIndexPage.nextButton().click();
+        createNewIndexPage.nextButton().click();
+
+        WebElement summaryStepIndexDescriptionLabel = createNewIndexPage.summaryStepIndexDescriptionLabel();
+        String expectedSummary = "A new index named "+name+" with "+displayName+" as display name (standard flavor) will be created";
+        verifyThat(summaryStepIndexDescriptionLabel, containsText(expectedSummary));
     }
 
     @Test
@@ -86,6 +136,10 @@ public class IndexWizardITCase extends HostedTestBase {
 
     private WebElement configErrorMessage(WebElement element){
         return ElementUtil.ancestor(element,1).findElement(By.tagName("p"));
+    }
+
+    private WebElement inputFormGroup(WebElement element){
+        return ElementUtil.ancestor(element,2);
     }
 
     @After
