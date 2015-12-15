@@ -39,21 +39,18 @@ define([
                 var metaType = $(e.currentTarget).closest('[data-metatype]').attr('data-metatype');
                 var type = $(e.currentTarget).closest('[data-type]').attr('data-type');
 
-                if(metaType && metaType === SearchFiltersCollection.metaFilterTypes.date) {
-                    if(type === SearchFiltersCollection.FilterTypes.dateRange) {
-                        this.datesFilterModel.setDateRange(null);
-                    }
-                    if(type === SearchFiltersCollection.FilterTypes.minDate) {
-                        this.datesFilterModel.setMinDate(null);
-                    }
-                    if(type === SearchFiltersCollection.FilterTypes.maxDate) {
-                        this.datesFilterModel.setMaxDate(null);
-                    }
-                } else {
-                    this.collection.remove(id);
-                }
+                this.removeFilter(id, metaType, type);
+            },
 
-
+            'click .remove-all-filters': function() {
+                // Separate picking attributes from calling removeFilter so we don't modify the collection while iterating
+                _.chain(this.collection.models)
+                    .map(function(model) {
+                        return model.pick('id', 'metaType', 'type');
+                    })
+                    .each(function(attributes) {
+                        this.removeFilter(attributes.id, attributes.metaType, attributes.type);
+                    }, this);
             }
         },
 
@@ -81,13 +78,29 @@ define([
             this.updateVisibility();
 
             this.listView.render();
-            this.$el.append(this.listView.$el);
+            this.$('.filters-labels').append(this.listView.$el);
 
             return this;
         },
 
         updateVisibility: function() {
             this.$el.toggleClass('hide', this.collection.isEmpty());
+        },
+
+        removeFilter: function(id, metaType, type) {
+            if (metaType && metaType === SearchFiltersCollection.metaFilterTypes.date) {
+                if (type === SearchFiltersCollection.FilterTypes.dateRange) {
+                    this.datesFilterModel.setDateRange(null);
+                }
+                if (type === SearchFiltersCollection.FilterTypes.minDate) {
+                    this.datesFilterModel.setMinDate(null);
+                }
+                if (type === SearchFiltersCollection.FilterTypes.maxDate) {
+                    this.datesFilterModel.setMaxDate(null);
+                }
+            } else {
+                this.collection.remove(id);
+            }
         }
     });
 
