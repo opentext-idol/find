@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.indexes.IndexesTree;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 
 import java.util.Collection;
 import java.util.HashSet;

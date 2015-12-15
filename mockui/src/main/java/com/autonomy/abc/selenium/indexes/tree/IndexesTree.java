@@ -1,5 +1,6 @@
-package com.autonomy.abc.selenium.indexes;
+package com.autonomy.abc.selenium.indexes.tree;
 
+import com.autonomy.abc.selenium.indexes.Index;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

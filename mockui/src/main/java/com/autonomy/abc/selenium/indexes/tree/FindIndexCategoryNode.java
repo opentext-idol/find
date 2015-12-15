@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.indexes;
+package com.autonomy.abc.selenium.indexes.tree;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

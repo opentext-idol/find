@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.Dropdown;
-import com.autonomy.abc.selenium.indexes.FindIndexCategoryNode;
-import com.autonomy.abc.selenium.indexes.IndexNodeElement;
-import com.autonomy.abc.selenium.indexes.IndexesTree;
+import com.autonomy.abc.selenium.indexes.tree.FindIndexCategoryNode;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchFilter;

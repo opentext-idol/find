@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.page.search;
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.ChevronContainer;
 import com.autonomy.abc.selenium.element.Collapsible;
-import com.autonomy.abc.selenium.indexes.IndexesTree;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchFilter;
 import com.autonomy.abc.selenium.util.Locator;

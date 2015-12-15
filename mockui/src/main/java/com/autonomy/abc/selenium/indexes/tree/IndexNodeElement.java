@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.indexes;
+package com.autonomy.abc.selenium.indexes.tree;
 
 public interface IndexNodeElement {
     void select();

@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.indexes;
+package com.autonomy.abc.selenium.indexes.tree;
 
 import com.autonomy.abc.selenium.element.ChevronContainer;
 import com.autonomy.abc.selenium.element.Collapsible;

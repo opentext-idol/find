@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.indexes;
+package com.autonomy.abc.selenium.indexes.tree;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
