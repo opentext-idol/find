@@ -1,17 +1,14 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.page.login.GoogleAuth;
-import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -27,7 +24,7 @@ public class HSOUserService extends UserService {
 
     @Override
     public HSOUsersPage goToUsers() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.USER_MGMT);
+        getBody().getSideNavBar().switchPage(NavBarTabId.USERS);
         setUsersPage(elementFactory.getUsersPage());
         return elementFactory.getUsersPage();
     }

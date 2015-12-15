@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOAppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.users.HSODeveloperService;
 import com.autonomy.abc.selenium.users.HSOUserService;
 import org.openqa.selenium.WebDriver;
 
@@ -54,5 +55,9 @@ public class HSOApplication extends Application {
 
     public IndexService createIndexService(HSOElementFactory elementFactory) {
         return new IndexService(this,elementFactory);
+    }
+
+    public HSODeveloperService createDeveloperService(HSOElementFactory elementFactory) {
+        return new HSODeveloperService(this, elementFactory);
     }
 }

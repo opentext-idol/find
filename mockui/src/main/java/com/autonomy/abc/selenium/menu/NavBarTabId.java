@@ -64,6 +64,6 @@ public enum NavBarTabId {
     }
 
     protected boolean isDisplayed(WebDriver driver){
-        return driver.findElement(By.partialLinkText(this.tabName)).isDisplayed();
+        return driver.findElement(By.xpath("//a[contains(.,'" + this.tabName + "')]")).isDisplayed();
     }
 }
