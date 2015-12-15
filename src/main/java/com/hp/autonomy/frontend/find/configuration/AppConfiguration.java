@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.configuration;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
@@ -16,7 +17,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
 
 @Configuration
 public class AppConfiguration {
@@ -26,19 +31,27 @@ public class AppConfiguration {
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
         httpClientBuilder
-            .setMaxConnPerRoute(20)
-            .setMaxConnTotal(120);
+                .setMaxConnPerRoute(20)
+                .setMaxConnTotal(120);
 
         final String proxyHost = System.getProperty("find.https.proxyHost");
 
-        if(proxyHost != null) {
+        if (proxyHost != null) {
             final Integer proxyPort = Integer.valueOf(System.getProperty("find.https.proxyPort", "80"));
             httpClientBuilder.setProxy(new HttpHost(proxyHost, proxyPort));
         }
 
         final ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClientBuilder.build());
 
-        return new RestTemplate(requestFactory);
+        final RestTemplate restTemplate = new RestTemplate(requestFactory);
+
+        final MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+        final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        jackson2HttpMessageConverter.setObjectMapper(objectMapper);
+        restTemplate.setMessageConverters(Collections.<HttpMessageConverter<?>>singletonList(jackson2HttpMessageConverter));
+
+        return restTemplate;
     }
 
     @Bean(name = "dispatcherObjectMapper")
