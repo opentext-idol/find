@@ -273,15 +273,15 @@ html, body {
     vertical-align: middle;
 }
 
-.hp-logo {
-    background: url('../img/HPE_header_logo.png') no-repeat;
+.find-logo-small {
+    background: url('../img/Find_Logo_sml.png') no-repeat;
     background-size: 210px 28px;
     width: 210px;
     height: 28px;
 }
 
 .find-logo-large {
-    background-image: url('../img/Find_logo.png');
+    background-image: url('../img/Find_Logo_lge.png');
     background-size: 170px 102px;
     width: 170px;
     height: 102px;
