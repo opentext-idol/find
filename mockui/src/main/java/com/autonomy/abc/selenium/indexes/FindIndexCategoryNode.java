@@ -37,4 +37,9 @@ public class FindIndexCategoryNode extends IndexCategoryNode {
         WebElement childElement = container.findElement(By.cssSelector(".clickable[data-category-id='" + name.toLowerCase() + "']"));
         return new FindIndexCategoryNode(childElement, driver);
     }
+
+    @Override
+    public String getName() {
+        return container.findElement(By.className("category-name")).getText();
+    }
 }

@@ -43,6 +43,6 @@ public class FindIndexLeafNode implements IndexNodeElement {
 
     @Override
     public String getName() {
-        return container.findElement(By.cssSelector("[data-name]")).getAttribute("data-name");
+        return container.findElement(By.className("database-name")).getText();
     }
 }

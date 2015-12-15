@@ -641,13 +641,14 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testSynonyms() throws InterruptedException {
+        String nonsense = "iuhdsafsaubfdja";
         getDriver().switchTo().window(browserHandles.get(0));
         keywordService.deleteAll(KeywordFilter.ALL);
 
         find.loadOrFadeWait();
 
         getDriver().switchTo().window(browserHandles.get(1));
-        find.search("iuhdsafsaubfdja");
+        find.search(nonsense);
 
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         assertThat(service.getText(), noDocs);
@@ -655,14 +656,16 @@ public class FindITCase extends HostedTestBase {
         find.search("Cat");
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         assertThat(service.getText(), not(noDocs));
-        String firstTitle = service.getSearchResultTitle(1).getText();
 
         getDriver().switchTo().window(browserHandles.get(0));
-        keywordService.addSynonymGroup(Language.ENGLISH, "cat iuhdsafsaubfdja");
+        keywordService.addSynonymGroup(Language.ENGLISH, "cat", nonsense);
 
         getDriver().switchTo().window(browserHandles.get(1));
-        find.search("iuhdsafsaubfdja");
 
+        find.search("cat");
+        String firstTitle = service.getSearchResultTitle(1).getText();
+
+        find.search(nonsense);
         assertThat(service.getText(), not(noDocs));
         verifyThat(service.getSearchResultTitle(1).getText(), is(firstTitle));
     }
