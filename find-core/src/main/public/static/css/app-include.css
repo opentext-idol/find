@@ -282,9 +282,8 @@ html, body {
 
 .find-logo-large {
     background-image: url('../img/Find_Logo_lge.png');
-    background-size: 170px 102px;
-    width: 170px;
-    height: 102px;
+    width: 500px;
+    height: 70px;
     display: inline-block;
     vertical-align: middle;
 }
