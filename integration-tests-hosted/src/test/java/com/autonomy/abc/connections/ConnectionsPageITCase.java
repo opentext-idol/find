@@ -69,7 +69,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     public void testSecureWebConnector(){
         String email = "matthew.williamson@hpe.com";
 
-        WebConnector webConnector = new WebConnector("http://www.facebook.com/settings","facebooksecure", new Credentials(email,"vdPAuTGU",email)).withDuration(200);
+        WebConnector webConnector = new WebConnector("http://www.facebook.com/settings","facebooksecure", new Credentials(email,"vdPAuTGU",email)).withDuration(255);
 
         connectionService.setUpConnection(webConnector);
         connectionService.goToDetails(webConnector);
@@ -84,7 +84,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     @Test
     //CSA-1795
     public void testBackButton(){
-        WebConnector webConnector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
+        WebConnector webConnector = new WebConnector("http://www.bbc.co.uk","bbc").withDuration(60);
 
         connectionService.setUpConnection(webConnector);
         connectionService.goToDetails(webConnector);
@@ -122,6 +122,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
             body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
 
+            connectionsPage = getElementFactory().getConnectionsPage();
             connectionsPage.newConnectionButton().click();
 
             newConnectionPage = getElementFactory().getNewConnectionPage();
