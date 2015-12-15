@@ -30,11 +30,6 @@ public class Service extends AppElement {
 
     }
 
-    public int getCurrentDocumentNumber() {
-        String[] current = getDriver().findElement(By.id("cboxCurrent")).getText().split(" ");
-        return Integer.parseInt(current[0]);
-    }
-
     public List<WebElement> getPromotions() {
         return getPromotionsDiv().findElements(By.className("promoted-document"));
     }

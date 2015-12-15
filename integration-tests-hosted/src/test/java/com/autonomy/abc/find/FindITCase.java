@@ -452,7 +452,7 @@ public class FindITCase extends HostedTestBase {
         do{
             assertThat(docViewer.getIndex(), is(indexTitle));
             docViewer.next();
-        } while (service.getCurrentDocumentNumber() != 1);
+        } while (docViewer.getCurrentDocumentNumber() != 1);
     }
 
     @Test
@@ -607,7 +607,7 @@ public class FindITCase extends HostedTestBase {
             assertThat(docViewer.nextButton(), displayed());
             assertThat(docViewer.prevButton(), displayed());
             docViewer.next();
-        } while (service.getCurrentDocumentNumber() != 1);
+        } while (docViewer.getCurrentDocumentNumber() != 1);
     }
 
     @Test
