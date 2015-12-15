@@ -28,12 +28,12 @@ define([
 
     // Get the filter model id for a given parametric field name
     function parametricFilterId(fieldName) {
-        return FilterTypes.PARAMETRIC + ':' + fieldName;
+        return fieldName;
     }
 
     // Get the display text for the given parametric field name and array of selected parametric values
     function parametricFilterText(fieldName, values) {
-        return fieldName + ': ' + values.join(', ');
+        return values.join(', ');
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -125,7 +125,7 @@ define([
 
         getDatabasesFilterText: function() {
             var selectedIndexNames = this.selectedIndexesCollection.pluck('name');
-            return i18n_indexes['search.indexes'] + ': ' + selectedIndexNames.join(', ');
+            return selectedIndexNames.join(', ');
         },
 
         allIndexesSelected: function() {
