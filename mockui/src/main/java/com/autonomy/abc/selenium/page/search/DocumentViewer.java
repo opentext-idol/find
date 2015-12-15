@@ -32,7 +32,8 @@ public class DocumentViewer extends AppElement implements AppPage {
         loadOrFadeWait();
     }
 
-    private WebElement prevButton() {
+    /* use this only to check that button is displayed - click by using previous() */
+    public WebElement prevButton() {
         return findElement(By.id("cboxPrevious"));
     }
 
@@ -41,7 +42,8 @@ public class DocumentViewer extends AppElement implements AppPage {
         waitForLoad();
     }
 
-    private WebElement nextButton() {
+    /* use this only to check that button is displayed - click by using next() */
+    public WebElement nextButton() {
         return findElement(By.id("cboxNext"));
     }
 

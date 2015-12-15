@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
@@ -58,6 +59,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindITCase extends HostedTestBase {
     private FindPage find;
@@ -391,6 +393,10 @@ public class FindITCase extends HostedTestBase {
         find.search("stars");
         find.filterBy(new IndexFilter(Index.DEFAULT));
 
+        service.getSearchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        String domain = docViewer.getDomain();
+
         for(WebElement searchResult : service.getResults()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
 
@@ -400,14 +406,10 @@ public class FindITCase extends HostedTestBase {
                 fail("Could not click on title - most likely CSA-1767");
             }
 
-            WebElement metadata = service.getViewMetadata();
-
-            assertThat(metadata.findElement(By.xpath(".//tr[1]/td")).getText(),is(domain));
-            assertThat(metadata.findElement(By.xpath(".//tr[2]/td")).getText(),is(not("")));
-            assertThat(metadata.findElement(By.xpath(".//tr[3]/td")).getText(),is(url));
-
-            service.closeViewBox();
-            find.loadOrFadeWait();
+            assertThat(docViewer.getDomain(), is(domain));
+            assertThat(docViewer.getIndex(), not(isEmptyOrNullString()));
+            assertThat(docViewer.getReference(), is(url));
+            docViewer.close();
         }
     }
 
@@ -429,11 +431,10 @@ public class FindITCase extends HostedTestBase {
         String titleString = title.getText();
         title.click();
 
-        WebElement metadata = service.getViewMetadata();
-        String index = metadata.findElement(By.xpath(".//tr[2]/td")).getText();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        String index = docViewer.getIndex();
 
-        service.closeViewBox();
-        service.loadOrFadeWait();
+        docViewer.close();
 
         find.filterBy(new IndexFilter(index));
 
@@ -447,10 +448,11 @@ public class FindITCase extends HostedTestBase {
         String indexTitle = find.getPrivateIndexNames().get(1);
         find.filterBy(new IndexFilter(indexTitle));
         service.getSearchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
-            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(indexTitle));
-            service.viewBoxNextButton().click();
-        } while (!service.cBoxFirstDocument());
+            assertThat(docViewer.getIndex(), is(indexTitle));
+            docViewer.next();
+        } while (service.getCurrentDocumentNumber() != 1);
     }
 
     @Test
@@ -566,12 +568,14 @@ public class FindITCase extends HostedTestBase {
                 fail("Could not click on title - most likely CSA-1767");
             }
 
+            DocumentViewer docViewer = DocumentViewer.make(getDriver());
+
             new WebDriverWait(getDriver(),20).until(new WaitForCBoxLoadIndicatorToDisappear());
             assertThat(service.getCBoxLoadedContent().getText(), not(containsString("500")));
 
-            assertTrue(service.viewBoxNextButton().isDisplayed());
-            assertTrue(service.viewBoxPrevButton().isDisplayed());
-            assertTrue(service.colourBox().isDisplayed());
+            assertThat(docViewer, displayed());
+            assertThat(docViewer.nextButton(), displayed());
+            assertThat(docViewer.prevButton(), displayed());
 
             service.closeViewBox();
             find.loadOrFadeWait();
@@ -596,13 +600,14 @@ public class FindITCase extends HostedTestBase {
 
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         service.getSearchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
             assertThat(service.getCBoxLoadedContent().getText(),not(containsString("500")));
-            assertTrue(service.viewBoxNextButton().isDisplayed());
-            assertTrue(service.viewBoxPrevButton().isDisplayed());
-            assertTrue(service.colourBox().isDisplayed());
-            service.viewBoxNextButton().click();
-        } while (!service.cBoxFirstDocument());
+            assertThat(docViewer, displayed());
+            assertThat(docViewer.nextButton(), displayed());
+            assertThat(docViewer.prevButton(), displayed());
+            docViewer.next();
+        } while (service.getCurrentDocumentNumber() != 1);
     }
 
     @Test
