@@ -23,7 +23,9 @@ public class FindPage extends AppElement implements AppPage, IndexFilter.Filtera
     private final Service service;
 
     public FindPage(WebDriver driver){
-        super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
+        super(new WebDriverWait(driver,30)
+                .withMessage("loading Find page")
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
         input = new Input(driver);
         service = new Service(driver);
     }
