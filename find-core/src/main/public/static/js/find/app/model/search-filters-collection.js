@@ -124,8 +124,12 @@ define([
         },
 
         getDatabasesFilterText: function() {
-            var selectedIndexNames = this.selectedIndexesCollection.pluck('name');
-            return i18n_indexes['search.indexes'] + ': ' + selectedIndexNames.join(', ');
+            var databaseFilter = this.selectedIndexesCollection.map(function (model) {
+                var displayName = this.indexesCollection.findWhere({name: model.get('name'), domain: model.get('domain')}).get('displayName');
+                return displayName || model.get('name');
+            }, this);
+
+            return i18n_indexes['search.indexes'] + ': ' + databaseFilter.join(', ');
         },
 
         allIndexesSelected: function() {

@@ -14,13 +14,15 @@ define([
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
         domain: 'TESTDOMAIN',
-        name: 'wookiepedia'
+        name: 'wookiepedia',
+        displayName: 'WookiePedia'
     };
 
     var WIKI_ENG = {
         id: 'TESTDOMAIN:wiki_eng',
         domain: 'TESTDOMAIN',
-        name: 'wiki_eng'
+        name: 'wiki_eng',
+        displayName: 'Wikipedia (Eng)'
     };
 
     var INITIAL_MIN_DATE = moment();
@@ -70,8 +72,8 @@ define([
         it('contains a databases filter model', function() {
             var model = this.collection.get(FiltersCollection.FilterTypes.indexes);
             expect(model).toBeDefined();
-            expect(model.get('text')).toContain(WIKI_ENG.name);
-            expect(model.get('text')).not.toContain(WOOKIEPEDIA.name);
+            expect(model.get('text')).toContain(WIKI_ENG.displayName);
+            expect(model.get('text')).not.toContain(WOOKIEPEDIA.displayName);
         });
 
         it('contains an AGE parametric field filter model', function() {
@@ -154,8 +156,8 @@ define([
                 it('adds a databases filter model', function() {
                     var model = this.collection.get(FiltersCollection.FilterTypes.indexes);
                     expect(model).toBeDefined();
-                    expect(model.get('text')).toContain(WOOKIEPEDIA.name);
-                    expect(model.get('text')).not.toContain(WIKI_ENG.name);
+                    expect(model.get('text')).toContain(WOOKIEPEDIA.displayName);
+                    expect(model.get('text')).not.toContain(WIKI_ENG.displayName);
                 });
             });
         });
