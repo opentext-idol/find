@@ -1261,7 +1261,7 @@ public class SearchPageITCase extends ABCTestBase {
 		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
 
 		try {
-			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), new Search(getApplication(), getElementFactory(), "*"), 8);
+			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), new Search(getApplication(), getElementFactory(), "*"), SearchPage.RESULTS_PER_PAGE + 2);
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
 			verifyThat(searchPage.forwardPageButton(), not(disabled()));
