@@ -19,17 +19,6 @@ public class Service extends AppElement {
         return findElement(By.className("related-concepts-list"));
     }
 
-    @Deprecated
-    public void filterByIndex(String domain, String index) {
-        filterByIndex(index);
-    }
-
-    public void filterByIndex(String index) {
-        findElement(By.cssSelector(".database-input[data-name='" + index.replace(" ", "%20") + "']")).click();
-        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
-
-    }
-
     public List<WebElement> getPromotions() {
         return getPromotionsDiv().findElements(By.className("promoted-document"));
     }
