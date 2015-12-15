@@ -49,7 +49,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
     @Test
     //CSA-1736
-    public void testWebConnectorURLOpensInNewTab(){
+    public void testWebConnectorURLOpensInNewTab() throws InterruptedException {
         String connectorURL = "https://www.google.co.uk";
         connector = new WebConnector(connectorURL,"google").withDepth(1).withDuration(60);
         connectionService.setUpConnection(connector);
@@ -62,6 +62,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         try {
             connectionsDetailPage.webConnectorURL().click();
 
+            Thread.sleep(2000);
             windowHandles = new ArrayList<>(getDriver().getWindowHandles());
 
             verifyThat(windowHandles.size(), is(2));
