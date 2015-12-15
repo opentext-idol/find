@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
@@ -42,9 +43,7 @@ import java.util.*;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
-import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
@@ -1245,7 +1244,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CSA1708
+	//CSA-1708
 	public void testParametricLabelsNotUndefined(){
 		new Search(getApplication(),getElementFactory(),"simpsons").applyFilter(new IndexFilter("default_index")).apply();
 
@@ -1253,6 +1252,24 @@ public class SearchPageITCase extends ABCTestBase {
 
 		for(WebElement filter : searchPage.findElements(By.cssSelector(".filter-display-view span"))){
 			assertThat(filter.getText().toLowerCase(),not(containsString("undefined")));
+		}
+	}
+
+	@Test
+	//CSA-1629
+	public void testPinToPositionPagination(){
+		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+
+		try {
+			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), new Search(getApplication(), getElementFactory(), "*"), 8);
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+
+			verifyThat(searchPage.forwardPageButton(), not(disabled()));
+			searchPage.forwardPageButton().click();
+
+			verifyThat(searchPage.visibleDocumentsCount(), is(2));
+		} finally {
+			promotionService.deleteAll();
 		}
 	}
 

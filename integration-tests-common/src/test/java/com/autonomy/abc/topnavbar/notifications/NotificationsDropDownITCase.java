@@ -95,7 +95,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		}
 	}
 
-	//Fails because of CSA-1542
+//Fails because of CSA-1542
 	@Test
 	public void testNotificationsOverTwoWindows() throws InterruptedException {
 		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
@@ -212,8 +212,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Test
 	public void testBlacklistNotifications() throws InterruptedException {
-		String blacklistOne = "Rollins".toLowerCase();
-		String blacklistTwo = "Seth".toLowerCase();
+		String blacklistOne = "seth";
+		String blacklistTwo = "rollins";
 		String blacklistNotificationText = "Added \"placeholder\" to the blacklist";
 
 		keywordService.deleteAll(KeywordFilter.ALL);
@@ -231,8 +231,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Test
 	public void testSpotlightPromotionNotifications(){
-		String promotionTrigger = "Maggle".toLowerCase();
-		String search = "Cole".toLowerCase();
+		String promotionTrigger = "blatter";
+		String search = "thief";
 		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
 
 		promotionService.setUpPromotion(new SpotlightPromotion(promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
@@ -292,8 +292,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	@Test
 	public void testDynamicPromotionNotifications(){
 		int numberOfResults = 10;
-		String promotionTrigger = "Wyatt".toLowerCase();
-		String search = "Lawler".toLowerCase();
+		String promotionTrigger = "football";
+		String search = "soccer";
 		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
 
 		promotionService.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
@@ -308,8 +308,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	@Test
 	public void testRemovingDynamicPromotionNotifications(){
 		int numberOfResults = 10;
-		String promotionTrigger = "Wyatt".toLowerCase();
-		String search = "Lawler".toLowerCase();
+		String promotionTrigger = "platini";
+		String search = "liar";
 		String promotionNotificationText = "Removed a dynamic spotlight promotion";
 
 		DynamicPromotion dynamic = new DynamicPromotion(numberOfResults, promotionTrigger);
