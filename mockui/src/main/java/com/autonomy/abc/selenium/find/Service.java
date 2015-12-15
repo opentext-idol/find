@@ -69,10 +69,6 @@ public class Service extends AppElement {
         return titles;
     }
 
-    public WebElement getCBoxLoadedContent() {
-        return getDriver().findElement(By.id("cboxLoadedContent"));
-    }
-
     public WebElement getStartDateFilter() {
         return findElement(By.cssSelector(".results-filter-min-date input"));
     }
@@ -203,9 +199,5 @@ public class Service extends AppElement {
 
     public WebElement getSearchResultTitle(int searchResultNumber) {
         return getSearchResult(searchResultNumber).findElement(By.tagName("h4"));
-    }
-
-    public void closeViewBox() {
-        getDriver().findElement(By.id("cboxClose")).click();
     }
 }

@@ -19,6 +19,7 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Locator;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -39,7 +40,6 @@ import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -569,28 +569,8 @@ public class FindITCase extends HostedTestBase {
             }
 
             DocumentViewer docViewer = DocumentViewer.make(getDriver());
-
-            new WebDriverWait(getDriver(),20).until(new WaitForCBoxLoadIndicatorToDisappear());
-            assertThat(service.getCBoxLoadedContent().getText(), not(containsString("500")));
-
-            assertThat(docViewer, displayed());
-            assertThat(docViewer.nextButton(), displayed());
-            assertThat(docViewer.prevButton(), displayed());
-
-            service.closeViewBox();
-            find.loadOrFadeWait();
-        }
-    }
-
-    private class WaitForCBoxLoadIndicatorToDisappear implements ExpectedCondition<Boolean> {
-        @Override
-        public Boolean apply(WebDriver input) {
-            return !getDriver().findElement(By.cssSelector("#cboxLoadedContent .icon-spin")).isDisplayed();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return false;
+            verifyDocumentViewer(docViewer);
+            docViewer.close();
         }
     }
 
@@ -602,12 +582,22 @@ public class FindITCase extends HostedTestBase {
         service.getSearchResultTitle(1).click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
-            assertThat(service.getCBoxLoadedContent().getText(),not(containsString("500")));
-            assertThat(docViewer, displayed());
-            assertThat(docViewer.nextButton(), displayed());
-            assertThat(docViewer.prevButton(), displayed());
+            verifyDocumentViewer(docViewer);
             docViewer.next();
         } while (docViewer.getCurrentDocumentNumber() != 1);
+    }
+
+    private void verifyDocumentViewer(DocumentViewer docViewer) {
+        verifyThat("document visible", docViewer, displayed());
+        verifyThat("next button visible", docViewer.nextButton(), displayed());
+        verifyThat("previous button visible", docViewer.prevButton(), displayed());
+
+        String handle = getDriver().getWindowHandle();
+        getDriver().switchTo().frame(docViewer.frame());
+
+        verifyThat("no backend error", getDriver().findElements(new Locator().withTagName("h1").containingText("500")), empty());
+        verifyThat("no view server error", getDriver().findElements(new Locator().withTagName("h2").containingCaseInsensitive("error")), empty());
+        getDriver().switchTo().window(handle);
     }
 
     @Test
