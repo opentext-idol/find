@@ -956,36 +956,27 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
 		final String firstResult = searchPage.getSearchResultTitle(1);
-		final Date date = searchPage.getDateFromResult(1);
+		Date date = searchPage.getDateFromResult(1);
+
+		logger.info("First Result: " + firstResult + " " + date);
 		// plus 1 minute to be inclusive
-		date.setTime(date.getTime() + 60000);
-        logger.info("First Result: " + firstResult + " " + date);
-		searchPage.openUntilDatePicker();
-		datePicker = new DatePicker(searchPage.$el(), getDriver());
-		try {
-			datePicker.calendarDateSelect(date);
-		} catch (final ElementNotVisibleException e) {
-			for (final String label : searchPage.filterLabelList()) {
-				assertThat("A 'From' date filter has been applied while only an 'Until' filter was selected by the user", label,not(containsString("From: ")));
-			}
-			assertThat("A 'From' date filter has been applied while only an 'Until' filter was selected by the user", searchPage.fromDateTextBox().getAttribute("value"), not(isEmptyOrNullString()));
-			throw e;
+		date = DateUtils.addMinutes(date, 1);
+
+		searchPage.filterBy(new DatePickerFilter().until(date));
+		for (final String label : searchPage.filterLabelList()) {
+			assertThat("no 'From' filter applied", label,not(containsString("From: ")));
 		}
-		searchPage.closeUntilDatePicker();
-        logger.info(searchPage.untilDateTextBox().getAttribute("value"));
+		assertThat("applied 'Until' filter", searchPage.untilDateTextBox().getAttribute("value"), not(isEmptyOrNullString()));
+		logger.info(searchPage.untilDateTextBox().getAttribute("value"));
+		assertThat(searchPage.getHeadingResultsCount(), greaterThan(0));
 		assertThat("Document should still be displayed", searchPage.getSearchResultTitle(1), is(firstResult));
 
-		searchPage.openUntilDatePicker();
-		datePicker = new DatePicker(searchPage.$el(), getDriver());
-		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
-		searchPage.closeUntilDatePicker();
+		searchPage.filterBy(new DatePickerFilter().until(DateUtils.addMinutes(date, -1)));
         logger.info(searchPage.untilDateTextBox().getAttribute("value"));
         assertThat("Document should not be visible. Date filter not working", searchPage.getSearchResultTitle(1), not(firstResult));
 
-		searchPage.openUntilDatePicker();
-		datePicker = new DatePicker(searchPage.$el(), getDriver());
-		datePicker.calendarDateSelect(DateUtils.addMinutes(date, 1));
-		searchPage.closeUntilDatePicker();
+		searchPage.filterBy(new DatePickerFilter().until(DateUtils.addMinutes(date, 1)));
+		assertThat(searchPage.getHeadingResultsCount(), greaterThan(0));
 		assertThat("Document should be visible. Date filter not working", searchPage.getSearchResultTitle(1), is(firstResult));
 	}
 
