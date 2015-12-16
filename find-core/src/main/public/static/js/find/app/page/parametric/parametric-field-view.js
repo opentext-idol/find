@@ -2,10 +2,11 @@ define([
     'backbone',
     'underscore',
     'jquery',
+    'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
     'find/app/util/collapsible',
     'find/app/page/parametric/parametric-value-view'
-], function(Backbone, _, $, ListView, Collapsible, ValueView) {
+], function(Backbone, _, $, i18n, ListView, Collapsible, ValueView) {
 
     var ValuesView = Backbone.View.extend({
         className: 'table',
@@ -35,6 +36,13 @@ define([
 
     return Backbone.View.extend({
         className: 'animated fadeIn',
+        seeMoreButtonTemplate: _.template('<tr class="toggle-more clickable"><td></td><td>+ <span class="toggle-more-text"><%-i18n["app.seeMore"]%></span></td></tr>'),
+
+        events: {
+            'click .toggle-more': function(e) {
+                this.toggleFacets($(e.currentTarget).hasClass('more'));
+            }
+        },
 
         initialize: function() {
             this.$el.attr('data-field', this.model.id);
@@ -50,6 +58,22 @@ define([
         render: function() {
             this.$el.empty().append(this.collapsible.$el);
             this.collapsible.render();
+
+            if(this.collapsible.$('tbody tr').length > 5) {
+                this.collapsible.$('tbody').append(this.seeMoreButtonTemplate({i18n:i18n}));
+                this.toggleFacets(true);
+            }
+        },
+
+        toggleFacets: function(toggle) {
+            var lastFacets = this.collapsible.$('tbody tr').slice(5);
+            lastFacets.toggleClass('hide', toggle);
+
+            //unhiding see more or see less buttons
+            this.$('.toggle-more').removeClass('hide');
+
+            this.collapsible.$('.toggle-more').toggleClass('more', !toggle);
+            this.collapsible.$('.toggle-more-text').text(toggle ? i18n["app.seeMore"] : i18n["app.seeLess"]);
         },
 
         remove: function() {

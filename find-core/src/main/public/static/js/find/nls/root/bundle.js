@@ -12,6 +12,8 @@ define([
         'app.name': "Find",
         'app.ok': 'OK',
         'app.roles': 'Roles',
+        'app.seeMore': 'See More',
+        'app.seeLess': 'See Less',
         'app.settings': 'Settings',
         'app.user': 'User',
         'app.users': 'Users',
