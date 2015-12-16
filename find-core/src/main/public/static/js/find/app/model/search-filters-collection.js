@@ -1,4 +1,3 @@
-
 define([
     'backbone',
     'underscore',
