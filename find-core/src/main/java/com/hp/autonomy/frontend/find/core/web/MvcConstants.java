@@ -5,21 +5,20 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-public enum MvcConstants
-{
-    APPLICATION_VERSION("applicationVersion"),
+public enum MvcConstants {
+    BUILD_NUMBER("buildNumber"),
     CONFIG("configJson"),
+    GIT_COMMIT("commit"),
+    RELEASE_VERSION("version"),
     USERNAME("username");
 
     private final String value;
 
-    MvcConstants(final String value)
-    {
+    MvcConstants(final String value) {
         this.value = value;
     }
 
-    public String value()
-    {
+    public String value() {
         return value;
     }
 }

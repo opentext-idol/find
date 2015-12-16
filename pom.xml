@@ -26,6 +26,7 @@
 
     <properties>
         <application.buildNumber>dev</application.buildNumber>
+        <application.commit>HEAD</application.commit>
     </properties>
 
     <build>

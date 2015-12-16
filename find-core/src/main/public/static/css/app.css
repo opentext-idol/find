@@ -6,11 +6,11 @@
 @import '../lib/bootstrap/css/bootstrap.css';
 @import '../lib/bootstrap/css/bootstrap-theme.css';
 @import '../bower_components/fontawesome/css/font-awesome.css';
-@import '../bower_components/bootstrap-timepicker/build/css/bootstrap-datetimepicker.min.css';
 @import "../bower_components/colorbox/example1/colorbox.css";
 @import "../bower_components/hp-autonomy-settings-page/src/css/settings.css";
 @import "../bower_components/hp-autonomy-js-whatever/src/css/javascript-utils.css";
-@import "../bower_components/icheck/skins/all.css";
+@import "../bower_components/datatables.net-bs/css/dataTables.bootstrap.css";
+@import "../bower_components/hp-autonomy-about-page/src/css/about-page.css";
 @import 'app-include.css';
 @import 'colorbox.css';
 @import 'icons.css';
