@@ -23,8 +23,13 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
         return new EditDocumentReferencesPage(driver);
     }
 
-    public WebElement saveButton() {
-        return findElement(By.xpath(".//button[text() = 'Save']"));
+    private static void waitForLoad(WebDriver driver) {
+        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotions-bucket-well")));
+    }
+
+    @Override
+    public void waitForLoad() {
+        waitForLoad(getDriver());
     }
 
     public List<String> promotionsBucketList() {
@@ -39,16 +44,11 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
         return items;
     }
 
+    public WebElement saveButton() {
+        return findElement(By.xpath(".//button[text() = 'Save']"));
+    }
+
     public WebElement cancelButton() {
         return findElement(By.xpath(".//*[contains(text(), 'Cancel')]"));
-    }
-
-    private static void waitForLoad(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotions-bucket-well")));
-    }
-
-    @Override
-    public void waitForLoad() {
-        waitForLoad(getDriver());
     }
 }

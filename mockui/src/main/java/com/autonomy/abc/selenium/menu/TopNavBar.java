@@ -47,4 +47,10 @@ public abstract class TopNavBar extends AppElement {
     public String getSearchBarText() {
         return searchBox().getAttribute("value");
     }
+
+    public void closeNotifications() {
+        if(findElement(By.className("top-navbar-notifications")).getAttribute("class").contains("open")){
+            notificationsDropdown();
+        }
+    }
 }
