@@ -89,7 +89,7 @@ public class CustomErrorController {
         if (contactSupport) {
             modelAndView.addObject("contactSupport", messageSource.getMessage("error.contactSupport", null, locale));
         }
-        modelAndView.addObject("commit", commit);
+        modelAndView.addObject(MvcConstants.GIT_COMMIT.value(), commit);
 
         return modelAndView;
     }
