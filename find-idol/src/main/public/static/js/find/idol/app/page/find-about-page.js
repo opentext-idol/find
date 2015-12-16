@@ -27,7 +27,7 @@ define([
                     tagLine: i18n['about.tagLine'],
                     title: i18n['app.about'],
                     version: i18n['about.app.version'],
-                    versionString: [config.version, i18n['about.app.build'], config.buildNumber, i18n['about.app.commit'], config.commit].join(' ')
+                    versionString: i18n['about.versionString'](config.version, config.buildNumber, config.commit)
                 }
             });
         }
