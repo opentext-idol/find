@@ -25,9 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -126,7 +124,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		}
 
 		assertEquals(searchPage.getSelectedLanguage(), "French");
-		assertThat("Wrong search performed", searchPage.searchTitle().getText().equals("bunny rabbit"));
+		assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), is("bunny rabbit"));
 		assertEquals(searchPage.promotionsSummaryList(false).get(0), firstDocTitle);
 		assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase("Top Promotions"));
 	}
@@ -266,7 +264,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
 
 		searchPage.loadOrFadeWait();
-		assertFalse("\"undefined\" returned as query text when wizard cancelled", searchPage.searchTitle().getText().contains("undefined"));
+		assertThat("\"undefined\" returned as query text when wizard cancelled", searchPage.getHeadingSearchTerm(), not(containsString("undefined")));
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
@@ -283,7 +281,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 		assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
 		searchPage.loadOrFadeWait();
-		assertFalse("\"undefined\" returned as query text when wizard cancelled", searchPage.searchTitle().getText().contains("undefined"));
+		assertThat("\"undefined\" returned as query text when wizard cancelled", searchPage.getHeadingSearchTerm(), not(containsString("undefined")));
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
@@ -351,7 +349,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		}
 
 		assertEquals(searchPage.getSelectedLanguage(), language);
-		assertThat("Wrong search performed", searchPage.searchTitle().getText().contains(trigger));
+		assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), containsString(trigger));
 		assertEquals(searchPage.promotionsSummaryList(false).get(0), firstDocTitle);
 		assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase(promotionType));
 	}
@@ -359,7 +357,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testTwoPromotionTypesForSameTrigger() {
         searchPage = searchActionFactory.makeSearch("paris").apply();
-		int promotionResultsCount = searchPage.countSearchResults();
+		int promotionResultsCount = searchPage.getHeadingResultsCount();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
@@ -384,7 +382,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		assertEquals("Wrong number of promoted documents displayed", promotionResultsCount, list);
 
         searchPage = searchActionFactory.makeSearch("rome").apply();
-		promotionResultsCount = promotionResultsCount + searchPage.countSearchResults();
+		promotionResultsCount = promotionResultsCount + searchPage.getHeadingResultsCount();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
@@ -409,7 +407,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 	public void testDuplicateQueryAndTriggerDifferentSpotlightType() {
         Search search = searchActionFactory.makeSearch("berlin");
         searchPage = search.apply();
-		int promotionResultsCount = searchPage.countSearchResults();
+		int promotionResultsCount = searchPage.getHeadingResultsCount();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
@@ -420,7 +418,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 		assertThat("promotions aren't labelled as Sponsored", searchPage.promotionsLabel().getText(), equalToIgnoringCase("Sponsored"));
 
 		search.apply();
-		promotionResultsCount = promotionResultsCount + searchPage.countSearchResults();
+		promotionResultsCount = promotionResultsCount + searchPage.getHeadingResultsCount();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
@@ -438,7 +436,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 	public void testNumberOfDocumentsPromotedOnPromotionsPage() {
         Search search = searchActionFactory.makeSearch("wors").applyFilter(new LanguageFilter("Afrikaans"));
         searchPage = search.apply();
-		final int promotionResultsCount = searchPage.countSearchResults();
+		final int promotionResultsCount = searchPage.getHeadingResultsCount();
 		searchPage.promoteThisQueryButton().click();
 		searchPage.loadOrFadeWait();
 
