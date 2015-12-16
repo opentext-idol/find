@@ -127,11 +127,9 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 
 	public int countRefreshIcons() {
 		try {
-            List<WebElement> refreshIcons = findElements(By.cssSelector(".keywords-list .fa-refresh"));
-
             int visibleIcons = 0;
 
-            for(WebElement refresh : refreshIcons){
+            for(WebElement refresh : findElements(By.cssSelector(".keywords-list .fa-spin"))){
                 if (refresh.isDisplayed()){
                     visibleIcons++;
                 }
