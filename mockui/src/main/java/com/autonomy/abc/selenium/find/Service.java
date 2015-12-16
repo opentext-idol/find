@@ -8,8 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Service extends AppElement {
     public Service(WebDriver driver) {
@@ -18,39 +17,6 @@ public class Service extends AppElement {
 
     public WebElement getRelatedConcepts() {
         return findElement(By.className("related-concepts-list"));
-    }
-
-    @Deprecated
-    public void filterByIndex(String domain, String index) {
-        filterByIndex(index);
-    }
-
-    public void filterByIndex(String index) {
-        findElement(By.cssSelector(".database-input[data-name='" + index.replace(" ", "%20") + "']")).click();
-        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
-
-    }
-
-    public boolean cBoxFirstDocument() {
-        String[] current = getDriver().findElement(By.id("cboxCurrent")).getText().split(" ");
-
-        if (Integer.parseInt(current[0]) == 1){
-            return true;
-        }
-
-        return false;
-    }
-
-    public WebElement viewBoxNextButton() {
-        return getDriver().findElement(By.className("nextBtn"));
-    }
-
-    public WebElement viewBoxPrevButton(){
-        return getDriver().findElement(By.className("prevBtn"));
-    }
-
-    public WebElement colourBox(){
-        return getDriver().findElement(By.id("colorbox"));
     }
 
     public List<WebElement> getPromotions() {
@@ -101,10 +67,6 @@ public class Service extends AppElement {
         }
 
         return titles;
-    }
-
-    public WebElement getCBoxLoadedContent() {
-        return getDriver().findElement(By.id("cboxLoadedContent"));
     }
 
     public WebElement getStartDateFilter() {
@@ -237,13 +199,5 @@ public class Service extends AppElement {
 
     public WebElement getSearchResultTitle(int searchResultNumber) {
         return getSearchResult(searchResultNumber).findElement(By.tagName("h4"));
-    }
-
-    public WebElement getViewMetadata() {
-        return new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOfElementLocated(By.className("view-server-document-info")));
-    }
-
-    public void closeViewBox() {
-        getDriver().findElement(By.id("cboxClose")).click();
     }
 }

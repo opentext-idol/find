@@ -6,15 +6,20 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.Input;
 import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
+import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Locator;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -35,7 +40,6 @@ import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -55,6 +59,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindITCase extends HostedTestBase {
     private FindPage find;
@@ -137,7 +142,7 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
         body.getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
-        searchPage.sortByRelevance();
+        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
         getDriver().switchTo().window(browserHandles.get(1));
@@ -157,14 +162,14 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
         body.getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
-        searchPage.sortByDate();
+        searchPage.sortBy(SearchBase.Sort.DATE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("stars bbc");
 
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        find.sortByDate();
+        find.sortBy(SearchBase.Sort.DATE);
 
         List<String> findSearchTitles = service.getResultTitles();
 
@@ -386,7 +391,11 @@ public class FindITCase extends HostedTestBase {
     //TODO update this based on CSA-1657
     public void testMetadata(){
         find.search("stars");
-        service.filterByIndex(Index.DEFAULT.getTitle());
+        find.filterBy(new IndexFilter(Index.DEFAULT));
+
+        service.getSearchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        String domain = docViewer.getDomain();
 
         for(WebElement searchResult : service.getResults()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
@@ -397,14 +406,10 @@ public class FindITCase extends HostedTestBase {
                 fail("Could not click on title - most likely CSA-1767");
             }
 
-            WebElement metadata = service.getViewMetadata();
-
-            assertThat(metadata.findElement(By.xpath(".//tr[1]/td")).getText(),is(domain));
-            assertThat(metadata.findElement(By.xpath(".//tr[2]/td")).getText(),is(not("")));
-            assertThat(metadata.findElement(By.xpath(".//tr[3]/td")).getText(),is(url));
-
-            service.closeViewBox();
-            find.loadOrFadeWait();
+            assertThat(docViewer.getDomain(), is(domain));
+            assertThat(docViewer.getIndex(), not(isEmptyOrNullString()));
+            assertThat(docViewer.getReference(), is(url));
+            docViewer.close();
         }
     }
 
@@ -426,14 +431,12 @@ public class FindITCase extends HostedTestBase {
         String titleString = title.getText();
         title.click();
 
-        WebElement metadata = service.getViewMetadata();
-        String index = metadata.findElement(By.xpath(".//tr[2]/td")).getText();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        String index = docViewer.getIndex();
 
-        service.closeViewBox();
-        service.loadOrFadeWait();
+        docViewer.close();
 
-        service.filterByIndex(index);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        find.filterBy(new IndexFilter(index));
 
         assertThat(service.getSearchResultTitle(1).getText(), is(titleString));
     }
@@ -442,22 +445,23 @@ public class FindITCase extends HostedTestBase {
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        String indexTitle = Index.values()[1].getTitle();
-
-        service.filterByIndex(indexTitle);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        String indexTitle = find.getPrivateIndexNames().get(1);
+        find.filterBy(new IndexFilter(indexTitle));
         service.getSearchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
-            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(indexTitle));
-            service.viewBoxNextButton().click();
-        } while (!service.cBoxFirstDocument());
+            assertThat(docViewer.getIndex(), is(indexTitle));
+            docViewer.next();
+        } while (docViewer.getCurrentDocumentNumber() != 1);
     }
 
     @Test
     public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
         find.search("index");
-        service.filterByIndex(Index.DEFAULT.title);
-        service.filterByIndex(Index.DEFAULT.title);
+        // async filters
+        new IndexFilter(Index.DEFAULT).apply(find);
+        IndexFilter.PRIVATE.apply(find);
+        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
     }
 
@@ -535,14 +539,14 @@ public class FindITCase extends HostedTestBase {
 
         Set<String> parametricFields = new HashSet<>();
 
-        for(Index i : Index.values()) {
+        find.search("Something");
+
+        for (String indexName : find.getPrivateIndexNames()) {
             RetrieveIndexFieldsResponse retrieveIndexFieldsResponse = retrieveIndexFieldsService.retrieveIndexFields(tokenProxy,
-                    new ResourceIdentifier(domain, i.title), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
+                    new ResourceIdentifier(domain, indexName), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
 
             parametricFields.addAll(retrieveIndexFieldsResponse.getAllFields());
         }
-
-        find.search("Something");
 
         for(String field : parametricFields) {
             try {
@@ -564,27 +568,9 @@ public class FindITCase extends HostedTestBase {
                 fail("Could not click on title - most likely CSA-1767");
             }
 
-            new WebDriverWait(getDriver(),20).until(new WaitForCBoxLoadIndicatorToDisappear());
-            assertThat(service.getCBoxLoadedContent().getText(), not(containsString("500")));
-
-            assertTrue(service.viewBoxNextButton().isDisplayed());
-            assertTrue(service.viewBoxPrevButton().isDisplayed());
-            assertTrue(service.colourBox().isDisplayed());
-
-            service.closeViewBox();
-            find.loadOrFadeWait();
-        }
-    }
-
-    private class WaitForCBoxLoadIndicatorToDisappear implements ExpectedCondition<Boolean> {
-        @Override
-        public Boolean apply(WebDriver input) {
-            return !getDriver().findElement(By.cssSelector("#cboxLoadedContent .icon-spin")).isDisplayed();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return false;
+            DocumentViewer docViewer = DocumentViewer.make(getDriver());
+            verifyDocumentViewer(docViewer);
+            docViewer.close();
         }
     }
 
@@ -594,13 +580,24 @@ public class FindITCase extends HostedTestBase {
 
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         service.getSearchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
-            assertThat(service.getCBoxLoadedContent().getText(),not(containsString("500")));
-            assertTrue(service.viewBoxNextButton().isDisplayed());
-            assertTrue(service.viewBoxPrevButton().isDisplayed());
-            assertTrue(service.colourBox().isDisplayed());
-            service.viewBoxNextButton().click();
-        } while (!service.cBoxFirstDocument());
+            verifyDocumentViewer(docViewer);
+            docViewer.next();
+        } while (docViewer.getCurrentDocumentNumber() != 1);
+    }
+
+    private void verifyDocumentViewer(DocumentViewer docViewer) {
+        verifyThat("document visible", docViewer, displayed());
+        verifyThat("next button visible", docViewer.nextButton(), displayed());
+        verifyThat("previous button visible", docViewer.prevButton(), displayed());
+
+        String handle = getDriver().getWindowHandle();
+        getDriver().switchTo().frame(docViewer.frame());
+
+        verifyThat("no backend error", getDriver().findElements(new Locator().withTagName("h1").containingText("500")), empty());
+        verifyThat("no view server error", getDriver().findElements(new Locator().withTagName("h2").containingCaseInsensitive("error")), empty());
+        getDriver().switchTo().window(handle);
     }
 
     @Test
@@ -639,13 +636,14 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testSynonyms() throws InterruptedException {
+        String nonsense = "iuhdsafsaubfdja";
         getDriver().switchTo().window(browserHandles.get(0));
         keywordService.deleteAll(KeywordFilter.ALL);
 
         find.loadOrFadeWait();
 
         getDriver().switchTo().window(browserHandles.get(1));
-        find.search("iuhdsafsaubfdja");
+        find.search(nonsense);
 
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         assertThat(service.getText(), noDocs);
@@ -653,14 +651,16 @@ public class FindITCase extends HostedTestBase {
         find.search("Cat");
         service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
         assertThat(service.getText(), not(noDocs));
-        String firstTitle = service.getSearchResultTitle(1).getText();
 
         getDriver().switchTo().window(browserHandles.get(0));
-        keywordService.addSynonymGroup(Language.ENGLISH, "cat iuhdsafsaubfdja");
+        keywordService.addSynonymGroup(Language.ENGLISH, "cat", nonsense);
 
         getDriver().switchTo().window(browserHandles.get(1));
-        find.search("iuhdsafsaubfdja");
 
+        find.search("cat");
+        String firstTitle = service.getSearchResultTitle(1).getText();
+
+        find.search(nonsense);
         assertThat(service.getText(), not(noDocs));
         verifyThat(service.getSearchResultTitle(1).getText(), is(firstTitle));
     }
@@ -964,23 +964,6 @@ public class FindITCase extends HostedTestBase {
         find.search("Marina and the Diamonds");
 
         verifyThat(find.getSelectedPublicIndexes().size(), is(0));
-    }
-
-    private enum Index {
-        DEFAULT("default_index"),
-        FIFA("fifa"),
-        SIMPSONS_ARCHIVE("simpsonsarchive");
-
-        private final String title;
-
-        Index(String index){
-            this.title = index;
-        }
-
-
-        public String getTitle() {
-            return title;
-        }
     }
 
     private enum FileType {
