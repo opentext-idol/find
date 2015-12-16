@@ -61,15 +61,20 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
 
     private void clickLink(WebDriver driver) {
         driver.findElement(By.partialLinkText("here")).click();
+        sleep();
 
+        driver.close();
+
+        sleep();
+        String loginWindow = driver.getWindowHandles().toArray(new String[1])[0];
+        driver.switchTo().window(loginWindow);
+    }
+
+    private void sleep() {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             /* NOOP */
         }
-
-        driver.close();
-        String loginWindow = driver.getWindowHandles().toArray(new String[1])[0];
-        driver.switchTo().window(loginWindow);
     }
 }

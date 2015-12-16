@@ -2,7 +2,6 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -16,13 +15,16 @@ import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.login.AuthHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
-import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.promotions.StaticPromotion;
+import com.autonomy.abc.selenium.users.GmailSignupEmailHandler;
+import com.autonomy.abc.selenium.users.Role;
+import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.UserService;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
-import com.hp.autonomy.frontend.selenium.sso.TwitterAuth;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -30,7 +32,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.usermanagement.UserManagementHostedITCase.gmailString;
 import static org.hamcrest.core.Is.is;
 
 public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
@@ -175,15 +176,18 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
                 verifyThat(notification.getUsername(), is(devUsername));
             }
 
-            User user = userService.createNewUser(config.getNewUserFactory().create(), Role.ADMIN);
+            User user = userService.createNewUser(config.getNewUser("drake"), Role.ADMIN);
 
-            user.authenticate(config.getWebDriverFactory(), new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider()));
+            try {
+                user.authenticate(config.getWebDriverFactory(), new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider()));
+            } catch (TimeoutException e){
+                /* User has likely already been authenticated recently, attempt to continue */
+            }
 
             adminDriver = config.getWebDriverFactory().create();
             adminDriver.get(config.getWebappUrl());
-            LoginPage loginPage = new HSOLoginPage(adminDriver, new AuthHasLoggedIn(adminDriver));
 
-            loginPage.loginWith(user.getAuthProvider());
+            new HSOLoginPage(adminDriver, new AuthHasLoggedIn(adminDriver)).loginWith(user.getAuthProvider());
 
             HSOElementFactory elementFactory = new HSOElementFactory(adminDriver);
             elementFactory.getPromotionsPage();
@@ -192,7 +196,6 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             new KeywordService(getApplication(),elementFactory).addSynonymGroup("Messi", "Campbell");
 
             secondScreen.getTopNavBar().notificationsDropdown();
-            elementFactory.getSearchPage().loadOrFadeWait();
             verifyThat(secondScreen.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
 
             keywordService.addSynonymGroup("Joel", "Lionel");
