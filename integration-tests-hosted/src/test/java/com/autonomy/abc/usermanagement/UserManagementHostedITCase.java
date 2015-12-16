@@ -23,6 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -274,6 +275,19 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         userService.deleteUser(user);
 
         assertThat(usersPage.getTable(), not(containsText(longUsername)));
+    }
+
+    @Test
+    public void testUserConfirmedWithoutRefreshing(){
+        final User user = userService.createNewUser(config.getNewUserFactory().create(), Role.USER);
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
+
+        new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
+            }
+        });
     }
 
     private void waitForUserConfirmed(User user){
