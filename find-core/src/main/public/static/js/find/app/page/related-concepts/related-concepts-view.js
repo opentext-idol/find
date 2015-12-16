@@ -86,10 +86,10 @@ define([
                     } else {
                         this.selectViewState(['list']);
 
-                        var clusters = this.entityCollection.groupBy('cluster');
+                        var entities = _.first(this.entityCollection.models, 8);
 
-                        _.each(clusters, function (entities) {
-                            this.$list.append(this.listItemTemplate({entities: entities}));
+                        _.each(entities, function (entity) {
+                            this.$list.append(this.listItemTemplate({concept: entity.get('text')}));
                         }, this);
 
                         popover(this.$list.find('.entity-text'), 'hover', handlePopover);

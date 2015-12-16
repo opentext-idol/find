@@ -466,10 +466,6 @@ input.find-input {
 }
 /* end of fancy animation */
 
-.suggestions-content a {
-    color: #425563;
-}
-
 .suggestions-content {
     height: 320px;
     overflow-y: auto;
@@ -495,8 +491,9 @@ input.find-input {
 }
 
 .suggestion-head-text {
-    font-size: 14px;
-    font-weight: 800;
+    font-size: 12px;
+    font-weight: 600;
+    color: #00b388;
 }
 
 .results-container .result-message {
@@ -558,6 +555,10 @@ input.find-input {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     max-height: 40px;
+}
+
+.related-concepts-list {
+    padding-left: 0;
 }
 
 .search-page .popover {
