@@ -98,8 +98,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             createNewIndexPage.loadOrFadeWait();
             createNewIndexPage.finishButton().click();
 
-            getElementFactory().getIndexesPage();
-            new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(indexCreationNotification));
+            new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining(indexCreationNotification));
 
             checkForNotification(indexCreationNotification);
         } finally {
@@ -117,7 +116,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         String startedNotification = "Connection " + connectorName + " started";
         String finishedNotification = "Connection "+ connectorName + " has finished running";
 
-        WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName).withDuration(200);
+        WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName).withDuration(60);
 
         ConnectionService cs = new ConnectionService(getApplication(), getElementFactory());
         try {
@@ -140,7 +139,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     public void testConnectorsDeletionNotifications() {
         String connectorName = "deathcabyoucutie";
-        WebConnector connector = new WebConnector("http://deathcabforcutie.com/", connectorName).withDuration(200);
+        WebConnector connector = new WebConnector("http://deathcabforcutie.com/", connectorName).withDuration(60);
 
         String deletingNotification = "Deleting connection " + connectorName;
         String successfulNotification = "Connection " + connectorName + " successfully removed";
@@ -148,7 +147,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         ConnectionService cs = new ConnectionService(getApplication(), getElementFactory());
         cs.setUpConnection(connector);
 
-        cs.deleteConnection(connector, true);        //Because of the thread.Sleep() within no need to wait for the notifications
+        cs.deleteConnection(connector, true);        //Because of the WebDriverWait within no need to wait for the notifications
 
         body.getTopNavBar().notificationsDropdown();
         notifications = body.getTopNavBar().getNotifications();

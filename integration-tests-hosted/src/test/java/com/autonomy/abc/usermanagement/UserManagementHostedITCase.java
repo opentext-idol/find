@@ -19,6 +19,7 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -71,7 +72,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         //Sometimes it requires us to add a valid user before invalid users show up
         userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
 
-        usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
 
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
@@ -111,7 +111,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         verifyThat("number of users has not increased", usersPage.getUsernames(), hasSize(existingUsers));
 
-        usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
 
         verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
@@ -129,7 +128,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         verifyThat(usersPage.getUsernames(), hasItem(validUser.getUsername()));
 
-        usersPage.refreshButton().click();
         usersPage.loadOrFadeWait();
         verifyThat("exactly one new user appears", usersPage.getUsernames(), hasSize(existingUsers + 1));
         return user;
@@ -279,7 +277,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     }
 
     private void waitForUserConfirmed(User user){
-        new WebDriverWait(getDriver(),60).pollingEvery(2, TimeUnit.SECONDS).withMessage("User not showing as confirmed").until(new WaitForUserToBeConfirmed(user));
+        new WebDriverWait(getDriver(),60).pollingEvery(10, TimeUnit.SECONDS).withMessage("User not showing as confirmed").until(new WaitForUserToBeConfirmed(user));
+        body = getBody();
     }
 
     private class WaitForUserToBeConfirmed implements ExpectedCondition<Boolean>{
@@ -291,8 +290,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         @Override
         public Boolean apply(WebDriver driver) {
-            usersPage.refreshButton().click();
-
+            driver.navigate().refresh();
+            usersPage = (HSOUsersPage) getElementFactory().getUsersPage();
             return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
         }
     }

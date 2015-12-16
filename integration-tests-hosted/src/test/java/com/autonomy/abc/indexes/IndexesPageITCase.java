@@ -176,7 +176,7 @@ public class IndexesPageITCase extends HostedTestBase {
 
     @Test
     //CSA1544
-    public void testCreatingIndexNameWithSpaceViaConnectorWizardDoesNotGiveInvalidIndexNameNotifications(){
+    public void testNoInvalidIndexNameNotifications(){
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
         Connector hassleRecords = new WebConnector("http://www.hasslerecords.com","hassle records").withDepth(1);
