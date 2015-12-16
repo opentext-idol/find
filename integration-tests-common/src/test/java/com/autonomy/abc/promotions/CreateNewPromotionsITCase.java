@@ -421,26 +421,28 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage.searchResultCheckbox(1).click();
         searchPage.promotionsBucketClose();
 
-        for (final String spotlightType : Arrays.asList("Sponsored", "Hotwire", "Top Promotions")) {
-            actionFactory.makeSearch("dog").apply();
-            searchPage = getElementFactory().getSearchPage();
-            searchPage.createAPromotion();
+        try {
+            for (final String spotlightType : Arrays.asList("Sponsored", "Hotwire", "Top Promotions")) {
+                actionFactory.makeSearch("dog").apply();
+                searchPage = getElementFactory().getSearchPage();
+                searchPage.createAPromotion();
 
-            createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-            createPromotionsPage.addSpotlightPromotion(spotlightType, "MyFirstNotification" + spotlightType.replaceAll("\\s+", ""));
-            new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationAppears());
-//            searchPage.waitForGritterToClear();
+                createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+                createPromotionsPage.addSpotlightPromotion(spotlightType, "MyFirstNotification" + spotlightType.replaceAll("\\s+", ""));
+                new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationAppears());
 
-            body.getTopNavBar().notificationsDropdown();
-            final NotificationsDropDown notifications = body.getTopNavBar().getNotifications();
-//            body.getTopNavBar().loadOrFadeWait();
-            //Match regardless of case
-            verifyThat(notifications.notificationNumber(1).getText().toLowerCase(),
-                    containsString(("Created a new spotlight promotion: Spotlight for: MyFirstNotification" + spotlightType.replaceAll("\\s+", "")).toLowerCase()));
+                body.getTopNavBar().notificationsDropdown();
+                final NotificationsDropDown notifications = body.getTopNavBar().getNotifications();
+                //Match regardless of case
+                verifyThat(notifications.notificationNumber(1).getText().toLowerCase(),
+                        containsString(("Created a new spotlight promotion: Spotlight for: MyFirstNotification" + spotlightType.replaceAll("\\s+", "")).toLowerCase()));
 
-            // TODO: CSA-893
+                // TODO: CSA-893
 //            notifications.notificationNumber(1).click();
 //            verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail/spotlight"));
+            }
+        } finally {
+            body.getTopNavBar().closeNotifications();
         }
     }
 

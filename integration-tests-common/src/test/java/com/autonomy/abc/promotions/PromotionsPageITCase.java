@@ -622,6 +622,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String newTitle = "Admit It!!!";
 
 		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
+		promotionsDetailPage.loadOrFadeWait();
 		verifyThat(promotionsDetailPage.promotionTitle().getValue(), is(newTitle));
 
 		promotionService.delete(newTitle);
