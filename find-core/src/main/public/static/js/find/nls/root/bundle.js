@@ -14,7 +14,7 @@ define([
         'about.lib.licence': 'License',
         'about.search': 'Search',
         'about.tagLine': 'Handcrafted in Cambridge.',
-        'about.versionString': '{0} build {1} commit {2}',
+        'about.versionString': '{0} commit {1}',
         'app.about': 'About',
         'app.cancel': 'Cancel',
         'app.from': 'From',

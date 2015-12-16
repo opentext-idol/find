@@ -35,9 +35,6 @@ public class FindController {
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
 
-    @Value(AppConfiguration.APPLICATION_BUILD_NUMBER_PROPERTY)
-    private String buildNumber;
-
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommit;
 
@@ -63,7 +60,6 @@ public class FindController {
         final String username = SecurityContextHolder.getContext().getAuthentication().getName();
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.USERNAME.value(), username);
-        config.put(MvcConstants.BUILD_NUMBER.value(), buildNumber);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
 

@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 public enum MvcConstants {
-    BUILD_NUMBER("buildNumber"),
     CONFIG("configJson"),
     GIT_COMMIT("commit"),
     RELEASE_VERSION("version"),
