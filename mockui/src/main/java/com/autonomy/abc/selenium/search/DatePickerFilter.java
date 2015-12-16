@@ -42,7 +42,9 @@ public class DatePickerFilter implements SearchFilter {
 
         private void applyTo(DatePicker datePicker) {
             if (date != null) {
+                datePicker.open();
                 datePicker.calendarDateSelect(date);
+                datePicker.close();
             }
         }
     }

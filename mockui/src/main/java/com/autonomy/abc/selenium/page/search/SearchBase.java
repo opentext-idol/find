@@ -343,16 +343,16 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public DatePicker fromDatePicker() {
-		openFromDatePicker();
 		return datePicker(By.cssSelector("[data-filter-name='minDate']"));
 	}
 
 	public DatePicker untilDatePicker() {
-		openUntilDatePicker();
 		return datePicker(By.cssSelector("[data-filter-name='maxDate']"));
 	}
 
 	private DatePicker datePicker(By locator) {
+		expand(Facet.FILTER_BY);
+		expand(Facet.DATES);
 		return new DatePicker(findElement(locator), getDriver());
 	}
 
