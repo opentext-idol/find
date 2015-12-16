@@ -6,9 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -26,7 +24,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -526,13 +523,13 @@ public class PromotionsPageITCase extends ABCTestBase {
 		for (final String query : queries) {
 			search(query, "English").apply();
 			searchPage = getElementFactory().getSearchPage();
-			final int firstPageStated = searchPage.countSearchResults();
+			final int firstPageStated = searchPage.getHeadingResultsCount();
 			searchPage.forwardToLastPageButton().click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 			final int numberOfPages = searchPage.getCurrentPageNumber();
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
 			final int listedCount = (numberOfPages - 1) * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
-			final int lastPageStated = searchPage.countSearchResults();
+			final int lastPageStated = searchPage.getHeadingResultsCount();
 			verifyThat("count is the same across pages for " + query, firstPageStated, is(lastPageStated));
 			verifyThat("count is correct for " + query, lastPageStated, is(listedCount));
 		}

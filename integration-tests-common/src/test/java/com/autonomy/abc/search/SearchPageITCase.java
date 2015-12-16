@@ -99,13 +99,13 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testSearchBasic(){
 		search("dog");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("dog"));
+		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("dog"));
 
 		search("cat");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("cat"));
+		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("cat"));
 
 		search("ElEPhanT");
-		assertThat("Search title text is wrong", searchPage.searchTitle().getText(), is("ElEPhanT"));
+		assertThat("Search title text is wrong", searchPage.getHeadingSearchTerm(), is("ElEPhanT"));
 	}
 
 	@Test
@@ -647,7 +647,7 @@ public class SearchPageITCase extends ABCTestBase {
 		final int comparisonResult = searchResultNotStarting(firstWord);
 		final String comparisonString = searchPage.getSearchResultTitle(comparisonResult);
 
-		searchPage.showFieldTextOptions();
+		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		searchPage.fieldTextAddButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("input visible", searchPage.fieldTextInput(), displayed());
@@ -694,8 +694,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.selectLanguage(Language.AFRIKAANS);
 
-
-        searchPage.showFieldTextOptions();
 		searchPage.clearFieldText();
 
 		final String firstSearchResult = searchPage.getSearchResultTitle(1);
@@ -724,7 +722,7 @@ public class SearchPageITCase extends ABCTestBase {
 
     @Test
 	public void testFieldTextInputDisappearsOnOutsideClick() {
-		searchPage.showFieldTextOptions();
+		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 
 		searchPage.fieldTextAddButton().click();
@@ -735,7 +733,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
 		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
 
-		searchPage.showRelatedConcepts();
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 		assertThat("Field text input visible", !searchPage.fieldTextInput().isDisplayed());
 	}
@@ -767,36 +765,25 @@ public class SearchPageITCase extends ABCTestBase {
 
 	private int getResultCount(String searchTerm) {
 		search(searchTerm);
-		return searchPage.countSearchResults();
+		return searchPage.getHeadingResultsCount();
 	}
 
 	//TODO
 	@Test
 	public void testFieldTextRestrictionOnPromotions(){
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage = getElementFactory().getPromotionsPage();
-		promotionsPage.deleteAllPromotions();
+		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		promotionService.deleteAll();
 
-		search("darth");
-
-        searchPage.selectLanguage(Language.ENGLISH);
-
-        searchPage.createAMultiDocumentPromotion(2);
-		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		createPromotionsPage.addSpotlightPromotion("Sponsored", "boat");
-
-//		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        searchPage.getDocLogo(1, new WebDriverWait(getDriver(), 10));
+		promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "boat"), "darth", 2);
+		searchPage = getElementFactory().getSearchPage();
+		searchPage.waitForPromotionsLoadIndicatorToDisappear();
         searchPage.loadOrFadeWait();
+
 		assertThat(searchPage.getPromotionSummarySize(), is(2));
 		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(2));
 
 		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
-		searchPage.showFieldTextOptions();
-		searchPage.fieldTextAddButton().click();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		searchPage.loadOrFadeWait();
+		searchPage.setFieldText("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
 
 		assertThat(searchPage.getPromotionSummarySize(), is(1));
 		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(1));
@@ -832,18 +819,14 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
 		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
 
-		searchPage.showFieldTextOptions();
-		searchPage.fieldTextAddButton().click();
-		searchPage.fieldTextInput().sendKeys("WILD{*horse*}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		searchPage.loadOrFadeWait();
+		searchPage.setFieldText("WILD{*horse*}:DRETITLE");
 
         searchPage.waitForSearchLoadIndicatorToDisappear();
         searchPage.loadOrFadeWait();
 
 		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
 		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));	//TODO Seems like this shouldn't be visible
-		assertThat("Wrong number of results displayed", searchPage.countSearchResults(), is(2));
+		assertThat("Wrong number of results displayed", searchPage.getHeadingResultsCount(), is(2));
 		assertThat("Wrong number of pin to position labels displayed", searchPage.countPinToPositionLabels(), is(2));
 
 		searchPage.fieldTextEditButton().click();
@@ -853,7 +836,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 
 		assertThat(searchPage.getSearchResultTitle(1), is(promotedDocs.get(0)));
-		assertThat(searchPage.countSearchResults(), is(1));
+		assertThat(searchPage.getHeadingResultsCount(), is(1));
 		assertThat(searchPage.countPinToPositionLabels(), is(1));
 
 		searchPage.fieldTextEditButton().click();
@@ -863,7 +846,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 
 		assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResultTitle(1), is(promotedDocs.get(1)));
-		assertThat("Wrong number of search results", searchPage.countSearchResults(), is(1));
+		assertThat("Wrong number of search results", searchPage.getHeadingResultsCount(), is(1));
 		assertThat("Wrong number of pin to position labels", searchPage.countPinToPositionLabels(), is(1));
 	}
 
@@ -873,16 +856,16 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.selectLanguage(Language.ENGLISH);
 		for (final String query : Arrays.asList("dog", "chips", "dinosaur", "melon", "art")) {
 			search(query);
-			final int firstPageResultsCount = searchPage.countSearchResults();
+			final int firstPageResultsCount = searchPage.getHeadingResultsCount();
 
 			searchPage.forwardToLastPageButton().click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
-			verifyThat("number of results in title is consistent", searchPage.countSearchResults(), is(firstPageResultsCount));
+			verifyThat("number of results in title is consistent", searchPage.getHeadingResultsCount(), is(firstPageResultsCount));
 
 			final int completePages = searchPage.getCurrentPageNumber() - 1;
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
 			final int expectedCount = completePages * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
-			verifyThat("number of results is as expected", searchPage.countSearchResults(), is(expectedCount));
+			verifyThat("number of results is as expected", searchPage.getHeadingResultsCount(), is(expectedCount));
 		}
 	}
 
@@ -938,26 +921,27 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		final String firstResult = searchPage.getSearchResultTitle(1);
 		final Date date = searchPage.getDateFromResult(1);
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		if (date == null) {
+			throw new IllegalStateException("testFromDateFilter requires first search result to have a date");
+		}
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(date);
 		searchPage.closeFromDatePicker();
-		assertThat("Document should still be displayed", searchPage.getSearchResultTitle(1), is(firstResult));
+		assertThat("displayed with filter = $time", searchPage.getSearchResultTitle(1), is(firstResult));
 
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, 1));
 		searchPage.closeFromDatePicker();
 
-		assertThat("Document should not be visible. Date filter not working", searchPage.getSearchResultTitle(1), not(firstResult));
+		assertThat("not displayed with filter = $time + 1min", searchPage.getSearchResultTitle(1), not(firstResult));
 
 		searchPage.openFromDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
 		searchPage.closeFromDatePicker();
-		assertThat("Document should be visible. Date filter not working", searchPage.getSearchResultTitle(1), is(firstResult));
+		assertThat("displayed with filter = $time - 1min", searchPage.getSearchResultTitle(1), is(firstResult));
 	}
 
 	@Test
@@ -973,8 +957,6 @@ public class SearchPageITCase extends ABCTestBase {
 		// plus 1 minute to be inclusive
 		date.setTime(date.getTime() + 60000);
         logger.info("First Result: " + firstResult + " " + date);
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.DATES);
 		searchPage.openUntilDatePicker();
 		datePicker = new DatePicker(searchPage.$el(), getDriver());
 		try {
@@ -1007,11 +989,11 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testFromDateAlwaysBeforeUntilDate() {
 		search("food");
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		searchPage.expand(SearchBase.Facet.FILTER_BY);
+		searchPage.expand(SearchBase.Facet.DATES);
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 12:00 PM");
-        searchPage.sortByRelevance();
+        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 		assertThat("Dates should be equal", searchPage.fromDateTextBox().getAttribute("value"), is(searchPage.untilDateTextBox().getAttribute("value")));
 
 		searchPage.loadOrFadeWait();
@@ -1019,7 +1001,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fromDateTextBox().clear();
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:01 PM");
 		//clicking sort by relevance because an outside click is needed for the changes to take place
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 //		assertNotEquals("From date cannot be after the until date", searchPage.fromDateTextBox().getAttribute("value"), "04/05/2000 12:01 PM");
         assertThat("From date should be blank", searchPage.fromDateTextBox().getAttribute("value"), isEmptyOrNullString());
 
@@ -1027,7 +1009,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
 		searchPage.untilDateTextBox().clear();
 		searchPage.untilDateTextBox().sendKeys("04/05/2000 11:59 AM");
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 //		assertEquals("Until date cannot be before the from date", searchPage.untilDateTextBox().getAttribute("value"),is(not("04/05/2000 11:59 AM")));
         assertThat("Until date should be blank", searchPage.untilDateTextBox().getAttribute("value"), isEmptyOrNullString());
 	}
@@ -1035,8 +1017,8 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testFromDateEqualsUntilDate() throws ParseException {
 		search("Search");
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.DATES);
+		searchPage.expand(SearchBase.Facet.FILTER_BY);
+		searchPage.expand(SearchBase.Facet.DATES);
 //		searchPage.openFromDatePicker();
 //		searchPage.closeFromDatePicker();
 //		searchPage.openUntilDatePicker();
@@ -1049,19 +1031,19 @@ public class SearchPageITCase extends ABCTestBase {
 		final Date date = searchPage.getDateFromFilter(searchPage.untilDateTextBox());
 
 		searchPage.sendDateToFilter(DateUtils.addMinutes(date, 1), searchPage.untilDateTextBox());
-        searchPage.sortByRelevance();
+        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         assertThat(searchPage.untilDateTextBox().getAttribute("value"), is("12/12/2012 12:13"));
 
         searchPage.sendDateToFilter(DateUtils.addMinutes(date, -1), searchPage.untilDateTextBox());
         //clicking sort by relevance because an outside click is needed for the changes to take place
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         assertThat(searchPage.untilDateTextBox().getAttribute("value"), isEmptyOrNullString());
 	}
 
 	@Test
 	public void testSortByRelevance() {
 		search("string");
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 		List<Float> weights = searchPage.getWeightsOnPage(5);
 
         logger.info("Weight of 0: " + weights.get(0));
@@ -1072,16 +1054,16 @@ public class SearchPageITCase extends ABCTestBase {
 			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
 		}
 
-		searchPage.sortByDate();
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.DATE);
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 		weights = searchPage.getWeightsOnPage(5);
 		for (int i = 0; i < weights.size() - 1; i++) {
 			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
 		}
 
-		searchPage.sortByDate();
+		searchPage.sortBy(SearchBase.Sort.DATE);
 		search("paper packages");
-		searchPage.sortByRelevance();
+		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
 		weights = searchPage.getWeightsOnPage(5);
 		for (int i = 0; i < weights.size() - 1; i++) {
 			assertThat("Weight of search result " + i + " is not greater that weight of search result " + (i + 1), weights.get(i), greaterThanOrEqualTo(weights.get(i + 1)));
@@ -1108,10 +1090,10 @@ public class SearchPageITCase extends ABCTestBase {
 		search(queryText);
 		assertThat(topNavBar.getSearchBarText(), is(queryText));
 		assertThat(searchPage.youSearchedFor(), hasItem(queryText));
-		assertThat(searchPage.getResultsForText(), containsString(queryText));
+		assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
 
 		for (int i = 0; i < 5; i++) {
-			searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+			searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 			searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 			final int conceptsCount = searchPage.countRelatedConcepts();
 			assertThat(conceptsCount, lessThanOrEqualTo(50));
@@ -1129,7 +1111,7 @@ public class SearchPageITCase extends ABCTestBase {
 				}
 			}
 			assertThat(searchPage.youSearchedFor(), containsItems(words));
-			assertThat(searchPage.getResultsForText(), containsString(queryText));
+			assertThat(searchPage.getHeadingSearchTerm(), containsString(queryText));
 		}
 	}
 
@@ -1138,18 +1120,18 @@ public class SearchPageITCase extends ABCTestBase {
 		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
 
 		search("France");
-		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> englishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
 		searchPage.selectLanguage(Language.FRENCH);
-		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> frenchConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
 
 		assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
 
 		searchPage.selectLanguage(Language.ENGLISH);
-		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
 		final List<String> secondEnglishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
 		assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
@@ -1186,17 +1168,17 @@ public class SearchPageITCase extends ABCTestBase {
 
         String errorMessage = "Garbage text returned results. garbageQueryText string needs changed to be more garbage like";
 		assertThat(errorMessage, searchPage.getText(), containsString("No results found"));
-		assertThat(errorMessage, searchPage.countSearchResults(), is(0));
+		assertThat(errorMessage, searchPage.getHeadingResultsCount(), is(0));
 
-		searchPage.expandFilter(SearchBase.Filter.RELATED_CONCEPTS);
+		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
         assertThat("If there are no search results there should be no related concepts", searchPage.getText(), containsString("No related concepts found"));
 	}
 
 	@Test
 	//TODO parametric values aren't working - file ticket
 	public void testParametricValuesLoads() throws InterruptedException {
-		searchPage.expandFilter(SearchBase.Filter.FILTER_BY);
-		searchPage.expandSubFilter(SearchBase.Filter.PARAMETRIC_VALUES);
+		searchPage.expand(SearchBase.Facet.FILTER_BY);
+		searchPage.expand(SearchBase.Facet.PARAMETRIC_VALUES);
 		Thread.sleep(20000);
 		assertThat("Load indicator still visible after 20 seconds", searchPage.parametricValueLoadIndicator().isDisplayed(), is(false));
 	}
@@ -1213,7 +1195,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
-		assertThat(searchPage.countSearchResults(), is(results));
+		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
 		searchPage.forwardToLastPageButton().click();
 		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE;

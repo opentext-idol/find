@@ -18,7 +18,6 @@ public class DocumentViewer extends AppElement implements AppPage {
     public static DocumentViewer make(WebDriver driver) {
 //        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id("cboxClose")));
         DocumentViewer documentViewer = new DocumentViewer(driver);
-        documentViewer.loadOrFadeWait();
         documentViewer.waitForLoad();
         return documentViewer;
     }
@@ -32,8 +31,9 @@ public class DocumentViewer extends AppElement implements AppPage {
         loadOrFadeWait();
     }
 
-    private WebElement prevButton() {
-        return findElement(By.id("cboxPrevious"));
+    /* use this only to check that button is displayed - click by using previous() */
+    public WebElement prevButton() {
+        return findElement(By.cssSelector("#cboxPrevious, .prevBtn"));
     }
 
     public void previous() {
@@ -41,8 +41,9 @@ public class DocumentViewer extends AppElement implements AppPage {
         waitForLoad();
     }
 
-    private WebElement nextButton() {
-        return findElement(By.id("cboxNext"));
+    /* use this only to check that button is displayed - click by using next() */
+    public WebElement nextButton() {
+        return findElement(By.cssSelector("#cboxNext, .nextBtn"));
     }
 
     public void next() {
@@ -51,11 +52,8 @@ public class DocumentViewer extends AppElement implements AppPage {
     }
 
     public WebElement frame() {
+        waitForDocumentLoad();
         return findElement(By.tagName("iframe"));
-    }
-
-    private String getRowText(int row) {
-        return findElement(By.cssSelector("tr:nth-child(" + row + ") td.break-all")).getText();
     }
 
     public String getField(String name) {
@@ -78,8 +76,17 @@ public class DocumentViewer extends AppElement implements AppPage {
         return getField("Reference");
     }
 
+    public int getCurrentDocumentNumber() {
+        String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
+        return Integer.parseInt(current[current.length - 3]);
+    }
+
     @Override
     public void waitForLoad() {
+        loadOrFadeWait();
+    }
+
+    private void waitForDocumentLoad() {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
     }
 }

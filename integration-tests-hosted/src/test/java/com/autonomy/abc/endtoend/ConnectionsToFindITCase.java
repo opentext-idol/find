@@ -11,12 +11,10 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +67,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         searchPage = search.apply();
 
         verifyThat("index shows up on search page", searchPage.getSelectedDatabases(), hasItem(indexName));
-        verifyThat("index has search results", searchPage.countSearchResults(), greaterThan(0));
+        verifyThat("index has search results", searchPage.getHeadingResultsCount(), greaterThan(0));
 
         promotedTitles = searchPage.createAMultiDocumentPromotion(3);
         getElementFactory().getCreateNewPromotionsPage().addSpotlightPromotion("", trigger);
