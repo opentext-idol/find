@@ -763,6 +763,20 @@ input:-moz-placeholder::before {
     margin-left: 5px;
 }
 
+.remove-all-filters .fa-bars {
+    left: 0;
+    top: 0;
+    padding: 0;
+    width: 8px;
+    height: 9px;
+    color: #c0c0c0;
+}
+
+.remove-all-filters .fa-remove {
+    font-size: 1.5em;
+    color: #5C5959;
+}
+
 .no-bottom-margin {
     margin-bottom: 0;
 }
