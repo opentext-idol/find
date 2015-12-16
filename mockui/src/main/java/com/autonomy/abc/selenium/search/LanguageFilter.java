@@ -25,7 +25,7 @@ public class LanguageFilter implements SearchFilter {
             searchBase.languageButton().click();
             searchBase.javascriptClick(searchBase.findElement(By.className("search-language")).findElement(By.linkText(language)));
         } catch (Exception e) {
-            logger.info("language not found");
+            logger.warn("language not found");
         }
     }
 }
