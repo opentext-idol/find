@@ -847,8 +847,11 @@ public class FindITCase extends HostedTestBase {
     //CSA-1577
     public void testClickingCustomDateFilterDoesNotRefreshResults(){
         find.search("O Captain! My Captain!");
-        results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
-        assertThat(results.getResultsDiv().getText(),not(containsString("Loading")));
+        // may not happen the first time
+        for (int unused = 0; unused < 5; unused++) {
+            results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
+            assertThat(results.getResultsDiv().getText(), not(containsString("Loading")));
+        }
     }
 
     // CSA-1665
