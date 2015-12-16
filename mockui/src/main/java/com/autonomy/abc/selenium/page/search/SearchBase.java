@@ -1,9 +1,8 @@
 package com.autonomy.abc.selenium.page.search;
 
-import com.autonomy.abc.selenium.element.Checkbox;
-import com.autonomy.abc.selenium.element.ChevronContainer;
-import com.autonomy.abc.selenium.element.Collapsible;
+import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.autonomy.abc.selenium.search.DatePickerFilter;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchFilter;
 import com.autonomy.abc.selenium.util.ElementUtil;
@@ -24,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public abstract class SearchBase extends AppElement implements AppPage, SearchFilter.Filterable, IndexFilter.Filterable {
+public abstract class SearchBase extends AppElement implements AppPage, SearchFilter.Filterable, IndexFilter.Filterable, DatePickerFilter.Filterable {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
@@ -341,6 +340,20 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		filter.clear();
 		filter.sendKeys(dateFormat.format(date));
+	}
+
+	public DatePicker fromDatePicker() {
+		openFromDatePicker();
+		return datePicker(By.cssSelector("[data-filter-name='minDate']"));
+	}
+
+	public DatePicker untilDatePicker() {
+		openUntilDatePicker();
+		return datePicker(By.cssSelector("[data-filter-name='maxDate']"));
+	}
+
+	private DatePicker datePicker(By locator) {
+		return new DatePicker(findElement(locator), getDriver());
 	}
 
 	/* related concepts */
