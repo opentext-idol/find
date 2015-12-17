@@ -14,7 +14,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <artifactName>${project.parent.artifactId}-${project.version}</artifactName>
+        <artifactName>${project.parent.artifactId}</artifactName>
     </properties>
 
     <build>
@@ -72,19 +72,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                    <packagingExcludes>**/tomcat-embed-*.jar</packagingExcludes>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <classifier>executable</classifier>
                     <finalName>${artifactName}</finalName>
                 </configuration>
             </plugin>
