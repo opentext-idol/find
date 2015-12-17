@@ -13,7 +13,7 @@ import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.page.login.AuthHasLoggedIn;
+import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
@@ -21,14 +21,14 @@ import com.autonomy.abc.selenium.users.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.users.UserService;
-import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -187,7 +187,9 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             adminDriver = config.getWebDriverFactory().create();
             adminDriver.get(config.getWebappUrl());
 
-            new HSOLoginPage(adminDriver, new AuthHasLoggedIn(adminDriver)).loginWith(user.getAuthProvider());
+            adminDriver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
+
+            new HSOLoginPage(adminDriver, new AbcHasLoggedIn(adminDriver)).loginWith(user.getAuthProvider());
 
             HSOElementFactory elementFactory = new HSOElementFactory(adminDriver);
             elementFactory.getPromotionsPage();
@@ -195,6 +197,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
             new KeywordService(getApplication(),elementFactory).addSynonymGroup("Messi", "Campbell");
 
+            verifyThat(body.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
             secondScreen.getTopNavBar().notificationsDropdown();
             verifyThat(secondScreen.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
 
