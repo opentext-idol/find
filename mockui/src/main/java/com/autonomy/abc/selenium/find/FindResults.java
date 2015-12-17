@@ -10,8 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.*;
 
-public class Service extends AppElement {
-    public Service(WebDriver driver) {
+public class FindResults extends AppElement {
+    public FindResults(WebDriver driver) {
         super(driver.findElement(By.className("service-view-container")), driver);
     }
 
@@ -127,7 +127,7 @@ public class Service extends AppElement {
     }
 
     public void selectContentType(String contentType){
-        waitForSearchLoadIndicatorToDisappear(Service.Container.LEFT);
+        waitForSearchLoadIndicatorToDisappear(FindResults.Container.LEFT);
         getContentTypeContainer().findElement(By.cssSelector("[data-value='" + contentType.toUpperCase() + "']")).click();
         waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }

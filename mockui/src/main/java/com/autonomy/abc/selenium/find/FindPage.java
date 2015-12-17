@@ -19,15 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FindPage extends AppElement implements AppPage, IndexFilter.Filterable {
-    private final Input input;
-    private final Service service;
+    private final FindInput input;
+    private final FindResults results;
 
     public FindPage(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
-        input = new Input(driver);
-        service = new Service(driver);
+        input = new FindInput(driver);
+        results = new FindResults(driver);
     }
 
     @Override
@@ -35,18 +35,18 @@ public class FindPage extends AppElement implements AppPage, IndexFilter.Filtera
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
     }
 
-    public Input getInput() {
+    public FindInput getInput() {
         return input;
     }
 
-    public Service getService() {
-        return service;
+    public FindResults getResultsPage() {
+        return results;
     }
 
     public void search(String searchTerm){
         input.clear();
         input.sendKeys(searchTerm);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
     }
 
     public List<String> getSelectedPublicIndexes() {
@@ -85,6 +85,6 @@ public class FindPage extends AppElement implements AppPage, IndexFilter.Filtera
     @Override
     public void filterBy(SearchFilter filter) {
         filter.apply(this);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
     }
 }

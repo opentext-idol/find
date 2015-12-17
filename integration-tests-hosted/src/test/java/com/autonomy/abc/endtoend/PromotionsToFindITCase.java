@@ -4,7 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.find.FindResults;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -33,7 +33,7 @@ import static org.hamcrest.Matchers.isIn;
 public class PromotionsToFindITCase extends HostedTestBase {
     private List<String> browserHandles;
     private FindPage find;
-    private Service service;
+    private FindResults service;
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
     private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
@@ -144,7 +144,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         getDriver().navigate().refresh();
         find = getElementFactory().getFindPage();
         service = find.getService();
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        service.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
     }
 
     private List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {

@@ -4,8 +4,8 @@ import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class Input extends AppElement {
-    public Input(WebDriver driver) {
+public class FindInput extends AppElement {
+    public FindInput(WebDriver driver) {
         super(driver.findElement(By.className("find-input")), driver);
     }
 
