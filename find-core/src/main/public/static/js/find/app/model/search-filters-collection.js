@@ -124,13 +124,8 @@ define([
         },
 
         getDatabasesFilterText: function() {
-            var databaseFilter = this.selectedIndexesCollection.map(function (model) {
-                var findOptions = model.get('domain') ? {name: model.get('name'), domain: model.get('domain')} : {name: model.get('name')};
-                var index = this.indexesCollection.findWhere(findOptions);
-                return index ? index.get('displayName') : model.get('name');
-            }, this);
-
-            return i18n_indexes['search.indexes'] + ': ' + databaseFilter.join(', ');
+            var selectedIndexNames = this.selectedIndexesCollection.pluck('name');
+            return i18n_indexes['search.indexes'] + ': ' + selectedIndexNames.join(', ');
         },
 
         allIndexesSelected: function() {
