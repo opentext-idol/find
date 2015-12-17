@@ -20,6 +20,7 @@ import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Locator;
+import com.google.common.collect.Lists;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -382,9 +383,9 @@ public class FindITCase extends HostedTestBase {
     }
 
     private void promotionShownCorrectly (WebElement promotion) {
-        assertThat(promotion.getAttribute("class"),containsString("promoted-document"));
+        assertThat(promotion.getAttribute("class"), containsString("promoted-document"));
         assertThat(promotion.findElement(By.className("promoted-label")).getText(), containsString("Promoted"));
-        assertTrue(promotion.findElement(By.className("icon-star")).isDisplayed());
+        assertThat(promotion.findElement(By.className("fa-star")), displayed());
     }
 
     @Test
@@ -595,6 +596,7 @@ public class FindITCase extends HostedTestBase {
         String handle = getDriver().getWindowHandle();
         getDriver().switchTo().frame(docViewer.frame());
 
+        //TODO these aren't working properly - did Fred not fix these?
         verifyThat("no backend error", getDriver().findElements(new Locator().withTagName("h1").containingText("500")), empty());
         verifyThat("no view server error", getDriver().findElements(new Locator().withTagName("h2").containingCaseInsensitive("error")), empty());
         getDriver().switchTo().window(handle);
@@ -883,9 +885,9 @@ public class FindITCase extends HostedTestBase {
             verifyThat(searchElement.getTagName(), is("span"));
             verifyThat(searchElement.getAttribute("class"), is("search-text"));
 
-            WebElement parent = searchElement.findElement(By.xpath(".//.."));
-            verifyThat(parent.getTagName(),is("span"));
-            verifyThat(parent.getAttribute("data-title"), is(searchTerm));
+//            WebElement parent = searchElement.findElement(By.xpath(".//.."));
+//            verifyThat(parent.getTagName(),is("span"));
+//            verifyThat(parent.getAttribute("data-title"), is(searchTerm));
         }
 
         //TODO what happens when more than one word search term
@@ -915,19 +917,17 @@ public class FindITCase extends HostedTestBase {
     public void testSimilarDocumentsShowUp(){
         find.search("Doe");
 
-        for (WebElement similarResultLink : service.getSimilarResultLinks()){
-            new Actions(getDriver()).moveByOffset(-50,-50).build().perform();
-            service.loadOrFadeWait();
+        for (WebElement similarResultLink : Lists.reverse(service.getSimilarResultLinks())) {
             similarResultLink.click();
 
             WebElement popover = service.getPopover();
 
             new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
 
-            assertThat(popover.findElement(By.tagName("p")).getText(),not("An error occurred fetching similar documents"));
+            assertThat(popover.findElement(By.tagName("p")).getText(), not("An error occurred fetching similar documents"));
 
             for(WebElement similarResult : popover.findElements(By.tagName("li"))){
-                assertThat(similarResult.findElement(By.tagName("h5")).getText(), not(isEmptyString()));
+                assertThat(similarResult.findElement(By.tagName("a")).getText(), not(isEmptyString()));
                 assertThat(similarResult.findElement(By.tagName("p")).getText(), not(isEmptyString()));
             }
         }

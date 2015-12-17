@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.element;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 public class ChevronContainer implements Collapsible {
@@ -33,7 +34,11 @@ public class ChevronContainer implements Collapsible {
     }
 
     private WebElement chevronIcon() {
-        return container.findElement(By.cssSelector("[data-toggle='collapse']"));
+        try {
+            return container.findElement(By.cssSelector("[data-toggle='collapse']"));
+        } catch (NoSuchElementException e) {
+            return container.findElement(By.className("rotating-chevron"));
+        }
     }
 
     private void loadOrFadeWait() {

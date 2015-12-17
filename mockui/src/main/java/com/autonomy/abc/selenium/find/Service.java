@@ -37,6 +37,7 @@ public class Service extends AppElement {
 
     public void filterByDate(DateEnum date) {
         findElement(By.cssSelector("td[data-id='" + date.toString().toLowerCase() + "']")).click();
+        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }
 
     public void filterByDate(String start, String end){
@@ -44,6 +45,8 @@ public class Service extends AppElement {
 
         inputDate("results-filter-min-date", start);
         inputDate("results-filter-max-date", end);
+
+        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }
 
     private void inputDate(String inputElementCSS,String inputString){
