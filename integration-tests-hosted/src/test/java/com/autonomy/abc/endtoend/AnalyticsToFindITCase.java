@@ -4,20 +4,16 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.find.FindResults;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.Search;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,12 +49,12 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
         find = getElementFactory().getFindPage();
-        service = find.getService();
+        service = find.getResultsPage();
         getDriver().switchTo().window(browserHandles.get(0));
     }
 
     private FindPage find;
-    private Service service;
+    private FindResults service;
     private List<String> browserHandles;
 
     @Test
