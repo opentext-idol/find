@@ -8,6 +8,6 @@
     <name>Find</name>
     <description>HPE Find</description>
     <executable>java</executable>
-    <arguments>-Dhp.find.home="%FIND_HOME_DIR%/" -Dserver.port=%FIND_PORT% -Dhp.find.persistentState=INMEMORY -jar %FIND_INSTALL_DIR%/find.war</arguments>
+    <arguments>-Dhp.find.home="%FIND_HOME_DIR%/" -Dserver.port=%FIND_PORT% -Dhp.find.persistentState=INMEMORY -jar "%FIND_INSTALL_DIR%"/find.war</arguments>
     <logmode>rotate</logmode>
 </service>
