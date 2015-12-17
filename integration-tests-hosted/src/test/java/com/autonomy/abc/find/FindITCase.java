@@ -94,7 +94,7 @@ public class FindITCase extends HostedTestBase {
         getDriver().manage().window().maximize();
         find = getElementFactory().getFindPage();
         input = find.getInput();
-        results = find.getService();
+        results = find.getResultsPage();
     }
 
     @Test

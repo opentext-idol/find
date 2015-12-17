@@ -7,6 +7,8 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindResults;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -235,6 +237,31 @@ public class IndexesPageITCase extends HostedTestBase {
         body = getBody();
 
         verifyThat(indexesPage.getIndexNames(), hasItem(Index.DEFAULT.getName()));
+    }
+
+    @Test
+    //CCUK-3450
+    public void testFindNoParametricFields(){
+        Index index = new Index("index");
+        indexService.setUpIndex(index);
+
+        List<String> browserHandles = indexesPage.createAndListWindowHandles();
+
+        try {
+            getDriver().switchTo().window(browserHandles.get(1));
+            getDriver().get(config.getFindUrl());
+            getDriver().manage().window().maximize();
+            FindPage find = getElementFactory().getFindPage();
+
+            find.search("search");
+            find.filterBy(new IndexFilter(index));
+
+            verifyThat(find.getResultsPage().getResultsDiv().getText(), is("No results found"));
+        } finally {
+            getDriver().switchTo().window(browserHandles.get(1));
+            getDriver().close();
+            getDriver().switchTo().window(browserHandles.get(0));
+        }
     }
 
     @After

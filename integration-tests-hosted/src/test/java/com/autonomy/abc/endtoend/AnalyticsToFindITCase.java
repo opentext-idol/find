@@ -49,7 +49,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
         find = getElementFactory().getFindPage();
-        service = find.getService();
+        service = find.getResultsPage();
         getDriver().switchTo().window(browserHandles.get(0));
     }
 

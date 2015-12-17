@@ -53,7 +53,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
         find = getElementFactory().getFindPage();
-        service = find.getService();
+        service = find.getResultsPage();
         switchToSearch();
     }
 
@@ -143,7 +143,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
     private void refreshFind() {
         getDriver().navigate().refresh();
         find = getElementFactory().getFindPage();
-        service = find.getService();
+        service = find.getResultsPage();
         service.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
     }
 
