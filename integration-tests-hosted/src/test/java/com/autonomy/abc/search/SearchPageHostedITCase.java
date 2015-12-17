@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +17,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -111,7 +109,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.loadOrFadeWait();
 
-		ABCAssert.assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
+		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
 		searchPage.getSearchResult(1).click();
 
@@ -140,7 +138,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.loadOrFadeWait();
 
-		ABCAssert.assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
+		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
 		searchPage.getSearchResult(1).click();
 

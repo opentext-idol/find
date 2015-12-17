@@ -188,6 +188,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			}
 		} finally {
 			getDriver().switchTo().window(browserHandles.get(1));
+			topNavBarWindowTwo.closeNotifications();
 			keywordService.deleteAll(KeywordFilter.ALL);
 			promotionService.deleteAll();
 		}

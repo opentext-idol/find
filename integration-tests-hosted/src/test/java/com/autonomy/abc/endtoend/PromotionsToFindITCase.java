@@ -5,12 +5,14 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -96,10 +98,10 @@ public class PromotionsToFindITCase extends HostedTestBase {
         find.search(secondaryTrigger);
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        service.filterByIndex("default_index");
+        find.filterBy(new IndexFilter(Index.DEFAULT));
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        service.filterByIndex("default_index");
+        find.filterBy(IndexFilter.PRIVATE);
         service.filterByParametric("Source Connector", "SIMPSONSARCHIVE");
         verifyPinToPosition(promotionTitles, 6, 10);
 

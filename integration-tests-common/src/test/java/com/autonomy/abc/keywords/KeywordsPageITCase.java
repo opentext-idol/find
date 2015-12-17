@@ -72,7 +72,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		searchPage = keywordService.addSynonymGroup(synonyms);
 		for (String synonym : synonyms) {
-			verifyThat("search title contains " + synonym, searchPage.searchTitle(), containsText(synonym));
+			verifyThat("search title contains " + synonym, searchPage.getHeadingSearchTerm(), containsString(synonym));
 		}
 		
 		keywordService.addBlacklistTerms(blacklist);
