@@ -8,16 +8,12 @@ package com.hp.autonomy.frontend.find.hod.parametricfields;
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesServiceIT;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.parametricvalues.HodParametricRequest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 @SpringApplicationConfiguration(classes = HodFindApplication.class)
-public class HodParametricValuesServiceIT extends AbstractParametricValuesServiceIT<HodParametricRequest, ResourceIdentifier, HodErrorException> {
-    public HodParametricValuesServiceIT() {
-        super(Arrays.asList(ResourceIdentifier.WIKI_ENG, ResourceIdentifier.NEWS_ENG), Collections.singleton("Some field")); //TODO get real field name
+public class HodParametricValuesServiceIT extends AbstractParametricValuesServiceIT<HodParametricRequest, ResourceIdentifier> {
+    protected HodParametricValuesServiceIT() {
+        super(new String[]{ResourceIdentifier.NEWS_ENG.toString()}, new String[]{"TODO"});
     }
 }
