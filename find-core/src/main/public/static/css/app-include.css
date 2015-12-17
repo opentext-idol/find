@@ -210,20 +210,26 @@ html, body {
 }
 
 .main-content .container-fluid {
-    height:80%;
+    height: calc(100% - 50px);
 }
 
 .find-main-subcontainer,
-.main-content .content {
-    height:100%;
+.main-content .content, .content > div {
+    height: 100%;
+}
+
+.search-page {
+    height: 100%;
 }
 
 .left-side-container {
     font-size:13px;
+    background-color: #efefef;
 }
 
 .right-side-container {
     font-size: 14px;
+    background-color: #efefef;
 }
 
 .right-side-container h4,
@@ -420,7 +426,7 @@ input.find-input {
 /* fancy animation */
 .animated-container {
     position: absolute;
-    top: -60px;
+    top: -40px;
     transition: all 1000ms ease;
 }
 
@@ -587,6 +593,10 @@ input.find-input {
     font-weight: bold
 }
 
+.service-view-container {
+    height: 100%;
+}
+
 .service-view-container .fa-check {
     color: #00b388;
 }
@@ -660,10 +670,6 @@ input:-moz-placeholder::before {
     color: #425563;
 }
 
-.page .header {
-    margin-bottom: 20px;
-}
-
 .find-navbar {
     border-bottom: 3px solid #425563;
     background-color: #425563;
@@ -671,8 +677,8 @@ input:-moz-placeholder::before {
     opacity: 0;
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    margin-bottom: 0;
 }
-
 
 .find-navbar.visible {
     opacity: 1;
@@ -890,4 +896,11 @@ input:-moz-placeholder::before {
 #cboxLoadedContent .table > tbody > tr > th,
 #cboxLoadedContent .table > tbody > tr > td {
     border-top: 0;
+}
+
+@media (min-width: 980px) {
+    .flex-container {
+        display: flex;
+        min-height: 100%;
+    }
 }
