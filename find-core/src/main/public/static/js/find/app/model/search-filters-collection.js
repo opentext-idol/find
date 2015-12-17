@@ -125,8 +125,9 @@ define([
 
         getDatabasesFilterText: function() {
             var databaseFilter = this.selectedIndexesCollection.map(function (model) {
-                var displayName = this.indexesCollection.findWhere({name: model.get('name'), domain: model.get('domain')}).get('displayName');
-                return displayName || model.get('name');
+                var findOptions = model.get('domain') ? {name: model.get('name'), domain: model.get('domain')} : {name: model.get('name')};
+                var index = this.indexesCollection.findWhere(findOptions);
+                return index ? index.get('displayName') : model.get('name');
             }, this);
 
             return i18n_indexes['search.indexes'] + ': ' + databaseFilter.join(', ');
