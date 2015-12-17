@@ -17,9 +17,11 @@ import java.net.URL;
 @JsonDeserialize(builder = HsodConfig.Builder.class)
 public class HsodConfig {
     private final URL landingPageUrl;
+    private final URL externalUrl;
 
     private HsodConfig(final Builder builder) {
         landingPageUrl = builder.landingPageUrl;
+        externalUrl = builder.externalUrl;
     }
 
     public HsodConfig merge(final HsodConfig other) {
@@ -29,6 +31,7 @@ public class HsodConfig {
 
         return new Builder()
                 .setLandingPageUrl(landingPageUrl == null ? other.landingPageUrl : landingPageUrl)
+                .setExternalUrl(externalUrl == null ? other.externalUrl : externalUrl)
                 .build();
     }
 
@@ -37,6 +40,7 @@ public class HsodConfig {
     @Accessors(chain = true)
     public static class Builder {
         private URL landingPageUrl;
+        private URL externalUrl;
 
         public HsodConfig build() {
             return new HsodConfig(this);
