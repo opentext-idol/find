@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
-import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
@@ -80,8 +80,8 @@ public class HSOElementFactory extends ElementFactory {
         return ConnectionsDetailPage.make(getDriver());
     }
 
-    public FindPage getFindPage() {
-        return new FindPage(getDriver());
+    public Find getFindPage() {
+        return new Find(getDriver());
     }
 
 

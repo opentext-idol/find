@@ -3,8 +3,8 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindResults;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -53,8 +53,8 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
     }
 
-    private FindPage find;
-    private FindResults service;
+    private Find find;
+    private FindResultsPage service;
     private List<String> browserHandles;
 
     @Test

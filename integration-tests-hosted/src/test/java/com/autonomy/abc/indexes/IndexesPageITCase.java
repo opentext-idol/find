@@ -7,8 +7,7 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindResults;
+import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -251,7 +250,7 @@ public class IndexesPageITCase extends HostedTestBase {
             getDriver().switchTo().window(browserHandles.get(1));
             getDriver().get(config.getFindUrl());
             getDriver().manage().window().maximize();
-            FindPage find = getElementFactory().getFindPage();
+            Find find = getElementFactory().getFindPage();
 
             find.search("search");
             find.filterBy(new IndexFilter(index));
