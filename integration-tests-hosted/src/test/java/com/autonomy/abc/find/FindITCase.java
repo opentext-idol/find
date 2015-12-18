@@ -95,7 +95,7 @@ public class FindITCase extends HostedTestBase {
     public void testSendKeys() throws InterruptedException {
         String searchTerm = "Fred is a chimpanzee";
         find.search(searchTerm);
-        assertThat(find.getInput().getValue(), is(searchTerm));
+        assertThat(find.getSearchBoxTerm(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -203,7 +203,7 @@ public class FindITCase extends HostedTestBase {
         topRelatedConcept.click();
 
         assertThat(getDriver().getCurrentUrl(), containsString(concept));
-        assertThat(find.getInput().getValue(), containsString(concept));
+        assertThat(find.getSearchBoxTerm(), containsString(concept));
 
         hoverOverElement(results.getResultsDiv());
 
@@ -216,7 +216,7 @@ public class FindITCase extends HostedTestBase {
         tableRelatedConcept.click();
 
         assertThat(getDriver().getCurrentUrl(), containsString(concept));
-        assertThat(find.getInput().getValue(), containsString(concept));
+        assertThat(find.getSearchBoxTerm(), containsString(concept));
     }
 
     @Test

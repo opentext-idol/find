@@ -36,12 +36,12 @@ public class Find extends AppElement implements AppPage, IndexFilter.Filterable 
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
     }
 
-    public FormInput getInput() {
-        return input;
-    }
-
     public FindResultsPage getResultsPage() {
         return results;
+    }
+
+    public String getSearchBoxTerm(){
+        return input.getValue();
     }
 
     public void search(String searchTerm){
