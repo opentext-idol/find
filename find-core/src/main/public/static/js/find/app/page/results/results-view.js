@@ -291,7 +291,7 @@ define([
                 href: href,
                 summary: summary,
                 promotion: isPromotion,
-                date: model.has('date') ? model.get('date').format('YYYY/MM/DD HH:mm:ss') : null,
+                date: model.has('date') ? model.get('date').fromNow() : null,
                 contentType: getContentTypeClass(model)
             }));
 

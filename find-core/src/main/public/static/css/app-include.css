@@ -269,7 +269,6 @@ html, body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    width: 50%;
 }
 
 .find {
@@ -398,6 +397,7 @@ input.find-input {
     color: #aeaeae;
     font-style: italic;
     font-size: small;
+    font-weight: bold;
     cursor: default;
 }
 
