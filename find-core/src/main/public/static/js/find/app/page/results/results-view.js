@@ -240,6 +240,10 @@ define([
                         $('.view-server-page').removeClass('hidden');
                     });
 
+                    // Adding the source attribute after the colorbox has loaded prevents the iframe from loading
+                    // a very quick response (such as an error) before the listener is attached
+                    $viewServerPage.attr("src", options.href);
+
                     $window.resize(onResize);
                 }, this)
             };

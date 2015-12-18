@@ -6,13 +6,25 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Common logic within controller classes
  */
 public interface ControllerUtils {
-    String ERROR_PATH = "/error";
     String SPRING_CSRF_ATTRIBUTE = "_csrf";
 
     String convertToJson(final Object object) throws JsonProcessingException;
+
+    @SuppressWarnings("MethodWithTooManyParameters")
+    ModelAndView buildErrorModelAndView(
+            HttpServletRequest request,
+            String mainMessageCode,
+            String subMessageCode,
+            Object[] subMessageArguments,
+            Integer statusCode,
+            boolean contactSupport
+    );
 }
