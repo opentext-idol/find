@@ -46,6 +46,8 @@ import java.util.Set;
 
 @Service
 public class IdolDocumentService implements DocumentsService<String, FindDocument, AciErrorException> {
+    static final String MISSING_RULE_ERROR = "missing rule";
+    static final String INVALID_RULE_ERROR = "invalid rule";
     private static final String IDOL_DATE_PARAMETER_FORMAT = "HH:mm:ss dd/MM/yyyy";
     private static final int MAX_SIMILAR_DOCUMENTS = 3;
 
@@ -106,7 +108,24 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
             aciParameters.add(QmsActionParams.Promotions.name(), true);
         }
 
-        final QueryResponseData responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
+        return executeQuery(aciService, aciParameters);
+    }
+
+    private Documents<FindDocument> executeQuery(final AciService aciService, final AciParameters aciParameters) {
+        QueryResponseData responseData;
+        try {
+            responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
+        } catch (final AciErrorException e) {
+            final String errorString = e.getErrorString();
+            if (MISSING_RULE_ERROR.equals(errorString) || INVALID_RULE_ERROR.equals(errorString)) {
+                aciParameters.remove(QmsActionParams.Blacklist.name());
+                responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
+            }
+            else {
+                throw e;
+            }
+        }
+
         final List<Hit> hits = responseData.getHit();
         final List<FindDocument> results = parseQueryHits(hits);
         return new Documents<>(results, responseData.getTotalhits(), null);
