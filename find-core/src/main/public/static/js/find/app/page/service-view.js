@@ -152,6 +152,19 @@ define([
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
 
             this.resultsView.setElement(this.$('.results-container')).render();
+
+            this.$('.container-toggle').on('click', this.containerToggle.bind(this));
+
+        },
+
+        containerToggle: function(event) {
+            var $containerToggle = $(event.currentTarget);
+            var $sideContainer = $containerToggle.closest('.side-container');
+            var hide = !$sideContainer.hasClass('small-container');
+
+            $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
+            $sideContainer.toggleClass('small-container', hide);
+            $containerToggle.toggleClass('fa-rotate-180', hide);
         }
     });
 

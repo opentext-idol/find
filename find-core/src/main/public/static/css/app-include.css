@@ -227,9 +227,18 @@ html, body {
     background-color: #efefef;
 }
 
+.small-container {
+    width: initial;
+}
+
 .right-side-container {
     font-size: 14px;
     background-color: #efefef;
+}
+
+.right-container-icon {
+    width: 100%;
+    text-align: right;
 }
 
 .right-side-container h4,
@@ -247,6 +256,10 @@ html, body {
 .right-side-container h4 .rotating-chevron,
 .left-side-container h4 .rotating-chevron {
     font-weight: bold;
+}
+
+.middle-container {
+    flex: 1;
 }
 
 .middle-container h4 {
@@ -902,5 +915,15 @@ input:-moz-placeholder::before {
     .flex-container {
         display: flex;
         min-height: 100%;
+    }
+}
+
+@media (max-width: 980px) {
+    .side-container {
+        width: 100%;
+    }
+
+    .small-container {
+        width: 100%;
     }
 }
