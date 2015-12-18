@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
+import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.core.web.MvcConstants;
 import com.hp.autonomy.frontend.find.core.web.ViewNames;
 import com.hp.autonomy.frontend.find.hod.authentication.HodCombinedRequestController;
@@ -78,7 +79,7 @@ public class SsoController {
 
         final Map<String, Object> ssoConfig = new HashMap<>();
         ssoConfig.put(SsoMvcConstants.LOGOUT_ENDPOINT.value(), logoutEndpoint);
-        ssoConfig.put(SsoMvcConstants.LOGOUT_REDIRECT_URL.value(), hodFindConfig.getHsod().getLandingPageUrl());
+        ssoConfig.put(SsoMvcConstants.LOGOUT_REDIRECT_URL.value(), hodFindConfig.getHsod().getExternalUrl() + FindController.PUBLIC_PATH);
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
