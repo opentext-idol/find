@@ -21,6 +21,7 @@ import com.autonomy.abc.selenium.users.GmailSignupEmailHandler;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.users.UserService;
+import com.google.common.collect.Lists;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -28,10 +29,13 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 
 public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
@@ -180,7 +184,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
             try {
                 user.authenticate(config.getWebDriverFactory(), new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider()));
-            } catch (TimeoutException e){
+            } catch (TimeoutException e) {
                 /* User has likely already been authenticated recently, attempt to continue */
             }
 
@@ -207,12 +211,40 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             verifyThat(secondScreen.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
 
         } finally {
-            if(adminDriver != null){
+            if(adminDriver != null) {
                 adminDriver.quit();
             }
 
             userService.deleteOtherUsers();
             keywordService.deleteAll(KeywordFilter.ALL);
         }
+    }
+
+    @Test
+    //CSA-1583
+    public void testNotificationsPersistOverPages(){
+        KeywordService keywordService = getApplication().createKeywordService(getElementFactory());
+
+        keywordService.addSynonymGroup("Pop", "Punk");
+        keywordService.addBlacklistTerms("Shola", "Ameobi");
+        keywordService.deleteAll(KeywordFilter.ALL);
+
+        body.getTopNavBar().notificationsDropdown();
+        List<Notification> notifications = body.getTopNavBar().getNotifications().getAllNotifications();
+
+        for(NavBarTabId page : Arrays.asList(NavBarTabId.ANALYTICS, NavBarTabId.CONNECTIONS, NavBarTabId.PROMOTIONS, NavBarTabId.KEYWORDS, NavBarTabId.USERS)){
+            navigateAndVerifyNotifications(page, notifications);
+        }
+    }
+
+    private void navigateAndVerifyNotifications(NavBarTabId page, List<Notification> notifications){
+        body.getSideNavBar().switchPage(page);
+        getElementFactory().waitForPage(page);
+
+        body = getBody();
+
+        body.getTopNavBar().openNotifications();
+
+        verifyThat(body.getTopNavBar().getNotifications().getAllNotifications(), contains(notifications.toArray()));
     }
 }

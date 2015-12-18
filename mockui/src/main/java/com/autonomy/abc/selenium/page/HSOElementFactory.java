@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
@@ -106,5 +107,37 @@ public class HSOElementFactory extends ElementFactory {
 
     public HSODevelopersPage getDevsPage() {
         return new HSODevelopersPage(getDriver());
+    }
+
+    public void waitForPage(NavBarTabId page) {
+        switch(page){
+            case ANALYTICS:
+                getAnalyticsPage();
+                break;
+            case SEARCH:
+                getSearchPage();
+                break;
+            case CONNECTIONS:
+                getConnectionsPage();
+                break;
+            case INDEXES:
+                getIndexesPage();
+                break;
+            case PROMOTIONS:
+                getPromotionsPage();
+                break;
+            case KEYWORDS:
+                getKeywordsPage();
+                break;
+            case GETTING_STARTED:
+                getGettingStartedPage();
+                break;
+            case DEVELOPERS:
+                getDevsPage();
+                break;
+            case USERS:
+                getUsersPage();
+                break;
+        }
     }
 }
