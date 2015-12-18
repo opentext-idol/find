@@ -24,10 +24,18 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.AnyRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Configuration
@@ -65,9 +73,18 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         final AuthenticationSuccessHandler successHandler = new LoginSuccessHandler(role(CONFIG_ROLE), "/config", FindController.PUBLIC_PATH);
 
+        final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
+        entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());
+        entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint("/login"));
+        final AuthenticationEntryPoint authenticationEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
+
         http
                 .csrf()
                     .disable()
+                .exceptionHandling()
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedPage("/authentication-error")
+                    .and()
                 .logout()
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/login")
