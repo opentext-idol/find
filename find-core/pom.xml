@@ -117,11 +117,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.hp.autonomy.frontend</groupId>
-            <artifactId>aci-types</artifactId>
-            <version>0.1.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-authentication</artifactId>
             <version>0.3.0</version>
