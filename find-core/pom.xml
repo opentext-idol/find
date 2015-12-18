@@ -10,7 +10,7 @@
     <parent>
         <artifactId>find</artifactId>
         <groupId>com.hp.autonomy.frontend.find</groupId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>10.11.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>aci-types</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
@@ -129,22 +129,22 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-impl</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>1.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>logging</artifactId>
-            <version>1.1.3-SNAPSHOT</version>
+            <version>1.1.3</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>parametric-databases-core</artifactId>
-            <version>0.4.0-SNAPSHOT</version>
+            <version>0.4.1</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.view</groupId>
             <artifactId>view-proxy-components-core</artifactId>
-            <version>0.4.0-SNAPSHOT</version>
+            <version>0.4.0</version>
         </dependency>
 
         <dependency>
@@ -209,6 +209,13 @@
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt</artifactId>
             <version>1.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
