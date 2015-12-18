@@ -80,9 +80,11 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.Text.name(), findQueryParams.getText());
         aciParameters.add(QueryParams.MaxResults.name(), findQueryParams.getMaxResults());
         aciParameters.add(QueryParams.Summary.name(), SummaryParam.fromValue(findQueryParams.getSummary(), null));
-        if (!findQueryParams.getIndex().isEmpty()) {
+
+        if (!promotions && !findQueryParams.getIndex().isEmpty()) {
             aciParameters.add(QueryParams.DatabaseMatch.name(), new Databases(findQueryParams.getIndex()));
         }
+
         aciParameters.add(QueryParams.FieldText.name(), findQueryParams.getFieldText());
         aciParameters.add(QueryParams.Sort.name(), findQueryParams.getSort());
         aciParameters.add(QueryParams.MinDate.name(), formatDate(findQueryParams.getMinDate()));
@@ -90,11 +92,13 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
         aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
         aciParameters.add(QueryParams.XMLMeta.name(), true);
+
         if (findQueryParams.isHighlight()) {
             aciParameters.add(QueryParams.Highlight.name(), HighlightParam.SummaryTerms);
             aciParameters.add(QueryParams.StartTag.name(), HIGHLIGHT_START_TAG);
             aciParameters.add(QueryParams.EndTag.name(), HIGHLIGHT_END_TAG);
         }
+
         aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getQueryManipulation().getBlacklist());
         aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getQueryManipulation().getExpandQuery());
 
