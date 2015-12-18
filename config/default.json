@@ -48,6 +48,16 @@
         "email": "hodtestqa401@gmail.com",
         "password": "qoxntlozubjaamyszerfk"
       }
+    },
+    "drake": {
+      "username": "drake",
+      "password": "the_six",
+      "email": "hodtestqa401+WITHMYWOES@gmail.com",
+      "auth": {
+        "type":"Facebook",
+        "email": "matthew.williamson@hpe.com",
+        "password": "vdPAuTGU"
+      }
     }
   },
   "users": {

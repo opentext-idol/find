@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.menu;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -49,7 +50,13 @@ public abstract class TopNavBar extends AppElement {
     }
 
     public void closeNotifications() {
-        if(findElement(By.className("top-navbar-notifications")).getAttribute("class").contains("open")){
+        if(ElementUtil.ancestor(findElement(By.className("notification-list")), 1).getAttribute("class").contains("open")){
+            notificationsDropdown();
+        }
+    }
+
+    public void openNotifications() {
+        if(!ElementUtil.ancestor(findElement(By.className("notification-list")),1).getAttribute("class").contains("open")){
             notificationsDropdown();
         }
     }
