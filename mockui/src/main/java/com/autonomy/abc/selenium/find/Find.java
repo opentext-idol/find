@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.tree.FindIndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
@@ -18,16 +19,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindPage extends AppElement implements AppPage, IndexFilter.Filterable {
-    private final FindInput input;
-    private final FindResults results;
+public class Find extends AppElement implements AppPage, IndexFilter.Filterable {
+    private final FormInput input;
+    private final FindResultsPage results;
 
-    public FindPage(WebDriver driver){
+    public Find(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
-        input = new FindInput(driver);
-        results = new FindResults(driver);
+        input = new FormInput(driver.findElement(By.className("find-input")), driver);
+        results = new FindResultsPage(driver);
     }
 
     @Override
@@ -35,18 +36,18 @@ public class FindPage extends AppElement implements AppPage, IndexFilter.Filtera
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
     }
 
-    public FindInput getInput() {
+    public FormInput getInput() {
         return input;
     }
 
-    public FindResults getResultsPage() {
+    public FindResultsPage getResultsPage() {
         return results;
     }
 
     public void search(String searchTerm){
         input.clear();
-        input.sendKeys(searchTerm);
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        input.setAndSubmit(searchTerm);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     public List<String> getSelectedPublicIndexes() {
@@ -85,6 +86,6 @@ public class FindPage extends AppElement implements AppPage, IndexFilter.Filtera
     @Override
     public void filterBy(SearchFilter filter) {
         filter.apply(this);
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 }

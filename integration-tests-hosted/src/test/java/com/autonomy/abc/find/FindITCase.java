@@ -3,9 +3,8 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.FindInput;
-import com.autonomy.abc.selenium.find.FindResults;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -43,8 +42,6 @@ import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -63,10 +60,8 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindITCase extends HostedTestBase {
-    private FindPage find;
-    private FindResults results;
-    private FindInput input;
-    private Logger logger = LoggerFactory.getLogger(FindITCase.class);
+    private Find find;
+    private FindResultsPage results;
     private PromotionsPage promotions;
     private List<String> browserHandles;
     private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
@@ -93,7 +88,6 @@ public class FindITCase extends HostedTestBase {
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
         find = getElementFactory().getFindPage();
-        input = find.getInput();
         results = find.getResultsPage();
     }
 
@@ -101,7 +95,7 @@ public class FindITCase extends HostedTestBase {
     public void testSendKeys() throws InterruptedException {
         String searchTerm = "Fred is a chimpanzee";
         find.search(searchTerm);
-        assertThat(input.getSearchTerm(), is(searchTerm));
+        assertThat(find.getInput().getValue(), is(searchTerm));
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -134,7 +128,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testSearch(){
         find.search("Red");
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -149,7 +143,7 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("stars bbc");
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
 
         List<String> findSearchTitles = results.getResultTitles();
 
@@ -169,7 +163,7 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("stars bbc");
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         find.sortBy(SearchBase.Sort.DATE);
 
         List<String> findSearchTitles = results.getResultTitles();
@@ -183,7 +177,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testRelatedConceptsHasResults(){
         find.search("Danye West");
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.RIGHT);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.RIGHT);
         WebElement relatedConcepts = results.getRelatedConcepts();
 
         int i = 1;
@@ -201,7 +195,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testRelatedConceptsNavigateOnClick(){
         find.search("Red");
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.RIGHT);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.RIGHT);
         WebElement topRelatedConcept = results.getRelatedConcepts().findElement(By.tagName("a"));
 
         String concept = topRelatedConcept.getText();
@@ -209,11 +203,11 @@ public class FindITCase extends HostedTestBase {
         topRelatedConcept.click();
 
         assertThat(getDriver().getCurrentUrl(), containsString(concept));
-        assertThat(input.getSearchTerm(), containsString(concept));
+        assertThat(find.getInput().getValue(), containsString(concept));
 
         hoverOverElement(results.getResultsDiv());
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.RIGHT);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.RIGHT);
 
         WebElement tableRelatedConcept = results.getRelatedConcepts().findElement(By.cssSelector("table a"));
 
@@ -222,13 +216,13 @@ public class FindITCase extends HostedTestBase {
         tableRelatedConcept.click();
 
         assertThat(getDriver().getCurrentUrl(), containsString(concept));
-        assertThat(input.getSearchTerm(), containsString(concept));
+        assertThat(find.getInput().getValue(), containsString(concept));
     }
 
     @Test
     public void testRelatedConceptsHover(){
         find.search("Find");
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.RIGHT);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.RIGHT);
         WebElement topRelatedConcept = results.getRelatedConcepts().findElement(By.tagName("a"));
         WebElement tableLink = results.getRelatedConcepts().findElement(By.cssSelector("table a"));
 
@@ -462,26 +456,26 @@ public class FindITCase extends HostedTestBase {
         // async filters
         new IndexFilter(Index.DEFAULT).apply(find);
         IndexFilter.PRIVATE.apply(find);
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getResultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
     }
 
     @Test
     public void testPreDefinedWeekHasSameResultsAsCustomWeek(){
-        preDefinedDateFiltersVersusCustomDateFilters(FindResults.DateEnum.WEEK);
+        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.WEEK);
     }
 
     @Test
     public void testPreDefinedMonthHasSameResultsAsCustomMonth(){
-        preDefinedDateFiltersVersusCustomDateFilters(FindResults.DateEnum.MONTH);
+        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.MONTH);
     }
 
     @Test
     public void testPreDefinedYearHasSameResultsAsCustomYear(){
-        preDefinedDateFiltersVersusCustomDateFilters(FindResults.DateEnum.YEAR);
+        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.YEAR);
     }
 
-    private void preDefinedDateFiltersVersusCustomDateFilters(FindResults.DateEnum period){
+    private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period){
         find.search("Rugby");
 
         results.filterByDate(period);
@@ -496,7 +490,7 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
-    private String getDateString (FindResults.DateEnum period) {
+    private String getDateString (FindResultsPage.DateEnum period) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         Calendar cal = Calendar.getInstance();
 
@@ -579,7 +573,7 @@ public class FindITCase extends HostedTestBase {
     public void testViewDocumentsOpenWithArrows(){
         find.search("Review");
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         results.getSearchResultTitle(1).click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
@@ -606,15 +600,15 @@ public class FindITCase extends HostedTestBase {
     public void testDateRemainsWhenClosingAndReopeningDateFilters(){
         find.search("Corbyn");
 
-        String start = getDateString(FindResults.DateEnum.MONTH);
-        String end = getDateString(FindResults.DateEnum.WEEK);
+        String start = getDateString(FindResultsPage.DateEnum.MONTH);
+        String end = getDateString(FindResultsPage.DateEnum.WEEK);
 
         results.filterByDate(start, end);
         find.loadOrFadeWait();
-        results.filterByDate(FindResults.DateEnum.CUSTOM); //For some reason doesn't close first time
-        results.filterByDate(FindResults.DateEnum.CUSTOM);
+        results.filterByDate(FindResultsPage.DateEnum.CUSTOM); //For some reason doesn't close first time
+        results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
         find.loadOrFadeWait();
-        results.filterByDate(FindResults.DateEnum.CUSTOM);
+        results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
         find.loadOrFadeWait();
 
         assertThat(results.getStartDateFilter().getAttribute("value"), is(start));
@@ -647,11 +641,11 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(1));
         find.search(nonsense);
 
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getText(), noDocs);
 
         find.search("Cat");
-        results.waitForSearchLoadIndicatorToDisappear(FindResults.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getText(), not(noDocs));
 
         getDriver().switchTo().window(browserHandles.get(0));
@@ -868,7 +862,7 @@ public class FindITCase extends HostedTestBase {
     //CSA-1577
     public void testClickingCustomDateFilterDoesNotRefreshResults(){
         find.search("O Captain! My Captain!");
-        results.filterByDate(FindResults.DateEnum.CUSTOM);
+        results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
         assertThat(results.getResultsDiv().getText(),not(containsString("Loading")));
     }
 
