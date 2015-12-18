@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.menu;
 
-import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,10 +18,11 @@ public class OPTopNavBar extends TopNavBar {
 
     private void clickCog(){
         findElement(By.className("hp-settings")).click();
+        loadOrFadeWait();
     }
 
     private void clickDropdown(String page){
-       findElement(By.xpath(".//*[contains(text(),'"+page+"')]")).click();
+       findElement(By.xpath(".//a[contains(.,'"+page+"')]")).click();
     }
 
     public void goToAboutPage(){
