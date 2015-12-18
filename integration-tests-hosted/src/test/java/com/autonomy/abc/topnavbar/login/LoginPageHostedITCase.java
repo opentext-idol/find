@@ -4,6 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.users.User;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 
@@ -17,7 +18,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         setInitialUser(User.NULL);
     }
 
-    @Test
+    @Test   @Ignore("No account")
     public void testAPIKeyLogin(){
        testLogin("api_key");
     }
@@ -32,7 +33,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         testLogin("twitter");
     }
 
-    @Test
+    @Test   @Ignore("No account")
     public void testFacebookLogin(){
         testLogin("facebook");
     }
@@ -42,7 +43,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         testLogin("yahoo");
     }
 
-    @Test
+    @Test   @Ignore("No account")
     public void testOpenIDLogin(){
         testLogin("open_id");
     }
