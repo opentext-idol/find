@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -31,6 +32,14 @@ public abstract class GlobalExceptionHandler {
     @ResponseBody
     public ErrorResponse messageNotReadableHandler(final HttpMessageNotReadableException exception) throws HttpMessageNotReadableException {
         return handler(exception);
+    }
+
+    @ExceptionHandler(ClientAbortException.class)
+    @ResponseBody
+    public ErrorResponse connectionAbort(final ClientAbortException e) {
+        // Tomcat-specific exception when existing request is aborted by client
+        log.debug("Client aborted connection", e);
+        return null;
     }
 
     @ExceptionHandler(Exception.class)
