@@ -24,6 +24,7 @@ import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.idol.SuggestResponseData;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
+import com.hp.autonomy.types.requests.idol.actions.query.params.CombineParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.HighlightParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
@@ -87,6 +88,8 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
             aciParameters.add(QueryParams.DatabaseMatch.name(), new Databases(findQueryParams.getIndex()));
         }
 
+        aciParameters.add(QueryParams.Combine.name(), CombineParam.Simple);
+        aciParameters.add(QueryParams.Predict.name(), false);
         aciParameters.add(QueryParams.FieldText.name(), findQueryParams.getFieldText());
         aciParameters.add(QueryParams.Sort.name(), findQueryParams.getSort());
         aciParameters.add(QueryParams.MinDate.name(), formatDate(findQueryParams.getMinDate()));
@@ -94,6 +97,7 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
         aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
         aciParameters.add(QueryParams.XMLMeta.name(), true);
+        aciParameters.add(QueryParams.AnyLanguage.name(), true);
 
         if (findQueryParams.isHighlight()) {
             aciParameters.add(QueryParams.Highlight.name(), HighlightParam.SummaryTerms);
