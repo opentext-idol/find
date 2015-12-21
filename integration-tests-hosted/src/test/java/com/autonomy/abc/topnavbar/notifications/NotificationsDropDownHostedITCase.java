@@ -17,10 +17,7 @@ import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
-import com.autonomy.abc.selenium.users.GmailSignupEmailHandler;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.users.*;
 import com.google.common.collect.Lists;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.junit.Test;
@@ -171,6 +168,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         UserService userService = getApplication().createUserService(getElementFactory());
         WebDriver adminDriver = null;
 
+        SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+
         try {
             keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
 
@@ -183,7 +182,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             User user = userService.createNewUser(config.getNewUser("drake"), Role.ADMIN);
 
             try {
-                user.authenticate(config.getWebDriverFactory(), new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider()));
+                user.authenticate(config.getWebDriverFactory(), emailHandler);
             } catch (TimeoutException e) {
                 /* User has likely already been authenticated recently, attempt to continue */
             }
@@ -217,6 +216,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
             userService.deleteOtherUsers();
             keywordService.deleteAll(KeywordFilter.ALL);
+
+            emailHandler.markAllEmailAsRead(getDriver());
         }
     }
 

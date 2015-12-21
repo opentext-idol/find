@@ -21,6 +21,14 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         this.googleAuth = auth;
     }
 
+    public void markAllEmailAsRead(WebDriver driver){
+        driver.get(GMAIL_URL);
+        new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
+
+        driver.findElement(By.cssSelector(".T-I.J-J5-Ji.ar7.nf.T-I-ax7.L3")).click();
+        driver.findElement(By.xpath("//div[text()='Mark all as read']")).click();
+    }
+
     @Override
     public void goToUrl(WebDriver driver) {
         this.driver = driver;
