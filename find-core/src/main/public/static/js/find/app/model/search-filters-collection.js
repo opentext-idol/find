@@ -144,7 +144,7 @@ define([
                     // The databases filter model has equal id and type since only one filter of this type can be present
                     this.add({id: FilterTypes.indexes, type: FilterTypes.indexes, text: filterText});
                 }
-            } else if (filterModel) {
+            } else if (this.contains(filterModel)) {
                 this.remove(filterModel);
             }
         },
