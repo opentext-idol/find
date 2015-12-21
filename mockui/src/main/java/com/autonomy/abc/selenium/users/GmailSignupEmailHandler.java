@@ -1,13 +1,11 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +39,14 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
             /* Probably had an unread email */
 
             driver.findElement(By.cssSelector(".T-I.J-J5-Ji.lS.T-I-ax7.ar7")).click();
-            openMessage();
+
+            try {
+                openMessage();
+            } catch (TimeoutException f) {
+                //Email was probably opened the first time; but for some reason clicking on the message didn't take you to the 'right' place
+                LoggerFactory.getLogger(GmailSignupEmailHandler.class).info("Email failed to open; *probably* signed up already for some reason");
+            }
+
             clickLink();
         }
     }
