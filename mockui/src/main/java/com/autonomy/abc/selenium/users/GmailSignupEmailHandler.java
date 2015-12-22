@@ -20,18 +20,28 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
     }
 
     public void markAllEmailAsRead(WebDriver driver){
-        driver.get(GMAIL_URL);
-        new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
+        setDriver(driver);
+        goToGoogleAndLogIn();
 
         driver.findElement(By.cssSelector(".T-I.J-J5-Ji.ar7.nf.T-I-ax7.L3")).click();
+        loadOrFadeWait();
         driver.findElement(By.xpath("//div[text()='Mark all as read']")).click();
+        loadOrFadeWait();
+    }
+
+    private void goToGoogleAndLogIn() {
+        driver.get(GMAIL_URL);
+        new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
+    }
+
+    private void setDriver(WebDriver driver) {
+        this.driver = driver;
     }
 
     @Override
     public boolean goToUrl(WebDriver driver) {
-        this.driver = driver;
-        driver.get(GMAIL_URL);
-        new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
+        setDriver(driver);
+        goToGoogleAndLogIn();
         openMessage();
         try {
             clickLink();
@@ -99,14 +109,15 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
 
         loadOrFadeWait();
 
+        List<String> handles = new ArrayList<>(driver.getWindowHandles());
+        driver.switchTo().window(handles.get(1));
+
         try {
-            new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Twitter")));
+            new WebDriverWait(driver,20).until(ExpectedConditions.visibilityOfElementLocated(By.className("twitter")));
         } catch (TimeoutException e) {
             //If not already verified then go back to inbox
             if (!driver.getCurrentUrl().contains("already")) {
                 //Want to ignore cases where users are already verified, or taken to verification       TODO figure out which cases need this to be run
-                List<String> handles = new ArrayList<>(driver.getWindowHandles());
-                driver.switchTo().window(handles.get(1));
                 driver.close();
                 driver.switchTo().window(handles.get(0));
                 //Probably the wrong exception to throw but just to make things easier - happens when a link has already been used for auth
@@ -114,9 +125,9 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
             }
         }
 
+        driver.switchTo().window(handles.get(0));
         driver.close();
-        String loginWindow = driver.getWindowHandles().toArray(new String[1])[0];
-        driver.switchTo().window(loginWindow);
+        driver.switchTo().window(handles.get(1));
     }
 
     private void loadOrFadeWait() {

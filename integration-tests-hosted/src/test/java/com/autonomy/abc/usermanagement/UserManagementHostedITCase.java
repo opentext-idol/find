@@ -186,7 +186,13 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         try {
             secondDriver.get(config.getWebappUrl());
             LoginPage loginPage = new HSOLoginPage(secondDriver, new AbcHasLoggedIn(secondDriver));
-            loginTo(loginPage, secondDriver, user);
+
+            try {
+                loginTo(loginPage, secondDriver, user);
+            } catch (NoSuchElementException e) {
+                /* Happens when it's trying to log in for the second time */
+            }
+
             ErrorPage errorPage = new ErrorPage(secondDriver);
             verifyThat(errorPage.getErrorCode(), is("401"));
         } finally {
@@ -290,7 +296,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     }
 
     private void waitForUserConfirmed(User user){
-        new WebDriverWait(getDriver(),60).pollingEvery(10, TimeUnit.SECONDS).withMessage("User not showing as confirmed").until(new WaitForUserToBeConfirmed(user));
+        new WebDriverWait(getDriver(),30).pollingEvery(10, TimeUnit.SECONDS).withMessage("User not showing as confirmed").until(new WaitForUserToBeConfirmed(user));
         body = getBody();
     }
 
@@ -305,6 +311,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         public Boolean apply(WebDriver driver) {
             driver.navigate().refresh();
             usersPage = (HSOUsersPage) getElementFactory().getUsersPage();
+            usersPage.loadOrFadeWait();
             return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
         }
     }
