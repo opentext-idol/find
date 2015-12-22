@@ -19,6 +19,7 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -105,7 +106,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		assertThat(notifications.countNotifications(), is(0));
 
 		keywordsPage = getElementFactory().getKeywordsPage();
-		List<String> browserHandles = keywordsPage.createAndListWindowHandles();
+		List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		getDriver().navigate().to(getConfig().getWebappUrl());

@@ -17,6 +17,7 @@ import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -406,7 +407,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.loadOrFadeWait();
 
 		final String url = getDriver().getCurrentUrl();
-		final List<String> browserHandles = keywordsPage.createAndListWindowHandles();
+		final List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		getDriver().get(url);

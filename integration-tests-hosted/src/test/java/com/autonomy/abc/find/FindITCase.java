@@ -17,6 +17,7 @@ import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Locator;
@@ -83,7 +84,7 @@ public class FindITCase extends HostedTestBase {
 
         promotions = getElementFactory().getPromotionsPage();
 
-        browserHandles = promotions.createAndListWindowHandles();
+        browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
         getDriver().switchTo().window(browserHandles.get(1));
         getDriver().get(config.getFindUrl());

@@ -20,6 +20,7 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.After;
 import org.junit.Before;
@@ -244,7 +245,7 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexService.setUpIndex(index);
 
-        List<String> browserHandles = indexesPage.createAndListWindowHandles();
+        List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
         try {
             getDriver().switchTo().window(browserHandles.get(1));
