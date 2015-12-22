@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.view;
 
+import com.autonomy.aci.client.services.AciServiceException;
 import com.autonomy.aci.client.services.Processor;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
@@ -82,6 +83,6 @@ public class IdolViewControllerTest {
 
     @Test
     public void viewServerError() {
-        assertNotNull(idolViewController.handleViewServerErrorException(new ViewServerErrorException(444, "some reference"), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        assertNotNull(idolViewController.handleViewServerErrorException(new ViewServerErrorException("some reference", new AciServiceException("It broke")), new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
 }
