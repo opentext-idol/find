@@ -10,15 +10,6 @@ public class PageUtil {
         return driver.findElement(By.cssSelector(".page-heading .heading")).getText();
     }
 
-    public static boolean isAlertPresent(WebDriver driver) {
-        try {
-            driver.switchTo().alert();
-            return true;
-        } catch (final NoAlertPresentException ex) {
-            return false;
-        }
-    }
-
     public static boolean isModalShowing(WebDriver driver) {
         return !driver.findElements(By.cssSelector(".modal[aria-hidden='false']")).isEmpty();
     }

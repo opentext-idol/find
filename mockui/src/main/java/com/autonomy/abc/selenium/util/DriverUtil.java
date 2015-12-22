@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.util;
 
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Arrays;
@@ -24,5 +25,14 @@ public class DriverUtil {
         final String secondHandle = ((String)moreWindows.toArray()[0]);
 
         return Arrays.asList(handle, secondHandle);
+    }
+
+    public static boolean isAlertPresent(WebDriver driver) {
+        try {
+            driver.switchTo().alert();
+            return true;
+        } catch (final NoAlertPresentException ex) {
+            return false;
+        }
     }
 }
