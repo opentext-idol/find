@@ -18,6 +18,7 @@ import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections4.ListUtils;
@@ -137,13 +138,13 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.loadOrFadeWait();
 
 		for (int i = 1; i < 7; i++) {
-			AppElement.scrollIntoView(searchPage.searchResultCheckbox(i), getDriver());
+			ElementUtil.scrollIntoView(searchPage.searchResultCheckbox(i), getDriver());
 			searchPage.searchResultCheckbox(i).click();
 			assertThat("Promoted items count not correct", searchPage.promotedItemsCount(),is(i));
 		}
 
 		for (int j = 6; j > 0; j--) {
-			AppElement.scrollIntoView(searchPage.searchResultCheckbox(j), getDriver());
+			ElementUtil.scrollIntoView(searchPage.searchResultCheckbox(j), getDriver());
 			searchPage.searchResultCheckbox(j).click();
 			assertThat("Promoted items count not correct", searchPage.promotedItemsCount(), is(j - 1));
 		}
@@ -1262,7 +1263,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		//Hopefully less important documents will be on the last page
 		WebElement fwrdBtn = searchPage.forwardToLastPageButton();
-		AppElement.scrollIntoView(fwrdBtn, getDriver());
+		ElementUtil.scrollIntoView(fwrdBtn, getDriver());
 		fwrdBtn.click();
 
 		int results = searchPage.getHeadingResultsCount();

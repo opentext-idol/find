@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page.keywords;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -23,7 +24,7 @@ public class HSOKeywordsPage extends KeywordsPage {
             (LoggerFactory.getLogger(KeywordsPage.class)).warn("Cannot select language for blacklists yet");
 
             for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
-                scrollIntoView(blacklisted, getDriver());
+                ElementUtil.scrollIntoView(blacklisted, getDriver());
                 blacklisted.click();
                 waitForRefreshIconToDisappear();
             }

@@ -35,7 +35,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	// "Results for _____ (123)"
 	public String getHeadingSearchTerm() {
 		WebElement heading = getDriver().findElement(By.cssSelector(".heading > b"));
-		scrollIntoView(heading, getDriver());
+		ElementUtil.scrollIntoView(heading, getDriver());
 		return heading.getText();
 	}
 
@@ -358,7 +358,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	/* keywords */
 	public List<String> youSearchedFor() {
 		WebElement searchTermsList = findElement(By.cssSelector(".search-terms-list"));
-		scrollIntoView(searchTermsList, getDriver());
+		ElementUtil.scrollIntoView(searchTermsList, getDriver());
 		return ElementUtil.getTexts(searchTermsList.findElements(By.tagName("span")));
 	}
 

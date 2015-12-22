@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.search.SearchFilter;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
@@ -132,13 +133,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("unrelated");
 
         for (int i = 1; i < 7; i++) {
-            AppElement.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
+            ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
             editReferencesPage.searchResultCheckbox(i).click();
             verifyThat(editReferencesPage.promotionsBucketList().size(), is(i + 4));
         }
 
         for (int j = 6; j > 0; j--) {
-            AppElement.scrollIntoView(editReferencesPage.searchResultCheckbox(j), getDriver());
+            ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(j), getDriver());
             editReferencesPage.searchResultCheckbox(j).click();
             verifyThat(editReferencesPage.promotionsBucketList().size(), is(j - 1 + 4));
         }

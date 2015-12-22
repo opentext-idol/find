@@ -6,7 +6,9 @@ import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.PageUtil;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -51,7 +53,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers));
 
 		usersPage.createUserButton().click();
-		verifyThat(usersPage.isModalShowing(), is(true));
+		verifyThat(PageUtil.isModalShowing(getDriver()), is(true));
 		aNewUser.signUpAs(Role.USER, usersPage);
 		newUser2.signUpAs(Role.ADMIN, usersPage);
 		usersPage.closeModal();
