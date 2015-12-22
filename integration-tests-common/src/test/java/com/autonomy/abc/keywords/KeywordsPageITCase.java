@@ -18,6 +18,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.util.DriverUtil;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -475,8 +476,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.loadOrFadeWait();
 
 		try {
-			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"));
-			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string", "strung"));
+			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"), getDriver());
+			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string", "strung"), getDriver());
 		} catch (final WebDriverException w) {
 			throw new AssertionError("Unable to delete a synonym quickly", w);
 		}

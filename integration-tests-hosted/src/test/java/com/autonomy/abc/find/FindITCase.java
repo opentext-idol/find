@@ -548,7 +548,7 @@ public class FindITCase extends HostedTestBase {
 
         for(WebElement result : results.getResults()){
             try {
-                results.scrollIntoViewAndClick(result.findElement(By.tagName("h4")));
+                ElementUtil.scrollIntoViewAndClick(result.findElement(By.tagName("h4")), getDriver());
             } catch (WebDriverException e){
                 fail("Could not click on title - most likely CSA-1767");
             }

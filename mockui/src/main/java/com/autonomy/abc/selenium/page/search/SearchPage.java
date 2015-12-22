@@ -452,7 +452,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public void openParametricValuesList() {
-		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
+		ElementUtil.scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")), getDriver());
 		loadOrFadeWait();
 	}
 
@@ -470,7 +470,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		promoteTheseDocumentsButton().click();
 		loadOrFadeWait();
 		List<String> promotedDocTitles = addToBucket(numberOfDocs);
-		scrollIntoViewAndClick(promoteTheseItemsButton());
+		ElementUtil.scrollIntoViewAndClick(promoteTheseItemsButton(), getDriver());
 		loadOrFadeWait();
 		return promotedDocTitles;
 	}
