@@ -1,13 +1,11 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +19,16 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         this.googleAuth = auth;
     }
 
+    public void markAllEmailAsRead(WebDriver driver){
+        driver.get(GMAIL_URL);
+        new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
+
+        driver.findElement(By.cssSelector(".T-I.J-J5-Ji.ar7.nf.T-I-ax7.L3")).click();
+        driver.findElement(By.xpath("//div[text()='Mark all as read']")).click();
+    }
+
     @Override
-    public void goToUrl(WebDriver driver) {
+    public boolean goToUrl(WebDriver driver) {
         this.driver = driver;
         driver.get(GMAIL_URL);
         new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
@@ -33,9 +39,19 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
             /* Probably had an unread email */
 
             driver.findElement(By.cssSelector(".T-I.J-J5-Ji.lS.T-I-ax7.ar7")).click();
-            openMessage();
+
+            try {
+                openMessage();
+            } catch (TimeoutException f) {
+                //Email was probably opened the first time; but for some reason clicking on the message didn't take you to the 'right' place
+                LoggerFactory.getLogger(GmailSignupEmailHandler.class).info("Email failed to open; *probably* signed up already for some reason");
+                return false;
+            }
+
             clickLink();
         }
+
+        return true;
     }
 
     private void openMessage(){
@@ -67,10 +83,13 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
 
     private void expandCollapsedMessage() {
         try {
-            WebElement ellipses = new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img.ajT")));
+            new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img.ajT")));
 
-            if(ellipses.isDisplayed()){
-                ellipses.click();
+            List<WebElement> ellipses = driver.findElements(By.cssSelector("img.ajT"));
+            WebElement finalEllipses = ellipses.get(ellipses.size() - 1);
+
+            if(finalEllipses.isDisplayed()){
+                finalEllipses.click();
             }
         } catch (Exception e) { /* No Ellipses */ }
     }
@@ -80,14 +99,19 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
 
         loadOrFadeWait();
 
-        //Want to ignore cases where users are already verified, or taken to verification       TODO figure out which cases need this to be run
-        if(!driver.getCurrentUrl().contains("/verification/")){
-            List<String> handles = new ArrayList<>(driver.getWindowHandles());
-            driver.switchTo().window(handles.get(1));
-            driver.close();
-            driver.switchTo().window(handles.get(0));
-            //Probably the wrong exception to throw but just to make things easier - happens when a link has already been used for auth
-            throw new NoSuchElementException("Incorrect link clicked");
+        try {
+            new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Twitter")));
+        } catch (TimeoutException e) {
+            //If not already verified then go back to inbox
+            if (!driver.getCurrentUrl().contains("already")) {
+                //Want to ignore cases where users are already verified, or taken to verification       TODO figure out which cases need this to be run
+                List<String> handles = new ArrayList<>(driver.getWindowHandles());
+                driver.switchTo().window(handles.get(1));
+                driver.close();
+                driver.switchTo().window(handles.get(0));
+                //Probably the wrong exception to throw but just to make things easier - happens when a link has already been used for auth
+                throw new NoSuchElementException("Incorrect link clicked");
+            }
         }
 
         driver.close();

@@ -18,6 +18,7 @@ import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -46,12 +47,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private HSOUserService userService;
     private HSOUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
-    private final SignupEmailHandler emailHandler;
     private final Factory<NewUser> newUserFactory;
 
     public UserManagementHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
-        emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
         newUserFactory = config.getNewUserFactory();
     }
 

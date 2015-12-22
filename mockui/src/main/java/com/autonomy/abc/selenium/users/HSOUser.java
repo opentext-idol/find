@@ -36,12 +36,13 @@ public class HSOUser extends User {
         driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
 
         try {
-            emailParser.goToUrl(driver);
-            LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
-            try {
-                loginPage.loginWith(getAuthProvider());
-            } catch (TimeoutException e) {
+            if(emailParser.goToUrl(driver)) {
+                LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
+                try {
+                    loginPage.loginWith(getAuthProvider());
+                } catch (TimeoutException e) {
                 /* already signed in to auth account */
+                }
             }
         } finally {
             driver.quit();

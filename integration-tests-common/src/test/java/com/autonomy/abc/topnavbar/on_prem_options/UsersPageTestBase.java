@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.hamcrest.CoreMatchers;
+import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
@@ -32,7 +33,7 @@ public class UsersPageTestBase extends ABCTestBase {
     protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
     protected UsersPage usersPage;
     protected UserService userService;
-    private final SignupEmailHandler emailHandler;
+    protected final SignupEmailHandler emailHandler;
 
     public UsersPageTestBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -44,6 +45,13 @@ public class UsersPageTestBase extends ABCTestBase {
         userService = getApplication().createUserService(getElementFactory());
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
+    }
+
+    @After
+    public void tearDown(){
+        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+            emailHandler.markAllEmailAsRead(getDriver());
+        }
     }
 
     protected User singleSignUp() {
