@@ -17,9 +17,7 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchFilter;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections4.ListUtils;
@@ -55,7 +53,8 @@ public class SearchPageITCase extends ABCTestBase {
 	private TopNavBar topNavBar;
 	private CreateNewPromotionsPage createPromotionsPage;
 	private PromotionsPage promotionsPage;
-	DatePicker datePicker;
+	private DatePicker datePicker;
+	private SearchService searchService;
 
 	public SearchPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
@@ -67,6 +66,8 @@ public class SearchPageITCase extends ABCTestBase {
 		topNavBar.search("example");
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
+
+		searchService = getApplication().createSearchService(getElementFactory());
 	}
 
 	private void search(String searchTerm){
@@ -1253,6 +1254,25 @@ public class SearchPageITCase extends ABCTestBase {
 		} finally {
 			promotionService.deleteAll();
 		}
+	}
+
+	@Test
+	public void testDeletingDocument(){
+		searchService.search("bbc");
+
+		//Hopefully less important documents will be on the last page
+		WebElement fwrdBtn = searchPage.forwardToLastPageButton();
+		AppElement.scrollIntoView(fwrdBtn, getDriver());
+		fwrdBtn.click();
+
+		int results = searchPage.getHeadingResultsCount();
+		String deletedDoc = searchPage.getSearchResultTitle(1);
+
+		// Might wanna check this doesn't come up --- hp-icon hp-trash hp-lg fa-spin fa-circle-o-notch
+		searchService.deleteDocument(deletedDoc);
+
+		verifyThat(searchPage.getHeadingResultsCount(), is(--results));
+		verifyThat(searchPage.getSearchResultTitle(1), not(is(deletedDoc)));
 	}
 
 	private String getFirstWord(String string) {
