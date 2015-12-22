@@ -28,7 +28,7 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
     }
 
     @Override
-    public void goToUrl(WebDriver driver) {
+    public boolean goToUrl(WebDriver driver) {
         this.driver = driver;
         driver.get(GMAIL_URL);
         new GoogleAuth.GoogleLoginPage(driver).login(googleAuth);
@@ -45,10 +45,13 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
             } catch (TimeoutException f) {
                 //Email was probably opened the first time; but for some reason clicking on the message didn't take you to the 'right' place
                 LoggerFactory.getLogger(GmailSignupEmailHandler.class).info("Email failed to open; *probably* signed up already for some reason");
+                return false;
             }
 
             clickLink();
         }
+
+        return true;
     }
 
     private void openMessage(){
@@ -80,10 +83,13 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
 
     private void expandCollapsedMessage() {
         try {
-            WebElement ellipses = new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img.ajT")));
+            new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img.ajT")));
 
-            if(ellipses.isDisplayed()){
-                ellipses.click();
+            List<WebElement> ellipses = driver.findElements(By.cssSelector("img.ajT"));
+            WebElement finalEllipses = ellipses.get(ellipses.size() - 1);
+
+            if(finalEllipses.isDisplayed()){
+                finalEllipses.click();
             }
         } catch (Exception e) { /* No Ellipses */ }
     }
@@ -93,14 +99,19 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
 
         loadOrFadeWait();
 
-        //Want to ignore cases where users are already verified, or taken to verification       TODO figure out which cases need this to be run
-        if(!driver.getCurrentUrl().contains("/verification/")){
-            List<String> handles = new ArrayList<>(driver.getWindowHandles());
-            driver.switchTo().window(handles.get(1));
-            driver.close();
-            driver.switchTo().window(handles.get(0));
-            //Probably the wrong exception to throw but just to make things easier - happens when a link has already been used for auth
-            throw new NoSuchElementException("Incorrect link clicked");
+        try {
+            new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Twitter")));
+        } catch (TimeoutException e) {
+            //If not already verified then go back to inbox
+            if (!driver.getCurrentUrl().contains("already")) {
+                //Want to ignore cases where users are already verified, or taken to verification       TODO figure out which cases need this to be run
+                List<String> handles = new ArrayList<>(driver.getWindowHandles());
+                driver.switchTo().window(handles.get(1));
+                driver.close();
+                driver.switchTo().window(handles.get(0));
+                //Probably the wrong exception to throw but just to make things easier - happens when a link has already been used for auth
+                throw new NoSuchElementException("Incorrect link clicked");
+            }
         }
 
         driver.close();
