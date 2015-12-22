@@ -4,7 +4,7 @@
   -->
 
 <service>
-    <id>Find</id>
+    <id>%FIND_SERVICE_NAME%</id>
     <name>%FIND_SERVICE_NAME%</name>
     <description>HPE Find</description>
     <executable>java</executable>
