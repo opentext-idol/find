@@ -57,7 +57,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public String getSearchResultDetails(final int searchResultNumber) {
-		return getParent(getSearchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
+		return ElementUtil.getParent(getSearchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
 	}
 
 	public int visibleDocumentsCount() {
@@ -65,7 +65,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public Date getDateFromResult(final int index) throws ParseException {
-		final String dateString = getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
+		final String dateString = ElementUtil.getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
 		if (dateString.isEmpty()) {
 			return null;
 		}
@@ -139,19 +139,19 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 
 	/* pagination */
 	public WebElement backToFirstPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous-chapter")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous-chapter")));
 	}
 
 	public WebElement backPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous")));
 	}
 
 	public WebElement forwardToLastPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next-chapter")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next-chapter")));
 	}
 
 	public WebElement forwardPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next")));
 	}
 
 	public boolean isPageActive(final int pageNumber) {
@@ -170,7 +170,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public boolean isBackToFirstPageButtonDisabled() {
-		return  getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
+		return  ElementUtil.getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
 	}
 
 	/* indexes/databases */
@@ -220,7 +220,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 
 		if (selectedDatabases.contains(databaseName)) {
 			if (selectedDatabases.size() > 1) {
-				getParent(getDatabaseCheckboxes().get(getAllDatabases().indexOf(databaseName))).click();
+				ElementUtil.getParent(getDatabaseCheckboxes().get(getAllDatabases().indexOf(databaseName))).click();
 			} else {
 				System.out.println("Only one database remaining. Can't deselect final database");
 			}
@@ -233,7 +233,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		final List<String> selected = new ArrayList<>();
 
 		for (final WebElement tick : getDatabasesList().findElements(By.cssSelector(".child-categories .checked"))) {
-			selected.add(getParent(tick).getText());
+			selected.add(ElementUtil.getParent(tick).getText());
 		}
 
 		return selected;

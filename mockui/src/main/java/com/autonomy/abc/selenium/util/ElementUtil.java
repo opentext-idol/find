@@ -65,6 +65,10 @@ public final class ElementUtil {
         return result;
     }
 
+    public static WebElement getParent(final WebElement child) {
+        return ancestor(child, 1);
+    }
+
     public static String getLastWord(final String string) {
         return string.substring(string.lastIndexOf(' ') + 1);
     }

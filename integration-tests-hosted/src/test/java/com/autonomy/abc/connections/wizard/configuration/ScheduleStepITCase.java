@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
@@ -57,8 +58,8 @@ public class ScheduleStepITCase extends ConnectorTypeStepBase {
     @Test
     public void validateSchedulingFormInputs() {
         assertThat("The scheduling form is displayed by default", connectorConfigStep.scheduleForm(), displayed());
-        assertThat("The 'Run indefinitely' checkbox is checked by default", AppElement.getParent(connectorConfigStep.unlimitedOccurrencesCheckBox()), hasAttribute("aria-checked", equalToIgnoringCase("true")));
-        assertThat("The 'Run definitely' checkbox isn't checked by default", AppElement.getParent(connectorConfigStep.limitedOccurrencesCheckBox()), hasAttribute("aria-checked", equalToIgnoringCase("false")));
+        assertThat("The 'Run indefinitely' checkbox is checked by default", ElementUtil.getParent(connectorConfigStep.unlimitedOccurrencesCheckBox()), hasAttribute("aria-checked", equalToIgnoringCase("true")));
+        assertThat("The 'Run definitely' checkbox isn't checked by default", ElementUtil.getParent(connectorConfigStep.limitedOccurrencesCheckBox()), hasAttribute("aria-checked", equalToIgnoringCase("false")));
         assertThat("The repeating input is disabled default ", connectorConfigStep.occurrencesInput().getElement(), disabled());
     }
 

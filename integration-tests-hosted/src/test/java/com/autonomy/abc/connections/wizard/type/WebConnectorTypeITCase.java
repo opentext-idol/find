@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -100,7 +101,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         for (String key : map.keySet()) {
             connectorUrl.setValue(map.get(key));
             connectorName.getElement().click();
-            assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorUrl.getElement())), hasClass(INVALID_INPUT_CLASS));
+            assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorUrl.getElement(), 2), hasClass(INVALID_INPUT_CLASS));
 
             newConnectionPage.nextButton().click();
             assertThat("The step should be set as error ", newConnectionPage.connectorTypeStepTab(), not(stepIsValid()));
@@ -117,21 +118,21 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     @Test
     public void testWebConnectorRequiredFields() {
         newConnectionPage.nextButton().click();
-        assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorUrl.getElement())), hasClass(INVALID_INPUT_CLASS));
-        assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorName.getElement())), hasClass(INVALID_INPUT_CLASS));
+        assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorUrl.getElement(), 2), hasClass(INVALID_INPUT_CLASS));
+        assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorName.getElement(), 2), hasClass(INVALID_INPUT_CLASS));
 
         connectorUrl.setValue("http://foo.com");
         connectorName.clear();
         newConnectionPage.nextButton().click();
-        assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorUrl.getElement())), not(hasClass(INVALID_INPUT_CLASS)));
-        assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorName.getElement())), hasClass(INVALID_INPUT_CLASS));
+        assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorUrl.getElement(), 2), not(hasClass(INVALID_INPUT_CLASS)));
+        assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorName.getElement(), 2), hasClass(INVALID_INPUT_CLASS));
 
         connectorUrl.clear();
         connectorName.clear();
         connectorName.setValue("foo");
         newConnectionPage.nextButton().click();
-        assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorUrl.getElement())), hasClass(INVALID_INPUT_CLASS));
-        assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorName.getElement())), not(hasClass(INVALID_INPUT_CLASS)));
+        assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorUrl.getElement(), 2), hasClass(INVALID_INPUT_CLASS));
+        assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorName.getElement(), 2), not(hasClass(INVALID_INPUT_CLASS)));
     }
 
     @Test

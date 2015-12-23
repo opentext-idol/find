@@ -174,7 +174,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     public List<String> getLanguageList() {
         final List<String> languages = new ArrayList<>();
 
-        if (ElementUtil.isAttributePresent(getParent(selectLanguageButton()), "disabled")) {
+        if (ElementUtil.isAttributePresent(ElementUtil.getParent(selectLanguageButton()), "disabled")) {
             languages.add(getSelectedLanguage());
             return languages;
         } else {

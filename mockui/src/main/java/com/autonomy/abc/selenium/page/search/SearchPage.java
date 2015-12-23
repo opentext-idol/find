@@ -293,19 +293,19 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public WebElement promotionSummaryBackToStartButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
 	}
 
 	public WebElement promotionSummaryBackButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
 	}
 
 	public WebElement promotionSummaryForwardButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
 	}
 
 	public WebElement promotionSummaryForwardToEndButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
 	}
 
 	/* search results */

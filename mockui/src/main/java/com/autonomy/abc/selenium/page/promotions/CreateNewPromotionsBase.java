@@ -70,7 +70,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		final List<String> searchTriggerList = new ArrayList<>();
 
 		for (final WebElement trigger : findElements(By.cssSelector(".remove-word"))) {
-			searchTriggerList.add(getParent(trigger).getText());
+			searchTriggerList.add(ElementUtil.getParent(trigger).getText());
 		}
 
 		return searchTriggerList;
@@ -89,7 +89,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}
 
 	public WebElement spotlightType(final String type ) {
-		return getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
+		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
 	}
 
 	// "visited" by the promotion
@@ -121,7 +121,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}*/
 
 	public WebElement promotionType(final String promotionType) {
-		return getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));
+		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));
 	}
 
 	@Override

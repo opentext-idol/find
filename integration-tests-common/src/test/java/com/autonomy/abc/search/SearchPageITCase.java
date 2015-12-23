@@ -160,12 +160,12 @@ public class SearchPageITCase extends ABCTestBase {
 		search("dog");
 		Waits.loadOrFadeWait();
 		assertThat("Back to first page button is not disabled", searchPage.isBackToFirstPageButtonDisabled());
-		assertThat("Back a page button is not disabled", AppElement.getParent(searchPage.backPageButton()).getAttribute("class"),containsString("disabled"));
+		assertThat("Back a page button is not disabled", ElementUtil.getParent(searchPage.backPageButton()).getAttribute("class"),containsString("disabled"));
 
 		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 		searchPage.paginateWait();
- 		assertThat("Back to first page button is not enabled", AppElement.getParent(searchPage.backToFirstPageButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Back a page button is not enabled", AppElement.getParent(searchPage.backPageButton()).getAttribute("class"),not(containsString("disabled")));
+ 		assertThat("Back to first page button is not enabled", ElementUtil.getParent(searchPage.backToFirstPageButton()).getAttribute("class"),not(containsString("disabled")));
+		assertThat("Back a page button is not enabled", ElementUtil.getParent(searchPage.backPageButton()).getAttribute("class"),not(containsString("disabled")));
 		assertThat("Page 2 is not active", searchPage.isPageActive(2));
 
 		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
@@ -182,8 +182,8 @@ public class SearchPageITCase extends ABCTestBase {
 
 		ElementUtil.javascriptClick(searchPage.forwardToLastPageButton(), getDriver());
 		searchPage.paginateWait();
-		assertThat("Forward to last page button is not disabled", AppElement.getParent(searchPage.forwardToLastPageButton()).getAttribute("class"),containsString("disabled"));
-		assertThat("Forward a page button is not disabled", AppElement.getParent(searchPage.forwardPageButton()).getAttribute("class"),containsString("disabled"));
+		assertThat("Forward to last page button is not disabled", ElementUtil.getParent(searchPage.forwardToLastPageButton()).getAttribute("class"),containsString("disabled"));
+		assertThat("Forward a page button is not disabled", ElementUtil.getParent(searchPage.forwardPageButton()).getAttribute("class"),containsString("disabled"));
 
 		final int numberOfPages = searchPage.getCurrentPageNumber();
 
