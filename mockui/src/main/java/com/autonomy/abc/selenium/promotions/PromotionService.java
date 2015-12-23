@@ -95,10 +95,11 @@ public class PromotionService {
         return deleteButton;
     }
 
-    public void delete(String title) {
+    public PromotionsPage delete(String title) {
         goToPromotions();
         WebElement deleteButton = deleteNoWait(promotionsPage.getPromotionLinkWithTitleContaining(title));
         new WebDriverWait(getDriver(), 20).until(ExpectedConditions.stalenessOf(deleteButton));
+        return promotionsPage;
     }
 
     public PromotionsPage deleteAll() {
