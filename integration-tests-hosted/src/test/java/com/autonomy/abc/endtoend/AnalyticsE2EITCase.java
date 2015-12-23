@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
@@ -183,6 +184,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     private void verifyTriggerPromotes(List<String> promotedDocuments, String trigger, boolean promotes) {
         search(trigger);
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
+        Waits.loadOrFadeWait();
         if (searchPage.showMorePromotionsButton().isDisplayed()) {
             searchPage.showMorePromotions();
         }

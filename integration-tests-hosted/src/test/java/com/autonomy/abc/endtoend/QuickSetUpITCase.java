@@ -78,7 +78,7 @@ public class QuickSetUpITCase extends HostedTestBase {
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         PromotionsPage promotionsPage = getElementFactory().getPromotionsPage();
         promotionsPage.getPromotionLinkWithTitleContaining(trigger).findElement(By.className("promotion-delete")).click();
-        promotionsPage.Waits.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         getDriver().findElement(By.className("modal-action-button")).click();
 
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Removed a spotlight promotion"));
