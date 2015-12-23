@@ -123,6 +123,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		final WebElement addSynonymsTextBox = synonymAddTextBox();
 		addSynonymsTextBox.clear();
 		addSynonymsTextBox.sendKeys(synonyms);
+		Waits.loadOrFadeWait();
 		ElementUtil.tryClickThenTryParentClick(synonymAddButton(), getDriver());
 		Waits.loadOrFadeWait();
 	}
