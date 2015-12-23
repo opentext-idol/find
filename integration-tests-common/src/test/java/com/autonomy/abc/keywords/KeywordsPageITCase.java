@@ -74,10 +74,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		String blacklist = "illegal";
 
 		searchPage = keywordService.addSynonymGroup(synonyms);
-		for (String synonym : synonyms) {
-			verifyThat("search title contains " + synonym, searchPage.getHeadingSearchTerm(), containsString(synonym));
-		}
-		
+		verifyThat("search title contains one of the synonym group", searchPage.getHeadingSearchTerm(), isIn(synonyms));
+
 		keywordService.addBlacklistTerms(blacklist);
 		keywordsPage.filterView(KeywordFilter.ALL);
 		keywordsPage.selectLanguage(Language.ENGLISH);
@@ -356,9 +354,9 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	private void verifySearchKeywords(final List<String> synonyms) {
-		for (final String synonym : synonyms) {
-			verifyThat(synonym + " included in title", searchPage.title(), containsString(synonym));
-			verifyThat(synonym + " included in 'You searched for' section", searchPage.youSearchedFor(), hasItem(synonym));
+		verifyThat("One of the synonyms is included in title", searchPage.getHeadingSearchTerm(), isIn(synonyms));
+		for(String searchedFor : searchPage.youSearchedFor()) {
+			verifyThat("All searched for terms are within synonym group", searchedFor, isIn(synonyms));
 		}
 		verifyThat("synonyms appear in query analysis", searchPage.getSynonymGroupSynonyms(synonyms.get(0)), containsItems(synonyms));
 		verifyThat(searchPage.countKeywords(), is(synonyms.size()));
@@ -490,22 +488,23 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	//CCUK-3245
 	public void testAddingForbiddenKeywordsFromUrl() {
-		String blacklistUrl = getConfig().getWebappUrl() + "/p/keywords/create/blacklisted/English/";
-		String synonymsUrl = getConfig().getWebappUrl() + "/p/keywords/create/synonyms/English/";
+		String blacklistUrl = getConfig().getWebappUrl() + "/keywords/create/blacklisted/English/";
+		String synonymsUrl = getConfig().getWebappUrl() + "/keywords/create/synonyms/English/";
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
 			blacklistUrl = getConfig().getWebappUrl() + "keywords/create/blacklisted/englishUTF8/";
 			synonymsUrl = getConfig().getWebappUrl() + "keywords/create/synonyms/englishUTF8/";
 		}
+		//TODO check that OR has been added in lower case?
 		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {
 			getDriver().get(blacklistUrl + forbidden);
 			Waits.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem("(")));
+			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem(forbidden)));
 
 			getDriver().get(synonymsUrl + forbidden);
 			Waits.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem("(")));
+			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem(forbidden)));
 		}
 	}
 
