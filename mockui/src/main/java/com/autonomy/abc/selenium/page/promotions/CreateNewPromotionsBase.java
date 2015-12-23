@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -54,7 +55,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 
 		try {
 			loadOrFadeWait();
-			waitUntilClickableThenClick(triggerAddButton());
+			ElementUtil.waitUntilClickableThenClick(triggerAddButton(), getDriver());
 		} catch (final Exception e) {
 			System.out.println("could not click trigger button with trigger " + searchTrigger);
 		}

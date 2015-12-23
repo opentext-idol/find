@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.language.Language;
 import org.apache.commons.lang3.StringUtils;
@@ -114,13 +115,13 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link not directing to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
         assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("rouge"));
-        assertThat("Finish button should be disabled until further synonyms added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        assertThat("Finish button should be disabled until further synonyms added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
         createKeywordsPage.synonymAddTextBox().sendKeys("rouge");
         createKeywordsPage.synonymAddButton().click();
         assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("rouge"));
-        assertThat("Finish button should be disabled until further synonyms added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        assertThat("Finish button should be disabled until further synonyms added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
         createKeywordsPage.synonymAddTextBox().clear();
         createKeywordsPage.synonymAddTextBox().sendKeys("red");
@@ -128,7 +129,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertEquals(2, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(),hasItem("rouge"));
         assertThat("keywords list does not include term 'red'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("red"));
-        assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
         searchPage.waitForSynonymsLoadingIndicatorToDisappear();
@@ -162,7 +163,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link not directing to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
         assertEquals(3, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("Wrong prospective blacklisted terms added", createKeywordsPage.getProspectiveKeywordsList(), hasItems("lodge", "dodge", "podge"));
-        assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.enabledFinishWizardButton(), "disabled"));
+        assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.enabledFinishWizardButton(), "disabled"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));

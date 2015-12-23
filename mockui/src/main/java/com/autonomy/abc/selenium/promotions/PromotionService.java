@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -64,7 +65,7 @@ public class PromotionService {
         if (promotion instanceof DynamicPromotion) {
             searchPage.promoteThisQueryButton().click();
         } else {
-            searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
+            ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
         }
         promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
         getElementFactory().getSearchPage();

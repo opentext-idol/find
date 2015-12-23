@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -172,7 +173,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     public List<String> getLanguageList() {
         final List<String> languages = new ArrayList<>();
 
-        if (isAttributePresent(getParent(selectLanguageButton()), "disabled")) {
+        if (ElementUtil.isAttributePresent(getParent(selectLanguageButton()), "disabled")) {
             languages.add(getSelectedLanguage());
             return languages;
         } else {

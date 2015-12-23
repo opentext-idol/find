@@ -219,7 +219,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
     }
 
@@ -284,13 +284,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
 
         editReferencesPage.searchResultCheckbox(6).click();
         final String newPromotedDoc = editReferencesPage.getSearchResultTitle(6);
 
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail"));
 

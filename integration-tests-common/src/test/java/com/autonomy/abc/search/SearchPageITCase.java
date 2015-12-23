@@ -115,11 +115,11 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
-		assertThat("Promote these items button should not be enabled", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
+		assertThat("Promote these items button should not be enabled", ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount(), is(0));
 
 		searchPage.searchResultCheckbox(1).click();
-		assertThat("Promote these items button should be enabled", !searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
+		assertThat("Promote these items button should be enabled", !ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(1));
 
 		searchPage.promotionsBucketClose();
@@ -128,7 +128,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.loadOrFadeWait();
 		assertThat("Promoted items bucket has not appeared", searchPage.promotionsBucket().isDisplayed());
-		assertThat("Promote these items button should not be enabled", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
+		assertThat("Promote these items button should not be enabled", ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 		assertThat("Promoted items count should equal 0", searchPage.promotedItemsCount(), is(0));
 	}
 
@@ -461,7 +461,7 @@ public class SearchPageITCase extends ABCTestBase {
 			bucketDoc.findElement(By.cssSelector("i:nth-child(2)")).click();
 		}
 
-		assertThat("promote button should be disabled when bucket has no documents", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
+		assertThat("promote button should be disabled when bucket has no documents", ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 
 		search("tooth");
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(), is(0));
@@ -493,7 +493,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.deleteDocFromWithinBucket(docTitles.get(0));
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(0));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(5).isSelected());
-		assertThat("promote button should be disabled when bucket has no documents", searchPage.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
+		assertThat("promote button should be disabled when bucket has no documents", ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
 	}
 
 	@Test
@@ -607,7 +607,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.selectLanguage(Language.ENGLISH);
 		search("al");
 		searchPage.loadOrFadeWait();
-		assertThat("Languages should be enabled", !searchPage.isAttributePresent(searchPage.languageButton(), "disabled"));
+		assertThat("Languages should be enabled", !ElementUtil.isAttributePresent(searchPage.languageButton(), "disabled"));
 
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();

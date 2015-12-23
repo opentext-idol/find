@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Factory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -53,7 +54,7 @@ public abstract class UserService {
     public void deleteOtherUsers() {
         usersPage = goToUsers();
         for (final WebElement deleteButton : usersPage.getTable().findElements(By.cssSelector("button"))) {
-            if (!usersPage.isAttributePresent(deleteButton, "disabled")) {
+            if (!ElementUtil.isAttributePresent(deleteButton, "disabled")) {
                 usersPage.loadOrFadeWait();
                 deleteButton.click();
                 usersPage.loadOrFadeWait();

@@ -122,7 +122,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		final WebElement addSynonymsTextBox = synonymAddTextBox();
 		addSynonymsTextBox.clear();
 		addSynonymsTextBox.sendKeys(synonyms);
-		tryClickThenTryParentClick(synonymAddButton());
+		ElementUtil.tryClickThenTryParentClick(synonymAddButton(), getDriver());
 		loadOrFadeWait();
 	}
 
@@ -130,7 +130,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		final WebElement addBlacklistedTextBox = blacklistAddTextBox();
 		addBlacklistedTextBox.clear();
 		addBlacklistedTextBox.sendKeys(blacklistedTerms);
-		tryClickThenTryParentClick(blacklistAddButton());
+		ElementUtil.tryClickThenTryParentClick(blacklistAddButton(), getDriver());
 	}
 
 	public int countKeywords() {
