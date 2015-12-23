@@ -102,9 +102,9 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     }
 
     private void promotionShownCorrectly (WebElement promotion) {
-        assertThat(promotion, hasClass("promoted-document"));
-        assertThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
-        assertThat(promotion.findElement(By.className("icon-star")), displayed());
+        verifyThat(promotion, hasClass("promoted-document"));
+        verifyThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
+        verifyThat(promotion.findElement(By.className("fa-star")), displayed());
     }
 
     @After

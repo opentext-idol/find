@@ -50,6 +50,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     public ConnectionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        setInitialUser(config.getUser("index_tests"));
     }
 
     @Before
