@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 
 class KeywordGroup {
@@ -43,7 +44,7 @@ class KeywordGroup {
                 page.continueWizardButton().click();
                 incrementStep();
             }
-            page.loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
 
         @Override

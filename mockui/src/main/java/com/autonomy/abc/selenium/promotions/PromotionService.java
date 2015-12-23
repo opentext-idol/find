@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -90,7 +91,7 @@ public class PromotionService {
         deleteButton.click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         deleteModal.findElement(By.cssSelector(".btn-danger")).click();
-        deleteModal.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         return deleteButton;
     }
 

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -28,7 +29,7 @@ public class DocumentViewer extends AppElement implements AppPage {
 
     public void close() {
         closeButton().click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     /* use this only to check that button is displayed - click by using previous() */
@@ -83,7 +84,7 @@ public class DocumentViewer extends AppElement implements AppPage {
 
     @Override
     public void waitForLoad() {
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     private void waitForDocumentLoad() {

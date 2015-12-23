@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 		User user = aNewUser.signUpAs(Role.USER, usersPage);
-		usersPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		User admin = newUser2.signUpAs(Role.ADMIN, usersPage);
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
@@ -122,7 +123,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		User user = singleSignUp();
 
 		userService.changeRole(user, Role.ADMIN);
-		usersPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		userService.changeRole(user, Role.USER);
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.USER));
@@ -191,7 +192,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(Role.NONE));
 
-		usersPage.waitForGritterToClear();
+		Waits.waitForGritterToClear();
 
 		logoutAndNavigateToWebApp();
 
@@ -343,7 +344,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		verifyThat(usersPage.getUserCountInTitle(), is(1));
 
 		userService.deleteUser(user1);
-		usersPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		verifyThat(usersPage.getUserCountInTitle(), is(0));
 	}
 }

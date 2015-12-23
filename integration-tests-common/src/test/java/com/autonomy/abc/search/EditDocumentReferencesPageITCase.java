@@ -17,6 +17,7 @@ import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.search.SearchFilter;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
@@ -100,7 +101,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         promotionsDetailPage = promotionService.goToDetails("jedi");
         promotionsDetailPage.addMoreButton().click();
-        promotionsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         final List<String> secondPromotionsBucketList = editReferencesPage.promotionsBucketList();
@@ -255,7 +256,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
             }
 
             ElementUtil.javascriptClick(editReferencesPage.forwardPageButton(), getDriver());
-            editReferencesPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
 
         editReferencesPage.emptyBucket();

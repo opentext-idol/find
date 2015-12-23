@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Factory;
+import com.autonomy.abc.selenium.util.Waits;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
@@ -72,7 +73,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         //Sometimes it requires us to add a valid user before invalid users show up
         userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
 
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
     }
@@ -111,7 +112,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         verifyThat("number of users has not increased", usersPage.getUsernames(), hasSize(existingUsers));
 
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
     }
@@ -128,7 +129,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         verifyThat(usersPage.getUsernames(), hasItem(validUser.getUsername()));
 
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat("exactly one new user appears", usersPage.getUsernames(), hasSize(existingUsers + 1));
         return user;
     }
@@ -311,7 +312,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         public Boolean apply(WebDriver driver) {
             driver.navigate().refresh();
             usersPage = (HSOUsersPage) getElementFactory().getUsersPage();
-            usersPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
             return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
         }
     }

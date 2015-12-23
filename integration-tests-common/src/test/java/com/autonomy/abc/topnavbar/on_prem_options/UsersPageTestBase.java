@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
@@ -75,7 +76,7 @@ public class UsersPageTestBase extends ABCTestBase {
         usersPage.closeModal();
 
         try {
-            usersPage.waitForGritterToClear();
+            Waits.waitForGritterToClear();
         } catch (InterruptedException e) { /**/ }
 
         logout();

@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -55,7 +56,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
 
     protected void selectConnectorType(ConnectorType type) {
         connectorTypeStepTab.typeBtn(type).click();
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         for (ConnectorType eachType : ConnectorType.values()) {
             if (eachType.equals(type)) {

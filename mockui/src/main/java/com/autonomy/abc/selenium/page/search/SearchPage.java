@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
@@ -112,7 +113,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void promotionsBucketClose() {
 		promotionsBucket().findElement(By.cssSelector(".close-link")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	/* promoted results */
@@ -153,7 +154,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 				if (promotionSummaryForwardButton().isDisplayed()) {
 					promotionSummaryForwardToEndButton().click();
-					loadOrFadeWait();
+					Waits.loadOrFadeWait();
 					promotionsList.addAll(getVisiblePromotedItems());
 					final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
 
@@ -202,7 +203,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getPromotionSummaryLabels() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		final List<String> labelList = new ArrayList<>();
 
 		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
@@ -213,7 +214,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 			if (promotionSummaryForwardButton().isDisplayed()) {
 				promotionSummaryForwardToEndButton().click();
-				loadOrFadeWait();
+				Waits.loadOrFadeWait();
 				labelList.addAll(getVisiblePromotionLabels());
 				final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
 
@@ -231,7 +232,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getPromotionLabels() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		final List<String> labelList = new ArrayList<>();
 
 		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
@@ -242,7 +243,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 			if (promotionSummaryForwardButton().isDisplayed()) {
 				promotionSummaryForwardToEndButton().click();
-				loadOrFadeWait();
+				Waits.loadOrFadeWait();
 				labelList.addAll(getPromotionTypeLabels());
 				final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
 
@@ -275,12 +276,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void showMorePromotions() {
 		showMorePromotionsButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void showLessPromotions() {
 		showLessPromotionsButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public WebElement showMorePromotionsButton() {
@@ -316,9 +317,9 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
             if((i + 1) % 6 == 0){
                 forwardPageButton().click();
-                loadOrFadeWait();
+                Waits.loadOrFadeWait();
                 waitForSearchLoadIndicatorToDisappear();
-                loadOrFadeWait();
+                Waits.loadOrFadeWait();
             }
         }
 
@@ -351,7 +352,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		try {
 			waitForSearchLoadIndicatorToDisappear();
 		} catch (final StaleElementReferenceException|NoSuchElementException n) {
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 		}
 	}
 
@@ -453,7 +454,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void openParametricValuesList() {
 		ElementUtil.scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")), getDriver());
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	/* helper methods */
@@ -468,10 +469,10 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public List<String> createAMultiDocumentPromotion(final int numberOfDocs) {
 		promoteTheseDocumentsButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		List<String> promotedDocTitles = addToBucket(numberOfDocs);
 		ElementUtil.scrollIntoViewAndClick(promoteTheseItemsButton(), getDriver());
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		return promotedDocTitles;
 	}
 

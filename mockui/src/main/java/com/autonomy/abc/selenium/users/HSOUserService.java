@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -47,14 +48,14 @@ public class HSOUserService extends UserService {
             trashCan.click();
             ModalView.getVisibleModalView(getDriver()).okButton().click();
             new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
-            usersPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
     }
 
     public void deleteUser(User user){
         usersPage = goToUsers();
         usersPage.getUserRow(user).findElement(By.className("users-deleteUser")).click();
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
     }
@@ -77,7 +78,7 @@ public class HSOUserService extends UserService {
     public void resetAuthentication(HSOUser user) {
         usersPage = goToUsers();
         usersPage.resetAuthenticationButton(user).click();
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         ModalView.getVisibleModalView(getDriver()).okButton().click();
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Reset authentication for " + user.getUsername()));
     }
@@ -88,7 +89,7 @@ public class HSOUserService extends UserService {
         pencil.click();
         usersPage.editUsernameInput(user).setAndSubmit(newUsername);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         ((HSOUser) user).setUsername(newUsername);
         return user;
     }

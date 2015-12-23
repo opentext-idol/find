@@ -17,10 +17,7 @@ import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
-import com.autonomy.abc.selenium.util.DriverUtil;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Errors;
-import com.autonomy.abc.selenium.util.Locator;
+import com.autonomy.abc.selenium.util.*;
 import com.google.common.collect.Lists;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -594,12 +591,12 @@ public class FindITCase extends HostedTestBase {
         String end = getDateString(FindResultsPage.DateEnum.WEEK);
 
         results.filterByDate(start, end);
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         results.filterByDate(FindResultsPage.DateEnum.CUSTOM); //For some reason doesn't close first time
         results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         assertThat(results.getStartDateFilter().getAttribute("value"), is(start));
         assertThat(results.getEndDateFilter().getAttribute("value"), is(end));
@@ -626,7 +623,7 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
         keywordService.deleteAll(KeywordFilter.ALL);
 
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search(nonsense);
@@ -656,7 +653,7 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
         keywordService.deleteAll(KeywordFilter.ALL);
 
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         getDriver().switchTo().window(browserHandles.get(1));
         find.search("Cat");
@@ -753,7 +750,7 @@ public class FindITCase extends HostedTestBase {
         final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
         for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
             find.search(hiddenBooleansProximity);
-            find.loadOrFadeWait();
+            Waits.loadOrFadeWait();
             assertThat(find.getText(), not(containsString(Errors.Search.GENERAL)));
         }
     }
@@ -764,48 +761,48 @@ public class FindITCase extends HostedTestBase {
 
         int initialSearchCount = find.countSearchResults();
         find.search("leg[2:2]");
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat("Failed with the following search term: leg[2:2]  Search count should have reduced on initial search 'leg'",
                 initialSearchCount, greaterThan(find.countSearchResults()));
 
         search("red");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         initialSearchCount = searchPage.countSearchResults();
         search("red star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int secondSearchCount = searchPage.countSearchResults();
         assertThat("Failed with the following search term: red star  Search count should have increased on initial search: red",
                 initialSearchCount, lessThan(secondSearchCount));
 
         search("\"red star\"");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int thirdSearchCount = searchPage.countSearchResults();
         assertThat("Failed with the following search term: '\"red star\"'  Search count should have reduced on initial search: red star",
                 secondSearchCount, greaterThan(thirdSearchCount));
 
         search("red NOT star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int redNotStar = searchPage.countSearchResults();
         assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
                 initialSearchCount, greaterThan(redNotStar));
 
         search("star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int star = searchPage.countSearchResults();
 
         search("star NOT red");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int starNotRed = searchPage.countSearchResults();
         assertThat("Failed with the following search term: star NOT red  Search count should have reduced on initial search: star",
                 star, greaterThan(starNotRed));
 
         search("red OR star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         assertThat("Failed with the following search term: red OR star  Search count should be the same as initial search: red star",
                 secondSearchCount, CoreMatchers.is(searchPage.countSearchResults()));
 
         search("red AND star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int fourthSearchCount = searchPage.countSearchResults();
         assertThat("Failed with the following search term: red AND star  Search count should have reduced on initial search: red star",
                 secondSearchCount, greaterThan(fourthSearchCount));

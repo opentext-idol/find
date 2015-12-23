@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
+import com.autonomy.abc.selenium.util.Waits;
 
 public class WebConnector extends Connector {
     private String url;
@@ -95,13 +96,13 @@ public class WebConnector extends Connector {
                 page.nextButton().click();
                 incrementStep();
             }
-            page.loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
 
         @Override
         public void cancel() {
             page.cancelButton().click();
-            page.loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
     }
 

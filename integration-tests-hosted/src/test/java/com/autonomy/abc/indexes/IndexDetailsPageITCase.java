@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -105,10 +106,10 @@ public class IndexDetailsPageITCase extends HostedTestBase {
         getDriver().manage().window().setSize(new Dimension(1100, 700));
 
         ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight)");
-        indexesPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, -document.body.scrollHeight)");
-        indexesPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         indexesDetailPage.backButton().click();
 

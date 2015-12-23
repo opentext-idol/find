@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -123,7 +124,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		addSynonymsTextBox.clear();
 		addSynonymsTextBox.sendKeys(synonyms);
 		ElementUtil.tryClickThenTryParentClick(synonymAddButton(), getDriver());
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void addBlacklistedTerms(final String blacklistedTerms) {
@@ -134,7 +135,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 	}
 
 	public int countKeywords() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		return findElements(By.cssSelector(".remove-word")).size();
 	}
 
@@ -152,7 +153,7 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 
 	public void deleteKeyword(final String keyword) {
 		findElement(By.xpath(".//span[contains(text(), '" + keyword + "')]/i")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public List<String> getProspectiveKeywordsList() {

@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.util;
 
-public class Wait {
+public class Waits {
 
     public static void loadOrFadeWait() {
         try {

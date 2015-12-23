@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.gettingStarted;
 
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -26,7 +27,7 @@ public class GettingStartedPage extends AppElement implements AppPage {
     public void addSiteToIndex(String url){
         WebElement inputBox = addURLInput();
         inputBox.sendKeys(url);
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
         inputBox.findElement(By.xpath(".//..//i")).click();
     }
 }

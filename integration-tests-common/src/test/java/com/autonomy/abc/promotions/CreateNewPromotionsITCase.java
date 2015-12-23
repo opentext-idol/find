@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -112,8 +113,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     public void testNonNumericEntryInPinToPosition() {
         createPromotionsPage.promotionType("PIN_TO_POSITION").click();
         createPromotionsPage.continueButton().click();
-        createPromotionsPage.loadOrFadeWait();
-        createPromotionsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat(createPromotionsPage.positionInputValue(), is(1));
 
         trySendKeysToPinPosition(Keys.CONTROL, "a");
@@ -133,7 +134,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         assertThat(createPromotionsPage.positionInputValue(), is(2));
 
         ElementUtil.tryClickThenTryParentClick(createPromotionsPage.continueButton(), getDriver());
-        createPromotionsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat(createPromotionsPage, hasTextThat(containsString(SearchTriggerStep.TITLE)));
         body.getSideNavBar().toggle();
     }
@@ -295,11 +296,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         }
 
         searchPage.modifiedResultsCheckBox().click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat(searchPage, not(containsText(promotedDocTitle)));
 
         searchPage.modifiedResultsCheckBox().click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat(searchPage, containsText(promotedDocTitle));
 
         if (config.getType().equals(ApplicationType.ON_PREM)) {
@@ -452,7 +453,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         goToTriggerStep();
         createPromotionsPage.addSearchTrigger("fox luke");
         finishPromotion();
-        createPromotionsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         searchPage.promoteTheseDocumentsButton().click();

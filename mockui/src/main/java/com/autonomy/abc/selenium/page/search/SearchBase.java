@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.search.SearchFilter;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
@@ -162,7 +163,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public int getCurrentPageNumber() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 //		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
 		waitForSearchLoadIndicatorToDisappear();
 		return Integer.parseInt(findElement(By.cssSelector(".btn-nav.active")).getText());
@@ -197,7 +198,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	@Deprecated
 	public void selectDatabase(final String databaseName) {
 		indexesTree().select(databaseName);
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	@Deprecated
@@ -223,7 +224,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 			} else {
 				System.out.println("Only one database remaining. Can't deselect final database");
 			}
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 		}
 	}
 
@@ -263,7 +264,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 			checkbox.toggle();
 		}
 
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();
 	}
 
@@ -283,12 +284,12 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 
 		if(!checkbox.isDisplayed()){
 			openPublicFilter();
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 		}
 
 		checkbox.toggle();
 
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();
 	}
 
@@ -297,13 +298,13 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
 		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void closeFromDatePicker() {
 		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
 			findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 			waitForSearchLoadIndicatorToDisappear();
 		}
 	}
@@ -320,13 +321,13 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
 		findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void closeUntilDatePicker() {
 		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
 			findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 			waitForSearchLoadIndicatorToDisappear();
 		}
 	}
@@ -360,7 +361,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		expand(Facet.FIELD_TEXT);
 		try {
 			fieldTextAddButton().click();
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 		} catch (ElementNotVisibleException e) {
 			/* already clicked */
 		}
@@ -469,7 +470,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 				return !promotionsBox.isDisplayed() || resultsAreLoaded(promotionsBox);
 			}
 		});
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
     }
 
 	private boolean resultsAreLoaded(WebElement promotionsBox) {
@@ -479,7 +480,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	public void waitForRelatedConceptsLoadIndicatorToDisappear() {
 		try {
 			while (!findElement(By.cssSelector(".search-related-concepts .loading")).getAttribute("class").contains("hidden")){
-				loadOrFadeWait();
+				Waits.loadOrFadeWait();
 			}
 		} catch (final StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
 			// Loading Complete

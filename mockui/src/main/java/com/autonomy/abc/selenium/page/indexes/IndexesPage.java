@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.indexes;
 
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -42,9 +43,9 @@ public class IndexesPage extends AppElement implements AppPage {
 
     public void deleteIndex(String indexName){
         findIndex(indexName).findElement(By.cssSelector(".delete-action-button-container button")).click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
         modalClick();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     private void modalClick() {
