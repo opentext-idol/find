@@ -15,6 +15,9 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.search.SearchFilter;
+import com.autonomy.abc.selenium.util.DriverUtil;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
@@ -28,6 +31,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,7 +101,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         promotionsDetailPage = promotionService.goToDetails("jedi");
         promotionsDetailPage.addMoreButton().click();
-        promotionsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         final List<String> secondPromotionsBucketList = editReferencesPage.promotionsBucketList();
@@ -132,13 +136,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("unrelated");
 
         for (int i = 1; i < 7; i++) {
-            AppElement.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
+            ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
             editReferencesPage.searchResultCheckbox(i).click();
             verifyThat(editReferencesPage.promotionsBucketList().size(), is(i + 4));
         }
 
         for (int j = 6; j > 0; j--) {
-            AppElement.scrollIntoView(editReferencesPage.searchResultCheckbox(j), getDriver());
+            ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(j), getDriver());
             editReferencesPage.searchResultCheckbox(j).click();
             verifyThat(editReferencesPage.promotionsBucketList().size(), is(j - 1 + 4));
         }
@@ -181,7 +185,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("mansion");
         editReferencesPage.searchResultCheckbox(1).click();
         editReferencesPage.searchResultCheckbox(2).click();
-        editReferencesPage.javascriptClick(editReferencesPage.forwardPageButton());
+        ElementUtil.javascriptClick(editReferencesPage.forwardPageButton(), getDriver());
         editReferencesPage.searchResultCheckbox(3).click();
         editReferencesPage.searchResultCheckbox(4).click();
 
@@ -216,7 +220,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
     }
 
@@ -251,8 +255,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
                 checkDocumentViewable(searchResultTitle);
             }
 
-            editReferencesPage.javascriptClick(editReferencesPage.forwardPageButton());
-            editReferencesPage.loadOrFadeWait();
+            ElementUtil.javascriptClick(editReferencesPage.forwardPageButton(), getDriver());
+            Waits.loadOrFadeWait();
         }
 
         editReferencesPage.emptyBucket();
@@ -281,13 +285,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
 
         editReferencesPage.searchResultCheckbox(6).click();
         final String newPromotedDoc = editReferencesPage.getSearchResultTitle(6);
 
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail"));
 

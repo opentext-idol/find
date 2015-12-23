@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -34,7 +35,7 @@ public class HSONewUser implements NewUser {
 
         new WebDriverWait(usersPage.getDriver(),15).withMessage("User hasn't been created").until(GritterNotice.notificationContaining("Created user"));
 
-        hsoUsersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         if (hsoUsersPage.getUsernameInput().getValue().equals("")) {
             return new HSOUser(username, email, role, provider);

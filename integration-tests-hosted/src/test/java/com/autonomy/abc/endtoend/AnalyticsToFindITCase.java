@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +44,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         keywordService = new KeywordService(getApplication(), getElementFactory());
 
-        PromotionsPage promotions = getElementFactory().getPromotionsPage();
-        browserHandles = promotions.createAndListWindowHandles();
+        browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
         getDriver().switchTo().window(browserHandles.get(1));
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();

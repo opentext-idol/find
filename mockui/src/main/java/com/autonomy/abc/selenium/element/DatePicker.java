@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.element;
 
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -43,7 +44,7 @@ public class DatePicker extends AppElement {
 			minuteString = '0' + minuteString;
 		}
 		findElement(By.cssSelector(".timepicker-minutes")).findElement(By.xpath(".//td[contains(text(), '" + minuteString + "')]")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void setMinuteUsingIncrementDecrement(final int minute) {
@@ -57,7 +58,7 @@ public class DatePicker extends AppElement {
 				decrementMinutes();
 			}
 		}
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void setHourUsingIncrementDecrement(final int hour) {
@@ -71,7 +72,7 @@ public class DatePicker extends AppElement {
 				decrementHours();
 			}
 		}
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void resetDateToToday() {
@@ -139,10 +140,10 @@ public class DatePicker extends AppElement {
 		datePickerMonthSelect(month.format(date));
 		datePickerDaySelect(day.format(date));
 		togglePicker();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		timePickerHour().click();
 		selectTimePickerHour(Integer.parseInt(hour.format(date)));
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		timePickerMinute().click();
 		selectTimePickerMinute(Integer.parseInt(minute.format(date)));
 		setMinuteUsingIncrementDecrement(Integer.parseInt(minute.format(date)));
@@ -150,17 +151,17 @@ public class DatePicker extends AppElement {
 
 	public void datePickerYearSelect(final String year) {
 		getDriver().findElement(By.xpath(".//span[contains(@class, 'year')][text()='" + year + "']")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void datePickerMonthSelect(final String month) {
 		getDriver().findElement(By.xpath(".//span[contains(@class, 'month')][text()='" + month + "']")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void datePickerDaySelect(final String day) {
 		final String strippedDay = StringUtils.stripStart(day, "0");
 		getDriver().findElement(By.xpath(".//td[@class='day' or @class='day today' or @class='day today weekend' or @class='day active' or @class='day active today' or @class='day weekend'][text()='" + strippedDay + "']")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 }

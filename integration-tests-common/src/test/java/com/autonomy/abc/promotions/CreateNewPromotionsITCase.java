@@ -12,7 +12,9 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +50,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage = getElementFactory().getSearchPage();
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
-        searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
+        ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
         return promotedDocTitles;
     }
 
@@ -111,8 +113,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     public void testNonNumericEntryInPinToPosition() {
         createPromotionsPage.promotionType("PIN_TO_POSITION").click();
         createPromotionsPage.continueButton().click();
-        createPromotionsPage.loadOrFadeWait();
-        createPromotionsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat(createPromotionsPage.positionInputValue(), is(1));
 
         trySendKeysToPinPosition(Keys.CONTROL, "a");
@@ -131,8 +133,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         trySendKeysToPinPosition("bad");
         assertThat(createPromotionsPage.positionInputValue(), is(2));
 
-        createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.continueButton());
-        createPromotionsPage.loadOrFadeWait();
+        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.continueButton(), getDriver());
+        Waits.loadOrFadeWait();
         assertThat(createPromotionsPage, hasTextThat(containsString(SearchTriggerStep.TITLE)));
         body.getSideNavBar().toggle();
     }
@@ -179,7 +181,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         goToTriggerStep();
         assertThat(createPromotionsPage.triggerAddButton(), disabled());
 
-        createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton());
+        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton(), getDriver());
         assertThat(createPromotionsPage.getSearchTriggersList(), empty());
 
         createPromotionsPage.addSearchTrigger("trigger");
@@ -197,7 +199,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         goToTriggerStep();
         assertThat(createPromotionsPage.triggerAddButton(), disabled());
 
-        createPromotionsPage.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton());
+        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton(), getDriver());
         assertThat(createPromotionsPage.getSearchTriggersList(), empty());
 
         createPromotionsPage.addSearchTrigger("bag");
@@ -294,11 +296,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         }
 
         searchPage.modifiedResultsCheckBox().click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat(searchPage, not(containsText(promotedDocTitle)));
 
         searchPage.modifiedResultsCheckBox().click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat(searchPage, containsText(promotedDocTitle));
 
         if (config.getType().equals(ApplicationType.ON_PREM)) {
@@ -369,7 +371,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         verifyThat(getDriver().getCurrentUrl(), containsString("search/modified"));
         verifyThat(searchPage.promotedItemsCount(), is(1));
         body.getSideNavBar().toggle();
-        searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
+        ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
 //        searchPage.promoteTheseItemsButton().click();
         createPromotionsPage.waitForLoad();
     }
@@ -451,7 +453,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         goToTriggerStep();
         createPromotionsPage.addSearchTrigger("fox luke");
         finishPromotion();
-        createPromotionsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         searchPage.promoteTheseDocumentsButton().click();

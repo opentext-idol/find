@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -24,9 +25,9 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         goToGoogleAndLogIn();
 
         driver.findElement(By.cssSelector(".T-I.J-J5-Ji.ar7.nf.T-I-ax7.L3")).click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
         driver.findElement(By.xpath("//div[text()='Mark all as read']")).click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     private void goToGoogleAndLogIn() {
@@ -107,7 +108,7 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
     private void clickLink() {
         driver.findElement(By.partialLinkText("here")).click();
 
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         List<String> handles = new ArrayList<>(driver.getWindowHandles());
         driver.switchTo().window(handles.get(1));
@@ -128,13 +129,5 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         driver.switchTo().window(handles.get(0));
         driver.close();
         driver.switchTo().window(handles.get(1));
-    }
-
-    private void loadOrFadeWait() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            /* NOOP */
-        }
     }
 }

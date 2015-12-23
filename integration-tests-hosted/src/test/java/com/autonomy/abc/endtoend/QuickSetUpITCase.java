@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,13 +54,13 @@ public class QuickSetUpITCase extends HostedTestBase {
         searchPage.selectAllIndexes();
         searchPage.findElement(By.xpath(".//label[text()[contains(., 'All')]]/div/ins")).click();
         new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'default_index')]]"))).click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         searchPage.waitForSearchLoadIndicatorToDisappear();
         searchPage.getSearchResult(1).click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat(getDriver().findElement(By.xpath("//*[text()='Reference']/../td")).getText(), is("http://" + site));
         getDriver().findElement(By.className("fa-close")).click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         String promotionTitle = searchPage.createAPromotion();
 
@@ -77,7 +78,7 @@ public class QuickSetUpITCase extends HostedTestBase {
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         PromotionsPage promotionsPage = getElementFactory().getPromotionsPage();
         promotionsPage.getPromotionLinkWithTitleContaining(trigger).findElement(By.className("promotion-delete")).click();
-        promotionsPage.loadOrFadeWait();
+        promotionsPage.Waits.loadOrFadeWait();
         getDriver().findElement(By.className("modal-action-button")).click();
 
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Removed a spotlight promotion"));

@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -137,12 +138,12 @@ public class ConnectionsPageITCase extends HostedTestBase {
             connectorIndexStepTab = newConnectionPage.getIndexStep();
             connectorIndexStepTab.selectIndexButton().click();
             connectorIndexStepTab.selectFirstIndex();
-            newConnectionPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
 
             Index firstIndex = connectorIndexStepTab.getChosenIndexInModal();
 
             connectorIndexStepTab.selectLastIndex();
-            newConnectionPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
 
             Index lastIndex = connectorIndexStepTab.getChosenIndexInModal();
 
@@ -175,7 +176,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
             connectorTypeStep.connectorUrl().setValue("http://waitinginthefor.est");
             connectorTypeStep.connectorName().setValue("i am lost");
             newConnectionPage.nextButton().click();
-            newConnectionPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
             newConnectionPage.nextButton().click();
 
             ConnectorIndexStepTab connectorIndexStep = newConnectionPage.getIndexStep();

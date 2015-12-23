@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -132,9 +133,9 @@ public class ConnectionService {
 
         NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
         newConnectionPage.nextButton().click();
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         newConnectionPage.nextButton().click();
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         ConnectorIndexStepTab connectorIndexStep = newConnectionPage.getIndexStep();
 
         connectorIndexStep.selectIndexButton().click();
@@ -157,12 +158,12 @@ public class ConnectionService {
         NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
 
         newConnectionPage.nextButton().click();
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         newConnectionPage.getConnectorConfigStep().skipSchedulingCheckbox().click();
 
         newConnectionPage.nextButton().click();
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         newConnectionPage.finishButton().click();
 
         new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining("Connector " + connector.getName() + " schedule has been cancelled successfully"));

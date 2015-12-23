@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +48,8 @@ public class PromotionsToFindITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-        PromotionsPage promotions = promotionService.deleteAll();
-        browserHandles = promotions.createAndListWindowHandles();
+        promotionService.deleteAll();
+        browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
         switchToFind();
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();

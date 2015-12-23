@@ -18,6 +18,7 @@ import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Waits;
 import com.google.common.collect.Lists;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.junit.Test;
@@ -95,9 +96,9 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
             createNewIndexPage.inputIndexName(indexName);
             createNewIndexPage.nextButton().click();
-            createNewIndexPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
             createNewIndexPage.nextButton().click();
-            createNewIndexPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
             createNewIndexPage.finishButton().click();
 
             new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining(indexCreationNotification));
@@ -174,7 +175,6 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
 
             body.getTopNavBar().notificationsDropdown();
-            getElementFactory().getSearchPage().loadOrFadeWait();
             for (Notification notification : body.getTopNavBar().getNotifications().getAllNotifications()) {
                 verifyThat(notification.getUsername(), is(devUsername));
             }

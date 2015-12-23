@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -34,11 +35,11 @@ public class FindIndexLeafNode implements IndexNodeElement {
 
     @Override
     public boolean isSelected() {
-        return AppElement.hasClass("icon-ok", container.findElement(By.cssSelector(".database-icon")));
+        return ElementUtil.hasClass("icon-ok", container.findElement(By.cssSelector(".database-icon")));
     }
 
     private boolean isPartiallySelected() {
-        return AppElement.hasClass("icon-minus", container.findElement(By.cssSelector(".database-icon")));
+        return ElementUtil.hasClass("icon-minus", container.findElement(By.cssSelector(".database-icon")));
     }
 
     @Override

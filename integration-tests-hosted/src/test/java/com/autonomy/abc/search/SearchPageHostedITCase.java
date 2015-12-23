@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -105,9 +106,9 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
 
-		searchPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 
 		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
@@ -120,13 +121,13 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 		getDriver().findElement(By.className("fa-close")).click();
 
-		searchPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 
 		searchPage.filterByAuthor(author); //'Unfilter'
 
-		searchPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 
 		author = "YLEIS";
 
@@ -134,9 +135,9 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
 
-		searchPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 
 		assertThat(searchPage.getHeadingResultsCount(), is(results));
 

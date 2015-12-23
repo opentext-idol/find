@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.menu;
 
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -27,7 +28,7 @@ public abstract class TopNavBar extends AppElement {
 
     public void notificationsDropdown(){
         getDriver().findElement(By.cssSelector("nav.affix-element .count-info")).click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     public void search(String searchTerm) {

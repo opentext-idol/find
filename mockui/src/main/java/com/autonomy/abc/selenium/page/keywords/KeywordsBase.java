@@ -33,7 +33,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	public abstract WebElement synonymInGroup(final String synonym);
 
 	public WebElement synonymGroup(final String synonymGroupLead) {
-		return getParent(getParent(leadSynonym(synonymGroupLead)));
+		return ElementUtil.ancestor(leadSynonym(synonymGroupLead), 2);
 	}
 
 	public void addSynonymToGroup(final String synonym, final SynonymGroup group) {

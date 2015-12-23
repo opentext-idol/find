@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
@@ -35,7 +36,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	// "Results for _____ (123)"
 	public String getHeadingSearchTerm() {
 		WebElement heading = getDriver().findElement(By.cssSelector(".heading > b"));
-		scrollIntoView(heading, getDriver());
+		ElementUtil.scrollIntoView(heading, getDriver());
 		return heading.getText();
 	}
 
@@ -112,7 +113,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void promotionsBucketClose() {
 		promotionsBucket().findElement(By.cssSelector(".close-link")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	/* promoted results */
@@ -153,7 +154,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 				if (promotionSummaryForwardButton().isDisplayed()) {
 					promotionSummaryForwardToEndButton().click();
-					loadOrFadeWait();
+					Waits.loadOrFadeWait();
 					promotionsList.addAll(getVisiblePromotedItems());
 					final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
 
@@ -202,7 +203,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getPromotionSummaryLabels() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		final List<String> labelList = new ArrayList<>();
 
 		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
@@ -213,7 +214,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 			if (promotionSummaryForwardButton().isDisplayed()) {
 				promotionSummaryForwardToEndButton().click();
-				loadOrFadeWait();
+				Waits.loadOrFadeWait();
 				labelList.addAll(getVisiblePromotionLabels());
 				final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
 
@@ -231,7 +232,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getPromotionLabels() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		final List<String> labelList = new ArrayList<>();
 
 		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
@@ -242,7 +243,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 			if (promotionSummaryForwardButton().isDisplayed()) {
 				promotionSummaryForwardToEndButton().click();
-				loadOrFadeWait();
+				Waits.loadOrFadeWait();
 				labelList.addAll(getPromotionTypeLabels());
 				final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
 
@@ -275,12 +276,12 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void showMorePromotions() {
 		showMorePromotionsButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void showLessPromotions() {
 		showLessPromotionsButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public WebElement showMorePromotionsButton() {
@@ -292,19 +293,19 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public WebElement promotionSummaryBackToStartButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
 	}
 
 	public WebElement promotionSummaryBackButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
 	}
 
 	public WebElement promotionSummaryForwardButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
 	}
 
 	public WebElement promotionSummaryForwardToEndButton() {
-		return getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
 	}
 
 	/* search results */
@@ -316,9 +317,9 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
             if((i + 1) % 6 == 0){
                 forwardPageButton().click();
-                loadOrFadeWait();
+                Waits.loadOrFadeWait();
                 waitForSearchLoadIndicatorToDisappear();
-                loadOrFadeWait();
+                Waits.loadOrFadeWait();
             }
         }
 
@@ -351,14 +352,14 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		try {
 			waitForSearchLoadIndicatorToDisappear();
 		} catch (final StaleElementReferenceException|NoSuchElementException n) {
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 		}
 	}
 
 	/* keywords */
 	public List<String> youSearchedFor() {
 		WebElement searchTermsList = findElement(By.cssSelector(".search-terms-list"));
-		scrollIntoView(searchTermsList, getDriver());
+		ElementUtil.scrollIntoView(searchTermsList, getDriver());
 		return ElementUtil.getTexts(searchTermsList.findElements(By.tagName("span")));
 	}
 
@@ -452,8 +453,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public void openParametricValuesList() {
-		scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")));
-		loadOrFadeWait();
+		ElementUtil.scrollIntoViewAndClick(findElement(By.cssSelector("[data-target='.collapsible-parametric-option']")), getDriver());
+		Waits.loadOrFadeWait();
 	}
 
 	/* helper methods */
@@ -468,10 +469,10 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public List<String> createAMultiDocumentPromotion(final int numberOfDocs) {
 		promoteTheseDocumentsButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		List<String> promotedDocTitles = addToBucket(numberOfDocs);
-		scrollIntoViewAndClick(promoteTheseItemsButton());
-		loadOrFadeWait();
+		ElementUtil.scrollIntoViewAndClick(promoteTheseItemsButton(), getDriver());
+		Waits.loadOrFadeWait();
 		return promotedDocTitles;
 	}
 
