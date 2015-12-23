@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.hamcrest.Description;
@@ -71,7 +72,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
         return new TypeSafeMatcher<WebElement>() {
             @Override
             protected boolean matchesSafely(WebElement item) {
-                return AppElement.hasClass("current", item);
+                return ElementUtil.hasClass("current", item);
             }
 
             @Override
@@ -85,7 +86,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
         return new TypeSafeMatcher<WebElement>() {
             @Override
             protected boolean matchesSafely(WebElement item) {
-                return !AppElement.hasClass("error", item);
+                return !ElementUtil.hasClass("error", item);
             }
 
             @Override

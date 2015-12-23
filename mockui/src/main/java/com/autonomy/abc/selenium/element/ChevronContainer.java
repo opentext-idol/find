@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.element;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -31,7 +32,7 @@ public class ChevronContainer implements Collapsible {
 
     @Override
     public boolean isCollapsed() {
-        return AppElement.hasClass("collapsed", chevronIcon());
+        return ElementUtil.hasClass("collapsed", chevronIcon());
     }
 
     private WebElement chevronIcon() {

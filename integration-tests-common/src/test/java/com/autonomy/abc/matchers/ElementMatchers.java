@@ -1,5 +1,6 @@
 package com.autonomy.abc.matchers;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -123,7 +124,7 @@ public class ElementMatchers {
         return new TypeSafeMatcher<WebElement>() {
             @Override
             protected boolean matchesSafely(WebElement item) {
-                return AppElement.hasClass(className, item);
+                return ElementUtil.hasClass(className, item);
             }
 
             @Override
