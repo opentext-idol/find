@@ -90,7 +90,7 @@ public final class ElementUtil {
         element.click();
     }
 
-    public void javascriptClick(final WebElement element, WebDriver driver) {
+    public static void javascriptClick(final WebElement element, WebDriver driver) {
         final JavascriptExecutor executor = (JavascriptExecutor) driver;
         executor.executeScript("arguments[0].click();", element);
     }

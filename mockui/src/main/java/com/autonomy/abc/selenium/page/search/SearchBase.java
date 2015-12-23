@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.element.Collapsible;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchFilter;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -76,7 +77,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 			for (final WebElement weight : findElements(By.cssSelector(".weight"))) {
 				weights.add(Float.parseFloat(weight.getText().substring(8)));
 			}
-			javascriptClick(forwardPageButton());
+			ElementUtil.javascriptClick(forwardPageButton(), getDriver());
 		}
 		return weights;
 	}
@@ -182,7 +183,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public List<String> getAllDatabases() {
-		return webElementListToStringList(findElements(By.cssSelector(".child-categories label")));
+		return ElementUtil.webElementListToStringList(findElements(By.cssSelector(".child-categories label")));
 	}
 
 	public List<WebElement> getDatabaseCheckboxes() {
@@ -524,7 +525,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public List<String> filterLabelList() {
-		return webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
+		return ElementUtil.webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}
 
 	public void filterBy(SearchFilter filter) {

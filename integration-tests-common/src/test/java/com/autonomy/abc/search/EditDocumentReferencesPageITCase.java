@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.search.SearchFilter;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -29,6 +30,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,7 +184,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("mansion");
         editReferencesPage.searchResultCheckbox(1).click();
         editReferencesPage.searchResultCheckbox(2).click();
-        editReferencesPage.javascriptClick(editReferencesPage.forwardPageButton());
+        ElementUtil.javascriptClick(editReferencesPage.forwardPageButton(), getDriver());
         editReferencesPage.searchResultCheckbox(3).click();
         editReferencesPage.searchResultCheckbox(4).click();
 
@@ -252,7 +254,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
                 checkDocumentViewable(searchResultTitle);
             }
 
-            editReferencesPage.javascriptClick(editReferencesPage.forwardPageButton());
+            ElementUtil.javascriptClick(editReferencesPage.forwardPageButton(), getDriver());
             editReferencesPage.loadOrFadeWait();
         }
 

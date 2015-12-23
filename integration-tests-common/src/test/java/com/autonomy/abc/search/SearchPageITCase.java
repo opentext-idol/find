@@ -161,25 +161,25 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Back to first page button is not disabled", searchPage.isBackToFirstPageButtonDisabled());
 		assertThat("Back a page button is not disabled", AppElement.getParent(searchPage.backPageButton()).getAttribute("class"),containsString("disabled"));
 
-		searchPage.javascriptClick(searchPage.forwardPageButton());
+		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 		searchPage.paginateWait();
  		assertThat("Back to first page button is not enabled", AppElement.getParent(searchPage.backToFirstPageButton()).getAttribute("class"),not(containsString("disabled")));
 		assertThat("Back a page button is not enabled", AppElement.getParent(searchPage.backPageButton()).getAttribute("class"),not(containsString("disabled")));
 		assertThat("Page 2 is not active", searchPage.isPageActive(2));
 
-		searchPage.javascriptClick(searchPage.forwardPageButton());
+		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 		searchPage.paginateWait();
-		searchPage.javascriptClick(searchPage.forwardPageButton());
+		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 		searchPage.paginateWait();
-		searchPage.javascriptClick(searchPage.backPageButton());
+		ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
 		searchPage.paginateWait();
 		assertThat("Page 3 is not active", searchPage.isPageActive(3));
 
-		searchPage.javascriptClick(searchPage.backToFirstPageButton());
+		ElementUtil.javascriptClick(searchPage.backToFirstPageButton(), getDriver());
 		searchPage.paginateWait();
 		assertThat("Page 1 is not active", searchPage.isPageActive(1));
 
-		searchPage.javascriptClick(searchPage.forwardToLastPageButton());
+		ElementUtil.javascriptClick(searchPage.forwardToLastPageButton(), getDriver());
 		searchPage.paginateWait();
 		assertThat("Forward to last page button is not disabled", AppElement.getParent(searchPage.forwardToLastPageButton()).getAttribute("class"),containsString("disabled"));
 		assertThat("Forward a page button is not disabled", AppElement.getParent(searchPage.forwardPageButton()).getAttribute("class"),containsString("disabled"));
@@ -187,14 +187,14 @@ public class SearchPageITCase extends ABCTestBase {
 		final int numberOfPages = searchPage.getCurrentPageNumber();
 
 		for (int i = numberOfPages - 1; i > 0; i--) {
-			searchPage.javascriptClick(searchPage.backPageButton());
+			ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
 			searchPage.paginateWait();
 			assertThat("Page " + String.valueOf(i) + " is not active", searchPage.isPageActive(i));
 			assertThat("Url incorrect", getDriver().getCurrentUrl(),endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
-			searchPage.javascriptClick(searchPage.forwardPageButton());
+			ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 			searchPage.paginateWait();
 			assertThat("Page " + String.valueOf(j) + " is not active", searchPage.isPageActive(j));
 			assertThat("Url incorrect", getDriver().getCurrentUrl(),endsWith(String.valueOf(j)));
@@ -469,7 +469,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.searchResultCheckbox(5).click();
 		final List<String> docTitles = new ArrayList<>();
 		docTitles.add(searchPage.getSearchResultTitle(5));
-		searchPage.javascriptClick(searchPage.forwardPageButton());
+		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 		searchPage.loadOrFadeWait();
 		searchPage.searchResultCheckbox(3).click();
 		docTitles.add(searchPage.getSearchResultTitle(3));
@@ -489,7 +489,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Document should no longer be in the bucket", searchPage.promotionsBucketList(),not(hasItem(docTitles.get(1).toUpperCase())));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(3).isSelected());
 
-		searchPage.javascriptClick(searchPage.backPageButton());
+		ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
 		searchPage.deleteDocFromWithinBucket(docTitles.get(0));
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(0));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(5).isSelected());
@@ -509,7 +509,7 @@ public class SearchPageITCase extends ABCTestBase {
 					checkViewResult();
 				}
 
-				searchPage.javascriptClick(searchPage.forwardPageButton());
+				ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 				searchPage.loadOrFadeWait();
 			}
 		}
@@ -556,7 +556,7 @@ public class SearchPageITCase extends ABCTestBase {
 				searchPage.loadOrFadeWait();
 			}
 
-			searchPage.javascriptClick(searchPage.forwardPageButton());
+			ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 			searchPage.loadOrFadeWait();
 		}
 	}
@@ -1124,18 +1124,18 @@ public class SearchPageITCase extends ABCTestBase {
 		search("France");
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> englishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
+		final List<String> englishConcepts = ElementUtil.webElementListToStringList(searchPage.getRelatedConcepts());
 		searchPage.selectLanguage(Language.FRENCH);
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> frenchConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
+		final List<String> frenchConcepts = ElementUtil.webElementListToStringList(searchPage.getRelatedConcepts());
 
 		assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
 
 		searchPage.selectLanguage(Language.ENGLISH);
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> secondEnglishConcepts = searchPage.webElementListToStringList(searchPage.getRelatedConcepts());
+		final List<String> secondEnglishConcepts = ElementUtil.webElementListToStringList(searchPage.getRelatedConcepts());
 		assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
 	}
 
