@@ -39,7 +39,7 @@ public class Notification {
     public boolean equals(Object obj) {
         if(obj instanceof Notification){
             Notification notification = (Notification) obj;
-            return notification.getMessage().equals(message) && notification.getUsername().equals(username) && notification.getTime().equals(time);
+            return notification.getMessage().equals(message) && notification.getUsername().equals(username);
         }
 
         return false;

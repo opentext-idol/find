@@ -270,7 +270,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         searchPage.selectLanguage(Language.ENGLISH);
         searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 
-        //TODO should this not be the case??
+        //TODO split test into hosted/onprem
         assertThat("term is not blacklisted in English", searchPage.getText(),not(containsString("Any query terms were either blacklisted or stop words")));
     }
 
