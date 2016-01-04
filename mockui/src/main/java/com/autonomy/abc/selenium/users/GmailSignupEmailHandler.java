@@ -24,7 +24,7 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         setDriver(driver);
         goToGoogleAndLogIn();
 
-        driver.findElement(By.cssSelector(".T-I.J-J5-Ji.ar7.nf.T-I-ax7.L3")).click();
+        clickMoreDropdown();
         Waits.loadOrFadeWait();
         driver.findElement(By.xpath("//div[text()='Mark all as read']")).click();
         Waits.loadOrFadeWait();
@@ -49,7 +49,7 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
         } catch (NoSuchElementException e) {
             /* Probably had an unread email */
 
-            driver.findElement(By.cssSelector(".T-I.J-J5-Ji.lS.T-I-ax7.ar7")).click();
+            clickBackToInbox();
 
             try {
                 openMessage();
@@ -81,15 +81,27 @@ public class GmailSignupEmailHandler implements SignupEmailHandler {
                     return true;
                 }
 
-                driver.findElement(By.cssSelector(".T-I.J-J5-Ji.nu.T-I-ax7.L3")).click();
+                clickRefreshButton();
 
                 return false;
             }
         });
     }
 
+    private void clickRefreshButton() {
+        driver.findElement(By.cssSelector(".T-I.J-J5-Ji.nu.T-I-ax7.L3")).click();
+    }
+
     private void clickUnreadMessage(){
         driver.findElement(By.cssSelector(".zA.zE")).click();
+    }
+
+    private void clickBackToInbox(){
+        driver.findElement(By.cssSelector(".T-I.J-J5-Ji.lS.T-I-ax7.ar7")).click();
+    }
+
+    private void clickMoreDropdown(){
+        driver.findElement(By.cssSelector(".T-I.J-J5-Ji.ar7.nf.T-I-ax7.L3")).click();
     }
 
     private void expandCollapsedMessage() {
