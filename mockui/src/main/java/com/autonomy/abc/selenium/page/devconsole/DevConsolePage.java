@@ -13,11 +13,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DevConsole extends AppElement implements AppPage {
+public class DevConsolePage extends AppElement implements AppPage {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DevConsole.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(DevConsolePage.class);
 
-    public DevConsole(WebDriver driver) {
+    public DevConsolePage(WebDriver driver) {
         super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.id("solution-overall-container"))), driver);
     }
 
