@@ -20,6 +20,7 @@ import java.util.*;
 public abstract class SearchPage extends SearchBase implements AppPage {
 	private final static Logger LOGGER = LoggerFactory.getLogger(SearchPage.class);
 	public final static int RESULTS_PER_PAGE = 6;
+	public final static int MAX_RESULTS = 2500;
 
 	public SearchPage(final WebDriver driver) {
 		// specify data-pagename to avoid invisible elements from other pages showing up
@@ -43,8 +44,13 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	// "Results for term (___)"
 	public int getHeadingResultsCount() {
 		((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
-		final String bracketedSearchResultsTotal = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
-		return Integer.parseInt(bracketedSearchResultsTotal.substring(1, bracketedSearchResultsTotal.length() - 1));
+		final String totalWithBrackets = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
+		final String totalNoBrackets = totalWithBrackets.substring(1, totalWithBrackets.length() -1);
+
+		if (totalNoBrackets.equalsIgnoreCase("more than " + MAX_RESULTS)) {
+			return MAX_RESULTS + 1;
+		}
+		return Integer.parseInt(totalNoBrackets);
 	}
 
 	/* page controls */
