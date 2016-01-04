@@ -31,10 +31,8 @@ public class IdolFindConfigFileServiceTest {
     private static final String TEST_DIR = "./target/test";
 
     @BeforeClass
-    public static void init() throws IOException {
+    public static void init() {
         System.setProperty("hp.find.home", TEST_DIR);
-        final File directory = new File(TEST_DIR);
-        FileUtils.forceMkdir(directory);
     }
 
     @Mock
@@ -45,6 +43,9 @@ public class IdolFindConfigFileServiceTest {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Before
     public void setUp() throws Exception {
+        final File directory = new File(TEST_DIR);
+        FileUtils.forceMkdir(directory);
+
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.addMixIn(ServerConfig.class, ConfigurationFilterMixin.class);
         objectMapper.addMixIn(ViewConfig.class, ConfigurationFilterMixin.class);
