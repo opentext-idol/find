@@ -25,4 +25,9 @@ public class SearchQuery {
     String getSearchTerm() {
         return term;
     }
+
+    @Override
+    public String toString() {
+        return "SearchQuery<" + getSearchTerm() + "|" + getFilters() + ">";
+    }
 }

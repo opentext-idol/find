@@ -30,4 +30,9 @@ public class LanguageFilter implements SearchFilter {
             logger.warn("languages do not appear on " + page.getClass());
         }
     }
+
+    @Override
+    public String toString() {
+        return "LanguageFilter:" + language;
+    }
 }

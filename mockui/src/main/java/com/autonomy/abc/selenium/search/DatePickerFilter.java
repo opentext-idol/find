@@ -32,6 +32,11 @@ public class DatePickerFilter implements SearchFilter {
         untilHandler.applyTo(dateFilterable.untilDatePicker());
     }
 
+    @Override
+    public String toString() {
+        return "DatePickerFilter:" + fromHandler + "-" + untilHandler;
+    }
+
     public interface Filterable {
         DatePicker fromDatePicker();
         DatePicker untilDatePicker();
@@ -46,6 +51,11 @@ public class DatePickerFilter implements SearchFilter {
                 datePicker.calendarDateSelect(date);
                 datePicker.close();
             }
+        }
+
+        @Override
+        public String toString() {
+            return date == null ? "null" : FORMAT.format(date);
         }
     }
 }

@@ -13,4 +13,9 @@ class AggregateSearchFilter implements SearchFilter {
             filter.apply(searchBase);
         }
     }
+
+    @Override
+    public String toString() {
+        return filters.toString();
+    }
 }
