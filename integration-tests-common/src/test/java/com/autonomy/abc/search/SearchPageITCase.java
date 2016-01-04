@@ -920,7 +920,7 @@ public class SearchPageITCase extends ABCTestBase {
 		for (final String label : searchPage.filterLabelList()) {
 			assertThat("no 'Until' filter applied", label,not(containsString("Until: ")));
 		}
-		assertThat("applied 'From' filter", searchPage.fromDateTextBox().getAttribute("value"), not(isEmptyOrNullString()));
+		assertThat("applied 'From' filter", searchPage.fromDateInput().getValue(), not(isEmptyOrNullString()));
 		verifyValidDate(firstResult);
 
 		searchPage.filterBy(new DatePickerFilter().from(invalidDate));
@@ -943,7 +943,7 @@ public class SearchPageITCase extends ABCTestBase {
 		for (final String label : searchPage.filterLabelList()) {
 			assertThat("no 'From' filter applied", label,not(containsString("From: ")));
 		}
-		assertThat("applied 'Until' filter", searchPage.untilDateTextBox().getAttribute("value"), not(isEmptyOrNullString()));
+		assertThat("applied 'Until' filter", searchPage.untilDateInput().getValue(), not(isEmptyOrNullString()));
 		verifyValidDate(firstResult);
 
 		searchPage.filterBy(new DatePickerFilter().until(invalidDate));
@@ -965,16 +965,16 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	private void verifyValidDate(String firstResult) {
-		logger.info("from: " + searchPage.fromDateTextBox().getAttribute("value"));
-		logger.info("until: " + searchPage.untilDateTextBox().getAttribute("value"));
+		logger.info("from: " + searchPage.fromDateInput().getValue());
+		logger.info("until: " + searchPage.untilDateInput().getValue());
 		if (verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0))) {
 			verifyThat("Document should be displayed again", searchPage.getSearchResultTitle(1), is(firstResult));
 		}
 	}
 
 	private void verifyInvalidDate(String firstResult) {
-		logger.info("from: " + searchPage.fromDateTextBox().getAttribute("value"));
-		logger.info("until: " + searchPage.untilDateTextBox().getAttribute("value"));
+		logger.info("from: " + searchPage.fromDateInput().getValue());
+		logger.info("until: " + searchPage.untilDateInput().getValue());
 		if (searchPage.getHeadingResultsCount() > 0) {
 			verifyThat("Document should not be displayed", searchPage.getSearchResultTitle(1), not(firstResult));
 		}
@@ -982,56 +982,39 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testFromDateAlwaysBeforeUntilDate() {
-		search("food");
-		searchPage.expand(SearchBase.Facet.FILTER_BY);
-		searchPage.expand(SearchBase.Facet.DATES);
-		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
-		searchPage.untilDateTextBox().sendKeys("04/05/2000 12:00 PM");
-        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-		assertThat("Dates should be equal", searchPage.fromDateTextBox().getAttribute("value"), is(searchPage.untilDateTextBox().getAttribute("value")));
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2000, Calendar.MAY, 4, 12, 0);
+		final Date date = calendar.getTime();
 
-		Waits.loadOrFadeWait();
+		searchPage.filterBy(new StringDateFilter().from(date).until(date));
+		assertThat("Dates should be equal", searchPage.fromDateInput().getValue(), is(searchPage.untilDateInput().getValue()));
 
-		searchPage.fromDateTextBox().clear();
-		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:01 PM");
-		//clicking sort by relevance because an outside click is needed for the changes to take place
+		searchPage.filterBy(new StringDateFilter().from(DateUtils.addMinutes(date, 1)).until(date));
 		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-//		assertNotEquals("From date cannot be after the until date", searchPage.fromDateTextBox().getAttribute("value"), "04/05/2000 12:01 PM");
-        assertThat("From date should be blank", searchPage.fromDateTextBox().getAttribute("value"), isEmptyOrNullString());
+        assertThat("From date should be blank", searchPage.fromDateInput().getValue(), isEmptyOrNullString());
 
-		searchPage.fromDateTextBox().clear();
-		searchPage.fromDateTextBox().sendKeys("04/05/2000 12:00 PM");
-		searchPage.untilDateTextBox().clear();
-		searchPage.untilDateTextBox().sendKeys("04/05/2000 11:59 AM");
+		searchPage.filterBy(new StringDateFilter().from(date).until(DateUtils.addMinutes(date, -1)));
 		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-//		assertEquals("Until date cannot be before the from date", searchPage.untilDateTextBox().getAttribute("value"),is(not("04/05/2000 11:59 AM")));
-        assertThat("Until date should be blank", searchPage.untilDateTextBox().getAttribute("value"), isEmptyOrNullString());
+        assertThat("Until date should be blank", searchPage.untilDateInput().getValue(), isEmptyOrNullString());
 	}
 
 	@Test
 	public void testFromDateEqualsUntilDate() throws ParseException {
-		search("Search");
-		searchPage.expand(SearchBase.Facet.FILTER_BY);
-		searchPage.expand(SearchBase.Facet.DATES);
-//		searchPage.openFromDatePicker();
-//		searchPage.closeFromDatePicker();
-//		searchPage.openUntilDatePicker();
-//		searchPage.closeUntilDatePicker();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2012, Calendar.DECEMBER, 12, 12, 12);
+		final Date date = calendar.getTime();
 
-        searchPage.fromDateTextBox().sendKeys("12/12/2012 12:12");
-        searchPage.untilDateTextBox().sendKeys("12/12/2012 12:12");
+		searchPage.filterBy(new StringDateFilter().from(date).until(date));
 
-		assertThat("Datepicker dates are not equal", searchPage.fromDateTextBox().getAttribute("value"), is(searchPage.untilDateTextBox().getAttribute("value")));
-		final Date date = searchPage.getDateFromFilter(searchPage.untilDateTextBox());
+		assertThat(searchPage.fromDateInput().getValue(), is(searchPage.untilDateInput().getValue()));
 
-		searchPage.sendDateToFilter(DateUtils.addMinutes(date, 1), searchPage.untilDateTextBox());
-        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-        assertThat(searchPage.untilDateTextBox().getAttribute("value"), is("12/12/2012 12:13"));
+		Date nextDate = DateUtils.addMinutes(date, 1);
+		searchPage.filterBy(new StringDateFilter().until(nextDate));
+		assertThat(searchPage.untilDateInput().getValue(), is(StringDateFilter.FORMAT.format(nextDate)));
 
-        searchPage.sendDateToFilter(DateUtils.addMinutes(date, -1), searchPage.untilDateTextBox());
-        //clicking sort by relevance because an outside click is needed for the changes to take place
-		searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-        assertThat(searchPage.untilDateTextBox().getAttribute("value"), isEmptyOrNullString());
+		nextDate = DateUtils.addMinutes(date, -1);
+		searchPage.filterBy(new StringDateFilter().until(nextDate));
+        assertThat(searchPage.untilDateInput().getValue(), isEmptyOrNullString());
 	}
 
 	@Test
