@@ -1,12 +1,12 @@
 package com.autonomy.abc.selenium.page.search;
 
-import com.autonomy.abc.selenium.element.Checkbox;
-import com.autonomy.abc.selenium.element.ChevronContainer;
-import com.autonomy.abc.selenium.element.Collapsible;
+import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
+import com.autonomy.abc.selenium.search.DatePickerFilter;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchFilter;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.search.StringDateFilter;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
 import com.autonomy.abc.selenium.util.Waits;
@@ -24,9 +24,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public abstract class SearchBase extends AppElement implements AppPage, SearchFilter.Filterable, IndexFilter.Filterable {
+public abstract class SearchBase extends AppElement implements AppPage,
+		SearchFilter.Filterable,
+		IndexFilter.Filterable,
+		DatePickerFilter.Filterable,
+		StringDateFilter.Filterable {
 
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
+	private static final SimpleDateFormat RESULT_DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
 	public SearchBase(final WebElement element, final WebDriver driver) {
 		super(element, driver);
@@ -69,7 +73,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		if (dateString.isEmpty()) {
 			return null;
 		}
-		return DATE_FORMAT.parse(dateString.split(", ")[1]);
+		return RESULT_DATE_FORMAT.parse(dateString.split(", ")[1]);
 	}
 
 	public List<Float> getWeightsOnPage(final int numberOfPages) {
@@ -294,53 +298,35 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	/* date filter */
-	public void openFromDatePicker() {
-		expand(Facet.FILTER_BY);
-		expand(Facet.DATES);
-		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
-		Waits.loadOrFadeWait();
+	public FormInput fromDateInput() {
+		return dateInput(By.cssSelector("[data-filter-name=\"minDate\"] input"));
 	}
 
-	public void closeFromDatePicker() {
-		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
-			findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
-			Waits.loadOrFadeWait();
-			waitForSearchLoadIndicatorToDisappear();
-		}
+	public FormInput untilDateInput() {
+		return dateInput(By.cssSelector("[data-filter-name=\"maxDate\"] input"));
 	}
 
-	public WebElement fromDateTextBox() {
-		return findElement(By.cssSelector("[data-filter-name=\"minDate\"] input"));
-	}
-
-	public WebElement untilDateTextBox() {
-		return findElement(By.cssSelector("[data-filter-name=\"maxDate\"] input"));
-	}
-
-	public void openUntilDatePicker() {
+	private FormInput dateInput(By locator) {
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
 		findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
 		Waits.loadOrFadeWait();
+		WebElement textBox = findElement(locator);
+		return new FormInput(textBox, getDriver());
 	}
 
-	public void closeUntilDatePicker() {
-		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
-			findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
-			Waits.loadOrFadeWait();
-			waitForSearchLoadIndicatorToDisappear();
-		}
+	public DatePicker fromDatePicker() {
+		return datePicker(By.cssSelector("[data-filter-name='minDate']"));
 	}
 
-	public Date getDateFromFilter(final WebElement filter) throws ParseException {
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		return dateFormat.parse(filter.getAttribute("value"));
+	public DatePicker untilDatePicker() {
+		return datePicker(By.cssSelector("[data-filter-name='maxDate']"));
 	}
 
-	public void sendDateToFilter(final Date date, final WebElement filter) {
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		filter.clear();
-		filter.sendKeys(dateFormat.format(date));
+	private DatePicker datePicker(By locator) {
+		expand(Facet.FILTER_BY);
+		expand(Facet.DATES);
+		return new DatePicker(findElement(locator), getDriver());
 	}
 
 	/* related concepts */

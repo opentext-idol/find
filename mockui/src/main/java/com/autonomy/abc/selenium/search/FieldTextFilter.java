@@ -24,4 +24,9 @@ public class FieldTextFilter implements SearchFilter {
             ((SearchBase) page).clearFieldText();
         }
     }
+
+    @Override
+    public String toString() {
+        return "FieldTextFilter:" + fieldText;
+    }
 }

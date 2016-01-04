@@ -43,6 +43,11 @@ public class IndexFilter implements SearchFilter {
         }
     }
 
+    @Override
+    public String toString() {
+        return "IndexFilter:" + indexes;
+    }
+
     private static class AllIndexFilter extends IndexFilter {
         private AllIndexFilter() {
             super("All");
