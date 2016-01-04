@@ -29,8 +29,7 @@ public class DevConsoleITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        getElementFactory().getDevConsole();
-        getDriver().findElement(By.id("loginLogout")).click();
+        getElementFactory().getDevConsole().clickLogInButton();
         getElementFactory().getLoginPage();
         try {
             loginAs(config.getDefaultUser());
