@@ -176,7 +176,6 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public List<WebElement> dynamicPromotedList(){
         return new WebDriverWait(getDriver(),10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".query-search-results div:not(.hide)>h3")));
-
     }
 
     public List<String> getDynamicPromotedTitles(){
@@ -184,7 +183,9 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
         do {
             for (final WebElement docTitle : dynamicPromotedList()) {
-                docTitles.add(docTitle.getText());
+                if(!docTitle.getText().equals("Search for something...")) {
+                    docTitles.add(docTitle.getText());
+                }
             }
         } while(clickForwardButton());
 
