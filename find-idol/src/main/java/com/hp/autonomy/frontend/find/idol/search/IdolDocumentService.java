@@ -11,6 +11,7 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.identifier.reference.Reference;
+import com.hp.autonomy.aci.content.printfields.PrintFields;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
@@ -95,7 +96,7 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.MinDate.name(), formatDate(findQueryParams.getMinDate()));
         aciParameters.add(QueryParams.MaxDate.name(), formatDate(findQueryParams.getMaxDate()));
         aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
-        aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
+        aciParameters.add(QueryParams.PrintFields.name(), new PrintFields(FindDocument.ALL_FIELDS));
         aciParameters.add(QueryParams.XMLMeta.name(), true);
         aciParameters.add(QueryParams.AnyLanguage.name(), true);
 
