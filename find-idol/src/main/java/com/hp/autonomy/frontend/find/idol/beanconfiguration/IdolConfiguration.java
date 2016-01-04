@@ -16,10 +16,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
+import com.hp.autonomy.frontend.configuration.ServerConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.frontend.view.idol.IdolViewServerService;
 import com.hp.autonomy.frontend.view.idol.ViewServerService;
+import com.hp.autonomy.frontend.view.idol.configuration.ViewConfig;
 import com.hp.autonomy.idol.parametricvalues.IdolParametricRequest;
 import com.hp.autonomy.idol.parametricvalues.IdolParametricValuesService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
@@ -52,7 +55,9 @@ public class IdolConfiguration {
     public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder) {
         final ObjectMapper objectMapper = builder.createXmlMapper(false).build();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        // TODO add mixins
+        objectMapper.addMixIn(ServerConfig.class, ConfigurationFilterMixin.class);
+        objectMapper.addMixIn(ViewConfig.class, ConfigurationFilterMixin.class);
+
         return objectMapper;
     }
 

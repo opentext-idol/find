@@ -39,9 +39,12 @@ public class ConfigFileConfiguration {
     @Bean
     public SimpleFilterProvider filterProvider() {
         final Set<String> set = ImmutableSet.of(
+                "indexProtocol",
+                "indexPort",
+                "serviceProtocol",
+                "servicePort",
                 "productType",
                 "indexErrorMessage",
-                "enabled",
                 "plaintextPassword",
                 "currentPassword"
         );
