@@ -3,21 +3,18 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,18 +44,17 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         keywordService = new KeywordService(getApplication(), getElementFactory());
 
-        PromotionsPage promotions = getElementFactory().getPromotionsPage();
-        browserHandles = promotions.createAndListWindowHandles();
+        browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
         getDriver().switchTo().window(browserHandles.get(1));
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
         find = getElementFactory().getFindPage();
-        service = find.getService();
+        service = find.getResultsPage();
         getDriver().switchTo().window(browserHandles.get(0));
     }
 
-    private FindPage find;
-    private Service service;
+    private Find find;
+    private FindResultsPage service;
     private List<String> browserHandles;
 
     @Test
@@ -106,9 +102,9 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     }
 
     private void promotionShownCorrectly (WebElement promotion) {
-        assertThat(promotion, hasClass("promoted-document"));
-        assertThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
-        assertThat(promotion.findElement(By.className("icon-star")), displayed());
+        verifyThat(promotion, hasClass("promoted-document"));
+        verifyThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
+        verifyThat(promotion.findElement(By.className("fa-star")), displayed());
     }
 
     @After

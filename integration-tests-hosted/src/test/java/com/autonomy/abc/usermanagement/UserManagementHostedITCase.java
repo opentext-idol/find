@@ -13,16 +13,19 @@ import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Factory;
+import com.autonomy.abc.selenium.util.Waits;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +48,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private HSOUserService userService;
     private HSOUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
-    private final SignupEmailHandler emailHandler;
     private final Factory<NewUser> newUserFactory;
 
     public UserManagementHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
-        emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
         newUserFactory = config.getNewUserFactory();
     }
 
@@ -72,7 +73,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         //Sometimes it requires us to add a valid user before invalid users show up
         userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
 
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
     }
@@ -111,7 +112,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         verifyThat("number of users has not increased", usersPage.getUsernames(), hasSize(existingUsers));
 
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
     }
@@ -128,7 +129,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         verifyThat(usersPage.getUsernames(), hasItem(validUser.getUsername()));
 
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat("exactly one new user appears", usersPage.getUsernames(), hasSize(existingUsers + 1));
         return user;
     }
@@ -186,7 +187,13 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         try {
             secondDriver.get(config.getWebappUrl());
             LoginPage loginPage = new HSOLoginPage(secondDriver, new AbcHasLoggedIn(secondDriver));
-            loginTo(loginPage, secondDriver, user);
+
+            try {
+                loginTo(loginPage, secondDriver, user);
+            } catch (NoSuchElementException e) {
+                /* Happens when it's trying to log in for the second time */
+            }
+
             ErrorPage errorPage = new ErrorPage(secondDriver);
             verifyThat(errorPage.getErrorCode(), is("401"));
         } finally {
@@ -276,8 +283,21 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         assertThat(usersPage.getTable(), not(containsText(longUsername)));
     }
 
+    @Test
+    public void testUserConfirmedWithoutRefreshing(){
+        final User user = userService.createNewUser(config.getNewUserFactory().create(), Role.USER);
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
+
+        new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
+            }
+        });
+    }
+
     private void waitForUserConfirmed(User user){
-        new WebDriverWait(getDriver(),60).pollingEvery(10, TimeUnit.SECONDS).withMessage("User not showing as confirmed").until(new WaitForUserToBeConfirmed(user));
+        new WebDriverWait(getDriver(),30).pollingEvery(10, TimeUnit.SECONDS).withMessage("User not showing as confirmed").until(new WaitForUserToBeConfirmed(user));
         body = getBody();
     }
 
@@ -292,6 +312,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         public Boolean apply(WebDriver driver) {
             driver.navigate().refresh();
             usersPage = (HSOUsersPage) getElementFactory().getUsersPage();
+            Waits.loadOrFadeWait();
             return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
         }
     }

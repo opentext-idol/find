@@ -30,4 +30,8 @@ public class Errors {
         public static final String DUPLICATE_EMAIL = "Error! A user with this email address already exists";
         public static final String DUPLICATE_USER = "Error! User exists!";
     }
+
+    public static class Find {
+        public static final String GENERAL = "An error occurred retrieving results";
+    }
 }

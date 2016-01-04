@@ -8,6 +8,8 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 
+import java.util.concurrent.TimeUnit;
+
 public class HSOUser extends User {
     private String email;
 
@@ -31,13 +33,16 @@ public class HSOUser extends User {
     @Override
     public void authenticate(Factory<WebDriver> driverFactory, SignupEmailHandler emailParser) {
         WebDriver driver = driverFactory.create();
+        driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
+
         try {
-            emailParser.goToUrl(driver);
-            LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
-            try {
-                loginPage.loginWith(getAuthProvider());
-            } catch (TimeoutException e) {
+            if(emailParser.goToUrl(driver)) {
+                LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
+                try {
+                    loginPage.loginWith(getAuthProvider());
+                } catch (TimeoutException e) {
                 /* already signed in to auth account */
+                }
             }
         } finally {
             driver.quit();

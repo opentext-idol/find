@@ -18,8 +18,8 @@ public class Notification {
     public Notification(WebElement notification){
         this(
                 notification.findElement(By.className("notification-message")).getText(),
-                notification.findElement(By.className("small")).getText(),
-                notification.findElement(By.className("notification-time")).getText()
+                notification.findElement(By.cssSelector(".small:not(.notification-time)")).getText(),
+                notification.findElement(By.className("pull-right")).getText()
         );
     }
 
@@ -33,5 +33,20 @@ public class Notification {
 
     public String getTime() {
         return time;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Notification){
+            Notification notification = (Notification) obj;
+            return notification.getMessage().equals(message) && notification.getUsername().equals(username);
+        }
+
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return getMessage() + " " + getTime() + ", performed by " + getUsername();
     }
 }

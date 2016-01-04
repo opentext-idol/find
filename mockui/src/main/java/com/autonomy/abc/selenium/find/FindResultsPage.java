@@ -10,8 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.*;
 
-public class Service extends AppElement {
-    public Service(WebDriver driver) {
+public class FindResultsPage extends AppElement {
+    public FindResultsPage(WebDriver driver) {
         super(driver.findElement(By.className("service-view-container")), driver);
     }
 
@@ -37,6 +37,7 @@ public class Service extends AppElement {
 
     public void filterByDate(DateEnum date) {
         findElement(By.cssSelector("td[data-id='" + date.toString().toLowerCase() + "']")).click();
+        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }
 
     public void filterByDate(String start, String end){
@@ -44,6 +45,8 @@ public class Service extends AppElement {
 
         inputDate("results-filter-min-date", start);
         inputDate("results-filter-max-date", end);
+
+        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }
 
     private void inputDate(String inputElementCSS,String inputString){
@@ -124,7 +127,7 @@ public class Service extends AppElement {
     }
 
     public void selectContentType(String contentType){
-        waitForSearchLoadIndicatorToDisappear(Service.Container.LEFT);
+        waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.LEFT);
         getContentTypeContainer().findElement(By.cssSelector("[data-value='" + contentType.toUpperCase() + "']")).click();
         waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }

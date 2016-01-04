@@ -91,6 +91,7 @@ public class IndexSetUpITCase extends HostedTestBase {
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedTitle));
+        //TODO this is wrong
         verifyThat(searchPage.getPromotionBucketElementByTitle(promotedTitle), containsText("Index: " + indexName));
     }
 

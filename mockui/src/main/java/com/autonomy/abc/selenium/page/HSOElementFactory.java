@@ -1,9 +1,10 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
-import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
@@ -79,8 +80,8 @@ public class HSOElementFactory extends ElementFactory {
         return ConnectionsDetailPage.make(getDriver());
     }
 
-    public FindPage getFindPage() {
-        return new FindPage(getDriver());
+    public Find getFindPage() {
+        return new Find(getDriver());
     }
 
 
@@ -106,5 +107,37 @@ public class HSOElementFactory extends ElementFactory {
 
     public HSODevelopersPage getDevsPage() {
         return new HSODevelopersPage(getDriver());
+    }
+
+    public void waitForPage(NavBarTabId page) {
+        switch(page){
+            case ANALYTICS:
+                getAnalyticsPage();
+                break;
+            case SEARCH:
+                getSearchPage();
+                break;
+            case CONNECTIONS:
+                getConnectionsPage();
+                break;
+            case INDEXES:
+                getIndexesPage();
+                break;
+            case PROMOTIONS:
+                getPromotionsPage();
+                break;
+            case KEYWORDS:
+                getKeywordsPage();
+                break;
+            case GETTING_STARTED:
+                getGettingStartedPage();
+                break;
+            case DEVELOPERS:
+                getDevsPage();
+                break;
+            case USERS:
+                getUsersPage();
+                break;
+        }
     }
 }

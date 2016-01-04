@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -43,7 +44,7 @@ public class HSODeveloperService {
         pencil.click();
         devsPage.editUsernameInput(user).setAndSubmit(newUsername);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
-        devsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         ((HSOUser) user).setUsername(newUsername);
         return user;
     }

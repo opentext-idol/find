@@ -1,7 +1,9 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Predicates;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -53,7 +55,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public Editable pinPosition() {
-        final WebElement group = AppElement.getParent(findElement(By.cssSelector(".promotion-position-edit")));
+        final WebElement group = ElementUtil.getParent(findElement(By.cssSelector(".promotion-position-edit")));
         return new Editable() {
             @Override
             public String getValue() {
@@ -220,7 +222,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         try {
             if(!forwardButton().findElement(By.xpath(".//../..")).getAttribute("class").contains("disabled")) {
                 forwardButton().click();
-                loadOrFadeWait();
+                Waits.loadOrFadeWait();
                 return true;
             } else {
                 return false;

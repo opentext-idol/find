@@ -1,12 +1,14 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.tree.FindIndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchFilter;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -18,16 +20,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindPage extends AppElement implements AppPage, IndexFilter.Filterable {
-    private final Input input;
-    private final Service service;
+public class Find extends AppElement implements AppPage, IndexFilter.Filterable {
+    private final FormInput input;
+    private final FindResultsPage results;
 
-    public FindPage(WebDriver driver){
+    public Find(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
-        input = new Input(driver);
-        service = new Service(driver);
+        input = new FormInput(driver.findElement(By.className("find-input")), driver);
+        results = new FindResultsPage(driver);
     }
 
     @Override
@@ -35,25 +37,25 @@ public class FindPage extends AppElement implements AppPage, IndexFilter.Filtera
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid")));
     }
 
-    public Input getInput() {
-        return input;
+    public FindResultsPage getResultsPage() {
+        return results;
     }
 
-    public Service getService() {
-        return service;
+    public String getSearchBoxTerm(){
+        return input.getValue();
     }
 
     public void search(String searchTerm){
         input.clear();
-        input.sendKeys(searchTerm);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        input.setAndSubmit(searchTerm);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     public List<String> getSelectedPublicIndexes() {
         List<String> indexes = new ArrayList<>();
 
         for(WebElement selectedIndex : findElements(By.cssSelector("[data-category-id='public'] .icon-ok.database-icon"))){
-            indexes.add(selectedIndex.findElement(By.xpath("./../../span[@class='database-name' or @class='category-name']")).getText());
+            indexes.add(ElementUtil.ancestor(selectedIndex, 2).findElement(By.xpath("./span[@class='database-name' or @class='category-name']")).getText());
         }
 
         return indexes;
@@ -85,6 +87,6 @@ public class FindPage extends AppElement implements AppPage, IndexFilter.Filtera
     @Override
     public void filterBy(SearchFilter filter) {
         filter.apply(this);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 }

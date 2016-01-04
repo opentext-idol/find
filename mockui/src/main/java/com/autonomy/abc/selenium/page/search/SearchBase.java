@@ -6,8 +6,10 @@ import com.autonomy.abc.selenium.element.Collapsible;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchFilter;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
@@ -55,7 +57,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public String getSearchResultDetails(final int searchResultNumber) {
-		return getParent(getSearchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
+		return ElementUtil.getParent(getSearchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
 	}
 
 	public int visibleDocumentsCount() {
@@ -63,7 +65,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public Date getDateFromResult(final int index) throws ParseException {
-		final String dateString = getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
+		final String dateString = ElementUtil.getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
 		if (dateString.isEmpty()) {
 			return null;
 		}
@@ -76,7 +78,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 			for (final WebElement weight : findElements(By.cssSelector(".weight"))) {
 				weights.add(Float.parseFloat(weight.getText().substring(8)));
 			}
-			javascriptClick(forwardPageButton());
+			ElementUtil.javascriptClick(forwardPageButton(), getDriver());
 		}
 		return weights;
 	}
@@ -137,19 +139,19 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 
 	/* pagination */
 	public WebElement backToFirstPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous-chapter")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous-chapter")));
 	}
 
 	public WebElement backPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous")));
 	}
 
 	public WebElement forwardToLastPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next-chapter")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next-chapter")));
 	}
 
 	public WebElement forwardPageButton() {
-		return getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next")));
 	}
 
 	public boolean isPageActive(final int pageNumber) {
@@ -161,14 +163,14 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public int getCurrentPageNumber() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 //		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
 		waitForSearchLoadIndicatorToDisappear();
 		return Integer.parseInt(findElement(By.cssSelector(".btn-nav.active")).getText());
 	}
 
 	public boolean isBackToFirstPageButtonDisabled() {
-		return  getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
+		return  ElementUtil.getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
 	}
 
 	/* indexes/databases */
@@ -182,7 +184,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public List<String> getAllDatabases() {
-		return webElementListToStringList(findElements(By.cssSelector(".child-categories label")));
+		return ElementUtil.webElementListToStringList(findElements(By.cssSelector(".child-categories label")));
 	}
 
 	public List<WebElement> getDatabaseCheckboxes() {
@@ -196,7 +198,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	@Deprecated
 	public void selectDatabase(final String databaseName) {
 		indexesTree().select(databaseName);
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	@Deprecated
@@ -218,11 +220,11 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 
 		if (selectedDatabases.contains(databaseName)) {
 			if (selectedDatabases.size() > 1) {
-				getParent(getDatabaseCheckboxes().get(getAllDatabases().indexOf(databaseName))).click();
+				ElementUtil.getParent(getDatabaseCheckboxes().get(getAllDatabases().indexOf(databaseName))).click();
 			} else {
 				System.out.println("Only one database remaining. Can't deselect final database");
 			}
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 		}
 	}
 
@@ -231,7 +233,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		final List<String> selected = new ArrayList<>();
 
 		for (final WebElement tick : getDatabasesList().findElements(By.cssSelector(".child-categories .checked"))) {
-			selected.add(getParent(tick).getText());
+			selected.add(ElementUtil.getParent(tick).getText());
 		}
 
 		return selected;
@@ -262,7 +264,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 			checkbox.toggle();
 		}
 
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();
 	}
 
@@ -282,12 +284,12 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 
 		if(!checkbox.isDisplayed()){
 			openPublicFilter();
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 		}
 
 		checkbox.toggle();
 
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();
 	}
 
@@ -296,13 +298,13 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
 		findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void closeFromDatePicker() {
 		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
 			findElement(By.cssSelector("[data-filter-name=\"minDate\"] .clickable")).click();
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 			waitForSearchLoadIndicatorToDisappear();
 		}
 	}
@@ -319,13 +321,13 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
 		findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void closeUntilDatePicker() {
 		if (!getDriver().findElements(By.cssSelector(".datepicker")).isEmpty()) {
 			findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 			waitForSearchLoadIndicatorToDisappear();
 		}
 	}
@@ -359,7 +361,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 		expand(Facet.FIELD_TEXT);
 		try {
 			fieldTextAddButton().click();
-			loadOrFadeWait();
+			Waits.loadOrFadeWait();
 		} catch (ElementNotVisibleException e) {
 			/* already clicked */
 		}
@@ -468,7 +470,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 				return !promotionsBox.isDisplayed() || resultsAreLoaded(promotionsBox);
 			}
 		});
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
     }
 
 	private boolean resultsAreLoaded(WebElement promotionsBox) {
@@ -478,7 +480,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	public void waitForRelatedConceptsLoadIndicatorToDisappear() {
 		try {
 			while (!findElement(By.cssSelector(".search-related-concepts .loading")).getAttribute("class").contains("hidden")){
-				loadOrFadeWait();
+				Waits.loadOrFadeWait();
 			}
 		} catch (final StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
 			// Loading Complete
@@ -524,7 +526,7 @@ public abstract class SearchBase extends AppElement implements AppPage, SearchFi
 	}
 
 	public List<String> filterLabelList() {
-		return webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
+		return ElementUtil.webElementListToStringList(findElements(By.cssSelector(".filter-display-view .filter-display-text")));
 	}
 
 	public void filterBy(SearchFilter filter) {

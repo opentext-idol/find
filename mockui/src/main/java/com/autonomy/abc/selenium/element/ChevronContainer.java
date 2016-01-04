@@ -1,7 +1,10 @@
 package com.autonomy.abc.selenium.element;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 public class ChevronContainer implements Collapsible {
@@ -15,7 +18,7 @@ public class ChevronContainer implements Collapsible {
     public void expand() {
         if (isCollapsed()) {
             chevronIcon().click();
-            loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
     }
 
@@ -23,24 +26,20 @@ public class ChevronContainer implements Collapsible {
     public void collapse() {
         if (!isCollapsed()) {
             chevronIcon().click();
-            loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
     }
 
     @Override
     public boolean isCollapsed() {
-        return AppElement.hasClass("collapsed", chevronIcon());
+        return ElementUtil.hasClass("collapsed", chevronIcon());
     }
 
     private WebElement chevronIcon() {
-        return container.findElement(By.cssSelector("[data-toggle='collapse']"));
-    }
-
-    private void loadOrFadeWait() {
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            return container.findElement(By.cssSelector("[data-toggle='collapse']"));
+        } catch (NoSuchElementException e) {
+            return container.findElement(By.className("rotating-chevron"));
         }
     }
 }

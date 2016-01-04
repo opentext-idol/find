@@ -16,7 +16,9 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -230,15 +232,15 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		Dropdown dropdown = promotionsDetailPage.spotlightTypeDropdown();
 		dropdown.select("Hotwire");
-		promotionsDetailPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Hotwire"));
 
 		dropdown.select("Top Promotions");
-		promotionsDetailPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Top Promotions"));
 
 		dropdown.select("Sponsored");
-		promotionsDetailPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Sponsored"));
 	}
 
@@ -465,7 +467,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 //		promotionsPage.selectPromotionsCategoryFilter("All Types");
-//		promotionsPage.loadOrFadeWait();
+//		Waits.loadOrFadeWait();
 		promotionsDetailPage = promotionService.goToDetails("meow");
 
 		Editable queryText = promotionsDetailPage.queryText();
@@ -488,7 +490,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionService.goToPromotions();
 		final String url = getDriver().getCurrentUrl();
-		final List<String> browserHandles = promotionsPage.createAndListWindowHandles();
+		final List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		getDriver().get(url);
@@ -619,7 +621,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String newTitle = "Admit It!!!";
 
 		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
-		promotionsDetailPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		verifyThat(promotionsDetailPage.promotionTitle().getValue(), is(newTitle));
 
 		promotionService.delete(newTitle);

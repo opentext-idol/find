@@ -15,6 +15,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +50,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     public ConnectionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        setInitialUser(config.getUser("index_tests"));
     }
 
     @Before
@@ -95,7 +97,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
         indexesPage.findIndex(indexName).findElement(By.className("fa-trash-o")).click();
-        indexesPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         getDriver().findElement(By.className("btn-alert")).click();
 
         searchActionFactory.makeSearch(searchTerm).apply();

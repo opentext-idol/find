@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.menu;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -22,10 +23,16 @@ public class NotificationsDropDown extends AppElement {
 
     public List<Notification> getAllNotifications(){
         List<Notification> notifications = new ArrayList<>();
-        for(WebElement notification : findElements(By.cssSelector("li:nth-child(1) a"))){
-            notifications.add(new Notification(notification));
+        for(WebElement notification : findElements(By.cssSelector("li:not(.no-notifications) a"))){
+            if(notification.isDisplayed()) {
+                notifications.add(new Notification(notification));
+            }
         }
         return notifications;
+    }
+
+    public Notification getNotification(int index){
+        return new Notification(findElement(By.cssSelector("li:nth-child(" + (index * 2 - 1) + ") a")));
     }
 
     public List<String> getAllNotificationMessages(){
@@ -37,7 +44,7 @@ public class NotificationsDropDown extends AppElement {
     }
 
     public void toggleNotificationsOpen() {
-        getParent(this).click();
+        ElementUtil.getParent(this).click();
     }
 
     public int countNotifications() {

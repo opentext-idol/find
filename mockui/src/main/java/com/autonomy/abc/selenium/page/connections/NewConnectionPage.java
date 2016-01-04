@@ -64,8 +64,4 @@ public class NewConnectionPage extends SAASPageBase {
     public AppElement connectorSummaryStepTab() {
         return new AppElement(findElement(By.id("stepAnchor4")), getDriver());
     }
-
-    public void loadOrFadeWait() {
-        getPage().loadOrFadeWait();
-    }
 }

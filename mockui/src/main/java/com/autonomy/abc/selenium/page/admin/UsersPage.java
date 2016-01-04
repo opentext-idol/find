@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.element.PasswordBox;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -57,21 +58,21 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	 * @deprecated Use UserService instead
 	 */
 	public void createNewUser(final String userName, final String password, final String userLevel) {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		addUsername(userName);
 		addAndConfirmPassword(password, password);
 		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + userLevel + "']")).click();
 		createButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void closeModal() {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[data-dismiss='modal']")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public int countNumberOfUsers() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		return getTable().findElements(By.cssSelector("tbody tr")).size();
 	}
 

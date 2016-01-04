@@ -3,11 +3,12 @@ package com.autonomy.abc.analytics;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -84,12 +85,12 @@ public class AnalyticsITCase extends HostedTestBase {
         Term mostPopular = analytics.getMostPopularSearchTerm();
         int mostPopularSearchCount = mostPopular.getSearchCount();
 
-        List<String> browserHandles = analytics.createAndListWindowHandles();
+        List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
         getDriver().switchTo().window(browserHandles.get(1));
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
-        FindPage find = getElementFactory().getFindPage();
+        Find find = getElementFactory().getFindPage();
 
         find.search(mostPopular.getTerm());
 
