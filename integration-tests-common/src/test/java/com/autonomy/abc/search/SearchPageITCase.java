@@ -3,7 +3,6 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -21,7 +20,6 @@ import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.CoreMatchers;
@@ -55,7 +53,6 @@ public class SearchPageITCase extends ABCTestBase {
 	private TopNavBar topNavBar;
 	private CreateNewPromotionsPage createPromotionsPage;
 	private PromotionsPage promotionsPage;
-	private DatePicker datePicker;
 	private SearchService searchService;
 
 	public SearchPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
@@ -65,22 +62,18 @@ public class SearchPageITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws MalformedURLException {
 		topNavBar = body.getTopNavBar();
-		topNavBar.search("example");
-		searchPage = getElementFactory().getSearchPage();
-        searchPage.waitForSearchLoadIndicatorToDisappear();
-
 		searchService = getApplication().createSearchService(getElementFactory());
+		searchPage = searchService.search("example");
 	}
 
 	private void search(String searchTerm){
 		logger.info("Searching for: '" + searchTerm + "'");
-		topNavBar.search(searchTerm);
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage = searchService.search(searchTerm);
 	}
 
-	private void applyFilter(SearchFilter filter) {
-		filter.apply(searchPage);
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+	private void search(SearchQuery query) {
+		logger.info("Searching for: " + query + "");
+		searchPage = searchService.search(query);
 	}
 
     @Test
@@ -641,7 +634,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testFieldTextFilter() {
 		search("text");
 		if (config.getType().equals(ApplicationType.HOSTED)) {
-			applyFilter(new IndexFilter("sitesearch"));
+			searchPage.filterBy(new IndexFilter("sitesearch"));
 		}
 
 		final String searchResultTitle = searchPage.getSearchResultTitle(1);
@@ -918,66 +911,73 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testFromDateFilter() throws ParseException {
-		search("Dog");
-		// some indexes do not have dates
-		new IndexFilter("wiki_eng").apply(searchPage);
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResultTitle(1);
-		final Date date = searchPage.getDateFromResult(1);
-		if (date == null) {
-			throw new IllegalStateException("testFromDateFilter requires first search result to have a date");
+		final Date validDate = date;
+		final Date invalidDate = DateUtils.addMinutes(date, 1);
+
+		searchPage.filterBy(new DatePickerFilter().from(validDate));
+		for (final String label : searchPage.filterLabelList()) {
+			assertThat("no 'Until' filter applied", label,not(containsString("Until: ")));
 		}
-		searchPage.openFromDatePicker();
-		datePicker = new DatePicker(searchPage.$el(), getDriver());
-		datePicker.calendarDateSelect(date);
-		searchPage.closeFromDatePicker();
-		assertThat("displayed with filter = $time", searchPage.getSearchResultTitle(1), is(firstResult));
+		assertThat("applied 'From' filter", searchPage.fromDateTextBox().getAttribute("value"), not(isEmptyOrNullString()));
+		verifyValidDate(firstResult);
 
-		searchPage.openFromDatePicker();
-		datePicker = new DatePicker(searchPage.$el(), getDriver());
-		datePicker.calendarDateSelect(DateUtils.addMinutes(date, 1));
-		searchPage.closeFromDatePicker();
+		searchPage.filterBy(new DatePickerFilter().from(invalidDate));
+		verifyInvalidDate(firstResult);
 
-		assertThat("not displayed with filter = $time + 1min", searchPage.getSearchResultTitle(1), not(firstResult));
-
-		searchPage.openFromDatePicker();
-		datePicker = new DatePicker(searchPage.$el(), getDriver());
-		datePicker.calendarDateSelect(DateUtils.addMinutes(date, -1));
-		searchPage.closeFromDatePicker();
-		assertThat("displayed with filter = $time - 1min", searchPage.getSearchResultTitle(1), is(firstResult));
+		searchPage.filterBy(new DatePickerFilter().from(validDate));
+		verifyValidDate(firstResult);
 	}
 
 	@Test
 	public void testUntilDateFilter() throws ParseException {
-		search("Dog");
-		// not all indexes have times configured
-		new IndexFilter("news_eng").apply(searchPage);
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-
+		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResultTitle(1);
-		Date date = searchPage.getDateFromResult(1);
 
-		logger.info("First Result: " + firstResult + " " + date);
 		// plus 1 minute to be inclusive
-		date = DateUtils.addMinutes(date, 1);
+		final Date validDate = DateUtils.addMinutes(date, 1);
+		final Date invalidDate = date;
 
-		searchPage.filterBy(new DatePickerFilter().until(date));
+		searchPage.filterBy(new DatePickerFilter().until(validDate));
 		for (final String label : searchPage.filterLabelList()) {
 			assertThat("no 'From' filter applied", label,not(containsString("From: ")));
 		}
 		assertThat("applied 'Until' filter", searchPage.untilDateTextBox().getAttribute("value"), not(isEmptyOrNullString()));
-		logger.info(searchPage.untilDateTextBox().getAttribute("value"));
-		assertThat(searchPage.getHeadingResultsCount(), greaterThan(0));
-		assertThat("Document should still be displayed", searchPage.getSearchResultTitle(1), is(firstResult));
+		verifyValidDate(firstResult);
 
-		searchPage.filterBy(new DatePickerFilter().until(DateUtils.addMinutes(date, -1)));
-        logger.info(searchPage.untilDateTextBox().getAttribute("value"));
-        assertThat("Document should not be visible. Date filter not working", searchPage.getSearchResultTitle(1), not(firstResult));
+		searchPage.filterBy(new DatePickerFilter().until(invalidDate));
+        verifyInvalidDate(firstResult);
 
-		searchPage.filterBy(new DatePickerFilter().until(DateUtils.addMinutes(date, 1)));
-		assertThat(searchPage.getHeadingResultsCount(), greaterThan(0));
-		assertThat("Document should be visible. Date filter not working", searchPage.getSearchResultTitle(1), is(firstResult));
+		searchPage.filterBy(new DatePickerFilter().until(validDate));
+		verifyValidDate(firstResult);
+	}
+
+	private Date beginDateFilterTest() throws ParseException {
+		// not all indexes have times configured
+		search(new SearchQuery("Dog").withFilter(new IndexFilter("news_eng")));
+		Date date = searchPage.getDateFromResult(1);
+		if (date == null) {
+			throw new IllegalStateException("date filter test requires first search result to have a date");
+		}
+		logger.info("First Result: " + searchPage.getSearchResultTitle(1) + " " + date);
+		return date;
+	}
+
+	private void verifyValidDate(String firstResult) {
+		logger.info("from: " + searchPage.fromDateTextBox().getAttribute("value"));
+		logger.info("until: " + searchPage.untilDateTextBox().getAttribute("value"));
+		if (verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0))) {
+			verifyThat("Document should be displayed again", searchPage.getSearchResultTitle(1), is(firstResult));
+		}
+	}
+
+	private void verifyInvalidDate(String firstResult) {
+		logger.info("from: " + searchPage.fromDateTextBox().getAttribute("value"));
+		logger.info("until: " + searchPage.untilDateTextBox().getAttribute("value"));
+		if (searchPage.getHeadingResultsCount() > 0) {
+			verifyThat("Document should not be displayed", searchPage.getSearchResultTitle(1), not(firstResult));
+		}
 	}
 
 	@Test
