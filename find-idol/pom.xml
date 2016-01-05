@@ -132,7 +132,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>parametric-databases-idol</artifactId>
-            <version>0.4.1</version>
+            <version>0.4.2</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.view</groupId>
