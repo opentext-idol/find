@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
+import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.util.ElementUtil;
@@ -88,6 +89,11 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		}
 	}
 
+	public WebElement spotlightType(final Promotion.SpotlightType type){
+		return spotlightType(type.getOption());
+	}
+
+	@Deprecated
 	public WebElement spotlightType(final String type ) {
 		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
 	}
@@ -101,24 +107,6 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}
 
 	public abstract List<WizardStep> getWizardSteps(SpotlightPromotion promotion);
-
-	/*
-	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger, final String type) {
-		promotionType("SPOTLIGHT").click();
-		Waits.loadOrFadeWait();
-		continueButton(WizardStep.TYPE).click();
-		Waits.loadOrFadeWait();
-		if (type.equals("On Premise")) {
-			spotlightType(spotlightType).click();
-			Waits.loadOrFadeWait();
-			continueButton(WizardStep.PROMOTION_TYPE).click();
-			Waits.loadOrFadeWait();
-		}
-		addSearchTrigger(searchTrigger);
-		Waits.loadOrFadeWait();
-		finishButton().click();
-		Waits.loadOrFadeWait();
-	}*/
 
 	public WebElement promotionType(final String promotionType) {
 		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));

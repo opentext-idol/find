@@ -61,11 +61,13 @@ public class PromotionService {
 
     public List<String> setUpPromotion(Promotion promotion, Search search, int numberOfDocs) {
         SearchPage searchPage = search.apply();
-        searchPage.promoteTheseDocumentsButton().click();
-        List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
+        List<String> promotedDocTitles = null;
+
         if (promotion instanceof DynamicPromotion) {
             searchPage.promoteThisQueryButton().click();
         } else {
+            searchPage.promoteTheseDocumentsButton().click();
+            promotedDocTitles = searchPage.addToBucket(numberOfDocs);
             ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
         }
         promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
