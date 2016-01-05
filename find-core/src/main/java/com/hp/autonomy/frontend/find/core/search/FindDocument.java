@@ -57,6 +57,7 @@ public class FindDocument implements Serializable {
     private final String summary;
     private final String contentType;
     private final String url;
+    private final String offset;
 
     private final List<String> authors;
     private final List<String> categories;
@@ -73,6 +74,7 @@ public class FindDocument implements Serializable {
         summary = builder.summary;
         contentType = builder.contentType;
         url = builder.url;
+        offset = builder.offset;
 
         // LinkedList so we can guarantee Serializable
         authors = builder.authors == null ? Collections.<String>emptyList() : new LinkedList<>(builder.authors);
@@ -98,6 +100,7 @@ public class FindDocument implements Serializable {
         private String contentType;
 
         private String url;
+        private String offset;
 
         @JsonProperty(AUTHOR_FIELD)
         private List<String> authors;
@@ -116,6 +119,7 @@ public class FindDocument implements Serializable {
             summary = document.summary;
             contentType = document.contentType;
             url = document.url;
+            offset = document.offset;
             authors = document.authors;
             categories = document.categories;
             date = document.date;
@@ -136,6 +140,15 @@ public class FindDocument implements Serializable {
         public Builder setUrl(final List<String> urls) {
             if (urls != null && !urls.isEmpty()) {
                 url = urls.get(0);
+            }
+
+            return this;
+        }
+
+        @JsonProperty(OFFSET_FIELD)
+        public Builder setOffset(final List<String> offsets) {
+            if (offsets != null && !offsets.isEmpty()) {
+                offset = offsets.get(0);
             }
 
             return this;
