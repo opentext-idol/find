@@ -78,7 +78,6 @@ define([
             var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC});
             expect(model).toBeDefined();
             expect(model.get('field')).toBe('AGE');
-            expect(model.get('text')).toContain('AGE');
             expect(model.get('text')).toContain('4');
         });
 
@@ -210,7 +209,6 @@ define([
             it('contains a NAME parametric filter model', function() {
                 var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC,  field: 'NAME'});
                 expect(model).toBeDefined();
-                expect(model.get('text')).toContain('Name');
                 expect(model.get('text')).toContain('bobby');
                 expect(model.get('text')).toContain('penny');
             });
@@ -226,7 +224,6 @@ define([
 
                 it('removes the deselected field value from the NAME parametric filter model', function() {
                     var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'});
-                    expect(model.get('text')).toContain('Name');
                     expect(model.get('text')).toContain('bobby');
                     expect(model.get('text')).not.toContain('penny');
                 });
@@ -263,7 +260,6 @@ define([
 
                     var vehicleModel = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'VEHICLE'});
                     expect(vehicleModel).toBeDefined();
-                    expect(vehicleModel.get('text')).toContain('VEHICLE');
                     expect(vehicleModel.get('text')).toContain('car');
                 });
             });

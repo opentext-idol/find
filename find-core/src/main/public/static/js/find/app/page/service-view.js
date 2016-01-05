@@ -159,7 +159,7 @@ define([
 
             this.resultsView.setElement(this.$('.results-container')).render();
 
-            this.$('.container-toggle').on('click', this.containerToggle.bind(this));
+            this.$('.container-toggle').on('click', this.containerToggle);
 
         },
 
