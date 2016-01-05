@@ -13,6 +13,7 @@ A live preview of HP Find can be found at [find.idolondemand.com](http://find.id
 ## Building HP Find
 Building HP Find requires the following to be installed
 
+* [Git](https://git-scm.com/)
 * [Apache Maven 3](http://maven.apache.org)
 * [NodeJS](http://nodejs.org)
 
