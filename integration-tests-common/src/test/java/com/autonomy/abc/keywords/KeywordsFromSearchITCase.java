@@ -17,6 +17,7 @@ import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -190,7 +191,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         searchPage = keywordService.addSynonymGroup(synonymListBears);
 
         for (final String synonym : synonymListBears) {
-            assertThat(synonym + " not included in title", searchPage.title(),containsString(synonym));
+            assertThat(synonym + " not included in title", PageUtil.getPageTitle(getDriver()),containsString(synonym));
             assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
             verifyThat(synonym + " synonym group complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
             verifyThat(searchPage.countSynonymLists(), is(1));
