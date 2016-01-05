@@ -30,6 +30,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 
@@ -74,11 +75,11 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         promotedTitles = searchPage.createAMultiDocumentPromotion(3);
         getElementFactory().getCreateNewPromotionsPage().addSpotlightPromotion("", trigger);
 
-        assertThat(searchPage.getPromotedDocumentTitles(), containsInAnyOrder(promotedTitles.toArray()));
+        assertThat(searchPage.promotionsSummaryList(true), containsInAnyOrder(promotedTitles.toArray()));
 
         searchPage = keywordService.addSynonymGroup(Language.ENGLISH, synonyms);
 
-        assertThat(searchPage.getPromotedDocumentTitles(), containsInAnyOrder(promotedTitles.toArray()));
+        assertThat(searchPage.promotionsSummaryList(true), containsInAnyOrder(promotedTitles.toArray()));
 
         assertPromotedItemsForEverySynonym();
 
@@ -90,7 +91,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
         for(String synonym : synonyms){
             searchActionFactory.makeSearch(synonym).apply();
-            assertThat(searchPage.getPromotedResults().size(),is(0));
+            assertThat(searchPage.promotionsSummaryList(false), empty());
         }
 
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
@@ -110,7 +111,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     private void assertPromotedItemsForEverySynonym() {
         for(String synonym : synonyms){
             searchActionFactory.makeSearch(synonym).apply();
-            assertThat(searchPage.getPromotedDocumentTitles(), containsInAnyOrder(promotedTitles.toArray()));
+            assertThat(searchPage.promotionsSummaryList(true), containsInAnyOrder(promotedTitles.toArray()));
         }
     }
 

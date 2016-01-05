@@ -187,22 +187,11 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return ElementUtil.getTexts(findElements(By.cssSelector(".promotions-list h3 a")));
 	}
 
-	public List<WebElement> getPromotedResults() {
-		return findElements(By.cssSelector(".promotions-list h3"));
-	}
-
 	public WebElement getPromotedResult(int number) {
 		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ") h3")));
 	}
 
-	public List<String> getPromotedDocumentTitles(){
-		List<String> titles = new ArrayList<>();
-		for(WebElement promotion : getPromotedResults()){
-			titles.add(promotion.getText());
-		}
-		return titles;
-	}
-
+	// TODO: move down to OPSearchPage
 	public List<String> getPromotionLabels() {
 		Waits.loadOrFadeWait();
 		final List<String> labelList = new ArrayList<>();
