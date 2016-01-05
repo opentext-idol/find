@@ -17,8 +17,6 @@ import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,15 +27,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.Arrays;
-
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -70,7 +66,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testDynamicPromotionCreation() {
-        searchPage = searchService.search(new SearchQuery("lapin").withFilter(new LanguageFilter("French")));
+        searchPage = searchService.search(new SearchQuery("lapin").withFilter(new LanguageFilter(Language.FRENCH)));
 
         final String firstDocTitle = searchPage.getSearchResultTitle(1);
         searchPage.promoteThisQueryButton().click();
@@ -127,7 +123,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
         if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
             assertThat(searchPage.getSelectedLanguage(), is(Language.FRENCH.toString()));
-            assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase("Top Promotions"));
+            assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase(Promotion.SpotlightType.TOP_PROMOTIONS.getOption()));
         }
         assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), is("bunny rabbit"));
         assertThat(searchPage.promotionsSummaryList(false).get(0), is(firstDocTitle));
