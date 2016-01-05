@@ -54,7 +54,7 @@ public class IndexService {
         indexesPage.newIndexButton().click();
         CreateNewIndexPage newIndexPage = elementFactory.getCreateNewIndexPage();
 
-        newIndexPage.inputIndexName(index.getName());
+        newIndexPage.indexNameInput().setValue(index.getName());
         newIndexPage.nextButton().click();
         Waits.loadOrFadeWait();
 

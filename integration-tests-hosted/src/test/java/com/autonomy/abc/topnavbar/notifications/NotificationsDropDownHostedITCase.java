@@ -93,7 +93,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         try {
             indexes.newIndexButton().click();
             CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
-            createNewIndexPage.inputIndexName(indexName);
+            createNewIndexPage.indexNameInput().setValue(indexName);
             createNewIndexPage.nextButton().click();
             Waits.loadOrFadeWait();
             createNewIndexPage.nextButton().click();

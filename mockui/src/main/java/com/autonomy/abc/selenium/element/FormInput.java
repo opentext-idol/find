@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.element;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -42,5 +44,13 @@ public class FormInput {
     public void setAndSubmit(String value) {
         setValue(value);
         element.submit();
+    }
+
+    public WebElement formGroup() {
+        return ElementUtil.ancestor(element, 2);
+    }
+
+    public WebElement errorMessage() {
+        return formGroup().findElement(By.cssSelector(".help-block:not(.ng-hide)"));
     }
 }

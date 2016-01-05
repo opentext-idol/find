@@ -3,6 +3,7 @@ package com.autonomy.abc.connections;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
@@ -10,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
@@ -20,11 +22,14 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class IndexWizardITCase extends HostedTestBase {
 
     private CreateNewIndexPage createNewIndexPage;
+    private FormInput indexNameInput;
+    private FormInput displayNameInput;
 
     public IndexWizardITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -38,18 +43,19 @@ public class IndexWizardITCase extends HostedTestBase {
         body = getBody();
 
         createNewIndexPage = getElementFactory().getCreateNewIndexPage();
+        indexNameInput = createNewIndexPage.indexNameInput();
+        displayNameInput = createNewIndexPage.displayNameInput();
     }
 
     @Test
     //CSA-949 - test the input validator which supports only A-Za-Z0-9, space and underscore characters - shouldn't be valid
     public void testIndexDisplayNameValidatorsFail(){
-        createNewIndexPage.inputIndexName("name");
+        indexNameInput.setValue("name");
+        displayNameInput.setValue("displayName #$%");
 
-        createNewIndexPage.inputIndexDisplayName("displayName #$%");
         String error = "Please enter a valid name that contains only alphanumeric characters";
-        WebElement errorMessage = configErrorMessage(createNewIndexPage.indexDisplayNameInputElement());
-        WebElement displayNameFormGroup = inputFormGroup(createNewIndexPage.indexDisplayNameInputElement());
-        verifyThat(displayNameFormGroup,hasClass("has-error"));
+        verifyThat(displayNameInput.formGroup(), hasClass("has-error"));
+        WebElement errorMessage = displayNameInput.errorMessage();
         verifyThat(errorMessage, displayed());
         verifyThat(errorMessage, containsText(error));
     }
@@ -57,13 +63,18 @@ public class IndexWizardITCase extends HostedTestBase {
     @Test
     //CSA-949 - test the input validator which supports only A-Za-Z0-9, space and underscore characters - should be valid
     public void testIndexDisplayNameValidatorsPass(){
-        createNewIndexPage.inputIndexName("name");
-        createNewIndexPage.inputIndexDisplayName("displayName 7894");
-        WebElement errorMessage = configErrorMessage(createNewIndexPage.indexDisplayNameInputElement());
-        verifyThat(errorMessage, not(displayed()));
-        WebElement displayNameFormGroup = inputFormGroup(createNewIndexPage.indexDisplayNameInputElement());
+        indexNameInput.setValue("name");
+        displayNameInput.setValue("displayName 7894");
 
-        verifyThat(displayNameFormGroup, not(hasClass("has-error")));
+        WebElement errorMessage = null;
+        try {
+            errorMessage = displayNameInput.errorMessage();
+        } catch (NoSuchElementException e) {
+            /* expected behaviour */
+        } finally {
+            verifyThat(errorMessage, nullValue());
+        }
+        verifyThat(displayNameInput.formGroup(), not(hasClass("has-error")));
 
     }
 
@@ -72,14 +83,12 @@ public class IndexWizardITCase extends HostedTestBase {
     public void testIndexDisplayNameOnSummary(){
         String name = "name";
         String displayName = "displayName 7894";
-        createNewIndexPage.inputIndexName(name);
-        createNewIndexPage.inputIndexDisplayName(displayName);
 
-        WebElement indexNameFormGroup = inputFormGroup(createNewIndexPage.indexNameInputElement());
-        WebElement displayNameFormGroup = inputFormGroup(createNewIndexPage.indexDisplayNameInputElement());
+        indexNameInput.setValue(name);
+        displayNameInput.setValue(displayName);
 
-        verifyThat(indexNameFormGroup, not(hasClass("has-error")));
-        verifyThat(displayNameFormGroup, not(hasClass("has-error")));
+        verifyThat(indexNameInput.formGroup(), not(hasClass("has-error")));
+        verifyThat(displayNameInput.formGroup(), not(hasClass("has-error")));
 
         createNewIndexPage.nextButton().click();
         createNewIndexPage.nextButton().click();
@@ -92,7 +101,7 @@ public class IndexWizardITCase extends HostedTestBase {
     @Test
     //CSA-1616
     public void testUppercaseFieldNames() {
-        createNewIndexPage.inputIndexName("name");
+        indexNameInput.setValue("name");
 
         createNewIndexPage.nextButton().click();
 
@@ -136,10 +145,6 @@ public class IndexWizardITCase extends HostedTestBase {
 
     private WebElement configErrorMessage(WebElement element){
         return ElementUtil.ancestor(element,1).findElement(By.tagName("p"));
-    }
-
-    private WebElement inputFormGroup(WebElement element){
-        return ElementUtil.ancestor(element,2);
     }
 
     @After

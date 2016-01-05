@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.indexes;
 
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -21,20 +22,12 @@ public class CreateNewIndexPage extends SAASPageBase {
     }
 
     /* index name step */
-    public void inputIndexName(String name) {
-        indexNameInputElement().sendKeys(name);
+    public FormInput indexNameInput() {
+        return new FormInput(findElement(By.cssSelector("[name='indexName']")), getDriver());
     }
 
-    public void inputIndexDisplayName(String displayName) {
-        indexDisplayNameInputElement().sendKeys(displayName);
-    }
-
-    public WebElement indexNameInputElement() {
-        return findElement(By.cssSelector("[name='indexName']"));
-    }
-
-    public WebElement indexDisplayNameInputElement() {
-        return findElement(By.cssSelector("[name='indexDisplayName']"));
+    public FormInput displayNameInput() {
+        return new FormInput(findElement(By.cssSelector("[name='indexDisplayName']")), getDriver());
     }
 
     /* index configuration step */
