@@ -185,7 +185,7 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
     }
 
     private List<String> parseFields(final Element node, final String fieldName) {
-        final NodeList childNodes = node.getElementsByTagName(fieldName);
+        final NodeList childNodes = node.getElementsByTagName(fieldName.toUpperCase());
         final int length = childNodes.getLength();
         final List<String> values = new ArrayList<>(length);
 
