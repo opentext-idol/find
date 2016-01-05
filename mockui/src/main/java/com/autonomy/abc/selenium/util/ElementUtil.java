@@ -54,7 +54,7 @@ public final class ElementUtil {
         element.click();
     }
 
-    public static void tryClickThenTryParentClick(final WebElement element, WebDriver driver) {
+    public static void tryClickThenTryParentClick(final WebElement element) {
         try {
             element.click();
         } catch (final WebDriverException e) {

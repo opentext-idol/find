@@ -133,7 +133,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         trySendKeysToPinPosition("bad");
         assertThat(createPromotionsPage.positionInputValue(), is(2));
 
-        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.continueButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.continueButton());
         Waits.loadOrFadeWait();
         assertThat(createPromotionsPage, hasTextThat(containsString(SearchTriggerStep.TITLE)));
         body.getSideNavBar().toggle();
@@ -181,7 +181,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         goToTriggerStep();
         assertThat(createPromotionsPage.triggerAddButton(), disabled());
 
-        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton());
         assertThat(createPromotionsPage.getSearchTriggersList(), empty());
 
         createPromotionsPage.addSearchTrigger("trigger");
@@ -199,7 +199,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         goToTriggerStep();
         assertThat(createPromotionsPage.triggerAddButton(), disabled());
 
-        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(createPromotionsPage.triggerAddButton());
         assertThat(createPromotionsPage.getSearchTriggersList(), empty());
 
         createPromotionsPage.addSearchTrigger("bag");

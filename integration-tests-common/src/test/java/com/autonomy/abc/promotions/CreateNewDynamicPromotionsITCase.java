@@ -166,7 +166,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
         assertThat("Trigger add button is not disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
 
-        ElementUtil.tryClickThenTryParentClick(dynamicPromotionsPage.triggerAddButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(dynamicPromotionsPage.triggerAddButton());
         assertThat("Number of triggers does not equal 0", dynamicPromotionsPage.getSearchTriggersList(), hasSize(0));
 
         dynamicPromotionsPage.addSearchTrigger("trigger");
@@ -188,7 +188,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
         assertThat("Trigger add button is not disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
 
-        ElementUtil.tryClickThenTryParentClick(dynamicPromotionsPage.triggerAddButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(dynamicPromotionsPage.triggerAddButton());
 
         assertThat("Number of triggers does not equal 0", dynamicPromotionsPage.getSearchTriggersList(), hasSize(0));
 

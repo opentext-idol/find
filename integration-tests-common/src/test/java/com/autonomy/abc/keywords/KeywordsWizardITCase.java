@@ -308,7 +308,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
         createKeywordsPage.blacklistAddTextBox().sendKeys(" ");
-        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton());
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
         createKeywordsPage.blacklistAddTextBox().clear();
@@ -317,7 +317,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
         createKeywordsPage.blacklistAddTextBox().sendKeys("\t");
-        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton());
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
     }
 
