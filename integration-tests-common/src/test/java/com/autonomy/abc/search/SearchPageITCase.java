@@ -147,52 +147,41 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promotionsBucketClose();
 	}
 
-    //TODO fix this test so it's not being run on something with an obscene amount of pages
-    @Ignore
 	@Test
 	public void testSearchResultsPagination() {
-		search("dog");
+		search("grass");
 		Waits.loadOrFadeWait();
-		assertThat("Back to first page button is not disabled", searchPage.isBackToFirstPageButtonDisabled());
-		assertThat("Back a page button is not disabled", ElementUtil.getParent(searchPage.backPageButton()).getAttribute("class"),containsString("disabled"));
+		assertThat(searchPage.resultsPaginationButton(Pagination.FIRST), disabled());
+		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), disabled());
 
-		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-		searchPage.paginateWait();
- 		assertThat("Back to first page button is not enabled", ElementUtil.getParent(searchPage.backToFirstPageButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Back a page button is not enabled", ElementUtil.getParent(searchPage.backPageButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Page 2 is not active", searchPage.getCurrentPageNumber(), is(2));
+		searchPage.switchResultsPage(Pagination.NEXT);
+		assertThat(searchPage.resultsPaginationButton(Pagination.FIRST), not(disabled()));
+		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), not(disabled()));
+		assertThat(searchPage.getCurrentPageNumber(), is(2));
 
-		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-		searchPage.paginateWait();
-		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-		searchPage.paginateWait();
-		ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
-		searchPage.paginateWait();
-		assertThat("Page 3 is not active", searchPage.getCurrentPageNumber(), is(3));
+		searchPage.switchResultsPage(Pagination.NEXT);
+		searchPage.switchResultsPage(Pagination.NEXT);
+		searchPage.switchResultsPage(Pagination.PREVIOUS);
+		assertThat(searchPage.getCurrentPageNumber(), is(3));
 
-		ElementUtil.javascriptClick(searchPage.backToFirstPageButton(), getDriver());
-		searchPage.paginateWait();
-		assertThat("Page 1 is not active", searchPage.getCurrentPageNumber(), is(1));
+		searchPage.switchResultsPage(Pagination.FIRST);
+		assertThat(searchPage.getCurrentPageNumber(), is(1));
 
-		ElementUtil.javascriptClick(searchPage.forwardToLastPageButton(), getDriver());
-		searchPage.paginateWait();
-		assertThat("Forward to last page button is not disabled", ElementUtil.getParent(searchPage.forwardToLastPageButton()).getAttribute("class"),containsString("disabled"));
-		assertThat("Forward a page button is not disabled", ElementUtil.getParent(searchPage.forwardPageButton()).getAttribute("class"),containsString("disabled"));
+		searchPage.switchResultsPage(Pagination.LAST);
+		assertThat(searchPage.resultsPaginationButton(Pagination.LAST), disabled());
+		assertThat(searchPage.resultsPaginationButton(Pagination.NEXT), disabled());
 
 		final int numberOfPages = searchPage.getCurrentPageNumber();
-
 		for (int i = numberOfPages - 1; i > 0; i--) {
-			ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
-			searchPage.paginateWait();
-			assertThat("Page " + i + " is not active", searchPage.getCurrentPageNumber(), is(i));
-			assertThat("Url incorrect", getDriver().getCurrentUrl(),endsWith(String.valueOf(i)));
+			searchPage.switchResultsPage(Pagination.PREVIOUS);
+			assertThat(searchPage.getCurrentPageNumber(), is(i));
+			assertThat(getDriver().getCurrentUrl(), endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
-			ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-			searchPage.paginateWait();
-			assertThat("Page " + j + " is not active", searchPage.getCurrentPageNumber(), is(j));
-			assertThat("Url incorrect", getDriver().getCurrentUrl(),endsWith(String.valueOf(j)));
+			searchPage.switchResultsPage(Pagination.NEXT);
+			assertThat(searchPage.getCurrentPageNumber(), is(j));
+			assertThat(getDriver().getCurrentUrl(), endsWith(String.valueOf(j)));
 		}
 	}
 

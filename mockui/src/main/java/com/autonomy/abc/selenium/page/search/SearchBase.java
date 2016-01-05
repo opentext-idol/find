@@ -169,10 +169,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return Integer.parseInt(findElement(By.cssSelector(".btn-nav.active")).getText());
 	}
 
-	public boolean isBackToFirstPageButtonDisabled() {
-		return  ElementUtil.getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
-	}
-
 	public void switchResultsPage(Pagination pagination) {
 		resultsPaginationButton(pagination).click();
 		waitForSearchLoadIndicatorToDisappear();
