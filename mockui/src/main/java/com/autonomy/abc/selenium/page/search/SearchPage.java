@@ -223,26 +223,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".show-less"));
 	}
 
-	@Deprecated
-	public WebElement promotionSummaryBackToStartButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
-	}
-
-	@Deprecated
-	public WebElement promotionSummaryBackButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
-	}
-
-	@Deprecated
-	public WebElement promotionSummaryForwardButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
-	}
-
-	@Deprecated
-	public WebElement promotionSummaryForwardToEndButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
-	}
-
 	public void switchPromotionPage(Pagination pagination) {
 		promotionPaginationButton(pagination).click();
 		waitForPromotionsLoadIndicatorToDisappear();
