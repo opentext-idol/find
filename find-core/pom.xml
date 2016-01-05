@@ -139,7 +139,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.view</groupId>
             <artifactId>view-proxy-components-core</artifactId>
-            <version>0.4.0</version>
+            <version>0.5.1</version>
         </dependency>
 
         <dependency>
