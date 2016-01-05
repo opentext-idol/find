@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -257,34 +258,26 @@ public class SearchPageITCase extends ABCTestBase {
 			searchPage.showMorePromotions();
 			assertThat("showing more again", searchPage.getPromotionSummarySize(), is(5));
 
-			searchPage.promotionSummaryForwardButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.switchPromotionPage(Pagination.NEXT);
 			logger.info("on page 2");
 			verifyPromotionPagination(true, true);
 
-			searchPage.promotionSummaryForwardButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
-			searchPage.promotionSummaryForwardButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.switchPromotionPage(Pagination.NEXT);
+			searchPage.switchPromotionPage(Pagination.NEXT);
 			logger.info("on last page");
 			verifyPromotionPagination(true, false);
 
-			searchPage.promotionSummaryBackButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
-			searchPage.promotionSummaryBackButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
-			searchPage.promotionSummaryBackButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			for (int unused=0; unused < 3; unused++) {
+				searchPage.switchPromotionPage(Pagination.PREVIOUS);
+			}
 			logger.info("on first page");
 			verifyPromotionPagination(false, true);
 
-			searchPage.promotionSummaryForwardToEndButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.switchPromotionPage(Pagination.LAST);
 			logger.info("on last page");
 			verifyPromotionPagination(true, false);
 
-			searchPage.promotionSummaryBackToStartButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.switchPromotionPage(Pagination.FIRST);
 			logger.info("on first page");
 			verifyPromotionPagination(false, true);
 		} finally {
@@ -293,10 +286,10 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	private void verifyPromotionPagination(boolean previousEnabled, boolean nextEnabled) {
-		verifyButtonEnabled("back to start", searchPage.promotionSummaryBackToStartButton(), previousEnabled);
-		verifyButtonEnabled("back", searchPage.promotionSummaryBackButton(), previousEnabled);
-		verifyButtonEnabled("forward", searchPage.promotionSummaryForwardButton(), nextEnabled);
-		verifyButtonEnabled("forward to end", searchPage.promotionSummaryForwardToEndButton(), nextEnabled);
+		verifyButtonEnabled("back to start", searchPage.promotionPaginationButton(Pagination.FIRST), previousEnabled);
+		verifyButtonEnabled("back", searchPage.promotionPaginationButton(Pagination.PREVIOUS), previousEnabled);
+		verifyButtonEnabled("forward", searchPage.promotionPaginationButton(Pagination.NEXT), nextEnabled);
+		verifyButtonEnabled("forward to end", searchPage.promotionPaginationButton(Pagination.LAST), nextEnabled);
 	}
 
 	private void verifyButtonEnabled(String name, WebElement element, boolean enabled) {
