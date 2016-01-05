@@ -225,6 +225,7 @@ public class SearchPageITCase extends ABCTestBase {
 		Search search = new Search(getApplication(), getElementFactory(), "freeze");
 
 		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		promotionService.deleteAll();
 		promotionService.setUpPromotion(promotion, search, 18);
 
 		try {
