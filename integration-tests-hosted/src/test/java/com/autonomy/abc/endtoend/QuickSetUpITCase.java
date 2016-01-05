@@ -4,17 +4,21 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -27,39 +31,36 @@ public class QuickSetUpITCase extends HostedTestBase {
         super(config, browser, type, platform);
     }
 
-    GettingStartedPage gettingStarted;
+    private GettingStartedPage gettingStarted;
+    private PromotionService promotionService;
 
     @Before
     public void setUp(){
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        getElementFactory().getPromotionsPage().deleteAllPromotions();
+        promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService.deleteAll();
 
         body.getSideNavBar().switchPage(NavBarTabId.GETTING_STARTED);
-        body = getBody();
         gettingStarted = getElementFactory().getGettingStartedPage();
+        body = getBody();
     }
 
     @Test
     public void testQuickSetUp(){
-        String site = "www.cnet.com";
+        String site = "http://www.cnet.com";
         gettingStarted.addSiteToIndex(site);
-        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Document \"http://" + site + "\" was uploaded successfully"));
 
-        body.getTopNavBar().search(site);
-        SearchPage searchPage = getElementFactory().getSearchPage();
+        SearchService searchService = getApplication().createSearchService(getElementFactory());
+        //Can't search for forward slash, so take those out
+        SearchQuery searchQuery = new SearchQuery(site.split("//")[1]).withFilter(new IndexFilter(Index.DEFAULT));
+
+        SearchPage searchPage = searchService.search(searchQuery);
         body = getBody();
 
         //Check promoting the correct document
-        searchPage.selectAllIndexes();
-        searchPage.findElement(By.xpath(".//label[text()[contains(., 'All')]]/div/ins")).click();
-        new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//label[text()[contains(.,'default_index')]]"))).click();
-        searchPage.loadOrFadeWait();
-        searchPage.waitForSearchLoadIndicatorToDisappear();
         searchPage.getSearchResult(1).click();
-        searchPage.loadOrFadeWait();
-        assertThat(getDriver().findElement(By.xpath("//*[text()='Reference']/../td")).getText(), is("http://" + site));
-        getDriver().findElement(By.className("fa-close")).click();
-        searchPage.loadOrFadeWait();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        assertThat(docViewer.getReference(), is(site));
+        docViewer.close();
 
         String promotionTitle = searchPage.createAPromotion();
 
@@ -74,11 +75,7 @@ public class QuickSetUpITCase extends HostedTestBase {
         assertThat(searchPage.getPromotedResult(1).getText(), is(promotionTitle));
 
         //Delete Promotion
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        PromotionsPage promotionsPage = getElementFactory().getPromotionsPage();
-        promotionsPage.getPromotionLinkWithTitleContaining(trigger).findElement(By.className("promotion-delete")).click();
-        promotionsPage.loadOrFadeWait();
-        getDriver().findElement(By.className("modal-action-button")).click();
+        PromotionsPage promotionsPage = promotionService.delete(trigger);
 
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Removed a spotlight promotion"));
 
@@ -87,8 +84,7 @@ public class QuickSetUpITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        getElementFactory().getPromotionsPage().deleteAllPromotions();
+        promotionService.deleteAll();
     }
 
 }

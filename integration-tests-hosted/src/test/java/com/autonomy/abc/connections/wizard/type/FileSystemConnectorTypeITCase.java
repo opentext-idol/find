@@ -5,11 +5,13 @@ import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 
+import javax.lang.model.element.Element;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -52,7 +54,7 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
         for (String key : map.keySet()) {
             connectorPath.setValue(map.get(key));
             connectorName.getElement().click();
-            assertThat("The url input field isn't valid ", !AppElement.hasClass(INVALID_INPUT_CLASS, AppElement.getParent(AppElement.getParent(connectorPath.getElement()))));
+            assertThat("The url input field isn't valid ", !ElementUtil.hasClass(INVALID_INPUT_CLASS, ElementUtil.ancestor(connectorPath.getElement(), 2)));
 
             assertThat("The name was extracted from the URL", connectorName.getElement(), hasAttribute("value", equalTo(key)));
             assertThat("The next button in the wizard is enabled", newConnectionPage.nextButton(), not(disabled()));
@@ -78,7 +80,7 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
 
             connectorPath.setValue((String) pair.getValue());
             connectorName.getElement().click();
-            assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorPath.getElement())), hasClass(INVALID_INPUT_CLASS));
+            assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorPath.getElement(), 2), hasClass(INVALID_INPUT_CLASS));
 
             newConnectionPage.nextButton().click();
             assertThat("The step has an error when value is " + pair.getKey(), newConnectionPage.connectorTypeStepTab(), not(stepIsValid()));

@@ -35,10 +35,6 @@ public class HSOUsersPage extends HSOUserManagementPage {
         getEmailInput().setValue(email);
     }
 
-    public WebElement refreshButton() {
-        return findElement(By.id("refresh-users"));
-    }
-
     public void setRoleValueFor(User user, Role newRole) {
         getUserRow(user).findElement(By.xpath(".//a[contains(text(),'"+newRole+"')]")).click();
     }

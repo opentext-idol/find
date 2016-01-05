@@ -6,9 +6,8 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -18,7 +17,9 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -26,7 +27,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -233,15 +233,15 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		Dropdown dropdown = promotionsDetailPage.spotlightTypeDropdown();
 		dropdown.select("Hotwire");
-		promotionsDetailPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Hotwire"));
 
 		dropdown.select("Top Promotions");
-		promotionsDetailPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Top Promotions"));
 
 		dropdown.select("Sponsored");
-		promotionsDetailPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		verifyThat(dropdown.getValue(), is("Sponsored"));
 	}
 
@@ -464,11 +464,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage.waitForTriggerRefresh();
 		promotionsDetailPage.trigger("meow").removeAndWait();
 		search("tigre", "French").apply();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(secondSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(secondSearchResult));
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 //		promotionsPage.selectPromotionsCategoryFilter("All Types");
-//		promotionsPage.loadOrFadeWait();
+//		Waits.loadOrFadeWait();
 		promotionsDetailPage = promotionService.goToDetails("meow");
 
 		Editable queryText = promotionsDetailPage.queryText();
@@ -478,11 +478,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(queryText.getValue(), is("kitty"));
 
 		search("tigre", "French").apply();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
 
 		getDriver().navigate().refresh();
 		searchPage = getElementFactory().getSearchPage();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
 	}
 
 	@Test
@@ -491,7 +491,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotionService.goToPromotions();
 		final String url = getDriver().getCurrentUrl();
-		final List<String> browserHandles = promotionsPage.createAndListWindowHandles();
+		final List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		getDriver().get(url);
@@ -526,13 +526,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 		for (final String query : queries) {
 			search(query, "English").apply();
 			searchPage = getElementFactory().getSearchPage();
-			final int firstPageStated = searchPage.countSearchResults();
-			searchPage.forwardToLastPageButton().click();
-			searchPage.waitForSearchLoadIndicatorToDisappear();
+			final int firstPageStated = searchPage.getHeadingResultsCount();
+			searchPage.switchResultsPage(Pagination.LAST);
 			final int numberOfPages = searchPage.getCurrentPageNumber();
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
 			final int listedCount = (numberOfPages - 1) * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;
-			final int lastPageStated = searchPage.countSearchResults();
+			final int lastPageStated = searchPage.getHeadingResultsCount();
 			verifyThat("count is the same across pages for " + query, firstPageStated, is(lastPageStated));
 			verifyThat("count is correct for " + query, lastPageStated, is(listedCount));
 		}
@@ -622,6 +621,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String newTitle = "Admit It!!!";
 
 		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
+		Waits.loadOrFadeWait();
 		verifyThat(promotionsDetailPage.promotionTitle().getValue(), is(newTitle));
 
 		promotionService.delete(newTitle);

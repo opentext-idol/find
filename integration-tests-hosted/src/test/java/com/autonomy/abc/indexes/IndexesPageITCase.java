@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -19,6 +20,7 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.After;
 import org.junit.Before;
@@ -176,7 +178,7 @@ public class IndexesPageITCase extends HostedTestBase {
 
     @Test
     //CSA1544
-    public void testCreatingIndexNameWithSpaceViaConnectorWizardDoesNotGiveInvalidIndexNameNotifications(){
+    public void testNoInvalidIndexNameNotifications(){
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
         Connector hassleRecords = new WebConnector("http://www.hasslerecords.com","hassle records").withDepth(1);
@@ -235,6 +237,31 @@ public class IndexesPageITCase extends HostedTestBase {
         body = getBody();
 
         verifyThat(indexesPage.getIndexNames(), hasItem(Index.DEFAULT.getName()));
+    }
+
+    @Test
+    //CCUK-3450
+    public void testFindNoParametricFields(){
+        Index index = new Index("index");
+        indexService.setUpIndex(index);
+
+        List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+
+        try {
+            getDriver().switchTo().window(browserHandles.get(1));
+            getDriver().get(config.getFindUrl());
+            getDriver().manage().window().maximize();
+            Find find = getElementFactory().getFindPage();
+
+            find.search("search");
+            find.filterBy(new IndexFilter(index));
+
+            verifyThat(find.getResultsPage().getResultsDiv().getText(), is("No results found"));
+        } finally {
+            getDriver().switchTo().window(browserHandles.get(1));
+            getDriver().close();
+            getDriver().switchTo().window(browserHandles.get(0));
+        }
     }
 
     @After

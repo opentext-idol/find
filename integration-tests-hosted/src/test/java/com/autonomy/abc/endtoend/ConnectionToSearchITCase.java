@@ -56,7 +56,7 @@ public class ConnectionToSearchITCase extends HostedTestBase {
         search.apply();
         searchPage = getElementFactory().getSearchPage();
         verifyThat("index shows up on search page", searchPage.getSelectedDatabases(), hasItem(indexName));
-        verifyThat("index has search results", searchPage.countSearchResults(), greaterThan(0));
+        verifyThat("index has search results", searchPage.getHeadingResultsCount(), greaterThan(0));
 
         final String handle = getDriver().getWindowHandle();
         searchPage.getSearchResult(1).click();

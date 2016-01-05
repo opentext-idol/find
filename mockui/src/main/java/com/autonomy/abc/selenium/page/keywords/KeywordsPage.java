@@ -4,6 +4,8 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -39,7 +41,7 @@ public abstract class KeywordsPage extends KeywordsBase {
     // use deleteKeywords instead
     @Deprecated
     public void deleteAllSynonyms() throws InterruptedException {
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
         filterView(KeywordFilter.SYNONYMS);
         WebDriverWait wait = new WebDriverWait(getDriver(),40);	//TODO Possibly too long?
 
@@ -58,7 +60,7 @@ public abstract class KeywordsPage extends KeywordsBase {
                             findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
                         }
 
-                        loadOrFadeWait();
+                        Waits.loadOrFadeWait();
                         break;
                     }
                 }
@@ -126,7 +128,7 @@ public abstract class KeywordsPage extends KeywordsBase {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
         findElement(By.xpath("//*[contains(@class,'keywords-filters')]//a[text()='"+ filter.toString() +"']")).click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     public int countKeywords() {
@@ -172,12 +174,12 @@ public abstract class KeywordsPage extends KeywordsBase {
     public List<String> getLanguageList() {
         final List<String> languages = new ArrayList<>();
 
-        if (isAttributePresent(getParent(selectLanguageButton()), "disabled")) {
+        if (ElementUtil.isAttributePresent(ElementUtil.getParent(selectLanguageButton()), "disabled")) {
             languages.add(getSelectedLanguage());
             return languages;
         } else {
             selectLanguageButton().click();
-            loadOrFadeWait();
+            Waits.loadOrFadeWait();
 
             for (final WebElement language : findElements(By.cssSelector(".keywords-filters .scrollable-menu a"))) {
                 languages.add(language.getText());

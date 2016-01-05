@@ -3,15 +3,18 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +33,8 @@ import static org.hamcrest.Matchers.isIn;
 //CSA-1566
 public class PromotionsToFindITCase extends HostedTestBase {
     private List<String> browserHandles;
-    private FindPage find;
-    private Service service;
+    private Find find;
+    private FindResultsPage service;
     private PromotionService promotionService;
     private SearchActionFactory searchActionFactory;
     private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
@@ -45,13 +48,13 @@ public class PromotionsToFindITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-        PromotionsPage promotions = promotionService.deleteAll();
-        browserHandles = promotions.createAndListWindowHandles();
+        promotionService.deleteAll();
+        browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
         switchToFind();
         getDriver().get(config.getFindUrl());
         getDriver().manage().window().maximize();
         find = getElementFactory().getFindPage();
-        service = find.getService();
+        service = find.getResultsPage();
         switchToSearch();
     }
 
@@ -96,10 +99,10 @@ public class PromotionsToFindITCase extends HostedTestBase {
         find.search(secondaryTrigger);
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        service.filterByIndex("default_index");
+        find.filterBy(new IndexFilter(Index.DEFAULT));
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        service.filterByIndex("default_index");
+        find.filterBy(IndexFilter.PRIVATE);
         service.filterByParametric("Source Connector", "SIMPSONSARCHIVE");
         verifyPinToPosition(promotionTitles, 6, 10);
 
@@ -141,8 +144,8 @@ public class PromotionsToFindITCase extends HostedTestBase {
     private void refreshFind() {
         getDriver().navigate().refresh();
         find = getElementFactory().getFindPage();
-        service = find.getService();
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        service = find.getResultsPage();
+        service.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     private List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {

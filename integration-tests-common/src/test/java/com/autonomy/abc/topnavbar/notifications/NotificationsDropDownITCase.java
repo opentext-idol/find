@@ -19,6 +19,7 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -95,7 +96,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		}
 	}
 
-	//Fails because of CSA-1542
+//Fails because of CSA-1542
 	@Test
 	public void testNotificationsOverTwoWindows() throws InterruptedException {
 		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
@@ -105,7 +106,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		assertThat(notifications.countNotifications(), is(0));
 
 		keywordsPage = getElementFactory().getKeywordsPage();
-		List<String> browserHandles = keywordsPage.createAndListWindowHandles();
+		List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		getDriver().navigate().to(getConfig().getWebappUrl());
@@ -188,6 +189,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			}
 		} finally {
 			getDriver().switchTo().window(browserHandles.get(1));
+			topNavBarWindowTwo.closeNotifications();
 			keywordService.deleteAll(KeywordFilter.ALL);
 			promotionService.deleteAll();
 		}
@@ -212,8 +214,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Test
 	public void testBlacklistNotifications() throws InterruptedException {
-		String blacklistOne = "Rollins".toLowerCase();
-		String blacklistTwo = "Seth".toLowerCase();
+		String blacklistOne = "seth";
+		String blacklistTwo = "rollins";
 		String blacklistNotificationText = "Added \"placeholder\" to the blacklist";
 
 		keywordService.deleteAll(KeywordFilter.ALL);
@@ -231,8 +233,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Test
 	public void testSpotlightPromotionNotifications(){
-		String promotionTrigger = "Maggle".toLowerCase();
-		String search = "Cole".toLowerCase();
+		String promotionTrigger = "blatter";
+		String search = "thief";
 		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
 
 		promotionService.setUpPromotion(new SpotlightPromotion(promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
@@ -292,8 +294,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	@Test
 	public void testDynamicPromotionNotifications(){
 		int numberOfResults = 10;
-		String promotionTrigger = "Wyatt".toLowerCase();
-		String search = "Lawler".toLowerCase();
+		String promotionTrigger = "football";
+		String search = "soccer";
 		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
 
 		promotionService.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
@@ -308,8 +310,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	@Test
 	public void testRemovingDynamicPromotionNotifications(){
 		int numberOfResults = 10;
-		String promotionTrigger = "Wyatt".toLowerCase();
-		String search = "Lawler".toLowerCase();
+		String promotionTrigger = "platini";
+		String search = "liar";
 		String promotionNotificationText = "Removed a dynamic spotlight promotion";
 
 		DynamicPromotion dynamic = new DynamicPromotion(numberOfResults, promotionTrigger);

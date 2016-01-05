@@ -14,8 +14,11 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.util.PageUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -79,7 +82,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("No create synonyms link displayed", searchPage.createSynonymsLink().isDisplayed());
 
         searchPage.blacklistLink().click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat("link not directing to blacklist wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link not directing to blacklist wizard", createKeywordsPage.getText(), containsString("Select terms to blacklist"));
@@ -108,19 +111,19 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("No create synonyms link displayed", searchPage.createSynonymsLink().isDisplayed());
 
         searchPage.createSynonymsLink().click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat("link not directing to synonym group wizard", getDriver().getCurrentUrl(),containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link not directing to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
         assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("rouge"));
-        assertThat("Finish button should be disabled until further synonyms added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        assertThat("Finish button should be disabled until further synonyms added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
         createKeywordsPage.synonymAddTextBox().sendKeys("rouge");
         createKeywordsPage.synonymAddButton().click();
         assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("rouge"));
-        assertThat("Finish button should be disabled until further synonyms added", createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        assertThat("Finish button should be disabled until further synonyms added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
         createKeywordsPage.synonymAddTextBox().clear();
         createKeywordsPage.synonymAddTextBox().sendKeys("red");
@@ -128,12 +131,12 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertEquals(2, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(),hasItem("rouge"));
         assertThat("keywords list does not include term 'red'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("red"));
-        assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
         searchPage.waitForSynonymsLoadingIndicatorToDisappear();
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
         new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(keywordsPage.selectLanguageButton()));
         //assertEquals("Blacklist has been created in the wrong language", "French", keywordsPage.getSelectedLanguage());
@@ -156,18 +159,18 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("No create synonyms link displayed", searchPage.createSynonymsLink().isDisplayed());
 
         searchPage.createSynonymsLink().click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat("link not directing to synonym group wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link not directing to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
         assertEquals(3, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
         assertThat("Wrong prospective blacklisted terms added", createKeywordsPage.getProspectiveKeywordsList(), hasItems("lodge", "dodge", "podge"));
-        assertThat("Finish button should be enabled", !createKeywordsPage.isAttributePresent(createKeywordsPage.enabledFinishWizardButton(), "disabled"));
+        assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.enabledFinishWizardButton(), "disabled"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
         keywordsPage.selectLanguage(Language.ENGLISH);
@@ -188,7 +191,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         searchPage = keywordService.addSynonymGroup(synonymListBears);
 
         for (final String synonym : synonymListBears) {
-            assertThat(synonym + " not included in title", searchPage.title(),containsString(synonym));
+            assertThat(synonym + " not included in title", PageUtil.getPageTitle(getDriver()),containsString(synonym));
             assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
             verifyThat(synonym + " synonym group complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
             verifyThat(searchPage.countSynonymLists(), is(1));
@@ -204,7 +207,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         }
 
         searchPage.deleteSynonym("bigbear");
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         synonymListBears = Arrays.asList("grizzly", "brownbear");
         for (final String synonym : synonymListBears) {
             assertThat(synonym + " not included in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
@@ -215,7 +218,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         }
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         keywordsPage.selectLanguage(Language.ENGLISH);
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
         assertEquals(1, keywordsPage.countSynonymLists());
@@ -250,7 +253,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
             assertThat("blacklist has been created in the correct language", keywordsPage.getSelectedLanguage(), equalToIgnoringCase("Arabic"));
         }
 
-        keywordsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
         keywordsPage.filterView(KeywordFilter.BLACKLIST);
 
@@ -268,6 +271,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         searchPage.selectLanguage(Language.ENGLISH);
         searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 
+        //TODO split test into hosted/onprem
         assertThat("term is not blacklisted in English", searchPage.getText(),not(containsString("Any query terms were either blacklisted or stop words")));
     }
 
@@ -309,7 +313,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("New synonym has not been added to the group", searchPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.ALL);
         assertThat("New synonym has not been added to the group", keywordsPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
@@ -329,25 +333,25 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         verifyThat(searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode", "residence"));
 
         searchPage.deleteSynonym("residence");
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
         verifyThat("Synonym has not been deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("abode"));
         verifyThat("1 synonym deleted", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling", "abode"));
 
         searchPage.deleteSynonym("abode");
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("abode")));
         verifyThat("2 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItems("home", "dwelling"));
 
         searchPage.deleteSynonym("dwelling");
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("dwelling")));
         verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("abode")));
         verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
         verifyThat("3 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("home"));
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.ALL);
         assertThat("Synonyms have been removed from the group", keywordsPage.getSynonymGroupSynonyms("house"), hasItems("home", "house"));
 
@@ -364,7 +368,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         search("Korea", Language.CHINESE);
 
         searchPage.createSynonymsLink().click();
-        searchPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat(getDriver().getCurrentUrl(), containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 

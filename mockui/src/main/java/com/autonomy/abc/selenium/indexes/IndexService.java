@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -55,12 +56,12 @@ public class IndexService {
 
         newIndexPage.inputIndexName(index.getName());
         newIndexPage.nextButton().click();
-        newIndexPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         newIndexPage.inputIndexFields(index.getIndexFields());
         newIndexPage.inputParametricFields(index.getParametricFields());
         newIndexPage.nextButton().click();
-        newIndexPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         newIndexPage.finishButton().click();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));

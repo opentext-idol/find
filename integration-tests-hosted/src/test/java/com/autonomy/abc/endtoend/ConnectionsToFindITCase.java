@@ -11,12 +11,11 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
-import org.apache.commons.lang3.StringUtils;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +30,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 
@@ -51,6 +51,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     public ConnectionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
+        setInitialUser(config.getUser("index_tests"));
     }
 
     @Before
@@ -69,16 +70,16 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         searchPage = search.apply();
 
         verifyThat("index shows up on search page", searchPage.getSelectedDatabases(), hasItem(indexName));
-        verifyThat("index has search results", searchPage.countSearchResults(), greaterThan(0));
+        verifyThat("index has search results", searchPage.getHeadingResultsCount(), greaterThan(0));
 
         promotedTitles = searchPage.createAMultiDocumentPromotion(3);
         getElementFactory().getCreateNewPromotionsPage().addSpotlightPromotion("", trigger);
 
-        assertThat(searchPage.getPromotedDocumentTitles(), containsInAnyOrder(promotedTitles.toArray()));
+        assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
 
         searchPage = keywordService.addSynonymGroup(Language.ENGLISH, synonyms);
 
-        assertThat(searchPage.getPromotedDocumentTitles(), containsInAnyOrder(promotedTitles.toArray()));
+        assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
 
         assertPromotedItemsForEverySynonym();
 
@@ -90,14 +91,14 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
         for(String synonym : synonyms){
             searchActionFactory.makeSearch(synonym).apply();
-            assertThat(searchPage.getPromotedResults().size(),is(0));
+            assertThat(searchPage.getPromotedDocumentTitles(false), empty());
         }
 
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
 
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
         indexesPage.findIndex(indexName).findElement(By.className("fa-trash-o")).click();
-        indexesPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         getDriver().findElement(By.className("btn-alert")).click();
 
         searchActionFactory.makeSearch(searchTerm).apply();
@@ -110,7 +111,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     private void assertPromotedItemsForEverySynonym() {
         for(String synonym : synonyms){
             searchActionFactory.makeSearch(synonym).apply();
-            assertThat(searchPage.getPromotedDocumentTitles(), containsInAnyOrder(promotedTitles.toArray()));
+            assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
         }
     }
 

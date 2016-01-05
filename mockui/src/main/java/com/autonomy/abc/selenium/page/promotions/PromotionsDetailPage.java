@@ -1,7 +1,9 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Predicates;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -53,7 +55,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public Editable pinPosition() {
-        final WebElement group = AppElement.getParent(findElement(By.cssSelector(".promotion-position-edit")));
+        final WebElement group = ElementUtil.getParent(findElement(By.cssSelector(".promotion-position-edit")));
         return new Editable() {
             @Override
             public String getValue() {
@@ -174,7 +176,6 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public List<WebElement> dynamicPromotedList(){
         return new WebDriverWait(getDriver(),10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".query-search-results div:not(.hide)>h3")));
-
     }
 
     public List<String> getDynamicPromotedTitles(){
@@ -182,7 +183,9 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
         do {
             for (final WebElement docTitle : dynamicPromotedList()) {
-                docTitles.add(docTitle.getText());
+                if(!docTitle.getText().equals("Search for something...")) {
+                    docTitles.add(docTitle.getText());
+                }
             }
         } while(clickForwardButton());
 
@@ -220,7 +223,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         try {
             if(!forwardButton().findElement(By.xpath(".//../..")).getAttribute("class").contains("disabled")) {
                 forwardButton().click();
-                loadOrFadeWait();
+                Waits.loadOrFadeWait();
                 return true;
             } else {
                 return false;

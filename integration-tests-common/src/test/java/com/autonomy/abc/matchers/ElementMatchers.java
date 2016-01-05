@@ -1,5 +1,6 @@
 package com.autonomy.abc.matchers;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -76,6 +77,25 @@ public class ElementMatchers {
         };
     }
 
+    public static Matcher<? super WebElement> hasTagName(final String tagName) {
+        return new TypeSafeMatcher<WebElement>() {
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return item.getTagName().equals(tagName);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("<" + tagName + "> tag");
+            }
+
+            @Override
+            public void describeMismatchSafely(final WebElement item, final Description description) {
+                description.appendText("element was ").appendText(item.toString());
+            }
+        };
+    }
+
     public static Matcher<? super WebElement> hasAttribute(final String text) {
         return new TypeSafeMatcher<WebElement>() {
 
@@ -123,7 +143,7 @@ public class ElementMatchers {
         return new TypeSafeMatcher<WebElement>() {
             @Override
             protected boolean matchesSafely(WebElement item) {
-                return AppElement.hasClass(className, item);
+                return ElementUtil.hasClass(className, item);
             }
 
             @Override
@@ -143,7 +163,7 @@ public class ElementMatchers {
 
             @Override
             protected boolean matchesSafely(WebElement item) {
-                return item.getAttribute("disabled") != null;
+                return ElementUtil.isDisabled(item);
             }
 
             @Override

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -47,9 +48,9 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	private void deletePromotion(WebElement promotion){
 		WebElement deleteButton = promotion.findElement(By.className("promotion-delete"));
 		deleteButton.click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		modalClick();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		new WebDriverWait(getDriver(),20).until(ExpectedConditions.stalenessOf(deleteButton));
 	}
 
@@ -109,7 +110,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	public void selectPromotionsCategoryFilter(final String filterBy) {
 		promotionsCategoryFilterButton().click();
 		findElement(By.cssSelector(".type-filter")).findElement(By.xpath(".//a[contains(text(), '" + filterBy + "')]")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void clearPromotionsSearchFilter() {

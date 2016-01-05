@@ -4,8 +4,11 @@ import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
+import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -53,8 +56,8 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		triggerBox().setValue(searchTrigger);
 
 		try {
-			loadOrFadeWait();
-			waitUntilClickableThenClick(triggerAddButton());
+			Waits.loadOrFadeWait();
+			ElementUtil.waitUntilClickableThenClick(triggerAddButton(), getDriver());
 		} catch (final Exception e) {
 			System.out.println("could not click trigger button with trigger " + searchTrigger);
 		}
@@ -68,7 +71,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		final List<String> searchTriggerList = new ArrayList<>();
 
 		for (final WebElement trigger : findElements(By.cssSelector(".remove-word"))) {
-			searchTriggerList.add(getParent(trigger).getText());
+			searchTriggerList.add(ElementUtil.getParent(trigger).getText());
 		}
 
 		return searchTriggerList;
@@ -86,8 +89,13 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		}
 	}
 
+	public WebElement spotlightType(final Promotion.SpotlightType type){
+		return spotlightType(type.getOption());
+	}
+
+	@Deprecated
 	public WebElement spotlightType(final String type ) {
-		return getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
+		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
 	}
 
 	// "visited" by the promotion
@@ -100,26 +108,8 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 
 	public abstract List<WizardStep> getWizardSteps(SpotlightPromotion promotion);
 
-	/*
-	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger, final String type) {
-		promotionType("SPOTLIGHT").click();
-		loadOrFadeWait();
-		continueButton(WizardStep.TYPE).click();
-		loadOrFadeWait();
-		if (type.equals("On Premise")) {
-			spotlightType(spotlightType).click();
-			loadOrFadeWait();
-			continueButton(WizardStep.PROMOTION_TYPE).click();
-			loadOrFadeWait();
-		}
-		addSearchTrigger(searchTrigger);
-		loadOrFadeWait();
-		finishButton().click();
-		loadOrFadeWait();
-	}*/
-
 	public WebElement promotionType(final String promotionType) {
-		return getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));
+		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));
 	}
 
 	@Override
