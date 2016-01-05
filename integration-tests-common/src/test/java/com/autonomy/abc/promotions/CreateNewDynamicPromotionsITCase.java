@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -12,12 +13,12 @@ import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.LanguageFilter;
-import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +29,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Arrays;
+
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -59,6 +63,71 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     @After
     public void tearDown(){
         promotionService.deleteAll();
+    }
+
+    @Test
+    public void testDynamicPromotionCreation() {
+        searchPage = searchService.search(new SearchQuery("lapin").withFilter(new LanguageFilter("French")));
+
+        final String firstDocTitle = searchPage.getSearchResultTitle(1);
+        searchPage.promoteThisQueryButton().click();
+        dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        Waits.loadOrFadeWait();
+        assertThat("Wrong URL", getDriver().getCurrentUrl().contains("promotions/create-dynamic/"));
+
+        if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
+            assertThat("Wrong stage of wizard", dynamicPromotionsPage.spotlightType("Hotwire").isDisplayed());
+            assertThat("Wrong wizard step displayed, wrong title", dynamicPromotionsPage.getCurrentStepTitle().contains("Spotlight type"));
+            assertThat("Continue button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.continueButton(), "disabled"));
+
+            dynamicPromotionsPage.spotlightType("Top Promotions").click();
+        } else {
+            assertThat("Wrong wizard step displayed, dial not present", ((HSOCreateNewPromotionsPage) dynamicPromotionsPage).dial().isDisplayed());
+            assertThat("Wrong wizard step displayed, wrong title", dynamicPromotionsPage.getCurrentStepTitle().contains("Results number"));
+        }
+
+        dynamicPromotionsPage.continueButton().click();
+        Waits.loadOrFadeWait();
+
+        assertThat("Wrong wizard step", dynamicPromotionsPage.triggerAddButton().isDisplayed());
+        assertThat("Wrong wizard step displayed, wrong title", dynamicPromotionsPage.getCurrentStepTitle().contains("Trigger words"));
+        assertThat("Finish button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
+        assertThat("Trigger add button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
+        assertEquals(dynamicPromotionsPage.getSearchTriggersList().size(), 0);
+
+        dynamicPromotionsPage.addSearchTrigger("rabbit");
+        assertEquals(dynamicPromotionsPage.getSearchTriggersList().size(), 1);
+        assert(dynamicPromotionsPage.getSearchTriggersList().contains("rabbit"));
+
+        dynamicPromotionsPage.addSearchTrigger("bunny");
+        assertEquals(dynamicPromotionsPage.getSearchTriggersList().size(), 2);
+        assert(dynamicPromotionsPage.getSearchTriggersList().containsAll(Arrays.asList("bunny", "rabbit")));
+
+        dynamicPromotionsPage.addSearchTrigger("hare");
+        assertEquals(dynamicPromotionsPage.getSearchTriggersList().size(), 3);
+        assert(dynamicPromotionsPage.getSearchTriggersList().containsAll(Arrays.asList("bunny", "rabbit", "hare")));
+
+        // Hare is not a word for bunny
+        dynamicPromotionsPage.removeSearchTrigger("hare");
+        assertEquals(dynamicPromotionsPage.getSearchTriggersList().size(), 2);
+        assert(dynamicPromotionsPage.getSearchTriggersList().containsAll(Arrays.asList("bunny", "rabbit")));
+        assert(!dynamicPromotionsPage.getSearchTriggersList().contains("hare"));
+
+        dynamicPromotionsPage.finishButton().click();
+        Waits.loadOrFadeWait();
+
+        try {
+            new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
+        } catch (final TimeoutException t) {
+            fail("Promotions summary has not appeared");
+        }
+
+        if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
+            assertEquals(searchPage.getSelectedLanguage(), "French");
+            assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase("Top Promotions"));
+        }
+        assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), is("bunny rabbit"));
+        assertEquals(searchPage.promotionsSummaryList(false).get(0), firstDocTitle);
     }
 
     @Test
@@ -189,31 +258,10 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
         dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 
-        if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            dynamicPromotionsPage.spotlightType("Top Promotions").click();
-        }
+        clickTopPromotions();
 
         dynamicPromotionsPage.continueButton().click();
         Waits.loadOrFadeWait();
-    }
-
-    @Test
-    //TODO maybe take this out, OP only?
-    public void testTwoPromotionTypesForSameTrigger() {
-        String trigger = "cat";
-
-        searchPage = searchService.search("paris");
-        int promotionResultsCount = getNumberOfPromotedDynamicResults();
-
-        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.SPONSORED, promotionResultsCount, trigger), "paris", promotionResultsCount);
-        assertThat("Wrong number of promoted documents displayed", searchPage.promotionsSummaryList(true).size(), is(promotionResultsCount));
-
-        searchPage = searchService.search("rome");
-        int romeResults = getNumberOfPromotedDynamicResults();
-        promotionResultsCount += romeResults;
-
-        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, romeResults, trigger), "rome", promotionResultsCount);
-        assertThat("Wrong number of promoted documents displayed", searchPage.promotionsSummaryList(true).size(), is(promotionResultsCount));
     }
 
     private int getNumberOfPromotedDynamicResults() {
@@ -240,5 +288,66 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
         promotionsDetailPage = promotionService.goToDetails("sausage");
         assertThat(promotionsDetailPage.getDynamicPromotedTitles(), hasSize(promotionResultsCount));
+    }
+
+    @Test
+    public void testDeletedPromotionIsDeleted() {
+        String trigger = "home";
+        promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, 10, trigger), "Ulster", 10);
+        Waits.loadOrFadeWait();
+        assertThat("No promoted items displayed", searchPage.getPromotionSummarySize(), not(0));
+
+        promotionService.delete(trigger);
+        assertThat("promotion should be deleted", promotionsPage.promotionsList().size(), is(0));
+
+        searchService.search(trigger).waitForPromotionsLoadIndicatorToDisappear();
+        assertThat("Some items were promoted despite deleting the promotion", searchPage.getPromotionSummarySize(), is(0));
+    }
+
+    @Test
+    public void testWizardCancelButtonAfterClickingNavBarToggleButton() {
+        searchPage = searchService.search(new SearchQuery("simba").withFilter(new LanguageFilter("Swahili")));
+        searchPage.promoteThisQueryButton().click();
+        Waits.loadOrFadeWait();
+
+        dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        body.getSideNavBar().toggle();
+        dynamicPromotionsPage.cancelButton().click();
+        Waits.loadOrFadeWait();
+        assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
+
+        Waits.loadOrFadeWait();
+        assertThat("\"undefined\" returned as query text when wizard cancelled", searchPage.getHeadingSearchTerm(), Matchers.not(containsString("undefined")));
+        searchPage.promoteThisQueryButton().click();
+        Waits.loadOrFadeWait();
+        dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        clickTopPromotions();
+        dynamicPromotionsPage.continueButton().click();
+        Waits.loadOrFadeWait();
+
+        body.getSideNavBar().toggle();
+        dynamicPromotionsPage.cancelButton().click();
+        Waits.loadOrFadeWait();
+
+        assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
+        Waits.loadOrFadeWait();
+        assertThat("\"undefined\" returned as query text when wizard cancelled", searchPage.getHeadingSearchTerm(), Matchers.not(containsString("undefined")));
+        searchPage.promoteThisQueryButton().click();
+        Waits.loadOrFadeWait();
+
+        dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        clickTopPromotions();
+        dynamicPromotionsPage.continueButton().click();
+        Waits.loadOrFadeWait();
+        body.getSideNavBar().toggle();
+        dynamicPromotionsPage.cancelButton().click();
+        Waits.loadOrFadeWait();
+        assertThat("Wizard has not cancelled", !getDriver().getCurrentUrl().contains("dynamic"));
+    }
+
+    private void clickTopPromotions() {
+        if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
+            dynamicPromotionsPage.spotlightType("Top Promotions").click();
+        }
     }
 }
