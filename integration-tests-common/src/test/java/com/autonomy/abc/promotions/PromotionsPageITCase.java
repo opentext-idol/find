@@ -463,7 +463,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage.waitForTriggerRefresh();
 		promotionsDetailPage.trigger("meow").removeAndWait();
 		search("tigre", "French").apply();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(secondSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(secondSearchResult));
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 //		promotionsPage.selectPromotionsCategoryFilter("All Types");
@@ -477,11 +477,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(queryText.getValue(), is("kitty"));
 
 		search("tigre", "French").apply();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
 
 		getDriver().navigate().refresh();
 		searchPage = getElementFactory().getSearchPage();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
 	}
 
 	@Test

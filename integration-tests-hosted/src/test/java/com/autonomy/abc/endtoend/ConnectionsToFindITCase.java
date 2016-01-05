@@ -75,11 +75,11 @@ public class ConnectionsToFindITCase extends HostedTestBase {
         promotedTitles = searchPage.createAMultiDocumentPromotion(3);
         getElementFactory().getCreateNewPromotionsPage().addSpotlightPromotion("", trigger);
 
-        assertThat(searchPage.promotionsSummaryList(true), containsInAnyOrder(promotedTitles.toArray()));
+        assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
 
         searchPage = keywordService.addSynonymGroup(Language.ENGLISH, synonyms);
 
-        assertThat(searchPage.promotionsSummaryList(true), containsInAnyOrder(promotedTitles.toArray()));
+        assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
 
         assertPromotedItemsForEverySynonym();
 
@@ -91,7 +91,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
         for(String synonym : synonyms){
             searchActionFactory.makeSearch(synonym).apply();
-            assertThat(searchPage.promotionsSummaryList(false), empty());
+            assertThat(searchPage.getPromotedDocumentTitles(false), empty());
         }
 
         body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
@@ -111,7 +111,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     private void assertPromotedItemsForEverySynonym() {
         for(String synonym : synonyms){
             searchActionFactory.makeSearch(synonym).apply();
-            assertThat(searchPage.promotionsSummaryList(true), containsInAnyOrder(promotedTitles.toArray()));
+            assertThat(searchPage.getPromotedDocumentTitles(true), containsInAnyOrder(promotedTitles.toArray()));
         }
     }
 

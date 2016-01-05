@@ -186,9 +186,9 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
         Waits.loadOrFadeWait();
         if (promotes) {
-            verifyThat(searchPage.promotionsSummaryList(true), everyItem(isIn(promotedDocuments)));
+            verifyThat(searchPage.getPromotedDocumentTitles(true), everyItem(isIn(promotedDocuments)));
         } else {
-            verifyThat(searchPage.promotionsSummaryList(true), everyItem(not(isIn(promotedDocuments))));
+            verifyThat(searchPage.getPromotedDocumentTitles(true), everyItem(not(isIn(promotedDocuments))));
         }
     }
 }

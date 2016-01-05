@@ -770,11 +770,11 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat(searchPage.getPromotionSummarySize(), is(2));
 
-		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
+		final List<String> initialPromotionsSummary = searchPage.getPromotedDocumentTitles(false);
 		searchPage.setFieldText("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
 
 		assertThat(searchPage.getPromotionSummarySize(), is(1));
-		assertThat(searchPage.promotionsSummaryList(false).get(0), is(initialPromotionsSummary.get(0)));
+		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(0)));
 
 		searchPage.fieldTextEditButton().click();
 		searchPage.fieldTextInput().clear();
@@ -783,7 +783,7 @@ public class SearchPageITCase extends ABCTestBase {
 		Waits.loadOrFadeWait();
 
 		assertThat(searchPage.getPromotionSummarySize(), is(1));
-		assertThat(searchPage.promotionsSummaryList(false).get(0), is(initialPromotionsSummary.get(1)));
+		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(1)));
 	}
 
 	@Test

@@ -149,24 +149,28 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return summaryItemsTotal;
 	}
 
+	@Deprecated
 	public List<String> promotionsSummaryList(final boolean fullList) {
+		return getPromotedDocumentTitles(fullList);
+	}
+
+	public List<String> getPromotedDocumentTitles(final boolean fullList) {
 		waitForPromotionsLoadIndicatorToDisappear();
 		final List<String> promotionsList = new ArrayList<>();
 
 		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
-			promotionsList.addAll(getVisiblePromotedItems());
+			promotionsList.addAll(getVisiblePromotedDocumentTitles());
 		} else {
 			showMorePromotions();
 
 			if (!fullList) {
-				promotionsList.addAll(getVisiblePromotedItems());
+				promotionsList.addAll(getVisiblePromotedDocumentTitles());
 			} else {
-				promotionsList.addAll(getVisiblePromotedItems());
+				promotionsList.addAll(getVisiblePromotedDocumentTitles());
 
-				if (promotionSummaryForwardButton().isDisplayed()) {
-					promotionSummaryForwardToEndButton().click();
-					Waits.loadOrFadeWait();
-					promotionsList.addAll(getVisiblePromotedItems());
+				if (promotionPaginationButton(Pagination.NEXT).isDisplayed()) {
+					switchPromotionPage(Pagination.LAST);
+					promotionsList.addAll(getVisiblePromotedDocumentTitles());
 					final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
 
 					//starting at 1 because I add the results for the first page above
@@ -174,7 +178,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 						promotionSummaryBackButton().click();
 						new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(promotionsLabel()));
 
-						promotionsList.addAll(getVisiblePromotedItems());
+						promotionsList.addAll(getVisiblePromotedDocumentTitles());
 					}
 				}
 			}
@@ -183,7 +187,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return promotionsList;
 	}
 
-	private List<String> getVisiblePromotedItems() {
+	private List<String> getVisiblePromotedDocumentTitles() {
 		return ElementUtil.getTexts(findElements(By.cssSelector(".promotions-list h3 a")));
 	}
 
