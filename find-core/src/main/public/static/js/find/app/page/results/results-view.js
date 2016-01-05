@@ -105,7 +105,7 @@ define([
                         reset: false
                     }, this);
 
-                    // TODO: Move out of if statement when HOD allows fetching promotions without query text
+                    // TODO: Move out of if statement when HOD allows fetching promotions without indexes
                     this.promotionsCollection.fetch({
                         data: {
                             text: this.queryModel.get('queryText'),
@@ -119,6 +119,15 @@ define([
                         },
                         reset: false
                     }, this);
+
+                    this.promotionsFinished = false;
+                    this.$('.main-results-content .promotions').empty();
+
+                    this.resultsFinished = false;
+                    this.$loadingSpinner.removeClass('hide');
+                    this.toggleError(false);
+                    this.$('.main-results-content .error .error-list').empty();
+                    this.$('.main-results-content .results').empty();
                 } else {
                     this.$loadingSpinner.addClass('hide');
                     this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
@@ -144,11 +153,6 @@ define([
                 this.formatResult(model, true);
             });
 
-            this.listenTo(this.promotionsCollection, 'request', function() {
-                this.promotionsFinished = false;
-                this.$('.main-results-content .promotions').empty();
-            });
-
             this.listenTo(this.promotionsCollection, 'sync', function() {
                 this.promotionsFinished = true;
                 this.clearLoadingSpinner();
@@ -162,14 +166,6 @@ define([
             });
 
             /*main results content*/
-            this.listenTo(this.documentsCollection, 'request', function() {
-                this.resultsFinished = false;
-                this.$loadingSpinner.removeClass('hide');
-                this.toggleError(false);
-                this.$('.main-results-content .error .error-list').empty();
-                this.$('.main-results-content .results').empty();
-            });
-
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 this.formatResult(model, false);
             });
@@ -239,6 +235,10 @@ define([
                         $('.view-server-loading-indicator').addClass('hidden');
                         $('.view-server-page').removeClass('hidden');
                     });
+
+                    // Adding the source attribute after the colorbox has loaded prevents the iframe from loading
+                    // a very quick response (such as an error) before the listener is attached
+                    $viewServerPage.attr("src", options.href);
 
                     $window.resize(onResize);
                 }, this)

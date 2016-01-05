@@ -37,7 +37,8 @@ import java.util.Set;
 @Configuration
 @PropertySource("classpath:/version.properties")
 public class AppConfiguration<C extends Config<C>> {
-    public static final String APPLICATION_VERSION_PROPERTY = "${application.version}";
+    public static final String APPLICATION_RELEASE_VERSION_PROPERTY = "${application.releaseVersion}";
+    public static final String GIT_COMMIT_PROPERTY = "${application.commit}";
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired

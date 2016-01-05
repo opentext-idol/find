@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.search;
 
+import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
@@ -85,6 +86,26 @@ public class IdolDocumentServiceTest {
 
         final Documents<FindDocument> results = idolDocumentService.queryTextIndex(mockQueryParams());
         assertThat(results.getDocuments(), is(not(empty())));
+    }
+
+    @Test
+    public void queryQmsButNoBlackList() {
+        when(qmsAciService.isEnabled()).thenReturn(true);
+        final QueryResponseData responseData = mockQueryResponse();
+        final AciErrorException blacklistError = new AciErrorException();
+        blacklistError.setErrorString(IdolDocumentService.MISSING_RULE_ERROR);
+        when(qmsAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(blacklistError).thenReturn(responseData);
+
+        final Documents<FindDocument> results = idolDocumentService.queryTextIndex(mockQueryParams());
+        assertThat(results.getDocuments(), is(not(empty())));
+    }
+
+    @Test(expected = AciErrorException.class)
+    public void queryQmsButUnexpectedError() {
+        when(qmsAciService.isEnabled()).thenReturn(true);
+        when(qmsAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(new AciErrorException());
+
+        idolDocumentService.queryTextIndex(mockQueryParams());
     }
 
     @Test

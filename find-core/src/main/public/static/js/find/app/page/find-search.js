@@ -15,6 +15,9 @@ define([
     'text!find/templates/app/page/find-search.html'
 ], function(BasePage, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
 
+    var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
+    var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
+
     return BasePage.extend({
         className: 'search-page',
         template: _.template(template),
@@ -68,26 +71,28 @@ define([
 
         expandedState: function() {
             /*fancy animation*/
-            this.$('.find').addClass('animated-container col-md-offset-2').removeClass('reverse-animated-container col-md-offset-3');
+            this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
             this.$('.service-view-container').show();
             this.$('.app-logo').hide();
-            $('.find-navbar').addClass('visible');
-            $('.find-banner').addClass('hidden');
-            $('.hp-logo-footer').addClass('hidden');
+            this.$('.hp-logo-footer').addClass('hidden');
+
+            // TODO: somebody else needs to own this
+            $('.find-navbar').removeClass('reduced').find('>').show();
 
             vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
 
         reducedState: function() {
             /*fancy reverse animation*/
-            this.$('.find').removeClass('animated-container col-md-offset-2').addClass('reverse-animated-container col-md-offset-3');
+            this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
             this.$('.service-view-container').hide();
             this.$('.app-logo').show();
-            $('.find-navbar').removeClass('visible');
-            $('.find-banner').removeClass('hidden');
-            $('.hp-logo-footer').removeClass('hidden');
+            this.$('.hp-logo-footer').removeClass('hidden');
+
+            // TODO: somebody else needs to own this
+            $('.find-navbar').addClass('reduced').find('>').hide();
 
             vent.navigate('find/search', {trigger: false});
         }

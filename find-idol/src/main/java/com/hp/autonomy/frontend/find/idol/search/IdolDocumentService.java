@@ -11,6 +11,7 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.identifier.reference.Reference;
+import com.hp.autonomy.aci.content.printfields.PrintFields;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.search.DocumentsService;
 import com.hp.autonomy.frontend.find.core.search.FindDocument;
@@ -24,6 +25,7 @@ import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.idol.SuggestResponseData;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
+import com.hp.autonomy.types.requests.idol.actions.query.params.CombineParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.HighlightParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
@@ -46,6 +48,8 @@ import java.util.Set;
 
 @Service
 public class IdolDocumentService implements DocumentsService<String, FindDocument, AciErrorException> {
+    static final String MISSING_RULE_ERROR = "missing rule";
+    static final String INVALID_RULE_ERROR = "invalid rule";
     private static final String IDOL_DATE_PARAMETER_FORMAT = "HH:mm:ss dd/MM/yyyy";
     private static final int MAX_SIMILAR_DOCUMENTS = 3;
 
@@ -80,21 +84,28 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         aciParameters.add(QueryParams.Text.name(), findQueryParams.getText());
         aciParameters.add(QueryParams.MaxResults.name(), findQueryParams.getMaxResults());
         aciParameters.add(QueryParams.Summary.name(), SummaryParam.fromValue(findQueryParams.getSummary(), null));
-        if (!findQueryParams.getIndex().isEmpty()) {
+
+        if (!promotions && !findQueryParams.getIndex().isEmpty()) {
             aciParameters.add(QueryParams.DatabaseMatch.name(), new Databases(findQueryParams.getIndex()));
         }
+
+        aciParameters.add(QueryParams.Combine.name(), CombineParam.Simple);
+        aciParameters.add(QueryParams.Predict.name(), false);
         aciParameters.add(QueryParams.FieldText.name(), findQueryParams.getFieldText());
         aciParameters.add(QueryParams.Sort.name(), findQueryParams.getSort());
         aciParameters.add(QueryParams.MinDate.name(), formatDate(findQueryParams.getMinDate()));
         aciParameters.add(QueryParams.MaxDate.name(), formatDate(findQueryParams.getMaxDate()));
         aciParameters.add(QueryParams.Print.name(), PrintParam.Fields);
-        aciParameters.add(QueryParams.PrintFields.name(), FindDocument.ALL_FIELDS);
+        aciParameters.add(QueryParams.PrintFields.name(), new PrintFields(FindDocument.ALL_FIELDS));
         aciParameters.add(QueryParams.XMLMeta.name(), true);
+        aciParameters.add(QueryParams.AnyLanguage.name(), true);
+
         if (findQueryParams.isHighlight()) {
             aciParameters.add(QueryParams.Highlight.name(), HighlightParam.SummaryTerms);
             aciParameters.add(QueryParams.StartTag.name(), HIGHLIGHT_START_TAG);
             aciParameters.add(QueryParams.EndTag.name(), HIGHLIGHT_END_TAG);
         }
+
         aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getQueryManipulation().getBlacklist());
         aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getQueryManipulation().getExpandQuery());
 
@@ -102,7 +113,24 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
             aciParameters.add(QmsActionParams.Promotions.name(), true);
         }
 
-        final QueryResponseData responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
+        return executeQuery(aciService, aciParameters);
+    }
+
+    private Documents<FindDocument> executeQuery(final AciService aciService, final AciParameters aciParameters) {
+        QueryResponseData responseData;
+        try {
+            responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
+        } catch (final AciErrorException e) {
+            final String errorString = e.getErrorString();
+            if (MISSING_RULE_ERROR.equals(errorString) || INVALID_RULE_ERROR.equals(errorString)) {
+                aciParameters.remove(QmsActionParams.Blacklist.name());
+                responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
+            }
+            else {
+                throw e;
+            }
+        }
+
         final List<Hit> hits = responseData.getHit();
         final List<FindDocument> results = parseQueryHits(hits);
         return new Documents<>(results, responseData.getTotalhits(), null);
@@ -157,7 +185,7 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
     }
 
     private List<String> parseFields(final Element node, final String fieldName) {
-        final NodeList childNodes = node.getElementsByTagName(fieldName);
+        final NodeList childNodes = node.getElementsByTagName(fieldName.toUpperCase());
         final int length = childNodes.getLength();
         final List<String> values = new ArrayList<>(length);
 

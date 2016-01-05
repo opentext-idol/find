@@ -8,36 +8,28 @@ package com.hp.autonomy.frontend.find.core.parametricfields;
 import com.hp.autonomy.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
 import java.util.Set;
 
-@SuppressWarnings("SpringJavaAutowiringInspection")
 @Controller
-@RequestMapping("/api/public/parametric")
-public class ParametricValuesController<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
+@RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
+public abstract class ParametricValuesController<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
+    public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
 
-    @Autowired
-    private ParametricValuesService<R, S, E> parametricValuesService;
+    private final ParametricValuesService<R, S, E> parametricValuesService;
 
-    @Autowired
-    private ParametricRequestBuilder<R, S> parametricRequestBuilder;
+    protected ParametricValuesController(final ParametricValuesService<R, S, E> parametricValuesService) {
+        this.parametricValuesService = parametricValuesService;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Set<QueryTagInfo> getParametricValues(
-            @RequestParam("databases") final Set<S> databases,
-            @RequestParam(value = "fieldNames", required = false) final Set<String> fieldNames,
-            @RequestParam("queryText") final String queryText,
-            @RequestParam("fieldText") final String fieldText
-    ) throws E {
-        final R parametricRequest = parametricRequestBuilder.buildRequest(databases, fieldNames, queryText, fieldText);
+    public Set<QueryTagInfo> getParametricValues(final R parametricRequest) throws E {
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 }

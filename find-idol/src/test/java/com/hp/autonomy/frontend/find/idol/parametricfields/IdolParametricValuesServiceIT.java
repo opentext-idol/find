@@ -5,17 +5,14 @@
 
 package com.hp.autonomy.frontend.find.idol.parametricfields;
 
-import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesServiceIT;
 import com.hp.autonomy.idol.parametricvalues.IdolParametricRequest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-import java.util.Collections;
-
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
-public class IdolParametricValuesServiceIT extends AbstractParametricValuesServiceIT<IdolParametricRequest, String, AciErrorException> {
+public class IdolParametricValuesServiceIT extends AbstractParametricValuesServiceIT<IdolParametricRequest, String> {
     public IdolParametricValuesServiceIT() {
-        super(Collections.<String>emptyList(), Collections.singleton("CATEGORY"));
+        super(new String[]{"WOOKIEPEDIA"}, new String[]{"CATEGORY"});
     }
 }

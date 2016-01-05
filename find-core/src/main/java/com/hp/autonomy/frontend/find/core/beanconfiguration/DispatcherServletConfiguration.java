@@ -22,8 +22,8 @@ public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
     public static final String NOT_FOUND_ERROR_PATH = "/not-found-error";
     public static final String SERVER_ERROR_PATH = "/server-error";
 
-    @Value("${application.version}")
-    private String applicationVersion;
+    @Value("${application.commit}")
+    private String commit;
 
     @SuppressWarnings("MismatchedReadAndWriteOfArray")
     @Autowired(required = false)
@@ -42,7 +42,7 @@ public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static-" + applicationVersion + "/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static-" + commit + "/**").addResourceLocations("classpath:/static/");
     }
 
     @Override

@@ -21,6 +21,7 @@ define([
 ], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
             IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
+    "use strict";
 
     var collapseView = function (title, view) {
         return new Collapsible({
@@ -32,6 +33,17 @@ define([
 
     return Backbone.View.extend({
         template: _.template(template)({i18n: i18n}),
+
+        // may be overridden
+        constructSearchFiltersCollection: function (queryModel, datesFilterModel, indexesCollection, selectedIndexesCollection, selectedParametricValues) {
+            return new SearchFiltersCollection([], {
+                queryModel: queryModel,
+                datesFilterModel: datesFilterModel,
+                indexesCollection: indexesCollection,
+                selectedIndexesCollection: selectedIndexesCollection,
+                selectedParametricValues: selectedParametricValues
+            });
+        },
 
         // will be overridden
         constructIndexesView: function (queryModel, indexesCollection, selectedIndexesCollection) {
@@ -61,13 +73,7 @@ define([
             this.selectedParametricValues = new SelectedParametricValuesCollection();
             this.selectedIndexesCollection = new IndexesCollection();
 
-            this.filtersCollection = new SearchFiltersCollection([], {
-                queryModel: this.queryModel,
-                datesFilterModel: this.datesFilterModel,
-                indexesCollection: this.indexesCollection,
-                selectedIndexesCollection: this.selectedIndexesCollection,
-                selectedParametricValues: this.selectedParametricValues
-            });
+            this.filtersCollection = this.constructSearchFiltersCollection(this.queryModel, this.datesFilterModel, this.indexesCollection, this.selectedIndexesCollection, this.selectedParametricValues);
 
             this.indexesCollection.fetch();
 

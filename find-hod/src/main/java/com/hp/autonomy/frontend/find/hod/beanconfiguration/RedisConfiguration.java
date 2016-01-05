@@ -24,8 +24,6 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-import java.util.Properties;
-
 @Configuration
 @Conditional(RedisCondition.class)
 @EnableRedisHttpSession
@@ -34,8 +32,8 @@ public class RedisConfiguration {
     @Autowired
     private ConfigService<HodFindConfig> configService;
 
-    @Value("${application.version}")
-    private String applicationVersion;
+    @Value("${application.commit}")
+    private String commit;
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
@@ -71,7 +69,7 @@ public class RedisConfiguration {
     public CacheManager cacheManager() {
         final RedisCacheManager cacheManager = new RedisCacheManager(cachingRedisTemplate());
         cacheManager.setUsePrefix(true);
-        cacheManager.setCachePrefix(new DefaultRedisCachePrefix(":cache:" + applicationVersion + ':'));
+        cacheManager.setCachePrefix(new DefaultRedisCachePrefix(":cache:" + commit + ':'));
 
         cacheManager.setDefaultExpiration(30 * 60);
         cacheManager.setExpires(CacheNames.CACHE_EXPIRES);

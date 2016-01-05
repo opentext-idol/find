@@ -5,18 +5,24 @@
 
 define([
     'find/public/pages',
-    'find/idol/app/page/idol-find-search'
-], function(Pages, FindSearch) {
+    'find/idol/app/page/idol-find-search',
+    'find/idol/app/page/find-about-page',
+    'i18n!find/nls/bundle'
+], function(Pages, FindSearch, AboutPage, i18n) {
     'use strict';
 
     return Pages.extend({
         initializePages: function() {
-            this.pages = [
+            Pages.prototype.initializePages.call(this);
+
+            this.pages = this.pages.concat([
                 {
-                    constructor: FindSearch
-                    , pageName: 'search'
+                    constructor: AboutPage,
+                    icon: 'fa fa-cog',
+                    pageName: 'about',
+                    title: i18n['app.about']
                 }
-            ];
+            ]);
         }
     });
 });

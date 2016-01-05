@@ -7,36 +7,32 @@ package com.hp.autonomy.frontend.find.core.parametricfields;
 
 import com.hp.autonomy.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public abstract class AbstractParametricValuesServiceIT<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> extends AbstractFindIT {
-    @Autowired
-    private ParametricValuesController<R, S, E> parametricValuesController;
+public abstract class AbstractParametricValuesServiceIT<R extends ParametricRequest<S>, S extends Serializable> extends AbstractFindIT {
+    protected final String[] indexes;
+    protected final String[] fieldNames;
 
-    protected final Set<S> indexes;
-    protected final Set<String> fieldNames;
-
-    protected AbstractParametricValuesServiceIT(final List<S> indexes, final Set<String> fieldNames) {
-        this.fieldNames = new HashSet<>(fieldNames);
-        this.indexes = new HashSet<>(indexes);
+    protected AbstractParametricValuesServiceIT(final String[] indexes, final String[] fieldNames) {
+        this.indexes = Arrays.copyOf(indexes, indexes.length);
+        this.fieldNames = Arrays.copyOf(fieldNames, fieldNames.length);
     }
 
     @Test
-    public void getParametricValues() throws E {
-        final Set<QueryTagInfo> results = parametricValuesController.getParametricValues(indexes, fieldNames, "*", "");
-        assertThat(results, is(not(empty())));
+    public void getParametricValues() throws Exception {
+        mockMvc.perform(get(ParametricValuesController.PARAMETRIC_VALUES_PATH).param("databases", indexes).param("fieldNames", fieldNames).param("queryText", "*").param("fieldText", ""))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", CoreMatchers.not(empty())));
     }
 }

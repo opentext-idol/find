@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
+import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.core.web.MvcConstants;
 import com.hp.autonomy.frontend.find.core.web.ViewNames;
 import com.hp.autonomy.frontend.find.hod.authentication.HodCombinedRequestController;
@@ -44,8 +45,8 @@ public class SsoController {
     @Autowired
     private ControllerUtils controllerUtils;
 
-    @Value(AppConfiguration.APPLICATION_VERSION_PROPERTY)
-    private String applicationVersion;
+    @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
+    private String gitCommit;
 
     @Value(HodConfiguration.SSO_PAGE_PROPERTY)
     private String ssoPage;
@@ -65,7 +66,7 @@ public class SsoController {
         ssoConfig.put(SsoMvcConstants.SSO_ENTRY_PAGE.value(), SSO_PAGE);
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
+        attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(ssoConfig));
         attributes.put(ControllerUtils.SPRING_CSRF_ATTRIBUTE, request.getAttribute(ControllerUtils.SPRING_CSRF_ATTRIBUTE));
 
@@ -78,10 +79,10 @@ public class SsoController {
 
         final Map<String, Object> ssoConfig = new HashMap<>();
         ssoConfig.put(SsoMvcConstants.LOGOUT_ENDPOINT.value(), logoutEndpoint);
-        ssoConfig.put(SsoMvcConstants.LOGOUT_REDIRECT_URL.value(), hodFindConfig.getHsod().getLandingPageUrl());
+        ssoConfig.put(SsoMvcConstants.LOGOUT_REDIRECT_URL.value(), hodFindConfig.getHsod().getExternalUrl() + FindController.PUBLIC_PATH);
 
         final Map<String, Object> attributes = new HashMap<>();
-        attributes.put(MvcConstants.APPLICATION_VERSION.value(), applicationVersion);
+        attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(ssoConfig));
         attributes.put(ControllerUtils.SPRING_CSRF_ATTRIBUTE, request.getAttribute(ControllerUtils.SPRING_CSRF_ATTRIBUTE));
         return new ModelAndView(ViewNames.SSO_LOGOUT.value(), attributes);

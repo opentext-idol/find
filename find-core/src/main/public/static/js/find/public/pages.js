@@ -7,16 +7,16 @@ define([
     'find/app/find-pages',
     'find/app/page/find-search',
     'i18n!find/nls/bundle'
-], function(FindPages, FindSearch) {
-    "use strict";
-
+], function(FindPages, FindSearch, i18n) {
     return FindPages.extend({
 
         initializePages: function() {
             this.pages = [
                 {
-                    constructor: FindSearch
-                    , pageName: 'search'
+                    constructor: FindSearch,
+                    icon: 'fa fa-search',
+                    pageName: 'search',
+                    title: i18n['app.search']
                 }
             ];
         }

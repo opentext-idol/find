@@ -93,7 +93,9 @@ define([
                             databases: this.queryModel.get('indexes'),
                             fieldNames: fieldNames,
                             queryText: this.queryModel.get('queryText'),
-                            fieldText: this.queryModel.get('fieldText')
+                            fieldText: this.queryModel.get('fieldText'),
+                            minDate: this.queryModel.getIsoDate('minDate'),
+                            maxDate: this.queryModel.getIsoDate('maxDate')
                         },
                         error: _.bind(function (collection, xhr) {
                             if (xhr.status !== 0) {
@@ -111,7 +113,7 @@ define([
             this.listenTo(this.queryModel, 'refresh', fetch);
 
             this.listenTo(this.queryModel, 'change', function() {
-                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
+                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'])) {
                     fetch.call(this);
                 }
             }, this);
