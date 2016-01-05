@@ -241,11 +241,18 @@ html, body {
     text-align: right;
 }
 
+.right-side-container,
+.left-side-container,
+.middle-container {
+    padding-top: 10px;
+}
+
 .right-side-container h4,
 .left-side-container h4 {
     font-weight: 900;
     font-size: 13px;
     color:#555;
+    text-transform: uppercase;
 }
 
 .rotating-chevron {
@@ -389,7 +396,6 @@ input.find-input {
 .result-container-control {
     color: #00b388;
     font-size: 13px;
-    cursor: default;
     text-decoration: none;
 }
 
