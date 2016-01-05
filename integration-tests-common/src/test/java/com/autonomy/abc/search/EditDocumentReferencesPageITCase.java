@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -185,7 +186,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("mansion");
         editReferencesPage.searchResultCheckbox(1).click();
         editReferencesPage.searchResultCheckbox(2).click();
-        ElementUtil.javascriptClick(editReferencesPage.forwardPageButton(), getDriver());
+        editReferencesPage.switchResultsPage(Pagination.NEXT);
         editReferencesPage.searchResultCheckbox(3).click();
         editReferencesPage.searchResultCheckbox(4).click();
 
@@ -229,7 +230,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
 
         getDriver().switchTo().frame(docViewer.frame());
-        verifyThat(getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
+        verifyThat("document '" + title + "' is viewable", getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
 
         getDriver().switchTo().window(handle);
         docViewer.close();
@@ -254,9 +255,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
                 editReferencesPage.getSearchResult(i).click();
                 checkDocumentViewable(searchResultTitle);
             }
-
-            ElementUtil.javascriptClick(editReferencesPage.forwardPageButton(), getDriver());
-            Waits.loadOrFadeWait();
+            editReferencesPage.switchResultsPage(Pagination.NEXT);
         }
 
         editReferencesPage.emptyBucket();

@@ -244,10 +244,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
             titles.add(getSearchResultTitle((i % 6) + 1));
 
             if((i + 1) % 6 == 0){
-                forwardPageButton().click();
-                Waits.loadOrFadeWait();
-                waitForSearchLoadIndicatorToDisappear();
-                Waits.loadOrFadeWait();
+				switchResultsPage(Pagination.NEXT);
             }
         }
 
@@ -415,9 +412,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 			// Change page when we have checked all boxes on the current page, if we have more to check
 			if (i < finalNumberOfDocs - 1 && checkboxIndex == RESULTS_PER_PAGE) {
-				// TODO: does this need to be javascriptClick?
-				forwardPageButton().click();
-				waitForSearchLoadIndicatorToDisappear();
+				switchResultsPage(Pagination.NEXT);
 			}
 		}
 		return promotedDocTitles;

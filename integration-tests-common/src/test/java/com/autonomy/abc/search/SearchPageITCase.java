@@ -189,10 +189,9 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testPaginationAndBackButton() {
 		search("safe");
-		searchPage.forwardToLastPageButton().click();
-		Waits.loadOrFadeWait();
-		assertThat("Forward to last page button is not disabled", searchPage.forwardToLastPageButton().getAttribute("class"),containsString("disabled"));
-		assertThat("Forward a page button is not disabled", searchPage.forwardPageButton().getAttribute("class"), containsString("disabled"));
+		searchPage.switchResultsPage(Pagination.LAST);
+		assertThat(searchPage.resultsPaginationButton(Pagination.LAST), disabled());
+		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), disabled());
 		final int lastPage = searchPage.getCurrentPageNumber();
 
 		getDriver().navigate().back();
@@ -445,27 +444,26 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.searchResultCheckbox(5).click();
 		final List<String> docTitles = new ArrayList<>();
 		docTitles.add(searchPage.getSearchResultTitle(5));
-		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-		Waits.loadOrFadeWait();
+		searchPage.switchResultsPage(Pagination.NEXT);
 		searchPage.searchResultCheckbox(3).click();
 		docTitles.add(searchPage.getSearchResultTitle(3));
 
 		final List<String> bucketListNew = searchPage.promotionsBucketList();
 		assertThat("Wrong number of documents in the bucket", bucketListNew.size(),is(2));
 //		assertThat("", searchPage.promotionsBucketList().containsAll(docTitles));
-		assertThat(bucketListNew.size(),is(docTitles.size()));
+		assertThat(bucketListNew.size(), is(docTitles.size()));
 
 		for(String docTitle : docTitles){
 			assertThat(bucketListNew,hasItem(docTitle.toUpperCase()));
 		}
 
 		searchPage.deleteDocFromWithinBucket(docTitles.get(1));
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(1));
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(), is(1));
 		assertThat("Document should still be in the bucket", searchPage.promotionsBucketList(),hasItem(docTitles.get(0).toUpperCase()));
 		assertThat("Document should no longer be in the bucket", searchPage.promotionsBucketList(),not(hasItem(docTitles.get(1).toUpperCase())));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(3).isSelected());
 
-		ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
+		searchPage.switchResultsPage(Pagination.PREVIOUS);
 		searchPage.deleteDocFromWithinBucket(docTitles.get(0));
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(0));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(5).isSelected());
@@ -485,8 +483,7 @@ public class SearchPageITCase extends ABCTestBase {
 					checkViewResult();
 				}
 
-				ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-				Waits.loadOrFadeWait();
+				searchPage.switchResultsPage(Pagination.NEXT);
 			}
 		}
 	}
@@ -532,8 +529,7 @@ public class SearchPageITCase extends ABCTestBase {
 				Waits.loadOrFadeWait();
 			}
 
-			ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-			Waits.loadOrFadeWait();
+			searchPage.switchResultsPage(Pagination.NEXT);
 		}
 	}
 
@@ -833,8 +829,7 @@ public class SearchPageITCase extends ABCTestBase {
 			search(query);
 			final int firstPageResultsCount = searchPage.getHeadingResultsCount();
 
-			searchPage.forwardToLastPageButton().click();
-			searchPage.waitForSearchLoadIndicatorToDisappear();
+			searchPage.switchResultsPage(Pagination.LAST);
 			verifyThat("number of results in title is consistent", searchPage.getHeadingResultsCount(), is(firstPageResultsCount));
 
 			final int completePages = searchPage.getCurrentPageNumber() - 1;
@@ -1097,8 +1092,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
         search("nice");
-		searchPage.forwardToLastPageButton().click();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.switchResultsPage(Pagination.LAST);
 		final int currentPage = searchPage.getCurrentPageNumber();
 		final String docTitle = searchPage.getSearchResultTitle(1);
 		final String url = getDriver().getCurrentUrl();
@@ -1153,7 +1147,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
-		searchPage.forwardToLastPageButton().click();
+		searchPage.switchResultsPage(Pagination.LAST);
 		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE;
 		resultsTotal += searchPage.visibleDocumentsCount();
 		assertThat(resultsTotal, is(results));
@@ -1177,7 +1171,7 @@ public class SearchPageITCase extends ABCTestBase {
 				verifyThat(parent.getTagName(), is("span"));
 				verifyThat(parent.getAttribute("class"), CoreMatchers.containsString("label"));
 			}
-			searchPage.forwardPageButton().click();
+			searchPage.switchResultsPage(Pagination.NEXT);
 		}
 	}
 
@@ -1202,8 +1196,8 @@ public class SearchPageITCase extends ABCTestBase {
 			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), new Search(getApplication(), getElementFactory(), "*"), SearchPage.RESULTS_PER_PAGE + 2);
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
-			verifyThat(searchPage.forwardPageButton(), not(disabled()));
-			searchPage.forwardPageButton().click();
+			verifyThat(searchPage.resultsPaginationButton(Pagination.NEXT), not(disabled()));
+			searchPage.switchResultsPage(Pagination.NEXT);
 
 			verifyThat(searchPage.visibleDocumentsCount(), is(2));
 		} finally {
@@ -1216,9 +1210,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchService.search("bbc");
 
 		//Hopefully less important documents will be on the last page
-		WebElement fwrdBtn = searchPage.forwardToLastPageButton();
-		ElementUtil.scrollIntoView(fwrdBtn, getDriver());
-		fwrdBtn.click();
+		searchPage.switchResultsPage(Pagination.LAST);
 
 		int results = searchPage.getHeadingResultsCount();
 		String deletedDoc = searchPage.getSearchResultTitle(1);

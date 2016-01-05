@@ -82,7 +82,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 			for (final WebElement weight : findElements(By.cssSelector(".weight"))) {
 				weights.add(Float.parseFloat(weight.getText().substring(8)));
 			}
-			ElementUtil.javascriptClick(forwardPageButton(), getDriver());
+			switchResultsPage(Pagination.NEXT);
 		}
 		return weights;
 	}
@@ -141,27 +141,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
 	}
 
-	/* pagination */
-	@Deprecated
-	public WebElement backToFirstPageButton() {
-		return resultsPaginationButton(Pagination.FIRST);
-	}
-
-	@Deprecated
-	public WebElement backPageButton() {
-		return resultsPaginationButton(Pagination.PREVIOUS);
-	}
-
-	@Deprecated
-	public WebElement forwardToLastPageButton() {
-		return resultsPaginationButton(Pagination.LAST);
-	}
-
-	@Deprecated
-	public WebElement forwardPageButton() {
-		return resultsPaginationButton(Pagination.NEXT);
-	}
-
+	/* results pagination */
 	public int getCurrentPageNumber() {
 		Waits.loadOrFadeWait();
 //		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
