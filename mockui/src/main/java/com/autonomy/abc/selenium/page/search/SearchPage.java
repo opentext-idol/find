@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
@@ -45,7 +46,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	public int getHeadingResultsCount() {
 		((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
 		final String totalWithBrackets = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
-		final String totalNoBrackets = totalWithBrackets.substring(1, totalWithBrackets.length() -1);
+		final String totalNoBrackets = totalWithBrackets.substring(1, totalWithBrackets.length() - 1);
 
 		if (totalNoBrackets.equalsIgnoreCase("more than " + MAX_RESULTS)) {
 			return MAX_RESULTS + 1;
@@ -302,20 +303,37 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".show-less"));
 	}
 
+	@Deprecated
 	public WebElement promotionSummaryBackToStartButton() {
 		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
 	}
 
+	@Deprecated
 	public WebElement promotionSummaryBackButton() {
 		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
 	}
 
+	@Deprecated
 	public WebElement promotionSummaryForwardButton() {
 		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
 	}
 
+	@Deprecated
 	public WebElement promotionSummaryForwardToEndButton() {
 		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
+	}
+
+	public void switchPromotionPage(Pagination pagination) {
+		promotionPaginationButton(pagination).click();
+		waitForPromotionsLoadIndicatorToDisappear();
+	}
+
+	public WebElement promotionPaginationButton(Pagination pagination) {
+		return pagination.findInside(promotionsPagination());
+	}
+
+	private WebElement promotionsPagination() {
+		return findElement(By.className("promotions-pagination"));
 	}
 
 	/* search results */
