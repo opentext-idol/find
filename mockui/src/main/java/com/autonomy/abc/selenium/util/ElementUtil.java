@@ -23,6 +23,14 @@ public final class ElementUtil {
         return element.findElement(By.xpath(xpath));
     }
 
+    public static boolean isEnabled(WebElement element) {
+        return !isDisabled(element);
+    }
+
+    public static boolean isDisabled(WebElement element) {
+        return isAttributePresent(element, "disabled") || hasClass("disabled", element);
+    }
+
     public static boolean hasClass(final String className, final WebElement element) {
         final Set<String> classes = getClassSet(element);
 

@@ -185,13 +185,10 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         search(trigger);
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
         Waits.loadOrFadeWait();
-        if (searchPage.showMorePromotionsButton().isDisplayed()) {
-            searchPage.showMorePromotions();
-        }
         if (promotes) {
-            verifyThat(searchPage.getPromotedDocumentTitles(), everyItem(isIn(promotedDocuments)));
+            verifyThat(searchPage.getPromotedDocumentTitles(true), everyItem(isIn(promotedDocuments)));
         } else {
-            verifyThat(searchPage.getPromotedDocumentTitles(), everyItem(not(isIn(promotedDocuments))));
+            verifyThat(searchPage.getPromotedDocumentTitles(true), everyItem(not(isIn(promotedDocuments))));
         }
     }
 }

@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -463,7 +464,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage.waitForTriggerRefresh();
 		promotionsDetailPage.trigger("meow").removeAndWait();
 		search("tigre", "French").apply();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(secondSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(secondSearchResult));
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 //		promotionsPage.selectPromotionsCategoryFilter("All Types");
@@ -477,11 +478,11 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(queryText.getValue(), is("kitty"));
 
 		search("tigre", "French").apply();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
 
 		getDriver().navigate().refresh();
 		searchPage = getElementFactory().getSearchPage();
-		verifyThat(searchPage.promotionsSummaryList(false).get(0), is(firstSearchResult));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
 	}
 
 	@Test
@@ -526,8 +527,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 			search(query, "English").apply();
 			searchPage = getElementFactory().getSearchPage();
 			final int firstPageStated = searchPage.getHeadingResultsCount();
-			searchPage.forwardToLastPageButton().click();
-			searchPage.waitForSearchLoadIndicatorToDisappear();
+			searchPage.switchResultsPage(Pagination.LAST);
 			final int numberOfPages = searchPage.getCurrentPageNumber();
 			final int lastPageDocumentsCount = searchPage.visibleDocumentsCount();
 			final int listedCount = (numberOfPages - 1) * SearchPage.RESULTS_PER_PAGE + lastPageDocumentsCount;

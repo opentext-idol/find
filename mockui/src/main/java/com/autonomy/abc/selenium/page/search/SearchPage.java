@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Dropdown;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
@@ -45,7 +46,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	public int getHeadingResultsCount() {
 		((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
 		final String totalWithBrackets = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
-		final String totalNoBrackets = totalWithBrackets.substring(1, totalWithBrackets.length() -1);
+		final String totalNoBrackets = totalWithBrackets.substring(1, totalWithBrackets.length() - 1);
 
 		if (totalNoBrackets.equalsIgnoreCase("more than " + MAX_RESULTS)) {
 			return MAX_RESULTS + 1;
@@ -148,136 +149,56 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return summaryItemsTotal;
 	}
 
+	@Deprecated
 	public List<String> promotionsSummaryList(final boolean fullList) {
+		return getPromotedDocumentTitles(fullList);
+	}
+
+	public List<String> getPromotedDocumentTitles(final boolean fullList) {
 		waitForPromotionsLoadIndicatorToDisappear();
 		final List<String> promotionsList = new ArrayList<>();
 
-		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
-			promotionsList.addAll(getVisiblePromotedItems());
-		} else {
+		if (showMorePromotionsButton().isDisplayed()) {
 			showMorePromotions();
+		}
+		promotionsList.addAll(getVisiblePromotedDocumentTitles());
 
-			if (!fullList) {
-				promotionsList.addAll(getVisiblePromotedItems());
-			} else {
-				promotionsList.addAll(getVisiblePromotedItems());
-
-				if (promotionSummaryForwardButton().isDisplayed()) {
-					promotionSummaryForwardToEndButton().click();
-					Waits.loadOrFadeWait();
-					promotionsList.addAll(getVisiblePromotedItems());
-					final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
-
-					//starting at 1 because I add the results for the first page above
-					for (int i = 1; i < numberOfPages; i++) {
-						promotionSummaryBackButton().click();
-						new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(promotionsLabel()));
-
-						promotionsList.addAll(getVisiblePromotedItems());
-					}
-				}
+		if (fullList) {
+			while (ElementUtil.isEnabled(promotionPaginationButton(Pagination.NEXT))) {
+				switchPromotionPage(Pagination.NEXT);
+				promotionsList.addAll(getVisiblePromotedDocumentTitles());
 			}
 		}
-
 		return promotionsList;
 	}
 
-	private List<String> getVisiblePromotedItems() {
+	private List<String> getVisiblePromotedDocumentTitles() {
 		return ElementUtil.getTexts(findElements(By.cssSelector(".promotions-list h3 a")));
-	}
-
-	public List<WebElement> getPromotedResults() {
-		return findElements(By.cssSelector(".promotions-list h3"));
 	}
 
 	public WebElement getPromotedResult(int number) {
 		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ") h3")));
 	}
 
-	public List<String> getPromotedDocumentTitles(){
-		List<String> titles = new ArrayList<>();
-		for(WebElement promotion : getPromotedResults()){
-			titles.add(promotion.getText());
-		}
-		return titles;
-	}
-
-	private List<String> getVisiblePromotionLabels() {
-		final List<String> labelList = new LinkedList<>();
-
-		for (final WebElement labelTitle : findElements(By.cssSelector(".promotions-list .search-result-title"))) {
-			labelList.add(labelTitle.getText());
-		}
-
-		return labelList;
-	}
-
-	public List<String> getPromotionSummaryLabels() {
-		Waits.loadOrFadeWait();
-		final List<String> labelList = new ArrayList<>();
-
-		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
-			labelList.addAll(getVisiblePromotionLabels());
-		} else {
-			showMorePromotions();
-			labelList.addAll(getVisiblePromotionLabels());
-
-			if (promotionSummaryForwardButton().isDisplayed()) {
-				promotionSummaryForwardToEndButton().click();
-				Waits.loadOrFadeWait();
-				labelList.addAll(getVisiblePromotionLabels());
-				final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
-
-				//starting at 1 because I add the results for the first page above
-				for (int i = 1; i < numberOfPages; i++) {
-					promotionSummaryBackButton().click();
-					new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(promotionsLabel()));
-
-					labelList.addAll(getVisiblePromotionLabels());
-				}
-			}
-		}
-
-		return labelList;
-	}
-
+	// TODO: move down to OPSearchPage
 	public List<String> getPromotionLabels() {
-		Waits.loadOrFadeWait();
+		waitForPromotionsLoadIndicatorToDisappear();
 		final List<String> labelList = new ArrayList<>();
 
-		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
-			labelList.addAll(getPromotionTypeLabels());
-		} else {
+		if (showMorePromotionsButton().isDisplayed()) {
 			showMorePromotions();
-			labelList.addAll(getPromotionTypeLabels());
-
-			if (promotionSummaryForwardButton().isDisplayed()) {
-				promotionSummaryForwardToEndButton().click();
-				Waits.loadOrFadeWait();
-				labelList.addAll(getPromotionTypeLabels());
-				final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
-
-				//starting at 1 because I add the results for the first page above
-				for (int i = 1; i < numberOfPages; i++) {
-					promotionSummaryBackButton().click();
-					new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(promotionsLabel()));
-
-					labelList.addAll(getPromotionTypeLabels());
-				}
-			}
 		}
+		labelList.addAll(getPromotionTypeLabels());
 
+		while (ElementUtil.isEnabled(promotionPaginationButton(Pagination.NEXT))) {
+			switchPromotionPage(Pagination.NEXT);
+			labelList.addAll(getPromotionTypeLabels());
+		}
 		return labelList;
 	}
 
 	private List<String> getPromotionTypeLabels() {
-		final List<String> labelList = new LinkedList<>();
-
-		for (final WebElement labelTitle : findElements(By.className("promotion-name"))) {
-			labelList.add(labelTitle.getText());
-		}
-
-		return labelList;
+		return ElementUtil.getTexts(findElements(By.className("promotion-name")));
 	}
 
 	public boolean isPromotionsBoxVisible() {
@@ -302,20 +223,17 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".show-less"));
 	}
 
-	public WebElement promotionSummaryBackToStartButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous-chapter")));
+	public void switchPromotionPage(Pagination pagination) {
+		promotionPaginationButton(pagination).click();
+		waitForPromotionsLoadIndicatorToDisappear();
 	}
 
-	public WebElement promotionSummaryBackButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-previous")));
+	public WebElement promotionPaginationButton(Pagination pagination) {
+		return pagination.findInside(promotionsPagination());
 	}
 
-	public WebElement promotionSummaryForwardButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next")));
-	}
-
-	public WebElement promotionSummaryForwardToEndButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".promotions-pagination .hp-next-chapter")));
+	private WebElement promotionsPagination() {
+		return findElement(By.className("promotions-pagination"));
 	}
 
 	/* search results */
@@ -326,10 +244,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
             titles.add(getSearchResultTitle((i % 6) + 1));
 
             if((i + 1) % 6 == 0){
-                forwardPageButton().click();
-                Waits.loadOrFadeWait();
-                waitForSearchLoadIndicatorToDisappear();
-                Waits.loadOrFadeWait();
+				switchResultsPage(Pagination.NEXT);
             }
         }
 
@@ -497,9 +412,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 			// Change page when we have checked all boxes on the current page, if we have more to check
 			if (i < finalNumberOfDocs - 1 && checkboxIndex == RESULTS_PER_PAGE) {
-				// TODO: does this need to be javascriptClick?
-				forwardPageButton().click();
-				waitForSearchLoadIndicatorToDisappear();
+				switchResultsPage(Pagination.NEXT);
 			}
 		}
 		return promotedDocTitles;

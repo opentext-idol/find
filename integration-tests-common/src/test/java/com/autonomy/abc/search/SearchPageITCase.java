@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -146,52 +147,41 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promotionsBucketClose();
 	}
 
-    //TODO fix this test so it's not being run on something with an obscene amount of pages
-    @Ignore
 	@Test
 	public void testSearchResultsPagination() {
-		search("dog");
+		search("grass");
 		Waits.loadOrFadeWait();
-		assertThat("Back to first page button is not disabled", searchPage.isBackToFirstPageButtonDisabled());
-		assertThat("Back a page button is not disabled", ElementUtil.getParent(searchPage.backPageButton()).getAttribute("class"),containsString("disabled"));
+		assertThat(searchPage.resultsPaginationButton(Pagination.FIRST), disabled());
+		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), disabled());
 
-		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-		searchPage.paginateWait();
- 		assertThat("Back to first page button is not enabled", ElementUtil.getParent(searchPage.backToFirstPageButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Back a page button is not enabled", ElementUtil.getParent(searchPage.backPageButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Page 2 is not active", searchPage.isPageActive(2));
+		searchPage.switchResultsPage(Pagination.NEXT);
+		assertThat(searchPage.resultsPaginationButton(Pagination.FIRST), not(disabled()));
+		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), not(disabled()));
+		assertThat(searchPage.getCurrentPageNumber(), is(2));
 
-		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-		searchPage.paginateWait();
-		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-		searchPage.paginateWait();
-		ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
-		searchPage.paginateWait();
-		assertThat("Page 3 is not active", searchPage.isPageActive(3));
+		searchPage.switchResultsPage(Pagination.NEXT);
+		searchPage.switchResultsPage(Pagination.NEXT);
+		searchPage.switchResultsPage(Pagination.PREVIOUS);
+		assertThat(searchPage.getCurrentPageNumber(), is(3));
 
-		ElementUtil.javascriptClick(searchPage.backToFirstPageButton(), getDriver());
-		searchPage.paginateWait();
-		assertThat("Page 1 is not active", searchPage.isPageActive(1));
+		searchPage.switchResultsPage(Pagination.FIRST);
+		assertThat(searchPage.getCurrentPageNumber(), is(1));
 
-		ElementUtil.javascriptClick(searchPage.forwardToLastPageButton(), getDriver());
-		searchPage.paginateWait();
-		assertThat("Forward to last page button is not disabled", ElementUtil.getParent(searchPage.forwardToLastPageButton()).getAttribute("class"),containsString("disabled"));
-		assertThat("Forward a page button is not disabled", ElementUtil.getParent(searchPage.forwardPageButton()).getAttribute("class"),containsString("disabled"));
+		searchPage.switchResultsPage(Pagination.LAST);
+		assertThat(searchPage.resultsPaginationButton(Pagination.LAST), disabled());
+		assertThat(searchPage.resultsPaginationButton(Pagination.NEXT), disabled());
 
 		final int numberOfPages = searchPage.getCurrentPageNumber();
-
 		for (int i = numberOfPages - 1; i > 0; i--) {
-			ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
-			searchPage.paginateWait();
-			assertThat("Page " + String.valueOf(i) + " is not active", searchPage.isPageActive(i));
-			assertThat("Url incorrect", getDriver().getCurrentUrl(),endsWith(String.valueOf(i)));
+			searchPage.switchResultsPage(Pagination.PREVIOUS);
+			assertThat(searchPage.getCurrentPageNumber(), is(i));
+			assertThat(getDriver().getCurrentUrl(), endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
-			ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-			searchPage.paginateWait();
-			assertThat("Page " + String.valueOf(j) + " is not active", searchPage.isPageActive(j));
-			assertThat("Url incorrect", getDriver().getCurrentUrl(),endsWith(String.valueOf(j)));
+			searchPage.switchResultsPage(Pagination.NEXT);
+			assertThat(searchPage.getCurrentPageNumber(), is(j));
+			assertThat(getDriver().getCurrentUrl(), endsWith(String.valueOf(j)));
 		}
 	}
 
@@ -199,10 +189,9 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testPaginationAndBackButton() {
 		search("safe");
-		searchPage.forwardToLastPageButton().click();
-		Waits.loadOrFadeWait();
-		assertThat("Forward to last page button is not disabled", searchPage.forwardToLastPageButton().getAttribute("class"),containsString("disabled"));
-		assertThat("Forward a page button is not disabled", searchPage.forwardPageButton().getAttribute("class"), containsString("disabled"));
+		searchPage.switchResultsPage(Pagination.LAST);
+		assertThat(searchPage.resultsPaginationButton(Pagination.LAST), disabled());
+		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), disabled());
 		final int lastPage = searchPage.getCurrentPageNumber();
 
 		getDriver().navigate().back();
@@ -236,6 +225,7 @@ public class SearchPageITCase extends ABCTestBase {
 		Search search = new Search(getApplication(), getElementFactory(), "freeze");
 
 		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		promotionService.deleteAll();
 		promotionService.setUpPromotion(promotion, search, 18);
 
 		try {
@@ -257,34 +247,26 @@ public class SearchPageITCase extends ABCTestBase {
 			searchPage.showMorePromotions();
 			assertThat("showing more again", searchPage.getPromotionSummarySize(), is(5));
 
-			searchPage.promotionSummaryForwardButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.switchPromotionPage(Pagination.NEXT);
 			logger.info("on page 2");
 			verifyPromotionPagination(true, true);
 
-			searchPage.promotionSummaryForwardButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
-			searchPage.promotionSummaryForwardButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.switchPromotionPage(Pagination.NEXT);
+			searchPage.switchPromotionPage(Pagination.NEXT);
 			logger.info("on last page");
 			verifyPromotionPagination(true, false);
 
-			searchPage.promotionSummaryBackButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
-			searchPage.promotionSummaryBackButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
-			searchPage.promotionSummaryBackButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			for (int unused=0; unused < 3; unused++) {
+				searchPage.switchPromotionPage(Pagination.PREVIOUS);
+			}
 			logger.info("on first page");
 			verifyPromotionPagination(false, true);
 
-			searchPage.promotionSummaryForwardToEndButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.switchPromotionPage(Pagination.LAST);
 			logger.info("on last page");
 			verifyPromotionPagination(true, false);
 
-			searchPage.promotionSummaryBackToStartButton().click();
-			searchPage.waitForPromotionsLoadIndicatorToDisappear();
+			searchPage.switchPromotionPage(Pagination.FIRST);
 			logger.info("on first page");
 			verifyPromotionPagination(false, true);
 		} finally {
@@ -293,10 +275,10 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	private void verifyPromotionPagination(boolean previousEnabled, boolean nextEnabled) {
-		verifyButtonEnabled("back to start", searchPage.promotionSummaryBackToStartButton(), previousEnabled);
-		verifyButtonEnabled("back", searchPage.promotionSummaryBackButton(), previousEnabled);
-		verifyButtonEnabled("forward", searchPage.promotionSummaryForwardButton(), nextEnabled);
-		verifyButtonEnabled("forward to end", searchPage.promotionSummaryForwardToEndButton(), nextEnabled);
+		verifyButtonEnabled("back to start", searchPage.promotionPaginationButton(Pagination.FIRST), previousEnabled);
+		verifyButtonEnabled("back", searchPage.promotionPaginationButton(Pagination.PREVIOUS), previousEnabled);
+		verifyButtonEnabled("forward", searchPage.promotionPaginationButton(Pagination.NEXT), nextEnabled);
+		verifyButtonEnabled("forward to end", searchPage.promotionPaginationButton(Pagination.LAST), nextEnabled);
 	}
 
 	private void verifyButtonEnabled(String name, WebElement element, boolean enabled) {
@@ -463,27 +445,26 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.searchResultCheckbox(5).click();
 		final List<String> docTitles = new ArrayList<>();
 		docTitles.add(searchPage.getSearchResultTitle(5));
-		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-		Waits.loadOrFadeWait();
+		searchPage.switchResultsPage(Pagination.NEXT);
 		searchPage.searchResultCheckbox(3).click();
 		docTitles.add(searchPage.getSearchResultTitle(3));
 
 		final List<String> bucketListNew = searchPage.promotionsBucketList();
 		assertThat("Wrong number of documents in the bucket", bucketListNew.size(),is(2));
 //		assertThat("", searchPage.promotionsBucketList().containsAll(docTitles));
-		assertThat(bucketListNew.size(),is(docTitles.size()));
+		assertThat(bucketListNew.size(), is(docTitles.size()));
 
 		for(String docTitle : docTitles){
 			assertThat(bucketListNew,hasItem(docTitle.toUpperCase()));
 		}
 
 		searchPage.deleteDocFromWithinBucket(docTitles.get(1));
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(1));
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(), is(1));
 		assertThat("Document should still be in the bucket", searchPage.promotionsBucketList(),hasItem(docTitles.get(0).toUpperCase()));
 		assertThat("Document should no longer be in the bucket", searchPage.promotionsBucketList(),not(hasItem(docTitles.get(1).toUpperCase())));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(3).isSelected());
 
-		ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
+		searchPage.switchResultsPage(Pagination.PREVIOUS);
 		searchPage.deleteDocFromWithinBucket(docTitles.get(0));
 		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(0));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(5).isSelected());
@@ -503,8 +484,7 @@ public class SearchPageITCase extends ABCTestBase {
 					checkViewResult();
 				}
 
-				ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-				Waits.loadOrFadeWait();
+				searchPage.switchResultsPage(Pagination.NEXT);
 			}
 		}
 	}
@@ -550,8 +530,7 @@ public class SearchPageITCase extends ABCTestBase {
 				Waits.loadOrFadeWait();
 			}
 
-			ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
-			Waits.loadOrFadeWait();
+			searchPage.switchResultsPage(Pagination.NEXT);
 		}
 	}
 
@@ -776,14 +755,12 @@ public class SearchPageITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
 
 		assertThat(searchPage.getPromotionSummarySize(), is(2));
-		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(2));
 
-		final List<String> initialPromotionsSummary = searchPage.promotionsSummaryList(false);
+		final List<String> initialPromotionsSummary = searchPage.getPromotedDocumentTitles(false);
 		searchPage.setFieldText("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
 
 		assertThat(searchPage.getPromotionSummarySize(), is(1));
-		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(1));
-		assertThat(searchPage.promotionsSummaryList(false).get(0), is(initialPromotionsSummary.get(0)));
+		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(0)));
 
 		searchPage.fieldTextEditButton().click();
 		searchPage.fieldTextInput().clear();
@@ -792,8 +769,7 @@ public class SearchPageITCase extends ABCTestBase {
 		Waits.loadOrFadeWait();
 
 		assertThat(searchPage.getPromotionSummarySize(), is(1));
-		assertThat(searchPage.getPromotionSummaryLabels(), hasSize(1));
-		assertThat(searchPage.promotionsSummaryList(false).get(0), is(initialPromotionsSummary.get(1)));
+		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(1)));
 	}
 
 	@Test
@@ -854,8 +830,7 @@ public class SearchPageITCase extends ABCTestBase {
 			search(query);
 			final int firstPageResultsCount = searchPage.getHeadingResultsCount();
 
-			searchPage.forwardToLastPageButton().click();
-			searchPage.waitForSearchLoadIndicatorToDisappear();
+			searchPage.switchResultsPage(Pagination.LAST);
 			verifyThat("number of results in title is consistent", searchPage.getHeadingResultsCount(), is(firstPageResultsCount));
 
 			final int completePages = searchPage.getCurrentPageNumber() - 1;
@@ -1118,8 +1093,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
         search("nice");
-		searchPage.forwardToLastPageButton().click();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.switchResultsPage(Pagination.LAST);
 		final int currentPage = searchPage.getCurrentPageNumber();
 		final String docTitle = searchPage.getSearchResultTitle(1);
 		final String url = getDriver().getCurrentUrl();
@@ -1174,7 +1148,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
-		searchPage.forwardToLastPageButton().click();
+		searchPage.switchResultsPage(Pagination.LAST);
 		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE;
 		resultsTotal += searchPage.visibleDocumentsCount();
 		assertThat(resultsTotal, is(results));
@@ -1198,7 +1172,7 @@ public class SearchPageITCase extends ABCTestBase {
 				verifyThat(parent.getTagName(), is("span"));
 				verifyThat(parent.getAttribute("class"), CoreMatchers.containsString("label"));
 			}
-			searchPage.forwardPageButton().click();
+			searchPage.switchResultsPage(Pagination.NEXT);
 		}
 	}
 
@@ -1223,8 +1197,8 @@ public class SearchPageITCase extends ABCTestBase {
 			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), new Search(getApplication(), getElementFactory(), "*"), SearchPage.RESULTS_PER_PAGE + 2);
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
-			verifyThat(searchPage.forwardPageButton(), not(disabled()));
-			searchPage.forwardPageButton().click();
+			verifyThat(searchPage.resultsPaginationButton(Pagination.NEXT), not(disabled()));
+			searchPage.switchResultsPage(Pagination.NEXT);
 
 			verifyThat(searchPage.visibleDocumentsCount(), is(2));
 		} finally {
@@ -1237,9 +1211,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchService.search("bbc");
 
 		//Hopefully less important documents will be on the last page
-		WebElement fwrdBtn = searchPage.forwardToLastPageButton();
-		ElementUtil.scrollIntoView(fwrdBtn, getDriver());
-		fwrdBtn.click();
+		searchPage.switchResultsPage(Pagination.LAST);
 
 		int results = searchPage.getHeadingResultsCount();
 		String deletedDoc = searchPage.getSearchResultTitle(1);

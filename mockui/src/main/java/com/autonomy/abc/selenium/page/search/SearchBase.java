@@ -82,7 +82,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 			for (final WebElement weight : findElements(By.cssSelector(".weight"))) {
 				weights.add(Float.parseFloat(weight.getText().substring(8)));
 			}
-			ElementUtil.javascriptClick(forwardPageButton(), getDriver());
+			switchResultsPage(Pagination.NEXT);
 		}
 		return weights;
 	}
@@ -141,31 +141,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return findElement(By.cssSelector(".search-result .promotion-name")).getText();
 	}
 
-	/* pagination */
-	public WebElement backToFirstPageButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous-chapter")));
-	}
-
-	public WebElement backPageButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous")));
-	}
-
-	public WebElement forwardToLastPageButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next-chapter")));
-	}
-
-	public WebElement forwardPageButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next")));
-	}
-
-	public boolean isPageActive(final int pageNumber) {
-		try {
-			return findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.xpath(".//span[text()='" + String.valueOf(pageNumber) + "']/..")).getAttribute("class").contains("active");
-		} catch (final NoSuchElementException e){
-			return false;
-		}
-	}
-
+	/* results pagination */
 	public int getCurrentPageNumber() {
 		Waits.loadOrFadeWait();
 //		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
@@ -173,8 +149,17 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return Integer.parseInt(findElement(By.cssSelector(".btn-nav.active")).getText());
 	}
 
-	public boolean isBackToFirstPageButtonDisabled() {
-		return  ElementUtil.getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
+	public void switchResultsPage(Pagination pagination) {
+		resultsPaginationButton(pagination).click();
+		waitForSearchLoadIndicatorToDisappear();
+	}
+
+	public WebElement resultsPaginationButton(Pagination pagination) {
+		return pagination.findInside(resultsPagination());
+	}
+
+	private WebElement resultsPagination() {
+		return findElement(By.cssSelector(".search-results-view .pagination-nav"));
 	}
 
 	/* indexes/databases */

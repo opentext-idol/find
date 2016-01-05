@@ -163,7 +163,7 @@ public class ElementMatchers {
 
             @Override
             protected boolean matchesSafely(WebElement item) {
-                return item.getAttribute("disabled") != null;
+                return ElementUtil.isDisabled(item);
             }
 
             @Override
