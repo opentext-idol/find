@@ -160,7 +160,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.paginateWait();
  		assertThat("Back to first page button is not enabled", ElementUtil.getParent(searchPage.backToFirstPageButton()).getAttribute("class"),not(containsString("disabled")));
 		assertThat("Back a page button is not enabled", ElementUtil.getParent(searchPage.backPageButton()).getAttribute("class"),not(containsString("disabled")));
-		assertThat("Page 2 is not active", searchPage.isPageActive(2));
+		assertThat("Page 2 is not active", searchPage.getCurrentPageNumber(), is(2));
 
 		ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 		searchPage.paginateWait();
@@ -168,11 +168,11 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.paginateWait();
 		ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
 		searchPage.paginateWait();
-		assertThat("Page 3 is not active", searchPage.isPageActive(3));
+		assertThat("Page 3 is not active", searchPage.getCurrentPageNumber(), is(3));
 
 		ElementUtil.javascriptClick(searchPage.backToFirstPageButton(), getDriver());
 		searchPage.paginateWait();
-		assertThat("Page 1 is not active", searchPage.isPageActive(1));
+		assertThat("Page 1 is not active", searchPage.getCurrentPageNumber(), is(1));
 
 		ElementUtil.javascriptClick(searchPage.forwardToLastPageButton(), getDriver());
 		searchPage.paginateWait();
@@ -184,14 +184,14 @@ public class SearchPageITCase extends ABCTestBase {
 		for (int i = numberOfPages - 1; i > 0; i--) {
 			ElementUtil.javascriptClick(searchPage.backPageButton(), getDriver());
 			searchPage.paginateWait();
-			assertThat("Page " + String.valueOf(i) + " is not active", searchPage.isPageActive(i));
+			assertThat("Page " + i + " is not active", searchPage.getCurrentPageNumber(), is(i));
 			assertThat("Url incorrect", getDriver().getCurrentUrl(),endsWith(String.valueOf(i)));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
 			ElementUtil.javascriptClick(searchPage.forwardPageButton(), getDriver());
 			searchPage.paginateWait();
-			assertThat("Page " + String.valueOf(j) + " is not active", searchPage.isPageActive(j));
+			assertThat("Page " + j + " is not active", searchPage.getCurrentPageNumber(), is(j));
 			assertThat("Url incorrect", getDriver().getCurrentUrl(),endsWith(String.valueOf(j)));
 		}
 	}

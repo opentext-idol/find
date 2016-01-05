@@ -142,28 +142,24 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	/* pagination */
+	@Deprecated
 	public WebElement backToFirstPageButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous-chapter")));
+		return resultsPaginationButton(Pagination.FIRST);
 	}
 
+	@Deprecated
 	public WebElement backPageButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-previous")));
+		return resultsPaginationButton(Pagination.PREVIOUS);
 	}
 
+	@Deprecated
 	public WebElement forwardToLastPageButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next-chapter")));
+		return resultsPaginationButton(Pagination.LAST);
 	}
 
+	@Deprecated
 	public WebElement forwardPageButton() {
-		return ElementUtil.getParent(findElement(By.cssSelector(".pagination-nav.centre .hp-next")));
-	}
-
-	public boolean isPageActive(final int pageNumber) {
-		try {
-			return findElement(By.cssSelector(".pagination-nav.centre")).findElement(By.xpath(".//span[text()='" + String.valueOf(pageNumber) + "']/..")).getAttribute("class").contains("active");
-		} catch (final NoSuchElementException e){
-			return false;
-		}
+		return resultsPaginationButton(Pagination.NEXT);
 	}
 
 	public int getCurrentPageNumber() {
@@ -175,6 +171,19 @@ public abstract class SearchBase extends AppElement implements AppPage,
 
 	public boolean isBackToFirstPageButtonDisabled() {
 		return  ElementUtil.getParent(backToFirstPageButton()).getAttribute("class").contains("disabled");
+	}
+
+	public void switchResultsPage(Pagination pagination) {
+		resultsPaginationButton(pagination).click();
+		waitForSearchLoadIndicatorToDisappear();
+	}
+
+	public WebElement resultsPaginationButton(Pagination pagination) {
+		return pagination.findInside(resultsPagination());
+	}
+
+	private WebElement resultsPagination() {
+		return findElement(By.cssSelector(".search-results-view .pagination-nav"));
 	}
 
 	/* indexes/databases */
