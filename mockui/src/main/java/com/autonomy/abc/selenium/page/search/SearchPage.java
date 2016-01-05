@@ -203,45 +203,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return titles;
 	}
 
-	private List<String> getVisiblePromotionLabels() {
-		final List<String> labelList = new LinkedList<>();
-
-		for (final WebElement labelTitle : findElements(By.cssSelector(".promotions-list .search-result-title"))) {
-			labelList.add(labelTitle.getText());
-		}
-
-		return labelList;
-	}
-
-	public List<String> getPromotionSummaryLabels() {
-		Waits.loadOrFadeWait();
-		final List<String> labelList = new ArrayList<>();
-
-		if (!findElement(By.cssSelector(".show-more")).isDisplayed()) {
-			labelList.addAll(getVisiblePromotionLabels());
-		} else {
-			showMorePromotions();
-			labelList.addAll(getVisiblePromotionLabels());
-
-			if (promotionSummaryForwardButton().isDisplayed()) {
-				promotionSummaryForwardToEndButton().click();
-				Waits.loadOrFadeWait();
-				labelList.addAll(getVisiblePromotionLabels());
-				final int numberOfPages = Integer.parseInt(promotionSummaryBackButton().getAttribute("data-page"));
-
-				//starting at 1 because I add the results for the first page above
-				for (int i = 1; i < numberOfPages; i++) {
-					promotionSummaryBackButton().click();
-					new WebDriverWait(getDriver(), 3).until(ExpectedConditions.visibilityOf(promotionsLabel()));
-
-					labelList.addAll(getVisiblePromotionLabels());
-				}
-			}
-		}
-
-		return labelList;
-	}
-
 	public List<String> getPromotionLabels() {
 		Waits.loadOrFadeWait();
 		final List<String> labelList = new ArrayList<>();
