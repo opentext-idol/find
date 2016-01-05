@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -40,14 +41,14 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
 
         connectorUrl.setValue("http://www.foo.com");
         connectorName.setValue("foo");
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         newConnectionPage.nextButton().click();
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
         newConnectionPage.nextButton().click();
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         connectorIndexStepTab = newConnectionPage.getIndexStep();
 
