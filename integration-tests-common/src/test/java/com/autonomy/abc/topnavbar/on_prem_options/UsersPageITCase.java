@@ -335,7 +335,6 @@ public class UsersPageITCase extends UsersPageTestBase {
 			userService.createNewUser(aNewUser, Role.ADMIN);
 		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) {
 			/* Expected */
-			usersPage.closeModal();
 		}
 
 		verifyThat(usersPage.getUserCountInTitle(), is(2));

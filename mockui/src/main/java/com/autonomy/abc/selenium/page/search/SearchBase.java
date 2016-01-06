@@ -294,8 +294,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	private FormInput dateInput(By locator) {
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
-		findElement(By.cssSelector("[data-filter-name=\"maxDate\"] .clickable")).click();
-		Waits.loadOrFadeWait();
 		WebElement textBox = findElement(locator);
 		return new FormInput(textBox, getDriver());
 	}

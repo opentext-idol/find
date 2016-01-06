@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.Pagination;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -499,7 +500,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertThat("Navigated to promotions menu", secondPromotionsPage.promoteExistingButton().isDisplayed());
 
 		getDriver().switchTo().window(browserHandles.get(0));
-		setUpPromotion(search("rafiki", "Swahili"), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
+		setUpPromotion(search("nein", "German"), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));

@@ -191,7 +191,9 @@ public class SearchPageITCase extends ABCTestBase {
 		search("safe");
 		searchPage.switchResultsPage(Pagination.LAST);
 		assertThat(searchPage.resultsPaginationButton(Pagination.LAST), disabled());
-		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), disabled());
+		assertThat(searchPage.resultsPaginationButton(Pagination.NEXT), disabled());
+		assertThat(searchPage.resultsPaginationButton(Pagination.PREVIOUS), not(disabled()));
+		assertThat(searchPage.resultsPaginationButton(Pagination.FIRST), not(disabled()));
 		final int lastPage = searchPage.getCurrentPageNumber();
 
 		getDriver().navigate().back();
@@ -411,6 +413,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	//TODO seems to be failing within VM - investigate futher
 	public void testDeleteDocsFromWithinBucket() {
 		search("sabre");
 		searchPage.promoteTheseDocumentsButton().click();
@@ -504,7 +507,6 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testViewFromBucketLabel() throws InterruptedException {
         search("جيمس");
 		searchPage.selectLanguage(Language.ARABIC);
-        logger.warn("Using Trimmed Titles");
 
         search("Engineer");
 
@@ -517,13 +519,14 @@ public class SearchPageITCase extends ABCTestBase {
 				final String handle = getDriver().getWindowHandle();
 				searchPage.searchResultCheckbox(i).click();
 				final String docTitle = searchPage.getSearchResultTitle(i);
+				//TODO fix clean xpath string so it works here
 				searchPage.getPromotionBucketElementByTitle(docTitle).click();
 
 				Thread.sleep(5000);
 
 				getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
                 //Using trimmedtitle is a really hacky way to get around the latin urls not being encoded (possibly, or another problem) correctly
-				assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText(),containsString(docTitle));
+				assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText(), containsString(docTitle));
 
 				getDriver().switchTo().window(handle);
 				getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
