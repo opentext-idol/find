@@ -58,8 +58,8 @@ public class IndexService {
         newIndexPage.nextButton().click();
         Waits.loadOrFadeWait();
 
-        newIndexPage.inputIndexFields(index.getIndexFields());
-        newIndexPage.inputParametricFields(index.getParametricFields());
+        newIndexPage.setIndexFields(index.getIndexFields());
+        newIndexPage.setParametricFields(index.getParametricFields());
         newIndexPage.nextButton().click();
         Waits.loadOrFadeWait();
 

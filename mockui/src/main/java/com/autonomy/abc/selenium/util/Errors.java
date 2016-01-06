@@ -34,4 +34,9 @@ public class Errors {
     public static class Find {
         public static final String GENERAL = "An error occurred retrieving results";
     }
+
+    public static class Index {
+        public static final String DISPLAY_NAME = "Please enter a valid name that contains only alphanumeric characters";
+        public static final String FIELD_NAMES = "field names can contain only lowercase alphanumeric characters";
+    }
 }

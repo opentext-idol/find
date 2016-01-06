@@ -6,11 +6,10 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
-import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Errors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
@@ -53,11 +52,10 @@ public class IndexWizardITCase extends HostedTestBase {
         indexNameInput.setValue("name");
         displayNameInput.setValue("displayName #$%");
 
-        String error = "Please enter a valid name that contains only alphanumeric characters";
         verifyThat(displayNameInput.formGroup(), hasClass("has-error"));
         WebElement errorMessage = displayNameInput.errorMessage();
         verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(error));
+        verifyThat(errorMessage, containsText(Errors.Index.DISPLAY_NAME));
     }
 
     @Test
@@ -117,34 +115,21 @@ public class IndexWizardITCase extends HostedTestBase {
             }
         }};
 
-        createNewIndexPage.inputIndexFields(capitals);
-
-        WebElement errorMessage = configErrorMessage(createNewIndexPage.advancedIndexFields());
-        String error = "field names can contain only lowercase alphanumeric characters";
-
+        createNewIndexPage.setIndexFields(capitals);
+        WebElement errorMessage = createNewIndexPage.indexFieldsInput().errorMessage();
         verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(error));
+        verifyThat(errorMessage, containsText(Errors.Index.FIELD_NAMES));
 
-        createNewIndexPage.advancedIndexFields().clear();
-        createNewIndexPage.inputIndexFields(lowercase);
-
+        createNewIndexPage.setIndexFields(lowercase);
         verifyThat(errorMessage, not(displayed()));
 
-        createNewIndexPage.inputParametricFields(capitals);
-
-        errorMessage = configErrorMessage(createNewIndexPage.advancedParametricFields());
-
+        createNewIndexPage.setParametricFields(capitals);
+        errorMessage = createNewIndexPage.parametricFieldsInput().errorMessage();
         verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(error));
+        verifyThat(errorMessage, containsText(Errors.Index.FIELD_NAMES));
 
-        createNewIndexPage.advancedParametricFields().clear();
-        createNewIndexPage.inputParametricFields(lowercase);
-
+        createNewIndexPage.setParametricFields(lowercase);
         verifyThat(errorMessage, not(displayed()));
-    }
-
-    private WebElement configErrorMessage(WebElement element){
-        return ElementUtil.ancestor(element,1).findElement(By.tagName("p"));
     }
 
     @After
