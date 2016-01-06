@@ -4,7 +4,9 @@ import com.autonomy.abc.selenium.indexes.Index;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class IndexesTree implements Iterable<IndexNodeElement> {
     private final IndexCategoryNode allIndexesNode;
@@ -47,6 +49,16 @@ public class IndexesTree implements Iterable<IndexNodeElement> {
 
     public boolean isSelected(String indexName) {
         return allIndexes().find(indexName).isSelected();
+    }
+
+    public List<Index> getSelected() {
+        List<Index> selected = new ArrayList<>();
+        for (IndexNodeElement node : this) {
+            if (node.isSelected()) {
+                selected.add(new Index(node.getName()));
+            }
+        }
+        return selected;
     }
 
     public IndexCategoryNode allIndexes() {
