@@ -91,8 +91,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         verifyPinToPosition(promotionTitles, 6, 10);
 
         switchToSearch();
-        promotionsDetailPage.triggerAddBox().setAndSubmit(secondaryTrigger);
-        promotionsDetailPage.waitForTriggerRefresh();
+        promotionsDetailPage.getTriggerForm().addTrigger(secondaryTrigger);
         LOGGER.info("added secondary trigger");
 
         switchToFind();

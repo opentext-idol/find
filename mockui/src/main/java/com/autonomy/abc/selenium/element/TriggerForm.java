@@ -18,10 +18,6 @@ public class TriggerForm extends AppElement {
         return new FormInput(findElement(By.name("words")), getDriver());
     }
 
-    public WebElement triggerAddButton() {
-        return findElement(By.cssSelector("[type='submit']"));
-    }
-
     public void addTrigger(String trigger) {
         triggerAddBox().setAndSubmit(trigger);
         Waits.loadOrFadeWait();

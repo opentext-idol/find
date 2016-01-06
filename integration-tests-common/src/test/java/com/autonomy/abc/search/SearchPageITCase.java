@@ -787,7 +787,7 @@ public class SearchPageITCase extends ABCTestBase {
 		final List<String> promotedDocs = searchPage.createAMultiDocumentPromotion(2);
 		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		createPromotionsPage.navigateToTriggers();
-		createPromotionsPage.addSearchTrigger("duck");
+		createPromotionsPage.getTriggerForm().addTrigger("duck");
 		createPromotionsPage.finishButton().click();
 		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
         searchPage.waitForSearchLoadIndicatorToDisappear();
