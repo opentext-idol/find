@@ -11,7 +11,7 @@ public class PromotionsMatchers {
         return new TypeSafeMatcher<PromotionsDetailPage>() {
             @Override
             protected boolean matchesSafely(PromotionsDetailPage promotionsDetailPage) {
-                return matcher.matches(promotionsDetailPage.getTriggerList());
+                return matcher.matches(promotionsDetailPage.getTriggerForm().getTriggersAsStrings());
             }
 
             @Override
@@ -21,7 +21,7 @@ public class PromotionsMatchers {
 
             @Override
             public void describeMismatchSafely(PromotionsDetailPage item, Description description) {
-                matcher.describeMismatch(item.getTriggerList(), description);
+                matcher.describeMismatch(item.getTriggerForm().getTriggersAsStrings(), description);
             }
         };
     }

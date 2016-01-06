@@ -6,8 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class PromotionsDetailPageTrigger extends Trigger {
-    public PromotionsDetailPageTrigger(WebElement element, WebDriver driver) {
+public class PromotionsDetailTriggerForm extends TriggerForm {
+    public PromotionsDetailTriggerForm(WebElement element, WebDriver driver) {
         super(element, driver);
     }
 
@@ -17,7 +17,7 @@ public class PromotionsDetailPageTrigger extends Trigger {
         waitForTriggerRefresh();
     }
 
-    private void waitForTriggerRefresh() {
+    public void waitForTriggerRefresh() {
         new WebDriverWait(getDriver(), 20).until(Predicates.invisibilityOfAllElementsLocated(By.cssSelector(".term .fa-spin")));
     }
 }

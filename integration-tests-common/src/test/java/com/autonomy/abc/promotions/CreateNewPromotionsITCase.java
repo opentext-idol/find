@@ -286,7 +286,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
         verifyThat(promotionsDetailPage, containsText("Spotlight for: " + searchTrigger));
 
-        promotionsDetailPage.trigger(searchTrigger).click();
+        promotionsDetailPage.getTriggerForm().clickTrigger(searchTrigger);
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
 

@@ -10,8 +10,8 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Trigger extends AppElement {
-    public Trigger(WebElement element, WebDriver driver) {
+public class TriggerForm extends AppElement {
+    public TriggerForm(WebElement element, WebDriver driver) {
         super(element, driver);
     }
 
@@ -38,9 +38,12 @@ public class Trigger extends AppElement {
     }
 
     /* Getting triggers */
-
-    public Removable trigger(final String triggerName) {
+    private Removable trigger(final String triggerName) {
         return new LabelBox(findElement(By.cssSelector("[data-id='" + triggerName + "']")), getDriver());
+    }
+
+    public void clickTrigger(String trigger) {
+        trigger(trigger).click();
     }
 
     public List<String> getTriggersAsStrings(){

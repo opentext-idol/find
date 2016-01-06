@@ -233,7 +233,7 @@ public class SearchPageITCase extends ABCTestBase {
 		try {
 			PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(promotion);
 
-			promotionsDetailPage.trigger("boat").click();
+			promotionsDetailPage.getTriggerForm().clickTrigger("boat");
 			searchPage = getElementFactory().getSearchPage();
 			searchPage.waitForPromotionsLoadIndicatorToDisappear();
 

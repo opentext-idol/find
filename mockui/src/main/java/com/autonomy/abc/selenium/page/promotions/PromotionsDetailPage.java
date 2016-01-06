@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Predicates;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -206,5 +205,9 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
                 document.click();
             }
         }
+    }
+
+    public PromotionsDetailTriggerForm getTriggerForm() {
+        return new PromotionsDetailTriggerForm(findElement(By.className("promotion-match-terms-wrapper")), getDriver());
     }
 }

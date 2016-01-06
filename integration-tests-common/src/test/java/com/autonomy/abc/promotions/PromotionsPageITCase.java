@@ -3,11 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.element.Dropdown;
-import com.autonomy.abc.selenium.element.Editable;
-import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.Pagination;
-import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -121,21 +117,21 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testWhitespaceTrigger() {
 		setUpCarsPromotion(1);
 
-		FormInput triggerBox = promotionsDetailPage.triggerAddBox();
+		TriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
 		try {
-			triggerBox.setAndSubmit("");
+			triggerForm.addTrigger("");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
 
-		promotionsDetailPage.addTrigger("trigger");
+		triggerForm.addTrigger("trigger");
 		verifyThat("added valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {"   ", " trigger", "\t"};
 		for (String trigger : invalidTriggers) {
-			promotionsDetailPage.addTrigger(trigger);
+			triggerForm.addTrigger(trigger);
 			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
 		}
 	}
@@ -146,12 +142,14 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
 
-		promotionsDetailPage.addTrigger("bag");
+		TriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
+
+		triggerForm.addTrigger("bag");
 		verifyThat("added valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {"\"bag", "bag\"", "\"bag\""};
 		for (String trigger : invalidTriggers) {
-			promotionsDetailPage.addTrigger(trigger);
+			triggerForm.addTrigger(trigger);
 			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
 		}
 	}
@@ -161,17 +159,19 @@ public class PromotionsPageITCase extends ABCTestBase {
 		setUpCarsPromotion(1);
 		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
 
-		promotionsDetailPage.addTrigger("France");
+		TriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
+
+		triggerForm.addTrigger("France");
 		verifyThat(promotionsDetailPage, triggerList(hasSize(2)));
 
 		String[] invalidTriggers = {",Germany", "Ita,ly Spain", "Ireland, Belgium", "UK , Luxembourg"};
 		for (String trigger : invalidTriggers) {
-			promotionsDetailPage.addTrigger(trigger);
+			triggerForm.addTrigger(trigger);
 			verifyThat("'" + trigger + "' does not add a new trigger", promotionsDetailPage, triggerList(hasSize(2)));
 			verifyThat("'" + trigger + "' produces an error message", promotionsPage, containsText(Errors.Term.COMMAS));
 		}
 
-		promotionsDetailPage.addTrigger("Greece Romania");
+		triggerForm.addTrigger("Greece Romania");
 		assertThat(promotionsDetailPage, triggerList(hasSize(4)));
 		assertThat("error message no longer showing", promotionsPage, not(containsText(Errors.Term.COMMAS)));
 	}
@@ -180,7 +180,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testHTMLTrigger() {
 		setUpCarsPromotion(1);
 		final String trigger = "<h1>hi</h1>";
-		promotionsDetailPage.triggerAddBox().setAndSubmit(trigger);
+		promotionsDetailPage.getTriggerForm().addTrigger(trigger);
 
 		assertThat("triggers are HTML escaped", promotionsDetailPage, triggerList(hasItem(trigger)));
 	}
@@ -190,25 +190,27 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testAddRemoveTriggers() throws InterruptedException {
 		setUpCarsPromotion(1);
 
-		promotionsDetailPage.addTrigger("alpha");
-		promotionsDetailPage.waitForTriggerRefresh();
-		promotionsDetailPage.trigger("wheels").removeAndWait();
+		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
+
+		triggerForm.addTrigger("alpha");
+		triggerForm.removeTrigger("wheels");
 		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
 
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wheels"))));
 
-		promotionsDetailPage.addTrigger("beta gamma delta");
-		promotionsDetailPage.trigger("gamma").removeAsync();
-		promotionsDetailPage.trigger("alpha").removeAsync();
-		promotionsDetailPage.addTrigger("epsilon");
-		promotionsDetailPage.trigger("beta").removeAsync();
-		promotionsDetailPage.waitForTriggerRefresh();
+		triggerForm.addTrigger("beta gamma delta");
+		triggerForm.removeTriggerAsync("gamma");
+		triggerForm.removeTriggerAsync("alpha");
+		//TODO should this be trying to add and remove a trigger at the same time?
+		triggerForm.addTrigger("epsilon");
+		triggerForm.removeTriggerAsync("beta");
+		triggerForm.waitForTriggerRefresh();
 
 		verifyThat(promotionsDetailPage, triggerList(hasSize(2)));
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("beta"))));
 		verifyThat(promotionsDetailPage, triggerList(hasItem("epsilon")));
 
-		promotionsDetailPage.trigger("epsilon").removeAndWait();
+		triggerForm.removeTrigger("epsilon");
 		verifyThat(promotionsPage, not(containsElement(By.className("remove-word"))));
 	}
 
@@ -368,7 +370,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 
 		promotionsDetailPage = promotionService.goToDetails("pooch");
-		promotionsDetailPage.trigger("pooch").removeAndWait();
+		promotionsDetailPage.getTriggerForm().removeTrigger("pooch");
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("pooch"))));
 		promotionService.goToPromotions();
 
@@ -402,7 +404,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(promotionsPage, promotionsList(hasSize(2)));
 
 		promotionsDetailPage = promotionService.goToDetails("lupo");
-		promotionsDetailPage.trigger("wolf").removeAndWait();
+		promotionsDetailPage.getTriggerForm().removeTrigger("wolf");
 		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wolf"))));
 		promotionService.goToPromotions();
 
@@ -417,8 +419,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(promotionsPage, promotionsList(hasSize(1)));
 
 		promotionsDetailPage = promotionService.goToDetails("hond");
-		promotionsDetailPage.triggerAddBox().setAndSubmit("Rhodesian Ridgeback");
-		promotionsDetailPage.waitForTriggerRefresh();
+		promotionsDetailPage.getTriggerForm().addTrigger("Rhodesian Ridgeback");
 		verifyThat(promotionsDetailPage, triggerList(hasItems("rhodesian", "ridgeback")));
 		promotionService.goToPromotions();
 
@@ -461,9 +462,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final String firstSearchResult = searchPage.getSearchResult(1).getText();
 		final String secondSearchResult = setUpPromotion(search("chat", "French"), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
 
-		promotionsDetailPage.triggerAddBox().setAndSubmit("tigre");
-		promotionsDetailPage.waitForTriggerRefresh();
-		promotionsDetailPage.trigger("meow").removeAndWait();
+		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
+		triggerForm.addTrigger("tigre");
+		triggerForm.removeTrigger("meow");
 		search("tigre", "French").apply();
 		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(secondSearchResult));
 
@@ -594,7 +595,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		promotionsDetailPage = promotionService.goToDetails(promotion);
 
 		String[] triggers = {"HC", "Sochi", "CKSA", "SKA", "Dinamo", "Riga"};
-		promotionsDetailPage.addTrigger(StringUtils.join(triggers, ' '));
+		promotionsDetailPage.getTriggerForm().addTrigger(StringUtils.join(triggers, ' '));
 
 		body.getTopNavBar().notificationsDropdown();
 
