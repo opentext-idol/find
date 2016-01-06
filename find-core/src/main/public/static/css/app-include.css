@@ -213,6 +213,10 @@ html, body {
     height: calc(100% - 50px);
 }
 
+.main-content .container-fluid.reduced {
+    height: auto;
+}
+
 .find-main-subcontainer,
 .main-content .content, .content > div {
     height: 100%;
@@ -316,7 +320,9 @@ html, body {
     background-size: 140px 55px;
     height: 55px;
     width: 140px;
-    margin: 33% auto 0;
+    position: fixed;
+    bottom: 20px;
+    left: calc(50% - 70px);
 }
 
 a.unstyled {
@@ -447,7 +453,7 @@ input.find-input {
 }
 /* fancy reverse animation */
 .reverse-animated-container {
-    margin-top: 10%;
+    margin-top: 15%;
     transition: all 1s ease;
 }
 

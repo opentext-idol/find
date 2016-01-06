@@ -79,6 +79,7 @@ define([
 
             // TODO: somebody else needs to own this
             $('.find-navbar').removeClass('reduced').find('>').show();
+            $('.container-fluid').removeClass('reduced');
 
             vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
@@ -93,6 +94,7 @@ define([
 
             // TODO: somebody else needs to own this
             $('.find-navbar').addClass('reduced').find('>').hide();
+            $('.container-fluid').addClass('reduced');
 
             vent.navigate('find/search', {trigger: false});
         }
