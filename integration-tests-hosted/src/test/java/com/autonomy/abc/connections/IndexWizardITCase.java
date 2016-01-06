@@ -10,7 +10,6 @@ import com.autonomy.abc.selenium.util.Errors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
@@ -20,9 +19,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.openqa.selenium.lift.Matchers.displayed;
+import static org.hamcrest.Matchers.*;
 
 public class IndexWizardITCase extends HostedTestBase {
 
@@ -53,9 +50,7 @@ public class IndexWizardITCase extends HostedTestBase {
         displayNameInput.setValue("displayName #$%");
 
         verifyThat(displayNameInput.formGroup(), hasClass("has-error"));
-        WebElement errorMessage = displayNameInput.errorMessage();
-        verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(Errors.Index.DISPLAY_NAME));
+        verifyThat(displayNameInput.getErrorMessage(), containsString(Errors.Index.DISPLAY_NAME));
     }
 
     @Test
@@ -64,16 +59,8 @@ public class IndexWizardITCase extends HostedTestBase {
         indexNameInput.setValue("name");
         displayNameInput.setValue("displayName 7894");
 
-        WebElement errorMessage = null;
-        try {
-            errorMessage = displayNameInput.errorMessage();
-        } catch (NoSuchElementException e) {
-            /* expected behaviour */
-        } finally {
-            verifyThat(errorMessage, nullValue());
-        }
         verifyThat(displayNameInput.formGroup(), not(hasClass("has-error")));
-
+        verifyThat(displayNameInput.getErrorMessage(), nullValue());
     }
 
     @Test
@@ -85,8 +72,8 @@ public class IndexWizardITCase extends HostedTestBase {
         indexNameInput.setValue(name);
         displayNameInput.setValue(displayName);
 
-        verifyThat(indexNameInput.formGroup(), not(hasClass("has-error")));
-        verifyThat(displayNameInput.formGroup(), not(hasClass("has-error")));
+        verifyThat(indexNameInput.getErrorMessage(), nullValue());
+        verifyThat(displayNameInput.getErrorMessage(), nullValue());
 
         createNewIndexPage.nextButton().click();
         createNewIndexPage.nextButton().click();
@@ -116,20 +103,18 @@ public class IndexWizardITCase extends HostedTestBase {
         }};
 
         createNewIndexPage.setIndexFields(capitals);
-        WebElement errorMessage = createNewIndexPage.indexFieldsInput().errorMessage();
-        verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(Errors.Index.FIELD_NAMES));
+        FormInput input = createNewIndexPage.indexFieldsInput();
+        verifyThat(input.getErrorMessage(), containsString(Errors.Index.FIELD_NAMES));
 
         createNewIndexPage.setIndexFields(lowercase);
-        verifyThat(errorMessage, not(displayed()));
+        verifyThat(input.getErrorMessage(), nullValue());
 
         createNewIndexPage.setParametricFields(capitals);
-        errorMessage = createNewIndexPage.parametricFieldsInput().errorMessage();
-        verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(Errors.Index.FIELD_NAMES));
+        input = createNewIndexPage.parametricFieldsInput();
+        verifyThat(input.getErrorMessage(), containsString(Errors.Index.FIELD_NAMES));
 
         createNewIndexPage.setParametricFields(lowercase);
-        verifyThat(errorMessage, not(displayed()));
+        verifyThat(input.getErrorMessage(), nullValue());
     }
 
     @After
