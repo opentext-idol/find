@@ -64,7 +64,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}
 
 	public void removeSearchTrigger(final String searchTrigger) {
-		waitUntilClickableThenClick(By.xpath(".//span[contains(text(), '" + searchTrigger + "')]/i"));
+		ElementUtil.waitUntilClickableThenClick(findElement(By.xpath(".//span[contains(text(), '" + searchTrigger + "')]/i")), getDriver());
 	}
 
 	public List<String> getSearchTriggersList() {
