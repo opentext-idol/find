@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page.promotions;
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
@@ -48,47 +49,6 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		return findElement(By.cssSelector(".wizard-controls .previous-step"));
 	}
 
-	public FormInput triggerBox() {
-		return new FormInput(findElement(By.cssSelector("input[name='words']")), getDriver());
-	}
-
-	public void addSearchTrigger(final String searchTrigger) {
-		triggerBox().setValue(searchTrigger);
-
-		try {
-			Waits.loadOrFadeWait();
-			ElementUtil.waitUntilClickableThenClick(triggerAddButton(), getDriver());
-		} catch (final Exception e) {
-			System.out.println("could not click trigger button with trigger " + searchTrigger);
-		}
-	}
-
-	public void removeSearchTrigger(final String searchTrigger) {
-		ElementUtil.waitUntilClickableThenClick(findElement(By.xpath(".//span[contains(text(), '" + searchTrigger + "')]/i")), getDriver());
-	}
-
-	public List<String> getSearchTriggersList() {
-		final List<String> searchTriggerList = new ArrayList<>();
-
-		for (final WebElement trigger : findElements(By.cssSelector(".remove-word"))) {
-			searchTriggerList.add(ElementUtil.getParent(trigger).getText());
-		}
-
-		return searchTriggerList;
-	}
-
-	public WebElement triggerAddButton() {
-		return findElement(By.cssSelector(".trigger-words-form")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
-	}
-
-	public String getTriggerError() {
-		try {
-			return findElement(By.className("help-block")).getText();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
 	public WebElement spotlightType(final Promotion.SpotlightType type){
 		return spotlightType(type.getOption());
 	}
@@ -115,5 +75,9 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	@Override
 	public void waitForLoad() {
 		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("pd-wizard")));
+	}
+
+	public TriggerForm getTriggerForm(){
+		return new TriggerForm(findElement(By.className("trigger-words-form")), getDriver());
 	}
 }
