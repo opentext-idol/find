@@ -83,7 +83,7 @@ class KeywordGroup {
 
         @Override
         public Object apply() {
-            page.keywordAddInput().setAndSubmit(keywordString);
+            page.getTriggerForm().addTrigger(keywordString);
             return null;
         }
     }

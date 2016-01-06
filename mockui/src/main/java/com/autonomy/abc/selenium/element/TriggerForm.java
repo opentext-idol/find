@@ -3,10 +3,7 @@ package com.autonomy.abc.selenium.element;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +29,22 @@ public class TriggerForm extends AppElement {
 
     public WebElement addButton(){
         return findElement(By.className("fa-plus"));
+    }
+
+    public void typeTriggerWithoutSubmit(String trigger){
+        triggerAddBox().setValue(trigger);
+    }
+
+    public void typeTriggerWithoutSubmit(Keys... keys){
+        triggerAddBox().getElement().sendKeys(keys);
+    }
+
+    public void clearTriggerBox() {
+        triggerAddBox().clear();
+    }
+
+    public String getTextInTriggerBox(){
+        return triggerAddBox().getValue();
     }
 
     /* Removing triggers */

@@ -90,22 +90,6 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.cssSelector(".wizard-controls .next-step"));
 	}
 
-	// use keywordAddInput instead
-	@Deprecated
-	public WebElement synonymAddTextBox() {
-		return findElement(By.cssSelector(".synonyms-input-view [name='words']"));
-	}
-
-	public FormInput keywordAddInput() {
-		return new FormInput(findElement(By.cssSelector(".wizard-branch:not(.hidden) input[name='words']")), getDriver());
-	}
-
-	// use keywordAddInput instead
-	@Deprecated
-	public WebElement blacklistAddTextBox() {
-		return findElement(By.cssSelector("[data-branch='blacklisted'] .form-group [name='words']"));
-	}
-
 	public WebElement finishWizardButton() {
 		return findElement(By.cssSelector(".wizard-controls .finish-step"));
 	}
