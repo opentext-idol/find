@@ -4,19 +4,19 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.LanguageFilter;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
-import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.lang3.StringUtils;
@@ -42,8 +42,6 @@ import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeThat;
 
@@ -52,7 +50,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     private SearchPage searchPage;
     private KeywordsPage keywordsPage;
     private KeywordService keywordService;
-    private SearchActionFactory searchActionFactory;
+    private SearchService searchService;
 
     public KeywordsFromSearchITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -60,8 +58,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        keywordService = new KeywordService(getApplication(), getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+        keywordService = getApplication().createKeywordService(getElementFactory());
+        searchService = getApplication().createSearchService(getElementFactory());
 
         keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
     }
@@ -507,11 +505,11 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     private void search(String searchTerm, Language language) {
-        Search search = searchActionFactory.makeSearch(searchTerm).applyFilter(new LanguageFilter(language));
+        SearchQuery query = new SearchQuery(searchTerm).withFilter(new LanguageFilter(language));
         if (getConfig().getType().equals(ApplicationType.HOSTED)) {
-            search = search.applyFilter(new IndexFilter("news_eng"));
+            query = query.withFilter(new IndexFilter("news_eng"));
         }
-        searchPage = search.apply();
+        searchPage = searchService.search(query);
     }
 
     private void waitForKeywordCreation() {

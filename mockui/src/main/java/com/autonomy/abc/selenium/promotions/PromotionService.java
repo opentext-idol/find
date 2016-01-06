@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -59,8 +60,25 @@ public class PromotionService {
         return getElementFactory().getPromotionsDetailPage();
     }
 
+    // TODO: remove
     public List<String> setUpPromotion(Promotion promotion, Search search, int numberOfDocs) {
         SearchPage searchPage = search.apply();
+        searchPage.promoteTheseDocumentsButton().click();
+        List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
+
+        if (promotion instanceof DynamicPromotion) {
+            searchPage.promoteThisQueryButton().click();
+        } else {
+            ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
+        }
+
+        promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
+        getElementFactory().getSearchPage();
+        return promotedDocTitles;
+    }
+
+    public List<String> setUpPromotion(Promotion promotion, SearchQuery query, int numberOfDocs) {
+        SearchPage searchPage = application.createSearchService(getElementFactory()).search(query);
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
 

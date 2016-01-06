@@ -9,14 +9,11 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.search.StringDateFilter;
 import com.autonomy.abc.selenium.util.*;
 import com.google.common.collect.Lists;
@@ -43,8 +40,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -64,12 +59,10 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class FindITCase extends HostedTestBase {
     private Find find;
     private FindResultsPage results;
-    private PromotionsPage promotions;
     private List<String> browserHandles;
     private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
     private final Matcher<String> noDocs = containsString("No results found");
     private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
     private KeywordService keywordService;
 
     public FindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
@@ -79,10 +72,7 @@ public class FindITCase extends HostedTestBase {
     @Before
     public void setUp(){
         promotionService = getApplication().createPromotionService(getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-        keywordService = new KeywordService(getApplication(), getElementFactory());
-
-        promotions = getElementFactory().getPromotionsPage();
+        keywordService = getApplication().createKeywordService(getElementFactory());
 
         browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
 
@@ -242,7 +232,7 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testPinToPosition(){
-        Search search = searchActionFactory.makeSearch("red");
+        String search = "red";
         String trigger = "mate";
         PinToPositionPromotion promotion = new PinToPositionPromotion(1, trigger);
 
@@ -264,7 +254,7 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testPinToPositionThree(){
-        Search search = searchActionFactory.makeSearch("red");
+        String search = "red";
         String trigger = "mate";
         PinToPositionPromotion promotion = new PinToPositionPromotion(3, trigger);
 
@@ -285,7 +275,7 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testSpotlightPromotions(){
-        Search search = searchActionFactory.makeSearch("Proper");
+        String search = "Proper";
         String trigger = "Prim";
         SpotlightPromotion spotlight = new SpotlightPromotion(trigger);
 
@@ -342,9 +332,9 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testDynamicPromotions(){
         int resultsToPromote = 13;
+        String search = "kittens";
         String trigger = "Rugby";
         DynamicPromotion dynamicPromotion = new DynamicPromotion(resultsToPromote, trigger);
-        Search search = searchActionFactory.makeSearch("kittens");
 
         getDriver().switchTo().window(browserHandles.get(0));
         promotionService.deleteAll();
@@ -914,8 +904,7 @@ public class FindITCase extends HostedTestBase {
         PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
 
         try {
-            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"),
-                    new Search(getApplication(), getElementFactory(), "scg-2"), 10);
+            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"), "scg-2", 10);
 
             getDriver().switchTo().window(browserHandles.get(1));
 

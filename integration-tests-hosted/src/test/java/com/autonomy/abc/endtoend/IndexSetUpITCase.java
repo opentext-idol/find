@@ -11,8 +11,7 @@ import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.SearchQuery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +31,7 @@ import static org.hamcrest.core.Is.is;
 public class IndexSetUpITCase extends HostedTestBase {
     private IndexService indexService;
     private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
-    private final String indexName;
+
     private final Index index;
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexSetUpITCase.class);
 
@@ -41,7 +39,7 @@ public class IndexSetUpITCase extends HostedTestBase {
         super(config, browser, type, platform);
         setInitialUser(config.getUser("index_tests"));
 
-        indexName = UUID.randomUUID().toString().replace('-','a');
+        String indexName = UUID.randomUUID().toString().replace('-','a');
         index = new Index(indexName);
     }
 
@@ -49,9 +47,8 @@ public class IndexSetUpITCase extends HostedTestBase {
     public void setUp(){
         indexService = new IndexService(getApplication(), getElementFactory());
         promotionService = getApplication().createPromotionService(getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-        LOGGER.info("Will create index " + indexName);
+        LOGGER.info("Will create index " + index);
         indexService.setUpIndex(index);
     }
 
@@ -68,8 +65,8 @@ public class IndexSetUpITCase extends HostedTestBase {
 
     private void verifyDetails() {
         IndexesDetailPage detailPage = indexService.goToDetails(index);
-        verifyThat(detailPage.getIndexHeader(), is(indexName));
-        verifyThat(detailPage.getIndexTitle(), is(indexName));
+        verifyThat(detailPage.getIndexHeader(), is(index.getName()));
+        verifyThat(detailPage.getIndexTitle(), is(index.getName()));
         verifyThat(detailPage.getCreatedDate(), is(new SimpleDateFormat("EEEE, dd MMMM yyyy").format(new Date())));
     }
 
@@ -81,8 +78,7 @@ public class IndexSetUpITCase extends HostedTestBase {
     }
 
     private String promoteDocumentInIndex(String trigger) {
-        Search search = searchActionFactory.makeSearch("*")
-                .applyFilter(new IndexFilter(index.getName()));
+        SearchQuery search = new SearchQuery("*").withFilter(new IndexFilter(index));
         Promotion promotion = new SpotlightPromotion(trigger);
         return promotionService.setUpPromotion(promotion, search, 1).get(0);
     }
@@ -92,7 +88,7 @@ public class IndexSetUpITCase extends HostedTestBase {
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedTitle));
         //TODO this is wrong
-        verifyThat(searchPage.getPromotionBucketElementByTitle(promotedTitle), containsText("Index: " + indexName));
+        verifyThat(searchPage.getPromotionBucketElementByTitle(promotedTitle), containsText("Index: " + index.getName()));
     }
 
     @After
