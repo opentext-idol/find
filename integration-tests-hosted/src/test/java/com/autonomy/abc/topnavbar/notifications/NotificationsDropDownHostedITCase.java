@@ -19,7 +19,6 @@ import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
-import com.google.common.collect.Lists;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -94,7 +93,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         try {
             indexes.newIndexButton().click();
             CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
-            createNewIndexPage.inputIndexName(indexName);
+            createNewIndexPage.indexNameInput().setValue(indexName);
             createNewIndexPage.nextButton().click();
             Waits.loadOrFadeWait();
             createNewIndexPage.nextButton().click();

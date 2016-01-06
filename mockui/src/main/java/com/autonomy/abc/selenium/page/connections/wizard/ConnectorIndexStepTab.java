@@ -21,6 +21,22 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         return new ConnectorIndexStepTab(driver);
     }
 
+    public WebElement indexNameInputElement(){
+        return findElement(By.cssSelector("[name='indexName']"));
+    }
+
+    public WebElement indexDisplayNameInputElement(){
+        return findElement(By.cssSelector("[name='displayName']"));
+    }
+
+    public void inputIndexName(String name){
+        indexNameInputElement().sendKeys(name);
+    }
+
+    public void inputIndexDisplayName(String displayName){
+        indexDisplayNameInputElement().sendKeys(displayName);
+    }
+
     public WebElement selectIndexButton(){
         return findElement(By.xpath("//button[text()='Select index']"));
     }

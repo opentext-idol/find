@@ -54,12 +54,12 @@ public class IndexService {
         indexesPage.newIndexButton().click();
         CreateNewIndexPage newIndexPage = elementFactory.getCreateNewIndexPage();
 
-        newIndexPage.inputIndexName(index.getName());
+        newIndexPage.indexNameInput().setValue(index.getName());
         newIndexPage.nextButton().click();
         Waits.loadOrFadeWait();
 
-        newIndexPage.inputIndexFields(index.getIndexFields());
-        newIndexPage.inputParametricFields(index.getParametricFields());
+        newIndexPage.setIndexFields(index.getIndexFields());
+        newIndexPage.setParametricFields(index.getParametricFields());
         newIndexPage.nextButton().click();
         Waits.loadOrFadeWait();
 
