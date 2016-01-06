@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
@@ -43,6 +44,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
     private CreateNewKeywordsPage createKeywordsPage;
     private SearchPage searchPage;
     private KeywordService keywordService;
+    private TriggerForm triggerForm;
 
     public KeywordsWizardITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -102,23 +104,22 @@ public class KeywordsWizardITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
         assertThat("Finish button should be disabled until synonyms are added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-//		createKeywordsPage.continueWizardButton(CreateNewKeywordsPage.WizardStep.TYPE).click();
-//		Waits.loadOrFadeWait();
+        triggerForm = createKeywordsPage.getTriggerForm();
 
-        createKeywordsPage.synonymAddTextBox().clear();
+        triggerForm.clearTriggerBox();
         assertThat("Finish button should be disabled until synonyms are added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertThat("Add synonyms button should be disabled until synonyms are added", ElementUtil.isAttributePresent(createKeywordsPage.synonymAddButton(), "disabled"));
+        assertThat("Add synonyms button should be disabled until synonyms are added", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
 
-        createKeywordsPage.synonymAddTextBox().sendKeys("horse");
+        triggerForm.typeTriggerWithoutSubmit("horse");
         assertThat("Finish button should be disabled until synonyms are added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.synonymAddButton().click();
+        triggerForm.addButton().click();
         assertThat("Finish button should be disabled until more than one synonym is added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertEquals(1, createKeywordsPage.countKeywords());
+        assertEquals(1, triggerForm.getNumberOfTriggers());
 
-        createKeywordsPage.addSynonyms("stuff pony things");
+        triggerForm.addTrigger("stuff pony things");
         assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertEquals(4, createKeywordsPage.countKeywords());
+        assertEquals(4, triggerForm.getNumberOfTriggers());
 
         createKeywordsPage.enabledFinishWizardButton().click();
         Waits.loadOrFadeWait();
@@ -207,25 +208,25 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
 
-        assertThat("Finish button should be disabled until blacklisted terms are added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertThat("Wizard did not navigate to blacklist page", createKeywordsPage.blacklistAddTextBox().isDisplayed());
+        triggerForm = createKeywordsPage.getTriggerForm();
 
-        createKeywordsPage.blacklistAddTextBox().clear();
         assertThat("Finish button should be disabled until blacklisted terms are added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertThat("Finish button should be disabled until blacklisted terms are added", ElementUtil.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
+        assertThat("Wizard did not navigate to blacklist page", createKeywordsPage, containsText("blacklist"));
 
-        createKeywordsPage.blacklistAddTextBox().sendKeys("danger");
+        triggerForm.clearTriggerBox();
+        assertThat("Finish button should be disabled until blacklisted terms are added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
+        assertThat("Finish button should be disabled until blacklisted terms are added", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
+
+        triggerForm.typeTriggerWithoutSubmit("danger");
         assertThat("Finish button should be disabled until blacklisted terms are added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.blacklistAddButton().click();
+        triggerForm.addButton().click();
         assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertEquals(1, createKeywordsPage.countKeywords());
+        assertEquals(1, triggerForm.getNumberOfTriggers());
 
-        createKeywordsPage.blacklistAddTextBox().sendKeys("warning beware scary");
-        createKeywordsPage.blacklistAddButton().click();
-        Waits.loadOrFadeWait();
+        triggerForm.addTrigger("warning beware scary");
         assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
-        assertEquals(4, createKeywordsPage.countKeywords());
+        assertEquals(4, triggerForm.getNumberOfTriggers());
 
         createKeywordsPage.enabledFinishWizardButton().click();
 
@@ -257,7 +258,9 @@ public class KeywordsWizardITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
         assertThat(createKeywordsPage.finishWizardButton(), disabled());
 
-        createKeywordsPage.keywordAddInput().setAndSubmit(term);
+        triggerForm = createKeywordsPage.getTriggerForm();
+
+        triggerForm.addTrigger(term);
         verifyThat(createKeywordsPage, containsText(Errors.Keywords.DUPLICATE_BLACKLIST));
         verifyKeywordCount(0);
 
@@ -265,18 +268,18 @@ public class KeywordsWizardITCase extends ABCTestBase {
             createKeywordsPage.finishWizardButton().click();
             WebElement notification = new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationAppears());
             verifyThat(notification, containsText(Errors.Keywords.CREATING));
-            createKeywordsPage.deleteKeyword(term);
+            triggerForm.removeTrigger(term);
             verifyThat(createKeywordsPage.finishWizardButton(), disabled());
         } catch (WebDriverException e) {
             LOGGER.info("cannot click finish wizard button, or timed out");
             assertThat(getDriver().getCurrentUrl(), not(endsWith("keywords")));
         }
 
-        createKeywordsPage.keywordAddInput().setAndSubmit(other);
+        triggerForm.addTrigger(other);
         assertThat(createKeywordsPage, not(containsText(Errors.Keywords.DUPLICATE_BLACKLIST)));
         verifyKeywordCount(1);
 
-        createKeywordsPage.deleteKeyword(other);
+        triggerForm.removeTrigger(other);
         verifyKeywordCount(0);
 
         createKeywordsPage.cancelWizardButton().click();
@@ -286,7 +289,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
     }
 
     private void verifyKeywordCount(int count) {
-        verifyThat(count + " keywords ready to be added", createKeywordsPage.countKeywords(), is(count));
+        verifyThat(count + " keywords ready to be added", triggerForm.getNumberOfTriggers(), is(count));
         if (count > 0) {
             verifyThat(createKeywordsPage.finishWizardButton(), not(disabled()));
         } else {
@@ -305,18 +308,20 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
-        createKeywordsPage.blacklistAddTextBox().sendKeys(" ");
-        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton());
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
-        createKeywordsPage.blacklistAddTextBox().clear();
-        createKeywordsPage.blacklistAddTextBox().click();
-        createKeywordsPage.blacklistAddTextBox().sendKeys(Keys.RETURN);
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
+        triggerForm = createKeywordsPage.getTriggerForm();
 
-        createKeywordsPage.blacklistAddTextBox().sendKeys("\t");
-        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton());
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
+        triggerForm.typeTriggerWithoutSubmit(" ");
+        ElementUtil.tryClickThenTryParentClick(triggerForm.addButton());
+        verifyWhitespaceNotAdded(0);
+
+        triggerForm.clearTriggerBox();
+        triggerForm.typeTriggerWithoutSubmit(Keys.RETURN);
+        verifyWhitespaceNotAdded(0);
+
+        triggerForm.typeTriggerWithoutSubmit("\t");
+        ElementUtil.tryClickThenTryParentClick(triggerForm.addButton());
+        verifyWhitespaceNotAdded(0);
     }
 
     //Whitespace of any form should not be added as a synonym keyword
@@ -330,28 +335,33 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
-        createKeywordsPage.addSynonyms(" ");
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
-        createKeywordsPage.synonymAddTextBox().clear();
-        createKeywordsPage.synonymAddTextBox().click();
-        createKeywordsPage.synonymAddTextBox().sendKeys(Keys.RETURN);
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
+        triggerForm = createKeywordsPage.getTriggerForm();
 
-        createKeywordsPage.addSynonyms("\t");
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
+        triggerForm.addTrigger(" ");
+        verifyWhitespaceNotAdded(0);
 
-        createKeywordsPage.addSynonyms("test");
-        createKeywordsPage.addSynonyms(" ");
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 1);
+        triggerForm.clearTriggerBox();
+        triggerForm.typeTriggerWithoutSubmit(Keys.RETURN);
+        verifyWhitespaceNotAdded(0);
 
-        createKeywordsPage.synonymAddTextBox().clear();
-        createKeywordsPage.synonymAddTextBox().click();
-        createKeywordsPage.synonymAddTextBox().sendKeys(Keys.RETURN);
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 1);
+        triggerForm.addTrigger("\t");
+        verifyWhitespaceNotAdded(0);
 
-        createKeywordsPage.addSynonyms("\t");
-        assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 1);
+        triggerForm.addTrigger("test");
+        triggerForm.addTrigger(" ");
+        verifyWhitespaceNotAdded(0);
+
+        triggerForm.clearTriggerBox();
+        triggerForm.typeTriggerWithoutSubmit(Keys.RETURN);
+        verifyWhitespaceNotAdded(0);
+
+        triggerForm.addTrigger("\t");
+        verifyWhitespaceNotAdded(0);
+    }
+
+    private void verifyWhitespaceNotAdded(int expectedTriggers){
+        verifyThat("Whitespace not added as a keyword", triggerForm.getNumberOfTriggers(), is(expectedTriggers));
     }
 
     //Odd number of quotes or quotes with blank text should not be able to be added as a synonym keyword
@@ -366,35 +376,29 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
 
-        createKeywordsPage.addSynonyms("\"");
-        assertEquals(0, createKeywordsPage.countKeywords());
+        triggerForm = createKeywordsPage.getTriggerForm();
 
-        createKeywordsPage.addSynonyms("\"\"");
-        assertEquals(0, createKeywordsPage.countKeywords());
+        for(String keyword : Arrays.asList("\"", "\"\"", "\" \"")) {
+            triggerForm.addTrigger(keyword);
+            assertThat(triggerForm.getNumberOfTriggers(), is(0));
+        }
 
-        createKeywordsPage.addSynonyms("\" \"");
-        assertEquals(0, createKeywordsPage.countKeywords());
+        triggerForm.addTrigger("test");
 
-        createKeywordsPage.addSynonyms("test");
-        createKeywordsPage.addSynonyms("\"");
-        assertEquals(1, createKeywordsPage.countKeywords());
+        for(String keyword : Arrays.asList("\"", "\"\"", "\" \"")) {
+            triggerForm.addTrigger(keyword);
+            assertThat(triggerForm.getNumberOfTriggers(), is(1));
+        }
 
-        createKeywordsPage.addSynonyms("\"\"");
-        assertEquals(1, createKeywordsPage.countKeywords());
-
-        createKeywordsPage.addSynonyms("\" \"");
-        assertEquals(1, createKeywordsPage.countKeywords());
-
-        createKeywordsPage.addSynonyms("terms \"");
-        assertEquals(1, createKeywordsPage.countKeywords());
+        triggerForm.addTrigger("terms \"");
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
         assertThat("Correct error message not showing", createKeywordsPage.getText(), containsString("Terms have an odd number of quotes, suggesting an unclosed phrase"));
 
-        createKeywordsPage.addSynonyms("\"closed phrase\"");
-        assertEquals(2, createKeywordsPage.countKeywords());
-        assertThat("Phrase not created", createKeywordsPage.getProspectiveKeywordsList(), hasItem("closed phrase"));
-        assertThat("Quotes unescaped", createKeywordsPage.getProspectiveKeywordsList(), not(hasItem("/")));
+        triggerForm.addTrigger("\"closed phrase\"");
+        assertThat(triggerForm.getNumberOfTriggers(), is(2));
+        assertThat("Phrase not created", triggerForm.getTriggersAsStrings(), hasItem("closed phrase"));
+        assertThat("Quotes unescaped", triggerForm.getTriggersAsStrings(), not(hasItem("/")));
     }
-
 
     //Odd number of quotes or quotes with blank text should not be able to be added as a blacklisted term
     @Test
@@ -406,62 +410,25 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
 
-        createKeywordsPage.addBlacklistedTerms("\"");
-        assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", ElementUtil.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
+        tryAddingBadTerms(0);
 
-        createKeywordsPage.addBlacklistedTerms("\"\"");
-        assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", ElementUtil.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
+        triggerForm.addTrigger("test");
 
-        createKeywordsPage.addBlacklistedTerms("\" \"");
-        assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", ElementUtil.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
+        tryAddingBadTerms(1);
+    }
 
-        createKeywordsPage.addBlacklistedTerms("\"d");
-        assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
+    private void tryAddingBadTerms(int keywords){
+        for(String keyword : Arrays.asList("\"", "\"\"", "\" \"")){
+            triggerForm.addTrigger(keyword);
+            assertThat(triggerForm.getNumberOfTriggers(), is(keywords));
+            assertThat("plus button should be disabled", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
+        }
 
-        createKeywordsPage.addBlacklistedTerms("d\"");
-        assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
-
-        createKeywordsPage.addBlacklistedTerms("\"d\"");
-        assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
-
-        createKeywordsPage.addBlacklistedTerms("s\"d\"d");
-        assertEquals(0, createKeywordsPage.countKeywords());
-        assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
-
-        createKeywordsPage.addBlacklistedTerms("test");
-        createKeywordsPage.addBlacklistedTerms("\"");
-        assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", ElementUtil.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
-
-        createKeywordsPage.addBlacklistedTerms("\"\"");
-        assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", ElementUtil.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
-
-        createKeywordsPage.addBlacklistedTerms("\" \"");
-        assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("plus button should be disabled", ElementUtil.isAttributePresent(createKeywordsPage.blacklistAddButton(), "disabled"));
-
-        createKeywordsPage.addBlacklistedTerms("\"d");
-        assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
-
-        createKeywordsPage.addBlacklistedTerms("d\"");
-        assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
-
-        createKeywordsPage.addBlacklistedTerms("\"d\"");
-        assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
-
-        createKeywordsPage.addBlacklistedTerms("s\"d\"d");
-        assertEquals(1, createKeywordsPage.countKeywords());
-        assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
+        for(String keyword : Arrays.asList("\"d", "d\"", "\"d\"", "s\"d\"d")){
+            triggerForm.addTrigger(keyword);
+            assertThat(triggerForm.getNumberOfTriggers(), is(keywords));
+            assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
+        }
     }
 
     @Test
@@ -472,19 +439,11 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
-        createKeywordsPage.addSynonyms("holder");
-        assertEquals(1, createKeywordsPage.countKeywords());
-        final List<String> booleanProximityOperators = Arrays.asList("NOT", "NEAR", "DNEAR", "SOUNDEX", "XNEAR", "YNEAR", "AND", "BEFORE", "AFTER", "WHEN", "SENTENCE", "PARAGRAPH", "OR", "WNEAR", "EOR", "NOTWHEN");
 
-        int operatorsAdded = 1;
-        for (final String operator : booleanProximityOperators) {
-            createKeywordsPage.addSynonyms(operator);
-            assertThat("boolean operator \"" + operator + "\" should not be added as a synonym", createKeywordsPage.getProspectiveKeywordsList(), not(hasItem(operator)));
-            assertThat("Operator not added properly. Should be lower case.", createKeywordsPage.getProspectiveKeywordsList(), hasItem(operator.toLowerCase()));
-            assertEquals(++operatorsAdded, createKeywordsPage.countKeywords());
-//			assertThat("Correct error message not showing", createKeywordsPage.getText(), containsString(operator + " is a boolean or proximity operator. These are invalid"));
-//			assertEquals(1, createKeywordsPage.countKeywords());
-        }
+        triggerForm = createKeywordsPage.getTriggerForm();
+
+        addPlaceholder();
+        tryAddingBooleanProximityOperators();
 
         createKeywordsPage.cancelWizardButton().click();
         Waits.loadOrFadeWait();
@@ -496,21 +455,33 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
-        createKeywordsPage.addBlacklistedTerms("holder");
-        assertEquals(1, createKeywordsPage.countKeywords());
 
-        operatorsAdded = 1;
-        for (final String operator : booleanProximityOperators) {
-            createKeywordsPage.addBlacklistedTerms(operator);
-            assertThat("boolean operator \"" + operator + "\" should not be added as a synonym", createKeywordsPage.getProspectiveKeywordsList(), not(hasItem(operator)));
-            assertThat("Operator not added properly. Should be lower case.", createKeywordsPage.getProspectiveKeywordsList(), hasItem(operator.toLowerCase()));
-            assertEquals(++operatorsAdded, createKeywordsPage.countKeywords());
-//			assertThat("Correct error message not showing", createKeywordsPage.getText(), containsString(operator + " is a boolean or proximity operator. These are invalid"));
-//			assertEquals(1, createKeywordsPage.countKeywords());
-        }
+        triggerForm = createKeywordsPage.getTriggerForm();
+
+        addPlaceholder();
+        tryAddingBooleanProximityOperators();
 
         createKeywordsPage.cancelWizardButton().click();
         Waits.loadOrFadeWait();
+    }
+
+    private void tryAddingBooleanProximityOperators(){
+        final List<String> booleanProximityOperators = Arrays.asList("NOT", "NEAR", "DNEAR", "SOUNDEX", "XNEAR", "YNEAR", "AND", "BEFORE", "AFTER", "WHEN", "SENTENCE", "PARAGRAPH", "OR", "WNEAR", "EOR", "NOTWHEN");
+
+        int operatorsAdded = 1;
+        for (final String operator : booleanProximityOperators) {
+            triggerForm.addTrigger(operator);
+            assertThat("boolean operator \"" + operator + "\" should not be added as a synonym", triggerForm.getTriggersAsStrings(), not(hasItem(operator)));
+            assertThat("Operator not added properly. Should be lower case.", triggerForm.getTriggersAsStrings(), hasItem(operator.toLowerCase()));
+            assertThat(triggerForm.getNumberOfTriggers(), is(++operatorsAdded));
+//			assertThat("Correct error message not showing", createKeywordsPage.getText(), containsString(operator + " is a boolean or proximity operator. These are invalid"));
+//			assertEquals(1, createKeywordsPage.countKeywords());
+        }
+    }
+
+    private void addPlaceholder() {
+        triggerForm.addTrigger("holder");
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
     }
 
     @Test
@@ -523,18 +494,14 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
-        createKeywordsPage.addSynonyms("placeholder");
-        assertEquals(1, createKeywordsPage.getProspectiveKeywordsList().size());
+
+        triggerForm = createKeywordsPage.getTriggerForm();
 
         final List<String> hiddenSearchOperators = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "NEARLY", "NEAR123LY", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
 
-        for (int i = 0; i < hiddenSearchOperators.size(); i++) {
-            createKeywordsPage.synonymAddTextBox().clear();
-            createKeywordsPage.synonymAddTextBox().sendKeys(hiddenSearchOperators.get(i));
-            createKeywordsPage.synonymAddButton().click();
-            Waits.loadOrFadeWait();
-            assertEquals(2 + i, createKeywordsPage.getProspectiveKeywordsList().size());
-        }
+        addPlaceholder();
+        tryAddingHiddenSearchOperators(hiddenSearchOperators);
+
         createKeywordsPage.cancelWizardButton().click();
         Waits.loadOrFadeWait();
         keywordsPage.createNewKeywordsButton().click();
@@ -545,16 +512,11 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
-        createKeywordsPage.addBlacklistedTerms("placeholder");
-        assertEquals(1, createKeywordsPage.getProspectiveKeywordsList().size());
 
-        for (int i = 0; i < hiddenSearchOperators.size(); i++) {
-            createKeywordsPage.blacklistAddTextBox().clear();
-            createKeywordsPage.blacklistAddTextBox().sendKeys(hiddenSearchOperators.get(i));
-            createKeywordsPage.blacklistAddButton().click();
-            Waits.loadOrFadeWait();
-            assertEquals(2 + i, createKeywordsPage.getProspectiveKeywordsList().size());
-        }
+        triggerForm = createKeywordsPage.getTriggerForm();
+
+        addPlaceholder();
+        tryAddingHiddenSearchOperators(hiddenSearchOperators);
 
         createKeywordsPage.cancelWizardButton().click();
         keywordService.addSynonymGroup(Language.ENGLISH, "place holder");
@@ -564,8 +526,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
         for (final String hiddenBooleansProximity : hiddenSearchOperators) {
-            LOGGER.info("Adding '"+hiddenBooleansProximity+"'");
-
             keywordsPage.addSynonymToGroup(hiddenBooleansProximity, keywordsPage.synonymGroupContaining("holder"));
 
             new WebDriverWait(getDriver(),120).until(new ExpectedCondition<Boolean>() {     //This is too long but after sending lots of requests it slows down a loto
@@ -580,6 +540,13 @@ public class KeywordsWizardITCase extends ABCTestBase {
         }
     }
 
+    private void tryAddingHiddenSearchOperators(List<String> hiddenSearchOperators) {
+        for (int i = 0; i < hiddenSearchOperators.size(); i++) {
+            triggerForm.addTrigger(hiddenSearchOperators.get(i));
+            assertEquals(triggerForm.getNumberOfTriggers(), is(2 + i));
+        }
+    }
+
     @Test
     public void testSynonymsNotCaseSensitive() {
         keywordsPage.createNewKeywordsButton().click();
@@ -591,25 +558,27 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
 
-        createKeywordsPage.addSynonyms("bear");
-        assertThat(createKeywordsPage.countKeywords(), is(1));
+        triggerForm = createKeywordsPage.getTriggerForm();
+
+        triggerForm.addTrigger("bear");
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
 
         for (final String bearVariant : Arrays.asList("Bear", "beaR", "BEAR", "beAR", "BEar")) {
-            createKeywordsPage.addSynonyms(bearVariant);
-            assertThat(createKeywordsPage.countKeywords(), is(1));
-            assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(),hasItem("bear"));
+            triggerForm.addTrigger(bearVariant);
+            assertThat(triggerForm.getNumberOfTriggers(), is(1));
+            assertThat("bear not included as a keyword", triggerForm.getTriggersAsStrings(),hasItem("bear"));
             assertThat("correct error message not showing", createKeywordsPage.getText(), containsString(bearVariant.toLowerCase() + " is a duplicate of an existing keyword."));
         }
 
         // disallows any adding of synonyms if disallowed synonym found
-        createKeywordsPage.addSynonyms("Polar Bear");
-        assertThat(createKeywordsPage.countKeywords(), is(1));
-        assertThat("bear not included as a keyword", createKeywordsPage.getProspectiveKeywordsList(), hasItem("bear"));
+        triggerForm.addTrigger("Polar Bear");
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
+        assertThat("bear not included as a keyword", triggerForm.getTriggersAsStrings(), hasItem("bear"));
         assertThat("correct error message not showing", createKeywordsPage.getText(), containsString("bear is a duplicate of an existing keyword."));
 
         //jam and jaM are case variants so none should be added
-        createKeywordsPage.addSynonyms("jam jaM");
-        assertThat(createKeywordsPage.countKeywords(), is(1));
+        triggerForm.addTrigger("jam jaM");
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
     }
 
     @Test
@@ -621,12 +590,14 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         createKeywordsPage.continueWizardButton().click();
 
-        createKeywordsPage.synonymAddTextBox().sendKeys("TESTING");
+        triggerForm = createKeywordsPage.getTriggerForm();
 
-        createKeywordsPage.synonymAddTextBox().sendKeys(Keys.ARROW_LEFT, Keys.ARROW_LEFT, Keys.BACK_SPACE, Keys.BACK_SPACE);
+        triggerForm.typeTriggerWithoutSubmit("TESTING");
 
-        verifyThat(createKeywordsPage.synonymAddTextBox().getAttribute("value"), is("TESNG"));
-        verifyThat(createKeywordsPage.synonymAddTextBox().getAttribute("value"), is(not("TESTN")));
+        triggerForm.typeTriggerWithoutSubmit(Keys.ARROW_LEFT, Keys.ARROW_LEFT, Keys.BACK_SPACE, Keys.BACK_SPACE);
+
+        verifyThat(triggerForm.getTextInTriggerBox(), is("TESNG"));
+        verifyThat(triggerForm.getTextInTriggerBox(), is(not("TESTN")));
     }
 
     @Test
@@ -643,10 +614,12 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         goToSynonymWizardPage();
 
-        createKeywordsPage.addSynonyms(duplicate);
+        triggerForm = createKeywordsPage.getTriggerForm();
+
+        triggerForm.addTrigger(duplicate);
         verifyExistingGroups(duplicate, 1);
 
-        createKeywordsPage.addSynonyms(unrelated);
+        triggerForm.addTrigger(unrelated);
         createKeywordsPage.finishWizardButton().click();
 
         getElementFactory().getSearchPage();
@@ -656,13 +629,13 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         goToSynonymWizardPage();
 
-        createKeywordsPage.addSynonyms(duplicate);
+        triggerForm.addTrigger(duplicate);
         verifyExistingGroups(duplicate, 2);
 
-        createKeywordsPage.addSynonyms(unrelated);
+        triggerForm.addTrigger(unrelated);
         verifyExistingGroups(duplicate, 2);
 
-        createKeywordsPage.deleteKeyword(duplicate);
+        triggerForm.addTrigger(duplicate);
         verifyExistingGroups(unrelated, 1);
     }
 
