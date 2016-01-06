@@ -1,13 +1,16 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.tree.FindIndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;
+import com.autonomy.abc.selenium.search.DatePickerFilter;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchFilter;
+import com.autonomy.abc.selenium.search.StringDateFilter;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -20,7 +23,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Find extends AppElement implements AppPage, IndexFilter.Filterable {
+public class Find extends AppElement implements AppPage,
+        IndexFilter.Filterable,
+        DatePickerFilter.Filterable,
+        StringDateFilter.Filterable {
     private final FormInput input;
     private final FindResultsPage results;
 
@@ -88,5 +94,33 @@ public class Find extends AppElement implements AppPage, IndexFilter.Filterable 
     public void filterBy(SearchFilter filter) {
         filter.apply(this);
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+    }
+
+    @Override
+    public DatePicker fromDatePicker() {
+        return datePicker(By.className("results-filter-min-date"));
+    }
+
+    @Override
+    public DatePicker untilDatePicker() {
+        return datePicker(By.className("results-filter-max-date"));
+    }
+
+    private DatePicker datePicker(By locator) {
+        return new DatePicker(findElement(locator), getDriver());
+    }
+
+    @Override
+    public FormInput fromDateInput() {
+        return dateInput(By.cssSelector(".results-filter-min-date input"));
+    }
+
+    @Override
+    public FormInput untilDateInput() {
+        return dateInput(By.cssSelector(".results-filter-max-date input"));
+    }
+
+    private FormInput dateInput(By locator) {
+        return new FormInput(findElement(locator), getDriver());
     }
 }

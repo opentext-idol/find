@@ -17,6 +17,7 @@ import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.StringDateFilter;
 import com.autonomy.abc.selenium.util.*;
 import com.google.common.collect.Lists;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
@@ -473,14 +474,13 @@ public class FindITCase extends HostedTestBase {
 
         results.filterByDate(period);
         List<String> preDefinedResults = results.getResultTitles();
-        results.filterByDate(getDateString(period), "");
+        find.filterBy(new StringDateFilter().from(getDate(period)));
         List<String> customResults = results.getResultTitles();
 
         assertThat(preDefinedResults, is(customResults));
     }
 
-    private String getDateString (FindResultsPage.DateEnum period) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+    private Date getDate(FindResultsPage.DateEnum period) {
         Calendar cal = Calendar.getInstance();
 
         if (period != null) {
@@ -496,8 +496,7 @@ public class FindITCase extends HostedTestBase {
                     break;
             }
         }
-
-        return dateFormat.format(cal.getTime());
+        return cal.getTime();
     }
 
     @Ignore //TODO seems to have broken
@@ -589,19 +588,18 @@ public class FindITCase extends HostedTestBase {
     public void testDateRemainsWhenClosingAndReopeningDateFilters(){
         find.search("Corbyn");
 
-        String start = getDateString(FindResultsPage.DateEnum.MONTH);
-        String end = getDateString(FindResultsPage.DateEnum.WEEK);
+        Date start = getDate(FindResultsPage.DateEnum.MONTH);
+        Date end = getDate(FindResultsPage.DateEnum.WEEK);
 
-        results.filterByDate(start, end);
+        find.filterBy(new StringDateFilter().from(start).until(end));
         Waits.loadOrFadeWait();
-        results.filterByDate(FindResultsPage.DateEnum.CUSTOM); //For some reason doesn't close first time
-        results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
-        Waits.loadOrFadeWait();
-        results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
-        Waits.loadOrFadeWait();
+        for (int unused = 0; unused < 3; unused++) {
+            results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
+            Waits.loadOrFadeWait();
+        }
 
-        assertThat(results.getStartDateFilter().getAttribute("value"), is(start));
-        assertThat(results.getEndDateFilter().getAttribute("value"), is(end));
+        assertThat(find.fromDateInput().getValue(), is(StringDateFilter.FORMAT.format(start)));
+        assertThat(find.untilDateInput().getValue(), is(StringDateFilter.FORMAT.format(end)));
     }
 
     @Test
