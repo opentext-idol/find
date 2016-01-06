@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -43,6 +44,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
     private final String content = "content";
     private final String trigger = "dog";
     private final StaticPromotion promotion = new StaticPromotion(title, content, trigger);
+    private PromotionsDetailTriggerForm triggerForm;
 
     public StaticPromotionsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -163,34 +165,33 @@ public class StaticPromotionsITCase extends HostedTestBase {
                 "doG",
                 "DOG"
         };
-        assertThat(promotionsDetailPage.getTriggerList(), hasSize(1));
+
+        triggerForm = promotionsDetailPage.getTriggerForm();
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
 
         checkBadTriggers(duplicateTriggers, Errors.Term.DUPLICATE_EXISTING);
         checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
         checkBadTriggers(commaTriggers, Errors.Term.COMMAS);
         checkBadTriggers(caseTriggers, Errors.Term.CASE);
 
-        FormInput triggerBox = promotionsDetailPage.triggerAddBox();
-        WebElement addButton = promotionsDetailPage.triggerAddButton();
+        triggerForm.typeTriggerWithoutSubmit("a");
+        verifyThat("error message is cleared", triggerForm.getTriggerError(), isEmptyOrNullString());
+        verifyThat(triggerForm.addButton(), not(disabled()));
 
-        triggerBox.setValue("a");
-        verifyThat("error message is cleared", promotionsDetailPage.getTriggerError(), isEmptyOrNullString());
-        verifyThat(addButton, not(disabled()));
-
-        triggerBox.setValue("    ");
-        verifyThat("cannot add '     '", promotionsDetailPage.triggerAddButton(), disabled());
-        triggerBox.setValue("\t");
-        verifyThat("cannot add '\\t'", promotionsDetailPage.triggerAddButton(), disabled());
-        promotionsDetailPage.addTrigger("\"valid trigger\"");
-        verifyThat("can add valid trigger", promotionsDetailPage.getTriggerList(), hasSize(2));
+        triggerForm.typeTriggerWithoutSubmit("    ");
+        verifyThat("cannot add '     '", triggerForm.addButton(), disabled());
+        triggerForm.typeTriggerWithoutSubmit("\t");
+        verifyThat("cannot add '\\t'", triggerForm.addButton(), disabled());
+        triggerForm.addTrigger("\"valid trigger\"");
+        verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(2));
     }
 
     private void checkBadTriggers(String[] triggers, String errorSubstring) {
         for (String trigger : triggers) {
-            promotionsDetailPage.addTrigger(trigger);
-            verifyThat("trigger '" + trigger + "' not added", promotionsDetailPage.getTriggerList(), hasSize(1));
-            verifyThat(promotionsDetailPage.getTriggerError(), containsString(errorSubstring));
-            verifyThat(promotionsDetailPage.triggerAddButton(), disabled());
+            triggerForm.addTrigger(trigger);
+            verifyThat("trigger '" + trigger + "' not added", triggerForm.getNumberOfTriggers(), is(1));
+            verifyThat(triggerForm.getTriggerError(), containsString(errorSubstring));
+            verifyThat(triggerForm.addButton(), disabled());
         }
     }
 
@@ -215,10 +216,12 @@ public class StaticPromotionsITCase extends HostedTestBase {
         final String newTitle = "aaa";
         final String newTrigger = "alternative";
 
+        triggerForm = promotionsDetailPage.getTriggerForm();
+
         promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
-        promotionsDetailPage.addTrigger(newTrigger);
-        promotionsDetailPage.trigger(trigger).removeAndWait();
-        verifyThat(promotionsDetailPage.getTriggerList(), hasSize(1));
+        triggerForm.addTrigger(newTrigger);
+        triggerForm.removeTrigger(trigger);
+        verifyThat(triggerForm.getNumberOfTriggers(), is(1));
         promotionsPage = promotionService.goToPromotions();
 
         promotionsPage.selectPromotionsCategoryFilter("Spotlight");

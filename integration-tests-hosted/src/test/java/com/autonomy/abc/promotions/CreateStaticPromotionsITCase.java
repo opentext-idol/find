@@ -5,6 +5,8 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
+import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
@@ -37,6 +39,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
     private PromotionsDetailPage promotionsDetailPage;
     private PromotionService promotionService;
     private Wizard wizard;
+    private TriggerForm triggerForm;
 
     public CreateStaticPromotionsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -103,10 +106,10 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
 
     private void checkBadTriggers(String[] triggers, String errorSubstring) {
         for (String trigger : triggers) {
-            createPromotionsPage.addSearchTrigger(trigger);
-            verifyThat("trigger '" + trigger + "' not added", createPromotionsPage.getSearchTriggersList(), hasSize(1));
-            verifyThat(createPromotionsPage.getTriggerError(), containsString(errorSubstring));
-            verifyThat(createPromotionsPage.triggerAddButton(), disabled());
+            triggerForm.addTrigger(trigger);
+            verifyThat("trigger '" + trigger + "' not added", triggerForm.getNumberOfTriggers(), is(1));
+            verifyThat(triggerForm.getTriggerError(), containsString(errorSubstring));
+            verifyThat(triggerForm.addButton(), disabled());
         }
     }
 
@@ -139,43 +142,46 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
         };
 
         goToTriggerStep();
+
+        triggerForm = createPromotionsPage.getTriggerForm();
+
         assertThat(createPromotionsPage.getCurrentStepTitle(), is(SearchTriggerStep.TITLE));
-        verifyThat(createPromotionsPage.getSearchTriggersList(), empty());
-        createPromotionsPage.addSearchTrigger(goodTrigger);
-        assertThat(createPromotionsPage.getSearchTriggersList(), hasSize(1));
+        verifyThat(triggerForm.getTriggers(), empty());
+        triggerForm.addTrigger(goodTrigger);
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
 
         checkBadTriggers(duplicateTriggers, Errors.Term.DUPLICATE_EXISTING);
         checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
         checkBadTriggers(commaTriggers, Errors.Term.COMMAS);
         checkBadTriggers(caseTriggers, Errors.Term.CASE);
 
-        FormInput triggerBox = createPromotionsPage.triggerBox();
-        WebElement addButton = createPromotionsPage.triggerAddButton();
+        triggerForm.typeTriggerWithoutSubmit("a");
+        verifyThat("error message is cleared", triggerForm.getTriggerError(), isEmptyOrNullString());
+        verifyThat(triggerForm.addButton(), not(disabled()));
 
-        triggerBox.setValue("a");
-        verifyThat("error message is cleared", createPromotionsPage.getTriggerError(), isEmptyOrNullString());
-        verifyThat(addButton, not(disabled()));
-
-        triggerBox.setValue("    ");
-        verifyThat("cannot add '     '", createPromotionsPage.triggerAddButton(), disabled());
-        triggerBox.setValue("\t");
-        verifyThat("cannot add '\\t'", createPromotionsPage.triggerAddButton(), disabled());
-        createPromotionsPage.addSearchTrigger("\"valid trigger\"");
-        verifyThat("can add valid trigger", createPromotionsPage.getSearchTriggersList(), hasSize(2));
+        triggerForm.typeTriggerWithoutSubmit("    ");
+        verifyThat("cannot add '     '", triggerForm.addButton(), disabled());
+        triggerForm.typeTriggerWithoutSubmit("\t");
+        verifyThat("cannot add '\\t'", triggerForm.addButton(), disabled());
+        triggerForm.addTrigger("\"valid trigger\"");
+        verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(2));
     }
 
     @Test
     public void testAddRemoveTriggers() {
         goToTriggerStep();
+
+        triggerForm = createPromotionsPage.getTriggerForm();
+
         assertThat(createPromotionsPage.getCurrentStepTitle(), is(SearchTriggerStep.TITLE));
-        verifyThat(createPromotionsPage.getSearchTriggersList(), empty());
-        createPromotionsPage.addSearchTrigger("alpha");
-        createPromotionsPage.addSearchTrigger("beta gamma delta");
-        createPromotionsPage.removeSearchTrigger("gamma");
-        createPromotionsPage.removeSearchTrigger("alpha");
-        createPromotionsPage.addSearchTrigger("epsilon");
-        createPromotionsPage.removeSearchTrigger("beta");
-        verifyThat(createPromotionsPage.getSearchTriggersList(), hasSize(2));
+        verifyThat(triggerForm.getTriggers(), empty());
+        triggerForm.addTrigger("alpha");
+        triggerForm.addTrigger("beta gamma delta");
+        triggerForm.removeTrigger("gamma");
+        triggerForm.removeTrigger("alpha");
+        triggerForm.addTrigger("epsilon");
+        triggerForm.removeTrigger("beta");
+        verifyThat(triggerForm.getNumberOfTriggers(), is(2));
 
         // finish wizard, wait
         wizard.next();
@@ -184,7 +190,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
         promotionsDetailPage = promotionService.goToDetails("delta");
         assertThat("loaded details page", promotionsDetailPage.promotionTitle().getValue(), containsString("delta"));
 
-        List<String> triggers = promotionsDetailPage.getTriggerList();
+        List<String> triggers = triggerForm.getTriggersAsStrings();
         verifyThat(triggers, hasSize(2));
         verifyThat(triggers, hasItems("delta", "epsilon"));
     }
