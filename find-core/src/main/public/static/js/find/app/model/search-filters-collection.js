@@ -28,12 +28,12 @@ define([
 
     // Get the filter model id for a given parametric field name
     function parametricFilterId(fieldName) {
-        return FilterTypes.PARAMETRIC + ':' + fieldName;
+        return fieldName;
     }
 
     // Get the display text for the given parametric field name and array of selected parametric values
-    function parametricFilterText(fieldName, values) {
-        return fieldName + ': ' + values.join(', ');
+    function parametricFilterText(values) {
+        return values.join(', ');
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -42,7 +42,7 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
-                text: parametricFilterText(field, values),
+                text: parametricFilterText(values),
                 type: FilterTypes.PARAMETRIC
             };
         });
@@ -125,7 +125,7 @@ define([
 
         getDatabasesFilterText: function() {
             var selectedIndexNames = this.selectedIndexesCollection.pluck('name');
-            return i18n_indexes['search.indexes'] + ': ' + selectedIndexNames.join(', ');
+            return selectedIndexNames.join(', ');
         },
 
         allIndexesSelected: function() {
@@ -200,7 +200,6 @@ define([
         // Handles add and remove events from the selected parametric values collection
         updateParametricSelection: function(selectionModel) {
             var field = selectionModel.get('field');
-            var fieldDisplayName = selectionModel.get('fieldDisplayName');
             var id = parametricFilterId(field);
             var modelsForField = this.selectedParametricValues.where({field: field});
 
@@ -208,7 +207,7 @@ define([
                 this.add({
                     id: id,
                     field: field,
-                    text: parametricFilterText(fieldDisplayName, _.invoke(modelsForField, 'get', 'value')),
+                    text: parametricFilterText(_.invoke(modelsForField, 'get', 'value')),
                     type: FilterTypes.PARAMETRIC
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name

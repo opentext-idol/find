@@ -1,10 +1,1 @@
-<% var headText = _.head(entities).get('text') %>
-<a class="entity-text suggestion-head-text clickable" data-title="<%- headText %>"><%- headText %></a>
-
-<table class="table suggestion-cluster">
-    <% _.each(_.tail(entities), function(entity) { %>
-        <tr>
-            <td><a class="entity-text clickable" data-title="<%- entity.get('text') %>"><%- entity.get('text') %></a></td>
-        </tr>
-    <% }); %>
-</table>
+<li class="list-unstyled m-b-xs"><a class="entity-text suggestion-head-text clickable" data-title="<%- concept %>"><%- concept %></a></li>

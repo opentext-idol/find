@@ -1,25 +1,28 @@
 <% var promoted = promotion ? 'promoted-document' : ''; %>
 
 <div class="main-results-container m-b-sm <%-promoted%>" data-rel="results" data-reference="<%-reference %>">
-    <span class="pull-right m-t-xs text-muted m-l-sm content-type">
+    <span class="pull-left m-t-xs text-muted m-r-sm content-type">
         <i class="icomoon-file-<%-contentType%>"></i>
     </span>
-    <% if (promotion) { %>
-        <span class="pull-right m-t-sm text-muted promoted-label">
+
+    <div class="results-contents">
+        <% if (promotion) { %>
+        <span class="pull-right m-t-xs text-muted promoted-label">
             <i class="fa fa-star"></i> Promoted
         </span>
-    <% } %>
-    <a href="<%-href %>" class="result-header">
-        <h4 class="pull-left m-b-nil"><%- title %></h4>
-        <span class="document-date pull-left m-t-sm m-l-xs">
+        <% } %>
+        <a href="<%-href %>" class="result-header">
+            <h4 class="pull-left m-b-nil m-t-xs"><%- title %></h4>
+        <span class="document-date pull-left m-t-xs m-l-xs">
             <%- date %>
         </span>
-    </a>
-    <span class="document-reference"><%-reference %></span>
-    <p class="result-summary">
-        <%= summary %>
-    </p>
-    <p class="text-right">
-        <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
-    </p>
+        </a>
+        <span class="document-reference"><%-reference %></span>
+        <p class="result-summary">
+            <%= summary %>
+        </p>
+        <p class="text-right">
+            <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+        </p>
+    </div>
 </div>
