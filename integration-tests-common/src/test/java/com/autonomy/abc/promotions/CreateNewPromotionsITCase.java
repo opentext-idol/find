@@ -10,8 +10,7 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
@@ -42,15 +41,15 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     private PromotionsDetailPage promotionsDetailPage;
     private CreateNewPromotionsPage createPromotionsPage;
     private Wizard wizard;
-    private SearchActionFactory actionFactory;
+    private SearchService searchService;
     private PromotionService promotionService;
 
-    private List<String> goToWizard(Search search, int numberOfDocs) {
-        search.apply();
-        searchPage = getElementFactory().getSearchPage();
+    private List<String> goToWizard(String query, int numberOfDocs) {
+        searchPage = searchService.search(query);
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
         ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
+        createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         return promotedDocTitles;
     }
 
@@ -70,10 +69,9 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        actionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+        searchService = getApplication().createSearchService(getElementFactory());
         promotionService = getApplication().createPromotionService(getElementFactory());
-        promotedDocTitle = goToWizard(actionFactory.makeSearch("fox"), 1).get(0);
-        createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        promotedDocTitle = goToWizard("fox", 1).get(0);
     }
 
     @After
@@ -420,14 +418,12 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         createPromotionsPage.cancelButton().click();
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
-        searchPage.searchResultCheckbox(1).click();
+        searchPage.emptyBucket();
         searchPage.promotionsBucketClose();
 
         try {
             for (final String spotlightType : Arrays.asList("Sponsored", "Hotwire", "Top Promotions")) {
-                actionFactory.makeSearch("dog").apply();
-                searchPage = getElementFactory().getSearchPage();
-                searchPage.createAPromotion();
+                goToWizard("dog", 1);
 
                 createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
                 createPromotionsPage.addSpotlightPromotion(spotlightType, "MyFirstNotification" + spotlightType.replaceAll("\\s+", ""));
