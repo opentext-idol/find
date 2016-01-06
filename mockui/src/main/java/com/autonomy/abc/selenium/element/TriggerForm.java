@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.element;
 
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -26,6 +27,11 @@ public class TriggerForm extends AppElement {
 
     public void addTrigger(String trigger) {
         triggerAddBox().setAndSubmit(trigger);
+        Waits.loadOrFadeWait();
+    }
+
+    public WebElement addButton(){
+        return findElement(By.className("fa-plus"));
     }
 
     /* Removing triggers */
@@ -56,6 +62,10 @@ public class TriggerForm extends AppElement {
             triggers.add(new LabelBox(trigger, getDriver()));
         }
         return triggers;
+    }
+
+    public int getNumberOfTriggers(){
+        return triggers().size();
     }
 
     private List<WebElement> triggers(){
