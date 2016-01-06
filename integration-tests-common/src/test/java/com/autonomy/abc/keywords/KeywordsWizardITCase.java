@@ -4,16 +4,16 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
-import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -35,8 +35,6 @@ import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
 
 public class KeywordsWizardITCase extends ABCTestBase {
@@ -308,7 +306,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
         createKeywordsPage.blacklistAddTextBox().sendKeys(" ");
-        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton());
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
         createKeywordsPage.blacklistAddTextBox().clear();
@@ -317,7 +315,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
 
         createKeywordsPage.blacklistAddTextBox().sendKeys("\t");
-        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(createKeywordsPage.blacklistAddButton());
         assertThat("Whitespace should not be added as a blacklist term", createKeywordsPage.countKeywords() == 0);
     }
 

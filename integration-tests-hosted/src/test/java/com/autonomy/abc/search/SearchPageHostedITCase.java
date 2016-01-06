@@ -2,7 +2,6 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.ABCAssert;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.language.Language;
@@ -24,9 +23,8 @@ import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
@@ -61,7 +59,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		assertThat("All databases not showing", searchPage.allIndexesCheckbox().isChecked(), is(true));
 
 		for(Checkbox checkbox : searchPage.indexList()){
-			assertThat(checkbox.isChecked(),is(true));
+			assertThat(checkbox.isChecked(), is(true));
 		}
 
 		searchPage.allIndexesCheckbox().toggle();
@@ -74,7 +72,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.selectIndex("news_ger");
 		assertThat("Database not showing", searchPage.indexCheckbox("news_ger").isChecked(), is(true));
 		final String wookiepediaResult = searchPage.getSearchResult(1).getText();
-		assertNotEquals(wookiepediaResult, wikiEnglishResult);
+		assertThat(wookiepediaResult, not(wikiEnglishResult));
 
 		searchPage.selectIndex("wiki_chi");
 		assertThat(searchPage.indexCheckbox("news_ger").isChecked(), is(true));
@@ -86,11 +84,11 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	public void testParametricSearch() {
 		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 		topNavBar.search("*");
-
 	}
 
 
 	@Test
+	//TODO make this test WAY nicer
 	public void testAuthor(){
 		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
 
@@ -115,7 +113,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.getSearchResult(1).click();
 
 		for(int i = 0; i < results; i++) {
-			ABCAssert.assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), equalToIgnoringCase(author));
+			assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), equalToIgnoringCase(author));
 			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
 		}
 
@@ -144,7 +142,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.getSearchResult(1).click();
 
 		for(int i = 0; i < results; i++) {
-			ABCAssert.assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is("Yleis"));
+			assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is("Yleis"));
 			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
 		}
 

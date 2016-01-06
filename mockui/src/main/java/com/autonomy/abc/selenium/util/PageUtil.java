@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.util;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 
 public class PageUtil {

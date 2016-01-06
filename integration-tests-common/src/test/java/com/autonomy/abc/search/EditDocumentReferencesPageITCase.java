@@ -12,15 +12,10 @@ import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.Search;
 import com.autonomy.abc.selenium.search.SearchActionFactory;
-import com.autonomy.abc.selenium.search.SearchFilter;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -32,7 +27,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
-import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -221,7 +215,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
-        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
     }
 
@@ -284,13 +278,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
-        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
 
         editReferencesPage.searchResultCheckbox(6).click();
         final String newPromotedDoc = editReferencesPage.getSearchResultTitle(6);
 
-        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton(), getDriver());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail"));
 

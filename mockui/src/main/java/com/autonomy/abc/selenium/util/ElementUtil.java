@@ -54,7 +54,7 @@ public final class ElementUtil {
         element.click();
     }
 
-    public static void tryClickThenTryParentClick(final WebElement element, WebDriver driver) {
+    public static void tryClickThenTryParentClick(final WebElement element) {
         try {
             element.click();
         } catch (final WebDriverException e) {
@@ -75,10 +75,6 @@ public final class ElementUtil {
 
     public static WebElement getParent(final WebElement child) {
         return ancestor(child, 1);
-    }
-
-    public static String getLastWord(final String string) {
-        return string.substring(string.lastIndexOf(' ') + 1);
     }
 
     public static WebElement getFirstChild(final WebElement parent) {
