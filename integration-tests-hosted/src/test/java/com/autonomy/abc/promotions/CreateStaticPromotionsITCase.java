@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
@@ -101,17 +100,8 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
 
     @Test
     public void testInvalidTriggers() {
-        final String goodTrigger = "dog";
-
         goToTriggerStep();
-
-        triggerForm = createPromotionsPage.getTriggerForm();
-
-        assertThat(createPromotionsPage.getCurrentStepTitle(), is(SearchTriggerStep.TITLE));
-        verifyThat(triggerForm.getTriggers(), empty());
-        triggerForm.addTrigger(goodTrigger);
-
-        SharedTriggerTests.badTriggersTest(triggerForm, 1);
+        SharedTriggerTests.badTriggersTest(createPromotionsPage.getTriggerForm(), 0);
     }
 
     @Test

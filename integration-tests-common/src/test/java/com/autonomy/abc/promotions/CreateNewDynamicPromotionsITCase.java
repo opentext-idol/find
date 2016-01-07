@@ -1,5 +1,6 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
@@ -21,10 +22,8 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -43,7 +42,6 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     private SearchPage searchPage;
     private PromotionsPage promotionsPage;
     private CreateNewPromotionsPage dynamicPromotionsPage;
-    private PromotionsDetailPage promotionsDetailPage;
     private PromotionService promotionService;
     private SearchService searchService;
     private TriggerForm triggerForm;
@@ -165,93 +163,9 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     }
 
     @Test
-    public void testWhitespaceTrigger() {
+    public void testTriggers(){
         goToTriggers();
-
-        assertThat("Trigger add button is not disabled", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
-
-        ElementUtil.tryClickThenTryParentClick(triggerForm.addButton());
-        assertThat("Number of triggers does not equal 0", triggerForm.getNumberOfTriggers(), is(0));
-
-        triggerForm.addTrigger("trigger");
-        assertThat("Number of triggers does not equal 1", triggerForm.getNumberOfTriggers(), is(1));
-
-        triggerForm.addTrigger("   ");
-        assertThat("Number of triggers does not equal 1", triggerForm.getNumberOfTriggers(), is(1));
-
-        triggerForm.addTrigger(" trigger");
-        assertThat("Whitespace at beginning should be ignored", triggerForm.getNumberOfTriggers(), is(1));
-
-        triggerForm.addTrigger("\t");
-        assertThat("Whitespace at beginning should be ignored", triggerForm.getNumberOfTriggers(), is(1));
-    }
-
-    @Test
-    public void testQuotesTrigger() {
-        goToTriggers();
-
-        assertThat("Trigger add button is not disabled", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
-
-        ElementUtil.tryClickThenTryParentClick(triggerForm.addButton());
-
-        assertThat("Number of triggers does not equal 0", triggerForm.getNumberOfTriggers(), is(0));
-
-        triggerForm.addTrigger("bag");
-        assertThat("Number of triggers does not equal 1", triggerForm.getNumberOfTriggers(), is(1));
-
-        triggerForm.addTrigger("\"bag");
-        assertThat("Number of triggers does not equal 1", triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("Correct error message not showing", dynamicPromotionsPage.getText(), containsString("Terms have an odd number of quotes, suggesting an unclosed phrase."));
-
-        triggerForm.addTrigger("bag\"");
-        assertThat("Number of triggers does not equal 1", triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("Correct error message not showing", dynamicPromotionsPage.getText(), containsString("Terms have an odd number of quotes, suggesting an unclosed phrase."));
-
-        triggerForm.addTrigger("\"bag\"");
-        assertThat("Number of triggers does not equal 1", triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("Error message should not show", dynamicPromotionsPage.getText(), not(containsString("Terms have an odd number of quotes, suggesting an unclosed phrase.")));
-
-        triggerForm.removeTrigger("bag");
-        assertThat("Number of triggers does not equal 0", triggerForm.getNumberOfTriggers(), is(0));
-    }
-
-    @Test
-    public void testCommasTrigger() {
-        goToTriggers();
-
-        triggerForm.addTrigger("France");
-        assertThat("Number of triggers does not equal 1", triggerForm.getNumberOfTriggers(), is(1));
-
-        triggerForm.addTrigger(",Germany");
-        assertThat("Commas should not be included in triggers", triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("Incorrect/No error message displayed", dynamicPromotionsPage.getText(), containsString("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        triggerForm.addTrigger("Ita,ly Spain");
-        assertThat("Commas should not be included in triggers", triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("Incorrect/No error message displayed", dynamicPromotionsPage.getText(), containsString("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        triggerForm.addTrigger("Ireland, Belgium");
-        assertThat("Commas should not be included in triggers", triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("Incorrect/No error message displayed", dynamicPromotionsPage.getText(), containsString("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        triggerForm.addTrigger("UK , Luxembourg");
-        assertThat("Commas should not be included in triggers", triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("Incorrect/No error message displayed", dynamicPromotionsPage.getText(), containsString("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        triggerForm.addTrigger("Andorra");
-        assertThat("Legitimate trigger not added", triggerForm.getNumberOfTriggers(), is(2));
-        assertThat("Error message displayed with legitimate term", dynamicPromotionsPage.getText(), not(containsString("Terms may not contain commas. Separate words and phrases with whitespace.")));
-    }
-
-    @Test
-    public void testHTMLTrigger() {
-        goToTriggers();
-
-        final String searchTrigger = "<h1>Hey</h1>";
-        triggerForm.addTrigger(searchTrigger);
-
-        final WebElement span = dynamicPromotionsPage.findElement(By.cssSelector(".trigger-words-form .term"));
-        assertThat("HTML was not escaped", span.getText(), is(searchTrigger.toLowerCase()));		//Triggers are always lower case
+        SharedTriggerTests.badTriggersTest(triggerForm, 0);
     }
 
     private void goToTriggers() {
@@ -291,7 +205,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         }
         assertThat(searchPage.promotionsSummaryList(true).size(), is(promotionResultsCount));
 
-        promotionsDetailPage = promotionService.goToDetails("sausage");
+        PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("sausage");
         assertThat(promotionsDetailPage.getDynamicPromotedTitles(), hasSize(promotionResultsCount));
     }
 

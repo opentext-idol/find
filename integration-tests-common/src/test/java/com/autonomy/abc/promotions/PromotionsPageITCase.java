@@ -1,5 +1,6 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
@@ -110,75 +111,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testWhitespaceTrigger() {
+	public void testTriggers(){
 		setUpCarsPromotion(1);
-
-		TriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
-		try {
-			triggerForm.addTrigger("");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
-
-		triggerForm.addTrigger("trigger");
-		verifyThat("added valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
-
-		String[] invalidTriggers = {"   ", " trigger", "\t"};
-		for (String trigger : invalidTriggers) {
-			triggerForm.addTrigger(trigger);
-			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
-		}
-	}
-
-	@Test
-	public void testQuotesTrigger() throws InterruptedException {
-		setUpCarsPromotion(1);
-
-		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
-
-		TriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
-
-		triggerForm.addTrigger("bag");
-		verifyThat("added valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
-
-		String[] invalidTriggers = {"\"bag", "bag\"", "\"bag\""};
-		for (String trigger : invalidTriggers) {
-			triggerForm.addTrigger(trigger);
-			verifyThat("'" + trigger + "' is not accepted as a valid trigger", promotionsDetailPage, triggerList(hasSize(2)));
-		}
-	}
-
-	@Test
-	public void testCommasTrigger() {
-		setUpCarsPromotion(1);
-		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
-
-		TriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
-
-		triggerForm.addTrigger("France");
-		verifyThat(promotionsDetailPage, triggerList(hasSize(2)));
-
-		String[] invalidTriggers = {",Germany", "Ita,ly Spain", "Ireland, Belgium", "UK , Luxembourg"};
-		for (String trigger : invalidTriggers) {
-			triggerForm.addTrigger(trigger);
-			verifyThat("'" + trigger + "' does not add a new trigger", promotionsDetailPage, triggerList(hasSize(2)));
-			verifyThat("'" + trigger + "' produces an error message", promotionsPage, containsText(Errors.Term.COMMAS));
-		}
-
-		triggerForm.addTrigger("Greece Romania");
-		assertThat(promotionsDetailPage, triggerList(hasSize(4)));
-		assertThat("error message no longer showing", promotionsPage, not(containsText(Errors.Term.COMMAS)));
-	}
-
-	@Test
-	public void testHTMLTrigger() {
-		setUpCarsPromotion(1);
-		final String trigger = "<h1>hi</h1>";
-		promotionsDetailPage.getTriggerForm().addTrigger(trigger);
-
-		assertThat("triggers are HTML escaped", promotionsDetailPage, triggerList(hasItem(trigger)));
+		SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm(), 1);
 	}
 
 	// fails on-prem due to CCUK-2671
