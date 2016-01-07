@@ -5,18 +5,17 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordWizardType;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
-import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -24,7 +23,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.*;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
@@ -49,17 +50,14 @@ public class KeywordsPageITCase extends ABCTestBase {
 	private SearchPage searchPage;
 	private NotificationsDropDown notifications;
 	private KeywordService keywordService;
-	private SearchActionFactory searchFactory;
-	
+
 	public KeywordsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
 	}
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		keywordService = new KeywordService(getApplication(), getElementFactory());
-		searchFactory = new SearchActionFactory(getApplication(), getElementFactory());
-
+		keywordService = getApplication().createKeywordService(getElementFactory());
 		keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
     }
 

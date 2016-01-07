@@ -7,13 +7,11 @@ import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -26,9 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.isIn;
+import static org.hamcrest.Matchers.*;
 
 //CSA-1566
 public class PromotionsToFindITCase extends HostedTestBase {
@@ -36,7 +32,6 @@ public class PromotionsToFindITCase extends HostedTestBase {
     private Find find;
     private FindResultsPage service;
     private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
     private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
 
     public PromotionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
@@ -46,7 +41,6 @@ public class PromotionsToFindITCase extends HostedTestBase {
     @Before
     public void setUp(){
         promotionService = getApplication().createPromotionService(getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
         promotionService.deleteAll();
         browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
@@ -74,7 +68,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         Promotion spotlightPromotion = new SpotlightPromotion(searchTrigger);
         Promotion secondPinPromotion = new PinToPositionPromotion(6, searchTrigger);
 
-        List<String> promotionTitles = setUpPromotion(pinPromotion, "Promotions", 5);
+        List<String> promotionTitles = promotionService.setUpPromotion(pinPromotion, "Promotions", 5);
         LOGGER.info("set up pin to position");
 
         switchToFind();
@@ -107,7 +101,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         verifyPinToPosition(promotionTitles, 6, 10);
 
         switchToSearch();
-        List<String> spotlightPromotionTitles = setUpPromotion(spotlightPromotion, "Tertiary", 2);
+        List<String> spotlightPromotionTitles = promotionService.setUpPromotion(spotlightPromotion, "Tertiary", 2);
         LOGGER.info("set up spotlight promotion");
 
         switchToFind();
@@ -117,7 +111,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         verifySpotlight(spotlightPromotionTitles);
 
         switchToSearch();
-        String singlePromoted = setUpPromotion(secondPinPromotion, "187", 1).get(0);
+        String singlePromoted = promotionService.setUpPromotion(secondPinPromotion, "187", 1).get(0);
         LOGGER.info("set up second pin to position");
 
         switchToFind();
@@ -146,11 +140,6 @@ public class PromotionsToFindITCase extends HostedTestBase {
         find = getElementFactory().getFindPage();
         service = find.getResultsPage();
         service.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-    }
-
-    private List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {
-        return promotionService.setUpPromotion(promotion,
-                searchActionFactory.makeSearch(searchTerm), numberOfDocs);
     }
 
     private void verifySpotlight(List<String> promotionTitles) {

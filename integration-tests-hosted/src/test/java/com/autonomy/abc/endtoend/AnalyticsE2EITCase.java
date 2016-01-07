@@ -13,8 +13,7 @@ import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -43,7 +42,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     private PromotionsDetailPage promotionsDetailPage;
 
     private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
+    private SearchService searchService;
     private final static Matcher<? super WebElement> NO_RESULTS = containsText("No results found");
     private final static Logger LOGGER = LoggerFactory.getLogger(AnalyticsE2EITCase.class);
 
@@ -57,7 +56,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         List<String> triggers = Arrays.asList("trigger1", "trigger2", "trigger3");
         List<Integer> searchOrder = Arrays.asList(0, 1, 0, 1, 0, 2);
 
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+        searchService = getApplication().createSearchService(getElementFactory());
         promotionService = getApplication().createPromotionService(getElementFactory());
 
         deleteAllKeywords();
@@ -134,13 +133,12 @@ public class AnalyticsE2EITCase extends HostedTestBase {
 
     private void setUpPromotion(String searchTerm, String trigger) {
         Promotion promotion = new SpotlightPromotion(trigger);
-        Search search = searchActionFactory.makeSearch(searchTerm);
-        promotionService.setUpPromotion(promotion, search, 3);
+        promotionService.setUpPromotion(promotion, searchTerm, 3);
         LOGGER.info("set up promotion for trigger " + trigger);
     }
 
     private void search(String searchTerm) {
-        searchPage = searchActionFactory.makeSearch(searchTerm).apply();
+        searchPage = searchService.search(searchTerm);
     }
 
     private void goToAnalytics() {

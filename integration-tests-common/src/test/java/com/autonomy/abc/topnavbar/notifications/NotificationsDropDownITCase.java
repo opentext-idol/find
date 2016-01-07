@@ -18,7 +18,6 @@ import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +48,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Before
 	public void serviceSetUp() {
-		keywordService = new KeywordService(getApplication(), getElementFactory());
+		keywordService = getApplication().createKeywordService(getElementFactory());
 		promotionService = getApplication().createPromotionService(getElementFactory());
 	}
 
@@ -156,7 +155,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 			getDriver().switchTo().window(browserHandles.get(1));
 
-			promotionService.setUpPromotion(new SpotlightPromotion("wheels"), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch("cars"), 3);
+			promotionService.setUpPromotion(new SpotlightPromotion("wheels"), "cars", 3);
 
 			new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationAppears());
 			topNavBarWindowTwo.notificationsDropdown();
@@ -237,7 +236,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		String search = "thief";
 		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
 
-		promotionService.setUpPromotion(new SpotlightPromotion(promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		promotionService.setUpPromotion(new SpotlightPromotion(promotionTrigger), search, 2);
 		try {
 			getElementFactory().getSearchPage();
 			checkForNotification(promotionNotificationText);
@@ -254,7 +253,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(promotionTrigger);
 
-		promotionService.setUpPromotion(spotlightPromotion, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		promotionService.setUpPromotion(spotlightPromotion, search, 2);
 		promotionService.delete(spotlightPromotion);
 
 		checkForNotification(promotionNotificationText);
@@ -267,7 +266,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		String search = "Cena".toLowerCase();
 		String promotionNotificationText = "Created a new pin to position promotion: Pin to Position for: "+promotionTrigger;
 
-		promotionService.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
+		promotionService.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), search, 1);
 		try {
 			getElementFactory().getSearchPage();
 			checkForNotification(promotionNotificationText);
@@ -285,7 +284,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 		PinToPositionPromotion ptpp = new PinToPositionPromotion(pinToPositionPosition,promotionTrigger);
 
-		promotionService.setUpPromotion(ptpp, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
+		promotionService.setUpPromotion(ptpp, search, 1);
 		promotionService.delete(ptpp);
 
 		checkForNotification(promotionNotificationText);
@@ -298,7 +297,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		String search = "soccer";
 		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
 
-		promotionService.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
+		promotionService.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), search, 1);
 		try {
 			getElementFactory().getSearchPage();
 			checkForNotification(promotionNotificationText);
@@ -316,7 +315,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 		DynamicPromotion dynamic = new DynamicPromotion(numberOfResults, promotionTrigger);
 
-		promotionService.setUpPromotion(dynamic, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
+		promotionService.setUpPromotion(dynamic, search, 1);
 		promotionService.delete(dynamic);
 
 		checkForNotification(promotionNotificationText);
