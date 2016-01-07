@@ -497,12 +497,12 @@ public class KeywordsPageITCase extends ABCTestBase {
 			getDriver().get(blacklistUrl + forbidden);
 			Waits.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem(forbidden)));
+			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
 
 			getDriver().get(synonymsUrl + forbidden);
 			Waits.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem(forbidden)));
+			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
 		}
 	}
 

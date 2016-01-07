@@ -8,6 +8,7 @@ public class Errors {
         public static final String COMMAS = "Terms may not contain commas";
         // triggers are converted toLowerCase, but this may change again
         public static final String CASE = DUPLICATE_EXISTING;
+        public static final String BLANK = "No terms were supplied";
     }
 
     public static class Search {

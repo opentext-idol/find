@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
@@ -84,13 +85,15 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link not directing to blacklist wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link not directing to blacklist wizard", createKeywordsPage.getText(), containsString("Select terms to blacklist"));
-        assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.BLACKLIST));
-        assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
 
-        createKeywordsPage.blacklistAddTextBox().sendKeys("noir");
-        createKeywordsPage.blacklistAddButton().click();
-        assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.BLACKLIST));
-        assertThat("keywords list does not include term 'noir'", createKeywordsPage.getProspectiveKeywordsList().contains("noir"));
+        TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
+        
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
+        assertThat("keywords list does not include term 'noir'", triggerForm.getTriggersAsStrings().contains("noir"));
+
+        triggerForm.addTrigger("noir");
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
+        assertThat("keywords list does not include term 'noir'", triggerForm.getTriggersAsStrings().contains("noir"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
         waitForKeywordCreation();
@@ -110,25 +113,25 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         searchPage.createSynonymsLink().click();
         Waits.loadOrFadeWait();
-        assertThat("link not directing to synonym group wizard", getDriver().getCurrentUrl(),containsString("keywords/create"));
+        assertThat("link not directing to synonym group wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link not directing to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
-        assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
-        assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("rouge"));
+        
+        TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
+
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
+        assertThat("keywords list does not include term 'rouge'", triggerForm.getTriggersAsStrings(), hasItem("rouge"));
         assertThat("Finish button should be disabled until further synonyms added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.synonymAddTextBox().sendKeys("rouge");
-        createKeywordsPage.synonymAddButton().click();
-        assertEquals(1, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
-        assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("rouge"));
+        triggerForm.addTrigger("rouge");
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
+        assertThat("keywords list does not include term 'rouge'", triggerForm.getTriggersAsStrings(), hasItem("rouge"));
         assertThat("Finish button should be disabled until further synonyms added", ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
-        createKeywordsPage.synonymAddTextBox().clear();
-        createKeywordsPage.synonymAddTextBox().sendKeys("red");
-        createKeywordsPage.synonymAddButton().click();
-        assertEquals(2, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
-        assertThat("keywords list does not include term 'rouge'", createKeywordsPage.getProspectiveKeywordsList(),hasItem("rouge"));
-        assertThat("keywords list does not include term 'red'", createKeywordsPage.getProspectiveKeywordsList(), hasItem("red"));
+        triggerForm.addTrigger("red");
+        assertThat(triggerForm.getNumberOfTriggers(), is(2));
+        assertThat("keywords list does not include term 'rouge'", triggerForm.getTriggersAsStrings(),hasItem("rouge"));
+        assertThat("keywords list does not include term 'red'", triggerForm.getTriggersAsStrings(), hasItem("red"));
         assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.finishWizardButton(), "disabled"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
@@ -161,8 +164,11 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link not directing to synonym group wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link not directing to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
-        assertEquals(3, createKeywordsPage.countKeywords(KeywordFilter.SYNONYMS));
-        assertThat("Wrong prospective blacklisted terms added", createKeywordsPage.getProspectiveKeywordsList(), hasItems("lodge", "dodge", "podge"));
+
+        TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
+
+        assertThat(triggerForm.getNumberOfTriggers(), is(3));
+        assertThat("Wrong prospective blacklisted terms added", triggerForm.getTriggersAsStrings(), hasItems("lodge", "dodge", "podge"));
         assertThat("Finish button should be enabled", !ElementUtil.isAttributePresent(createKeywordsPage.enabledFinishWizardButton(), "disabled"));
 
         createKeywordsPage.enabledFinishWizardButton().click();
@@ -370,7 +376,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat(getDriver().getCurrentUrl(), containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
-        createKeywordsPage.addSynonyms("한국");
+        createKeywordsPage.getTriggerForm().addTrigger("한국");
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(createKeywordsPage.enabledFinishWizardButton())).click();
         searchPage = getElementFactory().getSearchPage();
 
@@ -404,7 +410,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         ArrayList<String> wordsInPhrase = new ArrayList<>(Arrays.asList(phrase.split(" ")));
         wordsInPhrase.removeAll(Collections.singleton("the"));
 
-        List<String> prospectiveKeywords = createKeywordsPage.getProspectiveKeywordsList();
+        List<String> prospectiveKeywords = createKeywordsPage.getTriggerForm().getTriggersAsStrings();
 
         assertThat(prospectiveKeywords, containsItems(wordsInPhrase));
         assertThat(prospectiveKeywords, not(hasItem("the")));

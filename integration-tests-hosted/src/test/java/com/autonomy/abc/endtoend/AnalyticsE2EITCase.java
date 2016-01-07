@@ -3,6 +3,7 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -94,14 +95,16 @@ public class AnalyticsE2EITCase extends HostedTestBase {
             goToFirstPromotion();
         }
 
-        List<String> existingTriggers = promotionsDetailPage.getTriggerList();
+        PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
+
+        List<String> existingTriggers = triggerForm.getTriggersAsStrings();
         List<String> promotedDocuments = promotionsDetailPage.getPromotedTitles();
 
         for(String trigger : newTriggers){
-            promotionsDetailPage.addTrigger(trigger);
+            triggerForm.addTrigger(trigger);
         }
 
-        for(Removable trigger : promotionsDetailPage.triggers()){
+        for(Removable trigger : triggerForm.getTriggers()){
             if(!newTriggers.contains(trigger.getText())) {
                 trigger.removeAndWait();
             }

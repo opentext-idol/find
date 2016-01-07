@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Predicates;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -113,59 +112,6 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return findElement(By.className("promotion-language")).getText();
     }
 
-    public List<String> getTriggerList() {
-        final List<String> triggers = new ArrayList<>();
-        for (final WebElement trigger : triggerElements()) {
-            triggers.add(trigger.getAttribute("data-id"));
-        }
-        return triggers;
-    }
-
-    public List<Removable> triggers() {
-        final List<Removable> triggers = new ArrayList<>();
-        for (final WebElement trigger : triggerElements()) {
-            triggers.add(new LabelBox(trigger, getDriver()));
-        }
-        return triggers;
-    }
-
-    private List<WebElement> triggerElements() {
-        return findElements(By.cssSelector(".promotion-view-match-terms .term"));
-    }
-
-    public Removable trigger(final String triggerName) {
-        return new LabelBox(findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "']")), getDriver());
-    }
-
-    public FormInput triggerAddBox() {
-        return new FormInput(triggerEditor().findElement(By.cssSelector("[name='words']")), getDriver());
-    }
-
-    public WebElement triggerAddButton() {
-        return triggerEditor().findElement(By.cssSelector("[type='submit']"));
-    }
-
-    public String getTriggerError() {
-        try {
-            return triggerEditor().findElement(By.cssSelector(".help-block")).getText();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-    }
-
-    private WebElement triggerEditor() {
-        return findElement(By.cssSelector(".promotion-match-terms-editor"));
-    }
-
-    public void waitForTriggerRefresh() {
-        new WebDriverWait(getDriver(), 20).until(Predicates.invisibilityOfAllElementsLocated(By.cssSelector(".promotion-view-match-terms .term .fa-spin")));
-    }
-
-    public void addTrigger(String text) {
-        triggerAddBox().setAndSubmit(text);
-        waitForTriggerRefresh();
-    }
-
     public WebElement addMoreButton() {
         return findElement(By.className("add-more-promoted-documents"));
     }
@@ -259,5 +205,9 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
                 document.click();
             }
         }
+    }
+
+    public PromotionsDetailTriggerForm getTriggerForm() {
+        return new PromotionsDetailTriggerForm(findElement(By.className("promotion-match-terms-wrapper")), getDriver());
     }
 }

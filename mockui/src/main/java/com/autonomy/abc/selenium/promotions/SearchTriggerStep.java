@@ -20,7 +20,7 @@ public class SearchTriggerStep implements WizardStep {
 
     @Override
     public Object apply() {
-        page.triggerBox().setAndSubmit(trigger);
+        page.getTriggerForm().addTrigger(trigger);
         return null;
     }
 }

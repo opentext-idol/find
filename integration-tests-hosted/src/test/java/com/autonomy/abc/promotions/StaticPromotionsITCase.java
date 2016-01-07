@@ -1,11 +1,12 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
-import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -13,7 +14,6 @@ import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
-import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,10 +23,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
 import static org.hamcrest.Matchers.*;
@@ -43,6 +41,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
     private final String content = "content";
     private final String trigger = "dog";
     private final StaticPromotion promotion = new StaticPromotion(title, content, trigger);
+    private PromotionsDetailTriggerForm triggerForm;
 
     public StaticPromotionsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -139,59 +138,8 @@ public class StaticPromotionsITCase extends HostedTestBase {
     @Test
     public void testInvalidTriggers() {
         goToDetails();
-        final String[] duplicateTriggers = {
-                "dog",
-                " dog",
-                "dog ",
-                " dog  ",
-                "\"dog\""
-        };
-        final String[] quoteTriggers = {
-                "\"bad",
-                "bad\"",
-                "b\"ad",
-                "\"trigger with\" 3 quo\"tes"
-        };
-        final String[] commaTriggers = {
-                "comma,",
-                ",comma",
-                "com,ma",
-                ",,,,,,"
-        };
-        final String[] caseTriggers = {
-                "Dog",
-                "doG",
-                "DOG"
-        };
-        assertThat(promotionsDetailPage.getTriggerList(), hasSize(1));
 
-        checkBadTriggers(duplicateTriggers, Errors.Term.DUPLICATE_EXISTING);
-        checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
-        checkBadTriggers(commaTriggers, Errors.Term.COMMAS);
-        checkBadTriggers(caseTriggers, Errors.Term.CASE);
-
-        FormInput triggerBox = promotionsDetailPage.triggerAddBox();
-        WebElement addButton = promotionsDetailPage.triggerAddButton();
-
-        triggerBox.setValue("a");
-        verifyThat("error message is cleared", promotionsDetailPage.getTriggerError(), isEmptyOrNullString());
-        verifyThat(addButton, not(disabled()));
-
-        triggerBox.setValue("    ");
-        verifyThat("cannot add '     '", promotionsDetailPage.triggerAddButton(), disabled());
-        triggerBox.setValue("\t");
-        verifyThat("cannot add '\\t'", promotionsDetailPage.triggerAddButton(), disabled());
-        promotionsDetailPage.addTrigger("\"valid trigger\"");
-        verifyThat("can add valid trigger", promotionsDetailPage.getTriggerList(), hasSize(2));
-    }
-
-    private void checkBadTriggers(String[] triggers, String errorSubstring) {
-        for (String trigger : triggers) {
-            promotionsDetailPage.addTrigger(trigger);
-            verifyThat("trigger '" + trigger + "' not added", promotionsDetailPage.getTriggerList(), hasSize(1));
-            verifyThat(promotionsDetailPage.getTriggerError(), containsString(errorSubstring));
-            verifyThat(promotionsDetailPage.triggerAddButton(), disabled());
-        }
+        SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm(), 1);
     }
 
     @Test
@@ -215,10 +163,12 @@ public class StaticPromotionsITCase extends HostedTestBase {
         final String newTitle = "aaa";
         final String newTrigger = "alternative";
 
+        triggerForm = promotionsDetailPage.getTriggerForm();
+
         promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
-        promotionsDetailPage.addTrigger(newTrigger);
-        promotionsDetailPage.trigger(trigger).removeAndWait();
-        verifyThat(promotionsDetailPage.getTriggerList(), hasSize(1));
+        triggerForm.addTrigger(newTrigger);
+        triggerForm.removeTrigger(trigger);
+        verifyThat(triggerForm.getNumberOfTriggers(), is(1));
         promotionsPage = promotionService.goToPromotions();
 
         promotionsPage.selectPromotionsCategoryFilter("Spotlight");

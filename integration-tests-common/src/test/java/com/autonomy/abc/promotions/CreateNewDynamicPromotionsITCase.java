@@ -1,8 +1,10 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
@@ -20,10 +22,8 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -42,9 +42,9 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     private SearchPage searchPage;
     private PromotionsPage promotionsPage;
     private CreateNewPromotionsPage dynamicPromotionsPage;
-    private PromotionsDetailPage promotionsDetailPage;
     private PromotionService promotionService;
     private SearchService searchService;
+    private TriggerForm triggerForm;
 
     public CreateNewDynamicPromotionsITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
         super(config, browser, appType, platform);
@@ -88,29 +88,31 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         dynamicPromotionsPage.continueButton().click();
         Waits.loadOrFadeWait();
 
-        assertThat("Wrong wizard step", dynamicPromotionsPage.triggerAddButton(), is(displayed()));
+        triggerForm = dynamicPromotionsPage.getTriggerForm();
+        
+        assertThat("Wrong wizard step", triggerForm.addButton(), is(displayed()));
         assertThat("Wrong wizard step displayed, wrong title", dynamicPromotionsPage.getCurrentStepTitle(), containsString("Trigger words"));
         assertThat("Finish button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
-        assertThat("Trigger add button should be disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasSize(0));
+        assertThat("Trigger add button should be disabled", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
+        assertThat(triggerForm.getNumberOfTriggers(), is(0));
 
-        dynamicPromotionsPage.addSearchTrigger("rabbit");
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasItem("rabbit"));
+        triggerForm.addTrigger("rabbit");
+        assertThat(triggerForm.getNumberOfTriggers(), is(1));
+        assertThat(triggerForm.getTriggersAsStrings(), hasItem("rabbit"));
+        
+        triggerForm.addTrigger("bunny");
+        assertThat(triggerForm.getNumberOfTriggers(), is(2));
+        assertThat(triggerForm.getTriggersAsStrings(), hasItems("bunny", "rabbit"));
 
-        dynamicPromotionsPage.addSearchTrigger("bunny");
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasSize(2));
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasItems("bunny", "rabbit"));
-
-        dynamicPromotionsPage.addSearchTrigger("hare");
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasSize(3));
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasItems("bunny", "rabbit", "hare"));
+        triggerForm.addTrigger("hare");
+        assertThat(triggerForm.getNumberOfTriggers(), is(3));
+        assertThat(triggerForm.getTriggersAsStrings(), hasItems("bunny", "rabbit", "hare"));
 
         // Hare is not a word for bunny
-        dynamicPromotionsPage.removeSearchTrigger("hare");
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasSize(2));
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), hasItems("bunny", "rabbit"));
-        assertThat(dynamicPromotionsPage.getSearchTriggersList(), not(hasItem("hare")));
+        triggerForm.removeTrigger("hare");
+        assertThat(triggerForm.getNumberOfTriggers(), is(2));
+        assertThat(triggerForm.getTriggersAsStrings(), hasItems("bunny", "rabbit"));
+        assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("hare")));
 
         dynamicPromotionsPage.finishButton().click();
         Waits.loadOrFadeWait();
@@ -132,122 +134,19 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     @Test
     public void testAddRemoveTriggerTermsAndCancel() {
         goToTriggers();
-
+        
         assertThat("Wizard has not progressed to Select the position", dynamicPromotionsPage.getText(), containsString("Select Promotion Triggers"));
-        assertThat("Trigger add button is not disabled when text box is empty", ElementUtil.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
-        assertThat("Finish button is not disabled when there are no match terms", ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
-        assertThat("Cancel button is not enabled when there are no match terms", !ElementUtil.isAttributePresent(dynamicPromotionsPage.cancelButton(), "disabled"));
 
-        dynamicPromotionsPage.addSearchTrigger("animal");
-        assertThat("Finish button is not enabled when a trigger is added", !ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
-        assertThat("animal search trigger not added", dynamicPromotionsPage.getSearchTriggersList(), hasItem("animal"));
-
-        dynamicPromotionsPage.removeSearchTrigger("animal");
-        assertThat("animal search trigger not removed", dynamicPromotionsPage.getSearchTriggersList(), not(hasItem("animal")));
-        assertThat("Promote button is not disabled when no triggers are added", ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
-
-        dynamicPromotionsPage.addSearchTrigger("bushy tail");
-        assertThat("Number of triggers does not equal 2", dynamicPromotionsPage.getSearchTriggersList(), hasSize(2));
-        assertThat("bushy search trigger not added", dynamicPromotionsPage.getSearchTriggersList(), hasItem("bushy"));
-        assertThat("tail search trigger not added", dynamicPromotionsPage.getSearchTriggersList(), hasItem("tail"));
-
-        dynamicPromotionsPage.removeSearchTrigger("tail");
-        assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat("bushy search trigger not present", dynamicPromotionsPage.getSearchTriggersList(), hasItem("bushy"));
-        assertThat("tail search trigger not removed", dynamicPromotionsPage.getSearchTriggersList(), not(hasItem("tail")));
+        SharedTriggerTests.addRemoveTriggers(triggerForm, dynamicPromotionsPage.cancelButton(), dynamicPromotionsPage.finishButton());
 
         dynamicPromotionsPage.cancelButton().click();
         assertThat("Wizard has not cancelled", getDriver().getCurrentUrl(), not(containsString("create")));
     }
 
     @Test
-    public void testWhitespaceTrigger() {
+    public void testTriggers(){
         goToTriggers();
-
-        assertThat("Trigger add button is not disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
-
-        ElementUtil.tryClickThenTryParentClick(dynamicPromotionsPage.triggerAddButton());
-        assertThat("Number of triggers does not equal 0", dynamicPromotionsPage.getSearchTriggersList(), hasSize(0));
-
-        dynamicPromotionsPage.addSearchTrigger("trigger");
-        assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-
-        dynamicPromotionsPage.addSearchTrigger("   ");
-        assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-
-        dynamicPromotionsPage.addSearchTrigger(" trigger");
-        assertThat("Whitespace at beginning should be ignored", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-
-        dynamicPromotionsPage.addSearchTrigger("\t");
-        assertThat("Whitespace at beginning should be ignored", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-    }
-
-    @Test
-    public void testQuotesTrigger() {
-        goToTriggers();
-
-        assertThat("Trigger add button is not disabled", ElementUtil.isAttributePresent(dynamicPromotionsPage.triggerAddButton(), "disabled"));
-
-        ElementUtil.tryClickThenTryParentClick(dynamicPromotionsPage.triggerAddButton());
-
-        assertThat("Number of triggers does not equal 0", dynamicPromotionsPage.getSearchTriggersList(), hasSize(0));
-
-        dynamicPromotionsPage.addSearchTrigger("bag");
-        assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-
-        dynamicPromotionsPage.addSearchTrigger("\"bag");
-        assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat("Correct error message not showing", dynamicPromotionsPage.getText(), containsString("Terms have an odd number of quotes, suggesting an unclosed phrase."));
-
-        dynamicPromotionsPage.addSearchTrigger("bag\"");
-        assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat("Correct error message not showing", dynamicPromotionsPage.getText(), containsString("Terms have an odd number of quotes, suggesting an unclosed phrase."));
-
-        dynamicPromotionsPage.addSearchTrigger("\"bag\"");
-        assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat("Error message should not show", dynamicPromotionsPage.getText(), not(containsString("Terms have an odd number of quotes, suggesting an unclosed phrase.")));
-
-        dynamicPromotionsPage.removeSearchTrigger("bag");
-        assertThat("Number of triggers does not equal 0", dynamicPromotionsPage.getSearchTriggersList(), hasSize(0));
-    }
-
-    @Test
-    public void testCommasTrigger() {
-        goToTriggers();
-
-        dynamicPromotionsPage.addSearchTrigger("France");
-        assertThat("Number of triggers does not equal 1", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-
-        dynamicPromotionsPage.addSearchTrigger(",Germany");
-        assertThat("Commas should not be included in triggers", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat("Incorrect/No error message displayed", dynamicPromotionsPage.getText(), containsString("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        dynamicPromotionsPage.addSearchTrigger("Ita,ly Spain");
-        assertThat("Commas should not be included in triggers", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat("Incorrect/No error message displayed", dynamicPromotionsPage.getText(), containsString("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        dynamicPromotionsPage.addSearchTrigger("Ireland, Belgium");
-        assertThat("Commas should not be included in triggers", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat("Incorrect/No error message displayed", dynamicPromotionsPage.getText(), containsString("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        dynamicPromotionsPage.addSearchTrigger("UK , Luxembourg");
-        assertThat("Commas should not be included in triggers", dynamicPromotionsPage.getSearchTriggersList(), hasSize(1));
-        assertThat("Incorrect/No error message displayed", dynamicPromotionsPage.getText(), containsString("Terms may not contain commas. Separate words and phrases with whitespace."));
-
-        dynamicPromotionsPage.addSearchTrigger("Andorra");
-        assertThat("Legitimate trigger not added", dynamicPromotionsPage.getSearchTriggersList(), hasSize(2));
-        assertThat("Error message displayed with legitimate term", dynamicPromotionsPage.getText(), not(containsString("Terms may not contain commas. Separate words and phrases with whitespace.")));
-    }
-
-    @Test
-    public void testHTMLTrigger() {
-        goToTriggers();
-
-        final String searchTrigger = "<h1>Hey</h1>";
-        dynamicPromotionsPage.addSearchTrigger(searchTrigger);
-
-        final WebElement span = dynamicPromotionsPage.findElement(By.cssSelector(".trigger-words-form .term"));
-        assertThat("HTML was not escaped", span.getText(), is(searchTrigger.toLowerCase()));		//Triggers are always lower case
+        SharedTriggerTests.badTriggersTest(triggerForm, 0);
     }
 
     private void goToTriggers() {
@@ -261,6 +160,8 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
         dynamicPromotionsPage.continueButton().click();
         Waits.loadOrFadeWait();
+
+        triggerForm = dynamicPromotionsPage.getTriggerForm();
     }
 
     private int getNumberOfPromotedDynamicResults() {
@@ -285,7 +186,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         }
         assertThat(searchPage.promotionsSummaryList(true).size(), is(promotionResultsCount));
 
-        promotionsDetailPage = promotionService.goToDetails("sausage");
+        PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("sausage");
         assertThat(promotionsDetailPage.getDynamicPromotedTitles(), hasSize(promotionResultsCount));
     }
 
