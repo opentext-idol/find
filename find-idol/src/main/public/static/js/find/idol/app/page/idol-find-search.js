@@ -5,7 +5,7 @@
 
 define([
     'find/app/page/find-search',
-    'find/idol/app/page/idol-service-view'
+    'find/idol/app/page/search/idol-service-view'
 ], function(FindSearch, ServiceView) {
     'use strict';
 
