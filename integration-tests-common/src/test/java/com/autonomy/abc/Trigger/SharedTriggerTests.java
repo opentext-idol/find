@@ -22,7 +22,8 @@ public class SharedTriggerTests {
             " dog",
             "dog ",
             " dog  ",
-            "\"dog\""
+            "\"dog\"",
+            "dog house"
     };
     private final String[] quoteTriggers = {
             "\"bad",
@@ -50,7 +51,7 @@ public class SharedTriggerTests {
         this.triggerForm = triggerForm;
     }
 
-    public static void badTriggersTest(TriggerForm triggerForm, int initialNumberOfTriggers){
+    public static int badTriggersTest(TriggerForm triggerForm, int initialNumberOfTriggers){
         SharedTriggerTests sharedTriggerTests = new SharedTriggerTests(triggerForm);
 
         if(!triggerForm.getTriggersAsStrings().contains(sharedTriggerTests.initialTrigger)){
@@ -67,8 +68,10 @@ public class SharedTriggerTests {
         triggerForm.typeTriggerWithoutSubmit("a");
         verifyThat("error message is cleared", triggerForm.getTriggerError(), isEmptyOrNullString());
         verifyThat(triggerForm.addButton(), not(disabled()));
-
+        triggerForm.addTrigger("\"Valid Trigger\"");
         verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(++initialNumberOfTriggers));
+
+        return initialNumberOfTriggers;
     }
 
     private void checkBadTriggers(){
@@ -77,15 +80,22 @@ public class SharedTriggerTests {
         checkBadTriggers(commaTriggers, Errors.Term.COMMAS);
         checkBadTriggers(caseTriggers, Errors.Term.CASE);
         checkWhitespaceTriggers();
+        checkDuplicateTrigger();
+    }
+
+    private void checkDuplicateTrigger(){
+        String trigger = "jam JAm";
+        triggerForm.addTrigger(trigger);
+        verifyTriggerNotAdded(trigger, Errors.Term.DUPLICATED);
     }
 
     private void checkWhitespaceTriggers(){
         for(String trigger : whitespaceTriggers){
             triggerForm.addTrigger(trigger);
-            verifyThat(triggerForm.addButton(), is(disabled()));
+            verifyTriggerNotAdded(trigger, Errors.Term.BLANK);
         }
 
-        triggerForm.clear();
+        triggerForm.clearTriggerBox();
         triggerForm.typeTriggerWithoutSubmit(Keys.RETURN);
         verifyThat(triggerForm.addButton(), is(disabled()));
     }
@@ -93,9 +103,25 @@ public class SharedTriggerTests {
     private void checkBadTriggers(String[] triggers, String errorSubstring) {
         for (String trigger : triggers) {
             triggerForm.addTrigger(trigger);
-            verifyThat("trigger '" + trigger + "' not added", triggerForm.getNumberOfTriggers(), is(numberOfTriggers));
-            verifyThat(triggerForm.getTriggerError(), containsString(errorSubstring));
-            verifyThat(triggerForm.addButton(), disabled());
+            verifyTriggerNotAdded(trigger, errorSubstring);
         }
+    }
+
+    private void verifyTriggerNotAdded(String trigger, String errorSubstring){
+        verifyNoNewTriggers(trigger);
+        verifyErrorString(errorSubstring);
+        verifyAddButtonDisabled();
+    }
+
+    private void verifyNoNewTriggers(String trigger){
+        verifyThat("trigger '" + trigger + "' not added", triggerForm.getNumberOfTriggers(), is(numberOfTriggers));
+    }
+
+    private void verifyErrorString(String errorSubstring){
+        verifyThat(triggerForm.getTriggerError(), containsString(errorSubstring));
+    }
+
+    private void verifyAddButtonDisabled(){
+        verifyThat(triggerForm.addButton(), is(disabled()));
     }
 }

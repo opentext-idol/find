@@ -54,7 +54,7 @@ public class TriggerForm extends AppElement {
 
     /* Getting triggers */
     private Removable trigger(final String triggerName) {
-        return new LabelBox(findElement(By.cssSelector("[data-id='" + triggerName + "']")), getDriver());
+        return new LabelBox(findElement(By.cssSelector("[data-id='" + triggerName.toLowerCase().replace("\"","") + "']")), getDriver());
     }
 
     public void clickTrigger(String trigger) {
