@@ -120,7 +120,8 @@ public class SharedTriggerTests {
         triggerForm.addTrigger(searchTrigger);
 
         assertThat("HTML was escaped", triggerForm.getTriggerStringOnPage(searchTrigger), is(searchTrigger.toLowerCase()));
-        numberOfTriggers++;
+
+        triggerForm.removeTrigger(searchTrigger);
     }
 
     private void checkWhitespaceTriggers(){
