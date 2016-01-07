@@ -70,6 +70,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheResolver;
+import org.springframework.cache.interceptor.SimpleCacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -80,6 +81,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 public class HodConfiguration extends CachingConfigurerSupport {
     public static final String SSO_PAGE_PROPERTY = "${find.hod.sso:https://www.idolondemand.com/sso.html}";
     public static final String HOD_API_URL_PROPERTY = "${find.iod.api:https://api.havenondemand.com}";
+    public static final String SIMPLE_CACHE_RESOLVER_NAME = "simpleCacheResolver";
 
     @Autowired
     private Environment environment;
@@ -119,6 +121,14 @@ public class HodConfiguration extends CachingConfigurerSupport {
         hodApplicationCacheResolver.setCacheManager(cacheManager);
 
         return hodApplicationCacheResolver;
+    }
+
+    // Resolver for caches which are not application-specific
+    @Bean(name = SIMPLE_CACHE_RESOLVER_NAME)
+    public CacheResolver simpleCacheResolver() {
+        final SimpleCacheResolver resolver = new SimpleCacheResolver();
+        resolver.setCacheManager(cacheManager);
+        return resolver;
     }
 
     @Bean
