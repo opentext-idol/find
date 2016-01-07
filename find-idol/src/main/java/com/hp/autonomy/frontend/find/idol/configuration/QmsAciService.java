@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("qmsAciService")
 public class QmsAciService extends AbstractConfigurableAciService implements OptionalAciService {
 
     private final ConfigService<IdolFindConfig> configService;

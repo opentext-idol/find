@@ -30,9 +30,11 @@ import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersServiceImpl;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
+import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
 import org.apache.http.HttpHost;
@@ -111,13 +113,24 @@ public class HodConfiguration extends CachingConfigurerSupport {
         return builder.build();
     }
 
-    @Bean
-    public HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder() {
+    private HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder() {
         final String endpoint = environment.getProperty("find.iod.api", "https://api.havenondemand.com");
 
         return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
                 .setHttpClient(httpClient())
                 .setTokenRepository(tokenRepository);
+    }
+
+    @Bean
+    public TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService() {
+        return new SpringSecurityTokenProxyService();
+    }
+
+    @Bean
+    public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig(final TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService) {
+        return hodServiceConfigBuilder()
+                .setTokenProxyService(tokenProxyService)
+                .build();
     }
 
     @Bean

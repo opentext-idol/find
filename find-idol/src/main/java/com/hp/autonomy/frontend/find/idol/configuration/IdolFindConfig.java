@@ -92,6 +92,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         }
     }
 
+    @Override
+    public ServerConfig getQms() {
+        return queryManipulation != null ? queryManipulation.getServer() : null;
+    }
+
     @Setter
     @Accessors(chain = true)
     @NoArgsConstructor
