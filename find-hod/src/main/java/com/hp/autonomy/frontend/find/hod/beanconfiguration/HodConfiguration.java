@@ -20,6 +20,8 @@ import com.hp.autonomy.frontend.find.hod.search.HodFindDocument;
 import com.hp.autonomy.frontend.view.hod.HodViewService;
 import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
+import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteService;
+import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteServiceImpl;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
 import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -255,4 +257,8 @@ public class HodConfiguration extends CachingConfigurerSupport {
         return new UserStoreUsersServiceImpl(hodServiceConfig());
     }
 
+    @Bean
+    public AutocompleteService autocompleteService() {
+        return new AutocompleteServiceImpl(hodServiceConfig());
+    }
 }
