@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
+import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,15 @@ public class PromotionsToFindITCase extends HostedTestBase {
         verifyPinToPosition(promotionTitles, 6, 10);
 
         switchToSearch();
-        promotionsDetailPage.getTriggerForm().addTrigger(secondaryTrigger);
+        boolean addedQuickly = true;
+        try {
+            promotionsDetailPage.getTriggerForm().addTrigger(secondaryTrigger);
+        } catch (TimeoutException e) {
+            addedQuickly = false;
+            promotionsDetailPage.getTriggerForm().waitForTriggerRefresh();
+        } finally {
+            verifyThat("added trigger within reasonable time", addedQuickly);
+        }
         LOGGER.info("added secondary trigger");
 
         switchToFind();
@@ -100,7 +109,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         verifyPinToPosition(promotionTitles, 6, 10);
 
         switchToSearch();
-        List<String> spotlightPromotionTitles = promotionService.setUpPromotion(spotlightPromotion, "Tertiary", 2);
+        List<String> spotlightPromotionTitles = promotionService.setUpPromotion(spotlightPromotion, "another", 2);
         LOGGER.info("set up spotlight promotion");
 
         switchToFind();

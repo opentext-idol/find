@@ -190,11 +190,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat("deleted promotion 'pony'", promotionsPage, promotionsList(hasSize(0)));
 	}
 
-	@Ignore
 	@Test
+	// CSA-2022
 	public void testAddingLotsOfDocsToAPromotion() {
-		setUpPromotion(new SearchQuery("sith"), 100, new SpotlightPromotion("darth sith"));
-		assertThat(promotionsDetailPage.promotedList(), hasSize(100));
+		int size = 100;
+		setUpPromotion(new SearchQuery("dog"), size, new SpotlightPromotion("golden retriever"));
+		assertThat(promotionsDetailPage.promotedList(), hasSize(size));
 	}
 
 	private void renamePromotionContaining(String oldTitle, String newTitle) {

@@ -18,6 +18,8 @@ public class PromotionsDetailTriggerForm extends TriggerForm {
     }
 
     public void waitForTriggerRefresh() {
-        new WebDriverWait(getDriver(), 20).until(Predicates.invisibilityOfAllElementsLocated(By.cssSelector(".term .fa-spin")));
+        new WebDriverWait(getDriver(), 20)
+                .withMessage("refreshing triggers")
+                .until(Predicates.invisibilityOfAllElementsLocated(By.cssSelector(".term .fa-spin")));
     }
 }
