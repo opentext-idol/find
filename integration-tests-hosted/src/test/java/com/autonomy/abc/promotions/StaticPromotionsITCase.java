@@ -139,7 +139,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
     public void testInvalidTriggers() {
         goToDetails();
 
-        SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm(), 1);
+        SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm());
     }
 
     @Test

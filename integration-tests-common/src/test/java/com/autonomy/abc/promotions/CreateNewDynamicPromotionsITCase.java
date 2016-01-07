@@ -146,7 +146,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     @Test
     public void testTriggers(){
         goToTriggers();
-        SharedTriggerTests.badTriggersTest(triggerForm, 0);
+        SharedTriggerTests.badTriggersTest(triggerForm);
     }
 
     private void goToTriggers() {

@@ -164,7 +164,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     @Test
     public void testTriggers(){
         goToTriggerStep();
-        SharedTriggerTests.badTriggersTest(triggerForm, 0);
+        SharedTriggerTests.badTriggersTest(triggerForm);
     }
 
     @Test

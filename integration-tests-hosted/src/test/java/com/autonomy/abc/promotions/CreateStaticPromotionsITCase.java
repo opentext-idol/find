@@ -101,7 +101,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
     @Test
     public void testInvalidTriggers() {
         goToTriggerStep();
-        SharedTriggerTests.badTriggersTest(createPromotionsPage.getTriggerForm(), 0);
+        SharedTriggerTests.badTriggersTest(createPromotionsPage.getTriggerForm());
     }
 
     @Test
