@@ -1,10 +1,10 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
-import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -14,7 +14,6 @@ import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
-import com.autonomy.abc.selenium.util.Errors;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,10 +23,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
 import static org.hamcrest.Matchers.*;
@@ -141,58 +138,8 @@ public class StaticPromotionsITCase extends HostedTestBase {
     @Test
     public void testInvalidTriggers() {
         goToDetails();
-        final String[] duplicateTriggers = {
-                "dog",
-                " dog",
-                "dog ",
-                " dog  ",
-                "\"dog\""
-        };
-        final String[] quoteTriggers = {
-                "\"bad",
-                "bad\"",
-                "b\"ad",
-                "\"trigger with\" 3 quo\"tes"
-        };
-        final String[] commaTriggers = {
-                "comma,",
-                ",comma",
-                "com,ma",
-                ",,,,,,"
-        };
-        final String[] caseTriggers = {
-                "Dog",
-                "doG",
-                "DOG"
-        };
 
-        triggerForm = promotionsDetailPage.getTriggerForm();
-        assertThat(triggerForm.getNumberOfTriggers(), is(1));
-
-        checkBadTriggers(duplicateTriggers, Errors.Term.DUPLICATE_EXISTING);
-        checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
-        checkBadTriggers(commaTriggers, Errors.Term.COMMAS);
-        checkBadTriggers(caseTriggers, Errors.Term.CASE);
-
-        triggerForm.typeTriggerWithoutSubmit("a");
-        verifyThat("error message is cleared", triggerForm.getTriggerError(), isEmptyOrNullString());
-        verifyThat(triggerForm.addButton(), not(disabled()));
-
-        triggerForm.typeTriggerWithoutSubmit("    ");
-        verifyThat("cannot add '     '", triggerForm.addButton(), disabled());
-        triggerForm.typeTriggerWithoutSubmit("\t");
-        verifyThat("cannot add '\\t'", triggerForm.addButton(), disabled());
-        triggerForm.addTrigger("\"valid trigger\"");
-        verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(2));
-    }
-
-    private void checkBadTriggers(String[] triggers, String errorSubstring) {
-        for (String trigger : triggers) {
-            triggerForm.addTrigger(trigger);
-            verifyThat("trigger '" + trigger + "' not added", triggerForm.getNumberOfTriggers(), is(1));
-            verifyThat(triggerForm.getTriggerError(), containsString(errorSubstring));
-            verifyThat(triggerForm.addButton(), disabled());
-        }
+        SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm(), 1);
     }
 
     @Test

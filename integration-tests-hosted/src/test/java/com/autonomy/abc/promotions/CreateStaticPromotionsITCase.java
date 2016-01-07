@@ -1,11 +1,10 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
@@ -14,7 +13,6 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
-import com.autonomy.abc.selenium.util.Errors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,9 +32,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 
 public class CreateStaticPromotionsITCase extends HostedTestBase {
-    private HSOPromotionsPage promotionsPage;
     private HSOCreateNewPromotionsPage createPromotionsPage;
-    private PromotionsDetailPage promotionsDetailPage;
     private PromotionService promotionService;
     private Wizard wizard;
     private TriggerForm triggerForm;
@@ -58,8 +54,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
     @Before
     public void setUp() {
         body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        promotionsPage.staticPromotionButton().click();
+        getElementFactory().getPromotionsPage().staticPromotionButton().click();
         createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         promotionService = getApplication().createPromotionService(getElementFactory());
     }
@@ -104,42 +99,9 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
         getElementFactory().getSearchPage();
     }
 
-    private void checkBadTriggers(String[] triggers, String errorSubstring) {
-        for (String trigger : triggers) {
-            triggerForm.addTrigger(trigger);
-            verifyThat("trigger '" + trigger + "' not added", triggerForm.getNumberOfTriggers(), is(1));
-            verifyThat(triggerForm.getTriggerError(), containsString(errorSubstring));
-            verifyThat(triggerForm.addButton(), disabled());
-        }
-    }
-
     @Test
     public void testInvalidTriggers() {
         final String goodTrigger = "dog";
-        final String[] duplicateTriggers = {
-                "dog",
-                " dog",
-                "dog ",
-                " dog  ",
-                "\"dog\""
-        };
-        final String[] quoteTriggers = {
-                "\"bad",
-                "bad\"",
-                "b\"ad",
-                "\"trigger with\" 3 quo\"tes"
-        };
-        final String[] commaTriggers = {
-                "comma,",
-                ",comma",
-                "com,ma",
-                ",,,,,,"
-        };
-        final String[] caseTriggers = {
-                "Dog",
-                "doG",
-                "DOG"
-        };
 
         goToTriggerStep();
 
@@ -148,23 +110,8 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
         assertThat(createPromotionsPage.getCurrentStepTitle(), is(SearchTriggerStep.TITLE));
         verifyThat(triggerForm.getTriggers(), empty());
         triggerForm.addTrigger(goodTrigger);
-        assertThat(triggerForm.getNumberOfTriggers(), is(1));
 
-        checkBadTriggers(duplicateTriggers, Errors.Term.DUPLICATE_EXISTING);
-        checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
-        checkBadTriggers(commaTriggers, Errors.Term.COMMAS);
-        checkBadTriggers(caseTriggers, Errors.Term.CASE);
-
-        triggerForm.typeTriggerWithoutSubmit("a");
-        verifyThat("error message is cleared", triggerForm.getTriggerError(), isEmptyOrNullString());
-        verifyThat(triggerForm.addButton(), not(disabled()));
-
-        triggerForm.typeTriggerWithoutSubmit("    ");
-        verifyThat("cannot add '     '", triggerForm.addButton(), disabled());
-        triggerForm.typeTriggerWithoutSubmit("\t");
-        verifyThat("cannot add '\\t'", triggerForm.addButton(), disabled());
-        triggerForm.addTrigger("\"valid trigger\"");
-        verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(2));
+        SharedTriggerTests.badTriggersTest(triggerForm, 1);
     }
 
     @Test
@@ -187,7 +134,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
         wizard.next();
         getElementFactory().getSearchPage();
 
-        promotionsDetailPage = promotionService.goToDetails("delta");
+        PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("delta");
         assertThat("loaded details page", promotionsDetailPage.promotionTitle().getValue(), containsString("delta"));
 
         List<String> triggers = triggerForm.getTriggersAsStrings();

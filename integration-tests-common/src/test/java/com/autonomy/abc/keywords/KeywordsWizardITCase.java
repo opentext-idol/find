@@ -1,5 +1,6 @@
 package com.autonomy.abc.keywords;
 
+import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
@@ -37,6 +38,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsWizardITCase extends ABCTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsWizardITCase.class); 
@@ -57,6 +59,8 @@ public class KeywordsWizardITCase extends ABCTestBase {
         keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
 
         //TODO keywordsPage.createNewKeywordsButton().click(); up here?
+        keywordsPage.createNewKeywordsButton().click();
+        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
     }
 
     @After
@@ -66,6 +70,9 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Test
     public void testCreateNewKeywordsButtonAndCancel() {
+        assertThat("Cancel button displayed", createKeywordsPage.cancelWizardButton(), is(displayed()));
+        createKeywordsPage.cancelWizardButton().click();
+
         assertThat("Create new keywords button is not visible", keywordsPage.createNewKeywordsButton().isDisplayed());
 
         keywordsPage.createNewKeywordsButton().click();
@@ -84,8 +91,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Test
     public void testNavigateSynonymsWizard() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("Continue button should be disabled until a keywords type is selected", ElementUtil.isAttributePresent(createKeywordsPage.continueWizardButton(), "disabled"));
 
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
@@ -152,8 +157,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Test
     public void testWizardCancelButtonsWorksAfterClickingTheNavBarToggleButton() {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
 
         body.getSideNavBar().toggle();
@@ -185,8 +188,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Test
     public void testNavigateBlacklistedWizard() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("Continue button should be disabled until a keywords type is selected", ElementUtil.isAttributePresent(createKeywordsPage.continueWizardButton(), "disabled"));
 
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
@@ -247,7 +248,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         final String other = "chips";
 
         keywordService.addBlacklistTerms(Language.ENGLISH, term);
-        assertThat(keywordsPage.getBlacklistedTerms(), hasItem("fish"));
+        assertThat(keywordsPage.getBlacklistedTerms(), hasItem(term));
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
@@ -297,144 +298,32 @@ public class KeywordsWizardITCase extends ABCTestBase {
         }
     }
 
-    //Whitespace of any form should not be added as a blacklisted term
     @Test
-    public void testWhitespaceBlacklistTermsWizard() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-
-        createKeywordsPage.selectLanguage(Language.ENGLISH);
-
-        createKeywordsPage.continueWizardButton().click();
-        Waits.loadOrFadeWait();
-
-        triggerForm = createKeywordsPage.getTriggerForm();
-
-        triggerForm.typeTriggerWithoutSubmit(" ");
-        ElementUtil.tryClickThenTryParentClick(triggerForm.addButton());
-        verifyWhitespaceNotAdded(0);
-
-        triggerForm.clearTriggerBox();
-        triggerForm.typeTriggerWithoutSubmit(Keys.RETURN);
-        verifyWhitespaceNotAdded(0);
-
-        triggerForm.typeTriggerWithoutSubmit("\t");
-        ElementUtil.tryClickThenTryParentClick(triggerForm.addButton());
-        verifyWhitespaceNotAdded(0);
-    }
-
-    //Whitespace of any form should not be added as a synonym keyword
-    @Test
-    public void testWhitespaceSynonymsWizard() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+    public void testSynonymTriggers(){
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
-
-        createKeywordsPage.selectLanguage(Language.ENGLISH);
-
-        createKeywordsPage.continueWizardButton().click();
-        Waits.loadOrFadeWait();
-
-        triggerForm = createKeywordsPage.getTriggerForm();
-
-        triggerForm.addTrigger(" ");
-        verifyWhitespaceNotAdded(0);
-
-        triggerForm.clearTriggerBox();
-        triggerForm.typeTriggerWithoutSubmit(Keys.RETURN);
-        verifyWhitespaceNotAdded(0);
-
-        triggerForm.addTrigger("\t");
-        verifyWhitespaceNotAdded(0);
-
-        triggerForm.addTrigger("test");
-        triggerForm.addTrigger(" ");
-        verifyWhitespaceNotAdded(0);
-
-        triggerForm.clearTriggerBox();
-        triggerForm.typeTriggerWithoutSubmit(Keys.RETURN);
-        verifyWhitespaceNotAdded(0);
-
-        triggerForm.addTrigger("\t");
-        verifyWhitespaceNotAdded(0);
+        testTriggers();
     }
 
-    private void verifyWhitespaceNotAdded(int expectedTriggers){
-        verifyThat("Whitespace not added as a keyword", triggerForm.getNumberOfTriggers(), is(expectedTriggers));
-    }
-
-    //Odd number of quotes or quotes with blank text should not be able to be added as a synonym keyword
     @Test
-    public void testQuotesInSynonymsWizard() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
-
-        createKeywordsPage.selectLanguage(Language.ENGLISH);
-
-        createKeywordsPage.continueWizardButton().click();
-        Waits.loadOrFadeWait();
-
-        triggerForm = createKeywordsPage.getTriggerForm();
-
-        for(String keyword : Arrays.asList("\"", "\"\"", "\" \"")) {
-            triggerForm.addTrigger(keyword);
-            assertThat(triggerForm.getNumberOfTriggers(), is(0));
-        }
-
-        triggerForm.addTrigger("test");
-
-        for(String keyword : Arrays.asList("\"", "\"\"", "\" \"")) {
-            triggerForm.addTrigger(keyword);
-            assertThat(triggerForm.getNumberOfTriggers(), is(1));
-        }
-
-        triggerForm.addTrigger("terms \"");
-        assertThat(triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("Correct error message not showing", createKeywordsPage.getText(), containsString("Terms have an odd number of quotes, suggesting an unclosed phrase"));
-
-        triggerForm.addTrigger("\"closed phrase\"");
-        assertThat(triggerForm.getNumberOfTriggers(), is(2));
-        assertThat("Phrase not created", triggerForm.getTriggersAsStrings(), hasItem("closed phrase"));
-        assertThat("Quotes unescaped", triggerForm.getTriggersAsStrings(), not(hasItem("/")));
-    }
-
-    //Odd number of quotes or quotes with blank text should not be able to be added as a blacklisted term
-    @Test
-    public void testQuotesInBlacklistWizard() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+    public void testBlacklistTriggers(){
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-
-        createKeywordsPage.continueWizardButton().click();
-        Waits.loadOrFadeWait();
-
-        tryAddingBadTerms(0);
-
-        triggerForm.addTrigger("test");
-
-        tryAddingBadTerms(1);
+        testTriggers();
     }
 
-    private void tryAddingBadTerms(int keywords){
-        for(String keyword : Arrays.asList("\"", "\"\"", "\" \"")){
-            triggerForm.addTrigger(keyword);
-            assertThat(triggerForm.getNumberOfTriggers(), is(keywords));
-            assertThat("plus button should be disabled", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
-        }
+    private void testTriggers(){
+        createKeywordsPage.continueWizardButton().click();
+        triggerForm = createKeywordsPage.getTriggerForm();
 
-        for(String keyword : Arrays.asList("\"d", "d\"", "\"d\"", "s\"d\"d")){
-            triggerForm.addTrigger(keyword);
-            assertThat(triggerForm.getNumberOfTriggers(), is(keywords));
-            assertThat("wrong/no error message", createKeywordsPage.getText(),containsString("Terms may not contain quotation marks"));
-        }
+        int newTriggers = SharedTriggerTests.badTriggersTest(triggerForm, 0);
+
+        triggerForm.removeTrigger("\"Valid Trigger\"");
+        triggerForm.addTrigger("test");
+
+        SharedTriggerTests.badTriggersTest(triggerForm, newTriggers);
     }
 
     @Test
     public void testBooleanTermsNotValidKeyword() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
         createKeywordsPage.continueWizardButton().click();
@@ -486,8 +375,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Test
     public void testAllowKeywordStringsThatContainBooleansWithinThem() throws InterruptedException {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
 
         createKeywordsPage.selectLanguage(Language.ENGLISH);
@@ -543,50 +430,13 @@ public class KeywordsWizardITCase extends ABCTestBase {
     private void tryAddingHiddenSearchOperators(List<String> hiddenSearchOperators) {
         for (int i = 0; i < hiddenSearchOperators.size(); i++) {
             triggerForm.addTrigger(hiddenSearchOperators.get(i));
-            assertEquals(triggerForm.getNumberOfTriggers(), is(2 + i));
+            assertThat(triggerForm.getNumberOfTriggers(), is(2 + i));
         }
-    }
-
-    @Test
-    public void testSynonymsNotCaseSensitive() {
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
-
-        createKeywordsPage.selectLanguage(Language.ENGLISH);
-
-        createKeywordsPage.continueWizardButton().click();
-        Waits.loadOrFadeWait();
-
-        triggerForm = createKeywordsPage.getTriggerForm();
-
-        triggerForm.addTrigger("bear");
-        assertThat(triggerForm.getNumberOfTriggers(), is(1));
-
-        for (final String bearVariant : Arrays.asList("Bear", "beaR", "BEAR", "beAR", "BEar")) {
-            triggerForm.addTrigger(bearVariant);
-            assertThat(triggerForm.getNumberOfTriggers(), is(1));
-            assertThat("bear not included as a keyword", triggerForm.getTriggersAsStrings(),hasItem("bear"));
-            assertThat("correct error message not showing", createKeywordsPage.getText(), containsString(bearVariant.toLowerCase() + " is a duplicate of an existing keyword."));
-        }
-
-        // disallows any adding of synonyms if disallowed synonym found
-        triggerForm.addTrigger("Polar Bear");
-        assertThat(triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("bear not included as a keyword", triggerForm.getTriggersAsStrings(), hasItem("bear"));
-        assertThat("correct error message not showing", createKeywordsPage.getText(), containsString("bear is a duplicate of an existing keyword."));
-
-        //jam and jaM are case variants so none should be added
-        triggerForm.addTrigger("jam jaM");
-        assertThat(triggerForm.getNumberOfTriggers(), is(1));
     }
 
     @Test
     //CSA-1712
     public void testCursorDoesNotMoveToEndOfText(){
-        keywordsPage.createNewKeywordsButton().click();
-        createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         createKeywordsPage.continueWizardButton().click();
 
@@ -645,6 +495,8 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         createKeywordsPage.continueWizardButton().click();
+
+        triggerForm = createKeywordsPage.getTriggerForm();
     }
 
     private void verifyExistingGroups(String existingSynonym, int size){
