@@ -13,6 +13,7 @@ import com.hp.autonomy.frontend.find.core.search.FindQueryParams;
 import com.hp.autonomy.frontend.find.core.web.CacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.textindex.query.search.CheckSpelling;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Highlight;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
@@ -114,6 +115,10 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
                 .setStartTag(HIGHLIGHT_START_TAG)
                 .setEndTag(HIGHLIGHT_END_TAG);
 
+        if (findQueryParams.isAutoCorrect()) {
+            params.setCheckSpelling(CheckSpelling.autocorrect);
+        }
+
         final Documents<HodFindDocument> hodDocuments = queryTextIndexService.queryTextIndexWithText(findQueryParams.getText(), params);
         final List<HodFindDocument> documentList = new LinkedList<>();
 
@@ -121,7 +126,7 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
             documentList.add(addDomain(findQueryParams.getIndex(), hodDocument));
         }
 
-        return new Documents<>(documentList, hodDocuments.getTotalResults(), hodDocuments.getExpandedQuery(), null, null);
+        return new Documents<>(documentList, hodDocuments.getTotalResults(), hodDocuments.getExpandedQuery(), null, hodDocuments.getAutoCorrection());
     }
 
     // Add a domain to a FindDocument, given the collection of indexes which were queried against to return it from HOD
