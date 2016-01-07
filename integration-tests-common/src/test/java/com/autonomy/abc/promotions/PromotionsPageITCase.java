@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -460,7 +461,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
 		triggerForm.addTrigger("tigre");
 		triggerForm.removeTrigger("meow");
-		search("tigre", "French").apply();
+		searchService.search(getQuery("tigre", Language.FRENCH));
 		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(secondSearchResult));
 
 		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
