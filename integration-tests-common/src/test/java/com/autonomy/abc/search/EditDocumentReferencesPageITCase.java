@@ -6,14 +6,12 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
@@ -41,23 +39,22 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         super(config, browser, appType, platform);
     }
 
-    private PromotionsPage promotionsPage;
     private SearchPage searchPage;
     private PromotionsDetailPage promotionsDetailPage;
     private EditDocumentReferencesPage editReferencesPage;
     private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
+    private SearchService searchService;
 
     @Before
     public void setUp() throws MalformedURLException {
         promotionService = getApplication().createPromotionService(getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-        promotionsPage = promotionService.deleteAll();
+        searchService = getApplication().createSearchService(getElementFactory());
+
+        promotionService.deleteAll();
     }
 
     private List<String> setUpPromotion(final String searchTerm, final String trigger, final int numberOfDocs) {
-        Search search = searchActionFactory.makeSearch(searchTerm);
-        final List<String> promotedDocTitles = promotionService.setUpPromotion(new SpotlightPromotion(trigger), search, numberOfDocs);
+        final List<String> promotedDocTitles = promotionService.setUpPromotion(new SpotlightPromotion(trigger), searchTerm, numberOfDocs);
         promotionsDetailPage = promotionService.goToDetails(trigger.split(" ")[0]);
         promotionsDetailPage.addMoreButton().click();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
@@ -88,7 +85,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        searchPage = searchActionFactory.makeSearch("edit").apply();
+        searchPage = searchService.search("edit");
         searchPage.promoteTheseDocumentsButton().click();
         searchPage.addToBucket(3);
 
@@ -112,7 +109,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         final List<String> finalPromotionsBucketList = editReferencesPage.promotionsBucketList();
 
         body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        searchPage = searchActionFactory.makeSearch("fast").apply();
+        searchPage = searchService.search("fast");
         searchPage.promoteTheseDocumentsButton().click();
 
         final List<String> searchPageBucketDocs = searchPage.promotionsBucketList();

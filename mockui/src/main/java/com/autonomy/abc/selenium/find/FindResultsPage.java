@@ -40,20 +40,6 @@ public class FindResultsPage extends AppElement {
         waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
     }
 
-    public void filterByDate(String start, String end){
-        filterByDate(DateEnum.CUSTOM);
-
-        inputDate("results-filter-min-date", start);
-        inputDate("results-filter-max-date", end);
-
-        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
-    }
-
-    private void inputDate(String inputElementCSS,String inputString){
-        WebElement inputBox = findElement(By.cssSelector("."+inputElementCSS+" input"));
-        inputBox.sendKeys(inputString);
-    }
-
     public List<String> getResultTitles() {
         List<String> titles = new ArrayList<>();
         for(WebElement result : getResults()){
@@ -70,14 +56,6 @@ public class FindResultsPage extends AppElement {
         }
 
         return titles;
-    }
-
-    public WebElement getStartDateFilter() {
-        return findElement(By.cssSelector(".results-filter-min-date input"));
-    }
-
-    public WebElement getEndDateFilter() {
-        return findElement(By.cssSelector(".results-filter-max-date input"));
     }
 
     public void filterByParametric(String header, String filter) {

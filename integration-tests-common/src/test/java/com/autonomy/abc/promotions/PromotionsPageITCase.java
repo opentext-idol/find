@@ -10,10 +10,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.LanguageFilter;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
@@ -46,20 +43,18 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	private PromotionsPage promotionsPage;
 	private PromotionsDetailPage promotionsDetailPage;
-	private SearchActionFactory searchActionFactory;
+	private SearchService searchService;
 	private PromotionService promotionService;
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage = getElementFactory().getPromotionsPage();
-		// TODO: occasional stale element?
-		searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+		searchService = getApplication().createSearchService(getElementFactory());
 		promotionService = getApplication().createPromotionService(getElementFactory());
-		promotionService.deleteAll();
+
+		promotionsPage = promotionService.deleteAll();
 	}
 
-	private List<String> setUpPromotion(Search search, int numberOfDocs, Promotion promotion) {
+	private List<String> setUpPromotion(SearchQuery search, int numberOfDocs, Promotion promotion) {
 		List<String> promotedDocTitles = promotionService.setUpPromotion(promotion, search, numberOfDocs);
 		// wait for search page to load before navigating away
 		getElementFactory().getSearchPage();
@@ -67,17 +62,17 @@ public class PromotionsPageITCase extends ABCTestBase {
 		return promotedDocTitles;
 	}
 
-	private List<String> setUpPromotion(Search search, Promotion promotion) {
+	private List<String> setUpPromotion(SearchQuery search, Promotion promotion) {
 		return setUpPromotion(search, 1, promotion);
 	}
 
 	private List<String> setUpCarsPromotion(int numberOfDocs) {
-//		final List<String> promotedDocTitles = promotionsPage.setUpANewMultiDocPromotion("English", "cars", "Sponsored", "wheels", 2, getConfig().getType().getName());
-		return setUpPromotion(searchActionFactory.makeSearch("cars"), numberOfDocs, new SpotlightPromotion("wheels"));
+//		final List<String> promotedDocTitles = promotionsPage.setUpANewMultiDocPromotion(Language.ENGLISH, "cars", "Sponsored", "wheels", 2, getConfig().getType().getName());
+		return setUpPromotion(new SearchQuery("cars"), numberOfDocs, new SpotlightPromotion("wheels"));
 	}
 
-	private Search search(String searchTerm, String language) {
-		return searchActionFactory.makeSearch(searchTerm).applyFilter(new LanguageFilter(language));
+	private SearchQuery getQuery(String searchTerm, Language language) {
+		return new SearchQuery(searchTerm).withFilter(new LanguageFilter(language));
 	}
 
 	@Test
@@ -253,7 +248,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		String[] searchTerms = {"rabbit", "horse", "script"};
 		String[] triggers = {"bunny", "pony", "<script> document.body.innerHTML = '' </script>"};
 		for (int i=0; i<searchTerms.length; i++) {
-			setUpPromotion(searchActionFactory.makeSearch(searchTerms[i]), new SpotlightPromotion(triggers[i]));
+			setUpPromotion(new SearchQuery(searchTerms[i]), new SpotlightPromotion(triggers[i]));
 			promotionsPage = promotionService.goToPromotions();
 		}
 
@@ -283,8 +278,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Ignore
 	@Test
 	public void testAddingLotsOfDocsToAPromotion() {
-		setUpPromotion(searchActionFactory.makeSearch("sith"), 100, new SpotlightPromotion("darth sith"));
-		assertThat(promotionsPage, promotionsList(hasSize(100)));
+		setUpPromotion(new SearchQuery("sith"), 100, new SpotlightPromotion("darth sith"));
+		assertThat(promotionsDetailPage.promotedList(), hasSize(100));
 	}
 
 	private void renamePromotionContaining(String oldTitle, String newTitle) {
@@ -296,26 +291,26 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
-		Search[] searches;
+		SearchQuery[] searches;
 		if (config.getType().equals(ApplicationType.ON_PREM)) {
-			searches = new Search[]{
-					search("chien", "French"),
-					search("الكلب", "Arabic"),
-					search("dog", "English"),
-					search("mbwa", "Swahili"),
-					search("mbwa", "Swahili"),
-					search("hond", "Afrikaans"),
-					search("hond", "Afrikaans")
+			searches = new SearchQuery[]{
+					getQuery("chien", Language.FRENCH),
+					getQuery("الكلب", Language.ARABIC),
+					getQuery("dog", Language.ENGLISH),
+					getQuery("mbwa", Language.SWAHILI),
+					getQuery("mbwa", Language.SWAHILI),
+					getQuery("hond", Language.AFRIKAANS),
+					getQuery("hond", Language.AFRIKAANS)
 			};
 		} else {
-			searches = new Search[]{
-					search("marge", "English"),
-					search("homer", "English"),
-					search("dog", "English"),
-					search("bart", "English"),
-					search("bart", "English"),
-					search("lisa", "English"),
-					search("lisa", "English")
+			searches = new SearchQuery[]{
+					getQuery("marge", Language.ENGLISH),
+					getQuery("homer", Language.ENGLISH),
+					getQuery("dog", Language.ENGLISH),
+					getQuery("bart", Language.ENGLISH),
+					getQuery("bart", Language.ENGLISH),
+					getQuery("lisa", Language.ENGLISH),
+					getQuery("lisa", Language.ENGLISH)
 			};
 		}
 		Promotion[] promotions = {
@@ -439,7 +434,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testPromotionLanguages() {
 		// TODO: IOD-4827
 		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
-		String[] languages = {"French", "Swahili", "Afrikaans"};
+		Language[] languages = {Language.FRENCH, Language.SWAHILI, Language.AFRIKAANS};
 //		String[] searchTerms = {"chien", "mbwa", "pooch"};
 		//Afrikaans dog thing isn't actually a dog but it wasn't working so yolo
 		String[] searchTerms = {"chien", "mbwa", "bergaalwyn"};
@@ -450,17 +445,17 @@ public class PromotionsPageITCase extends ABCTestBase {
 		};
 
 		for (int i=0; i<languages.length; i++) {
-			setUpPromotion(search(searchTerms[i], languages[i]), promotions[i]);
-			verifyThat(promotionsDetailPage.getLanguage(), is(languages[i]));
+			setUpPromotion(getQuery(searchTerms[i], languages[i]), promotions[i]);
+			verifyThat(promotionsDetailPage.getLanguage(), is(languages[i].toString()));
 		}
 	}
 
 	@Test
 	public void testEditDynamicQuery() throws InterruptedException {
-		search("kitty", "French").apply();
+		searchService.search(getQuery("kitty", Language.FRENCH));
 		SearchPage searchPage = getElementFactory().getSearchPage();
 		final String firstSearchResult = searchPage.getSearchResult(1).getText();
-		final String secondSearchResult = setUpPromotion(search("chat", "French"), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
+		final String secondSearchResult = setUpPromotion(getQuery("chat", Language.FRENCH), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
 
 		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
 		triggerForm.addTrigger("tigre");
@@ -479,7 +474,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		queryText.setValueAndWait("kitty");
 		verifyThat(queryText.getValue(), is("kitty"));
 
-		search("tigre", "French").apply();
+		searchService.search(getQuery("tigre", Language.FRENCH));
 		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
 
 		getDriver().navigate().refresh();
@@ -489,7 +484,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testPromotionCreationAndDeletionOnSecondWindow() {
-		setUpPromotion(search("chien", "French"), new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"));
+		setUpPromotion(getQuery("chien", Language.FRENCH), new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"));
 
 		promotionService.goToPromotions();
 		final String url = getDriver().getCurrentUrl();
@@ -501,7 +496,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		assertThat("Navigated to promotions menu", secondPromotionsPage.promoteExistingButton().isDisplayed());
 
 		getDriver().switchTo().window(browserHandles.get(0));
-		setUpPromotion(search("nein", "German"), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
+		setUpPromotion(getQuery("nein", Language.GERMAN), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));
@@ -521,12 +516,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 	@Test
 	public void testCountSearchResultsWithPinToPositionInjected() {
-		setUpPromotion(search("donut", "English"), new PinToPositionPromotion(13, "round tasty snack"));
+		setUpPromotion(getQuery("donut", Language.ENGLISH), new PinToPositionPromotion(13, "round tasty snack"));
 
 		String[] queries = {"round", "tasty", "snack"};
 		SearchPage searchPage;
 		for (final String query : queries) {
-			search(query, "English").apply();
+			searchService.search(getQuery(query, Language.ENGLISH));
 			searchPage = getElementFactory().getSearchPage();
 			final int firstPageStated = searchPage.getHeadingResultsCount();
 			searchPage.switchResultsPage(Pagination.LAST);
@@ -543,7 +538,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testSpotlightViewable() {
 		List<String> promotedDocs = setUpCarsPromotion(3);
-		SearchPage searchPage = searchActionFactory.makeSearch("wheels").apply();
+		SearchPage searchPage = searchService.search("wheels");
 		final String handle = getDriver().getWindowHandle();
 
 		WebElement promotedResult = searchPage.getPromotedResult(1);
@@ -589,9 +584,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 	//CSA-1494
 	public void testAddingMultipleTriggersNotifications() {
 		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE,"moscow");
-		Search search = new Search(getApplication(), getElementFactory(), "Mother Russia");
 
-		promotionService.setUpPromotion(promotion, search, 4);
+		promotionService.setUpPromotion(promotion, "Mother Russia", 4);
 		promotionsDetailPage = promotionService.goToDetails(promotion);
 
 		String[] triggers = {"HC", "Sochi", "CKSA", "SKA", "Dinamo", "Riga"};
@@ -612,9 +606,8 @@ public class PromotionsPageITCase extends ABCTestBase {
 	//CSA-1769
 	public void testUpdatingAndDeletingPinToPosition(){
 		PinToPositionPromotion pinToPositionPromotion = new PinToPositionPromotion(1, "say anything");
-		Search search = new Search(getApplication(), getElementFactory(), "Max Bemis");
 
-		promotionService.setUpPromotion(pinToPositionPromotion, search, 2);
+		promotionService.setUpPromotion(pinToPositionPromotion, "Max Bemis", 2);
 		promotionsDetailPage = promotionService.goToDetails(pinToPositionPromotion);
 
 		promotionsDetailPage.pinPosition().setValueAndWait("4");
@@ -634,12 +627,12 @@ public class PromotionsPageITCase extends ABCTestBase {
 	//CCUK-3457
 	public void testPromotingItemsWithBrackets(){
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
-		Search search = new Search(getApplication(), getElementFactory(), "\"Selenium (software)\"").applyFilter(new IndexFilter("wiki_eng"));
+		SearchQuery query = new SearchQuery("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));
 
-		SearchPage searchPage = search.apply();
+		SearchPage searchPage = searchService.search(query);
 		assumeThat("Was expecting Selenium (Software) to be the first result",searchPage.getSearchResultTitle(1), is("Selenium (software)"));
 
-		promotionService.setUpPromotion(spotlightPromotion, search, 1);
+		promotionService.setUpPromotion(spotlightPromotion, query, 1);
 		PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(spotlightPromotion);
 
 		List<String> promotedDocuments = promotionsDetailPage.getPromotedTitles();

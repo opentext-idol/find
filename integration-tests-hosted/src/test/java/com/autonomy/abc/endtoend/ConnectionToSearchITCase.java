@@ -7,13 +7,12 @@ import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,10 +30,10 @@ public class ConnectionToSearchITCase extends HostedTestBase {
     private ConnectionsDetailPage connectionsDetailPage;
     private SearchPage searchPage;
     private ConnectionService connectionService;
-    private SearchActionFactory searchActionFactory;
+    private SearchService searchService;
 
     private final WebConnector connector = new WebConnector("http://www.havenondemand.com", "hod");
-    private final String indexName = "hod";
+    private final Index index = new Index("hod");
     private final String searchTerm = "haven";
 
     public ConnectionToSearchITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
@@ -44,24 +43,21 @@ public class ConnectionToSearchITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        connectionService = new ConnectionService(getApplication(), getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+        connectionService = getApplication().createConnectionService(getElementFactory());
+        searchService = getApplication().createSearchService(getElementFactory());
     }
 
     @Test
     public void testConnectionToSearch() {
         connectionService.setUpConnection(connector);
-        Search search = searchActionFactory.makeSearch(searchTerm);
-        search.applyFilter(new IndexFilter(indexName));
-        search.apply();
-        searchPage = getElementFactory().getSearchPage();
-        verifyThat("index shows up on search page", searchPage.getSelectedDatabases(), hasItem(indexName));
+        searchPage = searchService.search(new SearchQuery(searchTerm).withFilter(new IndexFilter(index)));
+        verifyThat("index shows up on search page", searchPage.indexesTree().getSelected(), hasItem(index));
         verifyThat("index has search results", searchPage.getHeadingResultsCount(), greaterThan(0));
 
         final String handle = getDriver().getWindowHandle();
         searchPage.getSearchResult(1).click();
         DocumentViewer documentViewer = DocumentViewer.make(getDriver());
-        verifyThat("search result in correct index", documentViewer.getIndex(), is(indexName));
+        verifyThat("search result in correct index", documentViewer.getIndex(), is(index.getName()));
         getDriver().switchTo().frame(documentViewer.frame());
         verifyThat("search result is viewable", getDriver().findElement(By.xpath(".//*")).getText(), containsString(searchTerm));
         getDriver().switchTo().window(handle);
