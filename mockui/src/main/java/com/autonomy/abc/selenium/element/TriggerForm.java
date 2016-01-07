@@ -24,7 +24,7 @@ public class TriggerForm extends AppElement {
     }
 
     public WebElement addButton(){
-        return findElement(By.className("fa-plus"));
+        return findElement(By.tagName("button"));
     }
 
     public void typeTriggerWithoutSubmit(String trigger){
