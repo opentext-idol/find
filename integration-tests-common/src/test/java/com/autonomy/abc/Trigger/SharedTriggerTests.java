@@ -35,7 +35,9 @@ public class SharedTriggerTests {
             "comma,",
             ",comma",
             "com,ma",
-            ",,,,,,"
+            ",,,,,,",
+            "one, two",
+            "one , two"
     };
     private final String[] caseTriggers = {
             "Dog",
@@ -61,7 +63,7 @@ public class SharedTriggerTests {
 
         sharedTriggerTests.numberOfTriggers = initialNumberOfTriggers;
 
-        assertThat(triggerForm.getNumberOfTriggers(), is(initialNumberOfTriggers));
+        assertThat(triggerForm.getNumberOfTriggers(), is(sharedTriggerTests.numberOfTriggers));
 
         sharedTriggerTests.checkBadTriggers();
 
@@ -69,9 +71,8 @@ public class SharedTriggerTests {
         verifyThat("error message is cleared", triggerForm.getTriggerError(), isEmptyOrNullString());
         verifyThat(triggerForm.addButton(), not(disabled()));
         triggerForm.addTrigger("\"Valid Trigger\"");
-        verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(++initialNumberOfTriggers));
-
-        return initialNumberOfTriggers;
+        verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(++sharedTriggerTests.numberOfTriggers));
+        return sharedTriggerTests.numberOfTriggers;
     }
 
     private void checkBadTriggers(){
@@ -79,14 +80,17 @@ public class SharedTriggerTests {
         checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
         checkBadTriggers(commaTriggers, Errors.Term.COMMAS);
         checkBadTriggers(caseTriggers, Errors.Term.CASE);
+        checkBadTriggers(new String[]{"jam JAm"}, Errors.Term.DUPLICATED);
         checkWhitespaceTriggers();
-        checkDuplicateTrigger();
+        checkHTMLTrigger();
     }
 
-    private void checkDuplicateTrigger(){
-        String trigger = "jam JAm";
-        triggerForm.addTrigger(trigger);
-        verifyTriggerNotAdded(trigger, Errors.Term.DUPLICATED);
+    private void checkHTMLTrigger(){
+        final String searchTrigger = "<h1>Hey</h1>";
+        triggerForm.addTrigger(searchTrigger);
+
+        assertThat("HTML was escaped", triggerForm.getTriggerStringOnPage(searchTrigger), is(searchTrigger.toLowerCase()));
+        numberOfTriggers++;
     }
 
     private void checkWhitespaceTriggers(){

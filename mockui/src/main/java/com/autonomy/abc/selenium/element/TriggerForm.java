@@ -88,4 +88,8 @@ public class TriggerForm extends AppElement {
             return null;
         }
     }
+
+    public String getTriggerStringOnPage(String trigger) {
+        return trigger(trigger).getText();
+    }
 }
