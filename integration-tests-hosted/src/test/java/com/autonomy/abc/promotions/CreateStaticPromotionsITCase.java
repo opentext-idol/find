@@ -112,13 +112,8 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
 
         assertThat(createPromotionsPage.getCurrentStepTitle(), is(SearchTriggerStep.TITLE));
         verifyThat(triggerForm.getTriggers(), empty());
-        triggerForm.addTrigger("alpha");
-        triggerForm.addTrigger("beta gamma delta");
-        triggerForm.removeTrigger("gamma");
-        triggerForm.removeTrigger("alpha");
-        triggerForm.addTrigger("epsilon");
-        triggerForm.removeTrigger("beta");
-        verifyThat(triggerForm.getNumberOfTriggers(), is(2));
+
+        SharedTriggerTests.addRemoveTriggers(triggerForm, createPromotionsPage.cancelButton(), createPromotionsPage.finishButton());
 
         // finish wizard, wait
         wizard.next();

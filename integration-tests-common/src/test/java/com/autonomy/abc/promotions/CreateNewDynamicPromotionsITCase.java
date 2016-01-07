@@ -136,27 +136,8 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         goToTriggers();
         
         assertThat("Wizard has not progressed to Select the position", dynamicPromotionsPage.getText(), containsString("Select Promotion Triggers"));
-        assertThat("Trigger add button is not disabled when text box is empty", ElementUtil.isAttributePresent(triggerForm.addButton(), "disabled"));
-        assertThat("Finish button is not disabled when there are no match terms", ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
-        assertThat("Cancel button is not enabled when there are no match terms", !ElementUtil.isAttributePresent(dynamicPromotionsPage.cancelButton(), "disabled"));
 
-        triggerForm.addTrigger("animal");
-        assertThat("Finish button is not enabled when a trigger is added", !ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
-        assertThat("animal search trigger not added", triggerForm.getTriggersAsStrings(), hasItem("animal"));
-
-        triggerForm.removeTrigger("animal");
-        assertThat("animal search trigger not removed", triggerForm.getTriggersAsStrings(), not(hasItem("animal")));
-        assertThat("Promote button is not disabled when no triggers are added", ElementUtil.isAttributePresent(dynamicPromotionsPage.finishButton(), "disabled"));
-
-        triggerForm.addTrigger("bushy tail");
-        assertThat("Number of triggers does not equal 2", triggerForm.getNumberOfTriggers(), is(2));
-        assertThat("bushy search trigger not added", triggerForm.getTriggersAsStrings(), hasItem("bushy"));
-        assertThat("tail search trigger not added", triggerForm.getTriggersAsStrings(), hasItem("tail"));
-
-        triggerForm.removeTrigger("tail");
-        assertThat("Number of triggers does not equal 1", triggerForm.getNumberOfTriggers(), is(1));
-        assertThat("bushy search trigger not present", triggerForm.getTriggersAsStrings(), hasItem("bushy"));
-        assertThat("tail search trigger not removed", triggerForm.getTriggersAsStrings(), not(hasItem("tail")));
+        SharedTriggerTests.addRemoveTriggers(triggerForm, dynamicPromotionsPage.cancelButton(), dynamicPromotionsPage.finishButton());
 
         dynamicPromotionsPage.cancelButton().click();
         assertThat("Wizard has not cancelled", getDriver().getCurrentUrl(), not(containsString("create")));

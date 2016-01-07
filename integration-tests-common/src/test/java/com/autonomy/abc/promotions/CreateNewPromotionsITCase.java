@@ -1,5 +1,6 @@
 package com.autonomy.abc.promotions;
 
+import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
@@ -151,109 +152,26 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     @Test
     public void testAddRemoveTriggerTermsAndCancel() {
         goToTriggerStep();
+
         assertThat(createPromotionsPage, containsText(wizard.getCurrentStep().getTitle()));
-        assertThat(triggerForm.addButton(), disabled());
-        assertThat(createPromotionsPage.cancelButton(), not(disabled()));
 
-        triggerForm.addTrigger("animal");
-        assertThat(createPromotionsPage.finishButton(), not(disabled()));
-        assertThat(triggerForm.getTriggersAsStrings(), hasItem("animal"));
-
-        triggerForm.removeTrigger("animal");
-        assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("animal")));
-        assertThat(createPromotionsPage.finishButton(), disabled());
-
-        triggerForm.addTrigger("bushy tail");
-        assertThat(triggerForm.getTriggersAsStrings(), hasSize(2));
-        assertThat(triggerForm.getTriggersAsStrings(), hasItem("bushy"));
-        assertThat(triggerForm.getTriggersAsStrings(), hasItem("tail"));
-
-        triggerForm.removeTrigger("tail");
-        assertThat(triggerForm.getTriggersAsStrings(), hasSize(1));
-        assertThat(triggerForm.getTriggersAsStrings(), hasItem("bushy"));
-        assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("tail")));
+        SharedTriggerTests.addRemoveTriggers(triggerForm, createPromotionsPage.cancelButton(), createPromotionsPage.finishButton());
 
         createPromotionsPage.cancelButton().click();
         assertThat(getDriver().getCurrentUrl(), not(containsString("create")));
     }
 
     @Test
-    public void testWhitespaceTrigger() {
+    public void testTriggers(){
         goToTriggerStep();
-        assertThat(triggerForm.addButton(), disabled());
-
-        ElementUtil.tryClickThenTryParentClick(triggerForm.addButton());
-        assertThat(triggerForm.getTriggersAsStrings(), empty());
-
-        triggerForm.addTrigger("trigger");
-        assertThat(triggerForm.getTriggersAsStrings(), hasSize(1));
-
-        String[] invalidTriggers = {"   ", " trigger", "\t"};
-        for (String trigger : invalidTriggers) {
-            triggerForm.addTrigger(trigger);
-            verifyThat("'" + trigger + "' is not accepted as a valid trigger", triggerForm.getTriggersAsStrings(), hasSize(1));
-        }
-    }
-
-    @Test
-    public void testQuotesTrigger() {
-        goToTriggerStep();
-        assertThat(triggerForm.addButton(), disabled());
-
-        ElementUtil.tryClickThenTryParentClick(triggerForm.addButton());
-        assertThat(triggerForm.getTriggersAsStrings(), empty());
-
-        triggerForm.addTrigger("bag");
-        assertThat(triggerForm.getTriggersAsStrings(), hasSize(1));
-
-        String[] invalidTriggers = {"\"bag", "bag\"", "\"bag\""};
-        for (String trigger : invalidTriggers) {
-            triggerForm.addTrigger(trigger);
-            assertThat("'" + trigger + "' is not accepted as a valid trigger", triggerForm.getTriggersAsStrings(), hasSize(1));
-        }
-
-        triggerForm.removeTrigger("bag");
-        assertThat(triggerForm.getTriggersAsStrings(), empty());
-    }
-
-    @Test
-    public void testCommasTrigger() {
-        goToTriggerStep();
-        triggerForm.addTrigger("France");
-        assertThat(triggerForm.getTriggersAsStrings(), hasSize(1));
-
-        String[] invalidTriggers = {",Germany", "Ita,ly Spain", "Ireland, Belgium", "UK , Luxembourg"};
-        for (String trigger : invalidTriggers) {
-            triggerForm.addTrigger(trigger);
-            assertThat("'" + trigger + "' is not accepted as a valid trigger", triggerForm.getTriggersAsStrings(), hasSize(1));
-            assertThat(createPromotionsPage, containsText(Errors.Term.COMMAS));
-        }
-
-        triggerForm.addTrigger("Andorra");
-        assertThat(triggerForm.getTriggersAsStrings(), hasSize(2));
-        assertThat(createPromotionsPage, not(containsText(Errors.Term.COMMAS)));
-    }
-
-    @Test
-    public void testHTMLTrigger() {
-        goToTriggerStep();
-        final String searchTrigger = "<h1>hey</h1>";
-        triggerForm.addTrigger(searchTrigger);
-
-        final WebElement span = createPromotionsPage.findElement(By.cssSelector(".trigger-words-form .term"));
-        assertThat("HTML was escaped", span, hasTextThat(equalTo(searchTrigger)));
+        SharedTriggerTests.badTriggersTest(triggerForm, 0);
     }
 
     @Test
     public void testAddRemoveTriggersAndComplete() {
         goToTriggerStep();
-        triggerForm.addTrigger("alpha");
-        triggerForm.addTrigger("beta gamma delta");
-        triggerForm.removeTrigger("gamma");
-        triggerForm.removeTrigger("alpha");
-        triggerForm.addTrigger("epsilon");
-        triggerForm.removeTrigger("beta");
-        verifyThat(triggerForm.getTriggersAsStrings(), hasSize(2));
+
+        SharedTriggerTests.addRemoveTriggers(triggerForm, createPromotionsPage.cancelButton(), createPromotionsPage.finishButton());
 
         finishPromotion();
 

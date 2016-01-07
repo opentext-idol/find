@@ -121,28 +121,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	public void testAddRemoveTriggers() throws InterruptedException {
 		setUpCarsPromotion(1);
 
-		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
-
-		triggerForm.addTrigger("alpha");
-		triggerForm.removeTrigger("wheels");
-		verifyThat(promotionsDetailPage, triggerList(hasSize(1)));
-
-		verifyThat(promotionsDetailPage, triggerList(not(hasItem("wheels"))));
-
-		triggerForm.addTrigger("beta gamma delta");
-		triggerForm.removeTriggerAsync("gamma");
-		triggerForm.removeTriggerAsync("alpha");
-		//TODO should this be trying to add and remove a trigger at the same time?
-		triggerForm.addTrigger("epsilon");
-		triggerForm.removeTriggerAsync("beta");
-		triggerForm.waitForTriggerRefresh();
-
-		verifyThat(promotionsDetailPage, triggerList(hasSize(2)));
-		verifyThat(promotionsDetailPage, triggerList(not(hasItem("beta"))));
-		verifyThat(promotionsDetailPage, triggerList(hasItem("epsilon")));
-
-		triggerForm.removeTrigger("epsilon");
-		verifyThat(promotionsPage, not(containsElement(By.className("remove-word"))));
+		SharedTriggerTests.addRemoveTriggers(promotionsDetailPage.getTriggerForm());
 	}
 
 	@Test
