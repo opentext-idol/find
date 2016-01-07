@@ -33,11 +33,6 @@ public class IdolConfigurationTest {
 
     @Test
     public void wiring() {
-        assertNotNull(idolConfiguration.aciService());
-    }
-
-    @Test
-    public void idolResponseParser() {
-        assertNotNull(idolConfiguration.aciService());
+        assertNotNull(idolConfiguration);
     }
 }

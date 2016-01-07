@@ -5,8 +5,8 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
-import com.hp.autonomy.core.parametricvalues.ParametricRequest;
-import com.hp.autonomy.core.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

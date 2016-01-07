@@ -6,9 +6,9 @@
 package com.hp.autonomy.frontend.find.idol.parametricfields;
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.hp.autonomy.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
-import com.hp.autonomy.idol.parametricvalues.IdolParametricRequest;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

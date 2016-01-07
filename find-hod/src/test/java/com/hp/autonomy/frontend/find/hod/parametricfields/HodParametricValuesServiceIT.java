@@ -8,12 +8,12 @@ package com.hp.autonomy.frontend.find.hod.parametricfields;
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesServiceIT;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.parametricvalues.HodParametricRequest;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
 @SpringApplicationConfiguration(classes = HodFindApplication.class)
 public class HodParametricValuesServiceIT extends AbstractParametricValuesServiceIT<HodParametricRequest, ResourceIdentifier> {
-    protected HodParametricValuesServiceIT() {
+    public HodParametricValuesServiceIT() {
         super(new String[]{ResourceIdentifier.NEWS_ENG.toString()}, new String[]{"TODO"});
     }
 }

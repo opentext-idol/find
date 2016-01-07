@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.hod.indexes;
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.indexes.AbstractIndexesServiceIT;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.hod.databases.Database;
+import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
 @SpringApplicationConfiguration(classes = HodFindApplication.class)

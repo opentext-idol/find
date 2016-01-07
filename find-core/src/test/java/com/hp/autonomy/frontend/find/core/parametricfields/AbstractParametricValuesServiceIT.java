@@ -5,8 +5,8 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
-import com.hp.autonomy.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.springframework.http.MediaType;

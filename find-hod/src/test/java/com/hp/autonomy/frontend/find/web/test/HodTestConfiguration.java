@@ -14,6 +14,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
+import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class HodTestConfiguration {
     private static final String TEST_APP_API_KEY = "03e5efd3-4ddb-47ed-811c-f74c7198f1a8";
     private static final String TEST_APPLICATION = "Find_Test";
     private static final String TEST_DOMAIN = "c46dfa57-0d8e-4f0f-b419-e3acd0a482e9";
+
+    @Autowired
+    private TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService;
 
     @Autowired
     private HodServiceConfig<?, TokenType.Simple> hodServiceConfig;
