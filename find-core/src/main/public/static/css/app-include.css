@@ -5,7 +5,6 @@
 
 html, body {
     min-width: 0;
-    min-height: 0;
     overflow: hidden;
 }
 
@@ -156,7 +155,6 @@ html, body {
 }
 
 .initial-loading-indicator-container {
-    position: relative;
     height: 100%;
 }
 
@@ -165,7 +163,6 @@ html, body {
     border-radius: 5px;
     height: 32px;
     left: 50%;
-    line-height: 32px;
     margin: -16px 0 0 -100px;
     padding: 5px;
     position: absolute;
@@ -253,9 +250,6 @@ html, body {
 
 .right-side-container h4,
 .left-side-container h4 {
-    font-weight: 900;
-    font-size: 13px;
-    color:#555;
     text-transform: uppercase;
 }
 
@@ -280,6 +274,12 @@ html, body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.filter-display-container h4 {
+    color: inherit;
+    font-size: inherit;
+    display: inline;
 }
 
 .find {
@@ -364,16 +364,10 @@ input.find-input {
     text-decoration: none;
 }
 
-.current-search-sort {
-    font-size: 13px;
-    color: #425563;
-}
-
 .main-results-container {
     border-bottom: 1px solid #F2F2F2;
     width: 100%;
     padding: 0 10px;
-    min-height: 140px;
 }
 
 .document-reference {
@@ -505,8 +499,6 @@ input.find-input {
 }
 
 .suggestion-head-text {
-    font-size: 12px;
-    font-weight: 600;
     color: #00b388;
 }
 
@@ -568,7 +560,7 @@ input.find-input {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    max-height: 40px;
+    max-height: 41px;
 }
 
 .related-concepts-list {
@@ -625,6 +617,14 @@ input.find-input {
     right: 20px;
     z-index: 1000;
     font-size: 18px;
+}
+
+.drop-list .dropdown-toggle {
+    padding: 5px 7px 5px 13px;
+}
+
+.dropdown-menu li > a {
+    color: #676a6c;
 }
 
 .find-navbar .dropdown-toggle {
