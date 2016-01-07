@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -26,7 +27,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
@@ -224,11 +224,10 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testMultiDocPromotionDrawerExpandAndPagination() {
 		Promotion promotion = new SpotlightPromotion("boat");
-		Search search = new Search(getApplication(), getElementFactory(), "freeze");
 
 		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
 		promotionService.deleteAll();
-		promotionService.setUpPromotion(promotion, search, 18);
+		promotionService.setUpPromotion(promotion, "freeze", 18);
 
 		try {
 			PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(promotion);
@@ -667,7 +666,7 @@ public class SearchPageITCase extends ABCTestBase {
 			searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
 			search("boer");
 		} else {
-			new Search(getApplication(), getElementFactory(), "*").applyFilter(new IndexFilter("sitesearch")).apply();
+			searchService.search(new SearchQuery("*").withFilter(new IndexFilter("sitesearch")));
 		}
 
 		searchPage.selectLanguage(Language.AFRIKAANS);
@@ -777,20 +776,10 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testFieldTextRestrictionOnPinToPositionPromotions(){
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage = getElementFactory().getPromotionsPage();
-		promotionsPage.deleteAllPromotions();
+		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		promotionService.deleteAll();
+		List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new SearchQuery("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
 
-		search("horse");
-		searchPage.selectLanguage(Language.ENGLISH);
-
-		final List<String> promotedDocs = searchPage.createAMultiDocumentPromotion(2);
-		createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		createPromotionsPage.navigateToTriggers();
-		createPromotionsPage.addSearchTrigger("duck");
-		createPromotionsPage.finishButton().click();
-		new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        searchPage.waitForSearchLoadIndicatorToDisappear();
 		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
 		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
 
@@ -1182,7 +1171,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	//CSA-1708
 	public void testParametricLabelsNotUndefined(){
-		new Search(getApplication(),getElementFactory(),"simpsons").applyFilter(new IndexFilter("default_index")).apply();
+		searchService.search(new SearchQuery("simpsons").withFilter(new IndexFilter(Index.DEFAULT)));
 
 		searchPage.filterByContentType("TEXT/HTML");
 
@@ -1197,7 +1186,7 @@ public class SearchPageITCase extends ABCTestBase {
 		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
 
 		try {
-			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), new Search(getApplication(), getElementFactory(), "*"), SearchPage.RESULTS_PER_PAGE + 2);
+			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), "*", SearchPage.RESULTS_PER_PAGE + 2);
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
 			verifyThat(searchPage.resultsPaginationButton(Pagination.NEXT), not(disabled()));
