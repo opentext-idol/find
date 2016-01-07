@@ -113,7 +113,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 	@Test
 	public void testTriggers(){
 		setUpCarsPromotion(1);
-		SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm(), 1);
+		SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm());
 	}
 
 	// fails on-prem due to CCUK-2671

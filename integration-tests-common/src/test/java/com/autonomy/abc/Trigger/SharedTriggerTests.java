@@ -52,17 +52,17 @@ public class SharedTriggerTests {
 
     private SharedTriggerTests(TriggerForm triggerForm){
         this.triggerForm = triggerForm;
+        this.numberOfTriggers = triggerForm.getNumberOfTriggers();
     }
 
-    public static int badTriggersTest(TriggerForm triggerForm, int initialNumberOfTriggers){
+    /* TESTS */
+    public static int badTriggersTest(TriggerForm triggerForm){
         SharedTriggerTests sharedTriggerTests = new SharedTriggerTests(triggerForm);
 
         if(!triggerForm.getTriggersAsStrings().contains(sharedTriggerTests.initialTrigger)){
             triggerForm.addTrigger(sharedTriggerTests.initialTrigger);
-            initialNumberOfTriggers++;
+            sharedTriggerTests.numberOfTriggers++;
         }
-
-        sharedTriggerTests.numberOfTriggers = initialNumberOfTriggers;
 
         assertThat(triggerForm.getNumberOfTriggers(), is(sharedTriggerTests.numberOfTriggers));
 
@@ -76,6 +76,35 @@ public class SharedTriggerTests {
         return sharedTriggerTests.numberOfTriggers;
     }
 
+    public static void addRemoveTriggers (TriggerForm triggerForm, WebElement cancelButton, WebElement finishButton) {
+        assertThat(triggerForm.addButton(), disabled());
+        assertThat(finishButton, disabled());
+        assertThat(cancelButton, not(disabled()));
+
+        triggerForm.addTrigger("animal");
+        assertThat(finishButton, not(disabled()));
+        assertThat(triggerForm.getTriggersAsStrings(), hasItem("animal"));
+
+        triggerForm.removeTrigger("animal");
+        assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("animal")));
+        assertThat(finishButton, disabled());
+
+        addBushyTail(triggerForm);
+    }
+
+    public static void addRemoveTriggers(TriggerForm triggerForm){
+        assertThat(triggerForm.addButton(), disabled());
+
+        triggerForm.addTrigger("animal");
+        assertThat(triggerForm.getTriggersAsStrings(), hasItem("animal"));
+
+        triggerForm.removeTrigger("animal");
+        assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("animal")));
+
+        addBushyTail(triggerForm);
+    }
+
+    /* Helper methods */
     private void checkBadTriggers(){
         checkBadTriggers(duplicateTriggers, Errors.Term.DUPLICATE_EXISTING);
         checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
@@ -128,34 +157,6 @@ public class SharedTriggerTests {
 
     private void verifyAddButtonDisabled(){
         verifyThat(triggerForm.addButton(), is(disabled()));
-    }
-
-    public static void addRemoveTriggers (TriggerForm triggerForm, WebElement cancelButton, WebElement finishButton) {
-        assertThat(triggerForm.addButton(), disabled());
-        assertThat(finishButton, disabled());
-        assertThat(cancelButton, not(disabled()));
-
-        triggerForm.addTrigger("animal");
-        assertThat(finishButton, not(disabled()));
-        assertThat(triggerForm.getTriggersAsStrings(), hasItem("animal"));
-
-        triggerForm.removeTrigger("animal");
-        assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("animal")));
-        assertThat(finishButton, disabled());
-
-        addBushyTail(triggerForm);
-    }
-
-    public static void addRemoveTriggers(TriggerForm triggerForm){
-        assertThat(triggerForm.addButton(), disabled());
-
-        triggerForm.addTrigger("animal");
-        assertThat(triggerForm.getTriggersAsStrings(), hasItem("animal"));
-
-        triggerForm.removeTrigger("animal");
-        assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("animal")));
-
-        addBushyTail(triggerForm);
     }
 
     private static void addBushyTail(TriggerForm triggerForm){

@@ -314,12 +314,12 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.continueWizardButton().click();
         triggerForm = createKeywordsPage.getTriggerForm();
 
-        int newTriggers = SharedTriggerTests.badTriggersTest(triggerForm, 0);
+        SharedTriggerTests.badTriggersTest(triggerForm);
 
         triggerForm.removeTrigger("\"Valid Trigger\"");
         triggerForm.addTrigger("test");
 
-        SharedTriggerTests.badTriggersTest(triggerForm, newTriggers);
+        SharedTriggerTests.badTriggersTest(triggerForm);
     }
 
     @Test
