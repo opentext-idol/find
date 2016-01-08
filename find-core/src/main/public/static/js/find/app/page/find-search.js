@@ -30,19 +30,8 @@ define([
         },
 
         initialize: function() {
-            var backboneQueryModel = new BackboneQueryModel();
-            this.queryModel = new QueryModel(backboneQueryModel);
-
-            // Because the queryModel doesn't fire with the empty string, we listen to the unadulterated model
-            // underlying the main model for the change in queryText.
-            this.listenTo(backboneQueryModel, 'change:queryText', function(model, text) {
-                this.$('.find-input').val(text); //when clicking one of the suggested search links
-
-                if(text.length) { // input has at least one non whitespace character
-                    this.expandedState();
-                }
-
-            });
+            this.queryModel = new QueryModel(new BackboneQueryModel());
+            this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
 
             this.inputView = new InputView({
                 queryModel: this.queryModel

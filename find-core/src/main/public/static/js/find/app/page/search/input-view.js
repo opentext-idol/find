@@ -25,13 +25,16 @@ define([
         },
 
         initialize: function(options) {
-            var queryModel = options.queryModel;
+            this.queryModel = options.queryModel;
+
+            // For example, when clicking one of the suggested search links
+            this.listenTo(this.queryModel, 'change:queryText', this.updateText);
 
             this.search = _.debounce(function(query, refresh) {
                 if (refresh) {
-                    queryModel.refresh(query);
+                    options.queryModel.refresh(query);
                 } else {
-                    queryModel.set('queryText', query);
+                    options.queryModel.set('queryText', query);
                 }
             }, 500);
         },
@@ -55,6 +58,14 @@ define([
                     });
                 }
             });
+
+            this.updateText();
+        },
+
+        updateText: function() {
+            if (this.$input) {
+                this.$input.typeahead('val', this.queryModel.get('queryText'));
+            }
         }
     });
 
