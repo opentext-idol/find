@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.indexes;
 
+import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.util.Waits;
@@ -77,15 +78,19 @@ public class Index {
         return displayName;
     }
 
+    public Wizard makeWizard(CreateNewIndexPage newIndexPage){
+        return new IndexWizard(newIndexPage);
+    }
+
     private class IndexWizard extends Wizard {
         private CreateNewIndexPage page;
 
         public IndexWizard(CreateNewIndexPage newIndexPage){
             super();
             this.page = newIndexPage;
-            add(new IndexNameWizardStep());
-            add(new IndexConfigStep());
-            add(new IndexSummaryStep());
+            add(new IndexNameWizardStep(page, name, displayName));
+            add(new IndexConfigStep(page, parametricFields, indexFields));
+            add(new BlankWizardStep("Summary"));
         }
 
         @Override

@@ -3,7 +3,10 @@ package com.autonomy.abc.selenium.page.indexes;
 import com.autonomy.abc.selenium.element.ChevronContainer;
 import com.autonomy.abc.selenium.element.Collapsible;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.indexes.IndexConfigStepTab;
+import com.autonomy.abc.selenium.indexes.IndexNameWizardStep;
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.page.indexes.wizard.IndexNameWizardStepTab;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -116,5 +119,13 @@ public class CreateNewIndexPage extends SAASPageBase {
 
     private WebElement menuButton(String text) {
         return findElement(By.className("actions")).findElement(By.xpath(".//a[contains(text(), '" + text + "')]"));
+    }
+
+    public IndexNameWizardStepTab getIndexNameWizardStepTab() {
+        return IndexNameWizardStepTab.make(getDriver());
+    }
+
+    public IndexConfigStepTab getIndexConfigStepTab() {
+        return IndexConfigStepTab.make(getDriver());
     }
 }
