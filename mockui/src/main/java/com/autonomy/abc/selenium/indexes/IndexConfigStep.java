@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.page.indexes.wizard.IndexConfigStepTab;
 
 import java.util.List;
 

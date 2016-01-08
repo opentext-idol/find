@@ -59,7 +59,7 @@ public class IndexService {
     public IndexesPage deleteIndex(Index index) {
         goToIndexes();
 
-        indexesPage.deleteIndex(index.getName());
+        indexesPage.deleteIndex(index.getDisplayName());
         waitForIndexDeletion(index.getName());
 
         return indexesPage;

@@ -13,7 +13,7 @@ public class IndexNameWizardStepTab extends SAASPageBase {
     }
 
     public static IndexNameWizardStepTab make(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.name("generalDetailsForm")));
+        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("generalDetailsForm")));
         return new IndexNameWizardStepTab(driver);
     }
 

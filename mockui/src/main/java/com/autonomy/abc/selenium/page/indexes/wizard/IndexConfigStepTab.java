@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.indexes;
+package com.autonomy.abc.selenium.page.indexes.wizard;
 
 import com.autonomy.abc.selenium.element.ChevronContainer;
 import com.autonomy.abc.selenium.element.Collapsible;
@@ -20,7 +20,7 @@ public class IndexConfigStepTab extends SAASPageBase {
     }
 
     public static IndexConfigStepTab make(WebDriver driver){
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Advanced options are not mandatory')]")));
+        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Advanced options are not mandatory')]")));
         return new IndexConfigStepTab(driver);
     }
 
