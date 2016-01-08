@@ -425,7 +425,8 @@ public class FindITCase extends HostedTestBase {
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        String indexTitle = find.getPrivateIndexNames().get(1);
+        // TODO: what if this index has no results?
+        String indexTitle = find.getPrivateIndexNames().get(2);
         find.filterBy(new IndexFilter(indexTitle));
         results.getSearchResultTitle(1).click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
