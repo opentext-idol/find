@@ -69,11 +69,11 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexesPage = indexService.setUpIndex(index);
 
-        verifyThat(indexesPage.getIndexNames(), hasItem(index.getName()));
+        verifyThat(indexesPage.getIndexDisplayNames(), hasItem(index.getName()));
 
         indexService.deleteIndex(index);
 
-        verifyThat(indexesPage.getIndexNames(), not(hasItem(index.getName())));
+        verifyThat(indexesPage.getIndexDisplayNames(), not(hasItem(index.getName())));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Make sure default index is still there
-        assertThat(indexesPage.getIndexNames(), hasItem(default_index.getName()));
+        assertThat(indexesPage.getIndexDisplayNames(), hasItem(default_index.getName()));
     }
 
     @Test
@@ -133,7 +133,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Ensure the index wasn't deleted
-        assertThat(indexesPage.getIndexNames(), hasItem(index.getName()));
+        assertThat(indexesPage.getIndexDisplayNames(), hasItem(index.getName()));
     }
 
     @Test
@@ -235,7 +235,7 @@ public class IndexesPageITCase extends HostedTestBase {
         indexesPage = getElementFactory().getIndexesPage();
         body = getBody();
 
-        verifyThat(indexesPage.getIndexNames(), hasItem(Index.DEFAULT.getName()));
+        verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getName()));
     }
 
     @Test

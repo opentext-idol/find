@@ -1,8 +1,10 @@
 package com.autonomy.abc.selenium.page.connections;
 
+import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -57,5 +59,9 @@ public class ConnectionsPage extends SAASPageBase {
             }
         }
         return null;
+    }
+
+    public String getIndexOf(Connector connector) {
+        return ElementUtil.ancestor(connectionWithTitleContaining(connector.getName()), 9).findElement(By.cssSelector(".listItemNormalText.ng-scope")).getText().split(":")[1].trim();
     }
 }

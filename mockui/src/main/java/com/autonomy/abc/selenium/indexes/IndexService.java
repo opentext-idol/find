@@ -10,11 +10,9 @@ import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,12 +88,13 @@ public class IndexService {
     public IndexesPage deleteAllIndexes() {
         goToIndexes();
 
-        for(WebElement trashCan : indexesPage.findElements(By.className("fa-trash-o"))){
-            if(ElementUtil.ancestor(trashCan, 1).isEnabled()){
-                trashCan.click();
-                Waits.loadOrFadeWait();
-                getDriver().findElement(By.cssSelector(".modal-footer [type=submit]")).click();
-                new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("successfully deleted"));
+        for(String index : indexesPage.getIndexDisplayNames()){
+            if(!index.equals("Default Index")) {
+                try {
+                    indexesPage.deleteIndex(index);
+                } catch (WebDriverException e) {
+                    LoggerFactory.getLogger(IndexService.class).error("Could not delete index " + index);
+                }
             }
         }
 
