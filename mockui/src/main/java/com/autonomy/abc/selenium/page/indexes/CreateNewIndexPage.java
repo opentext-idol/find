@@ -98,7 +98,7 @@ public class CreateNewIndexPage extends SAASPageBase {
         return findElement(By.cssSelector("[role='tablist'] li:nth-child(" + tab + ")"));
     }
 
-    public WebElement nextButton() {
+    public WebElement continueWizardButton() {
         return menuButton("Next");
     }
 
@@ -106,11 +106,11 @@ public class CreateNewIndexPage extends SAASPageBase {
         return menuButton("Previous");
     }
 
-    public WebElement finishButton() {
+    public WebElement finishWizardButton() {
         return menuButton("Finish");
     }
 
-    public WebElement cancelButton() {
+    public WebElement cancelWizardButton() {
         return menuButton("Cancel");
     }
 

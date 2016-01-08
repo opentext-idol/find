@@ -75,8 +75,8 @@ public class IndexWizardITCase extends HostedTestBase {
         verifyThat(indexNameInput.getErrorMessage(), nullValue());
         verifyThat(displayNameInput.getErrorMessage(), nullValue());
 
-        createNewIndexPage.nextButton().click();
-        createNewIndexPage.nextButton().click();
+        createNewIndexPage.continueWizardButton().click();
+        createNewIndexPage.continueWizardButton().click();
 
         WebElement summaryStepIndexDescriptionLabel = createNewIndexPage.summaryStepIndexDescriptionLabel();
         String expectedSummary = "A new index named "+name+" with "+displayName+" as display name (standard flavor) will be created";
@@ -88,7 +88,7 @@ public class IndexWizardITCase extends HostedTestBase {
     public void testUppercaseFieldNames() {
         indexNameInput.setValue("name");
 
-        createNewIndexPage.nextButton().click();
+        createNewIndexPage.continueWizardButton().click();
 
         final List<String> capitals = new ArrayList<String>() {{
             add("London");

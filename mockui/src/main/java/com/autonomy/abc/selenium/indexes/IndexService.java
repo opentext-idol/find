@@ -8,7 +8,6 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -60,15 +59,15 @@ public class IndexService {
         if(!displayName.equals(indexName)) {
             newIndexPage.displayNameInput().setValue(displayName);
         }
-        newIndexPage.nextButton().click();
+        newIndexPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
 
         newIndexPage.setIndexFields(index.getIndexFields());
         newIndexPage.setParametricFields(index.getParametricFields());
-        newIndexPage.nextButton().click();
+        newIndexPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
 
-        newIndexPage.finishButton().click();
+        newIndexPage.finishWizardButton().click();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));
 
         indexesPage = elementFactory.getIndexesPage();

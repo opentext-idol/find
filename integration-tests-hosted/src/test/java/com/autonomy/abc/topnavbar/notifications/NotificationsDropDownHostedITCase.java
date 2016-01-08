@@ -94,11 +94,11 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             indexes.newIndexButton().click();
             CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
             createNewIndexPage.indexNameInput().setValue(indexName);
-            createNewIndexPage.nextButton().click();
+            createNewIndexPage.continueWizardButton().click();
             Waits.loadOrFadeWait();
-            createNewIndexPage.nextButton().click();
+            createNewIndexPage.continueWizardButton().click();
             Waits.loadOrFadeWait();
-            createNewIndexPage.finishButton().click();
+            createNewIndexPage.finishWizardButton().click();
 
             new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining(indexCreationNotification));
 
