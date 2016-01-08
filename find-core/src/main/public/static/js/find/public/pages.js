@@ -14,7 +14,7 @@ define([
             this.pages = [
                 {
                     constructor: FindSearch,
-                    icon: 'fa fa-search',
+                    icon: 'hp-icon hp-fw hp-search',
                     pageName: 'search',
                     title: i18n['app.search']
                 }

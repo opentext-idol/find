@@ -18,7 +18,7 @@ define([
             this.pages = this.pages.concat([
                 {
                     constructor: AboutPage,
-                    icon: 'fa fa-cog',
+                    icon: 'hp-icon hp-fw hp-info',
                     pageName: 'about',
                     title: i18n['app.about']
                 }

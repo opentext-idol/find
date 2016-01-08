@@ -2,7 +2,7 @@
     <span class="find-logo-small navbar-brand m-l-sm m-t-sm"></span>
     <ul class="nav navbar-nav navbar-right drop-list">
         <li class="dropdown navbar-top-link">
-            <a class="dropdown-toggle clickable" data-toggle="dropdown"><i class="fa fa-cog"></i></a>
+            <a class="dropdown-toggle clickable" data-toggle="dropdown"><i class="hp-icon hp-settings hp-fw"></i></a>
             <ul class="dropdown-menu" role="menu">
                 <li class="not-clickable">
                     <a class="bold username"><%- data.username %></a>
@@ -10,7 +10,7 @@
                 <li class="divider"></li>
                 <%= data.menuItems(data) %>
                 <li>
-                    <a class="clickable navigation-logout"><i class="fa fa-sign-out"></i> <%-data.i18n['app.logout']%></a>
+                    <a class="clickable navigation-logout"><i class="hp-icon hp-steps hp-fw text-muted"></i> <%-data.i18n['app.logout']%></a>
                 </li>
             </ul>
         </li>
