@@ -1,6 +1,7 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.util.Factory;
+import com.autonomy.abc.selenium.util.ImplicitWaits;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 
@@ -19,6 +20,8 @@ public class WebDriverFactory implements Factory<WebDriver> {
 
     @Override
     public WebDriver create() {
-        return browser.createWebDriver(url, platform);
+        WebDriver driver = browser.createWebDriver(url, platform);
+        ImplicitWaits.setImplicitWait(driver);
+        return driver;
     }
 }

@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.config.WebDriverFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
@@ -9,6 +10,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -44,8 +46,7 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
-import static com.autonomy.abc.matchers.ElementMatchers.hasTagName;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -61,7 +62,7 @@ public class FindITCase extends HostedTestBase {
     private FindResultsPage results;
     private List<String> browserHandles;
     private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
-    private final Matcher<String> noDocs = containsString("No results found");
+    private final Matcher<String> noDocs = containsString(Errors.Search.NO_RESULTS);
     private PromotionService promotionService;
     private KeywordService keywordService;
 
@@ -656,10 +657,24 @@ public class FindITCase extends HostedTestBase {
 
         keywordService.addBlacklistTerms(Language.ENGLISH, "cat");
 
-        getDriver().switchTo().window(browserHandles.get(1));
-        find.search("Cat");
+        /* need a separate session due to caching */
+        WebDriver otherDriver = config.getWebDriverFactory().create();
+        try {
+            Find otherFind = createSession(otherDriver);
+            otherFind.search("Cat");
 
-        assertThat(results.getText(), noDocs);
+            assertThat(otherFind.getResultsPage(), hasTextThat(noDocs));
+        } finally {
+            otherDriver.quit();
+        }
+    }
+
+    // TODO: this does not belong here
+    private Find createSession(WebDriver driver) {
+        driver.get(config.getFindUrl());
+        HSOElementFactory otherElementFactory = (HSOElementFactory) getApplication().createElementFactory(driver);
+        otherElementFactory.getFindLoginPage().loginWith(config.getDefaultUser().getAuthProvider());
+        return otherElementFactory.getFindPage();
     }
 
     @Test   @Ignore("Not implemented")
@@ -810,7 +825,7 @@ public class FindITCase extends HostedTestBase {
         for(String searchTerm : testSearchTerms){
             find.search(searchTerm);
 
-            assertThat(results.getText(), containsString(Errors.Find.GENERAL));
+            assertThat(results, containsText(Errors.Search.OPERATORS));
         }
     }
 
@@ -820,7 +835,7 @@ public class FindITCase extends HostedTestBase {
         List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){
             find.search(searchTerm);
-            assertThat(results.getText(), Matchers.containsString(Errors.Find.GENERAL));
+            assertThat(results, containsText(Errors.Search.QUOTES));
         }
     }
 
@@ -828,7 +843,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testWhitespaceSearch() {
         find.search(" ");
-        assertThat(results.getText(),containsString(Errors.Find.GENERAL));
+        assertThat(results, containsText(Errors.Search.STOPWORDS));
     }
 
     @Test

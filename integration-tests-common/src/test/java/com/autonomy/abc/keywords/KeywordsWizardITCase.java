@@ -485,7 +485,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         triggerForm.addTrigger(unrelated);
         verifyExistingGroups(duplicate, 2);
 
-        triggerForm.addTrigger(duplicate);
+        triggerForm.removeTrigger(duplicate);
         verifyExistingGroups(unrelated, 1);
     }
 
