@@ -142,7 +142,8 @@ define([
             });
 
             this.spellCheckView = new SpellCheckView({
-                documentsCollection: this.documentsCollection
+                documentsCollection: this.documentsCollection,
+                queryModel: this.queryModel
             });
 
             // Collapse wrappers

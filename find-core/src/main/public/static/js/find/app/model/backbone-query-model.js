@@ -9,6 +9,7 @@ define([
 
     return Backbone.Model.extend({
         defaults: {
+            autoCorrect: true,
             queryText: '',
             indexes: [],
             fieldText: null,

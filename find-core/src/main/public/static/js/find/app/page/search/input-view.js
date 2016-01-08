@@ -35,7 +35,10 @@ define([
                 if (refresh) {
                     options.queryModel.refresh(query);
                 } else {
-                    options.queryModel.set('queryText', query);
+                    options.queryModel.set({
+                        autoCorrect: true,
+                        queryText: query
+                    });
                 }
             }, 500);
         },

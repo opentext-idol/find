@@ -12,8 +12,15 @@ define([
 
         template: _.template(template),
 
+        events: {
+            'click .original-query': function() {
+                this.queryModel.set('autoCorrect', false);
+            }
+        },
+
         initialize: function(options) {
             this.documentsCollection = options.documentsCollection;
+            this.queryModel = options.queryModel;
 
             this.listenTo(this.documentsCollection, 'update', function() {
                 var autoCorrection = this.documentsCollection.getAutoCorrection();

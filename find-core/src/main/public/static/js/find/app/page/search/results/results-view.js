@@ -92,6 +92,7 @@ define([
                 if (!_.isEmpty(this.queryModel.get('indexes'))) {
                     this.documentsCollection.fetch({
                         data: {
+                            auto_correct: this.queryModel.get('autoCorrect'),
                             text: this.queryModel.get('queryText'),
                             max_results: 30,
                             summary: 'context',
@@ -107,6 +108,7 @@ define([
                     // TODO: Move out of if statement when HOD allows fetching promotions without indexes
                     this.promotionsCollection.fetch({
                         data: {
+                            auto_correct: this.queryModel.get('autoCorrect'),
                             text: this.queryModel.get('queryText'),
                             max_results: 30, // TODO maybe less?
                             summary: 'context',
