@@ -3,7 +3,6 @@ define([
     'jquery',
     'underscore',
     'find/app/model/document-model',
-    'find/app/model/documents-collection',
     'find/app/model/promotions-collection',
     'find/app/model/similar-documents-collection',
     'find/app/util/popover',
@@ -23,7 +22,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'colorbox'
-], function(Backbone, $, _, DocumentModel, DocumentsCollection, PromotionsCollection, SimilarDocumentsCollection, popover,
+], function(Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, popover,
             viewClient, documentMimeTypes, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate,
             moment, i18n, i18n_indexes) {
@@ -86,7 +85,7 @@ define([
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
 
-            this.documentsCollection = new DocumentsCollection();
+            this.documentsCollection = options.documentsCollection;
             this.promotionsCollection = new PromotionsCollection();
 
             this.listenTo(this.queryModel, 'change refresh', function() {

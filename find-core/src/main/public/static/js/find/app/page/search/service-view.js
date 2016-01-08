@@ -3,6 +3,7 @@ define([
     'jquery',
     'underscore',
     'find/app/model/dates-filter-model',
+    'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/search-filters-collection',
@@ -12,14 +13,15 @@ define([
     'find/app/page/search/results/results-view',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/sort-view',
+    'find/app/page/search/spellcheck-view',
     'find/app/page/search/filters/indexes/indexes-view',
     'find/app/util/collapsible',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView,
+], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
+            ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView, SpellCheckView,
             IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
 
@@ -55,12 +57,8 @@ define([
         },
 
         // will be overridden
-        constructResultsView: function (entityCollection, indexesCollection, queryModel) {
-            return new ResultsView({
-                entityCollection: entityCollection,
-                indexesCollection: indexesCollection,
-                queryModel: queryModel
-            });
+        constructResultsView: function (models) {
+            return new ResultsView(models);
         },
 
         initialize: function(options) {
@@ -68,6 +66,7 @@ define([
 
             this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
 
+            this.documentsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
             this.selectedParametricValues = new SelectedParametricValuesCollection();
@@ -103,7 +102,12 @@ define([
                 }));
             }, this), 500));
 
-            this.resultsView = this.constructResultsView(this.entityCollection, this.indexesCollection, this.queryModel);
+            this.resultsView = this.constructResultsView({
+                documentsCollection: this.documentsCollection,
+                entityCollection: this.entityCollection,
+                indexesCollection: this.indexesCollection,
+                queryModel: this.queryModel
+            });
 
             // Left Views
             this.filterDisplayView = new FilterDisplayView({
@@ -137,6 +141,10 @@ define([
                 queryModel: this.queryModel
             });
 
+            this.spellCheckView = new SpellCheckView({
+                documentsCollection: this.documentsCollection
+            });
+
             // Collapse wrappers
             this.indexesViewWrapper = collapseView(i18n_indexes['search.indexes'], this.indexesView);
             this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
@@ -150,6 +158,7 @@ define([
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
             this.parametricView.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
+            this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
 
             this.relatedConceptsViewWrapper.render();
 

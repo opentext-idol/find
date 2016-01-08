@@ -94,6 +94,8 @@ define([
         'search.similarDocuments': 'Similar documents',
         'search.similarDocuments.error': 'An error occurred fetching similar documents',
         'search.similarDocuments.none': 'No similar documents found',
+        'search.spellCheck.showingResults': 'Showing results for',
+        'search.spellCheck.searchFor': 'Search for',
         'settings.cancel': 'Cancel',
         'settings.cancel.message': 'All unsaved changes will be lost.',
         'settings.cancel.title': 'Revert settings?',
