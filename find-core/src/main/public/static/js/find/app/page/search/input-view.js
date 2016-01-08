@@ -2,10 +2,11 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/util/string-blank',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
     'typeahead'
-], function(Backbone, $, _, i18n, template) {
+], function(Backbone, $, _, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
 
@@ -51,11 +52,16 @@ define([
                 async: true,
                 limit: 7,
                 source: function(query, sync, async) {
-                    $.get('../api/public/typeahead', {
-                        text: query
-                    }, function(results) {
-                        async(results);
-                    });
+                    // Don't look for suggestions if the query is blank
+                    if (stringBlank(query)) {
+                        sync([]);
+                    } else {
+                        $.get('../api/public/typeahead', {
+                            text: query
+                        }, function(results) {
+                            async(results);
+                        });
+                    }
                 }
             });
 
