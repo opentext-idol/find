@@ -41,7 +41,6 @@ define([
 
             router.on('route:search', function(text) {
                 if (text) {
-                    this.$('.find-input').val(text); //when clicking one of the suggested search links
                     this.queryModel.set('queryText', text);
                 } else {
                     this.queryModel.set('queryText', '');
