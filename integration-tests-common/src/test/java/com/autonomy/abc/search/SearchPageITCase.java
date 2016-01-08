@@ -380,10 +380,12 @@ public class SearchPageITCase extends ABCTestBase {
         }
 		for (String empty : emptyPhrases) {
 			search(empty);
+			assertThat(searchPage, containsText(searchErrorMessage));
 			assertThat(searchPage, containsText(emptyError));
 		}
 		for (String unclosed : unclosedPhrases) {
 			search(unclosed);
+			assertThat(searchPage, containsText(searchErrorMessage));
 			assertThat(searchPage, containsText(unclosedError));
 		}
 	}
