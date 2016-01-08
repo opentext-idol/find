@@ -25,7 +25,8 @@ require.config({
         moment: '../bower_components/moment/moment',
         settings: '../bower_components/hp-autonomy-settings-page/src',
         text: '../bower_components/requirejs-text/text',
-        underscore: '../bower_components/underscore/underscore'
+        underscore: '../bower_components/underscore/underscore',
+        typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery'
     },
     shim: {
         'backbone-base': {
