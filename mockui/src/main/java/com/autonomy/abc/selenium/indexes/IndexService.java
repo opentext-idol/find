@@ -50,26 +50,8 @@ public class IndexService {
     public IndexesPage setUpIndex(Index index) {
         goToIndexes();
         indexesPage.newIndexButton().click();
-        CreateNewIndexPage newIndexPage = elementFactory.getCreateNewIndexPage();
-
-        String indexName = index.getName();
-        String displayName = index.getDisplayName();
-
-        newIndexPage.indexNameInput().setValue(indexName);
-        if(!displayName.equals(indexName)) {
-            newIndexPage.displayNameInput().setValue(displayName);
-        }
-        newIndexPage.continueWizardButton().click();
-        Waits.loadOrFadeWait();
-
-        newIndexPage.setIndexFields(index.getIndexFields());
-        newIndexPage.setParametricFields(index.getParametricFields());
-        newIndexPage.continueWizardButton().click();
-        Waits.loadOrFadeWait();
-
-        newIndexPage.finishWizardButton().click();
+        index.makeWizard(elementFactory.getCreateNewIndexPage()).apply();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));
-
         indexesPage = elementFactory.getIndexesPage();
         return indexesPage;
     }
@@ -78,8 +60,7 @@ public class IndexService {
         goToIndexes();
 
         indexesPage.deleteIndex(index.getName());
-
-        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Index " + index.getName() + " successfully deleted"));
+        waitForIndexDeletion(index.getName());
 
         return indexesPage;
     }
@@ -91,6 +72,7 @@ public class IndexService {
             if(!index.equals("Default Index")) {
                 try {
                     indexesPage.deleteIndex(index);
+                    waitForIndexDeletion(index);
                 } catch (WebDriverException e) {
                     LoggerFactory.getLogger(IndexService.class).error("Could not delete index " + index);
                 }
@@ -98,6 +80,10 @@ public class IndexService {
         }
 
         return indexesPage;
+    }
+
+    private void waitForIndexDeletion(String indexName){
+        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Index " + indexName + " successfully deleted"));
     }
 
     public void deleteIndexViaAPICalls(Index index) {

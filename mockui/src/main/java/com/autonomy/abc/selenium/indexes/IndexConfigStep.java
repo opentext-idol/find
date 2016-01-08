@@ -7,12 +7,12 @@ import java.util.List;
 
 public class IndexConfigStep implements WizardStep {
     private final static String TITLE = "Index Configuration";
-    private final IndexConfigStepTab tab;
+    private final CreateNewIndexPage page;
     private final List<String> parametricFields;
     private final List<String> indexFields;
 
     public IndexConfigStep(CreateNewIndexPage page, List<String> parametricFields, List<String> indexFields) {
-        this.tab = page.getIndexConfigStepTab();
+        this.page = page;
         this.parametricFields = parametricFields;
         this.indexFields = indexFields;
     }
@@ -24,6 +24,8 @@ public class IndexConfigStep implements WizardStep {
 
     @Override
     public Object apply() {
+        IndexConfigStepTab tab = page.getIndexConfigStepTab();
+
         tab.setParametricFields(parametricFields);
         tab.setIndexFields(indexFields);
         return null;

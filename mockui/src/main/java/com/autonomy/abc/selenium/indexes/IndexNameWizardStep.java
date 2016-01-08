@@ -24,7 +24,7 @@ public class IndexNameWizardStep implements WizardStep {
     @Override
     public Object apply() {
         tab.indexNameInput().setValue(name);
-        if(!name.equals(displayName)){
+        if(displayName != null && !name.equals(displayName)){
             tab.displayNameInput().setValue(displayName);
         }
         return null;
