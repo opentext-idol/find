@@ -7,13 +7,20 @@ import java.util.List;
 
 public class Index {
     private final String name;
+    private final String displayName;
     private final List<String> parametricFields = new ArrayList<>();
     private final List<String> indexFields = new ArrayList<>();
 
-    public final static Index DEFAULT = new Index("default_index");
+    public final static Index DEFAULT = new Index("default_index", "Default Index");
 
     public Index(String name) {
         this.name = name;
+        this.displayName = null;
+    }
+
+    public Index(String name, String displayName) {
+        this.name = name;
+        this.displayName = displayName;
     }
 
     public Index withParametricFields(Collection<String> fields) {
@@ -56,5 +63,13 @@ public class Index {
     @Override
     public String toString() {
         return "Index<" + getName() + ">";
+    }
+
+    public String getDisplayName() {
+        if(displayName == null){
+            return name;
+        }
+
+        return displayName;
     }
 }
