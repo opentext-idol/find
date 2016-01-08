@@ -21,12 +21,12 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.util.DriverUtil;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,8 +220,7 @@ public class IndexesPageITCase extends HostedTestBase {
     //CSA-1735
     public void testNavigatingToNonExistingIndexByURL(){
         getDriver().get("https://search.dev.idolondemand.com/search/#/index/doesntexistmate");
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
-        verifyThat(new AppElement(getDriver().findElement(By.className("wrapper-content")),getDriver()), containsText("Index doesntexistmate does not exist"));
+        verifyThat(PageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
     }
 
     @Test

@@ -6,14 +6,19 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
+import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -56,4 +61,15 @@ public class IndexDisplayNameITCase extends HostedTestBase {
             verifyThat(node.getName(), anyOf(is(Index.DEFAULT.getDisplayName()), is(testIndex.getDisplayName())));
         }
     }
+
+    @Test
+    public void testPieChartLink(){
+        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        AnalyticsPage analyticsPage = getElementFactory().getAnalyticsPage();
+
+        analyticsPage.indexSizeChart().click();
+
+        verifyThat(PageUtil.getWrapperContent(getDriver()), not(containsText("does not exist")));
+    }
+
 }
