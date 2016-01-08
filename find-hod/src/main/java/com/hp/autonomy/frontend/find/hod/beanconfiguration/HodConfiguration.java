@@ -14,7 +14,6 @@ import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.frontend.find.hod.search.HodFindDocument;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -22,9 +21,6 @@ import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServiceImpl;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersServiceImpl;
@@ -139,11 +135,6 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public QueryTextIndexService<HodFindDocument> queryTextIndexService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
-        return new QueryTextIndexServiceImpl<>(hodServiceConfig, HodFindDocument.class);
-    }
-
-    @Bean
     public FindRelatedConceptsService relatedConceptsService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
         return new FindRelatedConceptsServiceImpl(hodServiceConfig);
     }
@@ -160,11 +151,6 @@ public class HodConfiguration extends CachingConfigurerSupport {
         } catch (final HodErrorException e) {
             throw new BeanInitializationException("Exception creating UnboundTokenService", e);
         }
-    }
-
-    @Bean
-    public FindSimilarService<HodFindDocument> findSimilarService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
-        return new FindSimilarServiceImpl<>(hodServiceConfig, HodFindDocument.class);
     }
 
     @Bean

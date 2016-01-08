@@ -17,6 +17,7 @@ import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
 import lombok.Data;
@@ -90,11 +91,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         if (queryManipulation != null) {
             queryManipulation.basicValidate();
         }
-    }
-
-    @Override
-    public ServerConfig getQms() {
-        return queryManipulation != null ? queryManipulation.getServer() : null;
     }
 
     @Setter

@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.searchcomponents.core.search.HavenDocument;
 import com.hp.autonomy.types.requests.Documents;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public abstract class AbstractDocumentServiceIT<S extends Serializable, D extends FindDocument, E extends Exception> extends AbstractFindIT {
+public abstract class AbstractDocumentServiceIT<S extends Serializable, D extends HavenDocument, E extends Exception> extends AbstractFindIT {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     protected DocumentsController<S, D, E> documentsController;

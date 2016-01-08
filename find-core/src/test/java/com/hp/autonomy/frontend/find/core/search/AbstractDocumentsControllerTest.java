@@ -5,6 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.HavenDocument;
+import com.hp.autonomy.searchcomponents.core.search.HavenQueryParams;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +24,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractDocumentsControllerTest<S extends Serializable, D extends FindDocument, E extends Exception> {
+public abstract class AbstractDocumentsControllerTest<S extends Serializable, D extends HavenDocument, E extends Exception> {
     @Mock
     protected DocumentsService<S, D, E> documentsService;
 
@@ -41,13 +44,13 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, D 
     @Test
     public void query() throws E {
         documentsController.query("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
-        verify(documentsService).queryTextIndex(Matchers.<FindQueryParams<S>>any());
+        verify(documentsService).queryTextIndex(Matchers.<HavenQueryParams<S>>any());
     }
 
     @Test
     public void queryForPromotions() throws E {
         documentsController.queryForPromotions("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
-        verify(documentsService).queryTextIndexForPromotions(Matchers.<FindQueryParams<S>>any());
+        verify(documentsService).queryTextIndexForPromotions(Matchers.<HavenQueryParams<S>>any());
     }
 
     @Test

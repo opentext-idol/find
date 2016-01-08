@@ -9,12 +9,13 @@ import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentServiceIT;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.hod.search.HodDocument;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
 import java.util.Arrays;
 
 @SpringApplicationConfiguration(classes = HodFindApplication.class)
-public class HodDocumentServiceIT extends AbstractDocumentServiceIT<ResourceIdentifier, HodFindDocument, HodErrorException> {
+public class HodDocumentServiceIT extends AbstractDocumentServiceIT<ResourceIdentifier, HodDocument, HodErrorException> {
     public HodDocumentServiceIT() {
         super(Arrays.asList(ResourceIdentifier.WIKI_ENG, ResourceIdentifier.NEWS_ENG));
     }

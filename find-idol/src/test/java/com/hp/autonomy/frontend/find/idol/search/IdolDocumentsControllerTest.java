@@ -7,9 +7,9 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
-import com.hp.autonomy.frontend.find.core.search.FindDocument;
+import com.hp.autonomy.searchcomponents.core.search.HavenDocument;
 
-public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, FindDocument, AciErrorException> {
+public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, HavenDocument, AciErrorException> {
     public IdolDocumentsControllerTest() {
         super(new IdolDocumentsController(), String.class);
     }

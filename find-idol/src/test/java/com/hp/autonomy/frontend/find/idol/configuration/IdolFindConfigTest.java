@@ -9,6 +9,7 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
+import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import org.junit.Before;
 import org.junit.Test;

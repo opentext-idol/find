@@ -14,8 +14,9 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.PasswordsConfig;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
-import com.hp.autonomy.frontend.find.core.configuration.QueryManipulationConfig;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
+import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationCapable;
+import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ import java.util.Set;
 @JsonDeserialize(builder = HodFindConfig.Builder.class)
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, PasswordsConfig<HodFindConfig>, HodSsoConfig {
+public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, QueryManipulationCapable, PasswordsConfig<HodFindConfig>, HodSsoConfig {
 
     private final Authentication<?> login;
     private final HsodConfig hsod;

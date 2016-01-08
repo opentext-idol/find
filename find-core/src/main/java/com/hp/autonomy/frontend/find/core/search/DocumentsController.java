@@ -5,6 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.HavenDocument;
+import com.hp.autonomy.searchcomponents.core.search.HavenQueryParams;
 import com.hp.autonomy.types.requests.Documents;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,7 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)
-public abstract class DocumentsController<S extends Serializable, D extends FindDocument, E extends Exception> {
+public abstract class DocumentsController<S extends Serializable, D extends HavenDocument, E extends Exception> {
     public static final String SEARCH_PATH = "/api/public/search";
     public static final String QUERY_PATH = "query-text-index/results";
     public static final String PROMOTIONS_PATH = "query-text-index/promotions";
@@ -55,7 +58,7 @@ public abstract class DocumentsController<S extends Serializable, D extends Find
                               @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                               @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
                               @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
+        final HavenQueryParams<S> findQueryParams = new HavenQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
         return documentsService.queryTextIndex(findQueryParams);
     }
 
@@ -71,7 +74,7 @@ public abstract class DocumentsController<S extends Serializable, D extends Find
                                            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
                                            @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        final FindQueryParams<S> findQueryParams = new FindQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
+        final HavenQueryParams<S> findQueryParams = new HavenQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
         return documentsService.queryTextIndexForPromotions(findQueryParams);
     }
 
