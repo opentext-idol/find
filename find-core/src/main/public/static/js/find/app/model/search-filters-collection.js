@@ -4,7 +4,7 @@ define([
     'moment',
     'find/app/model/backbone-query-model',
     'find/app/model/dates-filter-model',
-    'find/app/page/date/dates-filter-view',
+    'find/app/page/search/filters/date/dates-filter-view',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(Backbone, _, moment, QueryModel, DatesFilterModel, datesFilterView, i18n, i18n_indexes) {
