@@ -18,6 +18,7 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.util.DriverUtil;
+import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -73,7 +74,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
         body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         getElementFactory().getAnalyticsPage().indexSizeChart().click();
 
-        verifyThat(PageUtil.getWrapperContent(getDriver()), not(containsText("does not exist")));
+        verifyThat(PageUtil.getWrapperContent(getDriver()), not(containsText(Errors.Index.INVALID_INDEX)));
     }
 
     @Test
