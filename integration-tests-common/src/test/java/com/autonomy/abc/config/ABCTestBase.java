@@ -156,7 +156,7 @@ public abstract class ABCTestBase {
 	}
 
 	protected final void loginTo(LoginPage loginPage, WebDriver webDriver, User user) {
-		String redirectUrl = extractRedirectUrl(webDriver.getCurrentUrl());
+		String redirectUrl = extractRedirectUrl(webDriver.getCurrentUrl()).replace("%23","#");
 		try {
 			loginPage.loginWith(user.getAuthProvider());
 		} catch (SSOFailureException e) {
