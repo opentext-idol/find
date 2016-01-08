@@ -629,14 +629,21 @@ public class FindITCase extends HostedTestBase {
         getDriver().switchTo().window(browserHandles.get(0));
         keywordService.addSynonymGroup(Language.ENGLISH, "cat", nonsense);
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        /* need a separate session due to caching */
+        WebDriver otherDriver = config.getWebDriverFactory().create();
+        try {
+            Find otherFind = createSession(otherDriver);
+            otherFind.search("Cat");
+            FindResultsPage otherResults = otherFind.getResultsPage();
+            String firstTitle = otherResults.getSearchResultTitle(1).getText();
 
-        find.search("cat");
-        String firstTitle = results.getSearchResultTitle(1).getText();
+            otherFind.search(nonsense);
+            assertThat(otherResults.getText(), not(noDocs));
+            verifyThat(otherResults.getSearchResultTitle(1).getText(), is(firstTitle));
 
-        find.search(nonsense);
-        assertThat(results.getText(), not(noDocs));
-        verifyThat(results.getSearchResultTitle(1).getText(), is(firstTitle));
+        } finally {
+            otherDriver.quit();
+        }
     }
 
     @Test
