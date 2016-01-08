@@ -26,6 +26,7 @@ define([
         'app.seeMore': 'See More',
         'app.seeLess': 'See Less',
         'app.search': 'Search',
+        'app.searchPlaceholder': 'What do you want to find?',
         'app.settings': 'Settings',
         'app.until': 'Until',
         'app.user': 'User',
