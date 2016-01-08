@@ -1,0 +1,134 @@
+package com.autonomy.abc.indexes;
+
+import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
+import com.autonomy.abc.selenium.actions.wizard.WizardStep;
+import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.connections.Connector;
+import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.IndexService;
+import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
+import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import com.autonomy.abc.selenium.util.DriverUtil;
+import com.autonomy.abc.selenium.util.PageUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
+
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+
+public class IndexDisplayNameITCase extends HostedTestBase {
+    private IndexService indexService;
+    private IndexesPage indexesPage;
+    private Index testIndex;
+
+    public IndexDisplayNameITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
+        super(config, browser, type, platform);
+        setInitialUser(config.getUser("index_tests"));
+    }
+
+    @Before
+    public void setUp(){
+        indexService = getApplication().createIndexService(getElementFactory());
+        testIndex = new Index("thisisabittooyobbish5me","D1spl4y Nam3 AbC 123");
+        indexesPage = indexService.setUpIndex(testIndex);
+        body = getBody();
+    }
+
+    @After
+    public void tearDown(){
+        indexService.deleteAllIndexes();
+    }
+
+    @Test
+    public void testIndexPageList(){
+        verifyThat(indexesPage.getIndexDisplayNames(), hasItem(testIndex.getDisplayName()));
+    }
+
+    @Test
+    public void testSearchFilter(){
+        body.getTopNavBar().search("Crickets Throw Their Voices");
+        verifyIndexOrDefault(getElementFactory().getSearchPage().indexesTree().privateIndexes());
+    }
+
+    @Test
+    public void testPieChartLink(){
+        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getAnalyticsPage().indexSizeChart().click();
+
+        verifyThat(PageUtil.getWrapperContent(getDriver()), not(containsText("does not exist")));
+    }
+
+    @Test
+    public void testFindIndex(){
+        List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+
+        try {
+            getDriver().switchTo().window(browserHandles.get(1));
+            getDriver().get(config.getFindUrl());
+            getDriver().manage().window().maximize();
+
+            Find find = getElementFactory().getFindPage();
+            find.search("This woman's work");
+
+            verifyIndexOrDefault(find.indexesTree().privateIndexes());
+        } finally {
+            getDriver().close();
+            getDriver().switchTo().window(browserHandles.get(0));
+        }
+    }
+
+    private void verifyIndexOrDefault(IndexCategoryNode category){
+        for(IndexNodeElement node : category){
+            verifyThat(node.getName(), anyOf(is(Index.DEFAULT.getDisplayName()), is(testIndex.getDisplayName())));
+        }
+    }
+
+    @Test
+    public void testConnectionsIndex(){
+        Connector connector = new WebConnector("http://www.bbc.co.uk", "bbc", testIndex).withDuration(60);
+
+        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getConnectionsPage().newConnectionButton().click();
+
+        NewConnectionPage newConnectionPage = getElementFactory().getNewConnectionPage();
+
+        Wizard wizard = connector.makeWizard(newConnectionPage);
+
+        try {
+            for (WizardStep step : wizard.getSteps()) {
+                wizard.getCurrentStep().apply();
+
+                if (step.getTitle().contains("Index")) {
+                    //TODO change this to make sure that the indexes are equal in general if that's ever something that can happen
+                    verifyThat(newConnectionPage.getIndexStep().getChosenIndexOnPage().getDisplayName(), is(testIndex.getDisplayName()));
+                }
+
+                wizard.next();
+            }
+
+            new WebDriverWait(getDriver(), 300).withMessage("connection " + connector + " timed out").until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
+
+            verifyThat(getElementFactory().getConnectionsPage().getIndexOf(connector), is(testIndex.getDisplayName()));
+        } finally {
+            getApplication().createConnectionService(getElementFactory()).deleteAllConnections(true);
+        }
+    }
+}

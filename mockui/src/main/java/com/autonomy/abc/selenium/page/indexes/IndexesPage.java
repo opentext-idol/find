@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.indexes;
 
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -10,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.lang.model.element.Element;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +35,12 @@ public class IndexesPage extends AppElement implements AppPage {
         return getDriver().findElement(By.id("new-index-btn"));
     }
 
-    public WebElement findIndex(String indexName) {
-        if(indexName.contains(" ")){
-            findElement(By.xpath("//*[contains(text(),'"+indexName+"')]"));
-        }
-
-        return findElement(By.id(indexName));
+    public WebElement findIndex(String displayName) {
+            return findElement(By.xpath("//*[contains(text(),'" + displayName + "')]"));
     }
 
-    public void deleteIndex(String indexName){
-        findIndex(indexName).findElement(By.cssSelector(".delete-action-button-container button")).click();
+    public void deleteIndex(String displayName){
+        ElementUtil.ancestor(findIndex(displayName), 9).findElement(By.cssSelector(".delete-action-button-container button")).click();
         Waits.loadOrFadeWait();
         modalClick();
         Waits.loadOrFadeWait();
@@ -56,7 +54,7 @@ public class IndexesPage extends AppElement implements AppPage {
         return findElements(By.xpath("//*[contains(@ng-repeat,'index')]"));
     }
 
-    public List<String> getIndexNames(){
+    public List<String> getIndexDisplayNames(){
         List<String> names = new ArrayList<>();
 
         for(WebElement index : getIndexes()){

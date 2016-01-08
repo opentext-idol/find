@@ -37,5 +37,6 @@ public class Errors {
     public static class Index {
         public static final String DISPLAY_NAME = "Please enter a valid name that contains only alphanumeric characters";
         public static final String FIELD_NAMES = "field names can contain only lowercase alphanumeric characters";
+        public static final String INVALID_INDEX = "does not exist";
     }
 }

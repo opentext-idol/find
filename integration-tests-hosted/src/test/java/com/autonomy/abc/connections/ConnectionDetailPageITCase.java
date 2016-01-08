@@ -10,15 +10,10 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.http.HttpClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +106,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         getDriver().navigate().refresh();
         body = getBody();
 
-        verifyThat(getElementFactory().getIndexesPage().getIndexNames(), not(hasItem(indexOne.getName())));
+        verifyThat(getElementFactory().getIndexesPage().getIndexDisplayNames(), not(hasItem(indexOne.getName())));
 
         connector = connectionService.changeIndex(connector, indexTwo);
 

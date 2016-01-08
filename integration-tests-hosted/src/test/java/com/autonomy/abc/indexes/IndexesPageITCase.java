@@ -21,12 +21,12 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.util.DriverUtil;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,11 +69,11 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexesPage = indexService.setUpIndex(index);
 
-        verifyThat(indexesPage.getIndexNames(), hasItem(index.getName()));
+        verifyThat(indexesPage.getIndexDisplayNames(), hasItem(index.getName()));
 
         indexService.deleteIndex(index);
 
-        verifyThat(indexesPage.getIndexNames(), not(hasItem(index.getName())));
+        verifyThat(indexesPage.getIndexDisplayNames(), not(hasItem(index.getName())));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Make sure default index is still there
-        assertThat(indexesPage.getIndexNames(), hasItem(default_index.getName()));
+        assertThat(indexesPage.getIndexDisplayNames(), hasItem(default_index.getName()));
     }
 
     @Test
@@ -133,7 +133,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Ensure the index wasn't deleted
-        assertThat(indexesPage.getIndexNames(), hasItem(index.getName()));
+        assertThat(indexesPage.getIndexDisplayNames(), hasItem(index.getName()));
     }
 
     @Test
@@ -220,8 +220,7 @@ public class IndexesPageITCase extends HostedTestBase {
     //CSA-1735
     public void testNavigatingToNonExistingIndexByURL(){
         getDriver().get("https://search.dev.idolondemand.com/search/#/index/doesntexistmate");
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
-        verifyThat(new AppElement(getDriver().findElement(By.className("wrapper-content")),getDriver()), containsText("Index doesntexistmate does not exist"));
+        verifyThat(PageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
     }
 
     @Test
@@ -236,7 +235,7 @@ public class IndexesPageITCase extends HostedTestBase {
         indexesPage = getElementFactory().getIndexesPage();
         body = getBody();
 
-        verifyThat(indexesPage.getIndexNames(), hasItem(Index.DEFAULT.getName()));
+        verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getName()));
     }
 
     @Test

@@ -100,6 +100,7 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         }
     }
 
+    //TODO change so that it gets display and normal name (if possible)
     public Index getChosenIndexOnPage() {
         return new Index(findElement(By.cssSelector(".selectedIndexNameContainer .ng-binding")).getText());
     }
@@ -108,7 +109,7 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         getIndexSearchBox().click();
 
         for(WebElement existingIndex : getExistingIndexes()){
-            if(existingIndex.getText().equals(index.getName())){
+            if(existingIndex.getText().equals(index.getDisplayName())){
                 existingIndex.click();
                 modalOKButton().click();
                 //Need to wait for modal to disappear

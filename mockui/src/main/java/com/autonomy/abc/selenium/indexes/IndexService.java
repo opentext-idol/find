@@ -8,12 +8,11 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +53,13 @@ public class IndexService {
         indexesPage.newIndexButton().click();
         CreateNewIndexPage newIndexPage = elementFactory.getCreateNewIndexPage();
 
-        newIndexPage.indexNameInput().setValue(index.getName());
+        String indexName = index.getName();
+        String displayName = index.getDisplayName();
+
+        newIndexPage.indexNameInput().setValue(indexName);
+        if(!displayName.equals(indexName)) {
+            newIndexPage.displayNameInput().setValue(displayName);
+        }
         newIndexPage.nextButton().click();
         Waits.loadOrFadeWait();
 
@@ -82,13 +87,17 @@ public class IndexService {
 
     public IndexesPage deleteAllIndexes() {
         goToIndexes();
-        for(WebElement index : getDriver().findElements(By.className("listItemTitle"))){
-            String indexName = index.getText().split("\\(")[0].trim();
-            if(indexName.equals("default_index")){
-                continue;
+
+        for(String index : indexesPage.getIndexDisplayNames()){
+            if(!index.equals("Default Index")) {
+                try {
+                    indexesPage.deleteIndex(index);
+                } catch (WebDriverException e) {
+                    LoggerFactory.getLogger(IndexService.class).error("Could not delete index " + index);
+                }
             }
-            deleteIndex(new Index(indexName));
         }
+
         return indexesPage;
     }
 
