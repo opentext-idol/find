@@ -367,48 +367,25 @@ public class SearchPageITCase extends ABCTestBase {
     //TODO there are some which contain helpful error messages?
 	@Test
 	public void testSearchQuotationMarks() {
-        List<String> testSearchTerms = Arrays.asList("\"","\"\"","\" \"","\" \"","\"word","\" word","\" wo\"rd\"");
+        List<String> emptyPhrases = Arrays.asList("\"\"","\" \"");
+		List<String> unclosedPhrases = Arrays.asList("\"","\"word","\" word","\" wo\"rd\"");
 
+		String emptyError = Errors.Search.NO_TEXT;
+		String unclosedError = Errors.Search.QUOTES;
+
+		// TODO: IOD-8454
         if(getConfig().getType().equals(ApplicationType.HOSTED)){
-            for (String searchTerm : testSearchTerms){
-                search(searchTerm);
-                assertThat(searchPage.getText(),containsString(Errors.Search.HOD));
-            }
-        } else if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            String noValidQueryText = "No valid query text supplied";
-            String unclosedPhrase = "Unclosed phrase";
-            int searchTerm = 0;
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(unclosedPhrase));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(noValidQueryText));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(noValidQueryText));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(noValidQueryText));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(unclosedPhrase));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString("An error occurred executing the search action"));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(unclosedPhrase));
-
-            search(testSearchTerms.get(searchTerm++));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString("An error occurred executing the search action"));
-            assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(unclosedPhrase));
-        } else {
-            fail("Config type not recognised");
+			emptyError = Errors.Search.HOD;
+			unclosedError = Errors.Search.HOD;
         }
+		for (String empty : emptyPhrases) {
+			search(empty);
+			assertThat(searchPage, containsText(emptyError));
+		}
+		for (String unclosed : unclosedPhrases) {
+			search(unclosed);
+			assertThat(searchPage, containsText(unclosedError));
+		}
 	}
 
 	@Test

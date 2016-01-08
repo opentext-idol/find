@@ -46,9 +46,7 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
-import static com.autonomy.abc.matchers.ElementMatchers.hasTagName;
-import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -64,7 +62,7 @@ public class FindITCase extends HostedTestBase {
     private FindResultsPage results;
     private List<String> browserHandles;
     private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
-    private final Matcher<String> noDocs = containsString("No results found");
+    private final Matcher<String> noDocs = containsString(Errors.Search.NO_RESULTS);
     private PromotionService promotionService;
     private KeywordService keywordService;
 
@@ -827,7 +825,7 @@ public class FindITCase extends HostedTestBase {
         for(String searchTerm : testSearchTerms){
             find.search(searchTerm);
 
-            assertThat(results.getText(), containsString(Errors.Find.GENERAL));
+            assertThat(results, containsText(Errors.Search.OPERATORS));
         }
     }
 
@@ -837,7 +835,7 @@ public class FindITCase extends HostedTestBase {
         List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){
             find.search(searchTerm);
-            assertThat(results.getText(), Matchers.containsString(Errors.Find.GENERAL));
+            assertThat(results, containsText(Errors.Search.QUOTES));
         }
     }
 
@@ -845,7 +843,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testWhitespaceSearch() {
         find.search(" ");
-        assertThat(results.getText(),containsString(Errors.Find.GENERAL));
+        assertThat(results, containsText(Errors.Search.STOPWORDS));
     }
 
     @Test

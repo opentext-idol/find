@@ -18,6 +18,8 @@ public class Errors {
         public static final String STOPWORDS = "All terms were invalid, through being stopwords";
         public static final String BACKEND = "Backend request failed";
         public final static String HOD = "Haven OnDemand returned an error while executing the search action";
+        public static final String QUOTES = "Unclosed phrase";
+        public static final String NO_TEXT = "No valid query text supplied";
     }
 
     public static class Keywords {
@@ -30,10 +32,6 @@ public class Errors {
         public static final String BLANK_EMAIL = "Error! Email address must not be blank";
         public static final String DUPLICATE_EMAIL = "Error! A user with this email address already exists";
         public static final String DUPLICATE_USER = "Error! User exists!";
-    }
-
-    public static class Find {
-        public static final String GENERAL = "An error occurred retrieving results";
     }
 
     public static class Index {
