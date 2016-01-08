@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
 import com.autonomy.abc.selenium.element.Checkbox;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -31,6 +30,6 @@ public class IndexLeafNode implements IndexNodeElement {
 
     @Override
     public String getName() {
-        return container.findElement(By.cssSelector("[data-name]")).getAttribute("data-name");
+        return container.getText();
     }
 }

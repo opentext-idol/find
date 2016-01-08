@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -88,13 +89,16 @@ public class IndexService {
 
     public IndexesPage deleteAllIndexes() {
         goToIndexes();
-        for(WebElement index : getDriver().findElements(By.className("listItemTitle"))){
-            String indexName = index.getText().split("\\(")[0].trim();
-            if(indexName.equals("default_index")){
-                continue;
+
+        for(WebElement trashCan : indexesPage.findElements(By.className("fa-trash-o"))){
+            if(ElementUtil.ancestor(trashCan, 1).isEnabled()){
+                trashCan.click();
+                Waits.loadOrFadeWait();
+                getDriver().findElement(By.cssSelector(".modal-footer [type=submit]")).click();
+                new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("successfully deleted"));
             }
-            deleteIndex(new Index(indexName));
         }
+
         return indexesPage;
     }
 
