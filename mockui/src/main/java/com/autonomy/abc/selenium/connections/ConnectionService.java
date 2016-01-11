@@ -65,8 +65,18 @@ public class ConnectionService {
         connectionsPage.newConnectionButton().click();
         newConnectionPage = elementFactory.getNewConnectionPage();
         connector.makeWizard(newConnectionPage).apply();
-        new WebDriverWait(getDriver(), 300).withMessage("connection " + connector + " timed out").until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
+        waitForConnectorToRun(connector);
         return connectionsPage;
+    }
+
+    private void waitForConnectorToRun(final Connector connector) {
+        int timeout = 300;
+        if (connector instanceof WebConnector) {
+            timeout = ((WebConnector) connector).getDuration() + 10;
+        }
+        new WebDriverWait(getDriver(), timeout)
+                .withMessage("running connection " + connector)
+                .until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
     }
 
     public ConnectionsPage deleteConnection(final Connector connector, boolean deleteIndex) {
@@ -144,8 +154,7 @@ public class ConnectionService {
         newConnectionPage.finishButton().click();
 
         connector.setIndex(index);
-
-        new WebDriverWait(getDriver(), 300).withMessage("connection " + connector + " timed out").until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
+        waitForConnectorToRun(connector);
 
         return connector;
     }
