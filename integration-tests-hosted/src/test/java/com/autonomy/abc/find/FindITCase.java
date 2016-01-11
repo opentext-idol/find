@@ -2,7 +2,6 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.config.WebDriverFactory;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
@@ -32,7 +31,6 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -464,7 +462,7 @@ public class FindITCase extends HostedTestBase {
     private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period){
         find.search("Rugby");
 
-        results.filterByDate(period);
+        results.toggleDateSelection(period);
         List<String> preDefinedResults = results.getResultTitles();
         find.filterBy(new StringDateFilter().from(getDate(period)));
         List<String> customResults = results.getResultTitles();
@@ -586,7 +584,7 @@ public class FindITCase extends HostedTestBase {
         find.filterBy(new StringDateFilter().from(start).until(end));
         Waits.loadOrFadeWait();
         for (int unused = 0; unused < 3; unused++) {
-            results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
+            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
             Waits.loadOrFadeWait();
         }
 
@@ -860,7 +858,7 @@ public class FindITCase extends HostedTestBase {
         find.search("O Captain! My Captain!");
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
-            results.filterByDate(FindResultsPage.DateEnum.CUSTOM);
+            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
             assertThat(results.getResultsDiv().getText(), not(containsString("Loading")));
         }
     }

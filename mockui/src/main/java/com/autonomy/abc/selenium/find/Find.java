@@ -107,6 +107,7 @@ public class Find extends AppElement implements AppPage,
     }
 
     private DatePicker datePicker(By locator) {
+        showCustomDateBoxes();
         return new DatePicker(findElement(locator), getDriver());
     }
 
@@ -121,6 +122,13 @@ public class Find extends AppElement implements AppPage,
     }
 
     private FormInput dateInput(By locator) {
+        showCustomDateBoxes();
         return new FormInput(findElement(locator), getDriver());
+    }
+
+    private void showCustomDateBoxes() {
+        if (!results.isDateSelected(FindResultsPage.DateEnum.CUSTOM)) {
+            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+        }
     }
 }
