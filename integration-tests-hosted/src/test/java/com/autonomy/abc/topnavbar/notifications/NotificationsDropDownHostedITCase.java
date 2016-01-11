@@ -2,9 +2,12 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -58,7 +61,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         ps.setUpStaticPromotion(new StaticPromotion(docTitle, docContent, promotionTrigger));
         try {
             getElementFactory().getSearchPage();
-            checkForNotification(promotionNotificationText);
+            checkForNotification(promotionNotificationText, true);
         } finally {
             ps.deleteAll();
         }
@@ -78,34 +81,20 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         ps.setUpStaticPromotion(staticPromotion);
         ps.delete(staticPromotion);
 
-        checkForNotification(promotionNotificationText);
+        checkForNotification(promotionNotificationText, true);
     }
 
     @Test
     public void testCreateIndexNotifications() {
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage indexes = getElementFactory().getIndexesPage();
-        body = getBody();
-
-        String indexName = "danye west";
-        String indexCreationNotification = "Created a new index: "+indexName;
+        Index index = new Index("danye west");
+        IndexService indexService = ((HSOApplication) getApplication()).createIndexService(getElementFactory());
 
         try {
-            indexes.newIndexButton().click();
-            CreateNewIndexPage createNewIndexPage = getElementFactory().getCreateNewIndexPage();
-            createNewIndexPage.indexNameInput().setValue(indexName);
-            createNewIndexPage.continueWizardButton().click();
-            Waits.loadOrFadeWait();
-            createNewIndexPage.continueWizardButton().click();
-            Waits.loadOrFadeWait();
-            createNewIndexPage.finishWizardButton().click();
-
-            new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining(indexCreationNotification));
-
-            checkForNotification(indexCreationNotification);
+            indexService.setUpIndex(index);
+            body = getBody();
+            checkForNotification("Created a new index: " + index.getName(), false);
         } finally {
-            body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
-            getElementFactory().getIndexesPage().deleteIndex(indexName);
+            indexService.deleteIndex(index);
         }
     }
 
