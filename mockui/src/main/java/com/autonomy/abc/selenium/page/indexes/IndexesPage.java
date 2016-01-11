@@ -36,11 +36,11 @@ public class IndexesPage extends AppElement implements AppPage {
     }
 
     public WebElement findIndex(String displayName) {
-            return findElement(By.xpath("//*[contains(text(),'" + displayName + "')]"));
+            return findElement(By.xpath(".//*[contains(text(),'" + displayName + "')]"));
     }
 
     public void deleteIndex(String displayName){
-        ElementUtil.ancestor(findIndex(displayName), 9).findElement(By.cssSelector(".delete-action-button-container button")).click();
+        ElementUtil.ancestor(findIndex(displayName), 9).findElement(By.tagName("button")).click();
         Waits.loadOrFadeWait();
         modalClick();
         Waits.loadOrFadeWait();
