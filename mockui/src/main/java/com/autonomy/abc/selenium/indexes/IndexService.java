@@ -75,7 +75,7 @@ public class IndexService {
                     indexesPage.deleteIndex(index);
                     waitForIndexDeletion(index);
                 } catch (WebDriverException e) {
-                    LoggerFactory.getLogger(IndexService.class).error("Could not delete index " + index);
+                    LoggerFactory.getLogger(IndexService.class).error("Could not delete index '" + index + "' because of a " + e.getClass().getSimpleName());
                 }
             }
         }
