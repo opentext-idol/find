@@ -39,7 +39,7 @@ The properties you'll need to set are:
 
 * -Dhp.find.home . This is the directory where the webapp will store log files and the config.json file.
 * -Dhp.find.persistentState . Optional property. The persistence mode for the application, which determines where 
-sessions, token proxies and caches are stored. Possible options are REDIS or INMEMORY. Defaults to REDIS.
+sessions, token proxies and caches are stored. Possible options are REDIS or INMEMORY. Defaults to INMEMORY.
 * -Dfind.https.proxyHost . Optional property. The host for the https proxy. Set this if you need a proxy server to talk 
 to Haven OnDemand.
 * -Dfind.https.proxyPort . Optional property. The port for the https proxy. Set this if you need a proxy server to talk 

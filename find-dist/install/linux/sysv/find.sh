@@ -17,7 +17,7 @@ JAVA_BIN="/usr/bin/java"
 PRODUCT_NAME="HPE Find"
 LOCKFILE="/var/lock/$NAME.pid"
 STARTUP_LOG="$BASE_DIR/console.log"
-ARGS="-Dhp.find.home=$HOMEDIR -Dhp.find.persistentState=INMEMORY -Dserver.port=$PORT -jar $EXECUTABLE -uriEncoding utf-8"
+ARGS="-Dhp.find.home=$HOMEDIR -Dserver.port=$PORT -jar $EXECUTABLE -uriEncoding utf-8"
 SLEEPTIME=2
 ##
 

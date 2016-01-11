@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
 public abstract class AbstractPersistentStateCondition extends AbstractEnumCondition<PersistentStateConfig> {
 
-    private static final PersistentStateConfig DEFAULT_VALUE = PersistentStateConfig.REDIS;
+    private static final PersistentStateConfig DEFAULT_VALUE = PersistentStateConfig.INMEMORY;
 
     protected AbstractPersistentStateCondition(final PersistentStateConfig persistentStateConfig) {
         super("hp.find.persistentState", persistentStateConfig, DEFAULT_VALUE, PersistentStateConfig.class);
