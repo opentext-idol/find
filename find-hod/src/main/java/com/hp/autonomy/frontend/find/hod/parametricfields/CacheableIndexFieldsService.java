@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
-import com.hp.autonomy.frontend.find.core.web.CacheNames;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.fields.RetrieveIndexFieldsService;
@@ -26,13 +26,13 @@ public class CacheableIndexFieldsService extends IndexFieldsServiceImpl {
     }
 
     @Override
-    @Cacheable(CacheNames.PARAMETRIC_FIELDS)
+    @Cacheable(FindCacheNames.PARAMETRIC_FIELDS)
     public Set<String> getParametricFields(final ResourceIdentifier index) throws HodErrorException {
         return super.getParametricFields(index);
     }
 
     @Override
-    @Cacheable(CacheNames.PARAMETRIC_FIELDS)
+    @Cacheable(FindCacheNames.PARAMETRIC_FIELDS)
     public Set<String> getParametricFields(final TokenProxy<?, TokenType.Simple> tokenProxy, final ResourceIdentifier resourceIdentifier) throws HodErrorException {
         return super.getParametricFields(tokenProxy, resourceIdentifier);
     }

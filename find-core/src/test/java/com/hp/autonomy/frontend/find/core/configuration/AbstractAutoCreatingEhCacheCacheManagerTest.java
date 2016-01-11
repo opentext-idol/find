@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
-import com.hp.autonomy.frontend.find.core.web.CacheNames;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Status;
@@ -40,7 +40,7 @@ public abstract class AbstractAutoCreatingEhCacheCacheManagerTest {
 
     @Test
     public void getMissingCacheCustom() {
-        final String name = CacheNames.DOCUMENTS;
+        final String name = FindCacheNames.DOCUMENTS;
         assertNotNull(autoCreatingEhCacheCacheManager.getMissingCache(name));
     }
 }

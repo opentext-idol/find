@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
-import com.hp.autonomy.frontend.find.core.web.CacheNames;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricValuesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
@@ -25,7 +25,7 @@ public class CacheableParametricValuesService extends HodParametricValuesService
     }
 
     @Override
-    @Cacheable(CacheNames.PARAMETRIC_VALUES)
+    @Cacheable(FindCacheNames.PARAMETRIC_VALUES)
     public Set<QueryTagInfo> getAllParametricValues(final HodParametricRequest parametricRequest) throws HodErrorException {
         return super.getAllParametricValues(parametricRequest);
     }

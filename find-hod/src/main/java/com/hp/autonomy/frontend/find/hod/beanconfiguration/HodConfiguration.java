@@ -19,9 +19,6 @@ import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsService;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServiceImpl;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersServiceImpl;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
@@ -132,11 +129,6 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Bean
     public AuthenticationService authenticationService() {
         return new AuthenticationServiceImpl(hodServiceConfigBuilder().build());
-    }
-
-    @Bean
-    public FindRelatedConceptsService relatedConceptsService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
-        return new FindRelatedConceptsServiceImpl(hodServiceConfig);
     }
 
     @Bean

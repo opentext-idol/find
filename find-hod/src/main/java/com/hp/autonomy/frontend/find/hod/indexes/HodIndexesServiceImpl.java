@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.indexes;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.core.web.CacheNames;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
@@ -52,7 +52,7 @@ public class HodIndexesServiceImpl implements HodIndexesService {
     }
 
     @Override
-    @Cacheable(CacheNames.INDEXES)  // TODO: the caching here doesn't work from the settings page
+    @Cacheable(FindCacheNames.INDEXES)  // TODO: the caching here doesn't work from the settings page
     public Resources listIndexes(final TokenProxy<?, TokenType.Simple> tokenProxy) throws HodErrorException {
         final Set<ResourceType> types = new HashSet<>();
         types.add(ResourceType.CONTENT);
@@ -78,7 +78,7 @@ public class HodIndexesServiceImpl implements HodIndexesService {
     }
 
     @Override
-    @Cacheable(value = CacheNames.VISIBLE_INDEXES, key = "#root.methodName")
+    @Cacheable(value = FindCacheNames.VISIBLE_INDEXES, key = "#root.methodName")
     public List<Database> listVisibleIndexes() throws HodErrorException {
         final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 

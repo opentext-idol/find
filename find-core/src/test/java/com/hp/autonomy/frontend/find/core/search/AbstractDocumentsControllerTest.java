@@ -6,8 +6,8 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.HavenDocument;
-import com.hp.autonomy.searchcomponents.core.search.HavenQueryParams;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,14 +24,14 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractDocumentsControllerTest<S extends Serializable, D extends HavenDocument, E extends Exception> {
+public abstract class AbstractDocumentsControllerTest<S extends Serializable, R extends SearchResult, E extends Exception> {
     @Mock
-    protected DocumentsService<S, D, E> documentsService;
+    protected DocumentsService<S, R, E> documentsService;
 
-    protected final DocumentsController<S, D, E> documentsController;
+    protected final DocumentsController<S, R, E> documentsController;
     protected final Class<S> databaseType;
 
-    protected AbstractDocumentsControllerTest(final DocumentsController<S, D, E> documentsController, final Class<S> databaseType) {
+    protected AbstractDocumentsControllerTest(final DocumentsController<S, R, E> documentsController, final Class<S> databaseType) {
         this.documentsController = documentsController;
         this.databaseType = databaseType;
     }
@@ -44,13 +44,13 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, D 
     @Test
     public void query() throws E {
         documentsController.query("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
-        verify(documentsService).queryTextIndex(Matchers.<HavenQueryParams<S>>any());
+        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 
     @Test
     public void queryForPromotions() throws E {
         documentsController.queryForPromotions("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
-        verify(documentsService).queryTextIndexForPromotions(Matchers.<HavenQueryParams<S>>any());
+        verify(documentsService).queryTextIndexForPromotions(Matchers.<SearchRequest<S>>any());
     }
 
     @Test

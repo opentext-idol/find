@@ -6,8 +6,8 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.HavenDocument;
-import com.hp.autonomy.searchcomponents.core.search.HavenQueryParams;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)
-public abstract class DocumentsController<S extends Serializable, D extends HavenDocument, E extends Exception> {
+public abstract class DocumentsController<S extends Serializable, R extends SearchResult, E extends Exception> {
     public static final String SEARCH_PATH = "/api/public/search";
     public static final String QUERY_PATH = "query-text-index/results";
     public static final String PROMOTIONS_PATH = "query-text-index/promotions";
@@ -44,12 +44,12 @@ public abstract class DocumentsController<S extends Serializable, D extends Have
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    protected DocumentsService<S, D, E> documentsService;
+    protected DocumentsService<S, R, E> documentsService;
 
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public Documents<D> query(@RequestParam(TEXT_PARAM) final String text,
+    public Documents<R> query(@RequestParam(TEXT_PARAM) final String text,
                               @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
                               @RequestParam(SUMMARY_PARAM) final String summary,
                               @RequestParam(INDEX_PARAM) final List<S> index,
@@ -58,14 +58,14 @@ public abstract class DocumentsController<S extends Serializable, D extends Have
                               @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                               @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
                               @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        final HavenQueryParams<S> findQueryParams = new HavenQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
-        return documentsService.queryTextIndex(findQueryParams);
+        final SearchRequest<S> searchRequest = new SearchRequest<>(text, fieldText, 1, maxResults, summary, index, null, sort, minDate, maxDate, highlight, null);
+        return documentsService.queryTextIndex(searchRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = PROMOTIONS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public Documents<D> queryForPromotions(@RequestParam(TEXT_PARAM) final String text,
+    public Documents<R> queryForPromotions(@RequestParam(TEXT_PARAM) final String text,
                                            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
                                            @RequestParam(SUMMARY_PARAM) final String summary,
                                            @RequestParam(INDEX_PARAM) final List<S> index,
@@ -74,13 +74,13 @@ public abstract class DocumentsController<S extends Serializable, D extends Have
                                            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
                                            @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        final HavenQueryParams<S> findQueryParams = new HavenQueryParams<>(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
-        return documentsService.queryTextIndexForPromotions(findQueryParams);
+        final SearchRequest<S> searchRequest = new SearchRequest<>(text, fieldText, 1, maxResults, summary, index, null, sort, minDate, maxDate, highlight, null);
+        return documentsService.queryTextIndexForPromotions(searchRequest);
     }
 
     @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<D> findSimilar(@RequestParam(REFERENCE_PARAM) final String reference, @RequestParam(INDEXES_PARAM) final Set<S> indexes) throws E {
+    public List<R> findSimilar(@RequestParam(REFERENCE_PARAM) final String reference, @RequestParam(INDEXES_PARAM) final Set<S> indexes) throws E {
         return documentsService.findSimilar(indexes, reference);
     }
 }

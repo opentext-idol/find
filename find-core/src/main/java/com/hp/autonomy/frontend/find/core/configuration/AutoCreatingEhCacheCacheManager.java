@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
-import com.hp.autonomy.frontend.find.core.web.CacheNames;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.cache.Cache;
@@ -33,8 +33,8 @@ public abstract class AutoCreatingEhCacheCacheManager extends EhCacheCacheManage
 
             final String cacheName = getCacheName(name);
 
-            if (CacheNames.CACHE_EXPIRES.containsKey(cacheName)) {
-                cacheConfiguration.setTimeToLiveSeconds(CacheNames.CACHE_EXPIRES.get(cacheName));
+            if (FindCacheNames.CACHE_EXPIRES.containsKey(cacheName)) {
+                cacheConfiguration.setTimeToLiveSeconds(FindCacheNames.CACHE_EXPIRES.get(cacheName));
             }
 
             final net.sf.ehcache.Cache ehcache = new net.sf.ehcache.Cache(cacheConfiguration);
