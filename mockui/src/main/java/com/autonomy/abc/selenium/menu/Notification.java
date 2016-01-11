@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.menu;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 public class Notification {

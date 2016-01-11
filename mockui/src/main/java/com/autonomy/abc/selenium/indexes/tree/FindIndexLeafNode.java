@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 

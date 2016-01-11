@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.config.Application;
-import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.ElementFactory;

@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
-import org.openqa.selenium.WebElement;
 
 public class ConnectorIndexStep implements WizardStep {
     private final static String TITLE = "Index";

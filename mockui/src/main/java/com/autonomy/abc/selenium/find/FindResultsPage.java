@@ -8,7 +8,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FindResultsPage extends AppElement {
     public FindResultsPage(WebDriver driver) {

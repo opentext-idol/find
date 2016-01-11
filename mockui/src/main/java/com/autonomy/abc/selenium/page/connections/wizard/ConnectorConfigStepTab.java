@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.page.connections.wizard;
 
-import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -11,7 +10,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
