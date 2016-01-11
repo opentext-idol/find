@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
-import com.autonomy.abc.selenium.users.User;
 
 public class Credentials {
     private enum CredentialsEnum {

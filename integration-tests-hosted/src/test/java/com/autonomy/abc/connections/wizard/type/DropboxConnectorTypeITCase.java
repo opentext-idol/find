@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 

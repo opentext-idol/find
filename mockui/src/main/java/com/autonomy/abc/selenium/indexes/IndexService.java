@@ -5,12 +5,12 @@ import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
-import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Waits;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
 
@@ -51,26 +51,8 @@ public class IndexService {
     public IndexesPage setUpIndex(Index index) {
         goToIndexes();
         indexesPage.newIndexButton().click();
-        CreateNewIndexPage newIndexPage = elementFactory.getCreateNewIndexPage();
-
-        String indexName = index.getName();
-        String displayName = index.getDisplayName();
-
-        newIndexPage.indexNameInput().setValue(indexName);
-        if(!displayName.equals(indexName)) {
-            newIndexPage.displayNameInput().setValue(displayName);
-        }
-        newIndexPage.nextButton().click();
-        Waits.loadOrFadeWait();
-
-        newIndexPage.setIndexFields(index.getIndexFields());
-        newIndexPage.setParametricFields(index.getParametricFields());
-        newIndexPage.nextButton().click();
-        Waits.loadOrFadeWait();
-
-        newIndexPage.finishButton().click();
+        index.makeWizard(elementFactory.getCreateNewIndexPage()).apply();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));
-
         indexesPage = elementFactory.getIndexesPage();
         return indexesPage;
     }
@@ -78,9 +60,8 @@ public class IndexService {
     public IndexesPage deleteIndex(Index index) {
         goToIndexes();
 
-        indexesPage.deleteIndex(index.getName());
-
-        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Index " + index.getName() + " successfully deleted"));
+        indexesPage.deleteIndex(index.getDisplayName());
+        waitForIndexDeletion(index.getName());
 
         return indexesPage;
     }
@@ -92,13 +73,18 @@ public class IndexService {
             if(!index.equals("Default Index")) {
                 try {
                     indexesPage.deleteIndex(index);
+                    waitForIndexDeletion(index);
                 } catch (WebDriverException e) {
-                    LoggerFactory.getLogger(IndexService.class).error("Could not delete index " + index);
+                    LoggerFactory.getLogger(IndexService.class).error("Could not delete index '" + index + "' because of a " + e.getClass().getSimpleName());
                 }
             }
         }
 
         return indexesPage;
+    }
+
+    private void waitForIndexDeletion(String indexName){
+        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Index " + indexName + " successfully deleted"));
     }
 
     public void deleteIndexViaAPICalls(Index index) {

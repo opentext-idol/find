@@ -6,10 +6,7 @@ import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Locator;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SearchService extends ServiceBase {

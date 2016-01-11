@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.page.search;
 
-import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
+import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import org.openqa.selenium.WebDriver;
 
 public class HSOSearchPage extends SearchPage {

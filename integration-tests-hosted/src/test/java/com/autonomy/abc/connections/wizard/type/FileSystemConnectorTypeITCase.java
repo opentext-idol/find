@@ -6,20 +6,16 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
 
-import javax.lang.model.element.Element;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
-import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 

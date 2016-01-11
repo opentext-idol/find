@@ -2,7 +2,9 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.users.HSOUser;
+import com.autonomy.abc.selenium.users.Role;
+import com.autonomy.abc.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
