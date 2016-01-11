@@ -9,7 +9,6 @@ import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -465,9 +464,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 		SearchPage searchPage = searchService.search("wheels");
 		final String handle = getDriver().getWindowHandle();
 
-		WebElement promotedResult = searchPage.getPromotedResult(1);
+		WebElement promotedResult = searchPage.promotedDocumentTitle(1);
 		String firstTitle = promotedResult.getText();
-		String secondTitle = searchPage.getPromotedResult(2).getText();
+		String secondTitle = searchPage.promotedDocumentTitle(2).getText();
 		verifyThat(firstTitle, isIn(promotedDocs));
 		promotedResult.click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
@@ -492,7 +491,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		documentViewer.close();
 
 		searchPage.showMorePromotions();
-		promotedResult = searchPage.getPromotedResult(3);
+		promotedResult = searchPage.promotedDocumentTitle(3);
 		String thirdTitle = promotedResult.getText();
 		verifyThat(thirdTitle, isIn(promotedDocs));
 

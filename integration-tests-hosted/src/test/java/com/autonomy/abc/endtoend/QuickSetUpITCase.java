@@ -72,7 +72,7 @@ public class QuickSetUpITCase extends HostedTestBase {
 
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
-        assertThat(searchPage.getPromotedResult(1).getText(), is(promotionTitle));
+        assertThat(searchPage.promotedDocumentTitle(1).getText(), is(promotionTitle));
 
         //Delete Promotion
         PromotionsPage promotionsPage = promotionService.delete(trigger);
