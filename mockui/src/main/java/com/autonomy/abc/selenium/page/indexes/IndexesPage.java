@@ -16,18 +16,24 @@ import java.util.List;
 
 public class IndexesPage extends AppElement implements AppPage {
 
-    public IndexesPage(WebDriver driver) {
-        super(new WebDriverWait(driver, 30)
-                .withMessage("Indexes Page failed to load")
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
-        waitForLoad();
+    private IndexesPage(WebDriver driver) {
+        super(driver.findElement(By.className("wrapper-content")), driver);
+    }
+
+    public static IndexesPage make(WebDriver driver) {
+        IndexesPage.waitForLoad(driver);
+        return new IndexesPage(driver);
+    }
+
+    private static void waitForLoad(WebDriver driver) {
+        new WebDriverWait(driver, 30)
+                .withMessage("Indexes failed to load")
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
     }
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30)
-                .withMessage("Indexes failed to load")
-                .until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
+        waitForLoad(getDriver());
     }
 
     public WebElement newIndexButton(){
