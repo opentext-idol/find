@@ -121,7 +121,7 @@ public class HodDocumentsService implements DocumentsService<ResourceIdentifier,
             documentList.add(addDomain(findQueryParams.getIndex(), hodDocument));
         }
 
-        return new Documents<>(documentList, hodDocuments.getTotalResults(), hodDocuments.getExpandedQuery());
+        return new Documents<>(documentList, hodDocuments.getTotalResults(), hodDocuments.getExpandedQuery(), null, null);
     }
 
     // Add a domain to a FindDocument, given the collection of indexes which were queried against to return it from HOD

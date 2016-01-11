@@ -417,7 +417,26 @@ input.find-input {
 }
 
 .find-form {
+    text-align: left;
     position: relative;
+}
+
+/* Search form type ahead */
+.find-form .twitter-typeahead {
+    width: 100%;
+}
+.find-form .tt-menu {
+    background: white;
+    border: 2px solid #CCC;
+    width: 100%;
+    padding: 8px 0;
+    margin-top: 3px;
+}
+.find-form .tt-suggestion {
+    padding: 0 8px;
+}
+.find-form .tt-suggestion.tt-cursor {
+    background: #E7E7E7;
 }
 
 /* username */
@@ -576,19 +595,6 @@ input.find-input {
     font-weight: 700;
 }
 
-.find-form .popover label {
-    display: block;
-    margin-bottom: 5px;
-    padding-left: 20px;
-    vertical-align: baseline;
-}
-
-.find-form .popover label input[type="radio"], .find-form .popover label input[type="checkbox"] {
-    margin-left: -20px;
-    margin-right: 0;
-    vertical-align: baseline;
-}
-
 .search-text {
     font-weight: bold
 }
@@ -605,10 +611,6 @@ input.find-input {
     .find-input {
         height:25px;
         font-size: 24px;
-    }
-
-    form.form-search:before {
-        top:9px;
     }
 }
 
