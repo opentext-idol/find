@@ -138,7 +138,7 @@ public class IdolDocumentServiceTest {
     }
 
     private FindQueryParams<String> mockQueryParams() {
-        return new FindQueryParams<>("*", 50, null, Arrays.asList("Database1", "Database2"), null, null, null, DateTime.now(), true);
+        return new FindQueryParams<>("*", 50, null, Arrays.asList("Database1", "Database2"), null, null, null, DateTime.now(), true, false);
     }
 
     private QueryResponseData mockQueryResponse() {
