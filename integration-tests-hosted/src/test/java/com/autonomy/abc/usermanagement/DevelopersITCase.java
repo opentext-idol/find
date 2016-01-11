@@ -5,7 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.users.HSODeveloperService;
-import com.autonomy.abc.selenium.users.HSOUser;
+import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -14,8 +14,8 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class DevelopersITCase extends HostedTestBase {
-    private HSODeveloperService devService;
-    private HSODevelopersPage devsPage;
+    private HSODeveloperService developerService;
+    private HSODevelopersPage developersPage;
 
     public DevelopersITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
         super(config, browser, type, platform);
@@ -23,20 +23,20 @@ public class DevelopersITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        devService = getApplication().createDeveloperService(getElementFactory());
-        devsPage = devService.goToDevs();
+        developerService = getApplication().createDeveloperService(getElementFactory());
+        developersPage = developerService.goToDevs();
     }
 
     @Test
     public void testEditDevUsername(){
-        HSOUser dev = devService.DEVELOPER;
-        String originalUsername = dev.getUsername();
+        User developer = developersPage.getUser(0);
+        String originalUsername = developer.getUsername();
         String newUsername = "Jeremy Clarkson";
         try {
-            devService.editUsername(dev, newUsername);
-            verifyThat(devsPage.getUsernames(), hasItem(newUsername));
+            developerService.editUsername(developer, newUsername);
+            verifyThat(developersPage.getUsernames(), hasItem(newUsername));
         } finally {
-            devService.editUsername(dev, originalUsername);
+            developerService.editUsername(developer, originalUsername);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.admin;
 
+import com.autonomy.abc.selenium.users.HSOUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.By;
@@ -14,6 +15,13 @@ public class HSODevelopersPage extends HSOUserManagementPage {
     @Override
     public WebElement getUserRow(User user) {
         return getUserRowByUsername(user.getUsername());
+    }
+
+    public User getUser(int index) {
+        WebElement row = findElement(By.cssSelector(".users-table tbody tr:nth-of-type(" + (index+1) + ")"));
+        String username = row.findElement(By.className("user-name")).getText();
+        Role role = Role.fromString(row.findElement(By.className("user-role")).getText());
+        return new HSOUser(username, null, role);
     }
 
     @Override
