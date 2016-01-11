@@ -23,18 +23,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.not;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
@@ -117,18 +109,14 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         dynamicPromotionsPage.finishButton().click();
         Waits.loadOrFadeWait();
 
-        try {
-            new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-        } catch (final TimeoutException t) {
-            fail("Promotions summary has not appeared");
-        }
+        searchPage.waitForPromotionsLoadIndicatorToDisappear();
 
         if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
             assertThat(searchPage.getSelectedLanguage(), is(Language.FRENCH.toString()));
             assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase(Promotion.SpotlightType.TOP_PROMOTIONS.getOption()));
         }
         assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), is("bunny rabbit"));
-        assertThat(searchPage.promotionsSummaryList(false).get(0), is(firstDocTitle));
+        assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstDocTitle));
     }
 
     @Test
@@ -173,20 +161,17 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     }
 
     @Test
+    // CCUK-3586
     public void testNumberOfDocumentsPromotedOnPromotionsPage() {
         searchPage = searchService.search("arctic");
         final int promotionResultsCount = getNumberOfPromotedDynamicResults();
 
         promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, promotionResultsCount, "sausage"), "arctic", 1);
 
-        try {
-            new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-        } catch (final TimeoutException t) {
-            fail("Promotions summary has not appeared");
-        }
-        assertThat(searchPage.promotionsSummaryList(true).size(), is(promotionResultsCount));
+        assertThat(searchPage.getPromotedDocumentTitles(true), hasSize(promotionResultsCount));
 
         PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("sausage");
+        assertThat("query results are displayed on details page", promotionsDetailPage.dynamicPromotedList(), not(hasItem(containsText("Search for something"))));
         assertThat(promotionsDetailPage.getDynamicPromotedTitles(), hasSize(promotionResultsCount));
     }
 

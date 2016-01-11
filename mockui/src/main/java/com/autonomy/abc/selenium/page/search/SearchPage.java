@@ -149,11 +149,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return summaryItemsTotal;
 	}
 
-	@Deprecated
-	public List<String> promotionsSummaryList(final boolean fullList) {
-		return getPromotedDocumentTitles(fullList);
-	}
-
 	public List<String> getPromotedDocumentTitles(final boolean fullList) {
 		waitForPromotionsLoadIndicatorToDisappear();
 		final List<String> promotionsList = new ArrayList<>();
