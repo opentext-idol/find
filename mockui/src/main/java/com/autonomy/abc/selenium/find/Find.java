@@ -20,13 +20,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Find extends AppElement implements AppPage,
         IndexFilter.Filterable,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable {
+    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+
     private final FormInput input;
     private final FindResultsPage results;
 
@@ -107,6 +111,7 @@ public class Find extends AppElement implements AppPage,
     }
 
     private DatePicker datePicker(By locator) {
+        showCustomDateBoxes();
         return new DatePicker(findElement(locator), getDriver());
     }
 
@@ -120,7 +125,19 @@ public class Find extends AppElement implements AppPage,
         return dateInput(By.cssSelector(".results-filter-max-date input"));
     }
 
+    @Override
+    public String formatInputDate(Date date) {
+        return FORMAT.format(date);
+    }
+
     private FormInput dateInput(By locator) {
+        showCustomDateBoxes();
         return new FormInput(findElement(locator), getDriver());
+    }
+
+    private void showCustomDateBoxes() {
+        if (!results.isDateSelected(FindResultsPage.DateEnum.CUSTOM)) {
+            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+        }
     }
 }

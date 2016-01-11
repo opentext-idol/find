@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DatePickerFilter implements SearchFilter {
-    public static final SimpleDateFormat FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private final DatePickerHandler fromHandler = new DatePickerHandler();
     private final DatePickerHandler untilHandler = new DatePickerHandler();
 
@@ -55,7 +54,7 @@ public class DatePickerFilter implements SearchFilter {
 
         @Override
         public String toString() {
-            return date == null ? "null" : FORMAT.format(date);
+            return String.valueOf(date);
         }
     }
 }

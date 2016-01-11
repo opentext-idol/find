@@ -92,7 +92,7 @@ public class HSOElementFactory extends ElementFactory {
     }
 
     public IndexesPage getIndexesPage() {
-        return new IndexesPage(getDriver());
+        return IndexesPage.make(getDriver());
     }
 
     public CreateNewIndexPage getCreateNewIndexPage() {

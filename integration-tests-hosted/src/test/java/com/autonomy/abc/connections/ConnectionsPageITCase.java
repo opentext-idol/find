@@ -81,8 +81,8 @@ public class ConnectionsPageITCase extends HostedTestBase {
         connectionService.updateLastRun(webConnector);
         ConnectionStatistics connectionStatistics = webConnector.getStatistics();
 
-        verifyThat(connectionStatistics.getDetected(), not(0));
-        verifyThat(connectionStatistics.getIngested(), not(0));
+        verifyThat("detected some documents", connectionStatistics.getDetected(), not(0));
+        verifyThat("ingested some documents", connectionStatistics.getIngested(), not(0));
     }
 
     @Test

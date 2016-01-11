@@ -9,7 +9,6 @@ import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -371,35 +370,39 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	// CCUK-3586
 	public void testEditDynamicQuery() throws InterruptedException {
-		searchService.search(getQuery("kitty", Language.FRENCH));
-		SearchPage searchPage = getElementFactory().getSearchPage();
-		final String firstSearchResult = searchPage.getSearchResult(1).getText();
-		final String secondSearchResult = setUpPromotion(getQuery("chat", Language.FRENCH), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
+		final String initialTrigger = "meow";
+		final String updateTrigger = "tigre";
+		final String initialQueryTerm = "chat";
+		final String updateQueryTerm = "kitty";
+
+		SearchPage searchPage = searchService.search(getQuery(updateQueryTerm, Language.FRENCH));
+		final String updatePromotedResult = searchPage.getSearchResult(1).getText();
+		final String initialPromotedResult = setUpPromotion(getQuery(initialQueryTerm, Language.FRENCH), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger)).get(0);
 
 		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
-		triggerForm.addTrigger("tigre");
-		triggerForm.removeTrigger("meow");
-		searchService.search(getQuery("tigre", Language.FRENCH));
-		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(secondSearchResult));
+		triggerForm.addTrigger(updateTrigger);
+		triggerForm.removeTrigger(initialTrigger);
 
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-//		promotionsPage.selectPromotionsCategoryFilter("All Types");
-//		Waits.loadOrFadeWait();
-		promotionsDetailPage = promotionService.goToDetails("meow");
+		searchService.search(getQuery(updateTrigger, Language.FRENCH));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotedResult));
+
+		promotionsDetailPage = promotionService.goToDetails(initialTrigger);
 
 		Editable queryText = promotionsDetailPage.queryText();
-		verifyThat(queryText.getValue(), is("chat"));
+		verifyThat("correct query text displayed", queryText.getValue(), is(initialQueryTerm));
 
-		queryText.setValueAndWait("kitty");
-		verifyThat(queryText.getValue(), is("kitty"));
+		queryText.setValueAndWait(updateQueryTerm);
+		verifyThat("query text updated", queryText.getValue(), is(updateQueryTerm));
 
-		searchService.search(getQuery("tigre", Language.FRENCH));
-		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
+		searchService.search(getQuery(updateTrigger, Language.FRENCH));
+		verifyThat("promoted query updated in search results", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));
 
 		getDriver().navigate().refresh();
 		searchPage = getElementFactory().getSearchPage();
-		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+		verifyThat("correct promoted result after page refresh", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));
 	}
 
 	@Test
@@ -461,9 +464,9 @@ public class PromotionsPageITCase extends ABCTestBase {
 		SearchPage searchPage = searchService.search("wheels");
 		final String handle = getDriver().getWindowHandle();
 
-		WebElement promotedResult = searchPage.getPromotedResult(1);
+		WebElement promotedResult = searchPage.promotedDocumentTitle(1);
 		String firstTitle = promotedResult.getText();
-		String secondTitle = searchPage.getPromotedResult(2).getText();
+		String secondTitle = searchPage.promotedDocumentTitle(2).getText();
 		verifyThat(firstTitle, isIn(promotedDocs));
 		promotedResult.click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
@@ -488,7 +491,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		documentViewer.close();
 
 		searchPage.showMorePromotions();
-		promotedResult = searchPage.getPromotedResult(3);
+		promotedResult = searchPage.promotedDocumentTitle(3);
 		String thirdTitle = promotedResult.getText();
 		verifyThat(thirdTitle, isIn(promotedDocs));
 

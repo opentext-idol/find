@@ -30,6 +30,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		DatePickerFilter.Filterable,
 		StringDateFilter.Filterable {
 
+	private static final SimpleDateFormat INPUT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	private static final SimpleDateFormat RESULT_DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
 	public SearchBase(final WebElement element, final WebDriver driver) {
@@ -310,6 +311,11 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		expand(Facet.FILTER_BY);
 		expand(Facet.DATES);
 		return new DatePicker(findElement(locator), getDriver());
+	}
+
+	@Override
+	public String formatInputDate(Date date) {
+		return INPUT_DATE_FORMAT.format(date);
 	}
 
 	/* related concepts */

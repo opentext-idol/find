@@ -115,7 +115,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
         verifyNotification("create", promotion.getCreateNotification());
 
         promotionsDetailPage = promotionService.goToDetails(promotion);
-        promotionsDetailPage.staticPromotedDocumentTitle().setValueAndWait("different");
+        promotionsDetailPage.staticPromotedDocumentTitle().setValueAsync("different");
         verifyNotification("edit", promotion.getEditNotification());
 
         promotionService.delete(promotion);
@@ -145,7 +145,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
     @Test
     public void testPromotionViewable() {
         final String handle = getDriver().getWindowHandle();
-        searchPage.getPromotedResult(1).click();
+        searchPage.promotedDocumentTitle(1).click();
         DocumentViewer documentViewer = DocumentViewer.make(getDriver());
         verifyThat("document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
 

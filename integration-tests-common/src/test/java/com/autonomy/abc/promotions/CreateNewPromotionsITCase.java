@@ -175,12 +175,13 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
         SharedTriggerTests.addRemoveTriggers(triggerForm, createPromotionsPage.cancelButton(), createPromotionsPage.finishButton());
 
+        final String trigger = triggerForm.getTriggersAsStrings().get(0);
         finishPromotion();
 
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        promotionsDetailPage = promotionService.goToDetails("delta");
+        promotionsDetailPage = promotionService.goToDetails(trigger);
 
-        verifyThat(promotionsDetailPage, containsText("delta"));
+        verifyThat(promotionsDetailPage, containsText(trigger));
         verifyThat(promotionsDetailPage.pinPosition().getValue(), is("2"));
     }
 

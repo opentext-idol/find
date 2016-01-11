@@ -70,7 +70,7 @@ public class IndexService {
         goToIndexes();
 
         for(String index : indexesPage.getIndexDisplayNames()){
-            if(!index.equals("Default Index")) {
+            if(!index.equals(Index.DEFAULT.getDisplayName())) {
                 try {
                     indexesPage.deleteIndex(index);
                     waitForIndexDeletion(index);
