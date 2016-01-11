@@ -56,7 +56,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         ps.setUpStaticPromotion(new StaticPromotion(docTitle, docContent, promotionTrigger));
         try {
             getElementFactory().getSearchPage();
-            checkForNotification(promotionNotificationText, true);
+            checkForNotification(promotionNotificationText);
         } finally {
             ps.deleteAll();
         }
@@ -76,7 +76,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         ps.setUpStaticPromotion(staticPromotion);
         ps.delete(staticPromotion);
 
-        checkForNotification(promotionNotificationText, true);
+        checkForNotification(promotionNotificationText);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         try {
             indexService.setUpIndex(index);
             body = getBody();
-            checkForNotification("Created a new index: " + index.getName(), false);
+            checkForNotificationNoWait("Created a new index: " + index.getName());
         } finally {
             indexService.deleteIndex(index);
         }

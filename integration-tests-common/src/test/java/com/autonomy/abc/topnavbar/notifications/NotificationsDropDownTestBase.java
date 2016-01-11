@@ -32,13 +32,15 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
         notifications = topNavBar.getNotifications();
     }
 
-    protected void checkForNotification(String notificationText, boolean wait) {
-        if (wait) {
-            new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(notificationText));
-        }
+    protected void checkForNotificationNoWait(String notificationText) {
         body.getTopNavBar().notificationsDropdown();
         notifications = body.getTopNavBar().getNotifications();
         assertThat(notifications.notificationNumber(1).getText(), is(notificationText));
+    }
+
+    protected void checkForNotification(String notificationText) {
+        new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(notificationText));
+        checkForNotificationNoWait(notificationText);
     }
 
     protected void newBody(){

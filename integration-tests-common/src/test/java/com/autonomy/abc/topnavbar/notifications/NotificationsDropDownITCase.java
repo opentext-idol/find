@@ -204,7 +204,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		keywordService.addKeywords(KeywordWizardType.SYNONYMS, Language.ENGLISH, Arrays.asList(synonymOne, synonymTwo));
 
 		try {
-			checkForNotification(synonymNotificationText, true);
+			checkForNotification(synonymNotificationText);
 		} finally {
 			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 			keywordService.deleteAll(KeywordFilter.ALL);
@@ -239,7 +239,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		promotionService.setUpPromotion(new SpotlightPromotion(promotionTrigger), search, 2);
 		try {
 			getElementFactory().getSearchPage();
-			checkForNotification(promotionNotificationText, true);
+			checkForNotification(promotionNotificationText);
 		} finally {
 			promotionService.deleteAll();
 		}
@@ -256,7 +256,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		promotionService.setUpPromotion(spotlightPromotion, search, 2);
 		promotionService.delete(spotlightPromotion);
 
-		checkForNotification(promotionNotificationText, true);
+		checkForNotification(promotionNotificationText);
 	}
 
 	@Test
@@ -269,7 +269,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		promotionService.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), search, 1);
 		try {
 			getElementFactory().getSearchPage();
-			checkForNotification(promotionNotificationText, true);
+			checkForNotification(promotionNotificationText);
 		} finally {
 			promotionService.deleteAll();
 		}
@@ -287,7 +287,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		promotionService.setUpPromotion(ptpp, search, 1);
 		promotionService.delete(ptpp);
 
-		checkForNotification(promotionNotificationText, true);
+		checkForNotification(promotionNotificationText);
 	}
 
 	@Test
@@ -300,7 +300,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		promotionService.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), search, 1);
 		try {
 			getElementFactory().getSearchPage();
-			checkForNotification(promotionNotificationText, true);
+			checkForNotification(promotionNotificationText);
 		} finally {
 			promotionService.deleteAll();
 		}
@@ -318,7 +318,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		promotionService.setUpPromotion(dynamic, search, 1);
 		promotionService.delete(dynamic);
 
-		checkForNotification(promotionNotificationText, true);
+		checkForNotification(promotionNotificationText);
 	}
 
 	@Test
@@ -334,11 +334,11 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		try {
 			String removeSynonymOneNotification = "Removed \"" + synonymOne + "\" from a synonym group";
 			keywordsPage.synonymGroupContaining(synonymOne).synonymBox(synonymOne).removeAsync();
-			checkForNotification(removeSynonymOneNotification, true);
+			checkForNotification(removeSynonymOneNotification);
 			body.getTopNavBar().notificationsDropdown(); //Close notifications dropdown
 			String removeSynonymGroupNotification = "Removed a synonym group";
 			keywordsPage.synonymGroupContaining(synonymTwo).synonymBox(synonymTwo).removeAsync();
-			checkForNotification(removeSynonymGroupNotification, true);
+			checkForNotification(removeSynonymGroupNotification);
 		} finally {
 			keywordService.deleteAll(KeywordFilter.ALL);
 		}
