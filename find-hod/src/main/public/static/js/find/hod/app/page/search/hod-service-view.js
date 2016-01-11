@@ -30,12 +30,8 @@ define([
             });
         },
 
-        constructResultsView: function (entityCollection, indexesCollection, queryModel) {
-            return new ResultsView({
-                entityCollection: entityCollection,
-                indexesCollection: indexesCollection,
-                queryModel: queryModel
-            });
+        constructResultsView: function (models) {
+            return new ResultsView(models);
         }
     });
 
