@@ -22,10 +22,10 @@ import com.hp.autonomy.hod.client.token.TokenProxy;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -47,7 +47,7 @@ public class IodConfig implements ConfigurationComponent {
     }
 
     public List<ResourceIdentifier> getActiveIndexes() {
-        return new ArrayList<>(activeIndexes);
+        return activeIndexes == null ? Collections.<ResourceIdentifier>emptyList() : new ArrayList<>(activeIndexes);
     }
 
     @Override

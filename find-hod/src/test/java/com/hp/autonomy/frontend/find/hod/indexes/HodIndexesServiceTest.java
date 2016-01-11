@@ -22,7 +22,9 @@ import com.hp.autonomy.hod.databases.DatabasesService;
 import com.hp.autonomy.hod.fields.IndexFieldsService;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -43,6 +45,28 @@ import static org.mockito.Mockito.*;
 public class HodIndexesServiceTest {
     public static final String SAMPLE_DOMAIN = "SomeDomain";
 
+    private static SecurityContext existingSecurityContext;
+
+    @BeforeClass
+    public static void init() {
+        existingSecurityContext = SecurityContextHolder.getContext();
+
+        final SecurityContext securityContext = mock(SecurityContext.class);
+        final HodAuthentication hodAuthentication = mock(HodAuthentication.class);
+        final HodAuthenticationPrincipal hodAuthenticationPrincipal = mock(HodAuthenticationPrincipal.class);
+        final ResourceIdentifier resourceIdentifier = mock(ResourceIdentifier.class);
+        when(resourceIdentifier.getDomain()).thenReturn(SAMPLE_DOMAIN);
+        when(hodAuthenticationPrincipal.getApplication()).thenReturn(resourceIdentifier);
+        when(hodAuthentication.getPrincipal()).thenReturn(hodAuthenticationPrincipal);
+        when(securityContext.getAuthentication()).thenReturn(hodAuthentication);
+        SecurityContextHolder.setContext(securityContext);
+    }
+
+    @AfterClass
+    public static void destroy() {
+        SecurityContextHolder.setContext(existingSecurityContext);
+    }
+
     @Mock
     private ConfigService<HodFindConfig> configService;
 
@@ -60,16 +84,6 @@ public class HodIndexesServiceTest {
     @Before
     public void setUp() throws HodErrorException {
         hodIndexesService = new HodIndexesServiceImpl(configService, resourcesService, indexFieldsService, databasesService);
-
-        final SecurityContext securityContext = mock(SecurityContext.class);
-        final HodAuthentication hodAuthentication = mock(HodAuthentication.class);
-        final HodAuthenticationPrincipal hodAuthenticationPrincipal = mock(HodAuthenticationPrincipal.class);
-        final ResourceIdentifier resourceIdentifier = mock(ResourceIdentifier.class);
-        when(resourceIdentifier.getDomain()).thenReturn(SAMPLE_DOMAIN);
-        when(hodAuthenticationPrincipal.getApplication()).thenReturn(resourceIdentifier);
-        when(hodAuthentication.getPrincipal()).thenReturn(hodAuthenticationPrincipal);
-        when(securityContext.getAuthentication()).thenReturn(hodAuthentication);
-        SecurityContextHolder.setContext(securityContext);
 
         final Database privateDatabase = new Database.Builder().setName("Database1").build();
         final Database privateDatabase2 = new Database.Builder().setName("Database2").build();
