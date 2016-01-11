@@ -161,13 +161,16 @@ public class SharedTriggerTests {
     }
 
     private static void addBushyTail(TriggerForm triggerForm){
+        int triggerCount = triggerForm.getNumberOfTriggers();
         triggerForm.addTrigger("bushy tail");
-        assertThat(triggerForm.getTriggersAsStrings(), hasSize(2));
+        triggerCount += 2;
+        assertThat(triggerForm.getTriggersAsStrings(), hasSize(triggerCount));
         assertThat(triggerForm.getTriggersAsStrings(), hasItem("bushy"));
         assertThat(triggerForm.getTriggersAsStrings(), hasItem("tail"));
 
         triggerForm.removeTrigger("tail");
-        assertThat(triggerForm.getTriggersAsStrings(), hasSize(1));
+        triggerCount--;
+        assertThat(triggerForm.getTriggersAsStrings(), hasSize(triggerCount));
         assertThat(triggerForm.getTriggersAsStrings(), hasItem("bushy"));
         assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("tail")));
     }
