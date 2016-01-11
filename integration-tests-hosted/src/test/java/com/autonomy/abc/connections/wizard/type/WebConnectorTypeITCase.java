@@ -3,6 +3,7 @@ package com.autonomy.abc.connections.wizard.type;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
@@ -14,12 +15,17 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
+
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 /**
@@ -123,130 +129,216 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA-1700
-    //CSA-1889
+    //CSA-1700 || CSA-1889
+    public void testUppercaseUrls(){
+        List<WebConnector> uppercase = new ArrayList<WebConnector>() {{
+            add(new WebConnector("HTTP://www.ExAMPle.com", "example"));
+            add(new WebConnector("http://www.TAkingBAckSuNDAy.com", "takingbacksunday"));
+            add(new WebConnector("HTTP://WWW.FLICKERFLICKERFADE.COM", "flickerflickerfade"));
+            add(new WebConnector("hTTp://www.itTAKESMORE.com", "ittakesmore"));
+            add(new WebConnector("http://WWW.LOUDERNOW.com", "loudernow"));
+        }};
+
+        updateUrlAndVerifyConnectorName(uppercase, true, true);
+    }
+
+    @Test
+    public void testValidUrls(){
+        List<WebConnector> valid = new ArrayList<WebConnector>() {{
+            add(new WebConnector("http://www.foo.com", "foo"));
+            add(new WebConnector("http://koo.co.uk", "koo"));
+            add(new WebConnector("https://koo2.co.uk", "koo2"));
+            add(new WebConnector("http://koo3.co.uk", "koo3"));
+            add(new WebConnector("http://koo4.com/a?a=vv", "koo4"));
+            add(new WebConnector("http://foo-koo.com/blah_blah", "foo-koo"));
+            add(new WebConnector("http://foo.foo-koo.com/blah_blah", "foo"));
+            add(new WebConnector("http://foo.com/blah_blah", "foo"));
+            add(new WebConnector("http://foo.com/blah_blah/#/search", "foo"));
+            add(new WebConnector("http://foo.com/blah_blah/#/search", "foo"));
+            add(new WebConnector("http://foo.com/blah_blah_(wikipedia)", "foo"));
+            add(new WebConnector("http://foo.com/blah_blah_(wikipedia)_(again)", "foo"));
+            add(new WebConnector("http://foo.com/blah_(wikipedia)_blah#cite-1", "foo"));
+            add(new WebConnector("http://foo.com/unicode_(✪)_in_parens", "foo"));
+            add(new WebConnector("http://foo.com/(something)?after=parens", "foo"));
+            add(new WebConnector("http://foo.com/blah_(wikipedia)#cite-1", "foo"));
+            add(new WebConnector("http://foo.bar/?q=Test%20URL-encoded%20stuff", "foo"));
+            add(new WebConnector("http://www.example.com/wpstyle/?p=364", "example"));
+            add(new WebConnector("https://www.example.com/foo/?bar=baz&inga=42&quux", "example"));
+            add(new WebConnector("http://code.google.com/events/#&product=browser", "code"));
+            add(new WebConnector("http://j.mp", "j"));
+            add(new WebConnector("http://a.com", "a"));
+            add(new WebConnector("http://subdomain.a.com", "subdomain"));
+            add(new WebConnector("http://my-site.com", "my-site"));
+            add(new WebConnector("http://sub-domain.mysite.com", "sub-domain"));
+            add(new WebConnector("http://subdomain.my-site.com", "subdomain"));
+        }};
+
+        updateUrlAndVerifyConnectorName(valid, true, true);
+    }
+
+    @Test
+    public void testSpecialCharacterUrls(){
+        List<WebConnector> specialCharacters = new ArrayList<WebConnector>() {{
+            add(new WebConnector("http://✪df.ws/123", "✪df"));
+            add(new WebConnector("http://☺.damowmow.com/", "☺"));
+            add(new WebConnector("http://➡.ws/䨹", "➡"));
+            add(new WebConnector("http://⌘.ws", "⌘"));
+            add(new WebConnector("http://⌘.ws/", "⌘"));
+            add(new WebConnector("http://مثال.إختبار", "مثال"));
+            add(new WebConnector("http://例子.测试", "例子"));
+            add(new WebConnector("http://उदाहरण.परीक्षा", "उदाहरण"));
+            add(new WebConnector("http://בדיקה.co.il", "בדיקה"));
+        }};
+
+        updateUrlAndVerifyConnectorName(specialCharacters, true, false);
+
+        List<WebConnector> validSpecialCharacters = new ArrayList<WebConnector>() {{
+            add(new WebConnector("http://-.~_!$&'()*+,;=:%40:80%2f::::::@example.com", "-"));
+            add(new WebConnector("http://a.b-c.de", "a"));
+            add(new WebConnector("http://1337.net", "1337"));
+        }};
+
+        updateUrlAndVerifyConnectorName(validSpecialCharacters, true, true);
+    }
+
+    @Test
+    public void testValidUrlUserInformation(){
+        List<WebConnector> validUrls = new ArrayList<WebConnector>() {{
+            add(new WebConnector("http://userid:password@example.com:8080", "userid"));
+            add(new WebConnector("http://userid:password@example.com:8080/", "userid"));
+            add(new WebConnector("http://userid:password@example.com", "userid"));
+            add(new WebConnector("http://userid:password@example.com/", "userid"));
+        }};
+
+        updateUrlAndVerifyConnectorName(validUrls, true, true);
+
+        List<WebConnector> invalidUrls = new ArrayList<WebConnector>(){{
+            add(new WebConnector("http://userid@example.com", "userid@example"));
+            add(new WebConnector("http://userid@example.com/", "userid@example"));
+            add(new WebConnector("http://userid@example.com:8080", "userid@example"));
+            add(new WebConnector("http://userid@example.com:8080/", "userid@example"));
+        }};
+
+        updateUrlAndVerifyConnectorName(invalidUrls, true, false);
+    }
+
+    @Test
+    public void testInvalidUrls(){
+        List<WebConnector> invalid = new ArrayList<WebConnector>(){{
+            add(new WebConnector("http://http://", ""));
+            add(new WebConnector("http://", ""));
+            add(new WebConnector("http://.", ""));
+            add(new WebConnector("http://..", ""));
+            add(new WebConnector("http://../", ""));
+            add(new WebConnector("http://?", ""));
+            add(new WebConnector("http://??", ""));
+            add(new WebConnector("http://??/", ""));
+            add(new WebConnector("http://#", ""));
+            add(new WebConnector("http://##", ""));
+            add(new WebConnector("http://##/", ""));
+            add(new WebConnector("http://foo.bar?q=Spaces should be encoded", ""));
+            add(new WebConnector("//", ""));
+            add(new WebConnector("//a", ""));
+            add(new WebConnector("///a", ""));
+            add(new WebConnector("///", ""));
+            add(new WebConnector("http:///a", ""));
+            add(new WebConnector("foo.com", ""));
+            add(new WebConnector("rdar://1234", ""));
+            add(new WebConnector("h://test", ""));
+            add(new WebConnector("http:// shouldfail.com", ""));
+            add(new WebConnector(":// should fail", ""));
+            add(new WebConnector("http://foo.bar/foo(bar)baz quux", ""));
+            add(new WebConnector("ftps://foo.bar/", ""));
+            add(new WebConnector("http://-error-.invalid/", ""));
+            add(new WebConnector("http://3628126748", ""));
+            add(new WebConnector("http://.www.foo.bar/", ""));
+            add(new WebConnector("http://www.foo.bar./", ""));
+            add(new WebConnector("http://.www.foo.bar./", ""));
+        }};
+
+        updateUrlAndVerifyConnectorName(invalid, false, false);
+    }
+
+    @Test
+    public void testInvalidIPs(){
+        List<WebConnector> invalid = new ArrayList<WebConnector>(){{
+            add(new WebConnector("http://0.0.0.0", ""));
+            add(new WebConnector("http://10.1.1.0", ""));
+            add(new WebConnector("http://10.1.1.255", ""));
+            add(new WebConnector("http://224.1.1.1", ""));
+            add(new WebConnector("http://1.1.1.1.1", ""));
+            add(new WebConnector("http://123.123.123", ""));
+        }};
+
+        updateUrlAndVerifyConnectorName(invalid, false, false);
+    }
+
+    @Test
+    public void testInvalidLongUrls(){
+        List<WebConnector> invalid = new ArrayList<WebConnector>(){{
+            add(new WebConnector("http://10.1.1.1", ""));
+            add(new WebConnector("http://www.very.very.very.very.very.very.very.very$.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.long.domain.com", ""));
+            add(new WebConnector("http://www.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.$very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.long.domain.com", ""));
+            add(new WebConnector("http://www.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.$very.very.long.domain.com", ""));
+        }};
+
+        updateUrlAndVerifyConnectorName(invalid, false, false);
+    }
+
+    @Test
+    public void testInvalidProtocol(){
+        List<WebConnector> invalid = new ArrayList<WebConnector>(){{
+            add(new WebConnector("foo,com", ""));
+            add(new WebConnector("koo.co.uk", ""));
+            add(new WebConnector("ftp://koo.co.uk", ""));
+            add(new WebConnector("smb://koo.co.uk", ""));
+            add(new WebConnector("nfs://koo.co.uk", ""));
+            add(new WebConnector("nfs://koo.co.uk?a=1", ""));
+        }};
+
+        updateUrlAndVerifyConnectorName(invalid, false, false);
+    }
+
+    @Test
+    public void testValidIPs(){
+        List<WebConnector> valid = new ArrayList<WebConnector>(){{
+            add(new WebConnector("http://223.255.255.254", "223"));
+            add(new WebConnector("http://142.42.1.1/", "142"));
+            add(new WebConnector("http://142.42.1.1:8080/", "142"));
+        }};
+
+        updateUrlAndVerifyConnectorName(valid, true, true);
+    }
+
+    @Test
     //CSA-1789
-    public void testConnectorName() {
-        // Valid URL with Lower/Upper case mix
-        updateUrlAndVerifyConnectorName("HTTP://www.ExAMPle.com", "example", true, true);
-        updateUrlAndVerifyConnectorName("http://www.TAkingBAckSuNDAy.com", "takingbacksunday", true, true);
-        updateUrlAndVerifyConnectorName("HTTP://WWW.FLICKERFLICKERFADE.COM", "flickerflickerfade", true, true);
-        updateUrlAndVerifyConnectorName("hTTp://www.itTAKESMORE.com", "ittakesmore", true, true);
-        updateUrlAndVerifyConnectorName("http://WWW.LOUDERNOW.com", "loudernow", true, true);
+    public void testValidLongUrls(){
+        final List<WebConnector> valid = new ArrayList<WebConnector>(){{
+            add(new WebConnector("http://www.very.very.very.very.very.very.very.very.long.domain.com", "very"));
+            add(new WebConnector("http://www.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.long.domain.com", "very"));
+        }};
 
-        // Valid URLs
-        updateUrlAndVerifyConnectorName("http://www.foo.com", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://koo.co.uk", "koo", true, true);
-        updateUrlAndVerifyConnectorName("https://koo2.co.uk", "koo2", true, true);
-        updateUrlAndVerifyConnectorName("http://koo3.co.uk", "koo3", true, true);
-        updateUrlAndVerifyConnectorName("http://koo4.com/a?a=vv", "koo4", true, true);
-        updateUrlAndVerifyConnectorName("http://foo-koo.com/blah_blah", "foo-koo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.foo-koo.com/blah_blah", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/blah_blah", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/blah_blah/#/search", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/blah_blah/#/search", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/blah_blah_(wikipedia)", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/blah_blah_(wikipedia)_(again)", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/blah_(wikipedia)_blah#cite-1", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/unicode_(✪)_in_parens", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/(something)?after=parens", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.com/blah_(wikipedia)#cite-1", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://foo.bar/?q=Test%20URL-encoded%20stuff", "foo", true, true);
-        updateUrlAndVerifyConnectorName("http://www.example.com/wpstyle/?p=364", "example", true, true);
-        updateUrlAndVerifyConnectorName("https://www.example.com/foo/?bar=baz&inga=42&quux", "example", true, true);
-        updateUrlAndVerifyConnectorName("http://code.google.com/events/#&product=browser", "code", true, true);
-        updateUrlAndVerifyConnectorName("http://j.mp", "j", true, true);
-        updateUrlAndVerifyConnectorName("http://a.com", "a", true, true);
-        updateUrlAndVerifyConnectorName("http://subdomain.a.com", "subdomain", true, true);
-        updateUrlAndVerifyConnectorName("http://my-site.com", "my-site", true, true);
-        updateUrlAndVerifyConnectorName("http://sub-domain.mysite.com", "sub-domain", true, true);
-        updateUrlAndVerifyConnectorName("http://subdomain.my-site.com", "subdomain", true, true);
+        Runnable runnable = new Thread() {
+            @Override
+            public void run() {
+                updateUrlAndVerifyConnectorName(valid, true, true);
+            }
+        };
 
-        // Valid long URLs - try to catch regex matcher timeout
-        updateUrlAndVerifyConnectorName("http://www.very.very.very.very.very.very.very.very.long.domain.com", "very", true, true);
-        updateUrlAndVerifyConnectorName("http://www.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.long.domain.com", "very", true, true);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future future = executorService.submit(runnable);
+        executorService.shutdown();
 
-        // Valid URL with user information
-        updateUrlAndVerifyConnectorName("http://userid:password@example.com:8080", "userid", true, true);
-        updateUrlAndVerifyConnectorName("http://userid:password@example.com:8080/", "userid", true, true);
-        updateUrlAndVerifyConnectorName("http://userid@example.com", "userid@example", true, false);
-        updateUrlAndVerifyConnectorName("http://userid@example.com/", "userid@example", true, false);
-        updateUrlAndVerifyConnectorName("http://userid@example.com:8080", "userid@example", true, false);
-        updateUrlAndVerifyConnectorName("http://userid@example.com:8080/", "userid@example", true, false);
-        updateUrlAndVerifyConnectorName("http://userid:password@example.com", "userid", true, true);
-        updateUrlAndVerifyConnectorName("http://userid:password@example.com/", "userid", true, true);
+        try {
+            future.get(1, TimeUnit.MINUTES);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            e.printStackTrace();
+            fail("Method took too long");
+        }
 
-        // Valid URL with special characters
-        updateUrlAndVerifyConnectorName("http://✪df.ws/123", "✪df", true, false);
-        updateUrlAndVerifyConnectorName("http://☺.damowmow.com/", "☺", true, false);
-        updateUrlAndVerifyConnectorName("http://➡.ws/䨹", "➡", true, false);
-        updateUrlAndVerifyConnectorName("http://⌘.ws", "⌘", true, false);
-        updateUrlAndVerifyConnectorName("http://⌘.ws/", "⌘", true, false);
-        updateUrlAndVerifyConnectorName("http://مثال.إختبار", "مثال", true, false);
-        updateUrlAndVerifyConnectorName("http://例子.测试", "例子", true, false);
-        updateUrlAndVerifyConnectorName("http://उदाहरण.परीक्षा", "उदाहरण", true, false);
-        updateUrlAndVerifyConnectorName("http://בדיקה.co.il", "בדיקה", true, false);
-        updateUrlAndVerifyConnectorName("http://-.~_!$&'()*+,;=:%40:80%2f::::::@example.com", "-", true, true);
-        updateUrlAndVerifyConnectorName("http://1337.net", "1337", true, true);
-        updateUrlAndVerifyConnectorName("http://a.b-c.de", "a", true, true);
-
-        // Valid URL with IP for domain
-        updateUrlAndVerifyConnectorName("http://223.255.255.254", "223", true, true);
-        updateUrlAndVerifyConnectorName("http://142.42.1.1/", "142", true, true);
-        updateUrlAndVerifyConnectorName("http://142.42.1.1:8080/", "142", true, true);
-
-        // Invalid URL inputs
-        updateUrlAndVerifyConnectorName("http://http://", "", false, false);
-        updateUrlAndVerifyConnectorName("http://", "", false, false);
-        updateUrlAndVerifyConnectorName("http://.", "", false, false);
-        updateUrlAndVerifyConnectorName("http://..", "", false, false);
-        updateUrlAndVerifyConnectorName("http://../", "", false, false);
-        updateUrlAndVerifyConnectorName("http://?", "", false, false);
-        updateUrlAndVerifyConnectorName("http://??", "", false, false);
-        updateUrlAndVerifyConnectorName("http://??/", "", false, false);
-        updateUrlAndVerifyConnectorName("http://#", "", false, false);
-        updateUrlAndVerifyConnectorName("http://##", "", false, false);
-        updateUrlAndVerifyConnectorName("http://##/", "", false, false);
-        updateUrlAndVerifyConnectorName("http://foo.bar?q=Spaces should be encoded", "", false, false);
-        updateUrlAndVerifyConnectorName("//", "", false, false);
-        updateUrlAndVerifyConnectorName("//a", "", false, false);
-        updateUrlAndVerifyConnectorName("///a", "", false, false);
-        updateUrlAndVerifyConnectorName("///", "", false, false);
-        updateUrlAndVerifyConnectorName("http:///a", "", false, false);
-        updateUrlAndVerifyConnectorName("foo.com", "", false, false);
-        updateUrlAndVerifyConnectorName("rdar://1234", "", false, false);
-        updateUrlAndVerifyConnectorName("h://test", "", false, false);
-        updateUrlAndVerifyConnectorName("http:// shouldfail.com", "", false, false);
-        updateUrlAndVerifyConnectorName(":// should fail", "", false, false);
-        updateUrlAndVerifyConnectorName("http://foo.bar/foo(bar)baz quux", "", false, false);
-        updateUrlAndVerifyConnectorName("ftps://foo.bar/", "", false, false);
-        updateUrlAndVerifyConnectorName("http://-error-.invalid/", "", false, false);
-        updateUrlAndVerifyConnectorName("http://3628126748", "", false, false);
-        updateUrlAndVerifyConnectorName("http://.www.foo.bar/", "", false, false);
-        updateUrlAndVerifyConnectorName("http://www.foo.bar./", "", false, false);
-        updateUrlAndVerifyConnectorName("http://.www.foo.bar./", "", false, false);
-
-        // Invalid long URL input - try to catch regex matcher timeout
-        updateUrlAndVerifyConnectorName("http://10.1.1.1", "", false, false);
-        updateUrlAndVerifyConnectorName("http://www.very.very.very.very.very.very.very.very$.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.long.domain.com", "", false, false);
-        updateUrlAndVerifyConnectorName("http://www.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.$very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.long.domain.com", "", false, false);
-        updateUrlAndVerifyConnectorName("http://www.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.$very.very.long.domain.com", "", false, false);
-
-        // Invalid IP addresses
-        updateUrlAndVerifyConnectorName("http://0.0.0.0", "", false, false);
-        updateUrlAndVerifyConnectorName("http://10.1.1.0", "", false, false);
-        updateUrlAndVerifyConnectorName("http://10.1.1.255", "", false, false);
-        updateUrlAndVerifyConnectorName("http://224.1.1.1", "", false, false);
-        updateUrlAndVerifyConnectorName("http://1.1.1.1.1", "", false, false);
-        updateUrlAndVerifyConnectorName("http://123.123.123", "", false, false);
-
-        // Invalid protocol
-        updateUrlAndVerifyConnectorName("foo,com", "", false, false);
-        updateUrlAndVerifyConnectorName("koo.co.uk", "", false, false);
-        updateUrlAndVerifyConnectorName("ftp://koo.co.uk", "", false, false);
-        updateUrlAndVerifyConnectorName("smb://koo.co.uk", "", false, false);
-        updateUrlAndVerifyConnectorName("nfs://koo.co.uk", "", false, false);
-        updateUrlAndVerifyConnectorName("nfs://koo.co.uk?a=1", "", false, false);
+        if(!executorService.isTerminated()){
+            executorService.shutdownNow();
+        }
     }
 
     private void verifyURL(String url, boolean shouldPass) {
@@ -276,18 +368,20 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         }
     }
 
-    private void updateUrlAndVerifyConnectorName(String url, String name, boolean isUrlValid, boolean isNameValid) {
+    private void updateUrlAndVerifyConnectorName(List<WebConnector> connectors, boolean isUrlValid, boolean isNameValid) {
         /* For debugging -
             System.out.println("************************************************* \n"+url+"************************************************* \n");
         */
 
-        connectorName.clear();
-        connectorUrl.setValue(url);
-        connectorName.getElement().click();
+        for(WebConnector connector : connectors) {
+            connectorName.clear();
+            connectorUrl.getElement().sendKeys(connector.getUrl());
+            connectorName.getElement().click();
 
-        verifyURL(url, isUrlValid);
-        verifyName(name.toLowerCase(), isNameValid);
-        verifyThat(newConnectionPage.nextButton(), not(disabled()));
+            verifyURL(connector.getUrl(), isUrlValid);
+            verifyName(connector.getName().toLowerCase(), isNameValid);
+            verifyThat(newConnectionPage.nextButton(), not(disabled()));
+        }
     }
 
     private void checkFormInputError(FormInput form, int minimum) {
