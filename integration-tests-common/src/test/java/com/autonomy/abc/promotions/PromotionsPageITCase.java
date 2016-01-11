@@ -371,35 +371,39 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	// CCUK-3586
 	public void testEditDynamicQuery() throws InterruptedException {
-		searchService.search(getQuery("kitty", Language.FRENCH));
-		SearchPage searchPage = getElementFactory().getSearchPage();
-		final String firstSearchResult = searchPage.getSearchResult(1).getText();
-		final String secondSearchResult = setUpPromotion(getQuery("chat", Language.FRENCH), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "meow")).get(0);
+		final String initialTrigger = "meow";
+		final String updateTrigger = "tigre";
+		final String initialQueryTerm = "chat";
+		final String updateQueryTerm = "kitty";
+
+		SearchPage searchPage = searchService.search(getQuery(updateQueryTerm, Language.FRENCH));
+		final String updatePromotedResult = searchPage.getSearchResult(1).getText();
+		final String initialPromotedResult = setUpPromotion(getQuery(initialQueryTerm, Language.FRENCH), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger)).get(0);
 
 		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
-		triggerForm.addTrigger("tigre");
-		triggerForm.removeTrigger("meow");
-		searchService.search(getQuery("tigre", Language.FRENCH));
-		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(secondSearchResult));
+		triggerForm.addTrigger(updateTrigger);
+		triggerForm.removeTrigger(initialTrigger);
 
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-//		promotionsPage.selectPromotionsCategoryFilter("All Types");
-//		Waits.loadOrFadeWait();
-		promotionsDetailPage = promotionService.goToDetails("meow");
+		searchService.search(getQuery(updateTrigger, Language.FRENCH));
+		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotedResult));
+
+		promotionsDetailPage = promotionService.goToDetails(initialTrigger);
 
 		Editable queryText = promotionsDetailPage.queryText();
-		verifyThat(queryText.getValue(), is("chat"));
+		verifyThat("correct query text displayed", queryText.getValue(), is(initialQueryTerm));
 
-		queryText.setValueAndWait("kitty");
-		verifyThat(queryText.getValue(), is("kitty"));
+		queryText.setValueAndWait(updateQueryTerm);
+		verifyThat("query text updated", queryText.getValue(), is(updateQueryTerm));
 
-		searchService.search(getQuery("tigre", Language.FRENCH));
-		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
+		searchService.search(getQuery(updateTrigger, Language.FRENCH));
+		verifyThat("promoted query updated in search results", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));
 
 		getDriver().navigate().refresh();
 		searchPage = getElementFactory().getSearchPage();
-		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstSearchResult));
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+		verifyThat("correct promoted result after page refresh", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));
 	}
 
 	@Test
