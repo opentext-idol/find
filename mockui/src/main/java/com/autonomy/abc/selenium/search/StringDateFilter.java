@@ -61,7 +61,7 @@ public class StringDateFilter implements SearchFilter {
 
         @Override
         public String toString() {
-            return date.toString();
+            return String.valueOf(date);
         }
     }
 }
