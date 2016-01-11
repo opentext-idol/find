@@ -152,7 +152,17 @@ Find looks for the following fields in Idol/HoD documents:
 * date_created or created_date
 * date_modified or modified_date
 
-If content_type is audio or video, the document is treated as an audio/video file using the url and offset fields
+If content_type is audio or video, the document is treated as an audio/video file using the url and offset fields.
+The url field must point to a video/audio file in a supported format (browser-dependent).
+The offset field determines the time (in seconds from the start) after which playback should commence.
+All other fields are metadata only, and are displayed, if present, when the document is viewed.
+
+## On Premise implementation details
+Document titles are retrieved from the title tag in the Idol response (retrieved via Idol "SetTitleFields" configuration)
+The dates on results on the main page are retrieved from the date tag of the Idol response (configured via "SetDateFields" in the Idol configuration file)
+Summary is a context summary (see Idol documentation).
+The list of databases is retrieved by querying idol using GetStatus (internal databases are not displayed).
+Parametric fields are retrieved using GetQueryTagValues. They are configured in the Idol configuration file.
 
 ## Is it any good?
 Yes.
