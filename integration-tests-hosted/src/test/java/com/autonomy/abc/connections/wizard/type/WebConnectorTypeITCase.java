@@ -375,7 +375,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
 
         for(WebConnector connector : connectors) {
             connectorName.clear();
-            connectorUrl.getElement().sendKeys(connector.getUrl());
+            connectorUrl.setValue(connector.getUrl());
             connectorName.getElement().click();
 
             verifyURL(connector.getUrl(), isUrlValid);
