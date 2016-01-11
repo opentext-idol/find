@@ -588,8 +588,8 @@ public class FindITCase extends HostedTestBase {
             Waits.loadOrFadeWait();
         }
 
-        assertThat(find.fromDateInput().getValue(), is(StringDateFilter.FORMAT.format(start)));
-        assertThat(find.untilDateInput().getValue(), is(StringDateFilter.FORMAT.format(end)));
+        assertThat(find.fromDateInput().getValue(), is(find.formatInputDate(start)));
+        assertThat(find.untilDateInput().getValue(), is(find.formatInputDate(end)));
     }
 
     @Test

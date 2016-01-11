@@ -958,7 +958,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 		Date nextDate = DateUtils.addMinutes(date, 1);
 		searchPage.filterBy(new StringDateFilter().until(nextDate));
-		assertThat(searchPage.untilDateInput().getValue(), is(StringDateFilter.FORMAT.format(nextDate)));
+		assertThat(searchPage.untilDateInput().getValue(), is(searchPage.formatInputDate(nextDate)));
 
 		nextDate = DateUtils.addMinutes(date, -1);
 		searchPage.filterBy(new StringDateFilter().until(nextDate));
