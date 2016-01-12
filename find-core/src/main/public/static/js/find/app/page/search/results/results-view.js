@@ -89,49 +89,51 @@ define([
             this.promotionsCollection = new PromotionsCollection();
 
             this.listenTo(this.queryModel, 'change refresh', function() {
-                if (!_.isEmpty(this.queryModel.get('indexes'))) {
-                    this.documentsCollection.fetch({
-                        data: {
-                            auto_correct: this.queryModel.get('autoCorrect'),
-                            text: this.queryModel.get('queryText'),
-                            max_results: 30,
-                            summary: 'context',
-                            index: this.queryModel.get('indexes'),
-                            field_text: this.queryModel.get('fieldText'),
-                            min_date: this.queryModel.getIsoDate('minDate'),
-                            max_date: this.queryModel.getIsoDate('maxDate'),
-                            sort: this.queryModel.get('sort')
-                        },
-                        reset: false
-                    }, this);
+                if (this.queryModel.get('queryText')) {
+                    if (!_.isEmpty(this.queryModel.get('indexes'))) {
+                        this.documentsCollection.fetch({
+                            data: {
+                                auto_correct: this.queryModel.get('autoCorrect'),
+                                text: this.queryModel.get('queryText'),
+                                max_results: 30,
+                                summary: 'context',
+                                index: this.queryModel.get('indexes'),
+                                field_text: this.queryModel.get('fieldText'),
+                                min_date: this.queryModel.getIsoDate('minDate'),
+                                max_date: this.queryModel.getIsoDate('maxDate'),
+                                sort: this.queryModel.get('sort')
+                            },
+                            reset: false
+                        }, this);
 
-                    // TODO: Move out of if statement when HOD allows fetching promotions without indexes
-                    this.promotionsCollection.fetch({
-                        data: {
-                            auto_correct: this.queryModel.get('autoCorrect'),
-                            text: this.queryModel.get('queryText'),
-                            max_results: 30, // TODO maybe less?
-                            summary: 'context',
-                            index: this.queryModel.get('indexes'),
-                            field_text: this.queryModel.get('fieldText'),
-                            min_date: this.queryModel.getIsoDate('minDate'),
-                            max_date: this.queryModel.getIsoDate('maxDate'),
-                            sort: this.queryModel.get('sort')
-                        },
-                        reset: false
-                    }, this);
+                        // TODO: Move out of if statement when HOD allows fetching promotions without indexes
+                        this.promotionsCollection.fetch({
+                            data: {
+                                auto_correct: this.queryModel.get('autoCorrect'),
+                                text: this.queryModel.get('queryText'),
+                                max_results: 30, // TODO maybe less?
+                                summary: 'context',
+                                index: this.queryModel.get('indexes'),
+                                field_text: this.queryModel.get('fieldText'),
+                                min_date: this.queryModel.getIsoDate('minDate'),
+                                max_date: this.queryModel.getIsoDate('maxDate'),
+                                sort: this.queryModel.get('sort')
+                            },
+                            reset: false
+                        }, this);
 
-                    this.promotionsFinished = false;
-                    this.$('.main-results-content .promotions').empty();
+                        this.promotionsFinished = false;
+                        this.$('.main-results-content .promotions').empty();
 
-                    this.resultsFinished = false;
-                    this.$loadingSpinner.removeClass('hide');
-                    this.toggleError(false);
-                    this.$('.main-results-content .error .error-list').empty();
-                    this.$('.main-results-content .results').empty();
-                } else {
-                    this.$loadingSpinner.addClass('hide');
-                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
+                        this.resultsFinished = false;
+                        this.$loadingSpinner.removeClass('hide');
+                        this.toggleError(false);
+                        this.$('.main-results-content .error .error-list').empty();
+                        this.$('.main-results-content .results').empty();
+                    } else {
+                        this.$loadingSpinner.addClass('hide');
+                        this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
+                    }
                 }
             });
         },
