@@ -3,8 +3,6 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.element.Checkbox;
-import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.util.Waits;
@@ -24,7 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
@@ -47,37 +45,6 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		topNavBar = body.getTopNavBar();
 		topNavBar.search("example");
 		searchPage = getElementFactory().getSearchPage();
-	}
-
-
-	@Test
-	public void testIndexSelection() {
-		topNavBar.search("car");
-		searchPage.selectLanguage(Language.ENGLISH);
-		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		//TODO add a matcher
-		assertThat("All databases not showing", searchPage.allIndexesCheckbox().isChecked(), is(true));
-
-		for(Checkbox checkbox : searchPage.indexList()){
-			assertThat(checkbox.isChecked(), is(true));
-		}
-
-		searchPage.allIndexesCheckbox().toggle();
-
-		searchPage.selectIndex("news_eng");
-		assertThat("Database not showing", searchPage.indexCheckbox("news_eng").isChecked(), is(true));
-		final String wikiEnglishResult = searchPage.getSearchResult(1).getText();
-		searchPage.deselectIndex("news_eng");
-
-		searchPage.selectIndex("news_ger");
-		assertThat("Database not showing", searchPage.indexCheckbox("news_ger").isChecked(), is(true));
-		final String wookiepediaResult = searchPage.getSearchResult(1).getText();
-		assertThat(wookiepediaResult, not(wikiEnglishResult));
-
-		searchPage.selectIndex("wiki_chi");
-		assertThat(searchPage.indexCheckbox("news_ger").isChecked(), is(true));
-		assertThat(searchPage.indexCheckbox("wiki_chi").isChecked(),is(true));
-		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText(), anyOf(is(wookiepediaResult), is(wikiEnglishResult)));
 	}
 
 	@Test

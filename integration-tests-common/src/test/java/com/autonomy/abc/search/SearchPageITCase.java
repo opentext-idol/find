@@ -5,6 +5,8 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
+import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -1186,5 +1188,67 @@ public class SearchPageITCase extends ABCTestBase {
 
 	private String getFirstWord(String string) {
 		return string.substring(0, string.indexOf(' '));
+	}
+
+	@Test
+	public void testIndexSelection() {
+		Index firstIndex;
+		Index secondIndex;
+		if (config.getType().equals(ApplicationType.ON_PREM)) {
+			firstIndex = new Index("wikienglish");
+			secondIndex = new Index("wookiepedia");
+		} else {
+			firstIndex = new Index("news_eng");
+			secondIndex = new Index("news_ger");
+		}
+
+		searchService.search(new SearchQuery("car").withFilter(new LanguageFilter(Language.ENGLISH)).withFilter(IndexFilter.ALL));
+		IndexesTree indexesTree = searchPage.indexesTree();
+
+		for (IndexNodeElement node : indexesTree) {
+			assertThat(node.getName() + " is selected", node.isSelected(), is(true));
+		}
+		assertThat("all indexes selected", indexesTree.allIndexes().isSelected(), is(true));
+
+		searchPage.filterBy(new IndexFilter(firstIndex));
+		assertThat("all indexes checkbox not selected", indexesTree.allIndexes().isSelected(), is(false));
+		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
+		assertThat("correct index selected", indexesTree.getSelected(), hasItem(firstIndex));
+		final String firstIndexResult = searchPage.getSearchResult(1).getText();
+
+		for (int j = 1; j <= 2; j++) {
+			for (int i = 1; i <= 6; i++) {
+				assertThat("result " + i + " from " + firstIndex, searchPage.getSearchResultDetails(i), containsString(firstIndex.getName()));
+			}
+			searchPage.switchResultsPage(Pagination.NEXT);
+		}
+
+		searchPage.switchResultsPage(Pagination.FIRST);
+		indexesTree.select(secondIndex);
+		indexesTree.deselect(firstIndex);
+		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
+		assertThat("correct index selected", indexesTree.getSelected(), hasItem(secondIndex));
+		final String secondIndexResult = searchPage.getSearchResult(1).getText();
+		assertThat(secondIndexResult, not(firstIndexResult));
+
+		for (int j = 1; j <= 2; j++) {
+			for (int i = 1; i <= 6; i++) {
+				assertThat("result " + i + " from " + secondIndex, searchPage.getSearchResultDetails(i), containsString(secondIndex.getName()));
+			}
+			searchPage.switchResultsPage(Pagination.NEXT);
+		}
+
+		searchPage.switchResultsPage(Pagination.FIRST);
+		indexesTree.select(firstIndex);
+		assertThat("2 indexes should be selected", indexesTree.getSelected(), hasSize(2));
+		assertThat("correct indexes selected", indexesTree.getSelected(), hasItems(firstIndex, secondIndex));
+		assertThat("search result from selected indexes", searchPage.getSearchResult(1).getText(), isOneOf(firstIndexResult, secondIndexResult));
+
+		for (int j = 1; j <= 2; j++) {
+			for (int i = 1; i <= 6; i++) {
+				assertThat("result " + i + " from either index", searchPage.getSearchResultDetails(i), anyOf(containsString(firstIndex.getName()), containsString(secondIndex.getName())));
+			}
+			searchPage.switchResultsPage(Pagination.NEXT);
+		}
 	}
 }
