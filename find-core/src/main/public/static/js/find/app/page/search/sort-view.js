@@ -1,6 +1,6 @@
 define([
     'backbone',
-    'find/app/model/backbone-query-model',
+    'find/app/model/query-model',
     'text!find/templates/app/page/search/sort-view.html',
     'i18n!find/nls/bundle'
 ], function(Backbone, QueryModel, template, i18n) {

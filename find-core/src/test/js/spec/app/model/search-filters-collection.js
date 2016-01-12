@@ -4,12 +4,11 @@ define([
     'find/app/model/search-filters-collection',
     'parametric-refinement/selected-values-collection',
     'databases-view/js/databases-collection',
-    'find/app/model/backbone-query-model',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'backbone',
     'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, QueryModel, i18n, fieldTextParser, Backbone, moment) {
+], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, Backbone, moment) {
 
     var WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',

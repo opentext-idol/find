@@ -5,7 +5,6 @@
 
 define([
     'js-whatever/js/base-page',
-    'find/app/model/backbone-query-model',
     'find/app/model/query-model',
     'find/app/page/search/input-view',
     'find/app/page/search/service-view',
@@ -13,7 +12,7 @@ define([
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, BackboneQueryModel, QueryModel, InputView, ServiceView, router, vent, _, template) {
+], function(BasePage, QueryModel, InputView, ServiceView, router, vent, _, template) {
 
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
     var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
@@ -30,7 +29,7 @@ define([
         },
 
         initialize: function() {
-            this.queryModel = new QueryModel(new BackboneQueryModel());
+            this.queryModel = new QueryModel();
             this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
 
             this.inputView = new InputView({
