@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page;
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,9 +22,7 @@ public class HSOAppBody extends AppBody {
     public void logout() {
         getTopNavBar().findElement(By.className("hp-settings")).click();
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) { /**/ }
+        Waits.loadOrFadeWait();
 
         getTopNavBar().findElement(By.className("navigation-logout")).click();
 

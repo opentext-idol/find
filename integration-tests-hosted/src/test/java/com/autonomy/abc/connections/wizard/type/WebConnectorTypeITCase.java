@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -85,7 +86,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
 
     @Test
     //CSA-1562
-    public void testAdvancedConfigurations() throws InterruptedException {
+    public void testAdvancedConfigurations() {
         connectorUrl.setValue("http://www.w.ww");
         connectorName.setValue("jeremy");
 
@@ -96,7 +97,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         connectorConfigStep.advancedConfigurations().click();
 
         //Let the dropdown open
-        Thread.sleep(1000);
+        Waits.loadOrFadeWait();
 
         connectorConfigStep.getMaxPagesBox().setValue("9");
         connectorConfigStep.getDurationBox().setValue("59");
@@ -275,7 +276,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    @Ignore("To unignore after fix added")
+    //CSA-1789
     public void testInvalidLongUrls(){
         List<WebConnector> invalid = new ArrayList<WebConnector>(){{
             add(new WebConnector("http://10.1.1.1", ""));
@@ -313,7 +314,6 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    @Ignore("To unignore after fix added")
     //CSA-1789
     public void testValidLongUrls(){
         final List<WebConnector> valid = new ArrayList<WebConnector>(){{
@@ -324,11 +324,11 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         longUrls(valid, true, true);
     }
 
-    private void longUrls(final List<WebConnector> connectors, boolean urlValid, boolean nameValid) {
+    private void longUrls(final List<WebConnector> connectors, final boolean urlValid, final boolean nameValid) {
         Runnable runnable = new Thread() {
             @Override
             public void run() {
-                updateUrlAndVerifyConnectorName(connectors, true, true);
+                updateUrlAndVerifyConnectorName(connectors, urlValid, nameValid);
             }
         };
 

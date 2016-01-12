@@ -80,8 +80,7 @@ public class IndexesPageITCase extends HostedTestBase {
     //CSA-1720
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = getApplication().createConnectionService(getElementFactory());
-        Index default_index = new Index("default_index");
-        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc",default_index).withDepth(2);
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc", Index.DEFAULT).withDepth(2);
 
         //Create connection
         cs.setUpConnection(connector);
@@ -100,7 +99,7 @@ public class IndexesPageITCase extends HostedTestBase {
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Make sure default index is still there
-        assertThat(indexesPage.getIndexDisplayNames(), hasItem(default_index.getName()));
+        assertThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getDisplayName()));
     }
 
     @Test

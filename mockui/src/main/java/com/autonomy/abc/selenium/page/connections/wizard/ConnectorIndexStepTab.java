@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.connections.wizard;
 
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -113,7 +114,7 @@ public class ConnectorIndexStepTab extends SAASPageBase {
                 existingIndex.click();
                 modalOKButton().click();
                 //Need to wait for modal to disappear
-                try{Thread.sleep(1000);} catch (Exception e) {/*NO OP*/}
+                Waits.loadOrFadeWait();
                 return;
             }
         }
