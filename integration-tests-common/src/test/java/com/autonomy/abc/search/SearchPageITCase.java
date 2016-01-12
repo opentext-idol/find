@@ -474,12 +474,13 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testViewFromBucketLabel() throws InterruptedException {
-        search("جيمس");
+		// TODO: add Arabic test to OP
+		//Testing in Arabic because in some instances not latin urls have been encoded incorrectly
+		search("جيمس");
 		searchPage.selectLanguage(Language.ARABIC);
 
         search("Engineer");
 
-		//Testing in Arabic because in some instances not latin urls have been encoded incorrectly
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.promoteTheseDocumentsButton().click();
 
@@ -488,18 +489,14 @@ public class SearchPageITCase extends ABCTestBase {
 				final String handle = getDriver().getWindowHandle();
 				searchPage.searchResultCheckbox(i).click();
 				final String docTitle = searchPage.getSearchResultTitle(i);
-				//TODO fix clean xpath string so it works here
-				searchPage.getPromotionBucketElementByTitle(docTitle).click();
+				ElementUtil.scrollIntoViewAndClick(searchPage.getPromotionBucketElementByTitle(docTitle), getDriver());
 
-				Thread.sleep(5000);
-
-				getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
-                //Using trimmedtitle is a really hacky way to get around the latin urls not being encoded (possibly, or another problem) correctly
-				assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText(), containsString(docTitle));
+				DocumentViewer viewer = DocumentViewer.make(getDriver());
+				getDriver().switchTo().frame(viewer.frame());
+				verifyThat("view frame displays", getDriver().findElement(By.xpath(".//*")), containsText(docTitle));
 
 				getDriver().switchTo().window(handle);
-				getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
-				Waits.loadOrFadeWait();
+				viewer.close();
 			}
 
 			searchPage.switchResultsPage(Pagination.NEXT);
