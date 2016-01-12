@@ -75,8 +75,9 @@ public class ConnectionService {
         LOGGER.info("Connection '" + connector.getName() + "' finished");
         if(connector instanceof WebConnector){
             int timeTaken = (int) ((System.currentTimeMillis() - startTime) / 1000);
-            if(timeTaken > ((WebConnector) connector).getDuration()) {
-                LOGGER.error("Connection '" + connector.getName() + "' took " + timeTaken + " seconds to complete");
+            int duration = ((WebConnector) connector).getDuration();
+            if(timeTaken > duration) {
+                LOGGER.error("CONNECTION '" + connector.getName() + "' TOOK " + timeTaken + " SECONDS TO COMPLETE, SHOULD HAVE TAKEN " + duration + " SECONDS");
             }
         }
         return connectionsPage;

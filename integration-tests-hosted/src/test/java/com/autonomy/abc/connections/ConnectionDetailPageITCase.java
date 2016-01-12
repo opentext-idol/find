@@ -91,7 +91,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         indexService.setUpIndex(indexOne);
         indexService.setUpIndex(indexTwo);
 
-        connector = new WebConnector("http://www.bbc.co.uk", "bbc", indexOne).withDuration(60).withDepth(1);
+        connector = new WebConnector("http://www.bbc.co.uk", "bbc", indexOne).withDuration(60);
 
         connectionService.setUpConnection(connector);
         connectionService.goToDetails(connector);
