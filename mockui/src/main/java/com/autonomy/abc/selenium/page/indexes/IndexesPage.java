@@ -44,8 +44,12 @@ public class IndexesPage extends AppElement implements AppPage {
             return findElement(By.xpath(".//*[contains(text(),'" + displayName + "')]"));
     }
 
+    private WebElement fullIndexElement(String displayName){
+        return ElementUtil.ancestor(findIndex(displayName), 9);
+    }
+
     public void deleteIndex(String displayName){
-        ElementUtil.ancestor(findIndex(displayName), 9).findElement(By.tagName("button")).click();
+        fullIndexElement(displayName).findElement(By.tagName("button")).click();
         Waits.loadOrFadeWait();
         modalClick();
         Waits.loadOrFadeWait();
@@ -70,6 +74,6 @@ public class IndexesPage extends AppElement implements AppPage {
     }
 
     public int getNumberOfConnections(Index index) {
-        return Integer.parseInt(findIndex(index.getName()).findElement(By.cssSelector(".listItemNormalText>.ng-scope")).getText().split(" ")[1]);
+        return Integer.parseInt(fullIndexElement(index.getDisplayName()).findElement(By.cssSelector(".listItemNormalText>.ng-scope")).getText().split(" ")[1]);
     }
 }
