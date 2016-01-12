@@ -121,6 +121,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void emptyBucket() {
+		ElementUtil.scrollIntoView(promotionsBucket(), getDriver());
 		for (final WebElement bucketItem : promotionsBucketWebElements()) {
 			bucketItem.findElement(By.cssSelector(".remove-bucket-item")).click();
 		}
