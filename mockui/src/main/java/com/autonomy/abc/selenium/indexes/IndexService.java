@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
@@ -88,9 +89,11 @@ public class IndexService {
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Index " + indexName + " successfully deleted"));
     }
 
-    public void deleteIndexViaAPICalls(Index index, User user) {
+    public void deleteIndexViaAPICalls(Index index, User user, String webApp) {
         String apiKey = user.getApiKey();
-        String url = "https://api.int.havenondemand.com/1/api/sync/deletetextindex/v1?index=" + index.getName() + "&";
+
+        String url = (webApp.contains("idolondemand") ? "https://api.int.havenondemand.com" : "https://api.havenondemand.com");
+        url += "/1/api/sync/deletetextindex/v1?index=" + index.getName() + "&";
 
         ((JavascriptExecutor) getDriver()).executeScript("window.open('your url','_blank');");
         List<String> windowHandles = new ArrayList<>(getDriver().getWindowHandles());
