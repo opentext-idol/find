@@ -2,6 +2,8 @@ package com.autonomy.abc.selenium.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -109,5 +111,13 @@ public final class ElementUtil {
             stringList.add(element.getText());
         }
         return stringList;
+    }
+
+    public static void hover(WebElement element, WebDriver driver) {
+        Actions builder = new Actions(driver);
+        Dimension dimensions = element.getSize();
+        builder.moveToElement(element, dimensions.getWidth() / 2, dimensions.getHeight() / 2);
+        Action hover = builder.build();
+        hover.perform();
     }
 }

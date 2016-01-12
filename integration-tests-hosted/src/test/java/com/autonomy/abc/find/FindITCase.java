@@ -35,8 +35,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -160,73 +158,30 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testRelatedConceptsHasResults(){
         find.search("Danye West");
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.RIGHT);
-        WebElement relatedConcepts = results.getRelatedConcepts();
-
-        for(WebElement top : relatedConcepts.findElements(By.xpath("./a"))){
-            assertThat(top.getText(),not(""));
-
-            WebElement table = top.findElement(By.xpath("./following-sibling::table[1]"));
-
-            for(WebElement entry : table.findElements(By.tagName("a"))){
-                assertThat(entry.getText(),not(""));
-            }
+        for (WebElement concept : results.relatedConcepts()) {
+            assertThat(concept, hasTextThat(not(isEmptyOrNullString())));
         }
     }
 
     @Test
     public void testRelatedConceptsNavigateOnClick(){
         find.search("Red");
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.RIGHT);
-        WebElement topRelatedConcept = results.getRelatedConcepts().findElement(By.tagName("a"));
-
+        WebElement topRelatedConcept = results.relatedConcepts().get(0);
         String concept = topRelatedConcept.getText();
 
         topRelatedConcept.click();
-
-        assertThat(getDriver().getCurrentUrl(), containsString(concept));
-        assertThat(find.getSearchBoxTerm(), containsString(concept));
-
-        hoverOverElement(results.getResultsDiv());
-
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.RIGHT);
-
-        WebElement tableRelatedConcept = results.getRelatedConcepts().findElement(By.cssSelector("table a"));
-
-        concept = tableRelatedConcept.getText();
-
-        tableRelatedConcept.click();
-
         assertThat(getDriver().getCurrentUrl(), containsString(concept));
         assertThat(find.getSearchBoxTerm(), containsString(concept));
     }
 
     @Test
+    // CCUK-3498
     public void testRelatedConceptsHover(){
         find.search("Find");
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.RIGHT);
-        WebElement topRelatedConcept = results.getRelatedConcepts().findElement(By.tagName("a"));
-        WebElement tableLink = results.getRelatedConcepts().findElement(By.cssSelector("table a"));
-
-        hoverOverElement(topRelatedConcept);
-
-        WebElement popover = getDriver().findElement(By.className("popover"));
-
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
-        assertThat(popover.getText(), not(""));
-
-        hoverOverElement(results.getResultsDiv());
-
-        new WebDriverWait(getDriver(),2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
-
-        ((JavascriptExecutor) getDriver()).executeScript("arguments[0].scrollIntoView(true);", tableLink);
-        hoverOverElement(tableLink);
-
-        WebElement tablePopover = new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOfElementLocated(By.className("popover")));
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(tablePopover, "Loading")));
-
-        assertThat(tablePopover.getText(), not(""));
-
+        WebElement popover = results.hoverOverRelatedConcept(0);
+        verifyThat(popover, hasTextThat(not(isEmptyOrNullString())));
+        verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
+        results.unhover();
     }
 
     @Test
@@ -389,14 +344,6 @@ public class FindITCase extends HostedTestBase {
             assertThat(docViewer.getReference(), is(url));
             docViewer.close();
         }
-    }
-
-    private void hoverOverElement(WebElement element){
-        Actions builder = new Actions(getDriver());
-        Dimension dimensions = element.getSize();
-        builder.moveToElement(element, dimensions.getWidth() / 2, dimensions.getHeight() / 2);
-        Action hover = builder.build();
-        hover.perform();
     }
 
     @Test
@@ -885,7 +832,7 @@ public class FindITCase extends HostedTestBase {
     public void testRelatedConceptsInResults(){
         find.search("Tiger");
 
-        for(WebElement relatedConceptLink : results.getRelatedConcepts().findElements(By.tagName("a"))){
+        for(WebElement relatedConceptLink : results.relatedConcepts()){
             String relatedConcept = relatedConceptLink.getText();
             for (WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'" + relatedConcept + "')]"))) {
                 if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
