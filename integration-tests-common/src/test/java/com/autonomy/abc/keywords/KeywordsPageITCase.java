@@ -356,7 +356,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		for(String searchedFor : searchPage.youSearchedFor()) {
 			verifyThat("All searched for terms are within synonym group", searchedFor, isIn(synonyms));
 		}
-		verifyThat("synonyms appear in query analysis", searchPage.getSynonymGroupSynonyms(synonyms.get(0)), containsItems(synonyms));
+		// TODO: CSA-1724 CSA-1893
+//		verifyThat("synonyms appear in query analysis", searchPage.getSynonymGroupSynonyms(synonyms.get(0)), containsItems(synonyms));
 		verifyThat(searchPage.countKeywords(), is(synonyms.size()));
 	}
 

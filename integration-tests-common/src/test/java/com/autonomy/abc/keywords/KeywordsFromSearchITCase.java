@@ -241,6 +241,11 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     @Test
     //CCUK-2703
     public void testNoBlacklistLinkForBlacklistedSearch() throws InterruptedException {
+        String blacklistMessage = Errors.Search.BLACKLIST;
+        if (config.getType().equals(ApplicationType.HOSTED)) {
+            blacklistMessage = Errors.Search.NO_RESULTS;
+        }
+
         search("wizard", Language.ARABIC);
 
         searchPage.blacklistLink().click();
@@ -267,16 +272,19 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         search("wizard", Language.ARABIC);
 
-        assertThat("'You searched for:' section incorrect", searchPage.youSearchedFor(), hasItem("wizard"));
-        verifyThat("blacklist term appears in query analysis", searchPage.getBlacklistedTerms(), hasItem("wizard"));
-        assertThat("link to blacklist or create synonyms should not be present", searchPage.getText(),
-                not(containsString("You can create synonyms or blacklist these search terms")));
+        assertThat(searchPage, containsText(blacklistMessage));
+        assertThat("'You searched for:' section correct", searchPage.youSearchedFor(), hasItem("wizard"));
+        // TODO: CSA-1724 CSA-1893
+//        verifyThat("blacklist term appears in query analysis", searchPage.getBlacklistedTerms(), hasItem("wizard"));
+        assertThat("link to blacklist or create synonyms should not be present", searchPage,
+                not(containsText("You can create synonyms or blacklist these search terms")));
 
-        searchPage.selectLanguage(Language.ENGLISH);
-        searchPage.waitForSynonymsLoadingIndicatorToDisappear();
+        if (config.getType().equals(ApplicationType.ON_PREM)) {
+            searchPage.selectLanguage(Language.ENGLISH);
+            searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 
-        //TODO split test into hosted/onprem
-        assertThat("term is not blacklisted in English", searchPage.getText(),not(containsString("Any query terms were either blacklisted or stop words")));
+            assertThat("term is not blacklisted in English", searchPage, not(containsText(blacklistMessage)));
+        }
     }
 
     @Test

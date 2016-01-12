@@ -506,6 +506,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 
 	public void filterBy(SearchFilter filter) {
 		filter.apply(this);
+		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();
 	}
 }

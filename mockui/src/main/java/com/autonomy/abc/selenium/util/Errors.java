@@ -20,6 +20,7 @@ public class Errors {
         public final static String HOD = "Haven OnDemand returned an error while executing the search action";
         public static final String QUOTES = "Unclosed phrase";
         public static final String NO_TEXT = "No valid query text supplied";
+        public static final String BLACKLIST = "All query text has been blocked by white or blacklists";
     }
 
     public static class Keywords {
