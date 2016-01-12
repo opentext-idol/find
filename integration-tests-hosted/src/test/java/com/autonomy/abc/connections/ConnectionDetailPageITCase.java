@@ -98,7 +98,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
         verifyIndexNameForConnector();
 
-        indexService.deleteIndexViaAPICalls(indexOne, getCurrentUser(), config.getWebappUrl());
+        indexService.deleteIndexViaAPICalls(indexOne, getCurrentUser(), config.getApiUrl());
 
         indexService.goToIndexes();
 
