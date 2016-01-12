@@ -2,7 +2,8 @@
   "app": {
     "type": "Hosted",
     "url": "http://search.havenapps.io/searchoptimizer/p",
-    "find": "http://find.havenapps.io"
+    "find": "http://find.havenapps.io",
+    "api" : "https://api.havenondemand.com"
   },
   "selenium": {
     "url": "http://16.46.34.8:4444/wd/hub",

@@ -89,22 +89,21 @@ public class IndexService {
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Index " + indexName + " successfully deleted"));
     }
 
-    public void deleteIndexViaAPICalls(Index index, User user, String webApp) {
+    public void deleteIndexViaAPICalls(Index index, User user, String apiUrl) {
         String apiKey = user.getApiKey();
 
-        String url = (webApp.contains("idolondemand") ? "https://api.int.havenondemand.com" : "https://api.havenondemand.com");
-        url += "/1/api/sync/deletetextindex/v1?index=" + index.getName() + "&";
+        apiUrl += "/1/api/sync/deletetextindex/v1?index=" + index.getName() + "&";
 
         ((JavascriptExecutor) getDriver()).executeScript("window.open('your url','_blank');");
         List<String> windowHandles = new ArrayList<>(getDriver().getWindowHandles());
 
         try {
             getDriver().switchTo().window(windowHandles.get(1));
-            getDriver().get(url + "apikey=" + apiKey);
+            getDriver().get(apiUrl + "apikey=" + apiKey);
 
             String confirm = getDriver().findElement(By.tagName("pre")).getText().split("\"")[5];
 
-            getDriver().get(url + "confirm=" + confirm + "&apikey=" + apiKey);
+            getDriver().get(apiUrl + "confirm=" + confirm + "&apikey=" + apiKey);
         } finally {
             getDriver().close();
             getDriver().switchTo().window(windowHandles.get(0));
