@@ -77,7 +77,7 @@ define([
         updateText: function() {
             if (this.$input) {
                 this.$input.typeahead('val', this.queryModel.get('queryText'));
-                this.$('.see-all-documents').toggleClass('hide', this.queryModel.get('queryText') == '*');
+                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.queryModel.get('queryText') == '*');
             }
         }
     });

@@ -48,6 +48,16 @@ html, body {
     z-index: 1000;
 }
 
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}
+
+.disabled-clicks,
+.disabled-clicks:hover {
+    pointer-events: none;
+    color: #aaa !important;
+}
+
 .check-cell {
     width: 29px;
 }
