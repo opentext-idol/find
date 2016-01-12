@@ -228,7 +228,7 @@ public class IndexesPageITCase extends HostedTestBase {
     public void testDeletingDefaultIndex(){
         IndexService indexService = getApplication().createIndexService(getElementFactory());
 
-        indexService.deleteIndexViaAPICalls(Index.DEFAULT);
+        indexService.deleteIndexViaAPICalls(Index.DEFAULT, getCurrentUser());
 
         getDriver().navigate().refresh();
 

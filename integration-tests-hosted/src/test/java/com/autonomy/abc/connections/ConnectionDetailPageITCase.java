@@ -27,7 +27,6 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 public class ConnectionDetailPageITCase extends HostedTestBase {
 
     private ConnectionService connectionService;
-    private ConnectionsPage connectionsPage;
     private ConnectionsDetailPage connectionsDetailPage;
     private Connector connector;
 
@@ -92,14 +91,14 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         indexService.setUpIndex(indexOne);
         indexService.setUpIndex(indexTwo);
 
-        connector = new WebConnector("http://www.bbc.co.uk", "bbc", indexOne).withDuration(60);
+        connector = new WebConnector("http://www.bbc.co.uk", "bbc", indexOne).withDuration(60).withDepth(1);
 
         connectionService.setUpConnection(connector);
         connectionService.goToDetails(connector);
 
         verifyIndexNameForConnector();
 
-        indexService.deleteIndexViaAPICalls(indexOne);
+        indexService.deleteIndexViaAPICalls(indexOne, getCurrentUser());
 
         indexService.goToIndexes();
 
