@@ -3,11 +3,14 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
@@ -22,17 +25,18 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.not;
 
 public class SearchPageHostedITCase extends HostedTestBase {
+	private SearchPage searchPage;
+	private SearchService searchService;
+
 	public SearchPageHostedITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
 	}
-
-	private SearchPage searchPage;
-	private TopNavBar topNavBar;
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws IOException {
@@ -42,26 +46,22 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		topNavBar = body.getTopNavBar();
-		topNavBar.search("example");
-		searchPage = getElementFactory().getSearchPage();
+		searchService = getApplication().createSearchService(getElementFactory());
+		searchPage = searchService.search("example");
 	}
 
+	@Ignore("TODO: Not implemented")
 	@Test
 	public void testParametricSearch() {
-		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		topNavBar.search("*");
+		searchService.search(new SearchQuery("*").withFilter(IndexFilter.ALL));
 	}
 
 
 	@Test
 	//TODO make this test WAY nicer
 	public void testAuthor(){
-		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
-
-		topNavBar.search("fruit");
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		Assert.assertNotEquals(searchPage.getText(), contains("Haven OnDemand returned an error while executing the search action"));
+		searchService.search(new SearchQuery("fruit").withFilter(IndexFilter.PUBLIC));
+		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
 
 		String author = "FIFA.COM";
 

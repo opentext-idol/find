@@ -632,8 +632,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testEditFieldText() {
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-			search("boer");
+			searchService.search(new SearchQuery("boer").withFilter(IndexFilter.ALL));
 		} else {
 			searchService.search(new SearchQuery("*").withFilter(new IndexFilter("sitesearch")));
 		}
