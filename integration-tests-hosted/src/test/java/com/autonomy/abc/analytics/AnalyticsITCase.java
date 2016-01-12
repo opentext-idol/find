@@ -80,6 +80,7 @@ public class AnalyticsITCase extends HostedTestBase {
         verifyThat(mostPopular.getSearchCount(), is(mostPopularSearchCount + 1));
     }
 
+    @Ignore("TODO: rethink this")
     @Test
     public void testPopularTermsFind(){
         Term mostPopular = analytics.getMostPopularSearchTerm();

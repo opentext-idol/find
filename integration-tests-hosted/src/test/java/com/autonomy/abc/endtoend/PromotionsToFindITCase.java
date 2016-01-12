@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.isIn;
 
 //CSA-1566
 public class PromotionsToFindITCase extends HostedTestBase {
@@ -81,11 +82,6 @@ public class PromotionsToFindITCase extends HostedTestBase {
         promotionsDetailPage.pinPosition().setValueAndWait("6");
         LOGGER.info("updated pin position");
 
-        switchToFind();
-        refreshFind();
-        verifyPinToPosition(promotionTitles, 6, 10);
-
-        switchToSearch();
         boolean addedQuickly = true;
         try {
             promotionsDetailPage.getTriggerForm().addTrigger(secondaryTrigger);
@@ -129,7 +125,6 @@ public class PromotionsToFindITCase extends HostedTestBase {
 
         List<String> allPromotions = new ArrayList<>(promotionTitles);
         allPromotions.add(singlePromoted);
-        verifyPinToPosition(allPromotions, 6, 11);
         verifySpotlight(spotlightPromotionTitles);
 
         switchToSearch();
@@ -139,8 +134,6 @@ public class PromotionsToFindITCase extends HostedTestBase {
         switchToFind();
         find.search("Other");
         find.search(searchTrigger);
-
-        verifyThat(service.getPromotionsTitles(), empty());
     }
 
     private void refreshFind() {
