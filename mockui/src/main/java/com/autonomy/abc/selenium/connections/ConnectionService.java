@@ -25,7 +25,6 @@ public class ConnectionService {
     private Application application;
     private HSOElementFactory elementFactory;
     private ConnectionsPage connectionsPage;
-    private NewConnectionPage newConnectionPage;
     private ConnectionsDetailPage connectionsDetailPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
 
@@ -66,12 +65,18 @@ public class ConnectionService {
     public ConnectionsPage setUpConnection(final Connector connector) {
         goToConnections();
         connectionsPage.newConnectionButton().click();
-        newConnectionPage = elementFactory.getNewConnectionPage();
-        connector.makeWizard(newConnectionPage).apply();
+        connector.makeWizard(elementFactory.getNewConnectionPage()).apply();
         new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining("started"));
         LOGGER.info("Connection '" + connector.getName() + "' started");
-        Long startTime = System.currentTimeMillis();
         waitForConnectorToRun(connector);
+        return connectionsPage;
+    }
+
+    private void waitForConnectorToRun(final Connector connector) {
+        Long startTime = System.currentTimeMillis();
+        new WebDriverWait(getDriver(), 300)
+                .withMessage("running connection " + connector)
+                .until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
         LOGGER.info("Connection '" + connector.getName() + "' finished");
         if(connector instanceof WebConnector){
             int timeTaken = (int) ((System.currentTimeMillis() - startTime) / 1000);
@@ -80,13 +85,6 @@ public class ConnectionService {
                 LOGGER.error("CONNECTION '" + connector.getName() + "' TOOK " + timeTaken + " SECONDS TO COMPLETE, SHOULD HAVE TAKEN " + duration + " SECONDS");
             }
         }
-        return connectionsPage;
-    }
-
-    private void waitForConnectorToRun(final Connector connector) {
-        new WebDriverWait(getDriver(), 300)
-                .withMessage("running connection " + connector)
-                .until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
     }
 
     public ConnectionsPage deleteConnection(final Connector connector, boolean deleteIndex) {
@@ -152,15 +150,15 @@ public class ConnectionService {
         connectionsDetailPage.editButton().click();
 
         NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
-        newConnectionPage.nextButton().click();
-        Waits.loadOrFadeWait();
-        newConnectionPage.nextButton().click();
-        Waits.loadOrFadeWait();
-        ConnectorIndexStepTab connectorIndexStep = newConnectionPage.getIndexStep();
 
+        for(int i = 0; i < 2; i++) {
+            newConnectionPage.nextButton().click();
+            Waits.loadOrFadeWait();
+        }
+
+        ConnectorIndexStepTab connectorIndexStep = newConnectionPage.getIndexStep();
         connectorIndexStep.selectIndexButton().click();
         connectorIndexStep.selectIndex(index);
-
         newConnectionPage.finishButton().click();
 
         connector.setIndex(index);
