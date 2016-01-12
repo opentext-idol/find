@@ -15,6 +15,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ public class ConnectionService {
     private ConnectionsPage connectionsPage;
     private NewConnectionPage newConnectionPage;
     private ConnectionsDetailPage connectionsDetailPage;
+    private final static Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
 
     public ConnectionService(Application application, HSOElementFactory elementFactory) {
         this.application = application;
@@ -65,14 +68,18 @@ public class ConnectionService {
         connectionsPage.newConnectionButton().click();
         newConnectionPage = elementFactory.getNewConnectionPage();
         connector.makeWizard(newConnectionPage).apply();
+        new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining("started"));
+        LOGGER.info("Connection '" + connector.getName() + "' started");
         waitForConnectorToRun(connector);
+        LOGGER.info("Connection '" + connector.getName() + "' finished");
         return connectionsPage;
     }
 
     private void waitForConnectorToRun(final Connector connector) {
         int timeout = 300;
         if (connector instanceof WebConnector) {
-            timeout = ((WebConnector) connector).getDuration() + 10;
+            int duration = ((WebConnector) connector).getDuration();
+            timeout = (int) (duration * 1.5);
         }
         new WebDriverWait(getDriver(), timeout)
                 .withMessage("running connection " + connector)
