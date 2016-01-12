@@ -284,7 +284,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
             add(new WebConnector("http://www.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.$very.very.long.domain.com", ""));
         }};
 
-        updateUrlAndVerifyConnectorName(invalid, false, false);
+        longUrls(invalid, false, false);
     }
 
     @Test
@@ -321,10 +321,14 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
             add(new WebConnector("http://www.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.very.long.domain.com", "very"));
         }};
 
+        longUrls(valid, true, true);
+    }
+
+    private void longUrls(final List<WebConnector> connectors, boolean urlValid, boolean nameValid) {
         Runnable runnable = new Thread() {
             @Override
             public void run() {
-                updateUrlAndVerifyConnectorName(valid, true, true);
+                updateUrlAndVerifyConnectorName(connectors, true, true);
             }
         };
 
