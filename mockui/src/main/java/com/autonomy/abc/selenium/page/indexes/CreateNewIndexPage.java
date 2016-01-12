@@ -16,7 +16,7 @@ public class CreateNewIndexPage extends SAASPageBase {
     }
 
     public static CreateNewIndexPage make(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("actions")));
+        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("content")));
         return new CreateNewIndexPage(driver);
     }
 

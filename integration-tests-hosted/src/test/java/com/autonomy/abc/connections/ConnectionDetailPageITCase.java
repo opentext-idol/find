@@ -27,7 +27,6 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 public class ConnectionDetailPageITCase extends HostedTestBase {
 
     private ConnectionService connectionService;
-    private ConnectionsPage connectionsPage;
     private ConnectionsDetailPage connectionsDetailPage;
     private Connector connector;
 
@@ -99,7 +98,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
         verifyIndexNameForConnector();
 
-        indexService.deleteIndexViaAPICalls(indexOne);
+        indexService.deleteIndexViaAPICalls(indexOne, getCurrentUser(), config.getWebappUrl());
 
         indexService.goToIndexes();
 
