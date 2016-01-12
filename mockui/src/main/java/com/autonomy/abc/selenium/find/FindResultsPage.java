@@ -17,8 +17,28 @@ public class FindResultsPage extends AppElement {
         super(driver.findElement(By.className("service-view-container")), driver);
     }
 
-    public WebElement getRelatedConcepts() {
-        return findElement(By.className("related-concepts-list"));
+    public List<WebElement> relatedConcepts() {
+        waitForSearchLoadIndicatorToDisappear(Container.RIGHT);
+        return findElements(By.cssSelector(".related-concepts-list a"));
+    }
+
+    public WebElement hoverOverRelatedConcept(int i) {
+        WebElement concept = relatedConcepts().get(i);
+        ElementUtil.hover(concept, getDriver());
+        WebElement popover = findElement(By.className("popover"));
+        waitForPopoverToLoad(popover);
+        return popover;
+    }
+
+    public void unhover() {
+        /* click somewhere not important to remove hover -
+        * clicking the search term box seems safe... */
+        getDriver().findElement(By.cssSelector("input[name='find-input']")).click();
+        new WebDriverWait(getDriver(),2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
+    }
+
+    private void waitForPopoverToLoad(WebElement popover) {
+        new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }
 
     public List<WebElement> getPromotions() {

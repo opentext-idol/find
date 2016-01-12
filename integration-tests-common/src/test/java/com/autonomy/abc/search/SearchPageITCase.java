@@ -8,9 +8,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -54,8 +52,6 @@ public class SearchPageITCase extends ABCTestBase {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private SearchPage searchPage;
 	private TopNavBar topNavBar;
-	private CreateNewPromotionsPage createPromotionsPage;
-	private PromotionsPage promotionsPage;
 	private SearchService searchService;
 
 	public SearchPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
@@ -382,13 +378,11 @@ public class SearchPageITCase extends ABCTestBase {
         }
 		for (String empty : emptyPhrases) {
 			search(empty);
-			assertThat(searchPage, containsText(searchErrorMessage));
-			assertThat(searchPage, containsText(emptyError));
+			verifyThat(searchPage, containsText(emptyError));
 		}
 		for (String unclosed : unclosedPhrases) {
 			search(unclosed);
-			assertThat(searchPage, containsText(searchErrorMessage));
-			assertThat(searchPage, containsText(unclosedError));
+			verifyThat(searchPage, containsText(unclosedError));
 		}
 	}
 
@@ -397,15 +391,12 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testDeleteDocsFromWithinBucket() {
 		search("sabre");
 		searchPage.promoteTheseDocumentsButton().click();
-		searchPage.searchResultCheckbox(1).click();
-		searchPage.searchResultCheckbox(2).click();
-		searchPage.searchResultCheckbox(3).click();
-		searchPage.searchResultCheckbox(4).click();
+		searchPage.addToBucket(4);
 
 		final List<String> bucketList = searchPage.promotionsBucketList();
-		final List<WebElement> bucketListElements = searchPage.promotionsBucketWebElements();
-		assertThat("There should be four documents in the bucket", bucketList.size(),is(4));
-		assertThat("promote button not displayed when bucket has documents", searchPage.promoteTheseDocumentsButton().isDisplayed());
+		assertThat("There should be four documents in the bucket", bucketList.size(), is(4));
+		assertThat(searchPage.promoteTheseDocumentsButton(), disabled());
+		assertThat(searchPage.promoteTheseItemsButton(), displayed());
 
 //		for (final String bucketDocTitle : bucketList) {
 //			final int docIndex = bucketList.indexOf(bucketDocTitle);
@@ -416,14 +407,12 @@ public class SearchPageITCase extends ABCTestBase {
 //			assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(3 - docIndex));
 //		}
 
-		for (final WebElement bucketDoc : bucketListElements) {
-			bucketDoc.findElement(By.cssSelector("i:nth-child(2)")).click();
-		}
+		searchPage.emptyBucket();
 
-		assertThat("promote button should be disabled when bucket has no documents", ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
+		assertThat("promote button should be disabled when bucket has no documents", searchPage.promoteTheseItemsButton(), disabled());
 
 		search("tooth");
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(), is(0));
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList(), empty());
 
 		searchPage.searchResultCheckbox(5).click();
 		final List<String> docTitles = new ArrayList<>();
@@ -433,25 +422,25 @@ public class SearchPageITCase extends ABCTestBase {
 		docTitles.add(searchPage.getSearchResultTitle(3));
 
 		final List<String> bucketListNew = searchPage.promotionsBucketList();
-		assertThat("Wrong number of documents in the bucket", bucketListNew.size(),is(2));
+		assertThat("Wrong number of documents in the bucket", bucketListNew, hasSize(2));
 //		assertThat("", searchPage.promotionsBucketList().containsAll(docTitles));
-		assertThat(bucketListNew.size(), is(docTitles.size()));
+		assertThat(bucketListNew, hasSize(docTitles.size()));
 
 		for(String docTitle : docTitles){
-			assertThat(bucketListNew,hasItem(docTitle.toUpperCase()));
+			assertThat(bucketListNew, hasItem(equalToIgnoringCase(docTitle)));
 		}
 
 		searchPage.deleteDocFromWithinBucket(docTitles.get(1));
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(), is(1));
-		assertThat("Document should still be in the bucket", searchPage.promotionsBucketList(),hasItem(docTitles.get(0).toUpperCase()));
-		assertThat("Document should no longer be in the bucket", searchPage.promotionsBucketList(),not(hasItem(docTitles.get(1).toUpperCase())));
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList(), hasSize(1));
+		assertThat("Document should still be in the bucket", searchPage.promotionsBucketList(),hasItem(equalToIgnoringCase(docTitles.get(0))));
+		assertThat("Document should no longer be in the bucket", searchPage.promotionsBucketList(),not(hasItem(equalToIgnoringCase(docTitles.get(1)))));
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(3).isSelected());
 
 		searchPage.switchResultsPage(Pagination.PREVIOUS);
 		searchPage.deleteDocFromWithinBucket(docTitles.get(0));
-		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(0));
+		assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList(), empty());
 		assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(5).isSelected());
-		assertThat("promote button should be disabled when bucket has no documents", ElementUtil.isAttributePresent(searchPage.promoteTheseItemsButton(), "disabled"));
+		assertThat("promote button should be disabled when bucket has no documents", searchPage.promoteTheseItemsButton(), disabled());
 	}
 
 	@Test
@@ -485,12 +474,13 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testViewFromBucketLabel() throws InterruptedException {
-        search("جيمس");
+		// TODO: add Arabic test to OP
+		//Testing in Arabic because in some instances not latin urls have been encoded incorrectly
+		search("جيمس");
 		searchPage.selectLanguage(Language.ARABIC);
 
         search("Engineer");
 
-		//Testing in Arabic because in some instances not latin urls have been encoded incorrectly
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 		searchPage.promoteTheseDocumentsButton().click();
 
@@ -499,18 +489,14 @@ public class SearchPageITCase extends ABCTestBase {
 				final String handle = getDriver().getWindowHandle();
 				searchPage.searchResultCheckbox(i).click();
 				final String docTitle = searchPage.getSearchResultTitle(i);
-				//TODO fix clean xpath string so it works here
-				searchPage.getPromotionBucketElementByTitle(docTitle).click();
+				ElementUtil.scrollIntoViewAndClick(searchPage.getPromotionBucketElementByTitle(docTitle), getDriver());
 
-				Thread.sleep(5000);
-
-				getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
-                //Using trimmedtitle is a really hacky way to get around the latin urls not being encoded (possibly, or another problem) correctly
-				assertThat("View frame does not contain document", getDriver().findElement(By.xpath(".//*")).getText(), containsString(docTitle));
+				DocumentViewer viewer = DocumentViewer.make(getDriver());
+				getDriver().switchTo().frame(viewer.frame());
+				verifyThat("view frame displays", getDriver().findElement(By.xpath(".//*")), containsText(docTitle));
 
 				getDriver().switchTo().window(handle);
-				getDriver().findElement(By.xpath("//button[contains(@id, 'cboxClose')]")).click();
-				Waits.loadOrFadeWait();
+				viewer.close();
 			}
 
 			searchPage.switchResultsPage(Pagination.NEXT);
@@ -858,6 +844,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	// IOD-6855
 	public void testFromDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResultTitle(1);
@@ -879,6 +866,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	// IOD-6855
 	public void testUntilDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResultTitle(1);
