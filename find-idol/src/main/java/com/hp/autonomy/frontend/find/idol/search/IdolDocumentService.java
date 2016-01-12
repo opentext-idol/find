@@ -24,6 +24,7 @@ import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.idol.SuggestResponseData;
 import com.hp.autonomy.types.requests.Documents;
+import com.hp.autonomy.types.requests.Spelling;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import com.hp.autonomy.types.requests.idol.actions.query.params.CombineParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.HighlightParam;
@@ -41,6 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -76,7 +78,7 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
 
     @Override
     public Documents<FindDocument> queryTextIndexForPromotions(final FindQueryParams<String> findQueryParams) throws AciErrorException {
-        return qmsAciService.isEnabled() ? queryTextIndex(qmsAciService, findQueryParams, true) : new Documents<>(Collections.<FindDocument>emptyList(), 0, null);
+        return qmsAciService.isEnabled() ? queryTextIndex(qmsAciService, findQueryParams, true) : new Documents<>(Collections.<FindDocument>emptyList(), 0, null, null, null);
     }
 
     private Documents<FindDocument> queryTextIndex(final AciService aciService, final FindQueryParams<String> findQueryParams, final boolean promotions) {
@@ -106,6 +108,10 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
             aciParameters.add(QueryParams.EndTag.name(), HIGHLIGHT_END_TAG);
         }
 
+        if (findQueryParams.isAutoCorrect()) {
+            aciParameters.add(QueryParams.SpellCheck.name(), true);
+        }
+
         aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getQueryManipulation().getBlacklist());
         aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getQueryManipulation().getExpandQuery());
 
@@ -132,8 +138,22 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         }
 
         final List<Hit> hits = responseData.getHit();
+        final String spellingQuery = responseData.getSpellingquery();
+
+        // If IDOL has a spelling suggestion, retry query for auto correct
+        if (spellingQuery != null) {
+            final AciParameters correctedParameters = new AciParameters(aciParameters);
+            correctedParameters.put(QueryParams.Text.name(), spellingQuery);
+
+            final Documents<FindDocument> correctedDocuments = executeQuery(aciService, correctedParameters);
+
+            final Spelling spelling = new Spelling(Arrays.asList(responseData.getSpelling().split(", ")), spellingQuery, aciParameters.get(QueryParams.Text.name()));
+
+            return new Documents<>(correctedDocuments.getDocuments(), correctedDocuments.getTotalResults(), correctedDocuments.getExpandedQuery(), null, spelling);
+        }
+
         final List<FindDocument> results = parseQueryHits(hits);
-        return new Documents<>(results, responseData.getTotalhits(), null);
+        return new Documents<>(results, responseData.getTotalhits(), null, null, null);
     }
 
     @Override

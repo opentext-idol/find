@@ -29,12 +29,14 @@ define([
                     this.$correctedQuery.text(autoCorrection.correctedQuery);
                     this.$originalQuery.text(autoCorrection.originalQuery);
 
-                    this.$el.removeClass('hidden');
+                    this.show();
                 }
                 else {
-                    this.$el.addClass('hidden');
+                    this.hide();
                 }
             });
+
+            this.listenTo(this.documentsCollection, 'request', this.hide);
         },
 
         render: function() {
@@ -44,6 +46,14 @@ define([
 
             this.$correctedQuery = this.$('.corrected-query');
             this.$originalQuery = this.$('.original-query');
+        },
+
+        hide: function() {
+            this.$el.addClass('hidden');
+        },
+
+        show: function() {
+            this.$el.removeClass('hidden');
         }
 
     });
