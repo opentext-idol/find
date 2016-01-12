@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -85,7 +86,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
 
     @Test
     //CSA-1562
-    public void testAdvancedConfigurations() throws InterruptedException {
+    public void testAdvancedConfigurations() {
         connectorUrl.setValue("http://www.w.ww");
         connectorName.setValue("jeremy");
 
@@ -96,7 +97,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         connectorConfigStep.advancedConfigurations().click();
 
         //Let the dropdown open
-        Thread.sleep(1000);
+        Waits.loadOrFadeWait();
 
         connectorConfigStep.getMaxPagesBox().setValue("9");
         connectorConfigStep.getDurationBox().setValue("59");
