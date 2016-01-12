@@ -83,6 +83,10 @@ public class JsonConfig {
         return this.app.findUrl;
     }
 
+    public URL getApiUrl() {
+        return this.app.apiUrl;
+    }
+
     public List<Browser> getBrowsers() {
         return this.selenium.browsers;
     }
@@ -101,10 +105,6 @@ public class JsonConfig {
 
     public ApplicationType getAppType() {
         return this.app.type;
-    }
-
-    public URL getApiUrl() {
-        return this.app.apiUrl;
     }
 
     public static class AppConfig {
