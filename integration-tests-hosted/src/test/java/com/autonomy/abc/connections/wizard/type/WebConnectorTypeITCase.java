@@ -275,7 +275,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    @Ignore("To unignore after fix added")
+    //CSA-1789
     public void testInvalidLongUrls(){
         List<WebConnector> invalid = new ArrayList<WebConnector>(){{
             add(new WebConnector("http://10.1.1.1", ""));
@@ -313,7 +313,6 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    @Ignore("To unignore after fix added")
     //CSA-1789
     public void testValidLongUrls(){
         final List<WebConnector> valid = new ArrayList<WebConnector>(){{
@@ -324,11 +323,11 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
         longUrls(valid, true, true);
     }
 
-    private void longUrls(final List<WebConnector> connectors, boolean urlValid, boolean nameValid) {
+    private void longUrls(final List<WebConnector> connectors, final boolean urlValid, final boolean nameValid) {
         Runnable runnable = new Thread() {
             @Override
             public void run() {
-                updateUrlAndVerifyConnectorName(connectors, true, true);
+                updateUrlAndVerifyConnectorName(connectors, urlValid, nameValid);
             }
         };
 
