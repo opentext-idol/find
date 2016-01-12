@@ -49,6 +49,10 @@ public class TestConfig {
 		return jsonConfig.getFindUrl().toString();
 	}
 
+	public String getApiUrl() {
+		return jsonConfig.getApiUrl().toString();
+	}
+
 	public User getDefaultUser() {
 		return jsonConfig.getDefaultUser();
 	}
@@ -75,11 +79,6 @@ public class TestConfig {
 
 	public ApplicationType getType() {
 		return type;
-	}
-
-	@Deprecated
-	public WebDriver createWebDriver() {
-		return browser.createWebDriver(url, platform);
 	}
 
 	URL getHubUrl() {

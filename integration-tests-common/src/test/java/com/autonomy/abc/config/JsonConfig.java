@@ -103,22 +103,29 @@ public class JsonConfig {
         return this.app.type;
     }
 
+    public URL getApiUrl() {
+        return this.app.apiUrl;
+    }
+
     public static class AppConfig {
         private final ApplicationType type;
         private final URL url;
         private final URL findUrl;
+        private final URL apiUrl;
 
         private AppConfig(JsonNode node) throws MalformedURLException {
             String typeString = node.path("type").asText();
             type = (typeString.isEmpty() ? null : ApplicationType.fromString(typeString));
             url = getUrlOrNull(node.path("url"));
             findUrl = getUrlOrNull(node.path("find"));
+            apiUrl = getUrlOrNull(node.path("api"));
         }
 
         private AppConfig(AppConfig overrides, AppConfig defaults) {
             type = override(defaults.type, overrides.type);
             url = override(defaults.url, overrides.url);
             findUrl = override(defaults.findUrl, overrides.findUrl);
+            apiUrl = override(defaults.apiUrl, overrides.apiUrl);
         }
 
         private AppConfig overrideUsing(AppConfig overrides) {

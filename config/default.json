@@ -2,7 +2,8 @@
   "app": {
     "type": "Hosted",
     "url": "http://search.dev.idolondemand.com/searchoptimizer/p",
-    "find": "http://find.dev.idolondemand.com"
+    "find": "http://find.dev.idolondemand.com",
+    "api" : "https://api.int.havenondemand.com"
   },
   "selenium": {
     "browsers": ["chrome"],
