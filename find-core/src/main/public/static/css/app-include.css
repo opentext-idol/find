@@ -475,7 +475,7 @@ input.find-input {
 /* fancy animation */
 .animated-container {
     position: absolute;
-    top: -40px;
+    top: -60px;
     transition: all 1s ease;
 }
 
@@ -624,6 +624,11 @@ input.find-input {
     font-weight: bold
 }
 
+.see-all-documents,
+.see-all-documents:hover {
+    color: #fff;
+}
+
 .service-view-container {
     height: 100%;
 }
@@ -711,7 +716,7 @@ input:-moz-placeholder::before {
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
     margin-bottom: 0;
-    height: 50px;
+    height: 70px;
 }
 
 .find-navbar.reduced {

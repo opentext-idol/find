@@ -22,6 +22,9 @@ define([
             },
             'typeahead:select': function() {
                 this.search(this.$input.typeahead('val'), false);
+            },
+            'click .see-all-documents': function() {
+                this.queryModel.set('queryText', '*');
             }
         },
 
@@ -74,6 +77,7 @@ define([
         updateText: function() {
             if (this.$input) {
                 this.$input.typeahead('val', this.queryModel.get('queryText'));
+                this.$('.see-all-documents').toggleClass('hide', this.queryModel.get('queryText') == '*');
             }
         }
     });

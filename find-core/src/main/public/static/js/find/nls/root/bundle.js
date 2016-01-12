@@ -90,6 +90,7 @@ define([
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',
+        'search.seeAllDocuments': 'See all documents',
         'search.selected': 'Selected',
         'search.similarDocuments': 'Similar documents',
         'search.similarDocuments.error': 'An error occurred fetching similar documents',
