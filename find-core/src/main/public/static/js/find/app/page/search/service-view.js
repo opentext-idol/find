@@ -77,7 +77,7 @@ define([
             this.indexesCollection.fetch();
 
             var fetchEntities = _.bind(function() {
-                if (this.queryModel.get('indexes').length !== 0) {
+                if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                     this.entityCollection.fetch({
                         data: {
                             text: this.queryModel.get('queryText'),

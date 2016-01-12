@@ -85,7 +85,7 @@ define([
                     .uniq()
                     .value();
 
-                if(_.isEmpty(fieldNames)) {
+                if(!this.queryModel.get('queryText') || _.isEmpty(fieldNames)) {
                     this.model.set('processing', false);
                 } else {
                     this.parametricCollection.fetch({
