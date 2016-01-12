@@ -70,18 +70,20 @@ public class ConnectionService {
         connector.makeWizard(newConnectionPage).apply();
         new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining("started"));
         LOGGER.info("Connection '" + connector.getName() + "' started");
+        Long startTime = System.currentTimeMillis();
         waitForConnectorToRun(connector);
         LOGGER.info("Connection '" + connector.getName() + "' finished");
+        if(connector instanceof WebConnector){
+            int timeTaken = (int) ((System.currentTimeMillis() - startTime) / 1000);
+            if(timeTaken > ((WebConnector) connector).getDuration()) {
+                LOGGER.error("Connection '" + connector.getName() + "' took " + timeTaken + " seconds to complete");
+            }
+        }
         return connectionsPage;
     }
 
     private void waitForConnectorToRun(final Connector connector) {
-        int timeout = 300;
-        if (connector instanceof WebConnector) {
-            int duration = ((WebConnector) connector).getDuration();
-            timeout = (int) (duration * 1.5);
-        }
-        new WebDriverWait(getDriver(), timeout)
+        new WebDriverWait(getDriver(), 300)
                 .withMessage("running connection " + connector)
                 .until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
     }
