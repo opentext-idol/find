@@ -3,13 +3,14 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.element.Checkbox;
-import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
@@ -24,17 +25,18 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.contains;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.not;
 
 public class SearchPageHostedITCase extends HostedTestBase {
+	private SearchPage searchPage;
+	private SearchService searchService;
+
 	public SearchPageHostedITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
 		super(config, browser, appType, platform);
 	}
-
-	private SearchPage searchPage;
-	private TopNavBar topNavBar;
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws IOException {
@@ -44,57 +46,22 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		topNavBar = body.getTopNavBar();
-		topNavBar.search("example");
-		searchPage = getElementFactory().getSearchPage();
+		searchService = getApplication().createSearchService(getElementFactory());
+		searchPage = searchService.search("example");
 	}
 
-
-	@Test
-	public void testIndexSelection() {
-		topNavBar.search("car");
-		searchPage.selectLanguage(Language.ENGLISH);
-		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		//TODO add a matcher
-		assertThat("All databases not showing", searchPage.allIndexesCheckbox().isChecked(), is(true));
-
-		for(Checkbox checkbox : searchPage.indexList()){
-			assertThat(checkbox.isChecked(), is(true));
-		}
-
-		searchPage.allIndexesCheckbox().toggle();
-
-		searchPage.selectIndex("news_eng");
-		assertThat("Database not showing", searchPage.indexCheckbox("news_eng").isChecked(), is(true));
-		final String wikiEnglishResult = searchPage.getSearchResult(1).getText();
-		searchPage.deselectIndex("news_eng");
-
-		searchPage.selectIndex("news_ger");
-		assertThat("Database not showing", searchPage.indexCheckbox("news_ger").isChecked(), is(true));
-		final String wookiepediaResult = searchPage.getSearchResult(1).getText();
-		assertThat(wookiepediaResult, not(wikiEnglishResult));
-
-		searchPage.selectIndex("wiki_chi");
-		assertThat(searchPage.indexCheckbox("news_ger").isChecked(), is(true));
-		assertThat(searchPage.indexCheckbox("wiki_chi").isChecked(),is(true));
-		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText(), anyOf(is(wookiepediaResult), is(wikiEnglishResult)));
-	}
-
+	@Ignore("TODO: Not implemented")
 	@Test
 	public void testParametricSearch() {
-		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		topNavBar.search("*");
+		searchService.search(new SearchQuery("*").withFilter(IndexFilter.ALL));
 	}
 
 
 	@Test
 	//TODO make this test WAY nicer
 	public void testAuthor(){
-		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
-
-		topNavBar.search("fruit");
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		Assert.assertNotEquals(searchPage.getText(), contains("Haven OnDemand returned an error while executing the search action"));
+		searchService.search(new SearchQuery("fruit").withFilter(IndexFilter.PUBLIC));
+		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
 
 		String author = "FIFA.COM";
 

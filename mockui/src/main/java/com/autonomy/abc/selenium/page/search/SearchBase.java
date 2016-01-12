@@ -174,116 +174,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return findElement(By.cssSelector(".databases-list"));
 	}
 
-	public List<String> getAllDatabases() {
-		return ElementUtil.webElementListToStringList(findElements(By.cssSelector(".child-categories label")));
-	}
-
-	public List<WebElement> getDatabaseCheckboxes() {
-		return findElements(By.cssSelector(".child-categories input"));
-	}
-
-	public WebElement allDatabasesCheckbox() {
-		return findElement(By.cssSelector(".checkbox input[data-category-id='all']"));
-	}
-
-	@Deprecated
-	public void selectDatabase(final String databaseName) {
-		indexesTree().select(databaseName);
-		Waits.loadOrFadeWait();
-	}
-
-	@Deprecated
-	public void selectAllIndexesOrDatabases(final String type) {
-		selectAllIndexes();
-	}
-
-	@Deprecated
-	public void selectAllIndexes() {
-		expand(Facet.FILTER_BY);
-		expand(Facet.INDEXES);
-		indexesTree().allIndexes().select();
-		waitForSearchLoadIndicatorToDisappear();
-	}
-
-	@Deprecated
-	public void deselectDatabase(final String databaseName) {
-		final List<String> selectedDatabases = getSelectedDatabases();
-
-		if (selectedDatabases.contains(databaseName)) {
-			if (selectedDatabases.size() > 1) {
-				ElementUtil.getParent(getDatabaseCheckboxes().get(getAllDatabases().indexOf(databaseName))).click();
-			} else {
-				System.out.println("Only one database remaining. Can't deselect final database");
-			}
-			Waits.loadOrFadeWait();
-		}
-	}
-
-	@Deprecated
-	public List<String> getSelectedDatabases() {
-		final List<String> selected = new ArrayList<>();
-
-		for (final WebElement tick : getDatabasesList().findElements(By.cssSelector(".child-categories .checked"))) {
-			selected.add(ElementUtil.getParent(tick).getText());
-		}
-
-		return selected;
-	}
-
-	public List<Checkbox> indexList() {
-		List<Checkbox> checkboxes = new ArrayList<>();
-		for (WebElement element : findElements(By.cssSelector(".databases-list .checkbox"))) {
-			if (element.isDisplayed()) {
-				checkboxes.add(new Checkbox(element, getDriver()));
-			}
-		}
-		return checkboxes;
-	}
-
-	public Checkbox indexCheckbox(String indexName) {
-		return new Checkbox(findElement(By.cssSelector(".checkbox[data-name='" + indexName + "']")), getDriver());
-	}
-
-	public Checkbox allIndexesCheckbox() {
-		return new Checkbox(findElement(By.cssSelector(".checkbox[data-category-id='all']")), getDriver());
-	}
-
-	public void deselectIndex(String index) {
-		Checkbox checkbox = indexCheckbox(index);
-
-		if(checkbox.isChecked()){
-			checkbox.toggle();
-		}
-
-		Waits.loadOrFadeWait();
-		waitForSearchLoadIndicatorToDisappear();
-	}
-
-	public void openPublicFilter(){
-		WebElement publicChevron = findElement(By.cssSelector("[data-category-id=public] i"));
-		if(publicChevron.getAttribute("class").contains("collapsed")) {
-			publicChevron.click();
-		}
-	}
-
-	public void selectIndex(String index) {
-		Checkbox checkbox = indexCheckbox(index);
-
-		if(checkbox.isChecked()){
-			return;
-		}
-
-		if(!checkbox.isDisplayed()){
-			openPublicFilter();
-			Waits.loadOrFadeWait();
-		}
-
-		checkbox.toggle();
-
-		Waits.loadOrFadeWait();
-		waitForSearchLoadIndicatorToDisappear();
-	}
-
 	/* date filter */
 	public FormInput fromDateInput() {
 		return dateInput(By.cssSelector("[data-filter-name=\"minDate\"] input"));
@@ -370,7 +260,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	public void clearFieldText() {
 		expand(Facet.FIELD_TEXT);
 		if (!fieldTextAddButton().isDisplayed()) {
-			getDatabasesList().click();
 			fieldTextRemoveButton().click();
 		}
 	}

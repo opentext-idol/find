@@ -626,7 +626,7 @@ public class FindITCase extends HostedTestBase {
     private Find createSession(WebDriver driver) {
         driver.get(config.getFindUrl());
         HSOElementFactory otherElementFactory = (HSOElementFactory) getApplication().createElementFactory(driver);
-        otherElementFactory.getFindLoginPage().loginWith(config.getDefaultUser().getAuthProvider());
+        loginTo(otherElementFactory.getFindLoginPage(), driver, config.getDefaultUser());
         return otherElementFactory.getFindPage();
     }
 
