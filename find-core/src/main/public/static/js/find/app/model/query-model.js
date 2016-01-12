@@ -2,32 +2,46 @@ define([
     'backbone'
 ], function(Backbone) {
 
-    var EventsProxy = function(queryModel) {
-        this.model = queryModel;
-
-        this.listenTo(this.model, 'all', function(event) {
-            if (event !== 'change' && event !== 'refresh' || (this.model.get('queryText'))) {
-                this.trigger.apply(this, arguments);
-            }
-        });
+    var Sort = {
+        date: 'date',
+        relevance: 'relevance'
     };
 
-    _.extend(EventsProxy.prototype, Backbone.Events, {
+    return Backbone.Model.extend({
+        defaults: {
+            autoCorrect: true,
+            queryText: '',
+            indexes: [],
+            fieldText: null,
+            minDate: undefined,
+            maxDate: undefined,
+            sort: Sort.relevance
+        },
+
+        getIsoDate: function(type) {
+            var date = this.get(type);
+            if(date) {
+                return date.toISOString();
+            } else {
+                return null;
+            }
+        },
 
         hasAnyChangedAttributes: function(attributes) {
             return _.any(attributes, function (attr) {
                 return _.has(this.changedAttributes(), attr);
             }, this);
+        },
+
+        refresh: function(queryText) {
+            if (this.get('queryText') === queryText) {
+                this.trigger('refresh');
+            } else {
+                this.set('queryText', queryText);
+            }
         }
-
+    }, {
+        Sort: Sort
     });
 
-    _.each(['get', 'set', 'unset', 'changedAttributes', 'getIsoDate', 'refresh'], function(methodName) {
-        EventsProxy.prototype[methodName] = function() {
-            return this.model[methodName].apply(this.model, arguments);
-        };
-    });
-
-    return EventsProxy;
 });
-
