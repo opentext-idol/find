@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -36,11 +37,6 @@ public class FindResultsPage extends AppElement {
         return findElement(By.className("promotions"));
     }
 
-    public void filterByDate(DateEnum date) {
-        findElement(By.cssSelector("td[data-id='" + date.toString().toLowerCase() + "']")).click();
-        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
-    }
-
     public List<String> getResultTitles() {
         List<String> titles = new ArrayList<>();
         for(WebElement result : getResults()){
@@ -60,7 +56,7 @@ public class FindResultsPage extends AppElement {
     }
 
     public void filterByParametric(String header, String filter) {
-        findElement(By.cssSelector("[data-field='"+header.toLowerCase().replace(" ","_")+"'] [data-value='"+filter.toUpperCase()+"']"));
+        findElement(By.cssSelector("[data-field='" + header.toLowerCase().replace(" ", "_") + "'] [data-value='" + filter.toUpperCase() + "']"));
     }
 
     public List<WebElement> getSimilarResultLinks() {
@@ -76,6 +72,20 @@ public class FindResultsPage extends AppElement {
         MONTH,
         YEAR,
         CUSTOM
+    }
+
+    public void toggleDateSelection(DateEnum date) {
+        dateOption(date).click();
+        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
+    }
+
+    public boolean isDateSelected(DateEnum date) {
+        WebElement checkIcon = dateOption(date).findElement(By.tagName("i"));
+        return !ElementUtil.hasClass("hide", checkIcon);
+    }
+
+    private WebElement dateOption(DateEnum date) {
+        return findElement(By.cssSelector("tr[data-id='" + date.toString().toLowerCase() + "']"));
     }
 
     private enum ParametricContainers {

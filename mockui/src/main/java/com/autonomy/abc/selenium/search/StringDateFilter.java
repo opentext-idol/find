@@ -28,8 +28,8 @@ public class StringDateFilter implements SearchFilter {
     }
 
     protected void apply(Filterable dateFilterable) {
-        fromHandler.applyTo(dateFilterable.fromDateInput());
-        untilHandler.applyTo(dateFilterable.untilDateInput());
+        fromHandler.applyTo(dateFilterable, dateFilterable.fromDateInput());
+        untilHandler.applyTo(dateFilterable, dateFilterable.untilDateInput());
         loseFocus(dateFilterable);
     }
 
@@ -47,20 +47,21 @@ public class StringDateFilter implements SearchFilter {
     public interface Filterable {
         FormInput fromDateInput();
         FormInput untilDateInput();
+        String formatInputDate(Date date);
     }
 
     private static class StringDateHandler {
         private Date date;
 
-        private void applyTo(FormInput dateInput) {
+        private void applyTo(Filterable formatter, FormInput dateInput) {
             if (date != null) {
-                dateInput.setValue(FORMAT.format(date));
+                dateInput.setValue(formatter.formatInputDate(date));
             }
         }
 
         @Override
         public String toString() {
-            return date == null ? "null" : FORMAT.format(date);
+            return String.valueOf(date);
         }
     }
 }

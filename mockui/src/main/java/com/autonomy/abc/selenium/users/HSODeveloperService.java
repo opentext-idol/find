@@ -17,7 +17,6 @@ public class HSODeveloperService {
     private final HSOApplication application;
     private final HSOElementFactory elementFactory;
     private HSODevelopersPage devsPage;
-    public static final HSOUser DEVELOPER = new HSOUser("Aero Bubbles", null, null);
 
     private AppBody getBody() {
         return application.createAppBody(getDriver());
