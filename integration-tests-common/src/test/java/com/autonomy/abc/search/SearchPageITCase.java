@@ -629,63 +629,6 @@ public class SearchPageITCase extends ABCTestBase {
 		return searchPage.getHeadingResultsCount();
 	}
 
-	//TODO
-	@Test
-	public void testFieldTextRestrictionOnPromotions(){
-		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
-		promotionService.deleteAll();
-
-		promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "boat"), "darth", 2);
-		searchPage = getElementFactory().getSearchPage();
-		searchPage.waitForPromotionsLoadIndicatorToDisappear();
-        Waits.loadOrFadeWait();
-
-		assertThat(searchPage.getPromotionSummarySize(), is(2));
-
-		final List<String> initialPromotionsSummary = searchPage.getPromotedDocumentTitles(false);
-		searchPage.filterBy(new FieldTextFilter("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE"));
-
-		assertThat(searchPage.getPromotionSummarySize(), is(1));
-		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(0)));
-
-		searchPage.filterBy(new FieldTextFilter("MATCH{" + initialPromotionsSummary.get(1) + "}:DRETITLE"));
-
-		assertThat(searchPage.getPromotionSummarySize(), is(1));
-		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(1)));
-	}
-
-	@Test
-	public void testFieldTextRestrictionOnPinToPositionPromotions(){
-		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
-		promotionService.deleteAll();
-		List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new SearchQuery("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
-
-		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
-		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
-
-		searchPage.filterBy(new FieldTextFilter("WILD{*horse*}:DRETITLE"));
-
-        searchPage.waitForSearchLoadIndicatorToDisappear();
-        Waits.loadOrFadeWait();
-
-		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
-		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));	//TODO Seems like this shouldn't be visible
-		assertThat("Wrong number of results displayed", searchPage.getHeadingResultsCount(), is(2));
-		assertThat("Wrong number of pin to position labels displayed", searchPage.countPinToPositionLabels(), is(2));
-
-		searchPage.filterBy(new FieldTextFilter("MATCH{" + promotedDocs.get(0) + "}:DRETITLE"));
-
-		assertThat(searchPage.getSearchResultTitle(1), is(promotedDocs.get(0)));
-		assertThat(searchPage.getHeadingResultsCount(), is(1));
-		assertThat(searchPage.countPinToPositionLabels(), is(1));
-
-		searchPage.filterBy(new FieldTextFilter("MATCH{" + promotedDocs.get(1) + "}:DRETITLE"));
-
-		assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResultTitle(1), is(promotedDocs.get(1)));
-		assertThat("Wrong number of search results", searchPage.getHeadingResultsCount(), is(1));
-		assertThat("Wrong number of pin to position labels", searchPage.countPinToPositionLabels(), is(1));
-	}
-
 	// CSA-1818
 	@Test
 	public void testSearchResultsCount() {

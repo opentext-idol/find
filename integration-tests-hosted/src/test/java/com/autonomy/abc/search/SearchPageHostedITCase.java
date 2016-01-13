@@ -104,7 +104,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		assertThat(searchPage.getText(), not(containsString(Errors.Search.NO_RESULTS)));
 		searchPage.searchResult(1).click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
-		for(int i = 0; i <= 10; i++){
+		for(int i = 0; i < SearchPage.MAX_RESULTS; i++){
 			verifyThat(documentViewer.getIndex(), containsString(index));
 			documentViewer.next();
 		}
