@@ -32,7 +32,7 @@ import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.SuggestParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.SummaryParam;
-import com.hp.autonomy.types.requests.qms.QmsActionParams;
+import com.hp.autonomy.types.requests.qms.actions.query.params.QmsQueryParams;
 import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,11 +112,11 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
             aciParameters.add(QueryParams.SpellCheck.name(), true);
         }
 
-        aciParameters.add(QmsActionParams.Blacklist.name(), configService.getConfig().getQueryManipulation().getBlacklist());
-        aciParameters.add(QmsActionParams.ExpandQuery.name(), configService.getConfig().getQueryManipulation().getExpandQuery());
+        aciParameters.add(QmsQueryParams.Blacklist.name(), configService.getConfig().getQueryManipulation().getBlacklist());
+        aciParameters.add(QmsQueryParams.ExpandQuery.name(), configService.getConfig().getQueryManipulation().getExpandQuery());
 
         if (promotions) {
-            aciParameters.add(QmsActionParams.Promotions.name(), true);
+            aciParameters.add(QmsQueryParams.Promotions.name(), true);
         }
 
         return executeQuery(aciService, aciParameters);
@@ -129,7 +129,7 @@ public class IdolDocumentService implements DocumentsService<String, FindDocumen
         } catch (final AciErrorException e) {
             final String errorString = e.getErrorString();
             if (MISSING_RULE_ERROR.equals(errorString) || INVALID_RULE_ERROR.equals(errorString)) {
-                aciParameters.remove(QmsActionParams.Blacklist.name());
+                aciParameters.remove(QmsQueryParams.Blacklist.name());
                 responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
             }
             else {
