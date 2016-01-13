@@ -48,6 +48,7 @@ module.exports = (grunt) ->
         tasks: ['test']
       copyResources:
         files: [
+          '../find-core/src/main/public/static/**/*'
           'src/main/public/static/**/*'
         ]
         spawn: false
@@ -55,6 +56,11 @@ module.exports = (grunt) ->
     sync:
       devResources:
         files: [
+          {
+            cwd: '../find-core/src/main/public/static'
+            src: '**/*'
+            dest: 'target/classes/static'
+          }
           {
             cwd: 'src/main/public/static/'
             src: '**/*'
@@ -72,4 +78,4 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', ['connect:server', 'jasmine:test']
   grunt.registerTask 'browser-test', ['connect:server:keepalive']
   grunt.registerTask 'watch-test', ['watch:test']
-  grunt.registerTask 'copy-resources', ['watch:copyResources']
+  grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
