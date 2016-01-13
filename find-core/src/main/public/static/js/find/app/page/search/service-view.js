@@ -14,6 +14,7 @@ define([
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/sort-view',
     'find/app/page/search/spellcheck-view',
+    'find/app/page/search/saved-searches-view',
     'find/app/page/search/filters/indexes/indexes-view',
     'find/app/util/collapsible',
     'parametric-refinement/selected-values-collection',
@@ -21,7 +22,7 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView, SpellCheckView,
+            ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView, SpellCheckView, SavedSearchesView,
             IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
 
@@ -102,6 +103,10 @@ define([
                 }));
             }, this), 500));
 
+            this.savedSearchesView = new SavedSearchesView({
+                savedSearchesCollection: new Backbone.Collection()
+            });
+
             this.resultsView = this.constructResultsView({
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
@@ -160,6 +165,7 @@ define([
             this.parametricView.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
             this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
+            this.savedSearchesView.setElement(this.$('.saved-searches-container')).render();
 
             this.relatedConceptsViewWrapper.render();
 

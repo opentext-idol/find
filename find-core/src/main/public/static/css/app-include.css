@@ -136,7 +136,7 @@ html, body {
 
 .right-side-container td,
 .left-side-container td {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #C9C9C9;
     word-break: break-all;
 }
 
@@ -260,7 +260,7 @@ html, body {
 
 .left-side-container {
     font-size:13px;
-    background-color: #efefef;
+    background-color: #E2E2E2;
 }
 
 .small-container {
@@ -269,7 +269,7 @@ html, body {
 
 .right-side-container {
     font-size: 14px;
-    background-color: #efefef;
+    background-color: #E2E2E2;
 }
 
 .right-container-icon {
@@ -317,6 +317,13 @@ html, body {
     display: inline;
 }
 
+.saved-searches-container {
+    background-color: #efefef;
+}
+
+.saved-searches-container h4 {
+    vertical-align: text-bottom; /* hax? */
+}
 .find {
     text-align: center;
     /* We need to be on top of the static navbar */
@@ -910,17 +917,17 @@ input:-moz-placeholder::before {
 }
 
 .category-input {
-    border-top: 1px solid lightgrey;
+    border-top: 1px solid #C9C9C9;
     border-bottom: none !important;
 }
 
 .child-categories li {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #C9C9C9;
     word-break: break-all;
 }
 
 .child-categories li:first-child {
-    border-top: 1px solid lightgrey;
+    border-top: 1px solid #C9C9C9;
 }
 
 /* View server */
