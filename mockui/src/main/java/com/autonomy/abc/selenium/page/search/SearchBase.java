@@ -223,26 +223,12 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	/* field text */
-	public void setFieldText(String value) {
-		expand(Facet.FIELD_TEXT);
-		try {
-			fieldTextAddButton().click();
-			Waits.loadOrFadeWait();
-		} catch (ElementNotVisibleException e) {
-			/* already clicked */
-		}
-		fieldTextInput().clear();
-		fieldTextInput().sendKeys(value);
-		fieldTextTickConfirm().click();
-		waitForSearchLoadIndicatorToDisappear();
-	}
-
 	public WebElement fieldTextAddButton() {
 		return findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
 	}
 
-	public WebElement fieldTextInput() {
-		return findElement(By.xpath(".//input[@placeholder='FieldText']"));
+	public FormInput fieldTextInput() {
+		return new FormInput(findElement(By.xpath(".//input[@placeholder='FieldText']")), getDriver());
 	}
 
 	public WebElement fieldTextTickConfirm() {

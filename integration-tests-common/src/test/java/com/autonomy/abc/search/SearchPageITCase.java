@@ -596,10 +596,10 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		searchPage.fieldTextAddButton().click();
 		Waits.loadOrFadeWait();
-		assertThat("input visible", searchPage.fieldTextInput(), displayed());
+		assertThat("input visible", searchPage.fieldTextInput().getElement(), displayed());
 		assertThat("confirm button visible", searchPage.fieldTextTickConfirm(), displayed());
 
-		searchPage.setFieldText("WILD{" + firstWord + "*}:DRETITLE");
+		searchPage.filterBy(new FieldTextFilter("WILD{" + firstWord + "*}:DRETITLE"));
 		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
 
 		assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
@@ -631,11 +631,13 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Test
 	public void testEditFieldText() {
+		SearchQuery searchQuery;
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			searchService.search(new SearchQuery("boer").withFilter(IndexFilter.ALL));
+			searchQuery = new SearchQuery("boer").withFilter(IndexFilter.ALL);
 		} else {
-			searchService.search(new SearchQuery("*").withFilter(new IndexFilter("sitesearch")));
+			searchQuery = new SearchQuery("*").withFilter(new IndexFilter("sitesearch"));
 		}
+		searchService.search(searchQuery);
 
 		searchPage.selectLanguage(Language.AFRIKAANS);
 
@@ -644,23 +646,12 @@ public class SearchPageITCase extends ABCTestBase {
 		final String firstSearchResult = searchPage.getSearchResultTitle(1);
 		final String secondSearchResult = searchPage.getSearchResultTitle(2);
 
-		searchPage.fieldTextAddButton().click();
-		Waits.loadOrFadeWait();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + firstSearchResult + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.filterBy(new FieldTextFilter("MATCH{" + firstSearchResult + "}:DRETITLE"));
 		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		assertThat(searchPage.getText(), not(containsString("No results found")));
 		assertThat(searchPage.getSearchResultTitle(1), is(firstSearchResult));
 
-		searchPage.fieldTextEditButton().click();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + secondSearchResult + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		searchPage.filterBy(new FieldTextFilter("MATCH{" + secondSearchResult + "}:DRETITLE"));
 		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		assertThat(searchPage.getSearchResultTitle(1), is(secondSearchResult));
 	}
@@ -670,17 +661,19 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 
+		WebElement fieldTextInputElement = searchPage.fieldTextInput().getElement();
+
 		searchPage.fieldTextAddButton().click();
 		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
-		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
+		assertThat("Field text input not visible", fieldTextInputElement, displayed());
 
-		searchPage.fieldTextInput().click();
+		searchPage.fieldTextInput().getElement().click();
 		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
-		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
+		assertThat("Field text input not visible", fieldTextInputElement, displayed());
 
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
-		assertThat("Field text input visible", !searchPage.fieldTextInput().isDisplayed());
+		assertThat("Field text input visible", fieldTextInputElement, not(displayed()));
 	}
 
 	@Test
@@ -727,16 +720,12 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(searchPage.getPromotionSummarySize(), is(2));
 
 		final List<String> initialPromotionsSummary = searchPage.getPromotedDocumentTitles(false);
-		searchPage.setFieldText("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
+		searchPage.filterBy(new FieldTextFilter("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE"));
 
 		assertThat(searchPage.getPromotionSummarySize(), is(1));
 		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(0)));
 
-		searchPage.fieldTextEditButton().click();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + initialPromotionsSummary.get(1) + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
+		searchPage.filterBy(new FieldTextFilter("MATCH{" + initialPromotionsSummary.get(1) + "}:DRETITLE"));
 
 		assertThat(searchPage.getPromotionSummarySize(), is(1));
 		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(1)));
@@ -751,7 +740,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
 		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
 
-		searchPage.setFieldText("WILD{*horse*}:DRETITLE");
+		searchPage.filterBy(new FieldTextFilter("WILD{*horse*}:DRETITLE"));
 
         searchPage.waitForSearchLoadIndicatorToDisappear();
         Waits.loadOrFadeWait();
@@ -761,21 +750,13 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Wrong number of results displayed", searchPage.getHeadingResultsCount(), is(2));
 		assertThat("Wrong number of pin to position labels displayed", searchPage.countPinToPositionLabels(), is(2));
 
-		searchPage.fieldTextEditButton().click();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + promotedDocs.get(0) + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
+		searchPage.filterBy(new FieldTextFilter("MATCH{" + promotedDocs.get(0) + "}:DRETITLE"));
 
 		assertThat(searchPage.getSearchResultTitle(1), is(promotedDocs.get(0)));
 		assertThat(searchPage.getHeadingResultsCount(), is(1));
 		assertThat(searchPage.countPinToPositionLabels(), is(1));
 
-		searchPage.fieldTextEditButton().click();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + promotedDocs.get(1) + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
+		searchPage.filterBy(new FieldTextFilter("MATCH{" + promotedDocs.get(1) + "}:DRETITLE"));
 
 		assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResultTitle(1), is(promotedDocs.get(1)));
 		assertThat("Wrong number of search results", searchPage.getHeadingResultsCount(), is(1));

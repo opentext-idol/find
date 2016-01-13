@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.page.search.SearchBase;
+import com.autonomy.abc.selenium.util.Waits;
+import org.openqa.selenium.ElementNotVisibleException;
 
 public class FieldTextFilter implements SearchFilter {
     private String fieldText;
@@ -12,7 +14,16 @@ public class FieldTextFilter implements SearchFilter {
     @Override
     public void apply(SearchFilter.Filterable page) {
         if (page instanceof SearchBase) {
-            ((SearchBase) page).setFieldText(fieldText);
+            SearchBase searchBase = (SearchBase) page;
+            searchBase.expand(SearchBase.Facet.FIELD_TEXT);
+            try {
+                searchBase.fieldTextAddButton().click();
+                Waits.loadOrFadeWait();
+            } catch (ElementNotVisibleException e) {
+			/* already clicked */
+            }
+            searchBase.fieldTextInput().setAndSubmit(fieldText);
+            searchBase.waitForSearchLoadIndicatorToDisappear();
         }
     }
 
