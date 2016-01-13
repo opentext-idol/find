@@ -1,52 +1,72 @@
-# HP Find
+# HPE Find
 [![Build Status](https://travis-ci.org/hpautonomy/find.svg?branch=master)](https://travis-ci.org/hpautonomy/find)
 
-HP Find is a web application backed by [Haven OnDemand](https://www.idolondemand.com)
+HPE Find is a web application which can be backed by either [Haven OnDemand](https://www.havenondemand.com) or HPE IDOL.
 
-A live preview of HP Find can be found at [find.idolondemand.com](http://find.idolondemand.com).
+A live preview of HPE Find can be found at [find.idolondemand.com](http://find.idolondemand.com).
 
 ## Key Features
-* Querying Haven OnDemand indexes
-* Viewing Haven OnDemand results
-* Suggested related searches from Haven OnDemand
+* Querying HPE IDOL or Haven OnDemand text indexes
+* Viewing search results
+* Suggested related searches
 
-## Building HP Find
-Building HP Find requires the following to be installed
+## Building HPE Find
+Building HPE Find requires the following to be installed
 
 * [Git](https://git-scm.com/)
 * [Apache Maven 3](http://maven.apache.org)
 * [NodeJS](http://nodejs.org)
 
-[NPM](https://www.npmjs.com/) and [Bower](http://bower.io/) are used to manage dependencies. These are automatically
+Git and NPM must be on the PATH.
+
+The project consists of four maven modules:
+
+* **find-core** builds a jar file which is imported by the find-idol and find-hod modules, containing the core application
+ components which are not specific to HOD or IDOL.
+* **find-idol** builds an executable war file for running against IDOL.
+* **find-hod** builds an executable war file for running against HOD.
+* **find-dist** is responsible for packaging the IDOL artifacts into a zip file for distribution.
+
+Running mvn install from the root of the project will build each module in turn. The build artifacts can be found in the
+target directories of the modules.
+
+The maven spring-boot:run goal can be used from either the find-idol or find-hod modules to stand up a web server for local
+development. [Grunt](http://gruntjs.com/) tasks are provided in these modules for watching and refreshing static resources
+without having to restart the server.
+
+[NPM](https://www.npmjs.com/) and [Bower](http://bower.io/) are used to manage frontend dependencies. These are automatically
 run in the maven process-sources phase.
 
-The maven jetty:run goal will stand up a local web server for development. The package goal will build a war file.
+During development, the develop profile should be used. Running with the production profile will minify the Javascript 
+and CSS, and bless the CSS for older versions of Internet Explorer.
 
-Running with the production profile will minify the Javascript and CSS, and bless the CSS for older versions of Internet
-Explorer.
+## HPE Find setup
+Separate executable war files are provided for running against IDOL or HOD. These can either be deployed on an instance
+of [Tomcat](http://tomcat.apache.org) or run as an executable jar file, for example:
 
-When developing the develop profile should be used. You will need to create a copy of src/main/filters/filter-dev.properties.example in the same directory.
-This should be named filter-dev.properties.
+    java -Dhp.find.home=/opt/find -jar find.war
 
-## HP Find setup
-You'll need to install [Tomcat](http://tomcat.apache.org) to run the HP Find war file.
+HPE Find requires some Java system properties to be set in order to work.
 
-HP Find requires some Java system properties to be set in order to work.
-On Linux, one way to do this is by modifying JAVA_OPTS in /etc/default/tomcat7.
-On Windows, this can be done with the Tomcat Manager (if installed), or by modifying the JAVA_OPTS environment variable.
-If using the jetty:run goal, the properties can be set on the command line
+* With Tomcat on Linux, you can modify JAVA_OPTS in /etc/default/tomcat7.
+* With Tomcat on Windows, this can be done with the Tomcat Manager (if installed), or by modifying the JAVA_OPTS environment variable.
+* When running from the command line or using the spring-boot:run goal, use the -D flag.
+
 The properties you'll need to set are:
 
-* -Dhp.find.home . This is the directory where the webapp will store log files and the config.json file.
-* -Dhp.find.persistentState . Optional property. The persistence mode for the application, which determines where 
+* **-Dhp.find.home** This is the directory where the webapp will store log files and the config.json file.
+* **-Dhp.find.persistentState** Optional property. The persistence mode for the application, which determines where 
 sessions, token proxies and caches are stored. Possible options are REDIS or INMEMORY. Defaults to INMEMORY.
-* -Dfind.https.proxyHost . Optional property. The host for the https proxy. Set this if you need a proxy server to talk 
+
+When running against HOD, you may also need:
+
+* **-Dfind.https.proxyHost** Optional property. The host for the https proxy. Set this if you need a proxy server to talk 
 to Haven OnDemand.
-* -Dfind.https.proxyPort . Optional property. The port for the https proxy. Set this if you need a proxy server to talk 
+* **-Dfind.https.proxyPort** Optional property. The port for the https proxy. Set this if you need a proxy server to talk 
 to Haven OnDemand. Defaults to 80 if find.https.proxyHost is defined.
 
 ## Vagrant
-HP Find includes a Vagrant file, which will provision an Ubuntu 12.04 VM running a Redis server, which will by default 
+HPE Find includes a Vagrant file, which will provision an Ubuntu 12.04 VM running a Redis server, which will by default 
 be used to store sessions. 
 
 The Vagrantfile requires several plugins, which will be installed if they are not installed already.
@@ -55,11 +75,11 @@ The VM has the IP address 192.168.242.242, and can be accessed via DNS with the 
 
 The Redis runs on port 6379.
 
-## Configuring HP Find
+## Configuring HPE Find
 Earlier versions of Find had a settings page, but this is currently unavailable. To configure Find, create a config.json
 file in your Find home directory.
 
-Below is an example config file:
+Below is an example config file for running against HOD:
 
     {
         "login": {
@@ -91,6 +111,35 @@ Below is an example config file:
             "database": 0,
             "sentinels": []
         }
+    }
+
+And for running against IDOL:
+
+    {
+      "login" : {
+        "name": "CommunityAuthentication",
+        "community" : {
+          "host" : "find-idol"
+        }
+      },
+      "content": {
+        "host": "find-idol",
+        "port": 9000
+      },
+      "queryManipulation": {
+        "server": {
+          "host": "find-idol",
+          "port": 16000,
+        },
+        "expandQuery": true,
+        "blacklist": "ISO_BLACKLIST",
+        "enabled": true
+      },
+      "view": {
+        "host": "find-idol",
+        "port": 9080,
+        "referenceField": "URL"
+      }
     }
 
 ## Hard Coded fields
