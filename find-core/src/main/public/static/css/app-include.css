@@ -634,10 +634,16 @@ input.find-input {
     font-weight: bold
 }
 
-.see-all-documents,
-.see-all-documents:hover {
+.reverse-animated-container .see-all-documents,
+.reverse-animated-container .see-all-documents:hover {
+    color: inherit;
+}
+
+.animated-container .see-all-documents,
+.animated-container .see-all-documents:hover {
     color: #fff;
 }
+
 
 .service-view-container {
     height: 100%;
