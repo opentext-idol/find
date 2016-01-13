@@ -59,6 +59,6 @@ public class IndexConfigStepTab extends SAASPageBase {
 
     public Collapsible advancedOptions() {
         WebElement panel = findElement(By.className("panel"));
-        return new ChevronContainer(ElementUtil.ancestor(panel, 1));
+        return new ChevronContainer(ElementUtil.ancestor(panel, 1), getDriver());
     }
 }

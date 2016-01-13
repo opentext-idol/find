@@ -25,7 +25,7 @@ public class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterabl
         delegate = inside;
         container = element;
         driver = webDriver;
-        collapsible = new ChevronContainer(element);
+        collapsible = new ChevronContainer(element, driver);
     }
 
     @Override

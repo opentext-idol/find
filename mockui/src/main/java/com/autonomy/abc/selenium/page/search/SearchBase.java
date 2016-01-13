@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.lang.model.element.Element;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -251,15 +252,15 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void expand(FacetFilter section) {
-		section.findInside(this).expand();
+		section.findInside(this, getDriver()).expand();
 	}
 
 	public void collapse(FacetFilter section) {
-		section.findInside(this).collapse();
+		section.findInside(this, getDriver()).collapse();
 	}
 
 	protected interface FacetFilter {
-		Collapsible findInside(WebElement container);
+		Collapsible findInside(WebElement container, WebDriver driver);
 	}
 
 	public enum Facet implements FacetFilter {
@@ -282,8 +283,8 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		}
 
 		@Override
-		public Collapsible findInside(WebElement container) {
-			return new ChevronContainer(container.findElement(locator));
+		public Collapsible findInside(WebElement container, WebDriver driver) {
+			return new ChevronContainer(container.findElement(locator), driver);
 		}
 	}
 
