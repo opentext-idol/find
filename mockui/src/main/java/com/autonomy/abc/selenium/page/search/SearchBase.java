@@ -2,10 +2,7 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.search.DatePickerFilter;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.SearchFilter;
-import com.autonomy.abc.selenium.search.StringDateFilter;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
@@ -28,7 +25,8 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		SearchFilter.Filterable,
 		IndexFilter.Filterable,
 		DatePickerFilter.Filterable,
-		StringDateFilter.Filterable {
+		StringDateFilter.Filterable,
+		ParametricFilter.Filterable {
 
 	private static final SimpleDateFormat INPUT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	private static final SimpleDateFormat RESULT_DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
@@ -224,7 +222,9 @@ public abstract class SearchBase extends AppElement implements AppPage,
 
 	/* field text */
 	public WebElement fieldTextAddButton() {
-		return findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
+		WebElement addButton = findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
+		ElementUtil.scrollIntoView(addButton, getDriver());
+		return addButton;
 	}
 
 	public FormInput fieldTextInput() {
@@ -384,5 +384,12 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		filter.apply(this);
 		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();
+	}
+
+	@Override
+	public WebElement parametricContainer() {
+		expand(Facet.FILTER_BY);
+		expand(Facet.PARAMETRIC_VALUES);
+		return findElement(By.className("collapsible-parametric-option"));
 	}
 }

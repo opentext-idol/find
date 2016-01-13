@@ -7,10 +7,7 @@ import com.autonomy.abc.selenium.indexes.tree.FindIndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;
-import com.autonomy.abc.selenium.search.DatePickerFilter;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.SearchFilter;
-import com.autonomy.abc.selenium.search.StringDateFilter;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -28,7 +25,8 @@ import java.util.List;
 public class Find extends AppElement implements AppPage,
         IndexFilter.Filterable,
         DatePickerFilter.Filterable,
-        StringDateFilter.Filterable {
+        StringDateFilter.Filterable,
+        ParametricFilter.Filterable {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
     private final FormInput input;
@@ -139,5 +137,15 @@ public class Find extends AppElement implements AppPage,
         if (!results.isDateSelected(FindResultsPage.DateEnum.CUSTOM)) {
             results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
         }
+    }
+
+    @Override
+    public WebElement parametricContainer() {
+        return findElement(By.className("parametric-container"));
+    }
+
+    @Override
+    public void waitForParametricValuesToLoad() {
+        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
     }
 }
