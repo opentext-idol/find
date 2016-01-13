@@ -66,7 +66,9 @@ public class ConnectionService {
         goToConnections();
         connectionsPage.newConnectionButton().click();
         connector.makeWizard(elementFactory.getNewConnectionPage()).apply();
-        new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining("started"));
+        new WebDriverWait(getDriver(), 20)
+                .withMessage("starting connection")
+                .until(GritterNotice.notificationContaining("started"));
         LOGGER.info("Connection '" + connector.getName() + "' started");
         waitForConnectorToRun(connector);
         return connectionsPage;

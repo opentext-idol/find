@@ -23,6 +23,8 @@ import org.junit.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +36,8 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 
 public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public NotificationsDropDownHostedITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
         super(config, browser, appType, platform);
         setInitialUser(config.getUser("index_tests"));
@@ -123,6 +127,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
+    // CSA-2043
     public void testConnectorsDeletionNotifications() {
         String connectorName = "deathcabyoucutie";
         WebConnector connector = new WebConnector("http://deathcabforcutie.com/", connectorName).withDuration(60);
@@ -173,11 +178,10 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             adminDriver = config.getWebDriverFactory().create();
             adminDriver.get(config.getWebappUrl());
 
-            adminDriver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
-
-            new HSOLoginPage(adminDriver, new AbcHasLoggedIn(adminDriver)).loginWith(user.getAuthProvider());
-
             HSOElementFactory elementFactory = new HSOElementFactory(adminDriver);
+
+            loginTo(elementFactory.getLoginPage(), adminDriver, user);
+
             elementFactory.getPromotionsPage();
             AppBody secondScreen = getApplication().createAppBody(adminDriver);
 
@@ -224,6 +228,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     private void navigateAndVerifyNotifications(NavBarTabId page, List<Notification> notifications){
         body.getSideNavBar().switchPage(page);
         getElementFactory().waitForPage(page);
+        logger.info("on page " + page);
 
         body = getBody();
 
