@@ -2,10 +2,7 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.search.DatePickerFilter;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.SearchFilter;
-import com.autonomy.abc.selenium.search.StringDateFilter;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Predicates;
@@ -28,7 +25,8 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		SearchFilter.Filterable,
 		IndexFilter.Filterable,
 		DatePickerFilter.Filterable,
-		StringDateFilter.Filterable {
+		StringDateFilter.Filterable,
+		ParametricFilter.Filterable {
 
 	private static final SimpleDateFormat INPUT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	private static final SimpleDateFormat RESULT_DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
@@ -52,17 +50,17 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public String getSearchResultTitle(final int searchResultNumber) {
-		return getSearchResult(searchResultNumber).getText();
+		return searchResult(searchResultNumber).getText();
 	}
 
-	public WebElement getSearchResult(final int searchResultNumber) {
+	public WebElement searchResult(final int searchResultNumber) {
 		return new WebDriverWait(getDriver(),60)
 				.withMessage("Waiting for the #" + searchResultNumber + " search result")
 				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3")));
 	}
 
 	public String getSearchResultDetails(final int searchResultNumber) {
-		return ElementUtil.getParent(getSearchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
+		return ElementUtil.getParent(searchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
 	}
 
 	public int visibleDocumentsCount() {
@@ -70,7 +68,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public Date getDateFromResult(final int index) throws ParseException {
-		final String dateString = ElementUtil.getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
+		final String dateString = ElementUtil.getParent(searchResult(index)).findElement(By.cssSelector(".date")).getText();
 		if (dateString.isEmpty()) {
 			return null;
 		}
@@ -223,26 +221,14 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	/* field text */
-	public void setFieldText(String value) {
-		expand(Facet.FIELD_TEXT);
-		try {
-			fieldTextAddButton().click();
-			Waits.loadOrFadeWait();
-		} catch (ElementNotVisibleException e) {
-			/* already clicked */
-		}
-		fieldTextInput().clear();
-		fieldTextInput().sendKeys(value);
-		fieldTextTickConfirm().click();
-		waitForSearchLoadIndicatorToDisappear();
-	}
-
 	public WebElement fieldTextAddButton() {
-		return findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
+		WebElement addButton = findElement(By.xpath(".//button[contains(text(), 'FieldText Restriction')]"));
+		ElementUtil.scrollIntoView(addButton, getDriver());
+		return addButton;
 	}
 
-	public WebElement fieldTextInput() {
-		return findElement(By.xpath(".//input[@placeholder='FieldText']"));
+	public FormInput fieldTextInput() {
+		return new FormInput(findElement(By.xpath(".//input[@placeholder='FieldText']")), getDriver());
 	}
 
 	public WebElement fieldTextTickConfirm() {
@@ -265,15 +251,15 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void expand(FacetFilter section) {
-		section.findInside(this).expand();
+		section.findInside(this, getDriver()).expand();
 	}
 
 	public void collapse(FacetFilter section) {
-		section.findInside(this).collapse();
+		section.findInside(this, getDriver()).collapse();
 	}
 
 	protected interface FacetFilter {
-		Collapsible findInside(WebElement container);
+		Collapsible findInside(WebElement container, WebDriver driver);
 	}
 
 	public enum Facet implements FacetFilter {
@@ -296,8 +282,8 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		}
 
 		@Override
-		public Collapsible findInside(WebElement container) {
-			return new ChevronContainer(container.findElement(locator));
+		public Collapsible findInside(WebElement container, WebDriver driver) {
+			return new ChevronContainer(container.findElement(locator), driver);
 		}
 	}
 
@@ -398,5 +384,12 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		filter.apply(this);
 		Waits.loadOrFadeWait();
 		waitForSearchLoadIndicatorToDisappear();
+	}
+
+	@Override
+	public WebElement parametricContainer() {
+		expand(Facet.FILTER_BY);
+		expand(Facet.PARAMETRIC_VALUES);
+		return findElement(By.className("collapsible-parametric-option"));
 	}
 }

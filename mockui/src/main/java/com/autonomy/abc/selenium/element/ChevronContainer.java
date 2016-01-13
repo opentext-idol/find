@@ -4,19 +4,22 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class ChevronContainer implements Collapsible {
     private WebElement container;
+    private WebDriver driver;
 
-    public ChevronContainer(WebElement element) {
+    public ChevronContainer(WebElement element, WebDriver driver) {
         container = element;
+        this.driver = driver;
     }
 
     @Override
     public void expand() {
         if (isCollapsed()) {
-            chevronIcon().click();
+            ElementUtil.scrollIntoViewAndClick(chevronIcon(), driver);
             Waits.loadOrFadeWait();
         }
     }
@@ -24,7 +27,7 @@ public class ChevronContainer implements Collapsible {
     @Override
     public void collapse() {
         if (!isCollapsed()) {
-            chevronIcon().click();
+            ElementUtil.scrollIntoViewAndClick(chevronIcon(), driver);
             Waits.loadOrFadeWait();
         }
     }

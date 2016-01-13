@@ -29,7 +29,6 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -402,7 +401,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 //		for (final String bucketDocTitle : bucketList) {
 //			final int docIndex = bucketList.indexOf(bucketDocTitle);
-//			assertFalse("The document title appears as blank within the bucket for document titled " + searchPage.getSearchResult(bucketList.indexOf(bucketDocTitle) + 1).getText(), bucketDocTitle.equals(""));
+//			assertFalse("The document title appears as blank within the bucket for document titled " + searchPage.searchResult(bucketList.indexOf(bucketDocTitle) + 1).getText(), bucketDocTitle.equals(""));
 //			searchPage.deleteDocFromWithinBucket(bucketDocTitle);
 //			assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(docIndex + 1).isSelected());
 //			assertThat("Document not removed from bucket", searchPage.promotionsBucketList(),not(hasItem(bucketDocTitle)));
@@ -580,107 +579,24 @@ public class SearchPageITCase extends ABCTestBase {
 		}
 	}
 
-	@Test
-	public void testFieldTextFilter() {
-		search("text");
-		if (config.getType().equals(ApplicationType.HOSTED)) {
-			searchPage.filterBy(new IndexFilter("sitesearch"));
-		}
-
-		final String searchResultTitle = searchPage.getSearchResultTitle(1);
-		final String firstWord = getFirstWord(searchResultTitle);
-
-		final int comparisonResult = searchResultNotStarting(firstWord);
-		final String comparisonString = searchPage.getSearchResultTitle(comparisonResult);
-
-		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
-		searchPage.fieldTextAddButton().click();
-		Waits.loadOrFadeWait();
-		assertThat("input visible", searchPage.fieldTextInput(), displayed());
-		assertThat("confirm button visible", searchPage.fieldTextTickConfirm(), displayed());
-
-		searchPage.setFieldText("WILD{" + firstWord + "*}:DRETITLE");
-		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
-
-		assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
-		assertThat("remove button visible", searchPage.fieldTextRemoveButton(), displayed());
-		assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
-
-		try {
-			assertThat(searchPage.getSearchResultTitle(comparisonResult), not(comparisonString));
-		} catch (final NoSuchElementException e) {
-			// The comparison document is not present
-		}
-
-		searchPage.fieldTextRemoveButton().click();
-		Waits.loadOrFadeWait();
-		assertThat(searchPage.getSearchResultTitle(comparisonResult), is(comparisonString));
-		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
-		assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
-	}
-
-	private int searchResultNotStarting(String prefix) {
-		for (int result = 1; result <= SearchPage.RESULTS_PER_PAGE; result++) {
-			String comparisonString = searchPage.getSearchResultTitle(result);
-			if (!comparisonString.startsWith(prefix)) {
-				return result;
-			}
-		}
-		throw new IllegalStateException("Cannot test field text filter with this search");
-	}
-
-	@Test
-	public void testEditFieldText() {
-		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			searchService.search(new SearchQuery("boer").withFilter(IndexFilter.ALL));
-		} else {
-			searchService.search(new SearchQuery("*").withFilter(new IndexFilter("sitesearch")));
-		}
-
-		searchPage.selectLanguage(Language.AFRIKAANS);
-
-		searchPage.clearFieldText();
-
-		final String firstSearchResult = searchPage.getSearchResultTitle(1);
-		final String secondSearchResult = searchPage.getSearchResultTitle(2);
-
-		searchPage.fieldTextAddButton().click();
-		Waits.loadOrFadeWait();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + firstSearchResult + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
-		assertThat(searchPage.getText(), not(containsString("No results found")));
-		assertThat(searchPage.getSearchResultTitle(1), is(firstSearchResult));
-
-		searchPage.fieldTextEditButton().click();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + secondSearchResult + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
-		assertThat(searchPage.getSearchResultTitle(1), is(secondSearchResult));
-	}
-
     @Test
 	public void testFieldTextInputDisappearsOnOutsideClick() {
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
 
+		WebElement fieldTextInputElement = searchPage.fieldTextInput().getElement();
+
 		searchPage.fieldTextAddButton().click();
 		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
-		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
+		assertThat("Field text input not visible", fieldTextInputElement, displayed());
 
-		searchPage.fieldTextInput().click();
+		searchPage.fieldTextInput().getElement().click();
 		assertThat("Field text add button visible", !searchPage.fieldTextAddButton().isDisplayed());
-		assertThat("Field text input not visible", searchPage.fieldTextInput().isDisplayed());
+		assertThat("Field text input not visible", fieldTextInputElement, displayed());
 
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
-		assertThat("Field text input visible", !searchPage.fieldTextInput().isDisplayed());
+		assertThat("Field text input visible", fieldTextInputElement, not(displayed()));
 	}
 
 	@Test
@@ -711,75 +627,6 @@ public class SearchPageITCase extends ABCTestBase {
 	private int getResultCount(String searchTerm) {
 		search(searchTerm);
 		return searchPage.getHeadingResultsCount();
-	}
-
-	//TODO
-	@Test
-	public void testFieldTextRestrictionOnPromotions(){
-		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
-		promotionService.deleteAll();
-
-		promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "boat"), "darth", 2);
-		searchPage = getElementFactory().getSearchPage();
-		searchPage.waitForPromotionsLoadIndicatorToDisappear();
-        Waits.loadOrFadeWait();
-
-		assertThat(searchPage.getPromotionSummarySize(), is(2));
-
-		final List<String> initialPromotionsSummary = searchPage.getPromotedDocumentTitles(false);
-		searchPage.setFieldText("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE");
-
-		assertThat(searchPage.getPromotionSummarySize(), is(1));
-		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(0)));
-
-		searchPage.fieldTextEditButton().click();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + initialPromotionsSummary.get(1) + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
-
-		assertThat(searchPage.getPromotionSummarySize(), is(1));
-		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(1)));
-	}
-
-	@Test
-	public void testFieldTextRestrictionOnPinToPositionPromotions(){
-		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
-		promotionService.deleteAll();
-		List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new SearchQuery("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
-
-		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
-		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
-
-		searchPage.setFieldText("WILD{*horse*}:DRETITLE");
-
-        searchPage.waitForSearchLoadIndicatorToDisappear();
-        Waits.loadOrFadeWait();
-
-		assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
-		assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));	//TODO Seems like this shouldn't be visible
-		assertThat("Wrong number of results displayed", searchPage.getHeadingResultsCount(), is(2));
-		assertThat("Wrong number of pin to position labels displayed", searchPage.countPinToPositionLabels(), is(2));
-
-		searchPage.fieldTextEditButton().click();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + promotedDocs.get(0) + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
-
-		assertThat(searchPage.getSearchResultTitle(1), is(promotedDocs.get(0)));
-		assertThat(searchPage.getHeadingResultsCount(), is(1));
-		assertThat(searchPage.countPinToPositionLabels(), is(1));
-
-		searchPage.fieldTextEditButton().click();
-		searchPage.fieldTextInput().clear();
-		searchPage.fieldTextInput().sendKeys("MATCH{" + promotedDocs.get(1) + "}:DRETITLE");
-		searchPage.fieldTextTickConfirm().click();
-		Waits.loadOrFadeWait();
-
-		assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResultTitle(1), is(promotedDocs.get(1)));
-		assertThat("Wrong number of search results", searchPage.getHeadingResultsCount(), is(1));
-		assertThat("Wrong number of pin to position labels", searchPage.countPinToPositionLabels(), is(1));
 	}
 
 	// CSA-1818
@@ -1185,10 +1032,6 @@ public class SearchPageITCase extends ABCTestBase {
 		verifyThat(searchPage.getSearchResultTitle(1), not(is(deletedDoc)));
 	}
 
-	private String getFirstWord(String string) {
-		return string.substring(0, string.indexOf(' '));
-	}
-
 	@Test
 	public void testIndexSelection() {
 		Index firstIndex;
@@ -1213,7 +1056,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("all indexes checkbox not selected", indexesTree.allIndexes().isSelected(), is(false));
 		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
 		assertThat("correct index selected", indexesTree.getSelected(), hasItem(firstIndex));
-		final String firstIndexResult = searchPage.getSearchResult(1).getText();
+		final String firstIndexResult = searchPage.searchResult(1).getText();
 
 		for (int j = 1; j <= 2; j++) {
 			for (int i = 1; i <= 6; i++) {
@@ -1227,7 +1070,7 @@ public class SearchPageITCase extends ABCTestBase {
 		indexesTree.deselect(firstIndex);
 		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
 		assertThat("correct index selected", indexesTree.getSelected(), hasItem(secondIndex));
-		final String secondIndexResult = searchPage.getSearchResult(1).getText();
+		final String secondIndexResult = searchPage.searchResult(1).getText();
 		assertThat(secondIndexResult, not(firstIndexResult));
 
 		for (int j = 1; j <= 2; j++) {
@@ -1241,7 +1084,7 @@ public class SearchPageITCase extends ABCTestBase {
 		indexesTree.select(firstIndex);
 		assertThat("2 indexes should be selected", indexesTree.getSelected(), hasSize(2));
 		assertThat("correct indexes selected", indexesTree.getSelected(), hasItems(firstIndex, secondIndex));
-		assertThat("search result from selected indexes", searchPage.getSearchResult(1).getText(), isOneOf(firstIndexResult, secondIndexResult));
+		assertThat("search result from selected indexes", searchPage.searchResult(1).getText(), isOneOf(firstIndexResult, secondIndexResult));
 
 		for (int j = 1; j <= 2; j++) {
 			for (int i = 1; i <= 6; i++) {

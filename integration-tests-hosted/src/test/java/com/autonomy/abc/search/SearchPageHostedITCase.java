@@ -3,12 +3,13 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
+import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.SearchQuery;
-import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,12 +24,16 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.not;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageHostedITCase extends HostedTestBase {
 	private SearchPage searchPage;
@@ -56,6 +61,56 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchService.search(new SearchQuery("*").withFilter(IndexFilter.ALL));
 	}
 
+	@Test
+	public void testFieldTextFilter() {
+		searchService.search(new SearchQuery("Harrison Ford").withFilter(new IndexFilter("wiki_eng")));
+
+		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
+		searchPage.fieldTextAddButton().click();
+		Waits.loadOrFadeWait();
+		assertThat("input visible", searchPage.fieldTextInput().getElement(), displayed());
+		assertThat("confirm button visible", searchPage.fieldTextTickConfirm(), displayed());
+
+		searchPage.filterBy(new FieldTextFilter("MATCH{Actor / Actress}:person_profession"));
+		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
+
+		assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
+		assertThat("remove button visible", searchPage.fieldTextRemoveButton(), displayed());
+
+		List<String> fieldTextResults = searchPage.getSearchResultTitles(SearchPage.RESULTS_PER_PAGE);
+
+		searchPage.fieldTextRemoveButton().click();
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+
+		searchPage.filterBy(new ParametricFilter("Person Profession", "Actor / Actress"));
+
+		verifyThat(searchPage.getSearchResultTitles(SearchPage.RESULTS_PER_PAGE), is(fieldTextResults));
+	}
+
+	@Test
+	public void testEditFieldText() {
+		searchService.search(new SearchQuery("*")
+				.withFilter(IndexFilter.PUBLIC)
+				.withFilter(new FieldTextFilter("EXISTS{}:place_population")));
+
+		verifyResults("wiki");
+
+		searchPage.filterBy(new FieldTextFilter("EXISTS{}:place_elevation"));
+		verifyResults("transport");
+	}
+
+	private void verifyResults(String index){
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
+		assertThat(searchPage.getText(), not(containsString(Errors.Search.NO_RESULTS)));
+		searchPage.searchResult(1).click();
+		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+		for(int i = 0; i < SearchPage.MAX_RESULTS; i++){
+			verifyThat(documentViewer.getIndex(), containsString(index));
+			documentViewer.next();
+		}
+		documentViewer.close();
+	}
+
 
 	@Test
 	//TODO make this test WAY nicer
@@ -77,7 +132,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
-		searchPage.getSearchResult(1).click();
+		searchPage.searchResult(1).click();
 
 		for(int i = 0; i < results; i++) {
 			assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), equalToIgnoringCase(author));
@@ -106,7 +161,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 		assertThat(searchPage.getHeadingResultsCount(), is(results));
 
-		searchPage.getSearchResult(1).click();
+		searchPage.searchResult(1).click();
 
 		for(int i = 0; i < results; i++) {
 			assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is("Yleis"));

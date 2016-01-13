@@ -378,7 +378,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 		final String updateQueryTerm = "kitty";
 
 		SearchPage searchPage = searchService.search(getQuery(updateQueryTerm, Language.FRENCH));
-		final String updatePromotedResult = searchPage.getSearchResult(1).getText();
+		final String updatePromotedResult = searchPage.searchResult(1).getText();
 		final String initialPromotedResult = setUpPromotion(getQuery(initialQueryTerm, Language.FRENCH), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger)).get(0);
 
 		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();

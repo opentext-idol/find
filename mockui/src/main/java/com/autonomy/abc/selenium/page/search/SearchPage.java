@@ -242,7 +242,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
         for(int i = 0; i < numberOfResults; i++){
             titles.add(getSearchResultTitle((i % 6) + 1));
 
-            if((i + 1) % 6 == 0){
+            if((i + 1) % 6 == 0 && (i + 1) != numberOfResults){
 				switchResultsPage(Pagination.NEXT);
             }
         }
@@ -260,7 +260,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		if (clickLogo) {
 			getDocLogo(resultIndex).click();
 		} else {
-			getSearchResult(resultIndex).click();
+			searchResult(resultIndex).click();
 		}
 	}
 
