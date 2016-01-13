@@ -14,7 +14,6 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.lang.model.element.Element;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,17 +50,17 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public String getSearchResultTitle(final int searchResultNumber) {
-		return getSearchResult(searchResultNumber).getText();
+		return searchResult(searchResultNumber).getText();
 	}
 
-	public WebElement getSearchResult(final int searchResultNumber) {
+	public WebElement searchResult(final int searchResultNumber) {
 		return new WebDriverWait(getDriver(),60)
 				.withMessage("Waiting for the #" + searchResultNumber + " search result")
 				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3")));
 	}
 
 	public String getSearchResultDetails(final int searchResultNumber) {
-		return ElementUtil.getParent(getSearchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
+		return ElementUtil.getParent(searchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
 	}
 
 	public int visibleDocumentsCount() {
@@ -69,7 +68,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public Date getDateFromResult(final int index) throws ParseException {
-		final String dateString = ElementUtil.getParent(getSearchResult(index)).findElement(By.cssSelector(".date")).getText();
+		final String dateString = ElementUtil.getParent(searchResult(index)).findElement(By.cssSelector(".date")).getText();
 		if (dateString.isEmpty()) {
 			return null;
 		}

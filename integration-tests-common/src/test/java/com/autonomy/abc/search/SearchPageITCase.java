@@ -29,7 +29,6 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -402,7 +401,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 //		for (final String bucketDocTitle : bucketList) {
 //			final int docIndex = bucketList.indexOf(bucketDocTitle);
-//			assertFalse("The document title appears as blank within the bucket for document titled " + searchPage.getSearchResult(bucketList.indexOf(bucketDocTitle) + 1).getText(), bucketDocTitle.equals(""));
+//			assertFalse("The document title appears as blank within the bucket for document titled " + searchPage.searchResult(bucketList.indexOf(bucketDocTitle) + 1).getText(), bucketDocTitle.equals(""));
 //			searchPage.deleteDocFromWithinBucket(bucketDocTitle);
 //			assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(docIndex + 1).isSelected());
 //			assertThat("Document not removed from bucket", searchPage.promotionsBucketList(),not(hasItem(bucketDocTitle)));
@@ -1141,7 +1140,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("all indexes checkbox not selected", indexesTree.allIndexes().isSelected(), is(false));
 		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
 		assertThat("correct index selected", indexesTree.getSelected(), hasItem(firstIndex));
-		final String firstIndexResult = searchPage.getSearchResult(1).getText();
+		final String firstIndexResult = searchPage.searchResult(1).getText();
 
 		for (int j = 1; j <= 2; j++) {
 			for (int i = 1; i <= 6; i++) {
@@ -1155,7 +1154,7 @@ public class SearchPageITCase extends ABCTestBase {
 		indexesTree.deselect(firstIndex);
 		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
 		assertThat("correct index selected", indexesTree.getSelected(), hasItem(secondIndex));
-		final String secondIndexResult = searchPage.getSearchResult(1).getText();
+		final String secondIndexResult = searchPage.searchResult(1).getText();
 		assertThat(secondIndexResult, not(firstIndexResult));
 
 		for (int j = 1; j <= 2; j++) {
@@ -1169,7 +1168,7 @@ public class SearchPageITCase extends ABCTestBase {
 		indexesTree.select(firstIndex);
 		assertThat("2 indexes should be selected", indexesTree.getSelected(), hasSize(2));
 		assertThat("correct indexes selected", indexesTree.getSelected(), hasItems(firstIndex, secondIndex));
-		assertThat("search result from selected indexes", searchPage.getSearchResult(1).getText(), isOneOf(firstIndexResult, secondIndexResult));
+		assertThat("search result from selected indexes", searchPage.searchResult(1).getText(), isOneOf(firstIndexResult, secondIndexResult));
 
 		for (int j = 1; j <= 2; j++) {
 			for (int i = 1; i <= 6; i++) {

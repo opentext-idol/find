@@ -260,7 +260,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		if (clickLogo) {
 			getDocLogo(resultIndex).click();
 		} else {
-			getSearchResult(resultIndex).click();
+			searchResult(resultIndex).click();
 		}
 	}
 

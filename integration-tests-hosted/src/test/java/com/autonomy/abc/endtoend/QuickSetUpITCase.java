@@ -57,7 +57,7 @@ public class QuickSetUpITCase extends HostedTestBase {
         body = getBody();
 
         //Check promoting the correct document
-        searchPage.getSearchResult(1).click();
+        searchPage.searchResult(1).click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         assertThat(docViewer.getReference(), is(site));
         docViewer.close();
