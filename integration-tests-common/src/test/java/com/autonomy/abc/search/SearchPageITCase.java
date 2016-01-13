@@ -581,55 +581,6 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testFieldTextFilter() {
-		search("text");
-		if (config.getType().equals(ApplicationType.HOSTED)) {
-			searchPage.filterBy(new IndexFilter("sitesearch"));
-		}
-
-		final String searchResultTitle = searchPage.getSearchResultTitle(1);
-		final String firstWord = getFirstWord(searchResultTitle);
-
-		final int comparisonResult = searchResultNotStarting(firstWord);
-		final String comparisonString = searchPage.getSearchResultTitle(comparisonResult);
-
-		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
-		searchPage.fieldTextAddButton().click();
-		Waits.loadOrFadeWait();
-		assertThat("input visible", searchPage.fieldTextInput().getElement(), displayed());
-		assertThat("confirm button visible", searchPage.fieldTextTickConfirm(), displayed());
-
-		searchPage.filterBy(new FieldTextFilter("WILD{" + firstWord + "*}:DRETITLE"));
-		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
-
-		assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
-		assertThat("remove button visible", searchPage.fieldTextRemoveButton(), displayed());
-		assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
-
-		try {
-			assertThat(searchPage.getSearchResultTitle(comparisonResult), not(comparisonString));
-		} catch (final NoSuchElementException e) {
-			// The comparison document is not present
-		}
-
-		searchPage.fieldTextRemoveButton().click();
-		Waits.loadOrFadeWait();
-		assertThat(searchPage.getSearchResultTitle(comparisonResult), is(comparisonString));
-		assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
-		assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
-	}
-
-	private int searchResultNotStarting(String prefix) {
-		for (int result = 1; result <= SearchPage.RESULTS_PER_PAGE; result++) {
-			String comparisonString = searchPage.getSearchResultTitle(result);
-			if (!comparisonString.startsWith(prefix)) {
-				return result;
-			}
-		}
-		throw new IllegalStateException("Cannot test field text filter with this search");
-	}
-
-	@Test
 	public void testEditFieldText() {
 		SearchQuery searchQuery;
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
@@ -1164,10 +1115,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 		verifyThat(searchPage.getHeadingResultsCount(), is(--results));
 		verifyThat(searchPage.getSearchResultTitle(1), not(is(deletedDoc)));
-	}
-
-	private String getFirstWord(String string) {
-		return string.substring(0, string.indexOf(' '));
 	}
 
 	@Test
