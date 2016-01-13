@@ -4,6 +4,7 @@ module.exports = (grunt) ->
     watch:
       copyResources:
         files: [
+          '../find-core/src/main/public/static/**/*'
           'src/main/public/static/**/*'
         ]
         spawn: false
@@ -11,6 +12,11 @@ module.exports = (grunt) ->
     sync:
       devResources:
         files: [
+          {
+            cwd: '../find-core/src/main/public/static/'
+            src: '**/*'
+            dest: 'target/classes/static'
+          },
           {
             cwd: 'src/main/public/static/'
             src: '**/*'
@@ -22,4 +28,4 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
 
-  grunt.registerTask 'copy-resources', ['watch:copyResources']
+  grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
