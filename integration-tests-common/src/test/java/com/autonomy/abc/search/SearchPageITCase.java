@@ -579,33 +579,6 @@ public class SearchPageITCase extends ABCTestBase {
 		}
 	}
 
-	@Test
-	public void testEditFieldText() {
-		SearchQuery searchQuery;
-		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			searchQuery = new SearchQuery("boer").withFilter(IndexFilter.ALL);
-		} else {
-			searchQuery = new SearchQuery("*").withFilter(new IndexFilter("sitesearch"));
-		}
-		searchService.search(searchQuery);
-
-		searchPage.selectLanguage(Language.AFRIKAANS);
-
-		searchPage.clearFieldText();
-
-		final String firstSearchResult = searchPage.getSearchResultTitle(1);
-		final String secondSearchResult = searchPage.getSearchResultTitle(2);
-
-		searchPage.filterBy(new FieldTextFilter("MATCH{" + firstSearchResult + "}:DRETITLE"));
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
-		assertThat(searchPage.getText(), not(containsString("No results found")));
-		assertThat(searchPage.getSearchResultTitle(1), is(firstSearchResult));
-
-		searchPage.filterBy(new FieldTextFilter("MATCH{" + secondSearchResult + "}:DRETITLE"));
-		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
-		assertThat(searchPage.getSearchResultTitle(1), is(secondSearchResult));
-	}
-
     @Test
 	public void testFieldTextInputDisappearsOnOutsideClick() {
 		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
