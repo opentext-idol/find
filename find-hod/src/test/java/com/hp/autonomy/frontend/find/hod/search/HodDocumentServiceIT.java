@@ -7,16 +7,24 @@ package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentServiceIT;
+import com.hp.autonomy.frontend.find.web.test.HodTestConfiguration;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
+import org.junit.BeforeClass;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.Collections;
 
 @SpringApplicationConfiguration(classes = HodFindApplication.class)
-public class HodDocumentServiceIT extends AbstractDocumentServiceIT<ResourceIdentifier, HodSearchResult, HodErrorException> {
+public class HodDocumentServiceIT extends AbstractDocumentServiceIT<ResourceIdentifier, HodFindDocument, HodErrorException> {
+    @BeforeClass
+    public static void startup() throws IOException {
+        HodTestConfiguration.writeConfigFile(TEST_DIR);
+    }
+
     public HodDocumentServiceIT() {
-        super(Arrays.asList(ResourceIdentifier.WIKI_ENG, ResourceIdentifier.NEWS_ENG));
+        super(Collections.singletonList(ResourceIdentifier.NEWS_ENG));
     }
 }

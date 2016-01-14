@@ -34,13 +34,13 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, R 
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
+        documentsController.query("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
         verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.queryForPromotions("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
+        documentsController.queryForPromotions("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
         verify(documentsService).queryTextIndexForPromotions(Matchers.<SearchRequest<S>>any());
     }
 

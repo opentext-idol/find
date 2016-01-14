@@ -41,6 +41,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String HIGHLIGHT_PARAM = "highlight";
     public static final String REFERENCE_PARAM = "reference";
     public static final String INDEXES_PARAM = "indexes";
+    public static final String AUTOCORRECT_PARAM = "auto_correct";
 
     protected final DocumentsService<S, R, E> documentsService;
     protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
@@ -61,8 +62,9 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                               @RequestParam(value = SORT_PARAM, required = false) final String sort,
                               @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                               @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
-                              @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
+                              @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight,
+                              @RequestParam(value = AUTOCORRECT_PARAM, required = false, defaultValue = "true") final boolean autoCorrect) throws E {
+        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, autoCorrect);
         return documentsService.queryTextIndex(searchRequest);
     }
 
@@ -77,8 +79,9 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                                            @RequestParam(value = SORT_PARAM, required = false) final String sort,
                                            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
-                                           @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
+                                           @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight,
+                                           @RequestParam(value = AUTOCORRECT_PARAM, required = false, defaultValue = "true") final boolean autoCorrect) throws E {
+        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, autoCorrect);
         return documentsService.queryTextIndexForPromotions(searchRequest);
     }
 

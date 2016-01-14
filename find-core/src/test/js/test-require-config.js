@@ -18,10 +18,10 @@ require.config({
             'find/app/configuration': 'mock/configuration',
             'find/lib/backbone/backbone-extensions': 'backbone'
         },
-        'find/app/page/service-view': {
+        'find/app/page/search/service-view': {
             'find/app/model/indexes-collection': 'mock/model/indexes-collection'
         },
-        'find/app/page/related-concepts/related-concepts-view': {
+        'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
         }
     }

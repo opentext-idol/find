@@ -5,6 +5,7 @@
     "Alex Scown <alex.scown@hpe.com>",
     "Alyona Ivanova <alyona.ivanova@hpe.com>",
     "Daniel Grayling <daniel.grayling@hpe.com>",
+    "Matthew Gordon <matthew.gordon2@hpe.com>",
     "Will Byrne <will.byrne@hpe.com>",
     "Ivo Miller <ivo.miller@hpe.com>"
   ],
@@ -22,6 +23,7 @@
   "dependencies": {
     "backbone": "~1.2.3",
     "colorbox": "colorbox#~1.5.10",
+    "corejs-typeahead": "#3d2a7eb",
     "fontawesome": "components-font-awesome#~4.5.0",
     "jquery": "components/jquery#~1.10.2",
     "json": "json2#*",

@@ -14,7 +14,13 @@ define([
         url: '../api/public/search/query-text-index/results',
 
         parse: function(response) {
+            this.autoCorrection = response.autoCorrection;
+
             return response.documents;
+        },
+
+        getAutoCorrection: function() {
+            return this.autoCorrection;
         }
     });
 

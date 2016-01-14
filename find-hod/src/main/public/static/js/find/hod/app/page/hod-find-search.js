@@ -5,7 +5,7 @@
 
 define([
     'find/app/page/find-search',
-    'find/hod/app/page/hod-service-view'
+    'find/hod/app/page/search/hod-service-view'
 ], function(FindSearch, ServiceView) {
     'use strict';
 
