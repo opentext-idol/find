@@ -8,13 +8,11 @@ package com.hp.autonomy.frontend.find.core.search;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -28,18 +26,11 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, R 
     @Mock
     protected DocumentsService<S, R, E> documentsService;
 
-    protected final DocumentsController<S, R, E> documentsController;
-    protected final Class<S> databaseType;
+    @Mock
+    protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
-    protected AbstractDocumentsControllerTest(final DocumentsController<S, R, E> documentsController, final Class<S> databaseType) {
-        this.documentsController = documentsController;
-        this.databaseType = databaseType;
-    }
-
-    @Before
-    public void setUp() {
-        ReflectionTestUtils.setField(documentsController, "documentsService", documentsService, DocumentsService.class);
-    }
+    protected DocumentsController<S, R, E> documentsController;
+    protected Class<S> databaseType;
 
     @Test
     public void query() throws E {

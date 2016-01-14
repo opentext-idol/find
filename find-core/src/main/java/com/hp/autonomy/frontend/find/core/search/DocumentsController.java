@@ -6,11 +6,11 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,9 +42,13 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String REFERENCE_PARAM = "reference";
     public static final String INDEXES_PARAM = "indexes";
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    protected DocumentsService<S, R, E> documentsService;
+    protected final DocumentsService<S, R, E> documentsService;
+    protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
+
+    protected DocumentsController(final DocumentsService<S, R, E> documentsService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
+        this.documentsService = documentsService;
+        this.queryRestrictionsBuilder = queryRestrictionsBuilder;
+    }
 
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
@@ -58,7 +62,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                               @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                               @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
                               @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        final SearchRequest<S> searchRequest = new SearchRequest<>(text, fieldText, 1, maxResults, summary, index, null, sort, minDate, maxDate, highlight, null);
+        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
         return documentsService.queryTextIndex(searchRequest);
     }
 
@@ -74,8 +78,14 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                                            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
                                            @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight) throws E {
-        final SearchRequest<S> searchRequest = new SearchRequest<>(text, fieldText, 1, maxResults, summary, index, null, sort, minDate, maxDate, highlight, null);
+        final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight);
         return documentsService.queryTextIndexForPromotions(searchRequest);
+    }
+
+    @SuppressWarnings("MethodWithTooManyParameters")
+    protected SearchRequest<S> parseRequestParamsToObject(final String text, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight) {
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate);
+        return new SearchRequest<>(queryRestrictions, 1, maxResults, summary, sort, highlight, null);
     }
 
     @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)

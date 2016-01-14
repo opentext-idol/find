@@ -8,15 +8,11 @@ package com.hp.autonomy.frontend.find.hod.search;
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsServiceIT;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
-import com.hp.autonomy.hod.client.error.HodErrorException;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-import java.util.Arrays;
-
 @SpringApplicationConfiguration(classes = HodFindApplication.class)
-public class HodRelatedConceptsServiceIT extends AbstractRelatedConceptsServiceIT<Entity, ResourceIdentifier, HodErrorException> {
+public class HodRelatedConceptsServiceIT extends AbstractRelatedConceptsServiceIT {
     public HodRelatedConceptsServiceIT() {
-        super(Arrays.asList(ResourceIdentifier.WIKI_ENG, ResourceIdentifier.NEWS_ENG));
+        super(new String[]{ResourceIdentifier.NEWS_ENG.toString()});
     }
 }

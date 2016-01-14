@@ -81,9 +81,11 @@ define([
                 if (this.queryModel.get('indexes').length !== 0) {
                     this.entityCollection.fetch({
                         data: {
-                            text: this.queryModel.get('queryText'),
-                            index: this.queryModel.get('indexes'),
-                            field_text: this.queryModel.get('fieldText')
+                            queryText: this.queryModel.get('queryText'),
+                            databases: this.queryModel.get('indexes'),
+                            fieldText: this.queryModel.get('fieldText'),
+                            minDate: this.queryModel.getIsoDate('minDate'),
+                            maxDate: this.queryModel.getIsoDate('maxDate')
                         }
                     });
                 }

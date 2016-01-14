@@ -90,8 +90,8 @@ define([
                 } else {
                     this.parametricCollection.fetch({
                         data: {
-                            databases: this.queryModel.get('indexes'),
                             fieldNames: fieldNames,
+                            databases: this.queryModel.get('indexes'),
                             queryText: this.queryModel.get('queryText'),
                             fieldText: this.queryModel.get('fieldText'),
                             minDate: this.queryModel.getIsoDate('minDate'),

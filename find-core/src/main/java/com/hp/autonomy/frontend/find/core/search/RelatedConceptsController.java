@@ -5,9 +5,11 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.joda.time.DateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,18 +21,32 @@ import java.util.List;
 
 @Controller
 @SuppressWarnings("SpringJavaAutowiringInspection")
-@RequestMapping("/api/public/search/find-related-concepts")
+@RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
 public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
-    @Autowired
-    protected RelatedConceptsService<Q, S, E> relatedConceptsService;
+    public static final String RELATED_CONCEPTS_PATH = "/api/public/search/find-related-concepts";
+
+    public static final String QUERY_TEXT_PARAM = "queryText";
+    public static final String DATABASES_PARAM = "databases";
+    public static final String FIELD_TEXT_PARAM = "fieldText";
+    public static final String MIN_DATE_PARAM = "minDate";
+    public static final String MAX_DATE_PARAM = "maxDate";
+
+    protected final RelatedConceptsService<Q, S, E> relatedConceptsService;
+    protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
+
+    protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
+        this.relatedConceptsService = relatedConceptsService;
+        this.queryRestrictionsBuilder = queryRestrictionsBuilder;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Q> findRelatedConcepts(
-            @RequestParam("text") final String text,
-            @RequestParam("index") final List<S> index,
-            @RequestParam("field_text") final String fieldText
-    ) throws E {
-        return relatedConceptsService.findRelatedConcepts(text, index, fieldText);
+    public List<Q> findRelatedConcepts(@RequestParam(QUERY_TEXT_PARAM) final String queryText,
+                                       @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+                                       @RequestParam(DATABASES_PARAM) final List<S> databases,
+                                       @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+                                       @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate);
+        return relatedConceptsService.findRelatedConcepts(queryRestrictions);
     }
 }

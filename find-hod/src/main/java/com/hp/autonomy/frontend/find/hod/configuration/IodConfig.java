@@ -22,7 +22,6 @@ import com.hp.autonomy.hod.client.token.TokenProxy;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;

@@ -6,33 +6,29 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public abstract class AbstractRelatedConceptsServiceIT<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> extends AbstractFindIT {
-    @Autowired
-    protected RelatedConceptsController<Q, S, E> relatedConceptsController;
+public abstract class AbstractRelatedConceptsServiceIT extends AbstractFindIT {
+    protected final String[] databases;
 
-    protected final List<S> indexes;
-
-    protected AbstractRelatedConceptsServiceIT(final List<S> indexes) {
-        this.indexes = new ArrayList<>(indexes);
+    protected AbstractRelatedConceptsServiceIT(final String[] databases) {
+        this.databases = Arrays.copyOf(databases, databases.length);
     }
 
     @Test
-    public void findRelatedConcepts() throws E {
-        final List<Q> results = relatedConceptsController.findRelatedConcepts("*", indexes, "");
-        assertThat(results, is(not(empty())));
+    public void findRelatedConcepts() throws Exception {
+        mockMvc.perform(get(RelatedConceptsController.RELATED_CONCEPTS_PATH).param("databases", databases).param("queryText", "*").param("fieldText", ""))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", not(empty())));
     }
 }

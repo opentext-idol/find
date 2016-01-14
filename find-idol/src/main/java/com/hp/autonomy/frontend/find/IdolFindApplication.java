@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find;
 
-import com.hp.autonomy.searchcomponents.core.beanconfiguration.HavenSearchConfiguration;
+import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.WebApplicationInitializer;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class, SessionAutoConfiguration.class, ErrorMvcAutoConfiguration.class})
-@Import(HavenSearchConfiguration.class)
+@Import(HavenSearchIdolConfiguration.class)
 public class IdolFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
     public static void main(final String[] args) {
         SpringApplication.run(IdolFindApplication.class, args);

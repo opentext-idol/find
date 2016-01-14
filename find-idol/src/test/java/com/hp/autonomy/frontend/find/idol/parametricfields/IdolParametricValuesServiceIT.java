@@ -7,11 +7,10 @@ package com.hp.autonomy.frontend.find.idol.parametricfields;
 
 import com.hp.autonomy.frontend.find.IdolFindApplication;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesServiceIT;
-import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
-public class IdolParametricValuesServiceIT extends AbstractParametricValuesServiceIT<IdolParametricRequest, String> {
+public class IdolParametricValuesServiceIT extends AbstractParametricValuesServiceIT {
     public IdolParametricValuesServiceIT() {
         super(new String[]{"WOOKIEPEDIA"}, new String[]{"CATEGORY"});
     }
