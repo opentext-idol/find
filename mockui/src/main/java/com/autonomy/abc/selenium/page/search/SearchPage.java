@@ -6,15 +6,12 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
-import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -258,13 +255,13 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void viewFrameClick(final boolean clickLogo, final int resultIndex) {
 		if (clickLogo) {
-			getDocLogo(resultIndex).click();
+			docLogo(resultIndex).click();
 		} else {
 			searchResult(resultIndex).click();
 		}
 	}
 
-	public WebElement getDocLogo(final int searchResultNumber) {
+	public WebElement docLogo(final int searchResultNumber) {
 		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
 	}
 
@@ -334,7 +331,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* parametric values */
-	private WebElement getContentTypeDiv() {
+	private WebElement contentTypeDiv() {
 		return findElement(By.cssSelector("[data-field='content_type']"));
 	}
 
@@ -344,7 +341,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	 * @return					Number of results in filtered search
 	 */
 	public int filterByContentType(String contentType) {
-		WebElement li = getContentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "']"));
+		WebElement li = contentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "']"));
 
 		if(!li.isDisplayed()){
 			openParametricValuesList();

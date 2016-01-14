@@ -103,7 +103,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return findElement(By.cssSelector(".promotions-bucket-well"));
 	}
 
-	public WebElement getPromotionBucketElementByTitle(final String docTitle) {
+	public WebElement promotionBucketElementByTitle(final String docTitle) {
 		return findElement(By.cssSelector(".promotions-bucket-items")).findElement(new Locator().containingCaseInsensitive(docTitle));
 	}
 
@@ -167,11 +167,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return new IndexesTree(findElement(By.cssSelector(".databases-list")), getDriver());
 	}
 
-	@Deprecated
-	public WebElement getDatabasesList() {
-		return findElement(By.cssSelector(".databases-list"));
-	}
-
 	/* date filter */
 	public FormInput fromDateInput() {
 		return dateInput(By.cssSelector("[data-filter-name=\"minDate\"] input"));
@@ -209,10 +204,10 @@ public abstract class SearchBase extends AppElement implements AppPage,
 
 	/* related concepts */
 	public int countRelatedConcepts() {
-		return getRelatedConcepts().size();
+		return relatedConcepts().size();
 	}
 
-	public List<WebElement> getRelatedConcepts() {
+	public List<WebElement> relatedConcepts() {
 		return findElements(By.cssSelector(".concepts li"));
 	}
 

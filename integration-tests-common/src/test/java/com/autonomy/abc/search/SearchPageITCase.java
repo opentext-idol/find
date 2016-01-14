@@ -490,7 +490,7 @@ public class SearchPageITCase extends ABCTestBase {
 				final String handle = getDriver().getWindowHandle();
 				searchPage.searchResultCheckbox(i).click();
 				final String docTitle = searchPage.getSearchResultTitle(i);
-				ElementUtil.scrollIntoViewAndClick(searchPage.getPromotionBucketElementByTitle(docTitle), getDriver());
+				ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
 
 				DocumentViewer viewer = DocumentViewer.make(getDriver());
 				getDriver().switchTo().frame(viewer.frame());
@@ -859,7 +859,7 @@ public class SearchPageITCase extends ABCTestBase {
 			final int conceptsCount = searchPage.countRelatedConcepts();
 			assertThat(conceptsCount, lessThanOrEqualTo(50));
 			final int index = new Random().nextInt(conceptsCount);
-			queryText = searchPage.getRelatedConcepts().get(index).getText();
+			queryText = searchPage.relatedConcepts().get(index).getText();
 			searchPage.relatedConcept(queryText).click();
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 
@@ -883,18 +883,18 @@ public class SearchPageITCase extends ABCTestBase {
 		search("France");
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> englishConcepts = ElementUtil.webElementListToStringList(searchPage.getRelatedConcepts());
+		final List<String> englishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
 		searchPage.selectLanguage(Language.FRENCH);
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> frenchConcepts = ElementUtil.webElementListToStringList(searchPage.getRelatedConcepts());
+		final List<String> frenchConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
 
 		assertThat("Concepts should be different in different languages", englishConcepts, not(containsInAnyOrder(frenchConcepts.toArray())));
 
 		searchPage.selectLanguage(Language.ENGLISH);
 		searchPage.expand(SearchBase.Facet.RELATED_CONCEPTS);
 		searchPage.waitForRelatedConceptsLoadIndicatorToDisappear();
-		final List<String> secondEnglishConcepts = ElementUtil.webElementListToStringList(searchPage.getRelatedConcepts());
+		final List<String> secondEnglishConcepts = ElementUtil.webElementListToStringList(searchPage.relatedConcepts());
 		assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
 	}
 
