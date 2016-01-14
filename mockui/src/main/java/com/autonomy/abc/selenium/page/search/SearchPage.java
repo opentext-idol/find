@@ -363,15 +363,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* helper methods */
-	// TODO: move to service?
-	public String createAPromotion() {
-		promoteTheseDocumentsButton().click();
-		searchResultCheckbox(1).click();
-		final String promotedDocTitle = getSearchResultTitle(1);
-		promoteTheseItemsButton().click();
-		return promotedDocTitle;
-	}
-
 	public List<String> addToBucket(int finalNumberOfDocs) {
 		final List<String> promotedDocTitles = new ArrayList<>();
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteTheseItemsButton()));
