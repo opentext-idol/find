@@ -4,12 +4,11 @@ import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.NoSuchElementException;
 
 public class DocumentViewer extends AppElement implements AppPage {
     private DocumentViewer(WebDriver driver) {
@@ -75,6 +74,10 @@ public class DocumentViewer extends AppElement implements AppPage {
 
     public String getReference() {
         return getField("Reference");
+    }
+
+    public String getAuthor(){
+        return getField("Author");
     }
 
     public int getCurrentDocumentNumber() {
