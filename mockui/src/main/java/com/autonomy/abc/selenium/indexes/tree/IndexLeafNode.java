@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
 import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.element.SOCheckbox;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -9,7 +10,7 @@ public class IndexLeafNode implements IndexNodeElement {
     private final WebElement container;
 
     public IndexLeafNode(WebElement element, WebDriver driver) {
-        checkbox = new Checkbox(element, driver);
+        checkbox = new SOCheckbox(element, driver);
         container = element;
     }
 

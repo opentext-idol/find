@@ -4,7 +4,9 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ParametricFilter implements SearchFilter {
     private Map<String, String> map;
