@@ -25,7 +25,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -53,8 +52,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     private KeywordService keywordService;
     private SearchService searchService;
 
-    public KeywordsFromSearchITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public KeywordsFromSearchITCase(TestConfig config) {
+        super(config);
     }
 
     @Before
@@ -259,7 +258,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         keywordsPage.selectLanguageButton();	//Wait for select Language button
 
         if(getConfig().getType().equals(ApplicationType.ON_PREM)){
-            assertThat("blacklist has been created in the correct language", keywordsPage.getSelectedLanguage(), equalToIgnoringCase("Arabic"));
+            assertThat("blacklist has been created in the correct language", keywordsPage.getSelectedLanguage(), is(Language.ARABIC));
         }
 
         Waits.loadOrFadeWait();

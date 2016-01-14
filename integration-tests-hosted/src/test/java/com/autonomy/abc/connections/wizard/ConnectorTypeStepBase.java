@@ -2,7 +2,6 @@ package com.autonomy.abc.connections.wizard;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
@@ -15,20 +14,15 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.Before;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.not;
 
-
-/**
- * Created by avidan on 29-10-15.
- */
 public class ConnectorTypeStepBase extends HostedTestBase {
-    public ConnectorTypeStepBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public ConnectorTypeStepBase(TestConfig config) {
+        super(config);
     }
 
     protected final String INVALID_INPUT_CLASS = "has-error";

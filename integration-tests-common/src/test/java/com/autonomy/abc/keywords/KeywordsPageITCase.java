@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -51,8 +50,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 	private NotificationsDropDown notifications;
 	private KeywordService keywordService;
 
-	public KeywordsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public KeywordsPageITCase(final TestConfig config) {
+		super(config);
 	}
 
 	@Before

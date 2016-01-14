@@ -2,7 +2,6 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -20,7 +19,6 @@ import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,8 +45,8 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     private SearchPage searchPage;
     private List<String> promotedTitles;
 
-    public ConnectionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public ConnectionsToFindITCase(TestConfig config) {
+        super(config);
         setInitialUser(config.getUser("index_tests"));
     }
 

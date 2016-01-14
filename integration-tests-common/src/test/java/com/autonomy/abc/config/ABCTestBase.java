@@ -21,7 +21,6 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +48,6 @@ public abstract class ABCTestBase {
 	private User initialUser;
 	private String initialUrl;
 	private User currentUser;
-
-	// TODO: replace with single argument constructor
-	public ABCTestBase(final TestConfig config, final String browser, final ApplicationType type, final Platform platform) {
-		this(config);
-	}
 
 	public ABCTestBase(final TestConfig config) {
 		this.config = config;

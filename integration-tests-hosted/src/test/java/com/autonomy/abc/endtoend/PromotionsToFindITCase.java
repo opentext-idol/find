@@ -2,7 +2,6 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -16,7 +15,6 @@ import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +34,8 @@ public class PromotionsToFindITCase extends HostedTestBase {
     private PromotionService promotionService;
     private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
 
-    public PromotionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public PromotionsToFindITCase(TestConfig config) {
+        super(config);
     }
 
     @Before

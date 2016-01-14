@@ -4,7 +4,6 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -22,7 +21,6 @@ import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
@@ -39,8 +37,8 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     private IndexesPage indexesPage;
     private Index testIndex;
 
-    public IndexDisplayNameITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public IndexDisplayNameITCase(TestConfig config) {
+        super(config);
         setInitialUser(config.getUser("index_tests"));
     }
 

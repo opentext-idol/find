@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.keywords;
 
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
 import com.autonomy.abc.selenium.util.ElementUtil;
@@ -13,23 +14,6 @@ import org.slf4j.LoggerFactory;
 public class HSOKeywordsPage extends KeywordsPage {
     public HSOKeywordsPage(WebDriver driver) {
         super(driver);
-    }
-
-    @Override
-    public void deleteAllBlacklistedTerms() throws InterruptedException {
-        filterView(KeywordFilter.BLACKLIST);
-
-        for (final String language : getLanguageList()) {
-            Waits.loadOrFadeWait();
-
-            (LoggerFactory.getLogger(KeywordsPage.class)).warn("Cannot select language for blacklists yet");
-
-            for (final WebElement blacklisted : findElements(By.cssSelector(".blacklisted-word .remove-keyword"))) {
-                ElementUtil.scrollIntoView(blacklisted, getDriver());
-                blacklisted.click();
-                waitForRefreshIconToDisappear();
-            }
-        }
     }
 
     @Override

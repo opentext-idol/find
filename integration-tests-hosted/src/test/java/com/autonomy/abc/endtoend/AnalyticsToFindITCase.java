@@ -2,7 +2,6 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -18,7 +17,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -33,8 +31,8 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     private PromotionService promotionService;
     private KeywordService keywordService;
 
-    public AnalyticsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public AnalyticsToFindITCase(TestConfig config) {
+        super(config);
     }
 
     @Before

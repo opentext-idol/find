@@ -2,13 +2,11 @@ package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.users.HSODeveloperService;
 import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -17,8 +15,8 @@ public class DevelopersITCase extends HostedTestBase {
     private HSODeveloperService developerService;
     private HSODevelopersPage developersPage;
 
-    public DevelopersITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public DevelopersITCase(TestConfig config) {
+        super(config);
     }
 
     @Before

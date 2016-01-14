@@ -20,7 +20,10 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -48,8 +51,8 @@ public class KeywordsWizardITCase extends ABCTestBase {
     private KeywordService keywordService;
     private TriggerForm triggerForm;
 
-    public KeywordsWizardITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public KeywordsWizardITCase(TestConfig config) {
+        super(config);
     }
 
     @Before
@@ -58,7 +61,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
 
-        //TODO keywordsPage.createNewKeywordsButton().click(); up here?
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
     }

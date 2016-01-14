@@ -19,7 +19,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -36,8 +35,8 @@ import static org.junit.Assume.assumeThat;
 
 public class CreateNewPromotionsITCase extends ABCTestBase {
 
-    public CreateNewPromotionsITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-        super(config, browser, appType, platform);
+    public CreateNewPromotionsITCase(final TestConfig config) {
+        super(config);
     }
 
     private SearchPage searchPage;

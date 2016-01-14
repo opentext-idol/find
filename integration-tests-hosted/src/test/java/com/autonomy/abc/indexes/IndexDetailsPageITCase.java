@@ -2,7 +2,6 @@ package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -17,7 +16,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -37,8 +35,8 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     private Index indexOne = new Index("one");
     private Index indexTwo = new Index("two");
 
-    public IndexDetailsPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public IndexDetailsPageITCase(TestConfig config) {
+        super(config);
         // requires a separate account where indexes can safely be added and deleted
         setInitialUser(config.getUser("index_tests"));
     }
