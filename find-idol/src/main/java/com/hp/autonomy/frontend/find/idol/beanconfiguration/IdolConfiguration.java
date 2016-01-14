@@ -5,13 +5,19 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
+import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
+import com.autonomy.aci.client.services.AciService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
+import com.hp.autonomy.user.UserService;
+import com.hp.autonomy.user.UserServiceImpl;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -50,5 +56,10 @@ public class IdolConfiguration {
         configService.setFilterProvider(filterProvider);
 
         return configService;
+    }
+
+    @Bean
+    public UserService userService(final ConfigService<IdolFindConfig> configService, final AciService aciService, final IdolAnnotationsProcessorFactory annotationsProcessorFactory) {
+        return new UserServiceImpl(configService, aciService, annotationsProcessorFactory);
     }
 }

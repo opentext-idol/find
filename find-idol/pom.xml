@@ -109,6 +109,11 @@
             <artifactId>haven-search-components-idol</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.user</groupId>
+            <artifactId>idol-user-service</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
