@@ -233,7 +233,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         for (int i = 0; i < 5; i++){
             final String docTitle = editReferencesPage.promotionsBucketWebElements().get(i).getText();
-            editReferencesPage.getPromotionBucketElementByTitle(docTitle).click();
+            editReferencesPage.promotionBucketElementByTitle(docTitle).click();
             checkDocumentViewable(docTitle);
         }
 
@@ -255,7 +255,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         for (int i = 1; i < 5; i++) {
             editReferencesPage.searchResultCheckbox(i).click();
             final String docTitle = editReferencesPage.getSearchResultTitle(i);
-            editReferencesPage.getPromotionBucketElementByTitle(docTitle).click();
+            editReferencesPage.promotionBucketElementByTitle(docTitle).click();
             checkDocumentViewable(docTitle);
         }
     }

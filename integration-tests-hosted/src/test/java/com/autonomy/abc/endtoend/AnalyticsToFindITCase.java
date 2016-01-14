@@ -94,7 +94,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         verifyThat(findPromotions, containsInAnyOrder(createdPromotions.toArray()));
         verifyThat(service.getResultTitles(), contains(triggerResults.toArray()));
 
-        for(WebElement promotion : service.getPromotions()){
+        for(WebElement promotion : service.promotions()){
             promotionShownCorrectly(promotion);
         }
     }

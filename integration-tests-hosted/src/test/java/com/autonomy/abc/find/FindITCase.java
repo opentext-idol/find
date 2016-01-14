@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -15,6 +16,7 @@ import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.search.StringDateFilter;
 import com.autonomy.abc.selenium.util.*;
 import com.google.common.collect.Lists;
@@ -91,7 +93,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testPdfContentTypeValue(){
         find.search("red star");
-        results.selectContentType("APPLICATION/PDF");
+        find.filterBy(new ParametricFilter("Content Type","APPLICATION/PDF"));
         for(String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type,containsString("pdf"));
         }
@@ -100,7 +102,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testHtmlContentTypeValue(){
         find.search("red star");
-        results.selectContentType("TEXT/HTML");
+        find.filterBy(new ParametricFilter("Content Type","TEXT/HTML"));
         for(String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type,containsString("html"));
         }
@@ -109,8 +111,10 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError()  {
         find.search("wolf");
-        results.selectContentType("TEXT/HTML");
-        results.selectContentType("TEXT/HTML");
+        Checkbox contentTypeCheckbox = results.contentTypeCheckbox("TEXT/HTML");
+        contentTypeCheckbox.check();
+        Waits.loadOrFadeWait();
+        contentTypeCheckbox.uncheck();
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -199,7 +203,7 @@ public class FindITCase extends HostedTestBase {
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
-            assertThat(results.getSearchResultTitle(1).getText(), is(documentTitle));
+            assertThat(results.searchResultTitle(1).getText(), is(documentTitle));
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
             promotionService.deleteAll();
@@ -220,7 +224,7 @@ public class FindITCase extends HostedTestBase {
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
-            assertThat(results.getSearchResultTitle(3).getText(), is(documentTitle));
+            assertThat(results.searchResultTitle(3).getText(), is(documentTitle));
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
             promotionService.deleteAll();
@@ -247,7 +251,7 @@ public class FindITCase extends HostedTestBase {
             assertThat(findPromotions, not(empty()));
             assertThat(createdPromotions, everyItem(isIn(findPromotions)));
 
-            promotionShownCorrectly(results.getPromotions());
+            promotionShownCorrectly(results.promotions());
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
             promotionService.deleteAll();
@@ -269,7 +273,7 @@ public class FindITCase extends HostedTestBase {
 
             getDriver().switchTo().window(browserHandles.get(1));
             find.search(trigger);
-            List<WebElement> promotions = results.getPromotions();
+            List<WebElement> promotions = results.promotions();
 
             assertThat(promotions.size(), is(1));
             WebElement staticPromotion = promotions.get(0);
@@ -301,7 +305,7 @@ public class FindITCase extends HostedTestBase {
 
             verifyThat(promotedDocumentTitles, everyItem(isIn(results.getPromotionsTitles())));
 
-            promotionShownCorrectly(results.getPromotions());
+            promotionShownCorrectly(results.promotions());
         } finally {
             getDriver().switchTo().window(browserHandles.get(0));
             promotionService.deleteAll();
@@ -326,11 +330,11 @@ public class FindITCase extends HostedTestBase {
         find.search("stars");
         find.filterBy(new IndexFilter(Index.DEFAULT));
 
-        results.getSearchResultTitle(1).click();
+        results.searchResultTitle(1).click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         String domain = docViewer.getDomain();
 
-        for(WebElement searchResult : results.getResults()){
+        for(WebElement searchResult : results.results()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
 
             try {
@@ -350,7 +354,7 @@ public class FindITCase extends HostedTestBase {
     public void testFilterByIndex(){
         find.search("Sam");
 
-        WebElement searchResult = results.getSearchResult(1);
+        WebElement searchResult = results.searchResult(1);
         WebElement title = searchResult.findElement(By.tagName("h4"));
 
         String titleString = title.getText();
@@ -363,7 +367,7 @@ public class FindITCase extends HostedTestBase {
 
         find.filterBy(new IndexFilter(index));
 
-        assertThat(results.getSearchResultTitle(1).getText(), is(titleString));
+        assertThat(results.searchResultTitle(1).getText(), is(titleString));
     }
 
     @Test
@@ -373,7 +377,7 @@ public class FindITCase extends HostedTestBase {
         // TODO: what if this index has no results?
         String indexTitle = find.getPrivateIndexNames().get(2);
         find.filterBy(new IndexFilter(indexTitle));
-        results.getSearchResultTitle(1).click();
+        results.searchResultTitle(1).click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
             assertThat(docViewer.getIndex(), is(indexTitle));
@@ -388,7 +392,7 @@ public class FindITCase extends HostedTestBase {
         new IndexFilter(Index.DEFAULT).apply(find);
         IndexFilter.PRIVATE.apply(find);
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        assertThat(results.getResultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
+        assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
     }
 
     @Test
@@ -470,7 +474,7 @@ public class FindITCase extends HostedTestBase {
 
         for(String field : parametricFields) {
             try {
-                assertTrue(results.getParametricContainer(field).isDisplayed());
+                assertTrue(results.parametricContainer(field).isDisplayed());
             } catch (ElementNotVisibleException | NotFoundException e) {
                 fail("Could not find field '"+field+"'");
             }
@@ -481,7 +485,7 @@ public class FindITCase extends HostedTestBase {
     public void testViewDocumentsOpenFromFind(){
         find.search("Review");
 
-        for(WebElement result : results.getResults()){
+        for(WebElement result : results.results()){
             try {
                 ElementUtil.scrollIntoViewAndClick(result.findElement(By.tagName("h4")), getDriver());
             } catch (WebDriverException e){
@@ -499,7 +503,7 @@ public class FindITCase extends HostedTestBase {
         find.search("Review");
 
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        results.getSearchResultTitle(1).click();
+        results.searchResultTitle(1).click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
             verifyDocumentViewer(docViewer);
@@ -544,13 +548,13 @@ public class FindITCase extends HostedTestBase {
         find.search("love ");
 
         for(FileType f : FileType.values()) {
-            results.selectContentType(f.getSidebarString());
+            find.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
 
-            for(WebElement result : results.getResults()){
+            for(WebElement result : results.results()){
                 assertThat(result.findElement(By.tagName("i")).getAttribute("class"), containsString(f.getFileIconString()));
             }
 
-            results.selectContentType(f.getSidebarString());
+            find.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
         }
     }
 
@@ -581,11 +585,11 @@ public class FindITCase extends HostedTestBase {
             Find otherFind = createSession(otherDriver);
             otherFind.search("Cat");
             FindResultsPage otherResults = otherFind.getResultsPage();
-            String firstTitle = otherResults.getSearchResultTitle(1).getText();
+            String firstTitle = otherResults.searchResultTitle(1).getText();
 
             otherFind.search(nonsense);
             assertThat(otherResults.getText(), not(noDocs));
-            verifyThat(otherResults.getSearchResultTitle(1).getText(), is(firstTitle));
+            verifyThat(otherResults.searchResultTitle(1).getText(), is(firstTitle));
 
         } finally {
             otherDriver.quit();
@@ -806,7 +810,7 @@ public class FindITCase extends HostedTestBase {
         // may not happen the first time
         for (int unused = 0; unused < 5; unused++) {
             results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
-            assertThat(results.getResultsDiv().getText(), not(containsString("Loading")));
+            assertThat(results.resultsDiv().getText(), not(containsString("Loading")));
         }
     }
 
@@ -848,10 +852,10 @@ public class FindITCase extends HostedTestBase {
     public void testSimilarDocumentsShowUp(){
         find.search("Doe");
 
-        for (WebElement similarResultLink : Lists.reverse(results.getSimilarResultLinks())) {
+        for (WebElement similarResultLink : Lists.reverse(results.similarResultLinks())) {
             similarResultLink.click();
 
-            WebElement popover = results.getPopover();
+            WebElement popover = results.popover();
 
             new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
 

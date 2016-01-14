@@ -12,14 +12,11 @@ import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SearchPage extends SearchBase implements AppPage {
-	private final static Logger LOGGER = LoggerFactory.getLogger(SearchPage.class);
 	public final static int RESULTS_PER_PAGE = 6;
 	public final static int MAX_RESULTS = 2500;
 
@@ -258,26 +255,18 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public void viewFrameClick(final boolean clickLogo, final int resultIndex) {
 		if (clickLogo) {
-			getDocLogo(resultIndex).click();
+			docLogo(resultIndex).click();
 		} else {
 			searchResult(resultIndex).click();
 		}
 	}
 
-	public WebElement getDocLogo(final int searchResultNumber) {
+	public WebElement docLogo(final int searchResultNumber) {
 		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
 	}
 
 	public int countPinToPositionLabels() {
 		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
-	}
-
-	public void paginateWait() {
-		try {
-			waitForSearchLoadIndicatorToDisappear();
-		} catch (final StaleElementReferenceException|NoSuchElementException n) {
-			Waits.loadOrFadeWait();
-		}
 	}
 
 	/* keywords */
@@ -342,34 +331,22 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* parametric values */
-	private WebElement getContentTypeDiv() {
+	private WebElement contentTypeDiv() {
 		return findElement(By.cssSelector("[data-field='content_type']"));
 	}
 
 	/**
-	 *
+	 * TODO - if possible take out
 	 * @param contentType		String to filter by
 	 * @return					Number of results in filtered search
 	 */
 	public int filterByContentType(String contentType) {
-		WebElement li = getContentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "']"));
+		WebElement li = contentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "']"));
 
 		if(!li.isDisplayed()){
 			openParametricValuesList();
 		}
 
-		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
-		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
-		li.findElement(By.tagName("ins")).click();
-		return resultCount;
-	}
-
-	private WebElement getAuthorDiv(){
-		return findElement(By.cssSelector("[data-field='author']"));
-	}
-
-	public int filterByAuthor(String author) {
-		WebElement li = getAuthorDiv().findElement(By.cssSelector("[data-value='" + author + "']"));
 		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
 		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
 		li.findElement(By.tagName("ins")).click();
@@ -382,24 +359,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* helper methods */
-	// TODO: move to service?
-	public String createAPromotion() {
-		promoteTheseDocumentsButton().click();
-		searchResultCheckbox(1).click();
-		final String promotedDocTitle = getSearchResultTitle(1);
-		promoteTheseItemsButton().click();
-		return promotedDocTitle;
-	}
-
-	public List<String> createAMultiDocumentPromotion(final int numberOfDocs) {
-		promoteTheseDocumentsButton().click();
-		Waits.loadOrFadeWait();
-		List<String> promotedDocTitles = addToBucket(numberOfDocs);
-		ElementUtil.scrollIntoViewAndClick(promoteTheseItemsButton(), getDriver());
-		Waits.loadOrFadeWait();
-		return promotedDocTitles;
-	}
-
 	public List<String> addToBucket(int finalNumberOfDocs) {
 		final List<String> promotedDocTitles = new ArrayList<>();
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(promoteTheseItemsButton()));

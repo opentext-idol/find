@@ -254,7 +254,7 @@ public class IndexesPageITCase extends HostedTestBase {
             find.search("search");
             find.filterBy(new IndexFilter(index));
 
-            verifyThat(find.getResultsPage().getResultsDiv().getText(), is("No results found"));
+            verifyThat(find.getResultsPage().resultsDiv().getText(), is("No results found"));
         } finally {
             getDriver().switchTo().window(browserHandles.get(1));
             getDriver().close();

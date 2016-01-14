@@ -11,7 +11,9 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -21,8 +23,11 @@ import org.junit.Test;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assume.assumeThat;
 
 //CSA-1563
 public class QuickSetUpITCase extends HostedTestBase {
@@ -59,27 +64,22 @@ public class QuickSetUpITCase extends HostedTestBase {
         //Check promoting the correct document
         searchPage.searchResult(1).click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
-        assertThat(docViewer.getReference(), is(site));
+        assumeThat(docViewer.getReference(), is(site));
         docViewer.close();
 
-        String promotionTitle = searchPage.createAPromotion();
-
-        CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-
         String trigger = "trigger";
+        try {
+            List<String> promotionTitles = promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), searchQuery, 1);
 
-        createNewPromotionsPage.addSpotlightPromotion("", trigger);
-
-        searchPage = getElementFactory().getSearchPage();
-        searchPage.waitForPromotionsLoadIndicatorToDisappear();
-        assertThat(searchPage.promotedDocumentTitle(1).getText(), is(promotionTitle));
-
-        //Delete Promotion
-        PromotionsPage promotionsPage = promotionService.delete(trigger);
-
-        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Removed a spotlight promotion"));
-
-        assertThat(promotionsPage.promotionsList().size(),is(0));
+            searchPage = getElementFactory().getSearchPage();
+            searchPage.waitForPromotionsLoadIndicatorToDisappear();
+            assertThat(searchPage.promotedDocumentTitle(1).getText(), is(promotionTitles.get(0)));
+        } finally {
+            //Delete Promotion
+            PromotionsPage promotionsPage = promotionService.delete(trigger);
+            new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Removed a spotlight promotion"));
+            assertThat(promotionsPage.promotionsList().size(), is(0));
+        }
     }
 
     @After

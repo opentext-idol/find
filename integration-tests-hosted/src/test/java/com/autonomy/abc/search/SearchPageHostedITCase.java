@@ -104,7 +104,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		assertThat(searchPage.getText(), not(containsString(Errors.Search.NO_RESULTS)));
 		searchPage.searchResult(1).click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
-		for(int i = 0; i < SearchPage.MAX_RESULTS; i++){
+		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){
 			verifyThat(documentViewer.getIndex(), containsString(index));
 			documentViewer.next();
 		}
@@ -113,62 +113,19 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 
 	@Test
-	//TODO make this test WAY nicer
 	public void testAuthor(){
-		searchService.search(new SearchQuery("fruit").withFilter(IndexFilter.PUBLIC));
-		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
-
-		String author = "FIFA.COM";
-
-		searchPage.openParametricValuesList();
-
-		int results = searchPage.filterByAuthor(author);
-
-		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
-
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		Waits.loadOrFadeWait();
-
-		assertThat(searchPage.getHeadingResultsCount(), is(results));
+		String author = "FIFA.com";
+		searchPage = searchService.search(new SearchQuery("blatter").withFilter(new ParametricFilter("Author", author)));
 
 		searchPage.searchResult(1).click();
+		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 
-		for(int i = 0; i < results; i++) {
-			assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), equalToIgnoringCase(author));
-			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
+		for(int i = 0; i < searchPage.RESULTS_PER_PAGE; i++){
+			verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
+			documentViewer.next();
 		}
 
-		getDriver().findElement(By.className("fa-close")).click();
-
-		Waits.loadOrFadeWait();
-
-		searchPage.filterByAuthor(author); //'Unfilter'
-
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		Waits.loadOrFadeWait();
-
-		author = "YLEIS";
-
-		results = searchPage.filterByAuthor(author);
-
-		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
-
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		Waits.loadOrFadeWait();
-
-		assertThat(searchPage.getHeadingResultsCount(), is(results));
-
-		searchPage.searchResult(1).click();
-
-		for(int i = 0; i < results; i++) {
-			assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is("Yleis"));
-			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
-		}
-
-		getDriver().findElement(By.className("fa-close")).click();
+		documentViewer.close();
 	}
 
 }
