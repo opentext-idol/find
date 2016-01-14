@@ -988,9 +988,9 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	//CSA-1708
 	public void testParametricLabelsNotUndefined(){
-		searchService.search(new SearchQuery("simpsons").withFilter(new IndexFilter(Index.DEFAULT)));
-
-		searchPage.filterByContentType("TEXT/HTML");
+		searchService.search(new SearchQuery("simpsons")
+				.withFilter(new IndexFilter(Index.DEFAULT))
+				.withFilter(new ParametricFilter("Content Type","TEXT/HTML")));
 
 		for(WebElement filter : searchPage.findElements(By.cssSelector(".filter-display-view span"))){
 			assertThat(filter.getText().toLowerCase(),not(containsString("undefined")));

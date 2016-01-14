@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
+import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -272,14 +273,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
 	}
 
-	public void paginateWait() {
-		try {
-			waitForSearchLoadIndicatorToDisappear();
-		} catch (final StaleElementReferenceException|NoSuchElementException n) {
-			Waits.loadOrFadeWait();
-		}
-	}
-
 	/* keywords */
 	public List<String> youSearchedFor() {
 		WebElement searchTermsList = findElement(By.cssSelector(".search-terms-list"));
@@ -347,7 +340,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/**
-	 *
+	 * TODO - if possible take out
 	 * @param contentType		String to filter by
 	 * @return					Number of results in filtered search
 	 */
@@ -358,18 +351,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 			openParametricValuesList();
 		}
 
-		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
-		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
-		li.findElement(By.tagName("ins")).click();
-		return resultCount;
-	}
-
-	private WebElement getAuthorDiv(){
-		return findElement(By.cssSelector("[data-field='author']"));
-	}
-
-	public int filterByAuthor(String author) {
-		WebElement li = getAuthorDiv().findElement(By.cssSelector("[data-value='" + author + "']"));
 		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
 		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
 		li.findElement(By.tagName("ins")).click();
@@ -389,15 +370,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		final String promotedDocTitle = getSearchResultTitle(1);
 		promoteTheseItemsButton().click();
 		return promotedDocTitle;
-	}
-
-	public List<String> createAMultiDocumentPromotion(final int numberOfDocs) {
-		promoteTheseDocumentsButton().click();
-		Waits.loadOrFadeWait();
-		List<String> promotedDocTitles = addToBucket(numberOfDocs);
-		ElementUtil.scrollIntoViewAndClick(promoteTheseItemsButton(), getDriver());
-		Waits.loadOrFadeWait();
-		return promotedDocTitles;
 	}
 
 	public List<String> addToBucket(int finalNumberOfDocs) {
