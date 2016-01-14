@@ -90,6 +90,8 @@ define([
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',
+        'search.savedSearches': 'Saved searches',
+        'search.savedSearches.noSavedSearches': 'There are no saved searches',
         'search.seeAllDocuments': 'See all documents',
         'search.selected': 'Selected',
         'search.similarDocuments': 'Similar documents',
