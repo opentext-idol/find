@@ -4,7 +4,6 @@ import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
@@ -16,7 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -28,7 +26,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assume.assumeThat;
 
 public class CreateStaticPromotionsITCase extends HostedTestBase {
     private HSOCreateNewPromotionsPage createPromotionsPage;
@@ -36,9 +33,8 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
     private Wizard wizard;
     private TriggerForm triggerForm;
 
-    public CreateStaticPromotionsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
-        assumeThat(config.getType(), is(ApplicationType.HOSTED));
+    public CreateStaticPromotionsITCase(TestConfig config) {
+        super(config);
     }
 
     public void goToTriggerStep() {

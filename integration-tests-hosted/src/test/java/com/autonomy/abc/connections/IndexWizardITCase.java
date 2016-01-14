@@ -3,7 +3,6 @@ package com.autonomy.abc.connections;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -14,7 +13,6 @@ import com.autonomy.abc.selenium.util.Errors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +26,8 @@ public class IndexWizardITCase extends HostedTestBase {
 
     private CreateNewIndexPage createNewIndexPage;
 
-    public IndexWizardITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public IndexWizardITCase(TestConfig config) {
+        super(config);
     }
 
     @Before

@@ -2,7 +2,6 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
@@ -15,7 +14,6 @@ import com.autonomy.abc.selenium.search.SearchQuery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +33,8 @@ public class IndexSetUpITCase extends HostedTestBase {
     private final Index index;
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexSetUpITCase.class);
 
-    public IndexSetUpITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public IndexSetUpITCase(TestConfig config) {
+        super(config);
         setInitialUser(config.getUser("index_tests"));
 
         String indexName = UUID.randomUUID().toString().replace('-','a');

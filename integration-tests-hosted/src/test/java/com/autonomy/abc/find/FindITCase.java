@@ -2,7 +2,6 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
@@ -64,8 +63,8 @@ public class FindITCase extends HostedTestBase {
     private PromotionService promotionService;
     private KeywordService keywordService;
 
-    public FindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public FindITCase(TestConfig config) {
+        super(config);
     }
 
     @Before

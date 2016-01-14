@@ -3,7 +3,6 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
@@ -18,7 +17,6 @@ import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -29,7 +27,6 @@ import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assume.assumeThat;
 
 public class StaticPromotionsITCase extends HostedTestBase {
 
@@ -43,9 +40,8 @@ public class StaticPromotionsITCase extends HostedTestBase {
     private final StaticPromotion promotion = new StaticPromotion(title, content, trigger);
     private PromotionsDetailTriggerForm triggerForm;
 
-    public StaticPromotionsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
-        assumeThat(type, is(ApplicationType.HOSTED));
+    public StaticPromotionsITCase(TestConfig config) {
+        super(config);
     }
 
     public void goToDetails() {

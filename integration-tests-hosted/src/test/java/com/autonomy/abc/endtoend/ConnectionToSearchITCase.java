@@ -2,7 +2,6 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.Dropdown;
@@ -19,13 +18,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assume.assumeThat;
 
 public class ConnectionToSearchITCase extends HostedTestBase {
     private ConnectionsPage connectionsPage;
@@ -38,9 +35,8 @@ public class ConnectionToSearchITCase extends HostedTestBase {
     private final Index index = new Index("hod");
     private final String searchTerm = "haven";
 
-    public ConnectionToSearchITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
-        assumeThat(type, is(ApplicationType.HOSTED));
+    public ConnectionToSearchITCase(TestConfig config) {
+        super(config);
     }
 
     @Before

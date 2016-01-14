@@ -2,7 +2,6 @@ package com.autonomy.abc.analytics;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
@@ -13,7 +12,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +26,8 @@ public class AnalyticsITCase extends HostedTestBase {
     private AnalyticsPage analytics;
     private final static Logger LOGGER = LoggerFactory.getLogger(AnalyticsITCase.class);
 
-    public AnalyticsITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public AnalyticsITCase(TestConfig config) {
+        super(config);
     }
 
     @Before

@@ -2,18 +2,15 @@ package com.autonomy.abc.connections;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
-import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +27,8 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     private ConnectionsDetailPage connectionsDetailPage;
     private Connector connector;
 
-    public ConnectionDetailPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public ConnectionDetailPageITCase(TestConfig config) {
+        super(config);
         // requires a separate account where indexes can safely be added and deleted
         setInitialUser(config.getUser("index_tests"));
     }

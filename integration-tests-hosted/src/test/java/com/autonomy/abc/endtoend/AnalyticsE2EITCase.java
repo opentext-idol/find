@@ -2,7 +2,6 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -21,7 +20,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +46,8 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     private final static Matcher<? super WebElement> NO_RESULTS = containsText("No results found");
     private final static Logger LOGGER = LoggerFactory.getLogger(AnalyticsE2EITCase.class);
 
-    public AnalyticsE2EITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public AnalyticsE2EITCase(TestConfig config) {
+        super(config);
     }
 
     @Before
