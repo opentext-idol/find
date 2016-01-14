@@ -3,22 +3,23 @@ package com.autonomy.abc.selenium.control;
 import com.autonomy.abc.selenium.util.Factory;
 import org.openqa.selenium.WebDriver;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 public class SessionRegistry implements Iterable<Session> {
     private final Factory<? extends WebDriver> driverFactory;
+    private final List<Session> sessions;
 
-    private final Set<Session> sessions;
     public SessionRegistry(Factory<? extends WebDriver> webDriverFactory) {
         driverFactory = webDriverFactory;
-        sessions = new HashSet<>();
+        sessions = new ArrayList<>();
     }
 
     public Session startSession(String url) {
         Session session = startSession();
-        session.openWindow(url);
+        session.setUrl(session.getActiveWindow(), url);
         return session;
     }
 
@@ -36,8 +37,15 @@ public class SessionRegistry implements Iterable<Session> {
         session.end();
     }
 
+    public void clear() {
+        for (Session session : this) {
+            endSession(session);
+        }
+        assert sessions.isEmpty();
+    }
+
     @Override
     public Iterator<Session> iterator() {
-        return sessions.iterator();
+        return Collections.unmodifiableList(sessions).iterator();
     }
 }
