@@ -258,7 +258,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         keywordsPage.selectLanguageButton();	//Wait for select Language button
 
         if(getConfig().getType().equals(ApplicationType.ON_PREM)){
-            assertThat("blacklist has been created in the correct language", keywordsPage.getSelectedLanguage(), equalToIgnoringCase("Arabic"));
+            assertThat("blacklist has been created in the correct language", keywordsPage.getSelectedLanguage(), is(Language.ARABIC));
         }
 
         Waits.loadOrFadeWait();

@@ -34,44 +34,10 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElement(By.xpath(".//div[contains(@class,'keywords-controls')]//a[contains(text(), 'New')]"));
     }
 
-    public WebElement createNewKeywordsButton(WebDriverWait wait) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//div[contains(@class,'keywords-controls')]//a[contains(text(), 'New')]")));
-    }
-
-    // use deleteKeywords instead
-    @Deprecated
-    public void deleteAllSynonyms() throws InterruptedException {
-        Waits.loadOrFadeWait();
-        filterView(KeywordFilter.SYNONYMS);
-        WebDriverWait wait = new WebDriverWait(getDriver(),40);	//TODO Possibly too long?
-
-        for (final String language : getLanguageList()) {
-            selectLanguage(language);
-            final int numberOfSynonymGroups = getDriver().findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size();
-
-            if (numberOfSynonymGroups >= 2) {
-                for (int i = 0; i <= numberOfSynonymGroups; i++) {
-                    LoggerFactory.getLogger(KeywordsPage.class).info("Deleting");
-                    if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() > 2) {
-                        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword"))).click();	//TODO check works
-                        waitForRefreshIconToDisappear();
-                    } else {
-                        if (findElements(By.cssSelector(".keywords-list .keywords-sub-list")).size() == 2) {
-                            findElement(By.cssSelector(".keywords-list .keywords-sub-list li:first-child .remove-keyword")).click();
-                        }
-
-                        Waits.loadOrFadeWait();
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     public void deleteKeywords() {
         filterView(KeywordFilter.ALL);
 
-        for(final String language : getLanguageList()){
+        for(final Language language : getLanguageList()){
             selectLanguage(language);
 
             List<WebElement> synonymGroups = getDriver().findElements(By.cssSelector(".keywords-list .keywords-sub-list"));
@@ -122,8 +88,6 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElements(By.cssSelector(".scrollable-menu li")).size();
     }
 
-    public abstract void deleteAllBlacklistedTerms() throws InterruptedException;
-
     public void filterView(final KeywordFilter filter) {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
@@ -136,11 +100,6 @@ public abstract class KeywordsPage extends KeywordsBase {
             return 0;
         }
         return findElements(By.cssSelector(".keywords-list .remove-keyword")).size();
-    }
-
-    @Deprecated
-    public int countSynonymGroupsWithLeadSynonym(final String synonym) {
-        return findElement(By.cssSelector(".keywords-list")).findElements(By.xpath(".//ul[contains(@class, 'keywords-sub-list')]/li[1][@data-term='" + synonym + "']")).size();
     }
 
     public int countSynonymGroupsWithSynonym(final String synonym) {
@@ -162,8 +121,8 @@ public abstract class KeywordsPage extends KeywordsBase {
         languageDropdown().select(language);
     }
 
-    public String getSelectedLanguage() {
-        return languageDropdown().getSelected().toString();
+    public Language getSelectedLanguage() {
+        return languageDropdown().getSelected();
     }
 
     public WebElement selectLanguageButton() {
@@ -171,8 +130,8 @@ public abstract class KeywordsPage extends KeywordsBase {
                 By.cssSelector(".keywords-filters .current-language-selection")));
     }
 
-    public List<String> getLanguageList() {
-        final List<String> languages = new ArrayList<>();
+    public List<Language> getLanguageList() {
+        final List<Language> languages = new ArrayList<>();
 
         if (ElementUtil.isAttributePresent(ElementUtil.getParent(selectLanguageButton()), "disabled")) {
             languages.add(getSelectedLanguage());
@@ -182,7 +141,7 @@ public abstract class KeywordsPage extends KeywordsBase {
             Waits.loadOrFadeWait();
 
             for (final WebElement language : findElements(By.cssSelector(".keywords-filters .scrollable-menu a"))) {
-                languages.add(language.getText());
+                languages.add(Language.fromString(language.getText()));
             }
 
             selectLanguageButton().click();

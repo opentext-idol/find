@@ -100,7 +100,7 @@ public class KeywordService extends ServiceBase {
         goToKeywords();
         keywordsPage.filterView(type);
         int count = 0;
-        for (final String language : keywordsPage.getLanguageList()) {
+        for (final Language language : keywordsPage.getLanguageList()) {
             int current = keywordsPage.countKeywords();
             if (current > 0) {
                 count += current;
@@ -115,7 +115,7 @@ public class KeywordService extends ServiceBase {
         return keywordsPage;
     }
 
-    private void tryDeleteAll(String language) throws StaleElementReferenceException {
+    private void tryDeleteAll(Language language) throws StaleElementReferenceException {
         try {
             keywordsPage.selectLanguage(language);
         } catch (WebDriverException e) {
