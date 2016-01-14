@@ -13,7 +13,6 @@ import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -36,8 +35,8 @@ public class UsersPageTestBase extends ABCTestBase {
     protected UserService userService;
     protected final SignupEmailHandler emailHandler;
 
-    public UsersPageTestBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public UsersPageTestBase(TestConfig config) {
+        super(config);
         emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
     }
 

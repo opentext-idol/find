@@ -2,7 +2,6 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -17,7 +16,6 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -35,8 +33,8 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
-    public EditDocumentReferencesPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-        super(config, browser, appType, platform);
+    public EditDocumentReferencesPageITCase(final TestConfig config) {
+        super(config);
     }
 
     private SearchPage searchPage;

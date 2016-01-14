@@ -24,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
@@ -42,8 +41,8 @@ import static org.junit.Assume.assumeThat;
 
 public class PromotionsPageITCase extends ABCTestBase {
 
-	public PromotionsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public PromotionsPageITCase(final TestConfig config) {
+		super(config);
 	}
 
 	private PromotionsPage promotionsPage;

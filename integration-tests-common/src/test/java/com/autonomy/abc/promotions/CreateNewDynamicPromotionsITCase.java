@@ -22,7 +22,6 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
@@ -38,8 +37,8 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     private SearchService searchService;
     private TriggerForm triggerForm;
 
-    public CreateNewDynamicPromotionsITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-        super(config, browser, appType, platform);
+    public CreateNewDynamicPromotionsITCase(final TestConfig config) {
+        super(config);
     }
 
     @Before

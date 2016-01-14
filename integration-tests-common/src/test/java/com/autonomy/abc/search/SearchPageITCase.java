@@ -29,7 +29,6 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -55,8 +54,8 @@ public class SearchPageITCase extends ABCTestBase {
 	private TopNavBar topNavBar;
 	private SearchService searchService;
 
-	public SearchPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public SearchPageITCase(final TestConfig config) {
+		super(config);
 	}
 
 	@Before
@@ -935,7 +934,6 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	//TODO parametric values aren't working - file ticket
 	public void testParametricValuesLoads() throws InterruptedException {
 		searchPage.expand(SearchBase.Facet.FILTER_BY);
 		searchPage.expand(SearchBase.Facet.PARAMETRIC_VALUES);

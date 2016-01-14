@@ -25,7 +25,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -53,8 +52,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     private KeywordService keywordService;
     private SearchService searchService;
 
-    public KeywordsFromSearchITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public KeywordsFromSearchITCase(TestConfig config) {
+        super(config);
     }
 
     @Before
