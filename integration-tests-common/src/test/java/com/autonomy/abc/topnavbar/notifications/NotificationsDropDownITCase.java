@@ -42,8 +42,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	private KeywordService keywordService;
 	private PromotionService promotionService;
 
-	public NotificationsDropDownITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public NotificationsDropDownITCase(final TestConfig config) {
+		super(config);
 	}
 
 	@Before

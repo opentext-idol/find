@@ -31,8 +31,8 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 
 public class UsersPageITCase extends UsersPageTestBase {
-	public UsersPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public UsersPageITCase(final TestConfig config) {
+		super(config);
 	}
 
 	@Test

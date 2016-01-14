@@ -17,8 +17,4 @@ public class HSOSearchPage extends SearchPage {
         return new WarningLanguageDropdown();
     }
 
-    @Override
-    public WebElement promotionsLabel() {
-        return findElement(By.cssSelector(".promotions .search-result-title"));
-    }
 }
