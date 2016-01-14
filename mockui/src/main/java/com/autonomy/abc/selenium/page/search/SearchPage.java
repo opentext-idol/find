@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SearchPage extends SearchBase implements AppPage {
-	private final static Logger LOGGER = LoggerFactory.getLogger(SearchPage.class);
 	public final static int RESULTS_PER_PAGE = 6;
 	public final static int MAX_RESULTS = 2500;
 

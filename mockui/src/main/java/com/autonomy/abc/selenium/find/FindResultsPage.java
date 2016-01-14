@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.element.FindParametricCheckbox;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -41,25 +42,25 @@ public class FindResultsPage extends AppElement {
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }
 
-    public List<WebElement> getPromotions() {
-        return getPromotionsDiv().findElements(By.className("promoted-document"));
+    public List<WebElement> promotions() {
+        return promotionsDiv().findElements(By.className("promoted-document"));
     }
 
     public List<String> getPromotionsTitles(){
         List<String> titles = new ArrayList<>();
-        for(WebElement promotion : getPromotions()){
+        for(WebElement promotion : promotions()){
             titles.add(promotion.findElement(By.tagName("h4")).getText());
         }
         return titles;
     }
 
-    private WebElement getPromotionsDiv(){
+    private WebElement promotionsDiv(){
         return findElement(By.className("promotions"));
     }
 
     public List<String> getResultTitles() {
         List<String> titles = new ArrayList<>();
-        for(WebElement result : getResults()){
+        for(WebElement result : results()){
             titles.add(result.findElement(By.tagName("h4")).getText());
         }
         return titles;
@@ -79,11 +80,11 @@ public class FindResultsPage extends AppElement {
         findElement(By.cssSelector("[data-field='" + header.toLowerCase().replace(" ", "_") + "'] [data-value='" + filter.toUpperCase() + "']"));
     }
 
-    public List<WebElement> getSimilarResultLinks() {
+    public List<WebElement> similarResultLinks() {
         return findElements(By.className("similar-documents-trigger"));
     }
 
-    public WebElement getPopover() {
+    public WebElement popover() {
         return findElement(By.className("popover"));
     }
 
@@ -123,35 +124,31 @@ public class FindResultsPage extends AppElement {
         }
     }
 
-    private WebElement getParametricContainer(ParametricContainers param) {
-        return getParametricContainer(param.dataField);
+    private WebElement parametricContainer(ParametricContainers param) {
+        return parametricContainer(param.dataField);
     }
 
-    public WebElement getParametricContainer(String param){
+    public WebElement parametricContainer(String param){
         return findElement(By.className("parametric-container")).findElement(By.cssSelector("[data-field='" + param + "']"));
     }
 
-    private WebElement getContentTypeContainer(){
-        return getParametricContainer(ParametricContainers.CONTENTTYPE);
-    }
-
-    public void selectContentType(String contentType){
+    public FindParametricCheckbox contentTypeCheckbox(String contentType){
         waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.LEFT);
-        getContentTypeContainer().findElement(By.cssSelector("[data-value='" + contentType.toUpperCase() + "']")).click();
-        waitForSearchLoadIndicatorToDisappear(Container.MIDDLE);
+        WebElement checkbox = parametricContainer(ParametricContainers.CONTENTTYPE).findElement(By.cssSelector("[data-value='" + contentType.toUpperCase() + "']"));
+        return new FindParametricCheckbox(checkbox, getDriver());
     }
 
-    public WebElement getResultsDiv(){
+    public WebElement resultsDiv(){
         return getDriver().findElement(By.className("results"));
     }
 
-    public List<WebElement> getResults(){
-        return getResultsDiv().findElements(By.cssSelector("[data-rel='results']"));
+    public List<WebElement> results(){
+        return resultsDiv().findElements(By.cssSelector("[data-rel='results']"));
     }
 
     public List<String> getDisplayedDocumentsDocumentTypes(){
         List<String> documentTypes = new ArrayList<String>();
-        for(WebElement result : getResults()){
+        for(WebElement result : results()){
             documentTypes.add(result.findElement(By.cssSelector(".content-type i")).getAttribute("class"));
         }
         return documentTypes;
@@ -205,11 +202,11 @@ public class FindResultsPage extends AppElement {
         });
     }
 
-    public WebElement getSearchResult(int searchResultNumber) {
+    public WebElement searchResult(int searchResultNumber) {
         return findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")"));
     }
 
-    public WebElement getSearchResultTitle(int searchResultNumber) {
-        return getSearchResult(searchResultNumber).findElement(By.tagName("h4"));
+    public WebElement searchResultTitle(int searchResultNumber) {
+        return searchResult(searchResultNumber).findElement(By.tagName("h4"));
     }
 }
