@@ -90,9 +90,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return findElement(By.cssSelector(".search-language .dropdown-toggle"));
 	}
 
-	// TODO: use languageDropdown
-	public String getSelectedLanguage() {
-		return findElement(By.cssSelector(".current-language-selection")).getText();
+	public Language getSelectedLanguage() {
+		return languageDropdown().getSelected();
 	}
 
 	public List<String> getLanguageList() {
@@ -121,14 +120,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* promoted results */
-	// TODO: on-prem only
-	public WebElement promotionsLabel() {
-		try {
-			return findElement(By.cssSelector(".promotions .promotion-name"));
-		} catch (NoSuchElementException e) {
-			return findElement(By.cssSelector(".promotions .search-result-title"));
-		}
-	}
+	public abstract WebElement promotionsLabel();
 
 	public WebElement promotionsSummary() {
 		return findElement(By.cssSelector(".promotions-summary"));
@@ -174,27 +166,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	public WebElement promotedResult(int number) {
 		return new WebDriverWait(getDriver(),60).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".promotions-list li:nth-child(" + String.valueOf(number) + ")")));
-	}
-
-	// TODO: move down to OPSearchPage
-	public List<String> getPromotionLabels() {
-		waitForPromotionsLoadIndicatorToDisappear();
-		final List<String> labelList = new ArrayList<>();
-
-		if (showMorePromotionsButton().isDisplayed()) {
-			showMorePromotions();
-		}
-		labelList.addAll(getPromotionTypeLabels());
-
-		while (ElementUtil.isEnabled(promotionPaginationButton(Pagination.NEXT))) {
-			switchPromotionPage(Pagination.NEXT);
-			labelList.addAll(getPromotionTypeLabels());
-		}
-		return labelList;
-	}
-
-	private List<String> getPromotionTypeLabels() {
-		return ElementUtil.getTexts(findElements(By.className("promotion-name")));
 	}
 
 	public boolean isPromotionsBoxVisible() {
@@ -301,7 +272,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
 	}
 
-	// TODO: use keywordsContainer / deprecate
+	// TODO: use keywordsContainer
+	@Deprecated
 	public List<String> getLeadSynonymsList() {
 		final List<String> leadSynonyms = new ArrayList<>();
 		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {

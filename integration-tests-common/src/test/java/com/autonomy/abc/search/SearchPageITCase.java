@@ -512,7 +512,7 @@ public class SearchPageITCase extends ABCTestBase {
 		List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
 		for (final Language language : languages) {
 			searchPage.selectLanguage(language);
-			assertThat(searchPage.getSelectedLanguage(), is(language.toString()));
+			assertThat(searchPage.getSelectedLanguage(), is(language));
 
 			searchPage.waitForSearchLoadIndicatorToDisappear();
 			assertThat(searchPage.getSearchResultTitle(1), not(docTitle));
