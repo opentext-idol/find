@@ -53,7 +53,7 @@ public class AnalyticsPage extends AppElement implements AppPage {
         new WebDriverWait(getDriver(),30).until(new WaitUntilLoadingFinished(container));
         WebElement topTerm = container.findElement(By.cssSelector(".list-group-item:nth-child(1)"));
 
-        return new Term(topTerm);    //TODO do this inside term constructor
+        return new Term(topTerm);
     }
 
     public Term getMostPopularNonZeroSearchTerm() {

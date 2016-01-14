@@ -61,7 +61,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
 
-        //TODO keywordsPage.createNewKeywordsButton().click(); up here?
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
     }

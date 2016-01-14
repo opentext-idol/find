@@ -130,7 +130,6 @@ public class StaticPromotionsITCase extends HostedTestBase {
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.stalenessOf(notification));
     }
 
-    // TODO: this same test should apply for promotions, create promotions, keywords and create keywords?
     @Test
     public void testInvalidTriggers() {
         goToDetails();
