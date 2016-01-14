@@ -43,3 +43,6 @@ tmp
 *.LOCAL.*
 *.REMOTE.*
 *.orig
+
+# Database
+*.db
