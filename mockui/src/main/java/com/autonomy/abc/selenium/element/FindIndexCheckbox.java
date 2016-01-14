@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 public class FindIndexCheckbox extends Checkbox {
     public FindIndexCheckbox(WebElement element, WebDriver driver) {
         super(element, driver);
-        box = findElement(By.className("database-icon"));
+        box = findElement(By.className("check-cell"));
     }
 
     @Override
@@ -18,6 +18,18 @@ public class FindIndexCheckbox extends Checkbox {
 
     @Override
     public boolean isChecked() {
-        return ElementUtil.hasClass("fa-check", box);
+        return ElementUtil.hasClass("fa-check", box.findElement(By.tagName("i")));
+    }
+
+    @Override
+    public void check() {
+        if(!isChecked()) {
+            toggle();
+
+            //Top level checkboxes may have to be cleared and THEN selected, so try again
+            if (!isChecked()) {
+                toggle();
+            }
+        }
     }
 }

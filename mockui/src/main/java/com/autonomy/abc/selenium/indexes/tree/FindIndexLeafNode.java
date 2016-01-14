@@ -1,31 +1,29 @@
 package com.autonomy.abc.selenium.indexes.tree;
 
+import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.element.FindIndexCheckbox;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class FindIndexLeafNode implements IndexNodeElement {
+    private Checkbox checkbox;
     private WebElement container;
 
-    FindIndexLeafNode(WebElement clickable) {
-        container = clickable;
+    FindIndexLeafNode(WebElement element, WebDriver driver) {
+        container = element;
+        checkbox = new FindIndexCheckbox(element, driver);
     }
 
     @Override
     public void select() {
-        if (isPartiallySelected()) {
-            selector().click();
-            selector().click();
-        } else if (!isSelected()) {
-            selector().click();
-        }
+        checkbox.check();
     }
 
     @Override
     public void deselect() {
-        if (isSelected() || isPartiallySelected()) {
-            selector().click();
-        }
+        checkbox.uncheck();
     }
 
     private WebElement selector() {
