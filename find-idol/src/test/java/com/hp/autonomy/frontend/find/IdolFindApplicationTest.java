@@ -19,7 +19,7 @@ import java.io.IOException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
-@WebIntegrationTest({"server.port=0", "hp.find.persistentState = INMEMORY", "application.buildNumber=test"})
+@WebIntegrationTest({"server.port=0", "hp.find.persistentState = INMEMORY", "hp.find.databaseType=H2INMEMORY", "application.buildNumber=test"})
 public class IdolFindApplicationTest {
     private static final String TEST_DIR = "./target/test";
 

@@ -1,0 +1,1 @@
+-- Initial database migration script, intentionally empty because V1 schema has not yet been determined.
