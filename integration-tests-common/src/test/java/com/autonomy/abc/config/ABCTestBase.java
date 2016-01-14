@@ -7,6 +7,8 @@ import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.config.Application;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.control.Session;
+import com.autonomy.abc.selenium.control.SessionRegistry;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.login.SSOFailureException;
@@ -41,6 +43,7 @@ public abstract class ABCTestBase {
 	protected final TestConfig config;
 
 	private final Application application;
+	private final SessionRegistry sessionRegistry;
 	private WebDriver driver;
 	// TODO: use getBody() instead
 	public AppBody body;
@@ -54,6 +57,7 @@ public abstract class ABCTestBase {
 		this.application = Application.ofType(config.getType());
 		this.initialUser = config.getDefaultUser();
 		this.initialUrl = config.getWebappUrl();
+		this.sessionRegistry = new SessionRegistry(config.getWebDriverFactory());
 	}
 
 	@Parameterized.Parameters
@@ -72,8 +76,7 @@ public abstract class ABCTestBase {
 
 	private void initialiseTest() {
 		LOGGER.info(config.toString());
-		driver = config.getWebDriverFactory().create();
-		ImplicitWaits.setImplicitWait(driver);
+		driver = sessionRegistry.startSession().getDriver();
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
 		testState.addStatementHandler(new StatementArtifactHandler(this));
@@ -128,6 +131,10 @@ public abstract class ABCTestBase {
 
 	public final WebDriver getDriver() {
 		return driver;
+	}
+
+	public final SessionRegistry getSessionRegistry() {
+		return sessionRegistry;
 	}
 
 	public final TestConfig getConfig() {

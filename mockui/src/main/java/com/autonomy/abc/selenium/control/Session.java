@@ -3,7 +3,11 @@ package com.autonomy.abc.selenium.control;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import org.openqa.selenium.WebDriver;
 
-public class Session {
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class Session implements Iterable<Window> {
     private WebDriver driver;
 
     Session(WebDriver webDriver) {
@@ -18,10 +22,11 @@ public class Session {
         return newWindow;
     }
 
-    /** Call this to terminate the WebDriver safely.
-    * After calling end, this object should not be used again.
-    */
-    public void end() {
+    public WebDriver getDriver() {
+        return driver;
+    }
+
+    void end() {
         driver.quit();
         driver = null;
     }
@@ -64,5 +69,14 @@ public class Session {
             end();
         }
         super.finalize();
+    }
+
+    @Override
+    public Iterator<Window> iterator() {
+        final List<Window> windows = new ArrayList<>();
+        for (String handle : driver.getWindowHandles()) {
+            windows.add(new Window(this, handle));
+        }
+        return windows.iterator();
     }
 }

@@ -1,59 +1,53 @@
 package com.autonomy.abc.framework.rules;
 
 import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.framework.ArtifactSaveVisitor;
 import com.autonomy.abc.framework.PageSourceSaver;
 import com.autonomy.abc.framework.ScreenshotSaver;
 import com.autonomy.abc.framework.TestState;
+import com.autonomy.abc.selenium.control.Session;
+import com.autonomy.abc.selenium.control.SessionRegistry;
+import com.autonomy.abc.selenium.control.Window;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
 
-public class TestArtifactRule extends TestWatcher {
-    private String timestamp;
-    private ABCTestBase test;
+public class TestArtifactRule extends TestWatcher implements ArtifactSaveVisitor.ArtifactSaver {
+    private final ArtifactSaveVisitor saveVisitor = new ArtifactSaveVisitor();
+    private final SessionRegistry sessions;
+    private final String timestamp;
+    private Description currentDescription;
 
     public TestArtifactRule(ABCTestBase testBase) {
-        test = testBase;
+        sessions = testBase.getSessionRegistry();
         timestamp = TestState.get().getTimestamp();
-    }
-
-    private ScreenshotSaver getScreenshotSaver() {
-        return new ScreenshotSaver(test.getDriver());
-    }
-
-    private PageSourceSaver getPageSourceSaver() {
-        return new PageSourceSaver(test.getDriver());
-    }
-
-    private String getBaseLocation(Description description) {
-        String[] splitName = description.getMethodName().split("\\[");
-        return ".output/" + splitName[0] + '/' + timestamp + '[' + splitName[splitName.length - 1];
-    }
-
-    private String getPngLocation(Description description) {
-        return getBaseLocation(description) + ".png";
-    }
-
-    private String getHtmlLocation(Description description) {
-        return getBaseLocation(description) + ".html";
-    }
-
-    private void handle(Description description) {
-        getScreenshotSaver().saveTo(getPngLocation(description));
-        getPageSourceSaver().saveTo(getHtmlLocation(description));
     }
 
     @Override
     protected void failed(Throwable e, Description description) {
+        currentDescription = description;
         if (e instanceof MultipleFailureException) {
             for (Throwable failure : ((MultipleFailureException) e).getFailures()) {
                 if (!(failure instanceof AssertionError)) {
-                    handle(description);
+                    saveVisitor.visit(this);
                     break;
                 }
             }
         } else if (!(e instanceof AssertionError)) {
-            handle(description);
+            saveVisitor.visit(this);
         }
+    }
+
+    @Override
+    public String baseLocation() {
+        String[] splitName = currentDescription.getMethodName().split("\\[");
+        return ".output/"
+                + splitName[0] + '/'
+                + timestamp + '[' + splitName[splitName.length - 1];
+    }
+
+    @Override
+    public Iterable<Session> getSessions() {
+        return sessions;
     }
 }

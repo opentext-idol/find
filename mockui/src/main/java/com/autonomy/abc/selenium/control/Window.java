@@ -24,6 +24,14 @@ public class Window {
         parent.closeWindow(this);
     }
 
+    public Session getSession() {
+        return parent;
+    }
+
+    public void activate() {
+        parent.switchWindow(this);
+    }
+
     String getHandle() {
         return handle;
     }
