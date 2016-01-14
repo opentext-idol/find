@@ -93,6 +93,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         }
     }
 
+    @JsonIgnore
     @Override
     public AciServerDetails getContentAciServerDetails() {
         return content.toAciServerDetails();

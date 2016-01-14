@@ -163,7 +163,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public AutocompleteService autocompleteService() {
-        return new AutocompleteServiceImpl(hodServiceConfig());
+    public AutocompleteService autocompleteService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
+        return new AutocompleteServiceImpl(hodServiceConfig);
     }
 }

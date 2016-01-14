@@ -17,7 +17,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
 import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.requests.Documents;
-import com.hp.autonomy.types.requests.qms.QmsActionParams;
+import com.hp.autonomy.types.requests.qms.actions.query.params.QmsQueryParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +34,14 @@ public class FindIdolDocumentService extends IdolDocumentService {
     }
 
     @Override
-    protected Documents<SearchResult> executeQuery(final AciService aciService, final AciParameters aciParameters) {
+    protected Documents<SearchResult> executeQuery(final AciService aciService, final AciParameters aciParameters, final boolean autoCorrect) {
         QueryResponseData responseData;
         try {
             responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
         } catch (final AciErrorException e) {
             final String errorString = e.getErrorString();
             if (MISSING_RULE_ERROR.equals(errorString) || INVALID_RULE_ERROR.equals(errorString)) {
-                aciParameters.remove(QmsActionParams.Blacklist.name());
+                aciParameters.remove(QmsQueryParams.Blacklist.name());
                 responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
             }
             else {
@@ -50,7 +50,17 @@ public class FindIdolDocumentService extends IdolDocumentService {
         }
 
         final List<Hit> hits = responseData.getHit();
-        final List<SearchResult> results = parseQueryHits(hits);
-        return new Documents<>(results, responseData.getTotalhits(), null);
+        final String spellingQuery = responseData.getSpellingquery();
+
+        // If IDOL has a spelling suggestion, retry query for auto correct
+        final Documents<SearchResult> documents;
+        if (autoCorrect && spellingQuery != null) {
+            documents = rerunQueryWithAdjustedSpelling(aciService, aciParameters, responseData, spellingQuery);
+        } else {
+            final List<SearchResult> results = parseQueryHits(hits);
+            documents = new Documents<>(results, responseData.getTotalhits(), null, null, null);
+        }
+
+        return documents;
     }
 }

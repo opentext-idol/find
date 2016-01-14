@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 @SpringApplicationConfiguration(classes = HodFindApplication.class)
-public class HodDocumentServiceIT extends AbstractDocumentServiceIT<ResourceIdentifier, HodFindDocument, HodErrorException> {
+public class HodDocumentServiceIT extends AbstractDocumentServiceIT<ResourceIdentifier, HodSearchResult, HodErrorException> {
     @BeforeClass
     public static void startup() throws IOException {
         HodTestConfiguration.writeConfigFile(TEST_DIR);

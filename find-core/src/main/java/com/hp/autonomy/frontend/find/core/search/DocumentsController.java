@@ -86,9 +86,9 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    protected SearchRequest<S> parseRequestParamsToObject(final String text, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight) {
+    protected SearchRequest<S> parseRequestParamsToObject(final String text, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final boolean autoCorrect) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate);
-        return new SearchRequest<>(queryRestrictions, 1, maxResults, summary, sort, highlight, null);
+        return new SearchRequest<>(queryRestrictions, 1, maxResults, summary, sort, highlight, autoCorrect, null);
     }
 
     @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)
