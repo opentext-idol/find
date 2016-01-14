@@ -46,7 +46,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		WebElement element = findElement(By.cssSelector(".search-page-contents"));
 		element = element.findElement(new Locator().withTagName("a").containingCaseInsensitive(docTitle));
 		element = element.findElement(By.xpath("./../../.."));
-		return new Checkbox(element, getDriver());
+		return new SOCheckbox(element, getDriver());
 	}
 
 	public String getSearchResultTitle(final int searchResultNumber) {

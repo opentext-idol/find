@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.search;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.InvalidElementStateException;
+import org.openqa.selenium.WebElement;
 
 public class FieldTextFilter implements SearchFilter {
     private String fieldText;
@@ -23,13 +23,14 @@ public class FieldTextFilter implements SearchFilter {
             } catch (ElementNotVisibleException e) {
 			/* already clicked */
             }
-            try {
-                searchBase.fieldTextInput().setAndSubmit(fieldText);
-            } catch (InvalidElementStateException e) {
+
+            WebElement editButton = searchBase.fieldTextEditButton();
+
+            if(editButton.isDisplayed()) {
                 searchBase.fieldTextEditButton().click();
-                searchBase.fieldTextInput().setAndSubmit(fieldText);
             }
-            searchBase.waitForSearchLoadIndicatorToDisappear();
+            
+            searchBase.fieldTextInput().setAndSubmit(fieldText);
         }
     }
 

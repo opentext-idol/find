@@ -4,29 +4,20 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParametricFilter implements SearchFilter {
-    private List<String> categories;
-    private List<String> fields;
+    private Map<String, String> map;
 
     public ParametricFilter(String category, String field){
-        categories = new ArrayList<>();
-        fields = new ArrayList<>();
-
-        categories.add(category);
-        fields.add(field);
+        this.map = new HashMap<>();
+        map.put(category, field);
     }
 
-    public ParametricFilter(Collection<String> categories, Collection<String> fields){
-        if(categories.size() != fields.size()){
-            throw new IllegalArgumentException("Categories and Fields have different sizes");
-        }
-
-        this.categories = new ArrayList<>(categories);
-        this.fields = new ArrayList<>(fields);
+    public ParametricFilter(Map<String, String> map){
+        map = new HashMap<>(map);
     }
 
     @Override
@@ -36,9 +27,9 @@ public class ParametricFilter implements SearchFilter {
             WebElement parametricContainer = filterable.parametricContainer();
             uncheckAll(parametricContainer, filterable);
 
-            for(int i = 0; i < categories.size(); i++) {
-                WebElement filterContainer = filterContainer(parametricContainer, categories.get(i));
-                fieldCheckbox(filterContainer, fields.get(i)).click();
+            for(Map.Entry<String, String> entry : map.entrySet()){
+                WebElement filterContainer = filterContainer(parametricContainer, entry.getKey());
+                fieldCheckbox(filterContainer, entry.getValue()).click();
                 filterable.waitForParametricValuesToLoad();
             }
         }
