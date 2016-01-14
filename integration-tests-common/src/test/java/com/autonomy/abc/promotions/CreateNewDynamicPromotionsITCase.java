@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.search.OPSearchPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -112,7 +113,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
         if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
             assertThat(searchPage.getSelectedLanguage(), is(Language.FRENCH));
-            assertThat(searchPage.promotionsLabel().getText(), equalToIgnoringCase(Promotion.SpotlightType.TOP_PROMOTIONS.getOption()));
+            assertThat(((OPSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase(Promotion.SpotlightType.TOP_PROMOTIONS.getOption()));
         }
         assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), is("bunny rabbit"));
         assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstDocTitle));

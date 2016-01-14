@@ -120,8 +120,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* promoted results */
-	public abstract WebElement promotionsLabel();
-
 	public WebElement promotionsSummary() {
 		return findElement(By.cssSelector(".promotions-summary"));
 	}

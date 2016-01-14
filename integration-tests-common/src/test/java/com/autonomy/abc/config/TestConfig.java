@@ -133,10 +133,7 @@ public class TestConfig {
 				TestConfig config = new TestConfig(i, jsonConfig);
 				// for compatibility
 				configs.add(new Object[]{
-						config,
-						config.getBrowser().toString(),
-						config.getType(),
-						config.getPlatform()
+						config
 				});
 			}
 		}
