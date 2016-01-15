@@ -32,7 +32,7 @@ public abstract class Checkbox extends AppElement {
     }
 
     protected int getResultCount(By by){
-        String spanResultCount = findElement(by).getText().split(" ")[1];
-        return Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
+        String spanResultCount = findElement(by).getText().split("\\(")[1];
+        return Integer.parseInt(spanResultCount.substring(0, spanResultCount.length() - 1));
     }
 }

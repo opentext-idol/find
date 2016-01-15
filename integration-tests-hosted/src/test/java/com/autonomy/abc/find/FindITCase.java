@@ -92,7 +92,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testPdfContentTypeValue(){
         find.search("red star");
-        find.filterBy(new ParametricFilter("Content Type","APPLICATION/PDF"));
+        find.filterBy(new ParametricFilter("Content Type", "APPLICATION/PDF"));
         for(String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type,containsString("pdf"));
         }
@@ -115,27 +115,34 @@ public class FindITCase extends HostedTestBase {
         int expectedResults = plainTextCheckbox().getResultsCount();
         plainTextCheckbox().check();
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        verifyParametricFields(plainTextCheckbox(), true, false, expectedResults);
+        verifyParametricFields(plainTextCheckbox(), expectedResults);
+        verifyTicks(true, false);
 
         expectedResults = plainTextCheckbox().getResultsCount();
         simpsonsArchiveCheckbox().check();
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        verifyParametricFields(plainTextCheckbox(), true, true, expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+        verifyParametricFields(plainTextCheckbox(), expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+        verifyTicks(true, true);
 
         plainTextCheckbox().uncheck();
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         expectedResults = simpsonsArchiveCheckbox().getResultsCount();
-        verifyParametricFields(simpsonsArchiveCheckbox(), false, true, expectedResults);
+        verifyParametricFields(simpsonsArchiveCheckbox(), expectedResults);
+        verifyTicks(false, true);
     }
 
-    private void verifyParametricFields(FindParametricCheckbox checked, boolean plainChecked, boolean simpsonsChecked, int expectedResults){
+    private void verifyParametricFields(FindParametricCheckbox checked, int expectedResults){
+        Waits.loadOrFadeWait();
         int resultsTotal = results.getResultTitles().size();
         int checkboxResults = checked.getResultsCount();
 
-        verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
-        verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
         verifyThat(resultsTotal, is(Math.min(expectedResults, 30)));
         verifyThat(checkboxResults, is(expectedResults));
+    }
+
+    private void verifyTicks(boolean plainChecked, boolean simpsonsChecked){
+        verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
+        verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
     }
 
     private FindParametricCheckbox simpsonsArchiveCheckbox(){
@@ -149,7 +156,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError()  {
         find.search("wolf");
-        FindParametricCheckbox contentTypeCheckbox = results.parametricTypeCheckbox("Content Type","TEXT/HTML");
+        FindParametricCheckbox contentTypeCheckbox = results.parametricTypeCheckbox("Content Type", "TEXT/HTML");
         contentTypeCheckbox.check();
         Waits.loadOrFadeWait();
         contentTypeCheckbox.uncheck();

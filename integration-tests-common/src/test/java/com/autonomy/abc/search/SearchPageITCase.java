@@ -944,29 +944,35 @@ public class SearchPageITCase extends ABCTestBase {
 		int expectedResults = plainTextCheckbox().getResultsCount();
 		plainTextCheckbox().check();
 		goToLastPage();
-		verifyParametricFields(plainTextCheckbox(), true, false, expectedResults);
+		verifyResultCounts(plainTextCheckbox(), expectedResults);
+		verifyTicks(true, false);
 
 		expectedResults = plainTextCheckbox().getResultsCount();
 		simpsonsArchiveCheckbox().check();
 		goToLastPage();
-		verifyParametricFields(plainTextCheckbox(), true, true, expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+		verifyResultCounts(plainTextCheckbox(), expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+		verifyTicks(true, true);
 
 		plainTextCheckbox().uncheck();
 		goToLastPage();
 		//Get this after unfiltering so it's accurate.
 		expectedResults = simpsonsArchiveCheckbox().getResultsCount();
-		verifyParametricFields(simpsonsArchiveCheckbox(), false, true, expectedResults);
+		verifyResultCounts(simpsonsArchiveCheckbox(), expectedResults);
+		verifyTicks(false, true);
 	}
 
-	private void verifyParametricFields(SOCheckbox checked, boolean plainChecked, boolean simpsonsChecked, int expectedResults){
+	private void verifyResultCounts(SOCheckbox checked, int expectedResults){
 		int resultsTotal = ((searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE) + searchPage.visibleDocumentsCount();
 		int checkboxResults = checked.getResultsCount();
 
-		verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
-		verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
 		verifyThat(searchPage.getHeadingResultsCount(), is(expectedResults));
 		verifyThat(resultsTotal, is(expectedResults));
 		verifyThat(checkboxResults, is(expectedResults));
+	}
+
+	private void verifyTicks(boolean plainChecked, boolean simpsonsChecked) {
+		verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
+		verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
 	}
 
 	private void goToLastPage(){
