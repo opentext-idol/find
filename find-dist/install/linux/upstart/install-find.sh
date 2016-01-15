@@ -3,6 +3,7 @@
 # Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
 
 ## INSTALLATION SETTINGS ##
+## If you change these, you need to change them in find.conf as well
 NAME="find"
 BASE_DIR="/opt/$NAME"
 HOME_DIR="$BASE_DIR/home"

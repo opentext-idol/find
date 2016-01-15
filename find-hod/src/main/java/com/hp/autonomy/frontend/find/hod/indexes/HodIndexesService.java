@@ -11,7 +11,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.hod.databases.Database;
+import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

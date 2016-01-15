@@ -15,6 +15,7 @@ define([
 
         parse: function(response) {
             this.autoCorrection = response.autoCorrection;
+            this.totalResults = response.totalResults;
 
             return response.documents;
         },

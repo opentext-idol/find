@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public abstract class AbstractDocumentServiceIT<S extends Serializable, D extends FindDocument, E extends Exception> extends AbstractFindIT {
+public abstract class AbstractDocumentServiceIT<S extends Serializable, R extends SearchResult, E extends Exception> extends AbstractFindIT {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    protected DocumentsController<S, D, E> documentsController;
+    protected DocumentsController<S, R, E> documentsController;
 
     protected final List<S> indexes;
     protected final String[] indexesArray;
@@ -41,7 +42,15 @@ public abstract class AbstractDocumentServiceIT<S extends Serializable, D extend
 
     @Test
     public void query() throws Exception {
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+         mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.documents", not(empty())));
+    }
+
+    @Test
+    public void queryWithPagination() throws Exception {
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "51").param(DocumentsController.MAX_RESULTS_PARAM, "100").param(DocumentsController.AUTOCORRECT_PARAM, "false").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", not(empty())));
@@ -49,7 +58,7 @@ public abstract class AbstractDocumentServiceIT<S extends Serializable, D extend
 
     @Test
     public void queryForPromotions() throws Exception {
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.PROMOTIONS_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.PROMOTIONS_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", empty()));
@@ -58,7 +67,7 @@ public abstract class AbstractDocumentServiceIT<S extends Serializable, D extend
     @Test
     public void findSimilar() throws Exception {
         //TODO currently not making (many) assumptions about content we are querying so we don't know a valid reference in advance...
-        final Documents<D> documents = documentsController.query("*", 50, null, indexes, null, null, null, null, false, false);
+        final Documents<R> documents = documentsController.query("*", 1, 50, null, indexes, null, null, null, null, false, false);
         final String reference = documents.getDocuments().get(0).getReference();
         mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.SIMILAR_DOCUMENTS_PATH).param(DocumentsController.REFERENCE_PARAM, reference).param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andExpect(status().isOk())

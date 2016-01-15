@@ -5,13 +5,14 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import org.junit.Before;
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -21,33 +22,32 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractDocumentsControllerTest<S extends Serializable, D extends FindDocument, E extends Exception> {
+public abstract class AbstractDocumentsControllerTest<S extends Serializable, R extends SearchResult, E extends Exception> {
     @Mock
-    protected DocumentsService<S, D, E> documentsService;
+    protected DocumentsService<S, R, E> documentsService;
 
-    protected final DocumentsController<S, D, E> documentsController;
-    protected final Class<S> databaseType;
+    @Mock
+    protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
-    protected AbstractDocumentsControllerTest(final DocumentsController<S, D, E> documentsController, final Class<S> databaseType) {
-        this.documentsController = documentsController;
-        this.databaseType = databaseType;
-    }
-
-    @Before
-    public void setUp() {
-        ReflectionTestUtils.setField(documentsController, "documentsService", documentsService, DocumentsService.class);
-    }
+    protected DocumentsController<S, R, E> documentsController;
+    protected Class<S> databaseType;
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
-        verify(documentsService).queryTextIndex(Matchers.<FindQueryParams<S>>any());
+        documentsController.query("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.queryForPromotions("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
-        verify(documentsService).queryTextIndexForPromotions(Matchers.<FindQueryParams<S>>any());
+        documentsController.queryForPromotions("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        verify(documentsService).queryTextIndexForPromotions(Matchers.<SearchRequest<S>>any());
+    }
+
+    @Test
+    public void queryPaginationTest() throws E {
+        documentsController.query("Some query text", 30, 60, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 
     @Test

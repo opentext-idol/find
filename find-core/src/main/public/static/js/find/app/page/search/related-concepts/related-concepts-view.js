@@ -24,10 +24,10 @@ define([
         topResultsCollection.fetch({
             reset: true,
             data: {
-                text: queryText,
+                queryText: queryText,
                 max_results: 3,
                 summary: 'context',
-                index: this.queryModel.get('indexes'),
+                databases: this.queryModel.get('indexes'),
                 highlight: false
             },
             error: _.bind(function() {
@@ -62,7 +62,8 @@ define([
         events: {
             'click .entity-text' : function(e) {
                 var $target = $(e.target);
-                var queryText = $target.attr('data-title');
+                var oldQueryText = this.queryModel.get('queryText');
+                var queryText = oldQueryText.concat(" AND ").concat($target.attr('data-title'));
                 this.queryModel.set('queryText', queryText);
             }
         },

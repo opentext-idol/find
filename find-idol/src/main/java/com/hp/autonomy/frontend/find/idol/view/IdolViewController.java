@@ -9,13 +9,13 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.logging.Markers;
-import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
-import com.hp.autonomy.frontend.view.idol.ReferenceFieldBlankException;
-import com.hp.autonomy.frontend.view.idol.ViewDocumentNotFoundException;
-import com.hp.autonomy.frontend.view.idol.ViewNoReferenceFieldException;
-import com.hp.autonomy.frontend.view.idol.ViewServerErrorException;
-import com.hp.autonomy.frontend.view.idol.ViewServerService;
 import com.hp.autonomy.idolutils.processors.CopyResponseProcessor;
+import com.hp.autonomy.searchcomponents.core.view.ViewContentSecurityPolicy;
+import com.hp.autonomy.searchcomponents.idol.view.ReferenceFieldBlankException;
+import com.hp.autonomy.searchcomponents.idol.view.ViewDocumentNotFoundException;
+import com.hp.autonomy.searchcomponents.idol.view.ViewNoReferenceFieldException;
+import com.hp.autonomy.searchcomponents.idol.view.ViewServerErrorException;
+import com.hp.autonomy.searchcomponents.idol.view.ViewServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -116,7 +116,7 @@ public class IdolViewController {
     public ModelAndView handleViewServerErrorException(
             final ViewServerErrorException e,
             final HttpServletRequest request,
-            final HttpServletResponse response
+            final ServletResponse response
     ) {
         response.reset();
 

@@ -20,6 +20,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
+import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,9 @@ public class HodTestConfiguration {
     private String application;
     @Value("${find.test.domain}")
     private String domain;
+
+    @Autowired
+    private TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService;
 
     @Autowired
     private HodServiceConfig<?, TokenType.Simple> hodServiceConfig;
