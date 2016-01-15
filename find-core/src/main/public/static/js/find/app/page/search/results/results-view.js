@@ -201,7 +201,7 @@ define([
                 }
             });
 
-            $('.main-content').scroll(this.checkScroll.bind(this));
+            $('.main-content').scroll(_.bind(this.checkScroll, this));
 
             /*colorbox fancy button override*/
             $('#colorbox').append(_.template(colorboxControlsTemplate));
