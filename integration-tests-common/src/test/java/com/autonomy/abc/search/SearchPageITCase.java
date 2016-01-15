@@ -400,15 +400,6 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(searchPage.promoteTheseDocumentsButton(), disabled());
 		assertThat(searchPage.promoteTheseItemsButton(), displayed());
 
-//		for (final String bucketDocTitle : bucketList) {
-//			final int docIndex = bucketList.indexOf(bucketDocTitle);
-//			assertFalse("The document title appears as blank within the bucket for document titled " + searchPage.searchResult(bucketList.indexOf(bucketDocTitle) + 1).getText(), bucketDocTitle.equals(""));
-//			searchPage.deleteDocFromWithinBucket(bucketDocTitle);
-//			assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(docIndex + 1).isSelected());
-//			assertThat("Document not removed from bucket", searchPage.promotionsBucketList(),not(hasItem(bucketDocTitle)));
-//			assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(3 - docIndex));
-//		}
-
 		searchPage.emptyBucket();
 
 		assertThat("promote button should be disabled when bucket has no documents", searchPage.promoteTheseItemsButton(), disabled());
@@ -425,7 +416,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 		final List<String> bucketListNew = searchPage.promotionsBucketList();
 		assertThat("Wrong number of documents in the bucket", bucketListNew, hasSize(2));
-//		assertThat("", searchPage.promotionsBucketList().containsAll(docTitles));
 		assertThat(bucketListNew, hasSize(docTitles.size()));
 
 		for(String docTitle : docTitles){
@@ -950,27 +940,33 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.openParametricValuesList();
 		searchPage.waitForParametricValuesToLoad();
 
+		//Need to get the result BEFORE filtering, and check that it's the same as after
+		int expectedResults = plainTextCheckbox().getResultsCount();
 		plainTextCheckbox().check();
 		goToLastPage();
-		verifyParametricFields(plainTextCheckbox(), true, false);
+		verifyParametricFields(plainTextCheckbox(), true, false, expectedResults);
 
+		expectedResults = plainTextCheckbox().getResultsCount();
 		simpsonsArchiveCheckbox().check();
 		goToLastPage();
-		verifyParametricFields(plainTextCheckbox(), true, true);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+		verifyParametricFields(plainTextCheckbox(), true, true, expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
 
 		plainTextCheckbox().uncheck();
 		goToLastPage();
-		verifyParametricFields(simpsonsArchiveCheckbox(), false, true);
+		//Get this after unfiltering so it's accurate.
+		expectedResults = simpsonsArchiveCheckbox().getResultsCount();
+		verifyParametricFields(simpsonsArchiveCheckbox(), false, true, expectedResults);
 	}
 
-	private void verifyParametricFields(SOCheckbox checked, boolean plainChecked, boolean simpsonsChecked){
+	private void verifyParametricFields(SOCheckbox checked, boolean plainChecked, boolean simpsonsChecked, int expectedResults){
 		int resultsTotal = ((searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE) + searchPage.visibleDocumentsCount();
-		int expectedResults = checked.getResultsCount();
+		int checkboxResults = checked.getResultsCount();
 
 		verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
 		verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
 		verifyThat(searchPage.getHeadingResultsCount(), is(expectedResults));
 		verifyThat(resultsTotal, is(expectedResults));
+		verifyThat(checkboxResults, is(expectedResults));
 	}
 
 	private void goToLastPage(){

@@ -9,7 +9,10 @@ import com.autonomy.abc.selenium.util.Predicates;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -144,7 +147,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	/* results pagination */
 	public int getCurrentPageNumber() {
 		Waits.loadOrFadeWait();
-//		new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(waitForDocLogo()));
 		waitForSearchLoadIndicatorToDisappear();
 		return Integer.parseInt(findElement(By.cssSelector(".btn-nav.active")).getText());
 	}
