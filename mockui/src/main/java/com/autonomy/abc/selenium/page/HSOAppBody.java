@@ -20,12 +20,6 @@ public class HSOAppBody extends AppBody {
 
     @Override
     public void logout() {
-        getTopNavBar().findElement(By.className("hp-settings")).click();
-
-        Waits.loadOrFadeWait();
-
-        getTopNavBar().findElement(By.className("navigation-logout")).click();
-
-        new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("haven-splash-header")));
+        getTopNavBar().logOut();
     }
 }

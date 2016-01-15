@@ -175,7 +175,7 @@ public abstract class ABCTestBase {
 	}
 
 	protected final void logout() {
-		getBody().logout();
+		getElementFactory().getTopNavBar().logOut();
 		currentUser = User.NULL;
 	}
 
