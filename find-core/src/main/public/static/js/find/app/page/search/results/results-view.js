@@ -316,7 +316,7 @@ define([
 
         addLinksToSummary: function(summary) {
             // Find highlighted query terms
-            var queryTextRegex = /<Find-IOD-QueryText-Placeholder>(.*?)<\/Find-IOD-QueryText-Placeholder>/g;
+            var queryTextRegex = /<HavenSearch-QueryText-Placeholder>(.*?)<\/HavenSearch-QueryText-Placeholder>/g;
             var queryText = [];
             var resultsArray;
             while ((resultsArray = queryTextRegex.exec(summary)) !==null) {
@@ -324,7 +324,7 @@ define([
             }
 
             // Protect us from XSS (but leave injected highlight tags alone)
-            var otherText = summary.split(/<Find-IOD-QueryText-Placeholder>.*?<\/Find-IOD-QueryText-Placeholder>/);
+            var otherText = summary.split(/<HavenSearch-QueryText-Placeholder>.*?<\/HavenSearch-QueryText-Placeholder>/);
             var escapedSummaryElements = [];
             escapedSummaryElements.push(_.escape(otherText[0]));
             for (var i = 0; i < queryText.length; i++) {

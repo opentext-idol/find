@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.indexes.AbstractIndexesServiceIT;
 import com.hp.autonomy.frontend.find.web.test.HodTestConfiguration;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.hod.databases.Database;
+import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import org.junit.BeforeClass;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 

@@ -5,18 +5,18 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
 
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -24,23 +24,15 @@ public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySumma
     @Mock
     protected RelatedConceptsService<Q, S, E> relatedConceptsService;
 
-    protected final RelatedConceptsController<Q, S, E> relatedConceptsController;
-    protected final Class<S> databaseType;
+    @Mock
+    protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
-    protected AbstractRelatedConceptsControllerTest(final RelatedConceptsController<Q, S, E> relatedConceptsController, final Class<S> databaseType) {
-        this.relatedConceptsController = relatedConceptsController;
-        this.databaseType = databaseType;
-    }
-
-    @Before
-    public void setUp() {
-        ReflectionTestUtils.setField(relatedConceptsController, "relatedConceptsService", relatedConceptsService, RelatedConceptsService.class);
-    }
+    protected RelatedConceptsController<Q, S, E> relatedConceptsController;
+    protected Class<S> databaseType;
 
     @Test
     public void query() throws E {
-        final String text = "Some query text";
-        relatedConceptsController.findRelatedConcepts(text, Collections.<S>emptyList(), null);
-        verify(relatedConceptsService).findRelatedConcepts(eq(text), anyListOf(databaseType), anyString());
+        relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null);
+        verify(relatedConceptsService).findRelatedConcepts(Matchers.<QueryRestrictions<S>>any());
     }
 }
