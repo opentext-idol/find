@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
+import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
@@ -29,6 +30,7 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -398,15 +400,6 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat(searchPage.promoteTheseDocumentsButton(), disabled());
 		assertThat(searchPage.promoteTheseItemsButton(), displayed());
 
-//		for (final String bucketDocTitle : bucketList) {
-//			final int docIndex = bucketList.indexOf(bucketDocTitle);
-//			assertFalse("The document title appears as blank within the bucket for document titled " + searchPage.searchResult(bucketList.indexOf(bucketDocTitle) + 1).getText(), bucketDocTitle.equals(""));
-//			searchPage.deleteDocFromWithinBucket(bucketDocTitle);
-//			assertThat("Checkbox still selected when doc deleted from bucket", !searchPage.searchResultCheckbox(docIndex + 1).isSelected());
-//			assertThat("Document not removed from bucket", searchPage.promotionsBucketList(),not(hasItem(bucketDocTitle)));
-//			assertThat("Wrong number of documents in the bucket", searchPage.promotionsBucketList().size(),is(3 - docIndex));
-//		}
-
 		searchPage.emptyBucket();
 
 		assertThat("promote button should be disabled when bucket has no documents", searchPage.promoteTheseItemsButton(), disabled());
@@ -423,7 +416,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 		final List<String> bucketListNew = searchPage.promotionsBucketList();
 		assertThat("Wrong number of documents in the bucket", bucketListNew, hasSize(2));
-//		assertThat("", searchPage.promotionsBucketList().containsAll(docTitles));
 		assertThat(bucketListNew, hasSize(docTitles.size()));
 
 		for(String docTitle : docTitles){
@@ -942,23 +934,63 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testContentType(){
+	public void testFilteringByParametricValues(){
 		search("Alexis");
 
 		searchPage.openParametricValuesList();
-		Waits.loadOrFadeWait();
 		searchPage.waitForParametricValuesToLoad();
 
-		int results = searchPage.filterByContentType("TEXT/PLAIN");
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		//Need to get the result BEFORE filtering, and check that it's the same as after
+		int expectedResults = plainTextCheckbox().getResultsCount();
+		plainTextCheckbox().check();
+		goToLastPage();
+		verifyResultCounts(plainTextCheckbox(), expectedResults);
+		verifyTicks(true, false);
 
-		assertThat(searchPage.getHeadingResultsCount(), is(results));
+		expectedResults = plainTextCheckbox().getResultsCount();
+		simpsonsArchiveCheckbox().check();
+		goToLastPage();
+		verifyResultCounts(plainTextCheckbox(), expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+		verifyTicks(true, true);
 
-		searchPage.switchResultsPage(Pagination.LAST);
-		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE;
-		resultsTotal += searchPage.visibleDocumentsCount();
-		assertThat(resultsTotal, is(results));
+		plainTextCheckbox().uncheck();
+		goToLastPage();
+		//Get this after unfiltering so it's accurate.
+		expectedResults = simpsonsArchiveCheckbox().getResultsCount();
+		verifyResultCounts(simpsonsArchiveCheckbox(), expectedResults);
+		verifyTicks(false, true);
+	}
+
+	private void verifyResultCounts(SOCheckbox checked, int expectedResults){
+		int resultsTotal = ((searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE) + searchPage.visibleDocumentsCount();
+		int checkboxResults = checked.getResultsCount();
+
+		verifyThat(searchPage.getHeadingResultsCount(), is(expectedResults));
+		verifyThat(resultsTotal, is(expectedResults));
+		verifyThat(checkboxResults, is(expectedResults));
+	}
+
+	private void verifyTicks(boolean plainChecked, boolean simpsonsChecked) {
+		verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
+		verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
+	}
+
+	private void goToLastPage(){
+		try {
+			Waits.loadOrFadeWait();
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+			searchPage.switchResultsPage(Pagination.LAST);
+		} catch (WebDriverException e) {
+			/* Already on last page */
+		}
+	}
+
+	private SOCheckbox simpsonsArchiveCheckbox(){
+		return searchPage.parametricTypeCheckbox("Source Connector", "SIMPSONSARCHIVE");
+	}
+
+	private SOCheckbox plainTextCheckbox(){
+		return searchPage.parametricTypeCheckbox("Content Type", "TEXT/PLAIN");
 	}
 
 	@Test

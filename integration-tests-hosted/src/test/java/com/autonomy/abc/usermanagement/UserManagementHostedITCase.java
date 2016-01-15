@@ -1,7 +1,6 @@
 package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.ErrorPage;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
@@ -46,8 +45,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
     private final Factory<NewUser> newUserFactory;
 
-    public UserManagementHostedITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public UserManagementHostedITCase(TestConfig config) {
+        super(config);
         newUserFactory = config.getNewUserFactory();
     }
 

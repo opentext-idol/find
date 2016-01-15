@@ -6,20 +6,24 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class FindParametricCheckbox extends Checkbox {
-    WebElement box;
+    private final By checkbox = By.cssSelector("td:not(.check-cell)");
 
     public FindParametricCheckbox(WebElement element, WebDriver driver) {
         super(element, driver);
-        box = findElement(By.className("fa-check"));
+        box = findElement(By.className("check-cell"));
     }
 
     @Override
     public String getName() {
-        return findElement(By.cssSelector("td:not(.check-cell)")).getText().split("\\(")[0].trim();
+        return findElement(checkbox).getText().split("\\(")[0].trim();
     }
 
     @Override
     public boolean isChecked() {
-        return !ElementUtil.hasClass("hide", box);
+        return !ElementUtil.hasClass("hide", box.findElement(By.className("fa-check")));
+    }
+
+    public int getResultsCount() {
+        return getResultCount(checkbox);
     }
 }
