@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.element;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -28,5 +29,10 @@ public abstract class Checkbox extends AppElement {
         if (isChecked()) {
             toggle();
         }
+    }
+
+    protected int getResultCount(By by){
+        String spanResultCount = findElement(by).getText().split(" ")[1];
+        return Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
     }
 }

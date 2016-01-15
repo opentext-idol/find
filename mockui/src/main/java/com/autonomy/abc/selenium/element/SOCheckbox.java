@@ -19,7 +19,6 @@ public class SOCheckbox extends Checkbox {
     }
 
     public int getResultsCount() {
-        String spanResultCount = findElement(By.tagName("span")).getText().split(" ")[1];
-        return Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
+        return getResultCount(By.tagName("span"));
     }
 }
