@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.ElementFactory;
@@ -17,7 +17,7 @@ public class HSOUserService extends UserService {
     private HSOUsersPage usersPage;
     private HSOElementFactory elementFactory;
 
-    public HSOUserService(Application application, ElementFactory elementFactory) {
+    public HSOUserService(SearchOptimizerApplication application, ElementFactory elementFactory) {
         super(application, elementFactory);
         this.elementFactory = (HSOElementFactory) elementFactory;
     }

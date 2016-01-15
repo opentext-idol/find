@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
@@ -12,11 +12,11 @@ import org.openqa.selenium.WebElement;
 
 public abstract class UserService {
 
-    private final Application application;
+    private final SearchOptimizerApplication application;
     private final ElementFactory elementFactory;
     protected UsersPage usersPage;
 
-    public UserService(Application application, ElementFactory elementFactory) {
+    public UserService(SearchOptimizerApplication application, ElementFactory elementFactory) {
         this.application = application;
         this.elementFactory = elementFactory;
     }
@@ -39,7 +39,7 @@ public abstract class UserService {
         return application.createAppBody(getDriver());
     }
 
-    protected Application getApplication() {
+    protected SearchOptimizerApplication getApplication() {
         return application;
     }
 

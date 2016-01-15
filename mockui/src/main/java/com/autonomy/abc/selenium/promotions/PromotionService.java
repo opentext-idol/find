@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
@@ -22,11 +22,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 
 public class PromotionService {
-    private Application application;
+    private SearchOptimizerApplication application;
     private ElementFactory elementFactory;
     private PromotionsPage promotionsPage;
 
-    public PromotionService(Application application, ElementFactory elementFactory) {
+    public PromotionService(SearchOptimizerApplication application, ElementFactory elementFactory) {
         this.application = application;
         this.elementFactory = elementFactory;
     }

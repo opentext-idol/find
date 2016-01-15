@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class SearchService extends ServiceBase {
     SearchPage searchPage;
 
-    public SearchService(Application application, ElementFactory elementFactory) {
+    public SearchService(SearchOptimizerApplication application, ElementFactory elementFactory) {
         super(application, elementFactory);
     }
 

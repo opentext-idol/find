@@ -5,15 +5,13 @@ import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.SessionRegistry;
 import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.login.SSOFailureException;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.ImplicitWaits;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +40,7 @@ public abstract class ABCTestBase {
 	private final TestState testState = TestState.get();
 	protected final TestConfig config;
 
-	private final Application application;
+	private final SearchOptimizerApplication application;
 	private final SessionRegistry sessionRegistry;
 	private WebDriver driver;
 	// TODO: use getBody() instead
@@ -54,7 +52,7 @@ public abstract class ABCTestBase {
 
 	public ABCTestBase(final TestConfig config) {
 		this.config = config;
-		this.application = Application.ofType(config.getType());
+		this.application = SearchOptimizerApplication.ofType(config.getType());
 		this.initialUser = config.getDefaultUser();
 		this.initialUrl = config.getWebappUrl();
 		this.sessionRegistry = new SessionRegistry(config.getWebDriverFactory());
@@ -141,7 +139,7 @@ public abstract class ABCTestBase {
 		return config;
 	}
 
-	public Application getApplication() {
+	public SearchOptimizerApplication getApplication() {
 		return application;
 	}
 

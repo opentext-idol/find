@@ -13,7 +13,7 @@ import com.autonomy.abc.selenium.users.HSODeveloperService;
 import com.autonomy.abc.selenium.users.HSOUserService;
 import org.openqa.selenium.WebDriver;
 
-public class HSOApplication extends Application {
+public class HSOApplication extends SearchOptimizerApplication {
     @Override
     public AppBody createAppBody(WebDriver driver) {
         return new HSOAppBody(driver);

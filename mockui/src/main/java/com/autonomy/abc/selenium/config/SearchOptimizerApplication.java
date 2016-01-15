@@ -10,7 +10,7 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.users.UserService;
 import org.openqa.selenium.WebDriver;
 
-public abstract class Application {
+public abstract class SearchOptimizerApplication {
     public abstract AppBody createAppBody(WebDriver driver);
 
     public abstract AppBody createAppBody(WebDriver driver, TopNavBar topNavBar, SideNavBar sideNavBar);
@@ -25,8 +25,8 @@ public abstract class Application {
 
     public abstract ApplicationType getType();
 
-    public static Application ofType(ApplicationType type) {
-        return type.makeApplication();
+    public static SearchOptimizerApplication ofType(ApplicationType type) {
+        return type.makeSearchApplication();
     }
 
     public KeywordService createKeywordService(ElementFactory elementFactory) {

@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectionService {
-    private Application application;
+    private SearchOptimizerApplication application;
     private HSOElementFactory elementFactory;
     private ConnectionsPage connectionsPage;
     private ConnectionsDetailPage connectionsDetailPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
 
-    public ConnectionService(Application application, HSOElementFactory elementFactory) {
+    public ConnectionService(SearchOptimizerApplication application, HSOElementFactory elementFactory) {
         this.application = application;
         this.elementFactory = elementFactory;
     }

@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.indexes;
 
-import com.autonomy.abc.selenium.config.Application;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
@@ -20,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IndexService {
-    private Application application;
+    private SearchOptimizerApplication application;
     private HSOElementFactory elementFactory;
     private IndexesPage indexesPage;
 
-    public IndexService(Application application, HSOElementFactory elementFactory) {
+    public IndexService(SearchOptimizerApplication application, HSOElementFactory elementFactory) {
         this.application = application;
         this.elementFactory = elementFactory;
     }

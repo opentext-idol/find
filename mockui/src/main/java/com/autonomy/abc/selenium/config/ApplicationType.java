@@ -20,9 +20,9 @@ public enum ApplicationType {
 	}
 
 	// instead exposed as factory method Application.ofType
-	Application makeApplication() {
+	SearchOptimizerApplication makeSearchApplication() {
 		try {
-			return (Application) Class.forName(className).newInstance();
+			return (SearchOptimizerApplication) Class.forName(className).newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			throw new IllegalStateException("Could not create Application object - check that the correct mockui package is included in the POM", e);
 		}

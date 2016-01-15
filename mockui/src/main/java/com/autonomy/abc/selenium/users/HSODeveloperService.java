@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.config.HSOApplication;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.AppBody;
@@ -26,7 +26,7 @@ public class HSODeveloperService {
         return elementFactory.getDriver();
     }
 
-    public HSODeveloperService(Application application, ElementFactory elementFactory){
+    public HSODeveloperService(SearchOptimizerApplication application, ElementFactory elementFactory){
         this.application = (HSOApplication) application;
         this.elementFactory = (HSOElementFactory) elementFactory;
     }
