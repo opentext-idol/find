@@ -111,10 +111,6 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
         searchPage.waitForPromotionsLoadIndicatorToDisappear();
 
-        if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-            assertThat(searchPage.getSelectedLanguage(), is(Language.FRENCH));
-            assertThat(((OPSearchPage) searchPage).promotionsLabel().getText(), equalToIgnoringCase(Promotion.SpotlightType.TOP_PROMOTIONS.getOption()));
-        }
         assertThat("Wrong search performed", searchPage.getHeadingSearchTerm(), is("bunny rabbit"));
         assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstDocTitle));
     }
