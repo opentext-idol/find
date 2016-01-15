@@ -2,7 +2,6 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
@@ -11,10 +10,8 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
@@ -30,12 +27,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-/**
- * Created by avidan on 10-11-15.
- */
 public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
-    public WebConnectorTypeITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public WebConnectorTypeITCase(TestConfig config) {
+        super(config);
     }
 
     private FormInput connectorUrl;

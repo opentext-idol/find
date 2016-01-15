@@ -2,7 +2,6 @@ package com.autonomy.abc.connections.wizard.index;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
@@ -13,7 +12,6 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -22,12 +20,9 @@ import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-/**
- * Created by avidan on 14-12-15.
- */
 public class IndexStepITCase extends ConnectorTypeStepBase {
-    public IndexStepITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public IndexStepITCase(TestConfig config) {
+        super(config);
     }
 
     private ConnectorIndexStepTab connectorIndexStepTab;

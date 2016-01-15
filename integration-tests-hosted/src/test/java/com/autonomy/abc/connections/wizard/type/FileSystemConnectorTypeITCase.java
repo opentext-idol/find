@@ -2,13 +2,11 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,12 +17,9 @@ import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
-/**
- * Created by avidan on 10-11-15.
- */
 public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
-    public FileSystemConnectorTypeITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public FileSystemConnectorTypeITCase(TestConfig config) {
+        super(config);
     }
 
     private FormInput connectorPath;

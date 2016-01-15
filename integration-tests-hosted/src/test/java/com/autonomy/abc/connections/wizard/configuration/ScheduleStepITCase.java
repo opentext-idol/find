@@ -2,7 +2,6 @@ package com.autonomy.abc.connections.wizard.configuration;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
@@ -11,7 +10,6 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -23,12 +21,9 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.Is.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-/**
- * Created by avidan on 02-11-15.
- */
 public class ScheduleStepITCase extends ConnectorTypeStepBase {
-    public ScheduleStepITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public ScheduleStepITCase(TestConfig config) {
+        super(config);
     }
 
     private ConnectorConfigStepTab connectorConfigStep;
