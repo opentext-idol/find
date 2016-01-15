@@ -36,6 +36,25 @@ define([
 
     var mediaTypes = ['audio', 'video'];
 
+    function infiniteScroll() {
+        var totalResults = this.documentsCollection.totalResults;
+
+        if (!this.endOfResults) {
+            if (this.maxResults < totalResults && this.maxResults + SCROLL_INCREMENT > totalResults) {
+                this.start = this.maxResults;
+                this.maxResults = totalResults;
+                this.endOfResults = true;
+            } else {
+                this.start = this.maxResults;
+                this.maxResults += SCROLL_INCREMENT;
+                if (this.maxResults === totalResults) {
+                    this.endOfResults = true;
+                }
+            }
+            this.loadData(true);
+        }
+    }
+
     var getContentTypeClass = function(model) {
         var contentType = model.get('contentType') || '';
 
@@ -50,6 +69,8 @@ define([
 
     var $window = $(window);
     var SIZE = '90%';
+
+    var SCROLL_INCREMENT = 30;
 
     var onResize = function() {
         $.colorbox.resize({width: SIZE, height: SIZE});
@@ -91,41 +112,12 @@ define([
             this.listenTo(this.queryModel, 'change refresh', function() {
                 if (this.queryModel.get('queryText')) {
                     if (!_.isEmpty(this.queryModel.get('indexes'))) {
-                        this.documentsCollection.fetch({
-                            data: {
-                                auto_correct: this.queryModel.get('autoCorrect'),
-                                text: this.queryModel.get('queryText'),
-                                max_results: 30,
-                                summary: 'context',
-                                index: this.queryModel.get('indexes'),
-                                field_text: this.queryModel.get('fieldText'),
-                                min_date: this.queryModel.getIsoDate('minDate'),
-                                max_date: this.queryModel.getIsoDate('maxDate'),
-                                sort: this.queryModel.get('sort')
-                            },
-                            reset: false
-                        }, this);
-
-                        // TODO: Move out of if statement when HOD allows fetching promotions without indexes
-                        this.promotionsCollection.fetch({
-                            data: {
-                                auto_correct: this.queryModel.get('autoCorrect'),
-                                text: this.queryModel.get('queryText'),
-                                max_results: 30, // TODO maybe less?
-                                summary: 'context',
-                                index: this.queryModel.get('indexes'),
-                                field_text: this.queryModel.get('fieldText'),
-                                min_date: this.queryModel.getIsoDate('minDate'),
-                                max_date: this.queryModel.getIsoDate('maxDate'),
-                                sort: this.queryModel.get('sort')
-                            },
-                            reset: false
-                        }, this);
-
-                        this.promotionsFinished = false;
+                        this.endOfResults = false;
+                        this.start = 1;
+                        this.maxResults = SCROLL_INCREMENT;
+                        this.loadData(false);
                         this.$('.main-results-content .promotions').empty();
 
-                        this.resultsFinished = false;
                         this.$loadingSpinner.removeClass('hide');
                         this.toggleError(false);
                         this.$('.main-results-content .error .error-list').empty();
@@ -136,6 +128,8 @@ define([
                     }
                 }
             });
+
+            this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
         },
 
         clearLoadingSpinner: function() {
@@ -149,7 +143,7 @@ define([
 
             this.$loadingSpinner = $(this.loadingTemplate);
 
-            this.$el.prepend(this.$loadingSpinner);
+            this.$el.append(this.$loadingSpinner);
 
             /*promotions content content*/
             this.listenTo(this.promotionsCollection, 'add', function(model) {
@@ -177,7 +171,9 @@ define([
                 this.resultsFinished = true;
                 this.clearLoadingSpinner();
 
-                if (this.documentsCollection.isEmpty()) {
+                if (this.endOfResults) {
+                    this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
+                } else if (this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
             });
@@ -204,6 +200,8 @@ define([
                     }, this);
                 }
             });
+
+            $('.main-content').scroll(this.checkScroll.bind(this));
 
             /*colorbox fancy button override*/
             $('#colorbox').append(_.template(colorboxControlsTemplate));
@@ -441,6 +439,53 @@ define([
             this.$('.main-results-content .promotions').toggleClass('hide', on);
             this.$('.main-results-content .results').toggleClass('hide', on);
             this.$('.main-results-content .error').toggleClass('hide', !on);
-        }
+        },
+
+        loadData: function (infiniteScroll) {
+            this.$loadingSpinner.removeClass('hide');
+            this.resultsFinished = false;
+
+            this.documentsCollection.fetch({
+                data: {
+                    auto_correct: infiniteScroll ? false : this.queryModel.get('autoCorrect'),
+                    text: this.queryModel.get('queryText'),
+                    start: this.start,
+                    max_results: this.maxResults,
+                    summary: 'context',
+                    index: this.queryModel.get('indexes'),
+                    field_text: this.queryModel.get('fieldText'),
+                    min_date: this.queryModel.getIsoDate('minDate'),
+                    max_date: this.queryModel.getIsoDate('maxDate'),
+                    sort: this.queryModel.get('sort')
+                },
+                reset: false
+            }, this);
+
+            if (!infiniteScroll) {
+                this.promotionsFinished = false;
+                this.promotionsCollection.fetch({
+                    data: {
+                        auto_correct: this.queryModel.get('autoCorrect'),
+                        text: this.queryModel.get('queryText'),
+                        start: this.start,
+                        max_results: this.maxResults,
+                        summary: 'context',
+                        index: this.queryModel.get('indexes'),
+                        field_text: this.queryModel.get('fieldText'),
+                        min_date: this.queryModel.getIsoDate('minDate'),
+                        max_date: this.queryModel.getIsoDate('maxDate'),
+                        sort: this.queryModel.get('sort')
+                    },
+                    reset: false
+                }, this);
+            }
+        },
+
+        checkScroll: function() {
+                var triggerPoint = 500;
+                if (this.documentsCollection.size() > 0 && this.queryModel.get('queryText') && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
+                    this.infiniteScroll();
+                }
+            }
     });
 });
