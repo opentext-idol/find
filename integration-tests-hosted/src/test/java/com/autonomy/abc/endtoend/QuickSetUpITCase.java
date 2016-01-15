@@ -43,7 +43,6 @@ public class QuickSetUpITCase extends HostedTestBase {
 
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.GETTING_STARTED);
         gettingStarted = getElementFactory().getGettingStartedPage();
-        body = getBody();
     }
 
     @Test
@@ -56,7 +55,6 @@ public class QuickSetUpITCase extends HostedTestBase {
         SearchQuery searchQuery = new SearchQuery(site.split("//")[1]).withFilter(new IndexFilter(Index.DEFAULT));
 
         SearchPage searchPage = searchService.search(searchQuery);
-        body = getBody();
 
         //Check promoting the correct document
         searchPage.searchResult(1).click();

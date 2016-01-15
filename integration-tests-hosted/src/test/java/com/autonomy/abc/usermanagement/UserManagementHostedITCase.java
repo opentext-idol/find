@@ -293,7 +293,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     private void waitForUserConfirmed(User user){
         new WebDriverWait(getDriver(),30).pollingEvery(10, TimeUnit.SECONDS).withMessage("User not showing as confirmed").until(new WaitForUserToBeConfirmed(user));
-        body = getBody();
     }
 
     private class WaitForUserToBeConfirmed implements ExpectedCondition<Boolean>{

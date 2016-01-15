@@ -644,7 +644,6 @@ public class KeywordsPageITCase extends ABCTestBase {
 			getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
 			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-			body = getBody();
 		} else {
 			getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		}

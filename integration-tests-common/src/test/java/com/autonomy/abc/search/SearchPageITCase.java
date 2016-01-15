@@ -831,7 +831,6 @@ public class SearchPageITCase extends ABCTestBase {
 		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		getDriver().navigate().refresh();
-		body = getBody();
 		final String newSearchText = getElementFactory().getTopNavBar().getSearchBarText();
 		assertThat("search bar should be blank on refresh of a page that isn't the search page", newSearchText, is(searchText));
 	}

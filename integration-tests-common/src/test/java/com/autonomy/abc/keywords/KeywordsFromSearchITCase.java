@@ -454,7 +454,6 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
 
         getDriver().navigate().refresh();
-        body = getBody();
 
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage = getElementFactory().getKeywordsPage();

@@ -85,7 +85,6 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
         try {
             indexService.setUpIndex(index);
-            body = getBody();
             checkForNotificationNoWait("Created a new index: " + index.getName());
         } finally {
             indexService.deleteIndex(index);
@@ -224,8 +223,6 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         getElementFactory().getSideNavBar().switchPage(page);
         getElementFactory().waitForPage(page);
         logger.info("on page " + page);
-
-        body = getBody();
 
         getElementFactory().getTopNavBar().openNotifications();
 

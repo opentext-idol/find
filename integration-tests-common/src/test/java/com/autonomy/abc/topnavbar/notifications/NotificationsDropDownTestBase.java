@@ -42,7 +42,6 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
     }
 
     protected void newBody(){
-        body = getBody();
         topNavBar = getElementFactory().getTopNavBar();
         sideNavBar = getElementFactory().getSideNavBar();
     }
