@@ -81,7 +81,7 @@ public class PromotionsITCase extends ABCTestBase {
 	public void testNewPromotionButtonLink() {
 		promotionsPage.promoteExistingButton().click();
 		verifyThat("correct URL", getDriver().getCurrentUrl().endsWith("promotions/new"));
-		verifyThat("correct title", getApplication().createAppBody(getDriver()).getTopNavBar(), containsText("Create New Promotion"));
+		verifyThat("correct title", getElementFactory().getTopNavBar(), containsText("Create New Promotion"));
 	}
 
 	// TODO: should work after CCUK-3394

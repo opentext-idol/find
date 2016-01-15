@@ -5,10 +5,9 @@ import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
-import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.SessionRegistry;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.login.SSOFailureException;
 import com.autonomy.abc.selenium.users.User;
@@ -43,8 +42,6 @@ public abstract class ABCTestBase {
 	private final SearchOptimizerApplication application;
 	private final SessionRegistry sessionRegistry;
 	private WebDriver driver;
-	// TODO: use getBody() instead
-	public AppBody body;
 	private ElementFactory elementFactory;
 	private User initialUser;
 	private String initialUrl;
@@ -84,16 +81,12 @@ public abstract class ABCTestBase {
 		getDriver().get(initialUrl);
 		getDriver().manage().window().maximize();
 
-		// no side/top bar until logged in
-		body = getApplication().createAppBody(driver, null, null);
 		elementFactory = getApplication().createElementFactory(driver);
 	}
 
 	protected void postLogin() throws Exception {
 		//Wait for page to load
 		Thread.sleep(2000);
-		// now has side/top bar
-		body = getBody();
 		// wait for the first page to load
 		getElementFactory().getPromotionsPage();
 	}
@@ -145,10 +138,6 @@ public abstract class ABCTestBase {
 
 	public ElementFactory getElementFactory() {
 		return elementFactory;
-	}
-
-	public AppBody getBody() {
-		return getApplication().createAppBody(driver);
 	}
 
 	protected final void loginAs(User user) {
