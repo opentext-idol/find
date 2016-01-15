@@ -17,7 +17,7 @@ public class SearchService extends ServiceBase {
     }
 
     public SearchPage search(final SearchQuery query) {
-        getBody().getTopNavBar().search(query.getSearchTerm());
+        getElementFactory().getTopNavBar().search(query.getSearchTerm());
         setSearchPage(getElementFactory().getSearchPage());
         searchPage.filterBy(new AggregateSearchFilter(query.getFilters()));
         return searchPage;

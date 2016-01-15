@@ -1,16 +1,15 @@
 package com.autonomy.abc.selenium.indexes;
 
+import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
@@ -18,27 +17,16 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndexService {
-    private SearchOptimizerApplication application;
-    private HSOElementFactory elementFactory;
+public class IndexService extends ServiceBase<HSOElementFactory> {
     private IndexesPage indexesPage;
 
     public IndexService(SearchOptimizerApplication application, HSOElementFactory elementFactory) {
-        this.application = application;
-        this.elementFactory = elementFactory;
-    }
-
-    protected WebDriver getDriver() {
-        return elementFactory.getDriver();
-    }
-
-    protected AppBody getBody() {
-        return application.createAppBody(getDriver());
+        super(application, elementFactory);
     }
 
     public IndexesPage goToIndexes() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        indexesPage = elementFactory.getIndexesPage();
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        indexesPage = getElementFactory().getIndexesPage();
         return indexesPage;
     }
 
@@ -46,15 +34,15 @@ public class IndexService {
         goToIndexes();
 
         indexesPage.findIndex(index.getName()).click();
-        return elementFactory.getIndexesDetailPage();
+        return getElementFactory().getIndexesDetailPage();
     }
 
     public IndexesPage setUpIndex(Index index) {
         goToIndexes();
         indexesPage.newIndexButton().click();
-        index.makeWizard(elementFactory.getCreateNewIndexPage()).apply();
+        index.makeWizard(getElementFactory().getCreateNewIndexPage()).apply();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));
-        indexesPage = elementFactory.getIndexesPage();
+        indexesPage = getElementFactory().getIndexesPage();
         return indexesPage;
     }
 

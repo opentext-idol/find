@@ -1,24 +1,20 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public abstract class UserService {
+public abstract class UserService<T extends ElementFactory> extends ServiceBase<T> {
 
-    private final SearchOptimizerApplication application;
-    private final ElementFactory elementFactory;
     protected UsersPage usersPage;
 
-    public UserService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        this.application = application;
-        this.elementFactory = elementFactory;
+    public UserService(SearchOptimizerApplication application, T elementFactory) {
+        super(application, elementFactory);
     }
 
     public abstract void deleteUser(User user);
@@ -26,22 +22,6 @@ public abstract class UserService {
     public abstract UsersPage goToUsers();
 
     public abstract User createNewUser(NewUser newUser, Role role);
-
-    protected WebDriver getDriver() {
-        return getElementFactory().getDriver();
-    }
-
-    protected ElementFactory getElementFactory() {
-        return elementFactory;
-    }
-
-    protected AppBody getBody() {
-        return application.createAppBody(getDriver());
-    }
-
-    protected SearchOptimizerApplication getApplication() {
-        return application;
-    }
 
     public UsersPage getUsersPage() {
         return usersPage;

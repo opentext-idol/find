@@ -13,20 +13,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSOUserService extends UserService {
+public class HSOUserService extends UserService<HSOElementFactory> {
     private HSOUsersPage usersPage;
-    private HSOElementFactory elementFactory;
 
     public HSOUserService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        super(application, elementFactory);
-        this.elementFactory = (HSOElementFactory) elementFactory;
+        super(application, (HSOElementFactory) elementFactory);
     }
 
     @Override
     public HSOUsersPage goToUsers() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.USERS);
-        setUsersPage(elementFactory.getUsersPage());
-        return elementFactory.getUsersPage();
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.USERS);
+        setUsersPage(getElementFactory().getUsersPage());
+        return getElementFactory().getUsersPage();
     }
 
     @Override
