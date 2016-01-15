@@ -2,7 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.element.Checkbox;
+import com.autonomy.abc.selenium.element.FindParametricCheckbox;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -108,9 +108,48 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    public void testFilteringByParametricValues(){
+        find.search("Alexis");
+        find.waitForParametricValuesToLoad();
+
+        int expectedResults = plainTextCheckbox().getResultsCount();
+        plainTextCheckbox().check();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        verifyParametricFields(plainTextCheckbox(), true, false, expectedResults);
+
+        expectedResults = plainTextCheckbox().getResultsCount();
+        simpsonsArchiveCheckbox().check();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        verifyParametricFields(plainTextCheckbox(), true, true, expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+
+        plainTextCheckbox().uncheck();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        expectedResults = simpsonsArchiveCheckbox().getResultsCount();
+        verifyParametricFields(simpsonsArchiveCheckbox(), false, true, expectedResults);
+    }
+
+    private void verifyParametricFields(FindParametricCheckbox checked, boolean plainChecked, boolean simpsonsChecked, int expectedResults){
+        int resultsTotal = results.getResultTitles().size();
+        int checkboxResults = checked.getResultsCount();
+
+        verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
+        verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
+        verifyThat(resultsTotal, is(Math.min(expectedResults, 30)));
+        verifyThat(checkboxResults, is(expectedResults));
+    }
+
+    private FindParametricCheckbox simpsonsArchiveCheckbox(){
+        return results.parametricTypeCheckbox("Source Connector", "SIMPSONSARCHIVE");
+    }
+
+    private FindParametricCheckbox plainTextCheckbox(){
+        return results.parametricTypeCheckbox("Content Type", "TEXT/PLAIN");
+    }
+
+    @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError()  {
         find.search("wolf");
-        Checkbox contentTypeCheckbox = results.contentTypeCheckbox("TEXT/HTML");
+        FindParametricCheckbox contentTypeCheckbox = results.parametricTypeCheckbox("Content Type","TEXT/HTML");
         contentTypeCheckbox.check();
         Waits.loadOrFadeWait();
         contentTypeCheckbox.uncheck();

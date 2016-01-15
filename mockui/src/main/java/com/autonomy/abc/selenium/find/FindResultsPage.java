@@ -109,32 +109,12 @@ public class FindResultsPage extends AppElement {
         return findElement(By.cssSelector("tr[data-id='" + date.toString().toLowerCase() + "']"));
     }
 
-    private enum ParametricContainers {
-        AUTHOR("author"),
-        CONTENTTYPE("content_type");
-
-        private final String dataField;
-
-        ParametricContainers(String dataField){
-            this.dataField = dataField;
-        }
-
-        public String getDataField(){
-            return dataField;
-        }
-    }
-
-    private WebElement parametricContainer(ParametricContainers param) {
-        return parametricContainer(param.dataField);
-    }
-
     public WebElement parametricContainer(String param){
         return findElement(By.className("parametric-container")).findElement(By.cssSelector("[data-field='" + param + "']"));
     }
 
-    public FindParametricCheckbox contentTypeCheckbox(String contentType){
-        waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.LEFT);
-        WebElement checkbox = parametricContainer(ParametricContainers.CONTENTTYPE).findElement(By.cssSelector("[data-value='" + contentType.toUpperCase() + "']"));
+    public FindParametricCheckbox parametricTypeCheckbox(String category, String field){
+        WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.toLowerCase().replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
         return new FindParametricCheckbox(checkbox, getDriver());
     }
 
