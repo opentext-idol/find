@@ -60,7 +60,7 @@ public class FindITCase extends HostedTestBase {
     private List<String> browserHandles;
     private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
     private final Matcher<String> noDocs = containsString(Errors.Search.NO_RESULTS);
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
     private KeywordService keywordService;
 
     public FindITCase(TestConfig config) {

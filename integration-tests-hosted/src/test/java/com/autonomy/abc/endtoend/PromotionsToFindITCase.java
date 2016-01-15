@@ -31,7 +31,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
     private List<String> browserHandles;
     private Find find;
     private FindResultsPage service;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
     private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
 
     public PromotionsToFindITCase(TestConfig config) {
