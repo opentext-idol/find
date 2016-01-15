@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import org.openqa.selenium.WebDriver;
 
+@Deprecated
 public abstract class AppBody {
 
     private final TopNavBar topNavBar;

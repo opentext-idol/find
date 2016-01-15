@@ -1,7 +1,9 @@
 package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
@@ -30,6 +32,11 @@ import org.openqa.selenium.WebDriver;
 public class HSOElementFactory extends ElementFactory {
     public HSOElementFactory(final WebDriver driver) {
         super(driver);
+    }
+
+    @Override
+    public TopNavBar getTopNavBar() {
+        return new HSOTopNavBar(getDriver());
     }
 
     @Override

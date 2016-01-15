@@ -11,8 +11,10 @@ import com.autonomy.abc.selenium.users.UserService;
 import org.openqa.selenium.WebDriver;
 
 public abstract class SearchOptimizerApplication {
+    @Deprecated
     public abstract AppBody createAppBody(WebDriver driver);
 
+    @Deprecated
     public abstract AppBody createAppBody(WebDriver driver, TopNavBar topNavBar, SideNavBar sideNavBar);
 
     public abstract ElementFactory createElementFactory(WebDriver driver);
