@@ -55,10 +55,9 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
     @Test
     public void testPromotionToFind() throws InterruptedException {
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
         AnalyticsPage analyticsPage = getElementFactory().getAnalyticsPage();
-        body = getBody();
 
         Term zeroSearch = analyticsPage.getMostPopularZeroSearchTerm();
         Term nonZero = analyticsPage.getMostPopularNonZeroSearchTerm();
@@ -72,8 +71,6 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         String synonym = zeroSearch.getTerm();
 
         promotionService.deleteAll();
-
-        body = getBody();
 
         List<String> createdPromotions = promotionService.setUpPromotion(new SpotlightPromotion(trigger), searchTerm, 3);
 
@@ -109,7 +106,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         promotionService.deleteAll();
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
         keywordsPage.deleteKeywords();
     }

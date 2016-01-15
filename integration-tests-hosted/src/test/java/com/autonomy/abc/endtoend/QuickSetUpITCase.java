@@ -41,7 +41,7 @@ public class QuickSetUpITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         promotionService.deleteAll();
 
-        body.getSideNavBar().switchPage(NavBarTabId.GETTING_STARTED);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.GETTING_STARTED);
         gettingStarted = getElementFactory().getGettingStartedPage();
         body = getBody();
     }

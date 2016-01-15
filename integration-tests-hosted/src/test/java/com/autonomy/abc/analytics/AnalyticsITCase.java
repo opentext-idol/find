@@ -32,9 +32,8 @@ public class AnalyticsITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = getElementFactory().getAnalyticsPage();
-        body = getBody();
     }
 
     @Ignore("TODO: how often do statistics update?")
@@ -46,12 +45,11 @@ public class AnalyticsITCase extends HostedTestBase {
 
         LOGGER.info(String.valueOf(mostPopularSearchCount));
 
-        body.getTopNavBar().search(mostPopular.getTerm());
+        getElementFactory().getTopNavBar().search(mostPopular.getTerm());
 
         getElementFactory().getSearchPage();
-        body = getBody();
 
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = getElementFactory().getAnalyticsPage();
 
         mostPopular = analytics.getMostPopularSearchTerm();
@@ -66,9 +64,7 @@ public class AnalyticsITCase extends HostedTestBase {
 
         getElementFactory().getSearchPage();
 
-        body = getBody();
-
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = getElementFactory().getAnalyticsPage();
 
         mostPopular = analytics.getMostPopularSearchTerm();
@@ -97,7 +93,6 @@ public class AnalyticsITCase extends HostedTestBase {
 
         getDriver().navigate().refresh();
 
-        body = getBody();
         analytics = getElementFactory().getAnalyticsPage();
 
         assertThat(analytics.getMostPopularSearchTerm().getSearchCount(),is(mostPopularSearchCount + 1));

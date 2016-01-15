@@ -128,7 +128,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         assertThat(createPromotionsPage.positionInputValue(), is(1));
 
         trySendKeysToPinPosition("1bad");
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         assertThat(createPromotionsPage.positionInputValue(), is(1));
 
         trySendKeysToPinPosition("1");
@@ -139,7 +139,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         ElementUtil.tryClickThenTryParentClick(createPromotionsPage.continueButton());
         Waits.loadOrFadeWait();
         assertThat(createPromotionsPage, hasTextThat(containsString(SearchTriggerStep.TITLE)));
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
     }
 
     private void trySendKeysToPinPosition(CharSequence... keys) {
@@ -287,11 +287,11 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     }
 
     private void toggleAndCancel() {
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         createPromotionsPage.cancelButton().click();
         verifyThat(getDriver().getCurrentUrl(), containsString("search/modified"));
         verifyThat(searchPage.promotedItemsCount(), is(1));
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
 //        searchPage.promoteTheseItemsButton().click();
         createPromotionsPage.waitForLoad();
@@ -352,8 +352,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
                 createPromotionsPage.addSpotlightPromotion(spotlightType, "MyFirstNotification" + spotlightType.replaceAll("\\s+", ""));
                 new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationAppears());
 
-                body.getTopNavBar().notificationsDropdown();
-                final NotificationsDropDown notifications = body.getTopNavBar().getNotifications();
+                getElementFactory().getTopNavBar().notificationsDropdown();
+                final NotificationsDropDown notifications = getElementFactory().getTopNavBar().getNotifications();
                 //Match regardless of case
                 verifyThat(notifications.notificationNumber(1).getText().toLowerCase(),
                         containsString(("Created a new spotlight promotion: Spotlight for: MyFirstNotification" + spotlightType.replaceAll("\\s+", "")).toLowerCase()));
@@ -363,7 +363,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 //            verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail/spotlight"));
             }
         } finally {
-            body.getTopNavBar().closeNotifications();
+            getElementFactory().getTopNavBar().closeNotifications();
         }
     }
 

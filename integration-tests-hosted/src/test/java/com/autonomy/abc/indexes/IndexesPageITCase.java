@@ -59,9 +59,8 @@ public class IndexesPageITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
         indexesPage = getElementFactory().getIndexesPage();
-        body = getBody();
         indexService = getApplication().createIndexService(getElementFactory());
     }
 
@@ -97,7 +96,7 @@ public class IndexesPageITCase extends HostedTestBase {
         }
 
         //Navigate to indexes
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Make sure default index is still there
@@ -108,7 +107,7 @@ public class IndexesPageITCase extends HostedTestBase {
     //Potentially should be in ConnectionsPageITCase
     //CSA1710
     public void testAttemptingToDeleteConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
-        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
@@ -130,7 +129,7 @@ public class IndexesPageITCase extends HostedTestBase {
         }
 
         //Navigate to Indexes
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Ensure the index wasn't deleted
@@ -195,8 +194,8 @@ public class IndexesPageITCase extends HostedTestBase {
             LOGGER.info("Timeout exception");
         }
 
-        body.getTopNavBar().notificationsDropdown();
-        for(String message : body.getTopNavBar().getNotifications().getAllNotificationMessages()){
+        getElementFactory().getTopNavBar().notificationsDropdown();
+        for(String message : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
             assertThat(message,not(errorMessage));
         }
     }
@@ -234,7 +233,6 @@ public class IndexesPageITCase extends HostedTestBase {
         getDriver().navigate().refresh();
 
         indexesPage = getElementFactory().getIndexesPage();
-        body = getBody();
 
         verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getName()));
     }

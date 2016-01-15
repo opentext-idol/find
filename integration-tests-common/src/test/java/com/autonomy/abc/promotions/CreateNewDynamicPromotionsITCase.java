@@ -191,7 +191,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
 
         dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         dynamicPromotionsPage.cancelButton().click();
         Waits.loadOrFadeWait();
         assertThat("Wizard has not cancelled", getDriver().getCurrentUrl(), not(containsString("dynamic")));
@@ -205,7 +205,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         dynamicPromotionsPage.continueButton().click();
         Waits.loadOrFadeWait();
 
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         dynamicPromotionsPage.cancelButton().click();
         Waits.loadOrFadeWait();
 
@@ -219,7 +219,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
         clickTopPromotions();
         dynamicPromotionsPage.continueButton().click();
         Waits.loadOrFadeWait();
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         dynamicPromotionsPage.cancelButton().click();
         Waits.loadOrFadeWait();
         assertThat("Wizard has not cancelled", getDriver().getCurrentUrl(), not(containsString("dynamic")));

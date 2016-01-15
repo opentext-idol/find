@@ -100,7 +100,6 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         indexService.goToIndexes();
 
         getDriver().navigate().refresh();
-        body = getBody();
 
         verifyThat(getElementFactory().getIndexesPage().getIndexDisplayNames(), not(hasItem(indexOne.getName())));
 

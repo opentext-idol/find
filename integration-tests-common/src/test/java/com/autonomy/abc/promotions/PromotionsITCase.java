@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.Pagination;
-import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -20,7 +19,6 @@ import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -49,7 +47,7 @@ public class PromotionsITCase extends ABCTestBase {
 	private PromotionsPage promotionsPage;
 	private PromotionsDetailPage promotionsDetailPage;
 	private SearchService searchService;
-	private PromotionService promotionService;
+	private PromotionService<?> promotionService;
 
 	@Before
 	public void setUp() throws MalformedURLException {

@@ -10,7 +10,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.Notification;
-import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
@@ -109,8 +109,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
             getElementFactory().getConnectionsPage();
 
-            body.getTopNavBar().notificationsDropdown();
-            notifications = body.getTopNavBar().getNotifications();
+            getElementFactory().getTopNavBar().notificationsDropdown();
+            notifications = getElementFactory().getTopNavBar().getNotifications();
 
             assertThat(notifications.notificationNumber(1).getText(), is(finishedNotification));
             assertThat(notifications.notificationNumber(2).getText(), is(startedNotification));
@@ -135,8 +135,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
         cs.deleteConnection(connector, true);        //Because of the WebDriverWait within no need to wait for the notifications
 
-        body.getTopNavBar().notificationsDropdown();
-        notifications = body.getTopNavBar().getNotifications();
+        getElementFactory().getTopNavBar().notificationsDropdown();
+        notifications = getElementFactory().getTopNavBar().getNotifications();
 
         assertThat(notifications.notificationNumber(1).getText(), is(successfulNotification));
         assertThat(notifications.notificationNumber(2).getText(), is(deletingNotification));
@@ -145,7 +145,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     //CSA-1698 || CSA-1687
     public void testUsernameShowsInNotifications() throws Exception {
-        body.getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
         String devUsername = getElementFactory().getDevsPage().getUsernames().get(0);
 
         KeywordService keywordService = new KeywordService(getApplication(), getElementFactory());
@@ -157,8 +157,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         try {
             keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
 
-            body.getTopNavBar().notificationsDropdown();
-            for (Notification notification : body.getTopNavBar().getNotifications().getAllNotifications()) {
+            getElementFactory().getTopNavBar().notificationsDropdown();
+            for (Notification notification : getElementFactory().getTopNavBar().getNotifications().getAllNotifications()) {
                 verifyThat(notification.getUsername(), is(devUsername));
             }
 
@@ -178,18 +178,18 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             loginTo(elementFactory.getLoginPage(), adminDriver, user);
 
             elementFactory.getPromotionsPage();
-            AppBody secondScreen = getApplication().createAppBody(adminDriver);
+            ElementFactory secondFactory = getApplication().createElementFactory(adminDriver);
 
             new KeywordService(getApplication(),elementFactory).addSynonymGroup("Messi", "Campbell");
 
-            verifyThat(body.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
-            secondScreen.getTopNavBar().notificationsDropdown();
-            verifyThat(secondScreen.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
+            verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
+            secondFactory.getTopNavBar().notificationsDropdown();
+            verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
 
             keywordService.addSynonymGroup("Joel", "Lionel");
 
-            verifyThat(body.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
-            verifyThat(secondScreen.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
+            verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
+            verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
 
         } finally {
             if(adminDriver != null) {
@@ -212,8 +212,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         keywordService.addBlacklistTerms("Shola", "Ameobi");
         keywordService.deleteAll(KeywordFilter.ALL);
 
-        body.getTopNavBar().notificationsDropdown();
-        List<Notification> notifications = body.getTopNavBar().getNotifications().getAllNotifications();
+        getElementFactory().getTopNavBar().notificationsDropdown();
+        List<Notification> notifications = getElementFactory().getTopNavBar().getNotifications().getAllNotifications();
 
         for(NavBarTabId page : Arrays.asList(NavBarTabId.ANALYTICS, NavBarTabId.CONNECTIONS, NavBarTabId.PROMOTIONS, NavBarTabId.KEYWORDS, NavBarTabId.USERS)){
             navigateAndVerifyNotifications(page, notifications);
@@ -221,14 +221,14 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     private void navigateAndVerifyNotifications(NavBarTabId page, List<Notification> notifications){
-        body.getSideNavBar().switchPage(page);
+        getElementFactory().getSideNavBar().switchPage(page);
         getElementFactory().waitForPage(page);
         logger.info("on page " + page);
 
         body = getBody();
 
-        body.getTopNavBar().openNotifications();
+        getElementFactory().getTopNavBar().openNotifications();
 
-        verifyThat(body.getTopNavBar().getNotifications().getAllNotifications(), contains(notifications.toArray()));
+        verifyThat(getElementFactory().getTopNavBar().getNotifications().getAllNotifications(), contains(notifications.toArray()));
     }
 }

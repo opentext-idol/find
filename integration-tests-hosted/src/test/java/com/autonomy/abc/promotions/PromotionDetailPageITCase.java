@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.is;
 public class PromotionDetailPageITCase extends ABCTestBase {
 
     private SearchService searchService;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
     private PromotionsDetailPage promotionsDetailPage;
 
 
@@ -88,11 +88,11 @@ public class PromotionDetailPageITCase extends ABCTestBase {
         String[] triggers = {"HC", "Sochi", "CKSA", "SKA", "Dinamo", "Riga"};
         promotionsDetailPage.getTriggerForm().addTrigger(StringUtils.join(triggers, ' '));
 
-        body.getTopNavBar().notificationsDropdown();
+        getElementFactory().getTopNavBar().notificationsDropdown();
 
-        verifyThat(body.getTopNavBar().getNotifications().getAllNotificationMessages(), hasItem("Edited a spotlight promotion"));
+        verifyThat(getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages(), hasItem("Edited a spotlight promotion"));
 
-        for(String notification : body.getTopNavBar().getNotifications().getAllNotificationMessages()){
+        for(String notification : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
             for(String trigger : triggers){
                 verifyThat(notification, not(containsString(trigger)));
             }

@@ -47,7 +47,6 @@ public class IndexDisplayNameITCase extends HostedTestBase {
         indexService = getApplication().createIndexService(getElementFactory());
         testIndex = new Index("thisisabittooyobbish5me","D1spl4y Nam3 AbC 123");
         indexesPage = indexService.setUpIndex(testIndex);
-        body = getBody();
     }
 
     @After
@@ -62,13 +61,13 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
     @Test
     public void testSearchFilter(){
-        body.getTopNavBar().search("Crickets Throw Their Voices");
+        getElementFactory().getTopNavBar().search("Crickets Throw Their Voices");
         verifyIndexOrDefault(getElementFactory().getSearchPage().indexesTree().privateIndexes());
     }
 
     @Test
     public void testPieChartLink(){
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         getElementFactory().getAnalyticsPage().indexSizeChart().click();
 
         verifyThat(PageUtil.getWrapperContent(getDriver()), not(containsText(Errors.Index.INVALID_INDEX)));
@@ -103,7 +102,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     public void testConnectionsIndex(){
         Connector connector = new WebConnector("http://www.bbc.co.uk", "bbc", testIndex).withDuration(60);
 
-        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         getElementFactory().getConnectionsPage().newConnectionButton().click();
 
         NewConnectionPage newConnectionPage = getElementFactory().getNewConnectionPage();

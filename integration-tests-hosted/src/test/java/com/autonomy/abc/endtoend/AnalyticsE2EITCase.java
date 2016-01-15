@@ -129,7 +129,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     }
 
     private void deleteAllKeywords() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         getElementFactory().getKeywordsPage().deleteKeywords();
     }
 
@@ -144,7 +144,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     }
 
     private void goToAnalytics() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analyticsPage = getElementFactory().getAnalyticsPage();
     }
 

@@ -51,7 +51,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
     @Before
     public void setUp() {
         promotionService = getApplication().createPromotionService(getElementFactory());
-        body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         promotionsPage = getElementFactory().getPromotionsPage();
         promotionService.deleteAll();
         searchPage = promotionService.setUpStaticPromotion(promotion);

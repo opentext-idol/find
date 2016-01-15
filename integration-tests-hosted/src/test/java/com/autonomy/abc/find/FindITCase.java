@@ -173,7 +173,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testSortByRelevance() {
         getDriver().switchTo().window(browserHandles.get(0));
-        body.getTopNavBar().search("stars bbc");
+        getElementFactory().getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
@@ -189,7 +189,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testSortByDate(){
         getDriver().switchTo().window(browserHandles.get(0));
-        body.getTopNavBar().search("stars bbc");
+        getElementFactory().getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.sortBy(SearchBase.Sort.DATE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);

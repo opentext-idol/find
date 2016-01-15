@@ -34,7 +34,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
 
         connectionsPage = getElementFactory().getConnectionsPage();
         connectionsPage.newConnectionButton().click();
