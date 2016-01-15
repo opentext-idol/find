@@ -1,12 +1,11 @@
 define([
-    'find/app/model/saved-search-collection',
     'backbone',
-    'underscore'
-], function(SavedSearchModel, Backbone, _) {
+    'find/app/model/saved-searches/saved-search-model'
+], function(Backbone, SavedSearchModel) {
 
     return Backbone.Collection.extend({
+        url: '../api/public/saved-search',
         model: SavedSearchModel
+    });
 
-
-    })
 });

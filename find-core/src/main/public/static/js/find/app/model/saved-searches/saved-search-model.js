@@ -1,24 +1,31 @@
 define([
-    'backbone'
-], function(Backbone) {
+    'backbone',
+    'moment',
+    'underscore'
+], function(Backbone, moment, _) {
+
+    var DATE_FIELDS = [
+        'minDate',
+        'maxDate',
+        'dateCreated',
+        'dateModified'
+    ];
 
     return Backbone.Model.extend({
         defaults: {
             queryText: '',
+            title: '',
             indexes: [],
-            parametricValues: {},
-            minDate: undefined,
-            maxDate: undefined
+            parametricValues: []
         },
 
-        getSearch: function() {
-            return {
-                queryText: this.queryText,
-                indexes: this.indexes,
-                fieldText: this.parametricValues.toFieldText(),
-                minDate: undefined,
-                maxDate: undefined
-            }
+        parse: function(response) {
+            var dateAttributes = _.mapObject(_.pick(response, DATE_FIELDS), function(value) {
+                return value && moment(value);
+            });
+
+            return _.defaults(dateAttributes, response);
         }
     });
+
 });
