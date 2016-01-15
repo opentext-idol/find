@@ -17,4 +17,9 @@ public class SOCheckbox extends Checkbox {
     public boolean isChecked() {
         return box.getAttribute("class").contains("checked");
     }
+
+    public int getResultsCount() {
+        String spanResultCount = findElement(By.tagName("span")).getText().split(" ")[1];
+        return Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
+    }
 }

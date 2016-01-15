@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Pagination;
+import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
@@ -9,7 +10,10 @@ import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -301,26 +305,9 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	/* parametric values */
-	private WebElement contentTypeDiv() {
-		return findElement(By.cssSelector("[data-field='content_type']"));
-	}
-
-	/**
-	 * TODO - if possible take out
-	 * @param contentType		String to filter by
-	 * @return					Number of results in filtered search
-	 */
-	public int filterByContentType(String contentType) {
-		WebElement li = contentTypeDiv().findElement(By.cssSelector("[data-value='" + contentType + "']"));
-
-		if(!li.isDisplayed()){
-			openParametricValuesList();
-		}
-
-		String spanResultCount = li.findElement(By.tagName("span")).getText().split(" ")[1];
-		int resultCount = Integer.parseInt(spanResultCount.substring(1, spanResultCount.length() - 1));
-		li.findElement(By.tagName("ins")).click();
-		return resultCount;
+	public SOCheckbox parametricTypeCheckbox(String category, String field) {
+		WebElement checkbox = findElement(By.cssSelector("[data-field='" + category.toLowerCase().replace(" ","_") + "'] [data-value='" + field.toUpperCase() + "']"));
+		return new SOCheckbox(checkbox, getDriver());
 	}
 
 	public void openParametricValuesList() {

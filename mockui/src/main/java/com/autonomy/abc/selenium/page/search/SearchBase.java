@@ -150,7 +150,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	public void switchResultsPage(Pagination pagination) {
-		resultsPaginationButton(pagination).click();
+		ElementUtil.scrollIntoViewAndClick(resultsPaginationButton(pagination), getDriver());
 		waitForSearchLoadIndicatorToDisappear();
 	}
 

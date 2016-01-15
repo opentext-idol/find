@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
+import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
@@ -29,6 +30,7 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -942,23 +944,51 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	public void testContentType(){
+	public void testFilteringByParametricValues(){
 		search("Alexis");
 
 		searchPage.openParametricValuesList();
-		Waits.loadOrFadeWait();
 		searchPage.waitForParametricValuesToLoad();
 
-		int results = searchPage.filterByContentType("TEXT/PLAIN");
-		Waits.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
+		plainTextCheckbox().check();
+		goToLastPage();
+		verifyParametricFields(plainTextCheckbox(), true, false);
 
-		assertThat(searchPage.getHeadingResultsCount(), is(results));
+		simpsonsArchiveCheckbox().check();
+		goToLastPage();
+		verifyParametricFields(plainTextCheckbox(), true, true);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
 
-		searchPage.switchResultsPage(Pagination.LAST);
-		int resultsTotal = (searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE;
-		resultsTotal += searchPage.visibleDocumentsCount();
-		assertThat(resultsTotal, is(results));
+		plainTextCheckbox().uncheck();
+		goToLastPage();
+		verifyParametricFields(simpsonsArchiveCheckbox(), false, true);
+	}
+
+	private void verifyParametricFields(SOCheckbox checked, boolean plainChecked, boolean simpsonsChecked){
+		int resultsTotal = ((searchPage.getCurrentPageNumber() - 1) * SearchPage.RESULTS_PER_PAGE) + searchPage.visibleDocumentsCount();
+		int expectedResults = checked.getResultsCount();
+
+		verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
+		verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
+		verifyThat(searchPage.getHeadingResultsCount(), is(expectedResults));
+		verifyThat(resultsTotal, is(expectedResults));
+	}
+
+	private void goToLastPage(){
+		try {
+			Waits.loadOrFadeWait();
+			searchPage.waitForSearchLoadIndicatorToDisappear();
+			searchPage.switchResultsPage(Pagination.LAST);
+		} catch (WebDriverException e) {
+			/* Already on last page */
+		}
+	}
+
+	private SOCheckbox simpsonsArchiveCheckbox(){
+		return searchPage.parametricTypeCheckbox("Source Connector", "SIMPSONSARCHIVE");
+	}
+
+	private SOCheckbox plainTextCheckbox(){
+		return searchPage.parametricTypeCheckbox("Content Type", "TEXT/PLAIN");
 	}
 
 	@Test
