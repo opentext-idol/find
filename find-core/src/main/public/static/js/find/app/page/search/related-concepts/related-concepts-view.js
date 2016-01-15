@@ -62,14 +62,19 @@ define([
         events: {
             'click .entity-text' : function(e) {
                 var $target = $(e.target);
-                var oldQueryText = this.queryModel.get('queryText');
-                var queryText = oldQueryText.concat(" AND ").concat($target.attr('data-title'));
-                this.queryModel.set('queryText', queryText);
+                var queryText = $target.attr('data-title');
+
+                var concepts = this.queryTextModel.get('relatedConcepts');
+
+                // TODO: what if it's already in the array?
+                var newConcepts = _.union(concepts, [queryText]);
+                this.queryTextModel.set('relatedConcepts', newConcepts);
             }
         },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
+            this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
 

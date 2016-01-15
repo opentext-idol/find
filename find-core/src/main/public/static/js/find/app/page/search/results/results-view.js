@@ -95,7 +95,7 @@ define([
             'click .entity-text': function(e) {
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
-                this.queryModel.set('queryText', queryText);
+                this.queryTextModel.set('inputText', queryText);
             }
         },
 
@@ -103,6 +103,7 @@ define([
             _.bindAll(this, 'handlePopover');
 
             this.queryModel = options.queryModel;
+            this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
 
