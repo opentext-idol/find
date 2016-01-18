@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.page.promotions;
 
-import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -26,21 +25,6 @@ public abstract class CreateNewPromotionsPage extends CreateNewPromotionsBase {
 
 	public int positionInputValue() {
 		return Integer.parseInt(findElement(By.cssSelector(".position")).getText());
-	}
-
-	@Deprecated
-	public void navigateToTriggers() {
-		pinToPosition().click();
-		continueButton().click();
-		Waits.loadOrFadeWait();
-		selectPositionPlusButton().click();
-		continueButton().click();
-		Waits.loadOrFadeWait();
-	}
-
-	public void typePositionNumber(final int positionNumber) {
-		pinToPositionInput().clear();
-		pinToPositionInput().sendKeys(String.valueOf(positionNumber));
 	}
 
 	public WebElement pinToPositionInput() {

@@ -148,7 +148,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         analyticsPage = getElementFactory().getAnalyticsPage();
     }
 
-    private void addSynonymGroup(Term... terms) throws InterruptedException {
+    private void addSynonymGroup(Term... terms) {
         List<String> synonyms = new ArrayList<>();
         for (Term term : terms) {
             synonyms.add(term.getTerm());

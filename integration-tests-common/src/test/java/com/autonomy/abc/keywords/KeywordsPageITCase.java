@@ -43,7 +43,6 @@ import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsPageITCase extends ABCTestBase {
-	private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsPageITCase.class);
 	private KeywordsPage keywordsPage;
 	private CreateNewKeywordsPage createKeywordsPage;
 	private SearchPage searchPage;
