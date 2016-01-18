@@ -11,10 +11,10 @@ import com.autonomy.abc.selenium.users.HSODeveloperService;
 import com.autonomy.abc.selenium.users.HSOUserService;
 import org.openqa.selenium.WebDriver;
 
-public class HSOApplication extends SearchOptimizerApplication {
+public class HSOApplication extends SearchOptimizerApplication<HSOElementFactory> {
 
     @Override
-    public ElementFactory createElementFactory(WebDriver driver) {
+    public HSOElementFactory createElementFactory(WebDriver driver) {
         return new HSOElementFactory(driver);
     }
 

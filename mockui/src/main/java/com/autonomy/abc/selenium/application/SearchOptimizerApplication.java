@@ -6,10 +6,8 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.users.UserService;
-import org.openqa.selenium.WebDriver;
 
-public abstract class SearchOptimizerApplication {
-    public abstract ElementFactory createElementFactory(WebDriver driver);
+public abstract class SearchOptimizerApplication<T extends ElementFactory> implements Application<T> {
 
     public abstract PromotionService createPromotionService(ElementFactory elementFactory);
 
