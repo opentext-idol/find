@@ -64,11 +64,18 @@ define([
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
 
-                var concepts = this.queryTextModel.get('relatedConcepts');
+                if (this.queryTextModel.get('inputText') == ''){
 
-                // TODO: what if it's already in the array?
-                var newConcepts = _.union(concepts, [queryText]);
-                this.queryTextModel.set('relatedConcepts', newConcepts);
+                    this.queryTextModel.set('inputText', queryText);
+
+                } else {
+
+                    var concepts = this.queryTextModel.get('relatedConcepts');
+
+                    // TODO: what if it's already in the array?
+                    var newConcepts = _.union(concepts, [queryText]);
+                    this.queryTextModel.set('relatedConcepts', newConcepts);
+                }
             }
         },
 
