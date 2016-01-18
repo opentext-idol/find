@@ -21,14 +21,12 @@ define([
             return "(" + this.get('inputText') + ") AND " + this.get('relatedConcepts').join(' AND ');
         },
 
-        setInputText : function(attributes, options) {
-
-            if (attributes.hasOwnProperty('inputText')){
+        setInputText: function(attributes) {
+            if (_.has(attributes, 'inputText')){
                 attributes.inputText = attributes.inputText.trim();
             }
 
-            return Backbone.Model.prototype.set.call(this, attributes, options);
-
+            return Backbone.Model.prototype.set.call(this, attributes);
         }
     });
 

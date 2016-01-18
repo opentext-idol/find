@@ -9,9 +9,9 @@ define([
 ], function(Backbone, $, _, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
-    var relatedConceptsTemplate = _.template('<span class="selected-related-concepts" data-id="<%-concept%>"><%-concept%>' +
-        '<i class="clickable hp-icon hp-fw hp-close r-concepts-remove-icon">' +
-        '</i></span> ')
+    var relatedConceptsTemplate = _.template('<span class="selected-related-concepts" data-id="<%-concept%>"><%-concept%> ' +
+        '<i class="clickable hp-icon hp-fw hp-close concepts-remove-icon"></i>' +
+        '</span> ');
 
     return Backbone.View.extend({
         events: {
@@ -23,11 +23,11 @@ define([
             'typeahead:select': function() {
                 this.search(this.$input.typeahead('val'));
             },
-            'click .r-concepts-remove-icon': function(e) {
+            'click .concepts-remove-icon': function(e) {
                 var id = $(e.currentTarget).closest("span").attr('data-id');
 
                 this.removeRelatedConcept(id);
-            },
+            }
         },
 
         initialize: function(options) {
@@ -40,11 +40,13 @@ define([
             this.listenTo(this.queryTextModel, 'change:relatedConcepts', this.updateRelatedConcepts);
 
             this.search = _.debounce(function(query) {
+                // TODO: thse branches shouldn't be the same - refresh needs to be brought back
                 if (query === options.queryTextModel.get('inputText')) {
-                    options.queryTextModel.setInputText('inputText',query);
+                    options.queryTextModel.setInputText({
+                        inputText: query
+                    });
                 } else {
                     options.queryTextModel.setInputText({
-                        autoCorrect: true,
                         inputText: query
                     });
                 }

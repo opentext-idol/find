@@ -37,7 +37,10 @@ define([
             this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
 
             this.listenTo(this.queryTextModel, 'change', function() {
-                this.queryModel.set('queryText', this.queryTextModel.makeQueryText());
+                this.queryModel.set({
+                    autoCorrect: true,
+                    queryText: this.queryTextModel.makeQueryText()
+                });
             });
 
             this.inputView = new InputView({
@@ -74,9 +77,8 @@ define([
             }
 
             var relatedConcepts = this.queryTextModel.get('relatedConcepts');
-            var rConceptsWithSlashes = relatedConcepts.join('/');
 
-            return inputQuery + rConceptsWithSlashes;
+            return inputQuery + relatedConcepts.join('/');
         },
 
         expandedState: function() {

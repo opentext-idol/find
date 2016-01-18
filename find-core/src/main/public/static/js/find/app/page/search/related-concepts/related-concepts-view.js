@@ -64,15 +64,11 @@ define([
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
 
-                if (this.queryTextModel.get('inputText') == ''){
-
+                if (this.queryTextModel.get('inputText') === ''){
                     this.queryTextModel.set('inputText', queryText);
-
                 } else {
-
                     var concepts = this.queryTextModel.get('relatedConcepts');
 
-                    // TODO: what if it's already in the array?
                     var newConcepts = _.union(concepts, [queryText]);
                     this.queryTextModel.set('relatedConcepts', newConcepts);
                 }
