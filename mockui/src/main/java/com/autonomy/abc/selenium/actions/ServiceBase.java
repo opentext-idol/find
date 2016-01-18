@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.actions;
 
-import com.autonomy.abc.selenium.config.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import org.openqa.selenium.WebDriver;
 

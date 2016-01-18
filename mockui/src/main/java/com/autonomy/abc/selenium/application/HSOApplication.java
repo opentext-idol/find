@@ -1,5 +1,7 @@
-package com.autonomy.abc.selenium.config;
+package com.autonomy.abc.selenium.application;
 
+import com.autonomy.abc.selenium.config.HSOUserConfigParser;
+import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.ElementFactory;

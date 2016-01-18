@@ -1,5 +1,6 @@
-package com.autonomy.abc.selenium.config;
+package com.autonomy.abc.selenium.application;
 
+import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;

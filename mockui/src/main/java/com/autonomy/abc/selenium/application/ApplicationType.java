@@ -1,11 +1,11 @@
-package com.autonomy.abc.selenium.config;
+package com.autonomy.abc.selenium.application;
 
 // could remove this to fully separate hosted/on-prem, but left for convenience
 // allows shared tests to do a simple "if hosted then x else y"
 // instead of excessively complicated polymorphic method calls
 public enum ApplicationType {
-	ON_PREM("On Premise", "com.autonomy.abc.selenium.config.OPApplication"),
-	HOSTED("Hosted", "com.autonomy.abc.selenium.config.HSOApplication");
+	ON_PREM("On Premise", "com.autonomy.abc.selenium.application.OPISOApplication"),
+	HOSTED("Hosted", "com.autonomy.abc.selenium.application.HSOApplication");
 
 	private final String name;
 	private final String className;
