@@ -8,6 +8,7 @@ import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,6 +76,31 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     }
 
     @Test
+    //CSA-2042 - test index name validation with character length grater than 100
+    public void testIndexNameFieldMaxCharacterLength(){
+        connectorIndexStepTab.inputIndexName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
+
+        WebElement errorMessage = getMaxLengthErrorMsg(connectorIndexStepTab.indexNameInputElement());
+        WebElement indexNameFormGroup = inputFormGroup(connectorIndexStepTab.indexNameInputElement());
+        verifyThat(indexNameFormGroup, hasClass("has-error"));
+        verifyThat(errorMessage, displayed());
+        verifyThat(errorMessage, containsText(Errors.Index.MAX_CHAR_LENGTH));
+    }
+
+    @Test
+    //CSA-2042 - test index name validation with character length grater than 100
+    public void testDisplayNameFieldMaxCharacterLength(){
+        connectorIndexStepTab.inputIndexName("name");
+        connectorIndexStepTab.inputIndexDisplayName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
+
+        WebElement errorMessage = getMaxLengthErrorMsg(connectorIndexStepTab.indexDisplayNameInputElement());
+        WebElement displayNameFormGroup = inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
+        verifyThat(displayNameFormGroup, hasClass("has-error"));
+        verifyThat(errorMessage, displayed());
+        verifyThat(errorMessage, containsText(Errors.Index.MAX_CHAR_LENGTH));
+    }
+
+    @Test
     //CSA-949 - test the input validator which supports only A-Za-Z0-9, space and underscore characters - should be valid
     public void testIndexDisplayNameValidatorsPass(){
         connectorIndexStepTab.inputIndexName("name");
@@ -89,6 +115,10 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
 
     private WebElement configErrorMessage(WebElement element){
         return ElementUtil.ancestor(element, 1).findElement(By.tagName("p"));
+    }
+
+    private WebElement getMaxLengthErrorMsg(WebElement element){
+        return ElementUtil.ancestor(element, 1).findElements(By.tagName("p")).get(2);
     }
 
     private WebElement inputFormGroup(WebElement element){
