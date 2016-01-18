@@ -4,19 +4,23 @@
  */
 
 define([
-    'find/public/pages',
+    'find/app/find-pages',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'i18n!find/nls/bundle'
-], function(Pages, FindSearch, AboutPage, i18n) {
+], function(FindPages, FindSearch, AboutPage, i18n) {
     'use strict';
 
-    return Pages.extend({
-        initializePages: function() {
-            Pages.prototype.initializePages.call(this);
+    return FindPages.extend({
 
+        initializePages: function() {
             this.pages = this.pages.concat([
                 {
+                    constructor: FindSearch,
+                    icon: 'hp-icon hp-fw hp-search',
+                    pageName: 'search',
+                    title: i18n['app.search']
+                }, {
                     constructor: AboutPage,
                     icon: 'hp-icon hp-fw hp-info',
                     pageName: 'about',
