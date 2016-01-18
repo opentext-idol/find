@@ -19,6 +19,7 @@ public class Session implements Iterable<Window> {
         String newHandle = DriverUtil.createAndListWindowHandles(driver).get(1);
         Window newWindow = registerWindow(newHandle);
         newWindow.goTo(url);
+        driver.manage().window().maximize();
         return newWindow;
     }
 

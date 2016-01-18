@@ -34,7 +34,7 @@ public abstract class SearchOptimizerApplication<T extends ElementFactory> imple
         return new SearchService(this, elementFactory);
     }
 
-    public static SearchOptimizerApplication ofType(ApplicationType type) {
+    public static SearchOptimizerApplication<?> ofType(ApplicationType type) {
         return FACTORY_MAP.get(type).create();
     }
 }

@@ -39,7 +39,7 @@ public abstract class ABCTestBase {
 	private final TestState testState = TestState.get();
 	protected final TestConfig config;
 
-	private final SearchOptimizerApplication application;
+	private final SearchOptimizerApplication<?> application;
 	private final SessionRegistry sessionRegistry;
 	private WebDriver driver;
 	private ElementFactory elementFactory;
@@ -132,7 +132,7 @@ public abstract class ABCTestBase {
 		return config;
 	}
 
-	public SearchOptimizerApplication getApplication() {
+	public SearchOptimizerApplication<?> getApplication() {
 		return application;
 	}
 
