@@ -16,6 +16,8 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class IndexStepITCase extends ConnectorTypeStepBase {
@@ -51,12 +53,10 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     public void testIndexNameValidatorsFail(){
         connectorIndexStepTab.inputIndexName("name With UpperCase");
 
-        String error = "Please enter a valid name that contains only lowercase alphanumeric characters";
-        WebElement errorMessage = connectorIndexStepTab.configErrorMessage(connectorIndexStepTab.indexNameInputElement());
-        WebElement displayNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexNameInputElement());
-        verifyThat(displayNameFormGroup, hasClass("has-error"));
-        verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(error));
+        String errorMessage = connectorIndexStepTab.indexNameInput().getErrorMessage();
+        WebElement indexNameFormGroup = connectorIndexStepTab.indexNameInput().formGroup();
+        verifyThat(indexNameFormGroup, hasClass("has-error"));
+        verifyThat(errorMessage, is(Errors.Index.INDEX_NAME));
     }
 
     @Test
@@ -64,12 +64,10 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         connectorIndexStepTab.inputIndexName("name");
 
         connectorIndexStepTab.inputIndexDisplayName("displayName #$%");
-        String error = "Please enter a valid name that contains only alphanumeric characters";
-        WebElement errorMessage = connectorIndexStepTab.configErrorMessage(connectorIndexStepTab.indexDisplayNameInputElement());
-        WebElement displayNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
+        String errorMessage = connectorIndexStepTab.indexDisplayNameInput().getErrorMessage();
+        WebElement displayNameFormGroup = connectorIndexStepTab.indexDisplayNameInput().formGroup();
         verifyThat(displayNameFormGroup, hasClass("has-error"));
-        verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(error));
+        verifyThat(errorMessage, is(Errors.Index.DISPLAY_NAME));
     }
 
     @Test
@@ -77,11 +75,10 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     public void testIndexNameFieldMaxCharacterLength(){
         connectorIndexStepTab.inputIndexName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
 
-        WebElement errorMessage = connectorIndexStepTab.getMaxLengthErrorMsg(connectorIndexStepTab.indexNameInputElement());
-        WebElement indexNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexNameInputElement());
+        String errorMessage = connectorIndexStepTab.indexNameInput().getErrorMessage();
+        WebElement indexNameFormGroup = connectorIndexStepTab.indexNameInput().formGroup();
         verifyThat(indexNameFormGroup, hasClass("has-error"));
-        verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(Errors.Index.MAX_CHAR_LENGTH));
+        verifyThat(errorMessage, is(Errors.Index.MAX_CHAR_LENGTH));
     }
 
     @Test
@@ -90,11 +87,10 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         connectorIndexStepTab.inputIndexName("name");
         connectorIndexStepTab.inputIndexDisplayName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
 
-        WebElement errorMessage = connectorIndexStepTab.getMaxLengthErrorMsg(connectorIndexStepTab.indexDisplayNameInputElement());
-        WebElement displayNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
+        String errorMessage = connectorIndexStepTab.indexDisplayNameInput().getErrorMessage();
+        WebElement displayNameFormGroup = connectorIndexStepTab.indexDisplayNameInput().formGroup();
         verifyThat(displayNameFormGroup, hasClass("has-error"));
-        verifyThat(errorMessage, displayed());
-        verifyThat(errorMessage, containsText(Errors.Index.MAX_CHAR_LENGTH));
+        verifyThat(errorMessage, is(Errors.Index.MAX_CHAR_LENGTH));
     }
 
     @Test
@@ -102,9 +98,9 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     public void testIndexDisplayNameValidatorsPass(){
         connectorIndexStepTab.inputIndexName("name");
         connectorIndexStepTab.inputIndexDisplayName("displayName 7894");
-        WebElement errorMessage = connectorIndexStepTab.configErrorMessage(connectorIndexStepTab.indexDisplayNameInputElement());
-        verifyThat(errorMessage, not(displayed()));
-        WebElement displayNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
+        String errorMessage = connectorIndexStepTab.indexDisplayNameInput().getErrorMessage();
+        verifyThat(errorMessage, isEmptyOrNullString());
+        WebElement displayNameFormGroup = connectorIndexStepTab.indexDisplayNameInput().formGroup();
 
         verifyThat(displayNameFormGroup, not(hasClass("has-error")));
 

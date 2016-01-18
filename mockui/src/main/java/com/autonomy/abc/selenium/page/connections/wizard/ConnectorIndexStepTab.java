@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.connections.wizard;
 
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
@@ -23,20 +24,20 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         return new ConnectorIndexStepTab(driver);
     }
 
-    public WebElement indexNameInputElement(){
-        return findElement(By.cssSelector("[name='indexName']"));
+    public FormInput indexNameInput(){
+        return new FormInput(findElement(By.cssSelector("[name='indexName']")), getDriver());
     }
 
-    public WebElement indexDisplayNameInputElement(){
-        return findElement(By.cssSelector("[name='displayName']"));
+    public FormInput indexDisplayNameInput(){
+        return new FormInput(findElement(By.cssSelector("[name='displayName']")), getDriver());
     }
 
     public void inputIndexName(String name){
-        indexNameInputElement().sendKeys(name);
+        indexNameInput().setValue(name);
     }
 
     public void inputIndexDisplayName(String displayName){
-        indexDisplayNameInputElement().sendKeys(displayName);
+        indexDisplayNameInput().setValue(displayName);
     }
 
     public WebElement selectIndexButton(){
