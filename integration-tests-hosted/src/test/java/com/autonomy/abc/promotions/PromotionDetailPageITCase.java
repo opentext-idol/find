@@ -49,8 +49,10 @@ public class PromotionDetailPageITCase extends ABCTestBase {
 
         SearchPage searchPage = searchService.search(new SearchQuery(updateQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)));
         final String updatePromotedResult = searchPage.searchResult(1).getText();
-        final String initialPromotedResult = promotionService.setUpPromotion(new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger), new SearchQuery(initialQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)), 1).get(0);
+        Promotion promotion = new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger);
+        final String initialPromotedResult = promotionService.setUpPromotion(promotion, new SearchQuery(initialQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)), 1).get(0);
 
+        promotionsDetailPage = promotionService.goToDetails(promotion);
         PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
         triggerForm.addTrigger(updateTrigger);
         triggerForm.removeTrigger(initialTrigger);

@@ -390,8 +390,7 @@ public class PromotionsITCase extends ABCTestBase {
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
-//		promotionService.delete("woof");
-		secondPromotionsPage.deletePromotion("woof");
+		promotionService.delete("woof");
 
 		getDriver().switchTo().window(browserHandles.get(0));
 		verifyThat(promotionsPage, containsText("There are no promotions..."));

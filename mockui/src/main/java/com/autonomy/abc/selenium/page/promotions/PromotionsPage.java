@@ -39,21 +39,6 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return promotion.findElement(By.className("promotion-delete"));
 	}
 
-	@Deprecated
-	public void deletePromotion(String promotionContains){
-		deletePromotion(getPromotionLinkWithTitleContaining(promotionContains));
-	}
-
-	@Deprecated
-	private void deletePromotion(WebElement promotion){
-		WebElement deleteButton = promotion.findElement(By.className("promotion-delete"));
-		deleteButton.click();
-		Waits.loadOrFadeWait();
-		modalClick();
-		Waits.loadOrFadeWait();
-		new WebDriverWait(getDriver(),20).until(ExpectedConditions.stalenessOf(deleteButton));
-	}
-
 	private void modalClick() {
 		getDriver().findElement(By.className("modal-action-button")).click();
 	}
@@ -72,22 +57,6 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 			promotionTitles.add(promotion.findElement(By.tagName("h3")).getText());
 		}
 		return promotionTitles;
-	}
-
-	@Deprecated
-	public void deleteAllPromotions() {
-		List<WebElement> promotions = promotionsList();
-
-		for(WebElement promotion : promotions){
-			deletePromotion(promotion);
-		}
-
-		new WebDriverWait(getDriver(),Math.max(promotions.size() * 10,30)).until(new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver driver) {
-				return findElements(By.className("promotion-delete")).size() == 0;
-			}
-		});
 	}
 
 	@Deprecated
