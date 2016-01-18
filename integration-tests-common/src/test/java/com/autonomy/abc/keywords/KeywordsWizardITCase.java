@@ -3,7 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
@@ -146,7 +146,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("search for 1 synonym after creating synonym group", searchTerms, hasSize(1));
         assertThat(searchTerms.get(0), isIn(Arrays.asList("stuff", "horse", "pony", "things")));
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
         keywordsPage.filterView(KeywordFilter.ALL);
 
@@ -161,7 +161,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
     public void testWizardCancelButtonsWorksAfterClickingTheNavBarToggleButton() {
         assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
 
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         createKeywordsPage.cancelWizardButton().click();
         assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
@@ -172,7 +172,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         createKeywordsPage.cancelWizardButton().click();
         assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
 
@@ -183,7 +183,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
         createKeywordsPage.continueWizardButton().click();
         Waits.loadOrFadeWait();
-        body.getSideNavBar().toggle();
+        getElementFactory().getSideNavBar().toggle();
         createKeywordsPage.cancelWizardButton().click();
         assertThat("Cancel button does not work after clicking the toggle button", keywordsPage.createNewKeywordsButton().isDisplayed());
     }
@@ -461,7 +461,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordService.addSynonymGroup(existingSynonyms);
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         getElementFactory().getKeywordsPage();
 
         goToSynonymWizardPage();
@@ -476,7 +476,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         getElementFactory().getSearchPage();
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         getElementFactory().getKeywordsPage();
 
         goToSynonymWizardPage();

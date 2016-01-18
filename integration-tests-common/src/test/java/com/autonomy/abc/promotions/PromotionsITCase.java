@@ -3,11 +3,11 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.Pagination;
-import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -18,9 +18,7 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -49,7 +47,7 @@ public class PromotionsITCase extends ABCTestBase {
 	private PromotionsPage promotionsPage;
 	private PromotionsDetailPage promotionsDetailPage;
 	private SearchService searchService;
-	private PromotionService promotionService;
+	private PromotionService<?> promotionService;
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -83,7 +81,7 @@ public class PromotionsITCase extends ABCTestBase {
 	public void testNewPromotionButtonLink() {
 		promotionsPage.promoteExistingButton().click();
 		verifyThat("correct URL", getDriver().getCurrentUrl().endsWith("promotions/new"));
-		verifyThat("correct title", getApplication().createAppBody(getDriver()).getTopNavBar(), containsText("Create New Promotion"));
+		verifyThat("correct title", getElementFactory().getTopNavBar(), containsText("Create New Promotion"));
 	}
 
 	// TODO: should work after CCUK-3394
@@ -371,28 +369,29 @@ public class PromotionsITCase extends ABCTestBase {
 
 		promotionService.goToPromotions();
 		final String url = getDriver().getCurrentUrl();
-		final List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+		final Window mainWindow = getMainSession().getActiveWindow();
+		final Window secondWindow = getMainSession().openWindow(url);
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		getDriver().get(url);
 		final PromotionsPage secondPromotionsPage = getElementFactory().getPromotionsPage();
 		assertThat("Navigated to promotions menu", secondPromotionsPage.promoteExistingButton().isDisplayed());
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		setUpPromotion(getQuery("nein", Language.GERMAN), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		promotionService.goToPromotions();
 		promotionService.delete("friend");
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
 		promotionService.delete("woof");
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		verifyThat(promotionsPage, containsText("There are no promotions..."));
 	}
 

@@ -28,7 +28,7 @@ import static org.hamcrest.core.Is.is;
 //CSA-1564
 public class IndexSetUpITCase extends HostedTestBase {
     private IndexService indexService;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
 
     private final Index index;
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexSetUpITCase.class);

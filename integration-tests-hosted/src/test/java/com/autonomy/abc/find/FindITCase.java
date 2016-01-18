@@ -3,6 +3,10 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.FindParametricCheckbox;
+import com.autonomy.abc.selenium.application.FindApplication;
+import com.autonomy.abc.selenium.application.HSODFindApplication;
+import com.autonomy.abc.selenium.control.Session;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -57,11 +61,13 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class FindITCase extends HostedTestBase {
     private Find find;
     private FindResultsPage results;
-    private List<String> browserHandles;
     private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
     private final Matcher<String> noDocs = containsString(Errors.Search.NO_RESULTS);
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
     private KeywordService keywordService;
+    private Window searchWindow;
+    private Window findWindow;
+    private FindApplication<?> findApplication;
 
     public FindITCase(TestConfig config) {
         super(config);
@@ -72,11 +78,9 @@ public class FindITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         keywordService = getApplication().createKeywordService(getElementFactory());
 
-        browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
-
-        getDriver().switchTo().window(browserHandles.get(1));
-        getDriver().get(config.getFindUrl());
-        getDriver().manage().window().maximize();
+        searchWindow = getMainSession().getActiveWindow();
+        findWindow = getMainSession().openWindow(config.getFindUrl());
+        findApplication = FindApplication.ofType(config.getType());
         find = getElementFactory().getFindPage();
         results = find.getResultsPage();
     }
@@ -172,13 +176,13 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testSortByRelevance() {
-        getDriver().switchTo().window(browserHandles.get(0));
-        body.getTopNavBar().search("stars bbc");
+        searchWindow.activate();
+        getElementFactory().getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search("stars bbc");
 
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
@@ -188,13 +192,13 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testSortByDate(){
-        getDriver().switchTo().window(browserHandles.get(0));
-        body.getTopNavBar().search("stars bbc");
+        searchWindow.activate();
+        getElementFactory().getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
         searchPage.sortBy(SearchBase.Sort.DATE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search("stars bbc");
 
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
@@ -239,18 +243,18 @@ public class FindITCase extends HostedTestBase {
         String trigger = "mate";
         PinToPositionPromotion promotion = new PinToPositionPromotion(1, trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         promotionService.deleteAll();
 
         try {
             String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
             assertThat(results.searchResultTitle(1).getText(), is(documentTitle));
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
@@ -261,17 +265,17 @@ public class FindITCase extends HostedTestBase {
         String trigger = "mate";
         PinToPositionPromotion promotion = new PinToPositionPromotion(3, trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         promotionService.deleteAll();
 
         try {
             String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
             assertThat(results.searchResultTitle(3).getText(), is(documentTitle));
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
@@ -282,13 +286,13 @@ public class FindITCase extends HostedTestBase {
         String trigger = "Prim";
         SpotlightPromotion spotlight = new SpotlightPromotion(trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         promotionService.deleteAll();
 
         try {
             List<String> createdPromotions = promotionService.setUpPromotion(spotlight, search, 3);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
 
             List<String> findPromotions = results.getPromotionsTitles();
@@ -298,7 +302,7 @@ public class FindITCase extends HostedTestBase {
 
             promotionShownCorrectly(results.promotions());
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
@@ -310,13 +314,13 @@ public class FindITCase extends HostedTestBase {
         String trigger = "LOVE";
         StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         promotionService.deleteAll();
 
         try {
             ((HSOPromotionService) promotionService).setUpStaticPromotion(promotion);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
             List<WebElement> promotions = results.promotions();
 
@@ -326,7 +330,7 @@ public class FindITCase extends HostedTestBase {
             assertThat(staticPromotion.findElement(By.className("result-summary")).getText(), containsString(content));
             promotionShownCorrectly(staticPromotion);
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
@@ -339,20 +343,20 @@ public class FindITCase extends HostedTestBase {
         String trigger = "Rugby";
         DynamicPromotion dynamicPromotion = new DynamicPromotion(resultsToPromote, trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         promotionService.deleteAll();
 
         try{
             List<String> promotedDocumentTitles = promotionService.setUpPromotion(dynamicPromotion, search, resultsToPromote);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
 
             verifyThat(promotedDocumentTitles, everyItem(isIn(results.getPromotionsTitles())));
 
             promotionShownCorrectly(results.promotions());
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
@@ -606,12 +610,12 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testSynonyms() throws InterruptedException {
         String nonsense = "iuhdsafsaubfdja";
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         keywordService.deleteAll(KeywordFilter.ALL);
 
         Waits.loadOrFadeWait();
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search(nonsense);
 
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
@@ -621,13 +625,13 @@ public class FindITCase extends HostedTestBase {
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getText(), not(noDocs));
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         keywordService.addSynonymGroup(Language.ENGLISH, "cat", nonsense);
 
         /* need a separate session due to caching */
-        WebDriver otherDriver = config.getWebDriverFactory().create();
+        Session secondSession = getSessionRegistry().startSession(config.getFindUrl());
         try {
-            Find otherFind = createSession(otherDriver);
+            Find otherFind = initialiseSession(secondSession);
             otherFind.search("Cat");
             FindResultsPage otherResults = otherFind.getResultsPage();
             String firstTitle = otherResults.searchResultTitle(1).getText();
@@ -637,45 +641,44 @@ public class FindITCase extends HostedTestBase {
             verifyThat(otherResults.searchResultTitle(1).getText(), is(firstTitle));
 
         } finally {
-            otherDriver.quit();
+            getSessionRegistry().endSession(secondSession);
         }
     }
 
     @Test
     public void testBlacklist() throws InterruptedException {
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         keywordService.deleteAll(KeywordFilter.ALL);
 
         Waits.loadOrFadeWait();
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search("Cat");
 
         assertThat(results.getText(), not(noDocs));
 
         find.search("Holder");
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         keywordService.addBlacklistTerms(Language.ENGLISH, "cat");
 
         /* need a separate session due to caching */
-        WebDriver otherDriver = config.getWebDriverFactory().create();
+        Session secondSession = getSessionRegistry().startSession(config.getFindUrl());
         try {
-            Find otherFind = createSession(otherDriver);
+            Find otherFind = initialiseSession(secondSession);
             otherFind.search("Cat");
 
             assertThat(otherFind.getResultsPage(), hasTextThat(noDocs));
         } finally {
-            otherDriver.quit();
+            getSessionRegistry().endSession(secondSession);
         }
     }
 
     // TODO: this does not belong here
-    private Find createSession(WebDriver driver) {
-        driver.get(config.getFindUrl());
-        HSOElementFactory otherElementFactory = (HSOElementFactory) getApplication().createElementFactory(driver);
-        loginTo(otherElementFactory.getFindLoginPage(), driver, config.getDefaultUser());
+    private Find initialiseSession(Session session) {
+        HSOElementFactory otherElementFactory = new HSODFindApplication().createElementFactory(session.getDriver());
+        loginTo(otherElementFactory.getFindLoginPage(), session.getDriver(), config.getDefaultUser());
         return otherElementFactory.getFindPage();
     }
 
@@ -916,14 +919,14 @@ public class FindITCase extends HostedTestBase {
     @Test
     //CSA1630
     public void testAllPromotedDocumentsHaveTitles(){
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
 
         try {
             promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"), "scg-2", 10);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
 
             find.search("Tiger");
 
@@ -932,7 +935,7 @@ public class FindITCase extends HostedTestBase {
             }
 
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }

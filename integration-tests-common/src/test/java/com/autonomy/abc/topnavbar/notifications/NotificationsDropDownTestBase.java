@@ -25,14 +25,14 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
     @Before
     public void setUp() throws InterruptedException {
         Thread.sleep(5000);
-        topNavBar = body.getTopNavBar();
-        sideNavBar = body.getSideNavBar();
+        topNavBar = getElementFactory().getTopNavBar();
+        sideNavBar = getElementFactory().getSideNavBar();
         notifications = topNavBar.getNotifications();
     }
 
     protected void checkForNotificationNoWait(String notificationText) {
-        body.getTopNavBar().notificationsDropdown();
-        notifications = body.getTopNavBar().getNotifications();
+        getElementFactory().getTopNavBar().notificationsDropdown();
+        notifications = getElementFactory().getTopNavBar().getNotifications();
         assertThat(notifications.notificationNumber(1).getText(), is(notificationText));
     }
 
@@ -42,8 +42,7 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
     }
 
     protected void newBody(){
-        body = getBody();
-        topNavBar = body.getTopNavBar();
-        sideNavBar = body.getSideNavBar();
+        topNavBar = getElementFactory().getTopNavBar();
+        sideNavBar = getElementFactory().getSideNavBar();
     }
 }

@@ -2,12 +2,12 @@ package com.autonomy.abc.analytics;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -32,9 +30,8 @@ public class AnalyticsITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = getElementFactory().getAnalyticsPage();
-        body = getBody();
     }
 
     @Ignore("TODO: how often do statistics update?")
@@ -46,12 +43,11 @@ public class AnalyticsITCase extends HostedTestBase {
 
         LOGGER.info(String.valueOf(mostPopularSearchCount));
 
-        body.getTopNavBar().search(mostPopular.getTerm());
+        getElementFactory().getTopNavBar().search(mostPopular.getTerm());
 
         getElementFactory().getSearchPage();
-        body = getBody();
 
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = getElementFactory().getAnalyticsPage();
 
         mostPopular = analytics.getMostPopularSearchTerm();
@@ -66,9 +62,7 @@ public class AnalyticsITCase extends HostedTestBase {
 
         getElementFactory().getSearchPage();
 
-        body = getBody();
-
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         analytics = getElementFactory().getAnalyticsPage();
 
         mostPopular = analytics.getMostPopularSearchTerm();
@@ -84,20 +78,17 @@ public class AnalyticsITCase extends HostedTestBase {
         Term mostPopular = analytics.getMostPopularSearchTerm();
         int mostPopularSearchCount = mostPopular.getSearchCount();
 
-        List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+        Window searchWindow = getMainSession().getActiveWindow();
+        Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
-        getDriver().switchTo().window(browserHandles.get(1));
-        getDriver().get(config.getFindUrl());
-        getDriver().manage().window().maximize();
         Find find = getElementFactory().getFindPage();
 
         find.search(mostPopular.getTerm());
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         getDriver().navigate().refresh();
 
-        body = getBody();
         analytics = getElementFactory().getAnalyticsPage();
 
         assertThat(analytics.getMostPopularSearchTerm().getSearchCount(),is(mostPopularSearchCount + 1));

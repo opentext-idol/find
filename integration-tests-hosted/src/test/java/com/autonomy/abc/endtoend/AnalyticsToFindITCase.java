@@ -2,6 +2,7 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -12,7 +13,6 @@ import com.autonomy.abc.selenium.page.analytics.Term;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,13 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 //CSA-1590
 public class AnalyticsToFindITCase extends HostedTestBase {
-    private PromotionService promotionService;
+    private Find find;
+    private FindResultsPage service;
+    private Window searchWindow;
+    private Window findWindow;
+    
+    private PromotionService<?> promotionService;
+
     private KeywordService keywordService;
 
     public AnalyticsToFindITCase(TestConfig config) {
@@ -40,25 +46,18 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         keywordService = new KeywordService(getApplication(), getElementFactory());
 
-        browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
-        getDriver().switchTo().window(browserHandles.get(1));
-        getDriver().get(config.getFindUrl());
-        getDriver().manage().window().maximize();
+        searchWindow = getMainSession().getActiveWindow();
+        findWindow = getMainSession().openWindow(config.getFindUrl());
         find = getElementFactory().getFindPage();
         service = find.getResultsPage();
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
     }
-
-    private Find find;
-    private FindResultsPage service;
-    private List<String> browserHandles;
 
     @Test
     public void testPromotionToFind() throws InterruptedException {
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
         AnalyticsPage analyticsPage = getElementFactory().getAnalyticsPage();
-        body = getBody();
 
         Term zeroSearch = analyticsPage.getMostPopularZeroSearchTerm();
         Term nonZero = analyticsPage.getMostPopularNonZeroSearchTerm();
@@ -73,13 +72,11 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         promotionService.deleteAll();
 
-        body = getBody();
-
         List<String> createdPromotions = promotionService.setUpPromotion(new SpotlightPromotion(trigger), searchTerm, 3);
 
         keywordService.addSynonymGroup(Language.ENGLISH, trigger, synonym);
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search(trigger);
 
         List<String> triggerResults = service.getResultTitles();
@@ -105,11 +102,11 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         promotionService.deleteAll();
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
         keywordsPage.deleteKeywords();
     }

@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -19,7 +20,6 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
@@ -59,9 +59,8 @@ public class IndexesPageITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
         indexesPage = getElementFactory().getIndexesPage();
-        body = getBody();
         indexService = getApplication().createIndexService(getElementFactory());
     }
 
@@ -97,7 +96,7 @@ public class IndexesPageITCase extends HostedTestBase {
         }
 
         //Navigate to indexes
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Make sure default index is still there
@@ -108,7 +107,7 @@ public class IndexesPageITCase extends HostedTestBase {
     //Potentially should be in ConnectionsPageITCase
     //CSA1710
     public void testAttemptingToDeleteConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
-        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
@@ -130,7 +129,7 @@ public class IndexesPageITCase extends HostedTestBase {
         }
 
         //Navigate to Indexes
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
         IndexesPage indexesPage = getElementFactory().getIndexesPage();
 
         //Ensure the index wasn't deleted
@@ -195,8 +194,8 @@ public class IndexesPageITCase extends HostedTestBase {
             LOGGER.info("Timeout exception");
         }
 
-        body.getTopNavBar().notificationsDropdown();
-        for(String message : body.getTopNavBar().getNotifications().getAllNotificationMessages()){
+        getElementFactory().getTopNavBar().notificationsDropdown();
+        for(String message : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
             assertThat(message,not(errorMessage));
         }
     }
@@ -234,7 +233,6 @@ public class IndexesPageITCase extends HostedTestBase {
         getDriver().navigate().refresh();
 
         indexesPage = getElementFactory().getIndexesPage();
-        body = getBody();
 
         verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getName()));
     }
@@ -245,12 +243,11 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexService.setUpIndex(index);
 
-        List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+        Window searchWindow = getMainSession().getActiveWindow();
+        Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
         try {
-            getDriver().switchTo().window(browserHandles.get(1));
-            getDriver().get(config.getFindUrl());
-            getDriver().manage().window().maximize();
+            findWindow.activate();
             Find find = getElementFactory().getFindPage();
 
             find.search("search");
@@ -258,9 +255,8 @@ public class IndexesPageITCase extends HostedTestBase {
 
             verifyThat(find.getResultsPage().resultsDiv().getText(), is("No results found"));
         } finally {
-            getDriver().switchTo().window(browserHandles.get(1));
-            getDriver().close();
-            getDriver().switchTo().window(browserHandles.get(0));
+            findWindow.close();
+            searchWindow.activate();
         }
     }
 

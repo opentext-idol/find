@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -21,30 +21,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class PromotionService {
-    private Application application;
-    private ElementFactory elementFactory;
+public class PromotionService<T extends ElementFactory> extends ServiceBase<T> {
     private PromotionsPage promotionsPage;
 
-    public PromotionService(Application application, ElementFactory elementFactory) {
-        this.application = application;
-        this.elementFactory = elementFactory;
-    }
-
-    protected WebDriver getDriver() {
-        return getElementFactory().getDriver();
-    }
-
-    protected ElementFactory getElementFactory() {
-        return elementFactory;
-    }
-
-    protected AppBody getBody() {
-        return application.createAppBody(getDriver());
+    public PromotionService(SearchOptimizerApplication application, T elementFactory) {
+        super(application, elementFactory);
     }
 
     public PromotionsPage goToPromotions() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         promotionsPage = getElementFactory().getPromotionsPage();
         return promotionsPage;
     }
@@ -60,7 +45,7 @@ public class PromotionService {
     }
 
     public List<String> setUpPromotion(Promotion promotion, SearchQuery query, int numberOfDocs) {
-        SearchPage searchPage = application.createSearchService(getElementFactory()).search(query);
+        SearchPage searchPage = getApplication().createSearchService(getElementFactory()).search(query);
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
 

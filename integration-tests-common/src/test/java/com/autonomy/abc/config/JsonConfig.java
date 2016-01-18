@@ -1,7 +1,7 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.config.Application;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
@@ -27,7 +27,7 @@ public class JsonConfig {
 
         // user config is app-specific, must initialise after app
         // (this means that currently the app type must be specified in both configs) TODO: expose override constructor/factory
-        Application application = Application.ofType(getAppType());
+        SearchOptimizerApplication application = SearchOptimizerApplication.ofType(getAppType());
         UserConfigParser userConfigParser = application.getUserConfigParser();
         this.users = new HashMap<>();
         Iterator<Map.Entry<String, JsonNode>> iterator = node.path("users").fields();

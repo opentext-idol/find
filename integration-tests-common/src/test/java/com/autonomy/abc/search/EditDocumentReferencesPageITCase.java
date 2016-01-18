@@ -61,7 +61,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
     // TODO: search action should return a SearchBase?
     private void editDocumentSearch(final String searchTerm) {
-        body.getTopNavBar().search(searchTerm);
+        getElementFactory().getTopNavBar().search(searchTerm);
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         editReferencesPage.waitForSearchLoadIndicatorToDisappear();
     }
@@ -82,7 +82,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
             verifyThat(promotedDocs, hasItem(equalToIgnoringCase(docTitle)));
         }
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         searchPage = searchService.search("edit");
         searchPage.promoteTheseDocumentsButton().click();
         searchPage.addToBucket(3);
@@ -106,7 +106,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         final List<String> finalPromotionsBucketList = editReferencesPage.promotionsBucketList();
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         searchPage = searchService.search("fast");
         searchPage.promoteTheseDocumentsButton().click();
 
@@ -153,7 +153,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     private void verifyRefreshing() {
         getDriver().navigate().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-        body = getBody();
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
     }

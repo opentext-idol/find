@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
@@ -12,7 +12,6 @@ import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -21,32 +20,17 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionService {
-    private Application application;
-    private HSOElementFactory elementFactory;
+public class ConnectionService extends ServiceBase<HSOElementFactory> {
     private ConnectionsPage connectionsPage;
     private ConnectionsDetailPage connectionsDetailPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
 
-    public ConnectionService(Application application, HSOElementFactory elementFactory) {
-        this.application = application;
-        this.elementFactory = elementFactory;
-    }
-
-    protected WebDriver getDriver() {
-        return getElementFactory().getDriver();
-    }
-
-    protected HSOElementFactory getElementFactory() {
-        return elementFactory;
-    }
-
-    protected AppBody getBody() {
-        return application.createAppBody(getDriver());
+    public ConnectionService(SearchOptimizerApplication application, HSOElementFactory elementFactory) {
+        super(application, elementFactory);
     }
 
     public ConnectionsPage goToConnections() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         connectionsPage = getElementFactory().getConnectionsPage();
         return connectionsPage;
     }
@@ -65,7 +49,7 @@ public class ConnectionService {
     public ConnectionsPage setUpConnection(final Connector connector) {
         goToConnections();
         connectionsPage.newConnectionButton().click();
-        connector.makeWizard(elementFactory.getNewConnectionPage()).apply();
+        connector.makeWizard(getElementFactory().getNewConnectionPage()).apply();
         new WebDriverWait(getDriver(), 20)
                 .withMessage("starting connection")
                 .until(GritterNotice.notificationContaining("started"));
@@ -112,7 +96,7 @@ public class ConnectionService {
 
     private void confirmDelete(Connector connector){
         connectionsDetailPage.deleteConfirmButton().click();
-        connectionsPage = elementFactory.getConnectionsPage();
+        connectionsPage = getElementFactory().getConnectionsPage();
         new WebDriverWait(getDriver(), 100).until(GritterNotice.notificationContaining(connector.getDeleteNotification()));
     }
 

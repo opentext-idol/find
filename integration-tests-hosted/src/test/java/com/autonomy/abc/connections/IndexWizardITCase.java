@@ -32,11 +32,9 @@ public class IndexWizardITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        body.getSideNavBar().switchPage(NavBarTabId.INDEXES);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
 
         getElementFactory().getIndexesPage().newIndexButton().click();
-        body = getBody();
-
         createNewIndexPage = getElementFactory().getCreateNewIndexPage();
     }
 

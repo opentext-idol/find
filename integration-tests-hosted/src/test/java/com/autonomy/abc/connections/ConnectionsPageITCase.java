@@ -41,9 +41,8 @@ public class ConnectionsPageITCase extends HostedTestBase {
     public void setUp() {
         connectionService = getApplication().createConnectionService(getElementFactory());
 
-        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         connectionsPage = getElementFactory().getConnectionsPage();
-        body = getBody();
     }
 
     @Test
@@ -54,13 +53,13 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
         String url = getDriver().getCurrentUrl();
 
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         getElementFactory().getAnalyticsPage();
 
         navigateToConnectionViaURL(url);
 
         //For completeness try from both halves of the application
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         getElementFactory().getKeywordsPage();
 
         navigateToConnectionViaURL(url);
@@ -122,7 +121,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
                 indexService.setUpIndex(new Index("index two"));
             } catch (Exception e) { /* couldn't create an index */  }
 
-            body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+            getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
 
             connectionsPage = getElementFactory().getConnectionsPage();
             connectionsPage.newConnectionButton().click();

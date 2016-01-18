@@ -2,7 +2,7 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -62,7 +62,7 @@ public class SearchPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		topNavBar = body.getTopNavBar();
+		topNavBar = getElementFactory().getTopNavBar();
 		searchService = getApplication().createSearchService(getElementFactory());
 		searchPage = searchService.search("example");
 	}
@@ -828,11 +828,10 @@ public class SearchPageITCase extends ABCTestBase {
 		search(searchText);
 
 		// Change to promotions page since the search page will persist the query in the URL
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		getDriver().navigate().refresh();
-		body = getBody();
-		final String newSearchText = body.getTopNavBar().getSearchBarText();
+		final String newSearchText = getElementFactory().getTopNavBar().getSearchBarText();
 		assertThat("search bar should be blank on refresh of a page that isn't the search page", newSearchText, is(searchText));
 	}
 

@@ -2,11 +2,14 @@ package com.autonomy.abc.framework;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.framework.statements.StatementHandler;
+import com.autonomy.abc.selenium.control.Session;
+import com.autonomy.abc.selenium.control.SessionRegistry;
 import org.junit.runner.Description;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class TestState {
@@ -63,7 +66,7 @@ public class TestState {
     }
 
     public void finish() {
-        test.getDriver().quit();
+        test.getSessionRegistry().clear();
         statementHandlers.clear();
     }
 

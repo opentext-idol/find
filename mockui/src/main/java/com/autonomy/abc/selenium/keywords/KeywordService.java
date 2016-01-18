@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.config.Application;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -28,12 +28,12 @@ public class KeywordService extends ServiceBase {
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage newKeywordsPage;
 
-    public KeywordService(Application application, ElementFactory elementFactory) {
+    public KeywordService(SearchOptimizerApplication application, ElementFactory elementFactory) {
         super(application, elementFactory);
     }
 
     public KeywordsPage goToKeywords() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage = getElementFactory().getKeywordsPage();
         return keywordsPage;
     }

@@ -2,39 +2,40 @@ package com.autonomy.abc.framework.statements;
 
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.framework.PageSourceSaver;
-import com.autonomy.abc.framework.ScreenshotSaver;
-import com.autonomy.abc.framework.TestState;
-import com.autonomy.abc.framework.TestStatement;
+import com.autonomy.abc.framework.*;
+import com.autonomy.abc.selenium.control.Session;
+import com.autonomy.abc.selenium.control.SessionRegistry;
 
-public class StatementArtifactHandler implements StatementHandler {
-    private ScreenshotSaver screenshotSaver;
-    private PageSourceSaver pageSourceSaver;
-    private String timestamp;
+public class StatementArtifactHandler implements StatementHandler, ArtifactSaveVisitor.ArtifactSaver {
+    private final ArtifactSaveVisitor saveVisitor = new ArtifactSaveVisitor();
+    private final SessionRegistry sessions;
+    private final String timestamp;
+    private TestStatement currentStatement;
 
     public StatementArtifactHandler(ABCTestBase test) {
-        this.timestamp = TestState.get().getTimestamp();
-        screenshotSaver = new ScreenshotSaver(test.getDriver());
-        pageSourceSaver = new PageSourceSaver(test.getDriver());
-    }
-
-    private String getBaseLocation(TestStatement testStatement) {              String[] splitName = testStatement.getMethodName().split("\\[");
-        return ".output/" + splitName[0] + '/' + timestamp + '[' + splitName[splitName.length-1] + "_" + testStatement.getNumber();
-    }
-
-    private String getPngLocation(TestStatement testStatement) {
-        return getBaseLocation(testStatement) + ".png";
-    }
-
-    private String getHtmlLocation(TestStatement testStatement) {
-        return getBaseLocation(testStatement) + ".html";
+        sessions = test.getSessionRegistry();
+        timestamp = TestState.get().getTimestamp();
     }
 
     @Override
     public void handle(TestStatement testStatement) {
         if (testStatement.failed()) {
-            screenshotSaver.saveTo(getPngLocation(testStatement));
-            pageSourceSaver.saveTo(getHtmlLocation(testStatement));
+            currentStatement = testStatement;
+            saveVisitor.visit(this);
         }
+    }
+
+    @Override
+    public String baseLocation() {
+        String[] splitName = currentStatement.getMethodName().split("\\[");
+        return ".output/"
+                + splitName[0] + '/'
+                + timestamp + '[' + splitName[splitName.length-1]
+                + "_" + currentStatement.getNumber();
+    }
+
+    @Override
+    public Iterable<Session> getSessions() {
+        return sessions;
     }
 }

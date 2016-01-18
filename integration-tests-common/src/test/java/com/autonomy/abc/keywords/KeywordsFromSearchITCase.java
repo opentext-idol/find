@@ -2,7 +2,7 @@ package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
@@ -135,7 +135,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
         searchPage.waitForSynonymsLoadingIndicatorToDisappear();
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         Waits.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
         new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(keywordsPage.selectLanguageButton()));
@@ -172,7 +172,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         Waits.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
@@ -220,7 +220,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
             assertEquals(3, searchPage.countKeywords());
         }
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         Waits.loadOrFadeWait();
         keywordsPage.selectLanguage(Language.ENGLISH);
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
@@ -323,7 +323,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         houses.add("residence");
         assertThat("New synonym has not been added to the group", searchPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         Waits.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.ALL);
         assertThat("New synonym has not been added to the group", keywordsPage.getSynonymGroupSynonyms("house"), containsItems(houses));
@@ -361,7 +361,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
         verifyThat("3 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("home"));
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         Waits.loadOrFadeWait();
         keywordsPage.filterView(KeywordFilter.ALL);
         assertThat("Synonyms have been removed from the group", keywordsPage.getSynonymGroupSynonyms("house"), hasItems("home", "house"));
@@ -393,7 +393,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         searchPage.selectLanguage(Language.FRENCH);
         verifyThat("synonyms do not appear on search page for wrong language", searchPage.countSynonymLists(), is(0));
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage.filterView(KeywordFilter.ALL);
 
         keywordsPage.selectLanguage(Language.FRENCH);
@@ -454,9 +454,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
 
         getDriver().navigate().refresh();
-        body = getBody();
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage = getElementFactory().getKeywordsPage();
         assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
 
