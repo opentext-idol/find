@@ -32,11 +32,11 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         return new FormInput(findElement(By.cssSelector("[name='displayName']")), getDriver());
     }
 
-    public void inputIndexName(String name){
+    public void setIndexName(String name){
         indexNameInput().setValue(name);
     }
 
-    public void inputIndexDisplayName(String displayName){
+    public void setIndexDisplayName(String displayName){
         indexDisplayNameInput().setValue(displayName);
     }
 
@@ -132,18 +132,5 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         public IndexNotFoundException(Index index){
             this(index.getName());
         }
-    }
-
-
-    public WebElement configErrorMessage(WebElement element){
-        return ElementUtil.ancestor(element, 1).findElement(By.tagName("p"));
-    }
-
-    public WebElement getMaxLengthErrorMsg(WebElement element){
-        return ElementUtil.ancestor(element, 1).findElements(By.tagName("p")).get(2);
-    }
-
-    public WebElement inputFormGroup(WebElement element){
-        return ElementUtil.ancestor(element, 2);
     }
 }
