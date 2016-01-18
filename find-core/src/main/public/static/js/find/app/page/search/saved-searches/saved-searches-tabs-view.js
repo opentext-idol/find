@@ -33,13 +33,12 @@ define([
                 i18n: i18n
             }));
 
-            this.listView.setElement(this.$('.saved-searches-list')).render();
+            this.listView.setElement(this.$('.saved-searches-tab-list')).render();
             this.updateVisibility();
         },
 
         updateVisibility: function() {
             this.$('.saved-searches').toggleClass('hide', this.collection.isEmpty());
-            this.$('.no-saved-searches').toggleClass('hide', !this.collection.isEmpty());
         }
 
     });

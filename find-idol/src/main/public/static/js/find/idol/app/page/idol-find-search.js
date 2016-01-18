@@ -10,10 +10,6 @@ define([
     'use strict';
 
     return FindSearch.extend({
-        constructServiceView: function (model) {
-            return new ServiceView({
-                queryModel: model
-            });
-        }
+        ServiceView: ServiceView
     });
 });
