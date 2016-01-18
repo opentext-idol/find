@@ -84,6 +84,28 @@ public class IndexWizardITCase extends HostedTestBase {
     }
 
     @Test
+    //CSA-2042 - test index name with character length grater than 100
+    public void testIndexNameFieldMaxCharacterLength(){
+        Index index = new Index("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
+        index.makeWizard(createNewIndexPage).getCurrentStep().apply();
+        FormInput indexNameInput = createNewIndexPage.getIndexNameWizardStepTab().indexNameInput();
+
+        verifyThat(indexNameInput.formGroup(), hasClass("has-error"));
+        verifyThat(indexNameInput.getErrorMessage(), containsString(Errors.Index.MAX_CHAR_LENGTH));
+    }
+
+    @Test
+    //CSA-2042 - test index display name with character length grater than 100
+    public void testDisplayNameFieldMaxCharacterLength(){
+        Index index = new Index("validname","abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
+        index.makeWizard(createNewIndexPage).getCurrentStep().apply();
+        FormInput displayNameInput = createNewIndexPage.getIndexNameWizardStepTab().displayNameInput();
+
+        verifyThat(displayNameInput.formGroup(), hasClass("has-error"));
+        verifyThat(displayNameInput.getErrorMessage(), containsString(Errors.Index.MAX_CHAR_LENGTH));
+    }
+
+    @Test
     //CSA-1616
     public void testUppercaseFieldNames() {
         Index index = new Index("name");
