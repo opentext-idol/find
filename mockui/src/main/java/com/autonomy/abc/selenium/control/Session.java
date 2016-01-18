@@ -1,11 +1,12 @@
 package com.autonomy.abc.selenium.control;
 
-import com.autonomy.abc.selenium.util.DriverUtil;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class Session implements Iterable<Window> {
     private WebDriver driver;
@@ -16,11 +17,20 @@ public class Session implements Iterable<Window> {
 
     public Window openWindow(String url) {
         // TODO: move from DriverUtil
-        String newHandle = DriverUtil.createAndListWindowHandles(driver).get(1);
+        String newHandle = createDriverWindow();
         Window newWindow = registerWindow(newHandle);
         newWindow.goTo(url);
         driver.manage().window().maximize();
         return newWindow;
+    }
+
+    private String createDriverWindow() {
+        Set<String> oldHandles = driver.getWindowHandles();
+        // TODO: do we want new windows, or prefer tabs?
+        ((JavascriptExecutor) driver).executeScript("window.open('', '_blank', 'width=100');");
+        Set<String> newHandles = driver.getWindowHandles();
+        newHandles.removeAll(oldHandles);
+        return newHandles.toArray(new String[1])[0];
     }
 
     public WebDriver getDriver() {
