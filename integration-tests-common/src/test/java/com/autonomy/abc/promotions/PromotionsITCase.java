@@ -27,6 +27,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -39,9 +40,9 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeThat;
 
-public class PromotionsPageITCase extends ABCTestBase {
+public class PromotionsITCase extends ABCTestBase {
 
-	public PromotionsPageITCase(final TestConfig config) {
+	public PromotionsITCase(final TestConfig config) {
 		super(config);
 	}
 
@@ -71,7 +72,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 	}
 
 	private List<String> setUpCarsPromotion(int numberOfDocs) {
-//		final List<String> promotedDocTitles = promotionsPage.setUpANewMultiDocPromotion(Language.ENGLISH, "cars", "Sponsored", "wheels", 2, getConfig().getType().getName());
 		return setUpPromotion(new SearchQuery("cars"), numberOfDocs, new SpotlightPromotion("wheels"));
 	}
 
@@ -261,16 +261,14 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		renamePromotionContaining(promotionTitles.get(3), promotionTitles.get(3));
 
-		promotionsPage.promotionsSearchFilter().sendKeys("dog");
-		verifyThat(promotionsPage, promotionsList(hasSize(1)));
+		int results = 1;
+		for(String search : Arrays.asList("dog", "wolf", "pooch")){
+			promotionsPage.clearPromotionsSearchFilter();
+			promotionsPage.sendKeys(search);
+			verifyThat(promotionsPage, promotionsList(hasSize(results)));
+			results++;
+		}
 
-		promotionsPage.clearPromotionsSearchFilter();
-		promotionsPage.promotionsSearchFilter().sendKeys("wolf");
-		verifyThat(promotionsPage, promotionsList(hasSize(2)));
-
-		promotionsPage.clearPromotionsSearchFilter();
-		promotionsPage.promotionsSearchFilter().sendKeys("pooch");
-		verifyThat(promotionsPage, promotionsList(hasSize(3)));
 		promotionTitles = promotionsPage.getPromotionTitles();
 		for (int i = 0; i < promotionTitles.size() - 1; i++) {
 			verifyThat(promotionTitles.get(i).toLowerCase(), lessThanOrEqualTo(promotionTitles.get(i + 1).toLowerCase()));
@@ -353,7 +351,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 		// TODO: IOD-4827
 		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
 		Language[] languages = {Language.FRENCH, Language.SWAHILI, Language.AFRIKAANS};
-//		String[] searchTerms = {"chien", "mbwa", "pooch"};
 		//Afrikaans dog thing isn't actually a dog but it wasn't working so yolo
 		String[] searchTerms = {"chien", "mbwa", "bergaalwyn"};
 		Promotion[] promotions = {
@@ -366,42 +363,6 @@ public class PromotionsPageITCase extends ABCTestBase {
 			setUpPromotion(getQuery(searchTerms[i], languages[i]), promotions[i]);
 			verifyThat(promotionsDetailPage.getLanguage(), is(languages[i].toString()));
 		}
-	}
-
-	@Test
-	// CCUK-3586
-	public void testEditDynamicQuery() throws InterruptedException {
-		final String initialTrigger = "meow";
-		final String updateTrigger = "tigre";
-		final String initialQueryTerm = "chat";
-		final String updateQueryTerm = "kitty";
-
-		SearchPage searchPage = searchService.search(getQuery(updateQueryTerm, Language.FRENCH));
-		final String updatePromotedResult = searchPage.searchResult(1).getText();
-		final String initialPromotedResult = setUpPromotion(getQuery(initialQueryTerm, Language.FRENCH), new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger)).get(0);
-
-		PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
-		triggerForm.addTrigger(updateTrigger);
-		triggerForm.removeTrigger(initialTrigger);
-
-		searchService.search(getQuery(updateTrigger, Language.FRENCH));
-		verifyThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotedResult));
-
-		promotionsDetailPage = promotionService.goToDetails(initialTrigger);
-
-		Editable queryText = promotionsDetailPage.queryText();
-		verifyThat("correct query text displayed", queryText.getValue(), is(initialQueryTerm));
-
-		queryText.setValueAndWait(updateQueryTerm);
-		verifyThat("query text updated", queryText.getValue(), is(updateQueryTerm));
-
-		searchService.search(getQuery(updateTrigger, Language.FRENCH));
-		verifyThat("promoted query updated in search results", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));
-
-		getDriver().navigate().refresh();
-		searchPage = getElementFactory().getSearchPage();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		verifyThat("correct promoted result after page refresh", searchPage.getPromotedDocumentTitles(false).get(0), is(updatePromotedResult));
 	}
 
 	@Test
@@ -429,8 +390,7 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		getDriver().switchTo().window(browserHandles.get(1));
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
-//		promotionService.delete("woof");
-		secondPromotionsPage.deletePromotion("woof");
+		promotionService.delete("woof");
 
 		getDriver().switchTo().window(browserHandles.get(0));
 		verifyThat(promotionsPage, containsText("There are no promotions..."));
@@ -469,21 +429,17 @@ public class PromotionsPageITCase extends ABCTestBase {
 		verifyThat(firstTitle, isIn(promotedDocs));
 		promotedResult.click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
-		verifyThat("first document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
-		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
-		verifyThat("first document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+		verifyFrame(documentViewer.getReference(), documentViewer.frame());
 
 		getDriver().switchTo().window(handle);
 		documentViewer.next();
 
 		verifyThat(secondTitle, isIn(promotedDocs));
-		verifyThat("second document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
-		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
-		verifyThat("second document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+		verifyFrame(documentViewer.getReference(), documentViewer.frame());
 
 		getDriver().switchTo().window(handle);
 		documentViewer.previous();
-		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
+		getDriver().switchTo().frame(documentViewer.frame());
 		verifyThat("first document loads again", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
 
 		getDriver().switchTo().window(handle);
@@ -496,53 +452,14 @@ public class PromotionsPageITCase extends ABCTestBase {
 
 		promotedResult.click();
 		documentViewer = DocumentViewer.make(getDriver());
-		verifyThat("third document has a reference", documentViewer.getField("Reference"), not(isEmptyOrNullString()));
-		getDriver().switchTo().frame(getDriver().findElement(By.tagName("iframe")));
-		verifyThat("third document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
+		verifyFrame(documentViewer.getReference(), documentViewer.frame());
 		getDriver().switchTo().window(handle);
 	}
 
-	@Test
-	//CSA-1494
-	public void testAddingMultipleTriggersNotifications() {
-		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE,"moscow");
-
-		promotionService.setUpPromotion(promotion, "Mother Russia", 4);
-		promotionsDetailPage = promotionService.goToDetails(promotion);
-
-		String[] triggers = {"HC", "Sochi", "CKSA", "SKA", "Dinamo", "Riga"};
-		promotionsDetailPage.getTriggerForm().addTrigger(StringUtils.join(triggers, ' '));
-
-		body.getTopNavBar().notificationsDropdown();
-
-		verifyThat(body.getTopNavBar().getNotifications().getAllNotificationMessages(), hasItem("Edited a spotlight promotion"));
-
-		for(String notification : body.getTopNavBar().getNotifications().getAllNotificationMessages()){
-			for(String trigger : triggers){
-				verifyThat(notification, not(containsString(trigger)));
-			}
-		}
-	}
-
-	@Test
-	//CSA-1769
-	public void testUpdatingAndDeletingPinToPosition(){
-		PinToPositionPromotion pinToPositionPromotion = new PinToPositionPromotion(1, "say anything");
-
-		promotionService.setUpPromotion(pinToPositionPromotion, "Max Bemis", 2);
-		promotionsDetailPage = promotionService.goToDetails(pinToPositionPromotion);
-
-		promotionsDetailPage.pinPosition().setValueAndWait("4");
-		verifyThat(promotionsDetailPage.pinPosition().getValue(), is("4"));
-
-		String newTitle = "Admit It!!!";
-
-		promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
-		Waits.loadOrFadeWait();
-		verifyThat(promotionsDetailPage.promotionTitle().getValue(), is(newTitle));
-
-		promotionService.delete(newTitle);
-		verifyThat(promotionsPage.getPromotionTitles(), not(hasItem(newTitle)));
+	private void verifyFrame(String reference, WebElement frame) {
+		verifyThat("Document has a reference", reference, not(isEmptyOrNullString()));
+		getDriver().switchTo().frame(frame);
+		verifyThat("Document loads", getDriver().findElement(By.xpath(".//body")).getText(), not(isEmptyOrNullString()));
 	}
 
 	@Test
