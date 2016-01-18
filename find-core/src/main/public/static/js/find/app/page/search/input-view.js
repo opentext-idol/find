@@ -41,9 +41,9 @@ define([
 
             this.search = _.debounce(function(query) {
                 if (query === options.queryTextModel.get('inputText')) {
-                    options.queryTextModel.set('inputText', query);
+                    options.queryTextModel.setInputText('inputText',query);
                 } else {
-                    options.queryTextModel.set({
+                    options.queryTextModel.setInputText({
                         autoCorrect: true,
                         inputText: query
                     });

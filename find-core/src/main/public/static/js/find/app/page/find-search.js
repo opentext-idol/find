@@ -53,7 +53,7 @@ define([
                     relatedConcepts: concepts ? concepts.split('/') : []
                 };
 
-                this.queryTextModel.set(attributes);
+                this.queryTextModel.setInputText(attributes);
             }, this);
         },
 
