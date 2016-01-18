@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.connections.wizard;
 
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -130,5 +131,18 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         public IndexNotFoundException(Index index){
             this(index.getName());
         }
+    }
+
+
+    public WebElement configErrorMessage(WebElement element){
+        return ElementUtil.ancestor(element, 1).findElement(By.tagName("p"));
+    }
+
+    public WebElement getMaxLengthErrorMsg(WebElement element){
+        return ElementUtil.ancestor(element, 1).findElements(By.tagName("p")).get(2);
+    }
+
+    public WebElement inputFormGroup(WebElement element){
+        return ElementUtil.ancestor(element, 2);
     }
 }

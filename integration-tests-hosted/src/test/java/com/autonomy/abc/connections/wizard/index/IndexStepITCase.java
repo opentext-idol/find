@@ -3,16 +3,13 @@ package com.autonomy.abc.connections.wizard.index;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
-import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -42,7 +39,7 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         newConnectionPage.nextButton().click();
         Waits.loadOrFadeWait();
 
-        ConnectorConfigStepTab connectorConfigStepTab = newConnectionPage.getConnectorConfigStep();
+        newConnectionPage.getConnectorConfigStep();
         newConnectionPage.nextButton().click();
         Waits.loadOrFadeWait();
 
@@ -55,8 +52,8 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         connectorIndexStepTab.inputIndexName("name With UpperCase");
 
         String error = "Please enter a valid name that contains only lowercase alphanumeric characters";
-        WebElement errorMessage = configErrorMessage(connectorIndexStepTab.indexNameInputElement());
-        WebElement displayNameFormGroup = inputFormGroup(connectorIndexStepTab.indexNameInputElement());
+        WebElement errorMessage = connectorIndexStepTab.configErrorMessage(connectorIndexStepTab.indexNameInputElement());
+        WebElement displayNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexNameInputElement());
         verifyThat(displayNameFormGroup, hasClass("has-error"));
         verifyThat(errorMessage, displayed());
         verifyThat(errorMessage, containsText(error));
@@ -68,8 +65,8 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
 
         connectorIndexStepTab.inputIndexDisplayName("displayName #$%");
         String error = "Please enter a valid name that contains only alphanumeric characters";
-        WebElement errorMessage = configErrorMessage(connectorIndexStepTab.indexDisplayNameInputElement());
-        WebElement displayNameFormGroup = inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
+        WebElement errorMessage = connectorIndexStepTab.configErrorMessage(connectorIndexStepTab.indexDisplayNameInputElement());
+        WebElement displayNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
         verifyThat(displayNameFormGroup, hasClass("has-error"));
         verifyThat(errorMessage, displayed());
         verifyThat(errorMessage, containsText(error));
@@ -80,8 +77,8 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     public void testIndexNameFieldMaxCharacterLength(){
         connectorIndexStepTab.inputIndexName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
 
-        WebElement errorMessage = getMaxLengthErrorMsg(connectorIndexStepTab.indexNameInputElement());
-        WebElement indexNameFormGroup = inputFormGroup(connectorIndexStepTab.indexNameInputElement());
+        WebElement errorMessage = connectorIndexStepTab.getMaxLengthErrorMsg(connectorIndexStepTab.indexNameInputElement());
+        WebElement indexNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexNameInputElement());
         verifyThat(indexNameFormGroup, hasClass("has-error"));
         verifyThat(errorMessage, displayed());
         verifyThat(errorMessage, containsText(Errors.Index.MAX_CHAR_LENGTH));
@@ -93,8 +90,8 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         connectorIndexStepTab.inputIndexName("name");
         connectorIndexStepTab.inputIndexDisplayName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
 
-        WebElement errorMessage = getMaxLengthErrorMsg(connectorIndexStepTab.indexDisplayNameInputElement());
-        WebElement displayNameFormGroup = inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
+        WebElement errorMessage = connectorIndexStepTab.getMaxLengthErrorMsg(connectorIndexStepTab.indexDisplayNameInputElement());
+        WebElement displayNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
         verifyThat(displayNameFormGroup, hasClass("has-error"));
         verifyThat(errorMessage, displayed());
         verifyThat(errorMessage, containsText(Errors.Index.MAX_CHAR_LENGTH));
@@ -105,25 +102,11 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     public void testIndexDisplayNameValidatorsPass(){
         connectorIndexStepTab.inputIndexName("name");
         connectorIndexStepTab.inputIndexDisplayName("displayName 7894");
-        WebElement errorMessage = configErrorMessage(connectorIndexStepTab.indexDisplayNameInputElement());
+        WebElement errorMessage = connectorIndexStepTab.configErrorMessage(connectorIndexStepTab.indexDisplayNameInputElement());
         verifyThat(errorMessage, not(displayed()));
-        WebElement displayNameFormGroup = inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
+        WebElement displayNameFormGroup = connectorIndexStepTab.inputFormGroup(connectorIndexStepTab.indexDisplayNameInputElement());
 
         verifyThat(displayNameFormGroup, not(hasClass("has-error")));
 
     }
-
-    private WebElement configErrorMessage(WebElement element){
-        return ElementUtil.ancestor(element, 1).findElement(By.tagName("p"));
-    }
-
-    private WebElement getMaxLengthErrorMsg(WebElement element){
-        return ElementUtil.ancestor(element, 1).findElements(By.tagName("p")).get(2);
-    }
-
-    private WebElement inputFormGroup(WebElement element){
-        return ElementUtil.ancestor(element, 2);
-    }
-
-
 }
