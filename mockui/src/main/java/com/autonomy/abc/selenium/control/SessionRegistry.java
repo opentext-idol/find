@@ -46,6 +46,6 @@ public class SessionRegistry implements Iterable<Session> {
 
     @Override
     public Iterator<Session> iterator() {
-        return Collections.unmodifiableList(sessions).iterator();
+        return new ArrayList<>(sessions).iterator();
     }
 }

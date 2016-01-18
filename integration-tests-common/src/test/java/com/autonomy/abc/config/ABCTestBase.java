@@ -7,6 +7,7 @@ import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.SessionRegistry;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.login.SSOFailureException;
@@ -42,6 +43,7 @@ public abstract class ABCTestBase {
 	private final SearchOptimizerApplication<?> application;
 	private final SessionRegistry sessionRegistry;
 	private WebDriver driver;
+	private Session mainSession;
 	private ElementFactory elementFactory;
 	private User initialUser;
 	private String initialUrl;
@@ -71,7 +73,9 @@ public abstract class ABCTestBase {
 
 	private void initialiseTest() {
 		LOGGER.info(config.toString());
-		driver = sessionRegistry.startSession().getDriver();
+
+		mainSession = sessionRegistry.startSession();
+		driver = mainSession.getDriver();
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
 		testState.addStatementHandler(new StatementArtifactHandler(this));
@@ -122,6 +126,10 @@ public abstract class ABCTestBase {
 
 	public final WebDriver getDriver() {
 		return driver;
+	}
+
+	protected Session getMainSession() {
+		return mainSession;
 	}
 
 	public final SessionRegistry getSessionRegistry() {

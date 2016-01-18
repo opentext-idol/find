@@ -32,7 +32,7 @@ public class Session implements Iterable<Window> {
         driver = null;
     }
 
-    Window getActiveWindow() {
+    public Window getActiveWindow() {
         String currentHandle = driver.getWindowHandle();
         return registerWindow(currentHandle);
     }
