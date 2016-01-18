@@ -2,6 +2,7 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -18,7 +19,6 @@ import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -105,14 +105,13 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		assertThat(notifications.countNotifications(), is(0));
 
 		keywordsPage = getElementFactory().getKeywordsPage();
-		List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+		final Window mainWindow = getMainSession().getActiveWindow();
+		final Window secondWindow = getMainSession().openWindow(config.getWebappUrl());
 
-		getDriver().switchTo().window(browserHandles.get(1));
-		getDriver().navigate().to(getConfig().getWebappUrl());
+		secondWindow.activate();
 		ElementFactory elementFactoryTwo = getApplication().createElementFactory(getDriver());
 		TopNavBar topNavBarWindowTwo = elementFactoryTwo.getTopNavBar();
 		SideNavBar sideNavBarWindowTwo = elementFactoryTwo.getSideNavBar();
-		getDriver().manage().window().maximize();
 
 		sideNavBarWindowTwo.switchPage(NavBarTabId.KEYWORDS);
 		topNavBarWindowTwo.notificationsDropdown();
@@ -120,7 +119,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		assertThat(notificationsDropDownWindowTwo.countNotifications(), is(0));
 
 		try {
-			getDriver().switchTo().window(browserHandles.get(0));
+			mainWindow.activate();
 			keywordService.addSynonymGroup("Animal Beast");
 			keywordsPage = keywordService.goToKeywords();
 
@@ -129,7 +128,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			assertThat(notifications.countNotifications(), is(1));
 			String windowOneNotificationText = notifications.notificationNumber(1).getText();
 
-			getDriver().switchTo().window(browserHandles.get(1));
+			secondWindow.activate();
 			assertThat(notificationsDropDownWindowTwo.countNotifications(), is(1));
 			assertThat(notificationsDropDownWindowTwo.notificationNumber(1).getText(), is(windowOneNotificationText));
 			topNavBarWindowTwo.notificationsDropdown();
@@ -139,7 +138,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			assertThat(notificationsDropDownWindowTwo.countNotifications(), is(2));
 			List<String> notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-			getDriver().switchTo().window(browserHandles.get(0));
+			mainWindow.activate();
 			assertThat(notifications.countNotifications(), is(2));
 			assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
@@ -153,7 +152,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 				assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 			}
 
-			getDriver().switchTo().window(browserHandles.get(1));
+			secondWindow.activate();
 
 			promotionService.setUpPromotion(new SpotlightPromotion("wheels"), "cars", 3);
 
@@ -166,7 +165,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 			notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-			getDriver().switchTo().window(browserHandles.get(0));
+			mainWindow.activate();
 
 			notifications = topNavBar.getNotifications();
 			assertThat(notifications.countNotifications(), is(3));
@@ -174,7 +173,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 			int notificationsCount = 3;
 			for(int i = 0; i < 6; i += 2) {
-				getDriver().switchTo().window(browserHandles.get(1));
+				secondWindow.activate();
 				keywordService.addSynonymGroup(i + " " + (i + 1));
 				keywordService.goToKeywords();
 
@@ -182,12 +181,12 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 				verifyThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
 				notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-				getDriver().switchTo().window(browserHandles.get(0));
+				mainWindow.activate();
 				verifyThat(notifications.countNotifications(), is(Math.min(notificationsCount, 5)));
 				verifyThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 			}
 		} finally {
-			getDriver().switchTo().window(browserHandles.get(1));
+			secondWindow.activate();
 			topNavBarWindowTwo.closeNotifications();
 			keywordService.deleteAll(KeywordFilter.ALL);
 			promotionService.deleteAll();

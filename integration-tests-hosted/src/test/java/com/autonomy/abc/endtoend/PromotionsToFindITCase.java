@@ -2,6 +2,7 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -11,7 +12,6 @@ import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,8 @@ import static org.hamcrest.Matchers.isIn;
 
 //CSA-1566
 public class PromotionsToFindITCase extends HostedTestBase {
-    private List<String> browserHandles;
+    private Window searchWindow;
+    private Window findWindow;
     private Find find;
     private FindResultsPage service;
     private PromotionService<?> promotionService;
@@ -43,21 +44,11 @@ public class PromotionsToFindITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
 
         promotionService.deleteAll();
-        browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
-        switchToFind();
-        getDriver().get(config.getFindUrl());
-        getDriver().manage().window().maximize();
+        searchWindow = getMainSession().getActiveWindow();
+        findWindow = getMainSession().openWindow(config.getFindUrl());
         find = getElementFactory().getFindPage();
         service = find.getResultsPage();
-        switchToSearch();
-    }
-
-    private void switchToSearch() {
-        getDriver().switchTo().window(browserHandles.get(0));
-    }
-
-    private void switchToFind() {
-        getDriver().switchTo().window(browserHandles.get(1));
+        searchWindow.activate();
     }
 
     @Test
@@ -71,11 +62,11 @@ public class PromotionsToFindITCase extends HostedTestBase {
         List<String> promotionTitles = promotionService.setUpPromotion(pinPromotion, "Promotions", 5);
         LOGGER.info("set up pin to position");
 
-        switchToFind();
+        findWindow.activate();
         find.search(searchTrigger);
         verifyPinToPosition(promotionTitles, 1, 5);
 
-        switchToSearch();
+        searchWindow.activate();
         PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(pinPromotion);
         promotionsDetailPage.pinPosition().setValueAndWait("6");
         LOGGER.info("updated pin position");
@@ -91,7 +82,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         }
         LOGGER.info("added secondary trigger");
 
-        switchToFind();
+        findWindow.activate();
         find.search(secondaryTrigger);
         verifyPinToPosition(promotionTitles, 6, 10);
 
@@ -102,21 +93,21 @@ public class PromotionsToFindITCase extends HostedTestBase {
         service.filterByParametric("Source Connector", "SIMPSONSARCHIVE");
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        switchToSearch();
+        searchWindow.activate();
         List<String> spotlightPromotionTitles = promotionService.setUpPromotion(spotlightPromotion, "another", 2);
         LOGGER.info("set up spotlight promotion");
 
-        switchToFind();
+        findWindow.activate();
         find.search(searchTrigger);
 
         verifyPinToPosition(promotionTitles, 6, 10);
         verifySpotlight(spotlightPromotionTitles);
 
-        switchToSearch();
+        searchWindow.activate();
         String singlePromoted = promotionService.setUpPromotion(secondPinPromotion, "187", 1).get(0);
         LOGGER.info("set up second pin to position");
 
-        switchToFind();
+        findWindow.activate();
         refreshFind();
 
         verifyThat(singlePromoted, isIn(service.getResultTitles(6, 11)));
@@ -125,11 +116,11 @@ public class PromotionsToFindITCase extends HostedTestBase {
         allPromotions.add(singlePromoted);
         verifySpotlight(spotlightPromotionTitles);
 
-        switchToSearch();
+        searchWindow.activate();
         promotionService.delete("Spotlight for: " + spotlightPromotion.getTrigger());
         LOGGER.info("deleted spotlight promotion");
 
-        switchToFind();
+        findWindow.activate();
         find.search("Other");
         find.search(searchTrigger);
     }
@@ -156,7 +147,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
     @After
     public void tearDown(){
         try {
-            switchToSearch();
+            searchWindow.activate();
             promotionService.deleteAll();
         } catch (NullPointerException e) {
             LOGGER.warn("skipping tear down");

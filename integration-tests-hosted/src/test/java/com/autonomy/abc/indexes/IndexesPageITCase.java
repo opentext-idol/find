@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -19,7 +20,6 @@ import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
@@ -243,12 +243,11 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexService.setUpIndex(index);
 
-        List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+        Window searchWindow = getMainSession().getActiveWindow();
+        Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
         try {
-            getDriver().switchTo().window(browserHandles.get(1));
-            getDriver().get(config.getFindUrl());
-            getDriver().manage().window().maximize();
+            findWindow.activate();
             Find find = getElementFactory().getFindPage();
 
             find.search("search");
@@ -256,9 +255,8 @@ public class IndexesPageITCase extends HostedTestBase {
 
             verifyThat(find.getResultsPage().resultsDiv().getText(), is("No results found"));
         } finally {
-            getDriver().switchTo().window(browserHandles.get(1));
-            getDriver().close();
-            getDriver().switchTo().window(browserHandles.get(0));
+            findWindow.close();
+            searchWindow.activate();
         }
     }
 

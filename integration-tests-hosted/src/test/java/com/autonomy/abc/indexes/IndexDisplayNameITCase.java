@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -15,15 +16,12 @@ import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
@@ -75,20 +73,17 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
     @Test
     public void testFindIndex(){
-        List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+        Window searchWindow = getMainSession().getActiveWindow();
+        Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
         try {
-            getDriver().switchTo().window(browserHandles.get(1));
-            getDriver().get(config.getFindUrl());
-            getDriver().manage().window().maximize();
-
             Find find = getElementFactory().getFindPage();
             find.search("This woman's work");
 
             verifyIndexOrDefault(find.indexesTree().privateIndexes());
         } finally {
-            getDriver().close();
-            getDriver().switchTo().window(browserHandles.get(0));
+            findWindow.close();
+            searchWindow.activate();
         }
     }
 

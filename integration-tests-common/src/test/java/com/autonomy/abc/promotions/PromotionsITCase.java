@@ -4,6 +4,7 @@ import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.Pagination;
@@ -17,7 +18,6 @@ import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.LanguageFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -369,28 +369,29 @@ public class PromotionsITCase extends ABCTestBase {
 
 		promotionService.goToPromotions();
 		final String url = getDriver().getCurrentUrl();
-		final List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+		final Window mainWindow = getMainSession().getActiveWindow();
+		final Window secondWindow = getMainSession().openWindow(url);
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		getDriver().get(url);
 		final PromotionsPage secondPromotionsPage = getElementFactory().getPromotionsPage();
 		assertThat("Navigated to promotions menu", secondPromotionsPage.promoteExistingButton().isDisplayed());
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		setUpPromotion(getQuery("nein", Language.GERMAN), new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "friend"));
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(2)));
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		promotionService.goToPromotions();
 		promotionService.delete("friend");
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		verifyThat(secondPromotionsPage, promotionsList(hasSize(1)));
 		promotionService.delete("woof");
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		verifyThat(promotionsPage, containsText("There are no promotions..."));
 	}
 

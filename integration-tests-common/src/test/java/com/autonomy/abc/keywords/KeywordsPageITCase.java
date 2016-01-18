@@ -3,6 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
@@ -16,7 +17,6 @@ import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -404,29 +404,28 @@ public class KeywordsPageITCase extends ABCTestBase {
 		Waits.loadOrFadeWait();
 
 		final String url = getDriver().getCurrentUrl();
-		final List<String> browserHandles = DriverUtil.createAndListWindowHandles(getDriver());
+		Window mainWindow = getMainSession().getActiveWindow();
+		Window secondWindow = getMainSession().openWindow(url);
 
-		getDriver().switchTo().window(browserHandles.get(1));
-		getDriver().get(url);
 		final KeywordsPage secondKeywordsPage = getElementFactory().getKeywordsPage();
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
 		assertThat(secondKeywordsPage.countKeywords(), is(5));
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		keywordsPage = getElementFactory().getKeywordsPage();
 		Waits.loadOrFadeWait();
 		keywordsPage.deleteSynonym("couple");
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
 		assertThat(secondKeywordsPage.countKeywords(), is(4));
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		keywordsPage = getElementFactory().getKeywordsPage();
 		Waits.loadOrFadeWait();
 		keywordsPage.deleteSynonym("pair");
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
 		assertThat(secondKeywordsPage.countKeywords(), is(3));
 	}
