@@ -12,17 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeywordsContainer extends AppElement {
-    private WebElement container;
-    private WebDriver driver;
-
     public KeywordsContainer(WebElement element, WebDriver driver) {
         super(element, driver);
-        this.container = element;
-        this.driver = driver;
     }
 
     public SynonymGroup synonymGroupContaining(String synonym) {
-        WebElement termBox = container.findElement(By.cssSelector("[data-term='" + synonym.toLowerCase() + "']"));
+        WebElement termBox = findElement(By.cssSelector("[data-term='" + synonym.toLowerCase() + "']"));
         return new SynonymGroup(ElementUtil.ancestor(termBox, 2), getDriver());
     }
 

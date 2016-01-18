@@ -19,9 +19,5 @@ public abstract class AppBody {
     public TopNavBar getTopNavBar() { return topNavBar; }
     public SideNavBar getSideNavBar() { return sideNavBar; }
 
-    public void navigateTo(String s){
-        driver.get(s);
-    }
-
     public abstract void logout();
 }

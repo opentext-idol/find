@@ -63,22 +63,6 @@ public abstract class CreateNewKeywordsPage extends AppElement implements AppPag
 		return findElement(By.cssSelector(".wizard-controls .cancel-wizard"));
 	}
 
-	public enum WizardStep {
-		TYPE("type"),
-		TRIGGERS("triggers"),
-		FINISH("finish-step");
-
-		private final String title;
-
-		WizardStep(final String title) {
-			this.title = title;
-		}
-
-		public String getTitle() {
-			return title;
-		}
-	}
-
 	public WebElement previousWizardButton(){
 		return findElement(By.cssSelector(".wizard-controls .previous-step"));
 	}

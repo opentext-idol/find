@@ -84,10 +84,6 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]/ul/li/ul[contains(@class, 'keywords-sub-list')]/li[@data-term='" + synonym + "']"));
     }
 
-    private int getNumberOfLanguages() {
-        return findElements(By.cssSelector(".scrollable-menu li")).size();
-    }
-
     public void filterView(final KeywordFilter filter) {
         WebDriverWait wait = new WebDriverWait(getDriver(),5);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".keywords-filters .dropdown-toggle"))).click();
@@ -113,9 +109,6 @@ public abstract class KeywordsPage extends KeywordsBase {
     public FormInput searchFilterBox() {
         return new FormInput(searchFilterTextBox(), getDriver());
     }
-
-    @Deprecated
-    public abstract void selectLanguage(final String language);
 
     public final void selectLanguage(final Language language) {
         languageDropdown().select(language);
