@@ -2,13 +2,11 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import org.junit.Before;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -20,28 +18,31 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
     protected TopNavBar topNavBar;
     protected SideNavBar sideNavBar;
 
-    public NotificationsDropDownTestBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public NotificationsDropDownTestBase(TestConfig config) {
+        super(config);
     }
 
     @Before
     public void setUp() throws InterruptedException {
         Thread.sleep(5000);
-        topNavBar = body.getTopNavBar();
-        sideNavBar = body.getSideNavBar();
+        topNavBar = getElementFactory().getTopNavBar();
+        sideNavBar = getElementFactory().getSideNavBar();
         notifications = topNavBar.getNotifications();
     }
 
-    protected void checkForNotification(String notificationText) {
-        new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining(notificationText));
-        body.getTopNavBar().notificationsDropdown();
-        notifications = body.getTopNavBar().getNotifications();
+    protected void checkForNotificationNoWait(String notificationText) {
+        getElementFactory().getTopNavBar().notificationsDropdown();
+        notifications = getElementFactory().getTopNavBar().getNotifications();
         assertThat(notifications.notificationNumber(1).getText(), is(notificationText));
     }
 
+    protected void checkForNotification(String notificationText) {
+        new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining(notificationText));
+        checkForNotificationNoWait(notificationText);
+    }
+
     protected void newBody(){
-        body = getBody();
-        topNavBar = body.getTopNavBar();
-        sideNavBar = body.getSideNavBar();
+        topNavBar = getElementFactory().getTopNavBar();
+        sideNavBar = getElementFactory().getSideNavBar();
     }
 }

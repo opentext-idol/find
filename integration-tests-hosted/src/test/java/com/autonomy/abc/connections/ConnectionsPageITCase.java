@@ -2,8 +2,10 @@ package com.autonomy.abc.connections;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.connections.*;
+import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.ConnectionStatistics;
+import com.autonomy.abc.selenium.connections.Credentials;
+import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -12,12 +14,11 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
+import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -30,8 +31,8 @@ public class ConnectionsPageITCase extends HostedTestBase {
     private NewConnectionPage newConnectionPage;
     private ConnectionService connectionService;
 
-    public ConnectionsPageITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public ConnectionsPageITCase(TestConfig config) {
+        super(config);
         // requires a separate account where indexes can safely be added and deleted
         setInitialUser(config.getUser("index_tests"));
     }
@@ -40,9 +41,8 @@ public class ConnectionsPageITCase extends HostedTestBase {
     public void setUp() {
         connectionService = getApplication().createConnectionService(getElementFactory());
 
-        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         connectionsPage = getElementFactory().getConnectionsPage();
-        body = getBody();
     }
 
     @Test
@@ -53,13 +53,13 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
         String url = getDriver().getCurrentUrl();
 
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         getElementFactory().getAnalyticsPage();
 
         navigateToConnectionViaURL(url);
 
         //For completeness try from both halves of the application
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         getElementFactory().getKeywordsPage();
 
         navigateToConnectionViaURL(url);
@@ -70,7 +70,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     public void testSecureWebConnector(){
         String email = "matthew.williamson@hpe.com";
 
-        WebConnector webConnector = new WebConnector("http://www.facebook.com/settings","facebooksecure", new Credentials(email,"vdPAuTGU",email)).withDuration(200);
+        WebConnector webConnector = new WebConnector("http://www.facebook.com/settings","facebooksecure", new Credentials(email,"vdPAuTGU",email)).withDuration(255);
 
         connectionService.setUpConnection(webConnector);
         connectionService.goToDetails(webConnector);
@@ -78,14 +78,14 @@ public class ConnectionsPageITCase extends HostedTestBase {
         connectionService.updateLastRun(webConnector);
         ConnectionStatistics connectionStatistics = webConnector.getStatistics();
 
-        verifyThat(connectionStatistics.getDetected(), not(0));
-        verifyThat(connectionStatistics.getIngested(), not(0));
+        verifyThat("detected some documents", connectionStatistics.getDetected(), not(0));
+        verifyThat("ingested some documents", connectionStatistics.getIngested(), not(0));
     }
 
     @Test
     //CSA-1795
     public void testBackButton(){
-        WebConnector webConnector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
+        WebConnector webConnector = new WebConnector("http://www.bbc.co.uk","bbc").withDuration(60);
 
         connectionService.setUpConnection(webConnector);
         connectionService.goToDetails(webConnector);
@@ -121,8 +121,9 @@ public class ConnectionsPageITCase extends HostedTestBase {
                 indexService.setUpIndex(new Index("index two"));
             } catch (Exception e) { /* couldn't create an index */  }
 
-            body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+            getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
 
+            connectionsPage = getElementFactory().getConnectionsPage();
             connectionsPage.newConnectionButton().click();
 
             newConnectionPage = getElementFactory().getNewConnectionPage();
@@ -137,12 +138,12 @@ public class ConnectionsPageITCase extends HostedTestBase {
             connectorIndexStepTab = newConnectionPage.getIndexStep();
             connectorIndexStepTab.selectIndexButton().click();
             connectorIndexStepTab.selectFirstIndex();
-            newConnectionPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
 
             Index firstIndex = connectorIndexStepTab.getChosenIndexInModal();
 
             connectorIndexStepTab.selectLastIndex();
-            newConnectionPage.loadOrFadeWait();
+            Waits.loadOrFadeWait();
 
             Index lastIndex = connectorIndexStepTab.getChosenIndexInModal();
 
@@ -153,6 +154,35 @@ public class ConnectionsPageITCase extends HostedTestBase {
                 connectorIndexStepTab.closeModal();
             } catch (Exception e) { /* No visible modal */ }
 
+            indexService.deleteAllIndexes();
+        }
+    }
+
+    @Test
+    //CSA-1679
+    public void testCreateFromIndexAutoSelectsIndex(){
+        Index index = new Index("index");
+        IndexService indexService = getApplication().createIndexService(getElementFactory());
+
+        try {
+            indexService.setUpIndex(index);
+            IndexesDetailPage indexDetailPage = indexService.goToDetails(index);
+
+            indexDetailPage.newConnectionButton().click();
+
+            newConnectionPage = getElementFactory().getNewConnectionPage();
+
+            ConnectorTypeStepTab connectorTypeStep = newConnectionPage.getConnectorTypeStep();
+            connectorTypeStep.connectorUrl().setValue("http://waitinginthefor.est");
+            connectorTypeStep.connectorName().setValue("i am lost");
+            newConnectionPage.nextButton().click();
+            Waits.loadOrFadeWait();
+            newConnectionPage.nextButton().click();
+
+            ConnectorIndexStepTab connectorIndexStep = newConnectionPage.getIndexStep();
+
+            verifyThat(connectorIndexStep.getChosenIndexOnPage(), is(index));
+        } finally {
             indexService.deleteAllIndexes();
         }
     }

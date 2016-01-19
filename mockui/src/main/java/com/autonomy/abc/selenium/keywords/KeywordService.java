@@ -1,16 +1,19 @@
 package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
-import com.autonomy.abc.selenium.config.Application;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.language.Language;
-import org.openqa.selenium.*;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -25,12 +28,12 @@ public class KeywordService extends ServiceBase {
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage newKeywordsPage;
 
-    public KeywordService(Application application, ElementFactory elementFactory) {
+    public KeywordService(SearchOptimizerApplication application, ElementFactory elementFactory) {
         super(application, elementFactory);
     }
 
     public KeywordsPage goToKeywords() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         keywordsPage = getElementFactory().getKeywordsPage();
         return keywordsPage;
     }
@@ -97,7 +100,7 @@ public class KeywordService extends ServiceBase {
         goToKeywords();
         keywordsPage.filterView(type);
         int count = 0;
-        for (final String language : keywordsPage.getLanguageList()) {
+        for (final Language language : keywordsPage.getLanguageList()) {
             int current = keywordsPage.countKeywords();
             if (current > 0) {
                 count += current;
@@ -112,7 +115,7 @@ public class KeywordService extends ServiceBase {
         return keywordsPage;
     }
 
-    private void tryDeleteAll(String language) throws StaleElementReferenceException {
+    private void tryDeleteAll(Language language) throws StaleElementReferenceException {
         try {
             keywordsPage.selectLanguage(language);
         } catch (WebDriverException e) {

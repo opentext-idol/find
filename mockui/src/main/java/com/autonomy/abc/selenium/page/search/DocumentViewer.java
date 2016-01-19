@@ -1,14 +1,14 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.NoSuchElementException;
 
 public class DocumentViewer extends AppElement implements AppPage {
     private DocumentViewer(WebDriver driver) {
@@ -18,7 +18,6 @@ public class DocumentViewer extends AppElement implements AppPage {
     public static DocumentViewer make(WebDriver driver) {
 //        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id("cboxClose")));
         DocumentViewer documentViewer = new DocumentViewer(driver);
-        documentViewer.loadOrFadeWait();
         documentViewer.waitForLoad();
         return documentViewer;
     }
@@ -29,11 +28,12 @@ public class DocumentViewer extends AppElement implements AppPage {
 
     public void close() {
         closeButton().click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
-    private WebElement prevButton() {
-        return findElement(By.id("cboxPrevious"));
+    /* use this only to check that button is displayed - click by using previous() */
+    public WebElement prevButton() {
+        return findElement(By.cssSelector("#cboxPrevious, .prevBtn"));
     }
 
     public void previous() {
@@ -41,8 +41,9 @@ public class DocumentViewer extends AppElement implements AppPage {
         waitForLoad();
     }
 
-    private WebElement nextButton() {
-        return findElement(By.id("cboxNext"));
+    /* use this only to check that button is displayed - click by using next() */
+    public WebElement nextButton() {
+        return findElement(By.cssSelector("#cboxNext, .nextBtn"));
     }
 
     public void next() {
@@ -51,11 +52,8 @@ public class DocumentViewer extends AppElement implements AppPage {
     }
 
     public WebElement frame() {
+        waitForDocumentLoad();
         return findElement(By.tagName("iframe"));
-    }
-
-    private String getRowText(int row) {
-        return findElement(By.cssSelector("tr:nth-child(" + row + ") td.break-all")).getText();
     }
 
     public String getField(String name) {
@@ -78,8 +76,21 @@ public class DocumentViewer extends AppElement implements AppPage {
         return getField("Reference");
     }
 
+    public String getAuthor(){
+        return getField("Author");
+    }
+
+    public int getCurrentDocumentNumber() {
+        String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
+        return Integer.parseInt(current[current.length - 3]);
+    }
+
     @Override
     public void waitForLoad() {
+        Waits.loadOrFadeWait();
+    }
+
+    private void waitForDocumentLoad() {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("view-server-loading-indicator")));
     }
 }

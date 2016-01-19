@@ -1,12 +1,12 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.util.Factory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +48,10 @@ public class TestConfig {
 		return jsonConfig.getFindUrl().toString();
 	}
 
+	public String getApiUrl() {
+		return jsonConfig.getApiUrl().toString();
+	}
+
 	public User getDefaultUser() {
 		return jsonConfig.getDefaultUser();
 	}
@@ -76,17 +80,16 @@ public class TestConfig {
 		return type;
 	}
 
-	@Deprecated
-	public WebDriver createWebDriver() {
-		return browser.createWebDriver(url, platform);
-	}
-
 	URL getHubUrl() {
 		return url;
 	}
 
 	public WebDriverFactory getWebDriverFactory() {
 		return new WebDriverFactory(this);
+	}
+
+	public Factory<NewUser> getNewUserFactory() {
+		return new RandomNewUserFactory(this);
 	}
 
 	// used when running whole suite via mvn
@@ -129,10 +132,7 @@ public class TestConfig {
 				TestConfig config = new TestConfig(i, jsonConfig);
 				// for compatibility
 				configs.add(new Object[]{
-						config,
-						config.getBrowser().toString(),
-						config.getType(),
-						config.getPlatform()
+						config
 				});
 			}
 		}

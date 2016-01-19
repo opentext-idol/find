@@ -1,11 +1,14 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.page.login.AuthHasLoggedIn;
+import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
-import org.openqa.selenium.By;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.concurrent.TimeUnit;
 
 public class HSOUser extends User {
     private String email;
@@ -23,35 +26,27 @@ public class HSOUser extends User {
         return email;
     }
 
-    /**
-     * TODO now you can use WebDriverFactory and create/clean up within this method probably best to actually do that
-     * @param driver  MUST BE A DIFFERENT WEB DRIVER FROM THE ONE THE ADMIN IS RUNNING IN
-     */
-    public void resetAuthentication(WebDriver driver) {
-        GMailHelper helper = new GMailHelper(driver);
+    void setUsername(String username) {
+        this.username = username;
+    }
 
-        helper.goToGMail();
-        helper.tryLoggingInToEmail();
-        helper.waitForNewEmail();
-        helper.clickUnreadMessage();
-        helper.expandCollapsedMessage();
-
-        new WebDriverWait(driver,10).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[text()='click here']"))).click();
+    @Override
+    public void authenticate(Factory<WebDriver> driverFactory, SignupEmailHandler emailParser) {
+        WebDriver driver = driverFactory.create();
+        driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
 
         try {
-            new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Google")));
-            verifyUser(driver);
-        } catch (TimeoutException e) { /* User already verified */ }
-    }
-
-    private void verifyUser(WebDriver driver){
-        driver.findElement(By.linkText("Google")).click();
-
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("noAccount")));
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+            if(emailParser.goToUrl(driver)) {
+                LoginPage loginPage = new HSOLoginPage(driver, new AuthHasLoggedIn(driver));
+                try {
+                    loginPage.loginWith(getAuthProvider());
+                } catch (TimeoutException e) {
+                /* already signed in to auth account */
+                }
+            }
+        } finally {
+            driver.quit();
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.element;
 
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -10,8 +11,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DatePicker extends AppElement {
+	/* should pass in the .input-group element */
 	public DatePicker(final WebElement element, final WebDriver driver) {
 		super(element, driver);
+	}
+
+	public void open() {
+		if (!isOpen()) {
+			toggleOpen();
+		}
+	}
+
+	public void close() {
+		if (isOpen()) {
+			toggleOpen();
+		}
+	}
+
+	private boolean isOpen() {
+		return findElements(By.cssSelector(".dropdown-menu")).size() > 0;
+	}
+
+	private void toggleOpen() {
+		findElement(By.cssSelector(".input-group-addon")).click();
 	}
 
 	public WebElement timePickerHour() {
@@ -43,7 +65,7 @@ public class DatePicker extends AppElement {
 			minuteString = '0' + minuteString;
 		}
 		findElement(By.cssSelector(".timepicker-minutes")).findElement(By.xpath(".//td[contains(text(), '" + minuteString + "')]")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void setMinuteUsingIncrementDecrement(final int minute) {
@@ -57,7 +79,7 @@ public class DatePicker extends AppElement {
 				decrementMinutes();
 			}
 		}
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void setHourUsingIncrementDecrement(final int hour) {
@@ -71,7 +93,7 @@ public class DatePicker extends AppElement {
 				decrementHours();
 			}
 		}
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void resetDateToToday() {
@@ -94,6 +116,7 @@ public class DatePicker extends AppElement {
 		findElement(By.cssSelector("[data-action='decrementMinutes']")).click();
 	}
 
+	// TODO: what is this doing?
 	public void togglePicker() {
 		findElement(By.cssSelector("[data-action='togglePicker']")).click();
 	}
@@ -106,11 +129,11 @@ public class DatePicker extends AppElement {
 		return getDriver().findElement(By.cssSelector(".picker-switch")).getText().split("\\s+")[0];
 	}
 
-	public WebElement getDatePickerSwitch(final CalendarView currentCalendarView) {
+	private WebElement getDatePickerSwitch(final CalendarView currentCalendarView) {
 		return getDriver().findElement(By.cssSelector(".datepicker-" + currentCalendarView.getTitle() + " .picker-switch"));
 	}
 
-	public enum CalendarView {
+	private enum CalendarView {
 		DAYS("days"),
 		MONTHS("months"),
 		YEARS("years");
@@ -139,28 +162,28 @@ public class DatePicker extends AppElement {
 		datePickerMonthSelect(month.format(date));
 		datePickerDaySelect(day.format(date));
 		togglePicker();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		timePickerHour().click();
 		selectTimePickerHour(Integer.parseInt(hour.format(date)));
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		timePickerMinute().click();
 		selectTimePickerMinute(Integer.parseInt(minute.format(date)));
 		setMinuteUsingIncrementDecrement(Integer.parseInt(minute.format(date)));
 	}
 
-	public void datePickerYearSelect(final String year) {
+	private void datePickerYearSelect(final String year) {
 		getDriver().findElement(By.xpath(".//span[contains(@class, 'year')][text()='" + year + "']")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
-	public void datePickerMonthSelect(final String month) {
+	private void datePickerMonthSelect(final String month) {
 		getDriver().findElement(By.xpath(".//span[contains(@class, 'month')][text()='" + month + "']")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
-	public void datePickerDaySelect(final String day) {
+	private void datePickerDaySelect(final String day) {
 		final String strippedDay = StringUtils.stripStart(day, "0");
 		getDriver().findElement(By.xpath(".//td[@class='day' or @class='day today' or @class='day today weekend' or @class='day active' or @class='day active today' or @class='day weekend'][text()='" + strippedDay + "']")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 }

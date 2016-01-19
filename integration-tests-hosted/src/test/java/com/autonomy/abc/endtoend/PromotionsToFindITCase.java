@@ -2,20 +2,20 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.control.Window;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.IndexFilter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
+import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,43 +24,31 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.isIn;
 
 //CSA-1566
 public class PromotionsToFindITCase extends HostedTestBase {
-    private List<String> browserHandles;
-    private FindPage find;
-    private Service service;
-    private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
+    private Window searchWindow;
+    private Window findWindow;
+    private Find find;
+    private FindResultsPage service;
+    private PromotionService<?> promotionService;
     private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
 
-    public PromotionsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public PromotionsToFindITCase(TestConfig config) {
+        super(config);
     }
 
     @Before
     public void setUp(){
         promotionService = getApplication().createPromotionService(getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
 
-        PromotionsPage promotions = promotionService.deleteAll();
-        browserHandles = promotions.createAndListWindowHandles();
-        switchToFind();
-        getDriver().get(config.getFindUrl());
-        getDriver().manage().window().maximize();
+        promotionService.deleteAll();
+        searchWindow = getMainSession().getActiveWindow();
+        findWindow = getMainSession().openWindow(config.getFindUrl());
         find = getElementFactory().getFindPage();
-        service = find.getService();
-        switchToSearch();
-    }
-
-    private void switchToSearch() {
-        getDriver().switchTo().window(browserHandles.get(0));
-    }
-
-    private void switchToFind() {
-        getDriver().switchTo().window(browserHandles.get(1));
+        service = find.getResultsPage();
+        searchWindow.activate();
     }
 
     @Test
@@ -71,83 +59,77 @@ public class PromotionsToFindITCase extends HostedTestBase {
         Promotion spotlightPromotion = new SpotlightPromotion(searchTrigger);
         Promotion secondPinPromotion = new PinToPositionPromotion(6, searchTrigger);
 
-        List<String> promotionTitles = setUpPromotion(pinPromotion, "Promotions", 5);
+        List<String> promotionTitles = promotionService.setUpPromotion(pinPromotion, "Promotions", 5);
         LOGGER.info("set up pin to position");
 
-        switchToFind();
+        findWindow.activate();
         find.search(searchTrigger);
         verifyPinToPosition(promotionTitles, 1, 5);
 
-        switchToSearch();
+        searchWindow.activate();
         PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(pinPromotion);
         promotionsDetailPage.pinPosition().setValueAndWait("6");
         LOGGER.info("updated pin position");
 
-        switchToFind();
-        refreshFind();
-        verifyPinToPosition(promotionTitles, 6, 10);
-
-        switchToSearch();
-        promotionsDetailPage.triggerAddBox().setAndSubmit(secondaryTrigger);
-        promotionsDetailPage.waitForTriggerRefresh();
+        boolean addedQuickly = true;
+        try {
+            promotionsDetailPage.getTriggerForm().addTrigger(secondaryTrigger);
+        } catch (TimeoutException e) {
+            addedQuickly = false;
+            promotionsDetailPage.getTriggerForm().waitForTriggerRefresh();
+        } finally {
+            verifyThat("added trigger within reasonable time", addedQuickly);
+        }
         LOGGER.info("added secondary trigger");
 
-        switchToFind();
+        findWindow.activate();
         find.search(secondaryTrigger);
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        service.filterByIndex("default_index");
+        find.filterBy(new IndexFilter(Index.DEFAULT));
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        service.filterByIndex("default_index");
+        find.filterBy(IndexFilter.PRIVATE);
         service.filterByParametric("Source Connector", "SIMPSONSARCHIVE");
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        switchToSearch();
-        List<String> spotlightPromotionTitles = setUpPromotion(spotlightPromotion, "Tertiary", 2);
+        searchWindow.activate();
+        List<String> spotlightPromotionTitles = promotionService.setUpPromotion(spotlightPromotion, "another", 2);
         LOGGER.info("set up spotlight promotion");
 
-        switchToFind();
+        findWindow.activate();
         find.search(searchTrigger);
 
         verifyPinToPosition(promotionTitles, 6, 10);
         verifySpotlight(spotlightPromotionTitles);
 
-        switchToSearch();
-        String singlePromoted = setUpPromotion(secondPinPromotion, "187", 1).get(0);
+        searchWindow.activate();
+        String singlePromoted = promotionService.setUpPromotion(secondPinPromotion, "187", 1).get(0);
         LOGGER.info("set up second pin to position");
 
-        switchToFind();
+        findWindow.activate();
         refreshFind();
 
         verifyThat(singlePromoted, isIn(service.getResultTitles(6, 11)));
 
         List<String> allPromotions = new ArrayList<>(promotionTitles);
         allPromotions.add(singlePromoted);
-        verifyPinToPosition(allPromotions, 6, 11);
         verifySpotlight(spotlightPromotionTitles);
 
-        switchToSearch();
+        searchWindow.activate();
         promotionService.delete("Spotlight for: " + spotlightPromotion.getTrigger());
         LOGGER.info("deleted spotlight promotion");
 
-        switchToFind();
+        findWindow.activate();
         find.search("Other");
         find.search(searchTrigger);
-
-        verifyThat(service.getPromotionsTitles(), empty());
     }
 
     private void refreshFind() {
         getDriver().navigate().refresh();
         find = getElementFactory().getFindPage();
-        service = find.getService();
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-    }
-
-    private List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {
-        return promotionService.setUpPromotion(promotion,
-                searchActionFactory.makeSearch(searchTerm), numberOfDocs);
+        service = find.getResultsPage();
+        service.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     private void verifySpotlight(List<String> promotionTitles) {
@@ -165,7 +147,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
     @After
     public void tearDown(){
         try {
-            switchToSearch();
+            searchWindow.activate();
             promotionService.deleteAll();
         } catch (NullPointerException e) {
             LOGGER.warn("skipping tear down");

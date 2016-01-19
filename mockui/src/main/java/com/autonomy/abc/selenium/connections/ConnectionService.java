@@ -1,44 +1,36 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ConnectionService {
-    private Application application;
-    private HSOElementFactory elementFactory;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ConnectionService extends ServiceBase<HSOElementFactory> {
     private ConnectionsPage connectionsPage;
-    private NewConnectionPage newConnectionPage;
     private ConnectionsDetailPage connectionsDetailPage;
+    private final static Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
 
-    public ConnectionService(Application application, HSOElementFactory elementFactory) {
-        this.application = application;
-        this.elementFactory = elementFactory;
-    }
-
-    protected WebDriver getDriver() {
-        return getElementFactory().getDriver();
-    }
-
-    protected HSOElementFactory getElementFactory() {
-        return elementFactory;
-    }
-
-    protected AppBody getBody() {
-        return application.createAppBody(getDriver());
+    public ConnectionService(SearchOptimizerApplication application, HSOElementFactory elementFactory) {
+        super(application, elementFactory);
     }
 
     public ConnectionsPage goToConnections() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         connectionsPage = getElementFactory().getConnectionsPage();
         return connectionsPage;
     }
@@ -57,10 +49,28 @@ public class ConnectionService {
     public ConnectionsPage setUpConnection(final Connector connector) {
         goToConnections();
         connectionsPage.newConnectionButton().click();
-        newConnectionPage = elementFactory.getNewConnectionPage();
-        connector.makeWizard(newConnectionPage).apply();
-        new WebDriverWait(getDriver(), 300).withMessage("connection " + connector + " timed out").until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
+        connector.makeWizard(getElementFactory().getNewConnectionPage()).apply();
+        new WebDriverWait(getDriver(), 20)
+                .withMessage("starting connection")
+                .until(GritterNotice.notificationContaining("started"));
+        LOGGER.info("Connection '" + connector.getName() + "' started");
+        waitForConnectorToRun(connector);
         return connectionsPage;
+    }
+
+    private void waitForConnectorToRun(final Connector connector) {
+        Long startTime = System.currentTimeMillis();
+        new WebDriverWait(getDriver(), 300)
+                .withMessage("running connection " + connector)
+                .until(GritterNotice.notificationContaining(connector.getFinishedNotification()));
+        LOGGER.info("Connection '" + connector.getName() + "' finished");
+        if(connector instanceof WebConnector){
+            int timeTaken = (int) ((System.currentTimeMillis() - startTime) / 1000);
+            int duration = ((WebConnector) connector).getDuration();
+            if(timeTaken > duration) {
+                LOGGER.error("CONNECTION '" + connector.getName() + "' TOOK " + timeTaken + " SECONDS TO COMPLETE, SHOULD HAVE TAKEN " + duration + " SECONDS");
+            }
+        }
     }
 
     public ConnectionsPage deleteConnection(final Connector connector, boolean deleteIndex) {
@@ -86,14 +96,20 @@ public class ConnectionService {
 
     private void confirmDelete(Connector connector){
         connectionsDetailPage.deleteConfirmButton().click();
-        connectionsPage = elementFactory.getConnectionsPage();
+        connectionsPage = getElementFactory().getConnectionsPage();
         new WebDriverWait(getDriver(), 100).until(GritterNotice.notificationContaining(connector.getDeleteNotification()));
     }
 
     public ConnectionsPage deleteAllConnections(boolean deleteIndex) {
         goToConnections();
+
+        List<String> titles = new ArrayList<>();
         for(WebElement connector : getDriver().findElements(By.className("listItemTitle"))){
-            WebConnector webConnector = new WebConnector(null, connector.getText().split("\\(")[0].trim());
+            titles.add(connector.getText().split("\\(")[0].trim());
+        }
+
+        for(String title : titles){
+            WebConnector webConnector = new WebConnector(null, title);
 
             beginDelete(webConnector);
 
@@ -105,12 +121,56 @@ public class ConnectionService {
 
             confirmDelete(webConnector);
         }
+        
         return connectionsPage;
     }
 
     public ConnectionsDetailPage updateLastRun(WebConnector webConnector) {
         goToDetails(webConnector);
         webConnector.setStatistics(new ConnectionStatistics(connectionsDetailPage.lastRun()));
+        return connectionsDetailPage;
+    }
+
+    public Connector changeIndex(Connector connector, Index index) {
+        goToDetails(connector);
+        connectionsDetailPage.editButton().click();
+
+        NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
+
+        for(int i = 0; i < 2; i++) {
+            newConnectionPage.nextButton().click();
+            Waits.loadOrFadeWait();
+        }
+
+        ConnectorIndexStepTab connectorIndexStep = newConnectionPage.getIndexStep();
+        connectorIndexStep.selectIndexButton().click();
+        connectorIndexStep.selectIndex(index);
+        newConnectionPage.finishButton().click();
+
+        connector.setIndex(index);
+        waitForConnectorToRun(connector);
+
+        return connector;
+    }
+
+    public ConnectionsDetailPage cancelConnectionScheduling(Connector connector) {
+        goToDetails(connector);
+
+        connectionsDetailPage.editButton().click();
+
+        NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
+
+        newConnectionPage.nextButton().click();
+        Waits.loadOrFadeWait();
+
+        newConnectionPage.getConnectorConfigStep().skipSchedulingCheckbox().click();
+
+        newConnectionPage.nextButton().click();
+        Waits.loadOrFadeWait();
+        newConnectionPage.finishButton().click();
+
+        new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining("Connector " + connector.getName() + " schedule has been cancelled successfully"));
+
         return connectionsDetailPage;
     }
 }

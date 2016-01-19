@@ -5,27 +5,21 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class Checkbox extends AppElement {
-    private WebElement box;
+public abstract class Checkbox extends AppElement {
+    protected WebElement box;
 
     public Checkbox(WebElement element, WebDriver driver) {
         super(element, driver);
-        box = findElement(By.className("icheckbox_square-green"));
     }
 
-    public String getName() {
-        return findElement(By.tagName("label")).getText();
-    }
+    public abstract String getName();
+    public abstract boolean isChecked();
 
-    public boolean isChecked() {
-        return box.getAttribute("class").contains("checked");
-    }
-
-    public void toggle() {
+    public void toggle(){
         box.click();
     }
 
-    public void check() {
+    public void check(){
         if (!isChecked()) {
             toggle();
         }
@@ -35,5 +29,10 @@ public class Checkbox extends AppElement {
         if (isChecked()) {
             toggle();
         }
+    }
+
+    protected int getResultCount(By by){
+        String spanResultCount = findElement(by).getText().split("\\(")[1];
+        return Integer.parseInt(spanResultCount.substring(0, spanResultCount.length() - 1));
     }
 }

@@ -5,13 +5,14 @@ import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
-import com.autonomy.abc.selenium.config.Application;
-import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.control.Session;
+import com.autonomy.abc.selenium.control.SessionRegistry;
 import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
+import com.autonomy.abc.selenium.page.login.SSOFailureException;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.ImplicitWaits;
+import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -20,13 +21,14 @@ import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.model.MultipleFailureException;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static org.junit.Assert.fail;
 
@@ -38,25 +40,21 @@ public abstract class ABCTestBase {
 	private final TestState testState = TestState.get();
 	protected final TestConfig config;
 
-	private final Application application;
+	private final SearchOptimizerApplication<?> application;
+	private final SessionRegistry sessionRegistry;
 	private WebDriver driver;
-	// TODO: use getBody() instead
-	public AppBody body;
+	private Session mainSession;
 	private ElementFactory elementFactory;
 	private User initialUser;
 	private String initialUrl;
 	private User currentUser;
 
-	// TODO: replace with single argument constructor
-	public ABCTestBase(final TestConfig config, final String browser, final ApplicationType type, final Platform platform) {
-		this(config);
-	}
-
 	public ABCTestBase(final TestConfig config) {
 		this.config = config;
-		this.application = Application.ofType(config.getType());
+		this.application = SearchOptimizerApplication.ofType(config.getType());
 		this.initialUser = config.getDefaultUser();
 		this.initialUrl = config.getWebappUrl();
+		this.sessionRegistry = new SessionRegistry(config.getWebDriverFactory());
 	}
 
 	@Parameterized.Parameters
@@ -75,8 +73,9 @@ public abstract class ABCTestBase {
 
 	private void initialiseTest() {
 		LOGGER.info(config.toString());
-		driver = config.getWebDriverFactory().create();
-		ImplicitWaits.setImplicitWait(driver);
+
+		mainSession = sessionRegistry.startSession();
+		driver = mainSession.getDriver();
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
 		testState.addStatementHandler(new StatementArtifactHandler(this));
@@ -86,16 +85,12 @@ public abstract class ABCTestBase {
 		getDriver().get(initialUrl);
 		getDriver().manage().window().maximize();
 
-		// no side/top bar until logged in
-		body = getApplication().createAppBody(driver, null, null);
 		elementFactory = getApplication().createElementFactory(driver);
 	}
 
 	protected void postLogin() throws Exception {
 		//Wait for page to load
 		Thread.sleep(2000);
-		// now has side/top bar
-		body = getBody();
 		// wait for the first page to load
 		getElementFactory().getPromotionsPage();
 	}
@@ -133,11 +128,19 @@ public abstract class ABCTestBase {
 		return driver;
 	}
 
+	protected Session getMainSession() {
+		return mainSession;
+	}
+
+	public final SessionRegistry getSessionRegistry() {
+		return sessionRegistry;
+	}
+
 	public final TestConfig getConfig() {
 		return config;
 	}
 
-	public Application getApplication() {
+	public SearchOptimizerApplication<?> getApplication() {
 		return application;
 	}
 
@@ -145,17 +148,31 @@ public abstract class ABCTestBase {
 		return elementFactory;
 	}
 
-	public AppBody getBody() {
-		return getApplication().createAppBody(driver);
-	}
-
 	protected final void loginAs(User user) {
-		getElementFactory().getLoginPage().loginWith(user.getAuthProvider());
+		loginTo(getElementFactory().getLoginPage(), driver, user);
 		currentUser = user;
 	}
 
+	protected final void loginTo(LoginPage loginPage, WebDriver webDriver, User user) {
+		String redirectUrl = extractRedirectUrl(webDriver.getCurrentUrl()).replace("%23","#");
+		try {
+			loginPage.loginWith(user.getAuthProvider());
+		} catch (SSOFailureException e) {
+			LOGGER.info("Login failed, redirecting to " + redirectUrl);
+			webDriver.get(redirectUrl);
+		}
+	}
+
+	private String extractRedirectUrl(String fullUrl) {
+		int startIndex = fullUrl.indexOf("redirect_url=") + "redirect_url=".length();
+		String redirectUrl = fullUrl.substring(startIndex);
+		return redirectUrl
+				.replaceAll("%3A", ":")
+				.replaceAll("%2F", "/");
+	}
+
 	protected final void logout() {
-		getBody().logout();
+		getElementFactory().getTopNavBar().logOut();
 		currentUser = User.NULL;
 	}
 

@@ -1,12 +1,15 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.util.Factory;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+import org.openqa.selenium.WebDriver;
 
 public class User {
     protected String username;
-    private final Role role;
+    private Role role;
     private final AuthProvider authProvider;
     public final static User NULL = NullUser.getInstance();
+    private String apiKey;
 
     public User(AuthProvider provider, String username, Role role) {
         this.authProvider = provider;
@@ -32,5 +35,23 @@ public class User {
 
     public String toString() {
         return "User<" + authProvider + '|' + role + '>';
+    }
+
+    // changed in the app via UsersPage/UserService
+    void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void authenticate(Factory<WebDriver> driver, SignupEmailHandler handler) {
+        /* NOOP by default */
+    }
+
+    public User withApiKey(String apiKey) {
+        this.apiKey = apiKey;
+        return this;
+    }
+
+    public String getApiKey(){
+        return apiKey;
     }
 }

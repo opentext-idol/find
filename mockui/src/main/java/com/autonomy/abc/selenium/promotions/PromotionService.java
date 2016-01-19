@@ -1,14 +1,16 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.AppBody;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.search.Search;
+import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -19,30 +21,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class PromotionService {
-    private Application application;
-    private ElementFactory elementFactory;
+public class PromotionService<T extends ElementFactory> extends ServiceBase<T> {
     private PromotionsPage promotionsPage;
 
-    public PromotionService(Application application, ElementFactory elementFactory) {
-        this.application = application;
-        this.elementFactory = elementFactory;
-    }
-
-    protected WebDriver getDriver() {
-        return getElementFactory().getDriver();
-    }
-
-    protected ElementFactory getElementFactory() {
-        return elementFactory;
-    }
-
-    protected AppBody getBody() {
-        return application.createAppBody(getDriver());
+    public PromotionService(SearchOptimizerApplication application, T elementFactory) {
+        super(application, elementFactory);
     }
 
     public PromotionsPage goToPromotions() {
-        getBody().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
         promotionsPage = getElementFactory().getPromotionsPage();
         return promotionsPage;
     }
@@ -57,18 +44,24 @@ public class PromotionService {
         return getElementFactory().getPromotionsDetailPage();
     }
 
-    public List<String> setUpPromotion(Promotion promotion, Search search, int numberOfDocs) {
-        SearchPage searchPage = search.apply();
+    public List<String> setUpPromotion(Promotion promotion, SearchQuery query, int numberOfDocs) {
+        SearchPage searchPage = getApplication().createSearchService(getElementFactory()).search(query);
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
+
         if (promotion instanceof DynamicPromotion) {
             searchPage.promoteThisQueryButton().click();
         } else {
-            searchPage.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton());
+            ElementUtil.waitUntilClickableThenClick(searchPage.promoteTheseItemsButton(), getDriver());
         }
+
         promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
         getElementFactory().getSearchPage();
         return promotedDocTitles;
+    }
+
+    public List<String> setUpPromotion(Promotion promotion, String searchTerm, int numberOfDocs) {
+        return setUpPromotion(promotion, new SearchQuery(searchTerm), numberOfDocs);
     }
 
     public PromotionsPage delete(Promotion promotion) {
@@ -85,14 +78,15 @@ public class PromotionService {
         deleteButton.click();
         final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
         deleteModal.findElement(By.cssSelector(".btn-danger")).click();
-        deleteModal.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         return deleteButton;
     }
 
-    public void delete(String title) {
+    public PromotionsPage delete(String title) {
         goToPromotions();
         WebElement deleteButton = deleteNoWait(promotionsPage.getPromotionLinkWithTitleContaining(title));
         new WebDriverWait(getDriver(), 20).until(ExpectedConditions.stalenessOf(deleteButton));
+        return promotionsPage;
     }
 
     public PromotionsPage deleteAll() {

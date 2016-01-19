@@ -1,26 +1,18 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 
-public class HSOPromotionService extends PromotionService {
+public class HSOPromotionService extends PromotionService<HSOElementFactory> {
     private HSOPromotionsPage promotionsPage;
     private HSOCreateNewPromotionsPage createNewPromotionsPage;
-    private HSOElementFactory elementFactory;
 
-    public HSOPromotionService(Application application, ElementFactory elementFactory) {
-        super(application, elementFactory);
-        this.elementFactory = (HSOElementFactory) elementFactory;
-    }
-
-    @Override
-    protected HSOElementFactory getElementFactory() {
-        return elementFactory;
+    public HSOPromotionService(SearchOptimizerApplication application, ElementFactory elementFactory) {
+        super(application, (HSOElementFactory) elementFactory);
     }
 
     @Override

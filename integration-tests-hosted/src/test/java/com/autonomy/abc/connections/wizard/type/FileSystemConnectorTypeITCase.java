@@ -2,31 +2,24 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
-import static com.autonomy.abc.matchers.ElementMatchers.hasAttribute;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
-/**
- * Created by avidan on 10-11-15.
- */
 public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
-    public FileSystemConnectorTypeITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public FileSystemConnectorTypeITCase(TestConfig config) {
+        super(config);
     }
 
     private FormInput connectorPath;
@@ -52,7 +45,7 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
         for (String key : map.keySet()) {
             connectorPath.setValue(map.get(key));
             connectorName.getElement().click();
-            assertThat("The url input field isn't valid ", !AppElement.hasClass(INVALID_INPUT_CLASS, AppElement.getParent(AppElement.getParent(connectorPath.getElement()))));
+            assertThat("The url input field isn't valid ", !ElementUtil.hasClass(INVALID_INPUT_CLASS, ElementUtil.ancestor(connectorPath.getElement(), 2)));
 
             assertThat("The name was extracted from the URL", connectorName.getElement(), hasAttribute("value", equalTo(key)));
             assertThat("The next button in the wizard is enabled", newConnectionPage.nextButton(), not(disabled()));
@@ -78,7 +71,7 @@ public class FileSystemConnectorTypeITCase extends ConnectorTypeStepBase {
 
             connectorPath.setValue((String) pair.getValue());
             connectorName.getElement().click();
-            assertThat("The url input field isn't valid ", AppElement.getParent(AppElement.getParent(connectorPath.getElement())), hasClass(INVALID_INPUT_CLASS));
+            assertThat("The url input field isn't valid ", ElementUtil.ancestor(connectorPath.getElement(), 2), hasClass(INVALID_INPUT_CLASS));
 
             newConnectionPage.nextButton().click();
             assertThat("The step has an error when value is " + pair.getKey(), newConnectionPage.connectorTypeStepTab(), not(stepIsValid()));

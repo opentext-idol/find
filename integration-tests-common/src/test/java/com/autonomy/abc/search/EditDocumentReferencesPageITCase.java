@@ -2,59 +2,57 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
-import com.autonomy.abc.selenium.search.SearchFilter;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static com.autonomy.abc.matchers.ElementMatchers.disabled;
-import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
-    public EditDocumentReferencesPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-        super(config, browser, appType, platform);
+    public EditDocumentReferencesPageITCase(final TestConfig config) {
+        super(config);
     }
 
-    private PromotionsPage promotionsPage;
     private SearchPage searchPage;
     private PromotionsDetailPage promotionsDetailPage;
     private EditDocumentReferencesPage editReferencesPage;
     private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
+    private SearchService searchService;
 
     @Before
     public void setUp() throws MalformedURLException {
         promotionService = getApplication().createPromotionService(getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-        promotionsPage = promotionService.deleteAll();
+        searchService = getApplication().createSearchService(getElementFactory());
+
+        promotionService.deleteAll();
     }
 
     private List<String> setUpPromotion(final String searchTerm, final String trigger, final int numberOfDocs) {
-        Search search = searchActionFactory.makeSearch(searchTerm);
-        final List<String> promotedDocTitles = promotionService.setUpPromotion(new SpotlightPromotion(trigger), search, numberOfDocs);
+        final List<String> promotedDocTitles = promotionService.setUpPromotion(new SpotlightPromotion(trigger), searchTerm, numberOfDocs);
         promotionsDetailPage = promotionService.goToDetails(trigger.split(" ")[0]);
         promotionsDetailPage.addMoreButton().click();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
@@ -63,7 +61,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
     // TODO: search action should return a SearchBase?
     private void editDocumentSearch(final String searchTerm) {
-        body.getTopNavBar().search(searchTerm);
+        getElementFactory().getTopNavBar().search(searchTerm);
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         editReferencesPage.waitForSearchLoadIndicatorToDisappear();
     }
@@ -84,8 +82,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
             verifyThat(promotedDocs, hasItem(equalToIgnoringCase(docTitle)));
         }
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        searchPage = searchActionFactory.makeSearch("edit").apply();
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        searchPage = searchService.search("edit");
         searchPage.promoteTheseDocumentsButton().click();
         searchPage.addToBucket(3);
 
@@ -93,7 +91,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         promotionsDetailPage = promotionService.goToDetails("jedi");
         promotionsDetailPage.addMoreButton().click();
-        promotionsPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         final List<String> secondPromotionsBucketList = editReferencesPage.promotionsBucketList();
@@ -108,8 +106,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         final List<String> finalPromotionsBucketList = editReferencesPage.promotionsBucketList();
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        searchPage = searchActionFactory.makeSearch("fast").apply();
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        searchPage = searchService.search("fast");
         searchPage.promoteTheseDocumentsButton().click();
 
         final List<String> searchPageBucketDocs = searchPage.promotionsBucketList();
@@ -128,13 +126,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("unrelated");
 
         for (int i = 1; i < 7; i++) {
-            AppElement.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
+            ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(i), getDriver());
             editReferencesPage.searchResultCheckbox(i).click();
             verifyThat(editReferencesPage.promotionsBucketList().size(), is(i + 4));
         }
 
         for (int j = 6; j > 0; j--) {
-            AppElement.scrollIntoView(editReferencesPage.searchResultCheckbox(j), getDriver());
+            ElementUtil.scrollIntoView(editReferencesPage.searchResultCheckbox(j), getDriver());
             editReferencesPage.searchResultCheckbox(j).click();
             verifyThat(editReferencesPage.promotionsBucketList().size(), is(j - 1 + 4));
         }
@@ -155,7 +153,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     private void verifyRefreshing() {
         getDriver().navigate().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
-        body = getBody();
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));
     }
@@ -177,7 +174,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editDocumentSearch("mansion");
         editReferencesPage.searchResultCheckbox(1).click();
         editReferencesPage.searchResultCheckbox(2).click();
-        editReferencesPage.javascriptClick(editReferencesPage.forwardPageButton());
+        editReferencesPage.switchResultsPage(Pagination.NEXT);
         editReferencesPage.searchResultCheckbox(3).click();
         editReferencesPage.searchResultCheckbox(4).click();
 
@@ -212,7 +209,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
     }
 
@@ -221,7 +218,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
 
         getDriver().switchTo().frame(docViewer.frame());
-        verifyThat(getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
+        verifyThat("document '" + title + "' is viewable", getDriver().findElement(By.xpath(".//*")), not(hasTextThat(isEmptyOrNullString())));
 
         getDriver().switchTo().window(handle);
         docViewer.close();
@@ -233,7 +230,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         for (int i = 0; i < 5; i++){
             final String docTitle = editReferencesPage.promotionsBucketWebElements().get(i).getText();
-            editReferencesPage.getPromotionBucketElementByTitle(docTitle).click();
+            editReferencesPage.promotionBucketElementByTitle(docTitle).click();
             checkDocumentViewable(docTitle);
         }
 
@@ -243,12 +240,10 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         for (int j = 1; j <= 2; j++) {
             for (int i = 1; i <= 5; i++) {
                 final String searchResultTitle = editReferencesPage.getSearchResultTitle(i);
-                editReferencesPage.getSearchResult(i).click();
+                editReferencesPage.searchResult(i).click();
                 checkDocumentViewable(searchResultTitle);
             }
-
-            editReferencesPage.javascriptClick(editReferencesPage.forwardPageButton());
-            editReferencesPage.loadOrFadeWait();
+            editReferencesPage.switchResultsPage(Pagination.NEXT);
         }
 
         editReferencesPage.emptyBucket();
@@ -257,7 +252,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         for (int i = 1; i < 5; i++) {
             editReferencesPage.searchResultCheckbox(i).click();
             final String docTitle = editReferencesPage.getSearchResultTitle(i);
-            editReferencesPage.getPromotionBucketElementByTitle(docTitle).click();
+            editReferencesPage.promotionBucketElementByTitle(docTitle).click();
             checkDocumentViewable(docTitle);
         }
     }
@@ -277,13 +272,13 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         verifyThat(editReferencesPage.saveButton(), disabled());
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
 
         editReferencesPage.searchResultCheckbox(6).click();
         final String newPromotedDoc = editReferencesPage.getSearchResultTitle(6);
 
-        editReferencesPage.tryClickThenTryParentClick(editReferencesPage.saveButton());
+        ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail"));
 
@@ -317,5 +312,39 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
             verifyThat(promotionsList, not(hasItem(equalToIgnoringCase(bucketList.get(i)))));
             verifyThat(promotionsList, hasItem(equalToIgnoringCase(bucketList.get(i + 4))));
         }
+    }
+
+    @Test
+    //CSA-1761
+    public void testAddedDocumentsNotUnknown(){
+        setUpPromotion("smiles", "fun happiness", 2);
+
+        editDocumentSearch("Friday");
+
+        String title = editReferencesPage.getSearchResultTitle(5);
+        editReferencesPage.searchResultCheckbox(5).click();
+
+        editReferencesPage.saveButton().click();
+
+        promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
+
+        new WebDriverWait(getDriver(),5).until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return !promotionsDetailPage.getPromotedTitles().contains("Unknown Document");
+            }
+        });
+
+        List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
+
+        verifyThat(promotedTitles, hasItem(title));
+        verifyThat(promotedTitles, not(hasItem("Unknown Document")));
+
+        promotionsDetailPage.viewDocument(title);
+
+        new WebDriverWait(getDriver(),30).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#cboxLoadedContent .icon-spin")));
+
+        verifyThat(getDriver().findElement(By.id("cboxLoadedContent")), displayed());
+        verifyThat(getDriver().findElement(By.id("cboxLoadedContent")), not(containsText("500")));
     }
 }

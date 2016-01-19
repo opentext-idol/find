@@ -1,7 +1,7 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.config.Application;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
@@ -27,7 +27,7 @@ public class JsonConfig {
 
         // user config is app-specific, must initialise after app
         // (this means that currently the app type must be specified in both configs) TODO: expose override constructor/factory
-        Application application = Application.ofType(getAppType());
+        SearchOptimizerApplication application = SearchOptimizerApplication.ofType(getAppType());
         UserConfigParser userConfigParser = application.getUserConfigParser();
         this.users = new HashMap<>();
         Iterator<Map.Entry<String, JsonNode>> iterator = node.path("users").fields();
@@ -67,7 +67,7 @@ public class JsonConfig {
         return (url == null) ? null : new JsonConfig(new ObjectMapper().readTree(url));
     }
 
-    public JsonConfig overrideUsing(JsonConfig overrides) throws IOException {
+    public JsonConfig overrideUsing(JsonConfig overrides) {
         return (overrides == null) ? this : new JsonConfig(overrides, this);
     }
 
@@ -81,6 +81,10 @@ public class JsonConfig {
 
     public URL getFindUrl() {
         return this.app.findUrl;
+    }
+
+    public URL getApiUrl() {
+        return this.app.apiUrl;
     }
 
     public List<Browser> getBrowsers() {
@@ -107,18 +111,21 @@ public class JsonConfig {
         private final ApplicationType type;
         private final URL url;
         private final URL findUrl;
+        private final URL apiUrl;
 
         private AppConfig(JsonNode node) throws MalformedURLException {
             String typeString = node.path("type").asText();
             type = (typeString.isEmpty() ? null : ApplicationType.fromString(typeString));
             url = getUrlOrNull(node.path("url"));
             findUrl = getUrlOrNull(node.path("find"));
+            apiUrl = getUrlOrNull(node.path("api"));
         }
 
         private AppConfig(AppConfig overrides, AppConfig defaults) {
             type = override(defaults.type, overrides.type);
             url = override(defaults.url, overrides.url);
             findUrl = override(defaults.findUrl, overrides.findUrl);
+            apiUrl = override(defaults.apiUrl, overrides.apiUrl);
         }
 
         private AppConfig overrideUsing(AppConfig overrides) {

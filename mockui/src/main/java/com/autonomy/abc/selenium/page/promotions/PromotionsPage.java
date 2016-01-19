@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -38,25 +39,6 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return promotion.findElement(By.className("promotion-delete"));
 	}
 
-	@Deprecated
-	public void deletePromotion(String promotionContains){
-		deletePromotion(getPromotionLinkWithTitleContaining(promotionContains));
-	}
-
-	@Deprecated
-	private void deletePromotion(WebElement promotion){
-		WebElement deleteButton = promotion.findElement(By.className("promotion-delete"));
-		deleteButton.click();
-		loadOrFadeWait();
-		modalClick();
-		loadOrFadeWait();
-		new WebDriverWait(getDriver(),20).until(ExpectedConditions.stalenessOf(deleteButton));
-	}
-
-	private void modalClick() {
-		getDriver().findElement(By.className("modal-action-button")).click();
-	}
-
 	public List<WebElement> promotionsList() {
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loading-indicator")));
 		if (getText().contains("There are no promotions")) {
@@ -71,22 +53,6 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 			promotionTitles.add(promotion.findElement(By.tagName("h3")).getText());
 		}
 		return promotionTitles;
-	}
-
-	@Deprecated
-	public void deleteAllPromotions() {
-		List<WebElement> promotions = promotionsList();
-
-		for(WebElement promotion : promotions){
-			deletePromotion(promotion);
-		}
-
-		new WebDriverWait(getDriver(),Math.max(promotions.size() * 10,30)).until(new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver driver) {
-				return findElements(By.className("promotion-delete")).size() == 0;
-			}
-		});
 	}
 
 	@Deprecated
@@ -109,7 +75,7 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 	public void selectPromotionsCategoryFilter(final String filterBy) {
 		promotionsCategoryFilterButton().click();
 		findElement(By.cssSelector(".type-filter")).findElement(By.xpath(".//a[contains(text(), '" + filterBy + "')]")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void clearPromotionsSearchFilter() {

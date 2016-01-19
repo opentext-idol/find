@@ -2,7 +2,8 @@
   "app": {
     "type": "Hosted",
     "url": "http://search.dev.idolondemand.com/searchoptimizer/p",
-    "find": "http://find.dev.idolondemand.com"
+    "find": "http://find.dev.idolondemand.com",
+    "api" : "https://api.int.havenondemand.com"
   },
   "selenium": {
     "browsers": ["chrome"],
@@ -48,6 +49,16 @@
         "email": "hodtestqa401@gmail.com",
         "password": "qoxntlozubjaamyszerfk"
       }
+    },
+    "drake": {
+      "username": "drake",
+      "password": "the_six",
+      "email": "hodtestqa401+WITHMYWOES@gmail.com",
+      "auth": {
+        "type":"Facebook",
+        "email": "matthew.williamson@hpe.com",
+        "password": "vdPAuTGU"
+      }
     }
   },
   "users": {
@@ -58,7 +69,8 @@
         "type": "HP Passport",
         "username": "hodtest",
         "password": "Z@s=5rYbw6MEx]?X"
-      }
+      },
+      "apikey": "ac4d0af1-fa82-46f5-99ab-a525756c3c71"
     },
     "index_tests": {
       "username": "TODO",
@@ -67,7 +79,8 @@
         "type": "Yahoo",
         "username": "hodtesting",
         "password": ":Z4jM8vq5`en89d>"
-      }
+      },
+      "apikey" : "4f57f065-2723-4bd4-8559-a5d93066d3e3"
     },
     "google": {
       "username": "TODO",
@@ -76,7 +89,8 @@
         "type": "Google",
         "email": "hodtestqa401@gmail.com",
         "password": "qoxntlozubjaamyszerfk"
-      }
+      },
+      "apikey" : ""
     },
     "twitter": {
       "username": "TODO",
@@ -85,7 +99,8 @@
         "type": "Twitter",
         "username": "hodtesting",
         "password": "5cUdPhYM"
-      }
+      },
+      "apikey" : ""
     },
     "facebook": {
       "username": "TODO",
@@ -94,7 +109,8 @@
         "type": "Facebook",
         "email": "matthew.williamson@hpe.com",
         "password": "vdPAuTGU"
-      }
+      },
+      "apikey" : ""
     },
     "hp_passport": {
       "username": "TODO",
@@ -103,7 +119,8 @@
         "type": "HP Passport",
         "username": "hodtest",
         "password": "Z@s=5rYbw6MEx]?X"
-      }
+      },
+      "apikey": "ac4d0af1-fa82-46f5-99ab-a525756c3c71"
     },
     "yahoo": {
       "username": "TODO",
@@ -112,7 +129,8 @@
         "type": "Yahoo",
         "username": "hodtesting",
         "password": ":Z4jM8vq5`en89d>"
-      }
+      },
+      "apikey" : "4f57f065-2723-4bd4-8559-a5d93066d3e3"
     }
   }
 }

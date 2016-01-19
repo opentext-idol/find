@@ -2,20 +2,20 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
+import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,49 +45,13 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 		return findElement(By.cssSelector(".wizard-controls .previous-step"));
 	}
 
-	public FormInput triggerBox() {
-		return new FormInput(findElement(By.cssSelector("input[name='words']")), getDriver());
+	public WebElement spotlightType(final Promotion.SpotlightType type){
+		return spotlightType(type.getOption());
 	}
 
-	public void addSearchTrigger(final String searchTrigger) {
-		triggerBox().setValue(searchTrigger);
-
-		try {
-			loadOrFadeWait();
-			waitUntilClickableThenClick(triggerAddButton());
-		} catch (final Exception e) {
-			System.out.println("could not click trigger button with trigger " + searchTrigger);
-		}
-	}
-
-	public void removeSearchTrigger(final String searchTrigger) {
-		waitUntilClickableThenClick(By.xpath(".//span[contains(text(), '" + searchTrigger + "')]/i"));
-	}
-
-	public List<String> getSearchTriggersList() {
-		final List<String> searchTriggerList = new ArrayList<>();
-
-		for (final WebElement trigger : findElements(By.cssSelector(".remove-word"))) {
-			searchTriggerList.add(getParent(trigger).getText());
-		}
-
-		return searchTriggerList;
-	}
-
-	public WebElement triggerAddButton() {
-		return findElement(By.cssSelector(".trigger-words-form")).findElement(By.xpath(".//i[contains(@class, 'fa-plus')]/.."));
-	}
-
-	public String getTriggerError() {
-		try {
-			return findElement(By.className("help-block")).getText();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
-	}
-
+	@Deprecated
 	public WebElement spotlightType(final String type ) {
-		return getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
+		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
 	}
 
 	// "visited" by the promotion
@@ -100,30 +64,16 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 
 	public abstract List<WizardStep> getWizardSteps(SpotlightPromotion promotion);
 
-	/*
-	public void addSpotlightPromotion(final String spotlightType, final String searchTrigger, final String type) {
-		promotionType("SPOTLIGHT").click();
-		loadOrFadeWait();
-		continueButton(WizardStep.TYPE).click();
-		loadOrFadeWait();
-		if (type.equals("On Premise")) {
-			spotlightType(spotlightType).click();
-			loadOrFadeWait();
-			continueButton(WizardStep.PROMOTION_TYPE).click();
-			loadOrFadeWait();
-		}
-		addSearchTrigger(searchTrigger);
-		loadOrFadeWait();
-		finishButton().click();
-		loadOrFadeWait();
-	}*/
-
 	public WebElement promotionType(final String promotionType) {
-		return getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));
+		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + promotionType + "']")));
 	}
 
 	@Override
 	public void waitForLoad() {
 		new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("pd-wizard")));
+	}
+
+	public TriggerForm getTriggerForm(){
+		return new TriggerForm(findElement(By.className("trigger-words-form")), getDriver());
 	}
 }

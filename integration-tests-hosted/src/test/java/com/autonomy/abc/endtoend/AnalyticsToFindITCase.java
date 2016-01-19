@@ -2,30 +2,25 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.control.Window;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Term;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.*;
@@ -33,11 +28,17 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 //CSA-1590
 public class AnalyticsToFindITCase extends HostedTestBase {
-    private PromotionService promotionService;
+    private Find find;
+    private FindResultsPage service;
+    private Window searchWindow;
+    private Window findWindow;
+    
+    private PromotionService<?> promotionService;
+
     private KeywordService keywordService;
 
-    public AnalyticsToFindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public AnalyticsToFindITCase(TestConfig config) {
+        super(config);
     }
 
     @Before
@@ -45,26 +46,18 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         promotionService = getApplication().createPromotionService(getElementFactory());
         keywordService = new KeywordService(getApplication(), getElementFactory());
 
-        PromotionsPage promotions = getElementFactory().getPromotionsPage();
-        browserHandles = promotions.createAndListWindowHandles();
-        getDriver().switchTo().window(browserHandles.get(1));
-        getDriver().get(config.getFindUrl());
-        getDriver().manage().window().maximize();
+        searchWindow = getMainSession().getActiveWindow();
+        findWindow = getMainSession().openWindow(config.getFindUrl());
         find = getElementFactory().getFindPage();
-        service = find.getService();
-        getDriver().switchTo().window(browserHandles.get(0));
+        service = find.getResultsPage();
+        searchWindow.activate();
     }
-
-    private FindPage find;
-    private Service service;
-    private List<String> browserHandles;
 
     @Test
     public void testPromotionToFind() throws InterruptedException {
-        body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
         AnalyticsPage analyticsPage = getElementFactory().getAnalyticsPage();
-        body = getBody();
 
         Term zeroSearch = analyticsPage.getMostPopularZeroSearchTerm();
         Term nonZero = analyticsPage.getMostPopularNonZeroSearchTerm();
@@ -79,18 +72,11 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         promotionService.deleteAll();
 
-        body = getBody();
-
-        body.getTopNavBar().search(searchTerm);
-        SearchPage searchPage = getElementFactory().getSearchPage();
-        List<String> createdPromotions = searchPage.createAMultiDocumentPromotion(3);
-        CreateNewPromotionsPage createNewPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-        createNewPromotionsPage.addSpotlightPromotion("Spotlight", trigger);
-        getElementFactory().getSearchPage(); //Wait for search page
+        List<String> createdPromotions = promotionService.setUpPromotion(new SpotlightPromotion(trigger), searchTerm, 3);
 
         keywordService.addSynonymGroup(Language.ENGLISH, trigger, synonym);
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search(trigger);
 
         List<String> triggerResults = service.getResultTitles();
@@ -103,24 +89,24 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         verifyThat(findPromotions, containsInAnyOrder(createdPromotions.toArray()));
         verifyThat(service.getResultTitles(), contains(triggerResults.toArray()));
 
-        for(WebElement promotion : service.getPromotions()){
+        for(WebElement promotion : service.promotions()){
             promotionShownCorrectly(promotion);
         }
     }
 
     private void promotionShownCorrectly (WebElement promotion) {
-        assertThat(promotion, hasClass("promoted-document"));
-        assertThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
-        assertThat(promotion.findElement(By.className("icon-star")), displayed());
+        verifyThat(promotion, hasClass("promoted-document"));
+        verifyThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
+        verifyThat(promotion.findElement(By.className("fa-star")), displayed());
     }
 
     @After
     public void tearDown(){
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         promotionService.deleteAll();
 
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
         keywordsPage.deleteKeywords();
     }

@@ -2,26 +2,29 @@ package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordWizardType;
+import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
-import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -32,7 +35,7 @@ import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.CommonMatchers.*;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.*;
@@ -40,23 +43,19 @@ import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsPageITCase extends ABCTestBase {
-	private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsPageITCase.class);
 	private KeywordsPage keywordsPage;
 	private CreateNewKeywordsPage createKeywordsPage;
 	private SearchPage searchPage;
 	private NotificationsDropDown notifications;
 	private KeywordService keywordService;
-	private SearchActionFactory searchFactory;
-	
-	public KeywordsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+
+	public KeywordsPageITCase(final TestConfig config) {
+		super(config);
 	}
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		keywordService = new KeywordService(getApplication(), getElementFactory());
-		searchFactory = new SearchActionFactory(getApplication(), getElementFactory());
-
+		keywordService = getApplication().createKeywordService(getElementFactory());
 		keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
     }
 
@@ -71,10 +70,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		String blacklist = "illegal";
 
 		searchPage = keywordService.addSynonymGroup(synonyms);
-		for (String synonym : synonyms) {
-			verifyThat("search title contains " + synonym, searchPage.searchTitle(), containsText(synonym));
-		}
-		
+		verifyThat("search title contains one of the synonym group", searchPage.getHeadingSearchTerm(), isIn(synonyms));
+
 		keywordService.addBlacklistTerms(blacklist);
 		keywordsPage.filterView(KeywordFilter.ALL);
 		keywordsPage.selectLanguage(Language.ENGLISH);
@@ -207,7 +204,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testPhrasesCanBeAddedAsSynonymsOnKeywordsPage() throws InterruptedException {
 		searchPage = keywordService.addSynonymGroup(Language.ENGLISH, "one two three");
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.selectLanguage(Language.ENGLISH);
@@ -235,7 +232,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordService.addBlacklistTerms("orange");
 		notificationContents.add("Added \"orange\" to the blacklist");
 
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		verifyNotifications(notificationContents);
 
 		keywordService.addSynonymGroup("piano keyboard pianoforte");
@@ -243,15 +240,15 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		verifyNotifications(notificationContents);
 
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage.loadOrFadeWait();
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		Waits.loadOrFadeWait();
 		keywordsPage.deleteSynonym("keyboard");
 		notificationContents.add("Removed \"keyboard\" from a synonym group");
 
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		verifyNotifications(notificationContents);
 
-		body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		keywordsPage.filterView(KeywordFilter.BLACKLIST);
 		keywordsPage.selectLanguage(Language.ENGLISH);
 		keywordsPage.deleteBlacklistedTerm("orange");
@@ -259,15 +256,15 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		if (config.getType().equals(ApplicationType.HOSTED)) {
 			// TODO: belongs in a hosted notifications test
-			body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+			getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
 		}
 		verifyNotifications(notificationContents);
 	}
 
 	private void verifyNotifications(List<String> contents) {
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
+		getElementFactory().getTopNavBar().notificationsDropdown();
+		notifications = getElementFactory().getTopNavBar().getNotifications();
 
 		int size = Math.min(contents.size(), 5);
 		for (int i=1; i <= size ; i++) {
@@ -288,12 +285,12 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testHTMLEscapedInNotifications() throws InterruptedException {
 		keywordService.addBlacklistTerms("<h1>Hi</h1>");
 
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
-		body.getTopNavBar().waitForGritterToClear();
+		Waits.waitForGritterToClear();
 
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
+		getElementFactory().getTopNavBar().notificationsDropdown();
+		notifications = getElementFactory().getTopNavBar().getNotifications();
 		assertThat("Notification text incorrect, HTML not escaped", notifications.notificationNumber(1).getText(),
 				not(containsString("Added \"hi\" to the blacklist")));
 		assertThat("Notification text incorrect", notifications.notificationNumber(1).getText(),
@@ -353,11 +350,12 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	private void verifySearchKeywords(final List<String> synonyms) {
-		for (final String synonym : synonyms) {
-			verifyThat(synonym + " included in title", searchPage.title(), containsString(synonym));
-			verifyThat(synonym + " included in 'You searched for' section", searchPage.youSearchedFor(), hasItem(synonym));
+		verifyThat("One of the synonyms is included in title", searchPage.getHeadingSearchTerm(), isIn(synonyms));
+		for(String searchedFor : searchPage.youSearchedFor()) {
+			verifyThat("All searched for terms are within synonym group", searchedFor, isIn(synonyms));
 		}
-		verifyThat("synonyms appear in query analysis", searchPage.getSynonymGroupSynonyms(synonyms.get(0)), containsItems(synonyms));
+		// TODO: CSA-1724 CSA-1893
+//		verifyThat("synonyms appear in query analysis", searchPage.getSynonymGroupSynonyms(synonyms.get(0)), containsItems(synonyms));
 		verifyThat(searchPage.countKeywords(), is(synonyms.size()));
 	}
 
@@ -367,7 +365,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		keywordService.addBlacklistTerms(Language.AZERI, "Baku");
 
-		body.getTopNavBar().search("Baku");
+		getElementFactory().getTopNavBar().search("Baku");
 		searchPage = getElementFactory().getSearchPage();
 		assertThat(searchPage.getLanguageList(), not(hasItem("Azeri")));
 	}
@@ -403,32 +401,31 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.selectLanguage(Language.URDU);
-		keywordsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 
 		final String url = getDriver().getCurrentUrl();
-		final List<String> browserHandles = keywordsPage.createAndListWindowHandles();
+		Window mainWindow = getMainSession().getActiveWindow();
+		Window secondWindow = getMainSession().openWindow(url);
 
-		getDriver().switchTo().window(browserHandles.get(1));
-		getDriver().get(url);
 		final KeywordsPage secondKeywordsPage = getElementFactory().getKeywordsPage();
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
 		assertThat(secondKeywordsPage.countKeywords(), is(5));
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		keywordsPage.deleteSynonym("couple");
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
 		assertThat(secondKeywordsPage.countKeywords(), is(4));
 
-		getDriver().switchTo().window(browserHandles.get(0));
+		mainWindow.activate();
 		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		keywordsPage.deleteSynonym("pair");
 
-		getDriver().switchTo().window(browserHandles.get(1));
+		secondWindow.activate();
 		assertThat(secondKeywordsPage.countSynonymLists(), is(1));
 		assertThat(secondKeywordsPage.countKeywords(), is(3));
 	}
@@ -471,11 +468,11 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.selectLanguage(Language.GERMAN);
-		keywordsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 
 		try {
-			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"));
-			keywordsPage.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string", "strung"));
+			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"), getDriver());
+			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string", "strung"), getDriver());
 		} catch (final WebDriverException w) {
 			throw new AssertionError("Unable to delete a synonym quickly", w);
 		}
@@ -487,22 +484,23 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	//CCUK-3245
 	public void testAddingForbiddenKeywordsFromUrl() {
-		String blacklistUrl = getConfig().getWebappUrl() + "/p/keywords/create/blacklisted/English/";
-		String synonymsUrl = getConfig().getWebappUrl() + "/p/keywords/create/synonyms/English/";
+		String blacklistUrl = getConfig().getWebappUrl() + "/keywords/create/blacklisted/English/";
+		String synonymsUrl = getConfig().getWebappUrl() + "/keywords/create/synonyms/English/";
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
 			blacklistUrl = getConfig().getWebappUrl() + "keywords/create/blacklisted/englishUTF8/";
 			synonymsUrl = getConfig().getWebappUrl() + "keywords/create/synonyms/englishUTF8/";
 		}
+		//TODO check that OR has been added in lower case?
 		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {
 			getDriver().get(blacklistUrl + forbidden);
-			keywordsPage.loadOrFadeWait();
+			Waits.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem("(")));
+			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
 
 			getDriver().get(synonymsUrl + forbidden);
-			keywordsPage.loadOrFadeWait();
+			Waits.loadOrFadeWait();
 			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getProspectiveKeywordsList(),not(hasItem("(")));
+			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective synonyms list", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
 		}
 	}
 
@@ -515,11 +513,11 @@ public class KeywordsPageITCase extends ABCTestBase {
 			for (int i = 0; i < keywords.size() - 1; i++) {
 				assertThat(keywords.get(i).compareTo(keywords.get(i + 1)) <= 0, is(true));
 			}
-			searchPage.loadOrFadeWait();
-			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+			Waits.loadOrFadeWait();
+			getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		}
 
-		keywordsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.searchFilterTextBox().sendKeys("cc");
@@ -604,8 +602,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		String[] synonyms = new String[]{synonymOne, synonymTwo, synonymThree};
 		keywordService.addSynonymGroup(synonyms);
 		Arrays.sort(synonyms);
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
+		getElementFactory().getTopNavBar().notificationsDropdown();
+		notifications = getElementFactory().getTopNavBar().getNotifications();
 		assertThat(notifications.notificationNumber(1).getText(), is("Created a new synonym group containing: " + synonyms[0].toLowerCase() + ", " + synonyms[1].toLowerCase() + ", " + synonyms[2].toLowerCase()));
 	}
 
@@ -615,8 +613,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		String blacklistTwo = "Aardwolf";
 
 		keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
+		getElementFactory().getTopNavBar().notificationsDropdown();
+		notifications = getElementFactory().getTopNavBar().getNotifications();
 
 		assertThat(notifications.notificationNumber(1).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
 		assertThat(notifications.notificationNumber(2).getText(), anyOf(is("Added \"" + blacklistOne.toLowerCase() + "\" to the blacklist"), is("Added \"" + blacklistTwo.toLowerCase() + "\" to the blacklist")));
@@ -627,31 +625,30 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testClickingOnNotifications() throws InterruptedException {
 		keywordService.addSynonymGroup("a b c d");
 
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		getElementFactory().getPromotionsPage();
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
+		getElementFactory().getTopNavBar().notificationsDropdown();
+		notifications = getElementFactory().getTopNavBar().getNotifications();
 		verifyThat(notifications.notificationNumber(1), hasTextThat(startsWith("Created a new synonym group containing: ")));
 
 		verifyClickNotification();
 		if(!getDriver().getCurrentUrl().contains("keywords")){
-			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+			getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 		}
 
 		keywordService.addBlacklistTerms("e");
 
 		// TODO: this is a shared test, does not belong
 		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-			body.getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
+			getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
 			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-			body = getBody();
 		} else {
-			body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+			getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		}
 
-		body.getTopNavBar().notificationsDropdown();
-		notifications = body.getTopNavBar().getNotifications();
+		getElementFactory().getTopNavBar().notificationsDropdown();
+		notifications = getElementFactory().getTopNavBar().getNotifications();
 		verifyThat(notifications.notificationNumber(1).getText(), is("Added \"e\" to the blacklist"));
 		verifyClickNotification();
 	}
@@ -673,14 +670,14 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordService.addSynonymGroup(synonymGroup);
 		keywordService.addBlacklistTerms(blacklist);
 
-		body.getTopNavBar().search(blacklist);
+		getElementFactory().getTopNavBar().search(blacklist);
 
 		searchPage = getElementFactory().getSearchPage();
 
 		//Make sure no results show up for blacklisted terms
 		assertThat(searchPage.visibleDocumentsCount(), is(0));
 
-		body.getTopNavBar().search(synonym);
+		getElementFactory().getTopNavBar().search(synonym);
 
 		searchPage = getElementFactory().getSearchPage();
 
@@ -693,11 +690,27 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testNavigatingAwayBeforeKeywordAdded() throws InterruptedException {
 		keywordService.addKeywords(KeywordWizardType.BLACKLIST, Language.ENGLISH, Collections.singletonList("Jeff"));
 
-		body.getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
 		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));
 
 		assertThat(getDriver().getCurrentUrl(), containsString("promotions"));
+	}
+
+	@Test
+	//CSA-1686
+	public void testBlacklistTermsNotOverwritten(){
+		String blacklistOne = "uno";
+		String blacklistTwo = "duo";
+
+		keywordService.addBlacklistTerms(blacklistOne);
+
+		verifyBlacklisted(blacklistOne);
+
+		keywordService.addBlacklistTerms(blacklistTwo);
+
+		verifyBlacklisted(blacklistTwo);
+		verifyBlacklisted(blacklistOne);
 	}
 
 	private void verifyBlacklisted(String blacklist) {

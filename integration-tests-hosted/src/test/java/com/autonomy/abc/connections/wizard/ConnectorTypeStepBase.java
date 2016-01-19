@@ -2,32 +2,27 @@ package com.autonomy.abc.connections.wizard;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.Before;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.not;
 
-
-/**
- * Created by avidan on 29-10-15.
- */
 public class ConnectorTypeStepBase extends HostedTestBase {
-    public ConnectorTypeStepBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public ConnectorTypeStepBase(TestConfig config) {
+        super(config);
     }
 
     protected final String INVALID_INPUT_CLASS = "has-error";
@@ -39,7 +34,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        body.getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
 
         connectionsPage = getElementFactory().getConnectionsPage();
         connectionsPage.newConnectionButton().click();
@@ -55,7 +50,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
 
     protected void selectConnectorType(ConnectorType type) {
         connectorTypeStepTab.typeBtn(type).click();
-        newConnectionPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
         for (ConnectorType eachType : ConnectorType.values()) {
             if (eachType.equals(type)) {
@@ -70,7 +65,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
         return new TypeSafeMatcher<WebElement>() {
             @Override
             protected boolean matchesSafely(WebElement item) {
-                return AppElement.hasClass("current", item);
+                return ElementUtil.hasClass("current", item);
             }
 
             @Override
@@ -84,7 +79,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
         return new TypeSafeMatcher<WebElement>() {
             @Override
             protected boolean matchesSafely(WebElement item) {
-                return !AppElement.hasClass("error", item);
+                return !ElementUtil.hasClass("error", item);
             }
 
             @Override

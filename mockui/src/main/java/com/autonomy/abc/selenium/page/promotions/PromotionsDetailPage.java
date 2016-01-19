@@ -1,11 +1,14 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
-import com.autonomy.abc.selenium.util.Predicates;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -53,7 +56,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public Editable pinPosition() {
-        final WebElement group = AppElement.getParent(findElement(By.cssSelector(".promotion-position-edit")));
+        final WebElement group = ElementUtil.getParent(findElement(By.cssSelector(".promotion-position-edit")));
         return new Editable() {
             @Override
             public String getValue() {
@@ -111,59 +114,6 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return findElement(By.className("promotion-language")).getText();
     }
 
-    public List<String> getTriggerList() {
-        final List<String> triggers = new ArrayList<>();
-        for (final WebElement trigger : triggerElements()) {
-            triggers.add(trigger.getAttribute("data-id"));
-        }
-        return triggers;
-    }
-
-    public List<Removable> triggers() {
-        final List<Removable> triggers = new ArrayList<>();
-        for (final WebElement trigger : triggerElements()) {
-            triggers.add(new LabelBox(trigger, getDriver()));
-        }
-        return triggers;
-    }
-
-    private List<WebElement> triggerElements() {
-        return findElements(By.cssSelector(".promotion-view-match-terms .term"));
-    }
-
-    public Removable trigger(final String triggerName) {
-        return new LabelBox(findElement(By.cssSelector(".promotion-view-match-terms [data-id='" + triggerName + "']")), getDriver());
-    }
-
-    public FormInput triggerAddBox() {
-        return new FormInput(triggerEditor().findElement(By.cssSelector("[name='words']")), getDriver());
-    }
-
-    public WebElement triggerAddButton() {
-        return triggerEditor().findElement(By.cssSelector("[type='submit']"));
-    }
-
-    public String getTriggerError() {
-        try {
-            return triggerEditor().findElement(By.cssSelector(".help-block")).getText();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-    }
-
-    private WebElement triggerEditor() {
-        return findElement(By.cssSelector(".promotion-match-terms-editor"));
-    }
-
-    public void waitForTriggerRefresh() {
-        new WebDriverWait(getDriver(), 20).until(Predicates.invisibilityOfAllElementsLocated(By.cssSelector(".promotion-view-match-terms .term .fa-spin")));
-    }
-
-    public void addTrigger(String text) {
-        triggerAddBox().setAndSubmit(text);
-        waitForTriggerRefresh();
-    }
-
     public WebElement addMoreButton() {
         return findElement(By.className("add-more-promoted-documents"));
     }
@@ -174,7 +124,6 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public List<WebElement> dynamicPromotedList(){
         return new WebDriverWait(getDriver(),10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".query-search-results div:not(.hide)>h3")));
-
     }
 
     public List<String> getDynamicPromotedTitles(){
@@ -182,7 +131,9 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
         do {
             for (final WebElement docTitle : dynamicPromotedList()) {
-                docTitles.add(docTitle.getText());
+                if(!docTitle.getText().equals("Search for something...")) {
+                    docTitles.add(docTitle.getText());
+                }
             }
         } while(clickForwardButton());
 
@@ -220,7 +171,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         try {
             if(!forwardButton().findElement(By.xpath(".//../..")).getAttribute("class").contains("disabled")) {
                 forwardButton().click();
-                loadOrFadeWait();
+                Waits.loadOrFadeWait();
                 return true;
             } else {
                 return false;
@@ -250,4 +201,15 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return new InlineEdit(findElement(By.className("promotion-query-edit")), getDriver());
     }
 
+    public void viewDocument(String title) {
+        for(WebElement document : promotedList()){
+            if(document.getText().equals(title)){
+                document.click();
+            }
+        }
+    }
+
+    public PromotionsDetailTriggerForm getTriggerForm() {
+        return new PromotionsDetailTriggerForm(findElement(By.className("promotion-match-terms-wrapper")), getDriver());
+    }
 }

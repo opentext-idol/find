@@ -60,7 +60,7 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
         // TODO: move this logic into a "SpotlightPromotion" object
         promotionType("SPOTLIGHT").click();
         continueButton().click();
-        addSearchTrigger(searchTrigger);
+        getTriggerForm().addTrigger(searchTrigger);
         finishButton().click();
     }
 }

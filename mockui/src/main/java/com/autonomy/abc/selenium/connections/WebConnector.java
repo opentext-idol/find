@@ -4,10 +4,14 @@ import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
+import com.autonomy.abc.selenium.util.Waits;
 
 public class WebConnector extends Connector {
     private String url;
+    private Integer depth;
+    private Integer maxPages;
+    private Integer duration = 60;
+    private Credentials credentials;
 
     public Integer getDepth() {
         return depth;
@@ -24,11 +28,6 @@ public class WebConnector extends Connector {
     public Credentials getCredentials() {
         return credentials;
     }
-
-    private Integer depth;
-    private Integer maxPages;
-    private Integer duration;
-    private Credentials credentials;
 
     public WebConnector(String url, String name) {
         super(name);
@@ -50,17 +49,17 @@ public class WebConnector extends Connector {
         this.credentials = credentials;
     }
 
-    public WebConnector withDepth(int depth){
+    public WebConnector withDepth(Integer depth){
         this.depth = depth;
         return this;
     }
 
-    public WebConnector maxPages(int maxPages){
+    public WebConnector maxPages(Integer maxPages){
         this.maxPages = maxPages;
         return this;
     }
 
-    public WebConnector withDuration(int duration) {
+    public WebConnector withDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
@@ -95,13 +94,13 @@ public class WebConnector extends Connector {
                 page.nextButton().click();
                 incrementStep();
             }
-            page.loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
 
         @Override
         public void cancel() {
             page.cancelButton().click();
-            page.loadOrFadeWait();
+            Waits.loadOrFadeWait();
         }
     }
 

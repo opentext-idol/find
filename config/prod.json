@@ -2,10 +2,83 @@
   "app": {
     "type": "Hosted",
     "url": "http://search.havenapps.io/searchoptimizer/p",
-    "find": "http://find.havenapps.io"
+    "find": "http://find.havenapps.io",
+    "api" : "https://api.havenondemand.com"
   },
   "selenium": {
     "url": "http://16.46.34.8:4444/wd/hub",
     "browsers": ["chrome"]
+  },
+  "users": {
+    "default": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "HP Passport",
+        "username": "hodtest",
+        "password": "Z@s=5rYbw6MEx]?X"
+      },
+      "apikey" : "c4eb9531-531c-4bd2-8707-c31fcb02625e"
+    },
+    "index_tests": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Yahoo",
+        "username": "hodtesting",
+        "password": ":Z4jM8vq5`en89d>"
+      },
+      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c"
+    },
+    "google": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Google",
+        "email": "hodtestqa401@gmail.com",
+        "password": "qoxntlozubjaamyszerfk"
+      },
+      "apikey" : ""
+    },
+    "twitter": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Twitter",
+        "username": "hodtesting",
+        "password": "5cUdPhYM"
+      },
+      "apikey" : ""
+    },
+    "facebook": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Facebook",
+        "email": "matthew.williamson@hpe.com",
+        "password": "vdPAuTGU"
+      },
+      "apikey" : ""
+    },
+    "hp_passport": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "HP Passport",
+        "username": "hodtest",
+        "password": "Z@s=5rYbw6MEx]?X"
+      },
+      "apikey" : "c4eb9531-531c-4bd2-8707-c31fcb02625e"
+    },
+    "yahoo": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Yahoo",
+        "username": "hodtesting",
+        "password": ":Z4jM8vq5`en89d>"
+      },
+      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c"
+    }
   }
 }

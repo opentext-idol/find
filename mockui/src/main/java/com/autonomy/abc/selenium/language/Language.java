@@ -38,7 +38,8 @@ public enum Language {
         this.name = name;
     }
 
-    static Language fromString(String language) {
+    // TODO: restrict to default access
+    public static Language fromString(String language) {
         Language found = inverse.get(language.toLowerCase());
         return found == null ? UNKNOWN : found;
     }

@@ -1,8 +1,8 @@
 package com.autonomy.abc.selenium.page;
 
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.menu.SideNavBar;
+import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
@@ -14,11 +14,16 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.openqa.selenium.WebDriver;
 
 public abstract class ElementFactory {
-
     private final WebDriver driver;
 
     protected ElementFactory(WebDriver driver){
         this.driver = driver;
+    }
+
+    public abstract TopNavBar getTopNavBar();
+
+    public SideNavBar getSideNavBar() {
+        return new SideNavBar(driver);
     }
 
     public abstract PromotionsPage getPromotionsPage();

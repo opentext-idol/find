@@ -1,7 +1,10 @@
 package com.autonomy.abc.selenium.page.connections.wizard;
 
+import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,6 +22,22 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     public static ConnectorIndexStepTab make(WebDriver driver) {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.name("indexStepForm")));
         return new ConnectorIndexStepTab(driver);
+    }
+
+    public FormInput indexNameInput(){
+        return new FormInput(findElement(By.cssSelector("[name='indexName']")), getDriver());
+    }
+
+    public FormInput indexDisplayNameInput(){
+        return new FormInput(findElement(By.cssSelector("[name='displayName']")), getDriver());
+    }
+
+    public void setIndexName(String name){
+        indexNameInput().setValue(name);
+    }
+
+    public void setIndexDisplayName(String displayName){
+        indexDisplayNameInput().setValue(displayName);
     }
 
     public WebElement selectIndexButton(){
@@ -81,6 +100,37 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     public void closeModal(){
         if(isModalOpen()){
             getDriver().findElement(By.xpath("//div[contains(@class,'modal-footer')]/button[text()='Cancel']")).click();
+        }
+    }
+
+    //TODO change so that it gets display and normal name (if possible)
+    public Index getChosenIndexOnPage() {
+        return new Index(findElement(By.cssSelector(".selectedIndexNameContainer .ng-binding")).getText());
+    }
+
+    public void selectIndex(Index index) {
+        getIndexSearchBox().click();
+
+        for(WebElement existingIndex : getExistingIndexes()){
+            if(existingIndex.getText().equals(index.getDisplayName())){
+                existingIndex.click();
+                modalOKButton().click();
+                //Need to wait for modal to disappear
+                Waits.loadOrFadeWait();
+                return;
+            }
+        }
+
+        throw new IndexNotFoundException(index);
+    }
+
+    private class IndexNotFoundException extends RuntimeException {
+        public IndexNotFoundException(String index){
+            super("Index: '"+index+"' not found");
+        }
+
+        public IndexNotFoundException(Index index){
+            this(index.getName());
         }
     }
 }

@@ -27,21 +27,6 @@ public abstract class CreateNewPromotionsPage extends CreateNewPromotionsBase {
 		return Integer.parseInt(findElement(By.cssSelector(".position")).getText());
 	}
 
-	@Deprecated
-	public void navigateToTriggers() {
-		pinToPosition().click();
-		continueButton().click();
-		loadOrFadeWait();
-		selectPositionPlusButton().click();
-		continueButton().click();
-		loadOrFadeWait();
-	}
-
-	public void typePositionNumber(final int positionNumber) {
-		pinToPositionInput().clear();
-		pinToPositionInput().sendKeys(String.valueOf(positionNumber));
-	}
-
 	public WebElement pinToPositionInput() {
 		return findElement(By.cssSelector("div.position"));
 	}

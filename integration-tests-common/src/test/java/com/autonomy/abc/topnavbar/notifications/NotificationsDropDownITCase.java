@@ -1,7 +1,8 @@
 package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -11,14 +12,13 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.AppBody;
+import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Platform;
@@ -42,13 +42,13 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	private KeywordService keywordService;
 	private PromotionService promotionService;
 
-	public NotificationsDropDownITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public NotificationsDropDownITCase(final TestConfig config) {
+		super(config);
 	}
 
 	@Before
 	public void serviceSetUp() {
-		keywordService = new KeywordService(getApplication(), getElementFactory());
+		keywordService = getApplication().createKeywordService(getElementFactory());
 		promotionService = getApplication().createPromotionService(getElementFactory());
 	}
 
@@ -87,7 +87,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 			getDriver().navigate().refresh();
 			newBody();
-			body.getTopNavBar().notificationsDropdown();
+			getElementFactory().getTopNavBar().notificationsDropdown();
 			notifications = topNavBar.getNotifications();
 			assertThat("5 notifications after page refresh", notifications.countNotifications(), is(5));
 		} finally {
@@ -95,7 +95,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		}
 	}
 
-	//Fails because of CSA-1542
+//Fails because of CSA-1542
 	@Test
 	public void testNotificationsOverTwoWindows() throws InterruptedException {
 		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
@@ -105,14 +105,13 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		assertThat(notifications.countNotifications(), is(0));
 
 		keywordsPage = getElementFactory().getKeywordsPage();
-		List<String> browserHandles = keywordsPage.createAndListWindowHandles();
+		final Window mainWindow = getMainSession().getActiveWindow();
+		final Window secondWindow = getMainSession().openWindow(config.getWebappUrl());
 
-		getDriver().switchTo().window(browserHandles.get(1));
-		getDriver().navigate().to(getConfig().getWebappUrl());
-		AppBody bodyWindowTwo = getBody();
-		TopNavBar topNavBarWindowTwo = bodyWindowTwo.getTopNavBar();
-		SideNavBar sideNavBarWindowTwo = bodyWindowTwo.getSideNavBar();
-		getDriver().manage().window().maximize();
+		secondWindow.activate();
+		ElementFactory elementFactoryTwo = getApplication().createElementFactory(getDriver());
+		TopNavBar topNavBarWindowTwo = elementFactoryTwo.getTopNavBar();
+		SideNavBar sideNavBarWindowTwo = elementFactoryTwo.getSideNavBar();
 
 		sideNavBarWindowTwo.switchPage(NavBarTabId.KEYWORDS);
 		topNavBarWindowTwo.notificationsDropdown();
@@ -120,7 +119,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		assertThat(notificationsDropDownWindowTwo.countNotifications(), is(0));
 
 		try {
-			getDriver().switchTo().window(browserHandles.get(0));
+			mainWindow.activate();
 			keywordService.addSynonymGroup("Animal Beast");
 			keywordsPage = keywordService.goToKeywords();
 
@@ -129,7 +128,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			assertThat(notifications.countNotifications(), is(1));
 			String windowOneNotificationText = notifications.notificationNumber(1).getText();
 
-			getDriver().switchTo().window(browserHandles.get(1));
+			secondWindow.activate();
 			assertThat(notificationsDropDownWindowTwo.countNotifications(), is(1));
 			assertThat(notificationsDropDownWindowTwo.notificationNumber(1).getText(), is(windowOneNotificationText));
 			topNavBarWindowTwo.notificationsDropdown();
@@ -139,7 +138,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			assertThat(notificationsDropDownWindowTwo.countNotifications(), is(2));
 			List<String> notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-			getDriver().switchTo().window(browserHandles.get(0));
+			mainWindow.activate();
 			assertThat(notifications.countNotifications(), is(2));
 			assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
@@ -153,9 +152,9 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 				assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 			}
 
-			getDriver().switchTo().window(browserHandles.get(1));
+			secondWindow.activate();
 
-			promotionService.setUpPromotion(new SpotlightPromotion("wheels"), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch("cars"), 3);
+			promotionService.setUpPromotion(new SpotlightPromotion("wheels"), "cars", 3);
 
 			new WebDriverWait(getDriver(), 5).until(GritterNotice.notificationAppears());
 			topNavBarWindowTwo.notificationsDropdown();
@@ -166,7 +165,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 			notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-			getDriver().switchTo().window(browserHandles.get(0));
+			mainWindow.activate();
 
 			notifications = topNavBar.getNotifications();
 			assertThat(notifications.countNotifications(), is(3));
@@ -174,20 +173,21 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 			int notificationsCount = 3;
 			for(int i = 0; i < 6; i += 2) {
-				getDriver().switchTo().window(browserHandles.get(1));
+				secondWindow.activate();
 				keywordService.addSynonymGroup(i + " " + (i + 1));
 				keywordService.goToKeywords();
 
-				bodyWindowTwo.getTopNavBar().notificationsDropdown();
+				elementFactoryTwo.getTopNavBar().notificationsDropdown();
 				verifyThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
 				notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
-				getDriver().switchTo().window(browserHandles.get(0));
+				mainWindow.activate();
 				verifyThat(notifications.countNotifications(), is(Math.min(notificationsCount, 5)));
 				verifyThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 			}
 		} finally {
-			getDriver().switchTo().window(browserHandles.get(1));
+			secondWindow.activate();
+			topNavBarWindowTwo.closeNotifications();
 			keywordService.deleteAll(KeywordFilter.ALL);
 			promotionService.deleteAll();
 		}
@@ -205,22 +205,22 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		try {
 			checkForNotification(synonymNotificationText);
 		} finally {
-			body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+			getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 			keywordService.deleteAll(KeywordFilter.ALL);
 		}
 	}
 
 	@Test
 	public void testBlacklistNotifications() throws InterruptedException {
-		String blacklistOne = "Rollins".toLowerCase();
-		String blacklistTwo = "Seth".toLowerCase();
+		String blacklistOne = "seth";
+		String blacklistTwo = "rollins";
 		String blacklistNotificationText = "Added \"placeholder\" to the blacklist";
 
 		keywordService.deleteAll(KeywordFilter.ALL);
 		keywordService.addBlacklistTerms(blacklistOne, blacklistTwo);
 		try {
-			body.getTopNavBar().notificationsDropdown();
-			notifications = body.getTopNavBar().getNotifications();
+			getElementFactory().getTopNavBar().notificationsDropdown();
+			notifications = getElementFactory().getTopNavBar().getNotifications();
 			assertThat(notifications.notificationNumber(1).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
 			assertThat(notifications.notificationNumber(2).getText(), anyOf(is(blacklistNotificationText.replace("placeholder", blacklistOne)), is(blacklistNotificationText.replace("placeholder", blacklistTwo))));
 			assertThat(notifications.notificationNumber(2).getText(), not(is(notifications.notificationNumber(1).getText())));
@@ -231,11 +231,11 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Test
 	public void testSpotlightPromotionNotifications(){
-		String promotionTrigger = "Maggle".toLowerCase();
-		String search = "Cole".toLowerCase();
+		String promotionTrigger = "blatter";
+		String search = "thief";
 		String promotionNotificationText = "Created a new spotlight promotion: Spotlight for: "+promotionTrigger;
 
-		promotionService.setUpPromotion(new SpotlightPromotion(promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		promotionService.setUpPromotion(new SpotlightPromotion(promotionTrigger), search, 2);
 		try {
 			getElementFactory().getSearchPage();
 			checkForNotification(promotionNotificationText);
@@ -252,7 +252,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(promotionTrigger);
 
-		promotionService.setUpPromotion(spotlightPromotion, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 2);
+		promotionService.setUpPromotion(spotlightPromotion, search, 2);
 		promotionService.delete(spotlightPromotion);
 
 		checkForNotification(promotionNotificationText);
@@ -265,7 +265,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		String search = "Cena".toLowerCase();
 		String promotionNotificationText = "Created a new pin to position promotion: Pin to Position for: "+promotionTrigger;
 
-		promotionService.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
+		promotionService.setUpPromotion(new PinToPositionPromotion(pinToPositionPosition, promotionTrigger), search, 1);
 		try {
 			getElementFactory().getSearchPage();
 			checkForNotification(promotionNotificationText);
@@ -283,7 +283,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 		PinToPositionPromotion ptpp = new PinToPositionPromotion(pinToPositionPosition,promotionTrigger);
 
-		promotionService.setUpPromotion(ptpp, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
+		promotionService.setUpPromotion(ptpp, search, 1);
 		promotionService.delete(ptpp);
 
 		checkForNotification(promotionNotificationText);
@@ -292,11 +292,11 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	@Test
 	public void testDynamicPromotionNotifications(){
 		int numberOfResults = 10;
-		String promotionTrigger = "Wyatt".toLowerCase();
-		String search = "Lawler".toLowerCase();
+		String promotionTrigger = "football";
+		String search = "soccer";
 		String promotionNotificationText = "Created a new dynamic spotlight promotion: Dynamic Spotlight for: " + promotionTrigger;
 
-		promotionService.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
+		promotionService.setUpPromotion(new DynamicPromotion(numberOfResults, promotionTrigger), search, 1);
 		try {
 			getElementFactory().getSearchPage();
 			checkForNotification(promotionNotificationText);
@@ -308,13 +308,13 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	@Test
 	public void testRemovingDynamicPromotionNotifications(){
 		int numberOfResults = 10;
-		String promotionTrigger = "Wyatt".toLowerCase();
-		String search = "Lawler".toLowerCase();
+		String promotionTrigger = "platini";
+		String search = "liar";
 		String promotionNotificationText = "Removed a dynamic spotlight promotion";
 
 		DynamicPromotion dynamic = new DynamicPromotion(numberOfResults, promotionTrigger);
 
-		promotionService.setUpPromotion(dynamic, new SearchActionFactory(getApplication(), getElementFactory()).makeSearch(search), 1);
+		promotionService.setUpPromotion(dynamic, search, 1);
 		promotionService.delete(dynamic);
 
 		checkForNotification(promotionNotificationText);
@@ -334,7 +334,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			String removeSynonymOneNotification = "Removed \"" + synonymOne + "\" from a synonym group";
 			keywordsPage.synonymGroupContaining(synonymOne).synonymBox(synonymOne).removeAsync();
 			checkForNotification(removeSynonymOneNotification);
-			body.getTopNavBar().notificationsDropdown(); //Close notifications dropdown
+			getElementFactory().getTopNavBar().notificationsDropdown(); //Close notifications dropdown
 			String removeSynonymGroupNotification = "Removed a synonym group";
 			keywordsPage.synonymGroupContaining(synonymTwo).synonymBox(synonymTwo).removeAsync();
 			checkForNotification(removeSynonymGroupNotification);
@@ -353,8 +353,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 		try {
 			keywordsPage.deleteBlacklistedTerm(blacklistOne);        //The gritter happens during this phase so cannot wait to check if gritter is okay afterward
-			body.getTopNavBar().notificationsDropdown();
-			notifications = body.getTopNavBar().getNotifications();
+			getElementFactory().getTopNavBar().notificationsDropdown();
+			notifications = getElementFactory().getTopNavBar().getNotifications();
 			assertThat(notifications.notificationNumber(1).getText(), is(blacklistNotificationText.replace("placeholder", blacklistOne)));
 			keywordsPage.deleteBlacklistedTerm(blacklistTwo);
 			assertThat(notifications.notificationNumber(1).getText(), is(blacklistNotificationText.replace("placeholder", blacklistTwo)));

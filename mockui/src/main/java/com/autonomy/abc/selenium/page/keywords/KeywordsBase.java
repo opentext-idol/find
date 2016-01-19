@@ -3,13 +3,15 @@ package com.autonomy.abc.selenium.page.keywords;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class KeywordsBase extends AppElement implements AppPage {
@@ -33,7 +35,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	public abstract WebElement synonymInGroup(final String synonym);
 
 	public WebElement synonymGroup(final String synonymGroupLead) {
-		return getParent(getParent(leadSynonym(synonymGroupLead)));
+		return ElementUtil.ancestor(leadSynonym(synonymGroupLead), 2);
 	}
 
 	public void addSynonymToGroup(final String synonym, final SynonymGroup group) {
@@ -56,7 +58,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		deleteSynonym(synonym, synonymGroupContaining(synonym));
 	}
 
-	public void deleteSynonym(final String synonym, final String synonymGroupLead) throws InterruptedException {
+	public void deleteSynonym(final String synonym, final String synonymGroupLead) {
 		deleteSynonym(synonym, synonymGroupContaining(synonymGroupLead));
 	}
 
@@ -86,10 +88,6 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 
 	public WebElement getSynonymIcon(final String synonym){
 		return findElement(By.xpath("//span[text()='"+synonym.toLowerCase()+"']/../i"));
-	}
-
-	public WebElement getSynonymIcon(final String synonym, WebElement synonymGroup){
-		return synonymGroup.findElement(By.xpath(".//span[text()='" + synonym.toLowerCase()+"']/../i"));
 	}
 
 	public boolean areAnyKeywordsDisabled() {
@@ -127,11 +125,9 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 
 	public int countRefreshIcons() {
 		try {
-            List<WebElement> refreshIcons = findElements(By.cssSelector(".keywords-list .fa-refresh"));
-
             int visibleIcons = 0;
 
-            for(WebElement refresh : refreshIcons){
+            for(WebElement refresh : findElements(By.cssSelector(".keywords-list .fa-spin"))){
                 if (refresh.isDisplayed()){
                     visibleIcons++;
                 }

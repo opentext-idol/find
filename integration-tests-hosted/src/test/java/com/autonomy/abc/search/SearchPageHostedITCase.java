@@ -2,42 +2,38 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.framework.ABCAssert;
-import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.element.Checkbox;
-import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.TopNavBar;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
+import com.autonomy.abc.selenium.page.search.SearchBase;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import org.hamcrest.Matcher;
-import org.junit.Assert;
+import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
-import static com.thoughtworks.selenium.SeleneseTestBase.assertNotEquals;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageHostedITCase extends HostedTestBase {
-	public SearchPageHostedITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
-	}
-
 	private SearchPage searchPage;
-	private TopNavBar topNavBar;
+	private SearchService searchService;
+
+	public SearchPageHostedITCase(final TestConfig config) {
+		super(config);
+	}
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> parameters() throws IOException {
@@ -47,109 +43,81 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		topNavBar = body.getTopNavBar();
-		topNavBar.search("example");
-		searchPage = getElementFactory().getSearchPage();
+		searchService = getApplication().createSearchService(getElementFactory());
+		searchPage = searchService.search("example");
 	}
 
-
-	@Test
-	public void testIndexSelection() {
-		topNavBar.search("car");
-		searchPage.selectLanguage(Language.ENGLISH);
-		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		//TODO add a matcher
-		assertThat("All databases not showing", searchPage.allIndexesCheckbox().isChecked(), is(true));
-
-		for(Checkbox checkbox : searchPage.indexList()){
-			assertThat(checkbox.isChecked(),is(true));
-		}
-
-		searchPage.allIndexesCheckbox().toggle();
-
-		searchPage.selectIndex("news_eng");
-		assertThat("Database not showing", searchPage.indexCheckbox("news_eng").isChecked(), is(true));
-		final String wikiEnglishResult = searchPage.getSearchResult(1).getText();
-		searchPage.deselectIndex("news_eng");
-
-		searchPage.selectIndex("news_ger");
-		assertThat("Database not showing", searchPage.indexCheckbox("news_ger").isChecked(), is(true));
-		final String wookiepediaResult = searchPage.getSearchResult(1).getText();
-		assertNotEquals(wookiepediaResult, wikiEnglishResult);
-
-		searchPage.selectIndex("wiki_chi");
-		assertThat(searchPage.indexCheckbox("news_ger").isChecked(), is(true));
-		assertThat(searchPage.indexCheckbox("wiki_chi").isChecked(),is(true));
-		assertThat("Result not from selected databases", searchPage.getSearchResult(1).getText(), anyOf(is(wookiepediaResult), is(wikiEnglishResult)));
-	}
-
+	@Ignore("TODO: Not implemented")
 	@Test
 	public void testParametricSearch() {
-		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		topNavBar.search("*");
+		searchService.search(new SearchQuery("*").withFilter(IndexFilter.ALL));
+	}
 
+	@Test
+	public void testFieldTextFilter() {
+		searchService.search(new SearchQuery("Harrison Ford").withFilter(new IndexFilter("wiki_eng")));
+
+		searchPage.expand(SearchBase.Facet.FIELD_TEXT);
+		searchPage.fieldTextAddButton().click();
+		Waits.loadOrFadeWait();
+		assertThat("input visible", searchPage.fieldTextInput().getElement(), displayed());
+		assertThat("confirm button visible", searchPage.fieldTextTickConfirm(), displayed());
+
+		searchPage.filterBy(new FieldTextFilter("MATCH{Actor / Actress}:person_profession"));
+		assertThat(searchPage, not(containsText(Errors.Search.HOD)));
+
+		assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
+		assertThat("remove button visible", searchPage.fieldTextRemoveButton(), displayed());
+
+		List<String> fieldTextResults = searchPage.getSearchResultTitles(SearchPage.RESULTS_PER_PAGE);
+
+		searchPage.fieldTextRemoveButton().click();
+		searchPage.waitForSearchLoadIndicatorToDisappear();
+
+		searchPage.filterBy(new ParametricFilter("Person Profession", "Actor / Actress"));
+
+		verifyThat(searchPage.getSearchResultTitles(SearchPage.RESULTS_PER_PAGE), is(fieldTextResults));
+	}
+
+	@Test
+	public void testEditFieldText() {
+		searchService.search(new SearchQuery("*")
+				.withFilter(IndexFilter.PUBLIC)
+				.withFilter(new FieldTextFilter("EXISTS{}:place_population")));
+
+		verifyResults("wiki");
+
+		searchPage.filterBy(new FieldTextFilter("EXISTS{}:place_elevation"));
+		verifyResults("transport");
+	}
+
+	private void verifyResults(String index){
+		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
+		assertThat(searchPage.getText(), not(containsString(Errors.Search.NO_RESULTS)));
+		searchPage.searchResult(1).click();
+		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){
+			verifyThat(documentViewer.getIndex(), containsString(index));
+			documentViewer.next();
+		}
+		documentViewer.close();
 	}
 
 
 	@Test
 	public void testAuthor(){
-		searchPage.findElement(By.xpath("//label[text()[contains(.,'Public')]]/../i")).click();
+		String author = "FIFA.com";
+		searchPage = searchService.search(new SearchQuery("blatter").withFilter(new ParametricFilter("Author", author)));
 
-		topNavBar.search("fruit");
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		Assert.assertNotEquals(searchPage.getText(), contains("Haven OnDemand returned an error while executing the search action"));
+		searchPage.searchResult(1).click();
+		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 
-		String author = "FIFA.COM";
-
-		searchPage.openParametricValuesList();
-
-		int results = searchPage.filterByAuthor(author);
-
-		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
-
-		searchPage.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
-
-		ABCAssert.assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
-
-		searchPage.getSearchResult(1).click();
-
-		for(int i = 0; i < results; i++) {
-			ABCAssert.assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), equalToIgnoringCase(author));
-			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
+		for(int i = 0; i < searchPage.RESULTS_PER_PAGE; i++){
+			verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
+			documentViewer.next();
 		}
 
-		getDriver().findElement(By.className("fa-close")).click();
-
-		searchPage.loadOrFadeWait();
-
-		searchPage.filterByAuthor(author); //'Unfilter'
-
-		searchPage.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
-
-		author = "YLEIS";
-
-		results = searchPage.filterByAuthor(author);
-
-		((JavascriptExecutor) getDriver()).executeScript("scroll(0,-400);");
-
-		searchPage.loadOrFadeWait();
-		searchPage.waitForSearchLoadIndicatorToDisappear();
-		searchPage.loadOrFadeWait();
-
-		ABCAssert.assertThat(searchPage.searchTitle().findElement(By.xpath(".//..//span")).getText(), is("(" + results + ")"));
-
-		searchPage.getSearchResult(1).click();
-
-		for(int i = 0; i < results; i++) {
-			ABCAssert.assertThat(new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//th[text()[contains(.,'Author')]]/..//li"))).getText(), is("Yleis"));
-			getDriver().findElement(By.className("fa-chevron-circle-right")).click();
-		}
-
-		getDriver().findElement(By.className("fa-close")).click();
+		documentViewer.close();
 	}
 
 }

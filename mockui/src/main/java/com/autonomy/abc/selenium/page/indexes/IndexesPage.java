@@ -1,5 +1,8 @@
 package com.autonomy.abc.selenium.page.indexes;
 
+import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -13,37 +16,43 @@ import java.util.List;
 
 public class IndexesPage extends AppElement implements AppPage {
 
-    public IndexesPage(WebDriver driver) {
-        super(new WebDriverWait(driver, 30)
-                .withMessage("Indexes Page failed to load")
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
-        waitForLoad();
+    private IndexesPage(WebDriver driver) {
+        super(driver.findElement(By.className("wrapper-content")), driver);
+    }
+
+    public static IndexesPage make(WebDriver driver) {
+        IndexesPage.waitForLoad(driver);
+        return new IndexesPage(driver);
+    }
+
+    private static void waitForLoad(WebDriver driver) {
+        new WebDriverWait(driver, 30)
+                .withMessage("Indexes failed to load")
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
     }
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30)
-                .withMessage("Indexes failed to load")
-                .until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIcon")));
+        waitForLoad(getDriver());
     }
 
     public WebElement newIndexButton(){
         return getDriver().findElement(By.id("new-index-btn"));
     }
 
-    public WebElement findIndex(String indexName) {
-        if(indexName.contains(" ")){
-            findElement(By.xpath("//*[contains(text(),'"+indexName+"')]"));
-        }
-
-        return findElement(By.id(indexName));
+    public WebElement findIndex(String displayName) {
+            return findElement(By.xpath(".//*[contains(text(),'" + displayName + "')]"));
     }
 
-    public void deleteIndex(String indexName){
-        findIndex(indexName).findElement(By.cssSelector(".delete-action-button-container button")).click();
-        loadOrFadeWait();
+    private WebElement indexRow(String displayName){
+        return ElementUtil.ancestor(findIndex(displayName), 9);
+    }
+
+    public void deleteIndex(String displayName){
+        indexRow(displayName).findElement(By.tagName("button")).click();
+        Waits.loadOrFadeWait();
         modalClick();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     private void modalClick() {
@@ -54,7 +63,7 @@ public class IndexesPage extends AppElement implements AppPage {
         return findElements(By.xpath("//*[contains(@ng-repeat,'index')]"));
     }
 
-    public List<String> getIndexNames(){
+    public List<String> getIndexDisplayNames(){
         List<String> names = new ArrayList<>();
 
         for(WebElement index : getIndexes()){
@@ -62,5 +71,9 @@ public class IndexesPage extends AppElement implements AppPage {
         }
 
         return names;
+    }
+
+    public int getNumberOfConnections(Index index) {
+        return Integer.parseInt(indexRow(index.getDisplayName()).findElement(By.cssSelector(".listItemNormalText>.ng-scope")).getText().split(" ")[1]);
     }
 }

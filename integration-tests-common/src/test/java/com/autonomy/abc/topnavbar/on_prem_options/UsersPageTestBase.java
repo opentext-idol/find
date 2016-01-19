@@ -2,15 +2,17 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.hamcrest.CoreMatchers;
+import org.junit.After;
 import org.junit.Before;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -26,15 +28,17 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
 public class UsersPageTestBase extends ABCTestBase {
-    public UsersPageTestBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
-    }
-
     protected final NewUser aNewUser = config.getNewUser("james");
     protected final NewUser newUser2 = config.getNewUser("john");
+    protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
     protected UsersPage usersPage;
     protected UserService userService;
-    protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
+    protected final SignupEmailHandler emailHandler;
+
+    public UsersPageTestBase(TestConfig config) {
+        super(config);
+        emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+    }
 
     @Before
     public void setUp() throws MalformedURLException, InterruptedException {
@@ -43,11 +47,19 @@ public class UsersPageTestBase extends ABCTestBase {
         userService.deleteOtherUsers();
     }
 
+    @After
+    public void tearDown(){
+        if(getConfig().getType().equals(ApplicationType.HOSTED)) {
+            emailHandler.markAllEmailAsRead(getDriver());
+        }
+    }
+
     protected User singleSignUp() {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
         final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-        User user = aNewUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+        User user = aNewUser.signUpAs(Role.USER, usersPage);
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         verifyUserAdded(newUserModal, user);
         usersPage.closeModal();
@@ -58,11 +70,12 @@ public class UsersPageTestBase extends ABCTestBase {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
 
-        User user = newUser.signUpAs(Role.USER, usersPage, config.getWebDriverFactory());
+        User user = newUser.signUpAs(Role.USER, usersPage);
+        user.authenticate(config.getWebDriverFactory(), emailHandler);
         usersPage.closeModal();
 
         try {
-            usersPage.waitForGritterToClear();
+            Waits.waitForGritterToClear();
         } catch (InterruptedException e) { /**/ }
 
         logout();

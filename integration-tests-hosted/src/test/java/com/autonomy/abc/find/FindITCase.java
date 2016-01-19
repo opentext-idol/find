@@ -2,19 +2,27 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.find.Input;
-import com.autonomy.abc.selenium.find.Service;
+import com.autonomy.abc.selenium.element.FindParametricCheckbox;
+import com.autonomy.abc.selenium.application.FindApplication;
+import com.autonomy.abc.selenium.application.HSODFindApplication;
+import com.autonomy.abc.selenium.control.Session;
+import com.autonomy.abc.selenium.control.Window;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
+import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
-import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.ParametricFilter;
+import com.autonomy.abc.selenium.search.StringDateFilter;
+import com.autonomy.abc.selenium.util.*;
+import com.google.common.collect.Lists;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -28,25 +36,18 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -55,55 +56,48 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindITCase extends HostedTestBase {
-    private FindPage find;
-    private Service service;
-    private Input input;
-    private Logger logger = LoggerFactory.getLogger(FindITCase.class);
-    private PromotionsPage promotions;
-    private List<String> browserHandles;
-    private final String domain = "2b7725de-bd04-4341-a4a0-5754f0655de8";
-    private final Matcher<String> noDocs = containsString("No results found");
-    private PromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
+    private Find find;
+    private FindResultsPage results;
+    private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
+    private final Matcher<String> noDocs = containsString(Errors.Search.NO_RESULTS);
+    private PromotionService<?> promotionService;
     private KeywordService keywordService;
+    private Window searchWindow;
+    private Window findWindow;
+    private FindApplication<?> findApplication;
 
-    public FindITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public FindITCase(TestConfig config) {
+        super(config);
     }
 
     @Before
     public void setUp(){
         promotionService = getApplication().createPromotionService(getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-        keywordService = new KeywordService(getApplication(), getElementFactory());
+        keywordService = getApplication().createKeywordService(getElementFactory());
 
-        promotions = getElementFactory().getPromotionsPage();
-
-        browserHandles = promotions.createAndListWindowHandles();
-
-        getDriver().switchTo().window(browserHandles.get(1));
-        getDriver().get(config.getFindUrl());
-        getDriver().manage().window().maximize();
+        searchWindow = getMainSession().getActiveWindow();
+        findWindow = getMainSession().openWindow(config.getFindUrl());
+        findApplication = FindApplication.ofType(config.getType());
         find = getElementFactory().getFindPage();
-        input = find.getInput();
-        service = find.getService();
+        results = find.getResultsPage();
     }
 
     @Test
     public void testSendKeys() throws InterruptedException {
         String searchTerm = "Fred is a chimpanzee";
         find.search(searchTerm);
-        assertThat(input.getSearchTerm(), is(searchTerm));
-        assertThat(service.getText().toLowerCase(), not(containsString("error")));
+        assertThat(find.getSearchBoxTerm(), is(searchTerm));
+        assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
     @Test
     public void testPdfContentTypeValue(){
         find.search("red star");
-        service.selectContentType("APPLICATION/PDF");
-        for(String type : service.getDisplayedDocumentsDocumentTypes()){
+        find.filterBy(new ParametricFilter("Content Type", "APPLICATION/PDF"));
+        for(String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type,containsString("pdf"));
         }
     }
@@ -111,210 +105,204 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testHtmlContentTypeValue(){
         find.search("red star");
-        service.selectContentType("TEXT/HTML");
-        for(String type : service.getDisplayedDocumentsDocumentTypes()){
+        find.filterBy(new ParametricFilter("Content Type","TEXT/HTML"));
+        for(String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type,containsString("html"));
         }
     }
 
     @Test
+    public void testFilteringByParametricValues(){
+        find.search("Alexis");
+        find.waitForParametricValuesToLoad();
+
+        int expectedResults = plainTextCheckbox().getResultsCount();
+        plainTextCheckbox().check();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        verifyParametricFields(plainTextCheckbox(), expectedResults);
+        verifyTicks(true, false);
+
+        expectedResults = plainTextCheckbox().getResultsCount();
+        simpsonsArchiveCheckbox().check();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        verifyParametricFields(plainTextCheckbox(), expectedResults);	//TODO Maybe change plainTextCheckbox to whichever has the higher value??
+        verifyTicks(true, true);
+
+        plainTextCheckbox().uncheck();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        expectedResults = simpsonsArchiveCheckbox().getResultsCount();
+        verifyParametricFields(simpsonsArchiveCheckbox(), expectedResults);
+        verifyTicks(false, true);
+    }
+
+    private void verifyParametricFields(FindParametricCheckbox checked, int expectedResults){
+        Waits.loadOrFadeWait();
+        int resultsTotal = results.getResultTitles().size();
+        int checkboxResults = checked.getResultsCount();
+
+        verifyThat(resultsTotal, is(Math.min(expectedResults, 30)));
+        verifyThat(checkboxResults, is(expectedResults));
+    }
+
+    private void verifyTicks(boolean plainChecked, boolean simpsonsChecked){
+        verifyThat(plainTextCheckbox().isChecked(), is(plainChecked));
+        verifyThat(simpsonsArchiveCheckbox().isChecked(), is(simpsonsChecked));
+    }
+
+    private FindParametricCheckbox simpsonsArchiveCheckbox(){
+        return results.parametricTypeCheckbox("Source Connector", "SIMPSONSARCHIVE");
+    }
+
+    private FindParametricCheckbox plainTextCheckbox(){
+        return results.parametricTypeCheckbox("Content Type", "TEXT/PLAIN");
+    }
+
+    @Test
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError()  {
         find.search("wolf");
-        service.selectContentType("TEXT/HTML");
-        service.selectContentType("TEXT/HTML");
-        assertThat(service.getText().toLowerCase(), not(containsString("error")));
+        FindParametricCheckbox contentTypeCheckbox = results.parametricTypeCheckbox("Content Type", "TEXT/HTML");
+        contentTypeCheckbox.check();
+        Waits.loadOrFadeWait();
+        contentTypeCheckbox.uncheck();
+        assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
     @Test
     public void testSearch(){
         find.search("Red");
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        assertThat(service.getText().toLowerCase(), not(containsString("error")));
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
     @Test
     public void testSortByRelevance() {
-        getDriver().switchTo().window(browserHandles.get(0));
-        body.getTopNavBar().search("stars bbc");
+        searchWindow.activate();
+        getElementFactory().getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
-        searchPage.sortByRelevance();
+        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search("stars bbc");
 
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
 
-        List<String> findSearchTitles = service.getResultTitles();
-
-        for(int i = 0; i < 30; i++){
-            assertThat(findSearchTitles.get(i), is(searchTitles.get(i)));
-        }
+        assertThat(results.getResultTitles(), is(searchTitles));
     }
 
     @Test
     public void testSortByDate(){
-        getDriver().switchTo().window(browserHandles.get(0));
-        body.getTopNavBar().search("stars bbc");
+        searchWindow.activate();
+        getElementFactory().getTopNavBar().search("stars bbc");
         SearchPage searchPage = getElementFactory().getSearchPage();
-        searchPage.sortByDate();
+        searchPage.sortBy(SearchBase.Sort.DATE);
         List<String> searchTitles = searchPage.getSearchResultTitles(30);
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search("stars bbc");
 
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        find.sortByDate();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        find.sortBy(SearchBase.Sort.DATE);
 
-        List<String> findSearchTitles = service.getResultTitles();
-
-        for(int i = 0; i < 30; i++){
-            assertThat(findSearchTitles.get(i), is(searchTitles.get(i)));
-        }
+        assertThat(results.getResultTitles(), is(searchTitles));
     }
 
     //TODO ALL RELATED CONCEPTS TESTS - probably better to check if text is not("Loading...") rather than not("")
     @Test
     public void testRelatedConceptsHasResults(){
         find.search("Danye West");
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.RIGHT);
-        WebElement relatedConcepts = service.getRelatedConcepts();
-
-        int i = 1;
-        for(WebElement top : relatedConcepts.findElements(By.xpath("./a"))){
-            assertThat(top.getText(),not(""));
-
-            WebElement table = top.findElement(By.xpath("./following-sibling::table[1]"));
-
-            for(WebElement entry : table.findElements(By.tagName("a"))){
-                assertThat(entry.getText(),not(""));
-            }
+        for (WebElement concept : results.relatedConcepts()) {
+            assertThat(concept, hasTextThat(not(isEmptyOrNullString())));
         }
     }
 
     @Test
     public void testRelatedConceptsNavigateOnClick(){
         find.search("Red");
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.RIGHT);
-        WebElement topRelatedConcept = service.getRelatedConcepts().findElement(By.tagName("a"));
-
+        WebElement topRelatedConcept = results.relatedConcepts().get(0);
         String concept = topRelatedConcept.getText();
 
         topRelatedConcept.click();
-
         assertThat(getDriver().getCurrentUrl(), containsString(concept));
-        assertThat(input.getSearchTerm(), containsString(concept));
-
-        hoverOverElement(service.getResultsDiv());
-
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.RIGHT);
-
-        WebElement tableRelatedConcept = service.getRelatedConcepts().findElement(By.cssSelector("table a"));
-
-        concept = tableRelatedConcept.getText();
-
-        tableRelatedConcept.click();
-
-        assertThat(getDriver().getCurrentUrl(), containsString(concept));
-        assertThat(input.getSearchTerm(), containsString(concept));
+        assertThat(find.getSearchBoxTerm(), containsString(concept));
     }
 
     @Test
+    // CCUK-3498
     public void testRelatedConceptsHover(){
         find.search("Find");
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.RIGHT);
-        WebElement topRelatedConcept = service.getRelatedConcepts().findElement(By.tagName("a"));
-        WebElement tableLink = service.getRelatedConcepts().findElement(By.cssSelector("table a"));
-
-        hoverOverElement(topRelatedConcept);
-
-        WebElement popover = getDriver().findElement(By.className("popover"));
-
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
-        assertThat(popover.getText(), not(""));
-
-        hoverOverElement(service.getResultsDiv());
-
-        new WebDriverWait(getDriver(),2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
-
-        ((JavascriptExecutor) getDriver()).executeScript("arguments[0].scrollIntoView(true);", tableLink);
-        hoverOverElement(tableLink);
-
-        WebElement tablePopover = new WebDriverWait(getDriver(),5).until(ExpectedConditions.visibilityOfElementLocated(By.className("popover")));
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(tablePopover, "Loading")));
-
-        assertThat(tablePopover.getText(), not(""));
-
+        WebElement popover = results.hoverOverRelatedConcept(0);
+        verifyThat(popover, hasTextThat(not(isEmptyOrNullString())));
+        verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
+        results.unhover();
     }
 
     @Test
     public void testPinToPosition(){
-        Search search = searchActionFactory.makeSearch("red");
+        String search = "red";
         String trigger = "mate";
         PinToPositionPromotion promotion = new PinToPositionPromotion(1, trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         promotionService.deleteAll();
 
         try {
             String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
-            assertThat(service.getSearchResultTitle(1).getText(), is(documentTitle));
+            assertThat(results.searchResultTitle(1).getText(), is(documentTitle));
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
 
     @Test
     public void testPinToPositionThree(){
-        Search search = searchActionFactory.makeSearch("red");
+        String search = "red";
         String trigger = "mate";
         PinToPositionPromotion promotion = new PinToPositionPromotion(3, trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         promotionService.deleteAll();
 
         try {
             String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
-            assertThat(service.getSearchResultTitle(3).getText(), is(documentTitle));
+            assertThat(results.searchResultTitle(3).getText(), is(documentTitle));
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
 
     @Test
     public void testSpotlightPromotions(){
-        Search search = searchActionFactory.makeSearch("Proper");
+        String search = "Proper";
         String trigger = "Prim";
         SpotlightPromotion spotlight = new SpotlightPromotion(trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         promotionService.deleteAll();
 
         try {
             List<String> createdPromotions = promotionService.setUpPromotion(spotlight, search, 3);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
 
-            List<String> findPromotions = service.getPromotionsTitles();
+            List<String> findPromotions = results.getPromotionsTitles();
 
             assertThat(findPromotions, not(empty()));
             assertThat(createdPromotions, everyItem(isIn(findPromotions)));
 
-            for(WebElement promotion : service.getPromotions()){
-                promotionShownCorrectly(promotion);
-            }
+            promotionShownCorrectly(results.promotions());
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
@@ -326,15 +314,15 @@ public class FindITCase extends HostedTestBase {
         String trigger = "LOVE";
         StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         promotionService.deleteAll();
 
         try {
             ((HSOPromotionService) promotionService).setUpStaticPromotion(promotion);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
-            List<WebElement> promotions = service.getPromotions();
+            List<WebElement> promotions = results.promotions();
 
             assertThat(promotions.size(), is(1));
             WebElement staticPromotion = promotions.get(0);
@@ -342,7 +330,7 @@ public class FindITCase extends HostedTestBase {
             assertThat(staticPromotion.findElement(By.className("result-summary")).getText(), containsString(content));
             promotionShownCorrectly(staticPromotion);
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
@@ -351,43 +339,51 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testDynamicPromotions(){
         int resultsToPromote = 13;
+        String search = "kittens";
         String trigger = "Rugby";
         DynamicPromotion dynamicPromotion = new DynamicPromotion(resultsToPromote, trigger);
-        Search search = searchActionFactory.makeSearch("kittens");
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         promotionService.deleteAll();
 
         try{
             List<String> promotedDocumentTitles = promotionService.setUpPromotion(dynamicPromotion, search, resultsToPromote);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
             find.search(trigger);
 
-            verifyThat(promotedDocumentTitles, everyItem(isIn(service.getPromotionsTitles())));
+            verifyThat(promotedDocumentTitles, everyItem(isIn(results.getPromotionsTitles())));
 
-            for(WebElement promotion : service.getPromotions()){
-                promotionShownCorrectly(promotion);
-            }
-
+            promotionShownCorrectly(results.promotions());
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
 
     private void promotionShownCorrectly (WebElement promotion) {
-        assertThat(promotion.getAttribute("class"),containsString("promoted-document"));
+        assertThat(promotion.getAttribute("class"), containsString("promoted-document"));
         assertThat(promotion.findElement(By.className("promoted-label")).getText(), containsString("Promoted"));
-        assertTrue(promotion.findElement(By.className("icon-star")).isDisplayed());
+        assertThat(promotion.findElement(By.className("fa-star")), displayed());
+    }
+
+    private void promotionShownCorrectly (List<WebElement> promotions){
+        for(WebElement promotion : promotions){
+            promotionShownCorrectly(promotion);
+        }
     }
 
     @Test
-    public void testCheckMetadata(){
+    //TODO update this based on CSA-1657
+    public void testMetadata(){
         find.search("stars");
-        service.filterByIndex(Index.DEFAULT.getTitle());
+        find.filterBy(new IndexFilter(Index.DEFAULT));
 
-        for(WebElement searchResult : service.getResults()){
+        results.searchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        String domain = docViewer.getDomain();
+
+        for(WebElement searchResult : results.results()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
 
             try {
@@ -396,102 +392,85 @@ public class FindITCase extends HostedTestBase {
                 fail("Could not click on title - most likely CSA-1767");
             }
 
-            WebElement metadata = service.getViewMetadata();
-
-            assertThat(metadata.findElement(By.xpath(".//tr[1]/td")).getText(),is(domain));
-            assertThat(metadata.findElement(By.xpath(".//tr[2]/td")).getText(),is(not("")));
-            assertThat(metadata.findElement(By.xpath(".//tr[3]/td")).getText(),is(url));
-
-            service.closeViewBox();
-            find.loadOrFadeWait();
+            assertThat(docViewer.getDomain(), is(domain));
+            assertThat(docViewer.getIndex(), not(isEmptyOrNullString()));
+            assertThat(docViewer.getReference(), is(url));
+            docViewer.close();
         }
-    }
-
-    private void hoverOverElement(WebElement element){
-        Actions builder = new Actions(getDriver());
-        Dimension dimensions = element.getSize();
-        builder.moveToElement(element, dimensions.getWidth() / 2, dimensions.getHeight() / 2);
-        Action hover = builder.build();
-        hover.perform();
     }
 
     @Test
     public void testFilterByIndex(){
         find.search("Sam");
 
-        WebElement searchResult = service.getSearchResult(1);
+        WebElement searchResult = results.searchResult(1);
         WebElement title = searchResult.findElement(By.tagName("h4"));
 
         String titleString = title.getText();
         title.click();
 
-        WebElement metadata = service.getViewMetadata();
-        String index = metadata.findElement(By.xpath(".//tr[2]/td")).getText();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        String index = docViewer.getIndex();
 
-        service.closeViewBox();
-        service.loadOrFadeWait();
+        docViewer.close();
 
-        service.filterByIndex(index);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
+        find.filterBy(new IndexFilter(index));
 
-        assertThat(service.getSearchResultTitle(1).getText(), is(titleString));
+        assertThat(results.searchResultTitle(1).getText(), is(titleString));
     }
 
     @Test
     public void testFilterByIndexOnlyContainsFilesFromThatIndex(){
         find.search("Happy");
 
-        String indexTitle = Index.values()[1].getTitle();
-
-        service.filterByIndex(indexTitle);
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        service.getSearchResultTitle(1).click();
+        // TODO: what if this index has no results?
+        String indexTitle = find.getPrivateIndexNames().get(2);
+        find.filterBy(new IndexFilter(indexTitle));
+        results.searchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
-            assertThat(service.getViewMetadata().findElement(By.xpath(".//tr[2]/td")).getText(), is(indexTitle));
-            service.viewBoxNextButton().click();
-        } while (!service.cBoxFirstDocument());
+            assertThat(docViewer.getIndex(), is(indexTitle));
+            docViewer.next();
+        } while (docViewer.getCurrentDocumentNumber() != 1);
     }
 
     @Test
     public void testQuicklyDoubleClickingIndexDoesNotLeadToError(){
         find.search("index");
-        service.filterByIndex(Index.DEFAULT.title);
-        service.filterByIndex(Index.DEFAULT.title);
-        assertThat(service.getResultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
+        // async filters
+        new IndexFilter(Index.DEFAULT).apply(find);
+        IndexFilter.PRIVATE.apply(find);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        assertThat(results.resultsDiv().getText().toLowerCase(), not(containsString("an error occurred")));
     }
 
     @Test
     public void testPreDefinedWeekHasSameResultsAsCustomWeek(){
-        preDefinedDateFiltersVersusCustomDateFilters(Service.DateEnum.WEEK);
+        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.WEEK);
     }
 
     @Test
     public void testPreDefinedMonthHasSameResultsAsCustomMonth(){
-        preDefinedDateFiltersVersusCustomDateFilters(Service.DateEnum.MONTH);
+        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.MONTH);
     }
 
     @Test
     public void testPreDefinedYearHasSameResultsAsCustomYear(){
-        preDefinedDateFiltersVersusCustomDateFilters(Service.DateEnum.YEAR);
+        preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum.YEAR);
     }
 
-    private void preDefinedDateFiltersVersusCustomDateFilters(Service.DateEnum period){
+    private void preDefinedDateFiltersVersusCustomDateFilters(FindResultsPage.DateEnum period){
         find.search("Rugby");
 
-        service.filterByDate(period);
-        List<String> preDefinedResults = service.getResultTitles();
-        service.filterByDate(getDateString(period),"");
-        List<String> customResults = service.getResultTitles();
+        results.toggleDateSelection(period);
+        List<String> preDefinedResults = results.getResultTitles();
+        find.filterBy(new StringDateFilter().from(getDate(period)));
+        List<String> customResults = results.getResultTitles();
 
-        assertThat(preDefinedResults.size(), is(customResults.size()));
-
-        for(int i = 0; i < preDefinedResults.size(); i++){
-            assertThat(preDefinedResults.get(i), is(customResults.get(i)));
-        }
+        assertThat(preDefinedResults, is(customResults));
     }
 
-    private String getDateString (Service.DateEnum period) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+    private Date getDate(FindResultsPage.DateEnum period) {
         Calendar cal = Calendar.getInstance();
 
         if (period != null) {
@@ -507,8 +486,7 @@ public class FindITCase extends HostedTestBase {
                     break;
             }
         }
-
-        return dateFormat.format(cal.getTime());
+        return cal.getTime();
     }
 
     @Ignore //TODO seems to have broken
@@ -534,18 +512,18 @@ public class FindITCase extends HostedTestBase {
 
         Set<String> parametricFields = new HashSet<>();
 
-        for(Index i : Index.values()) {
+        find.search("Something");
+
+        for (String indexName : find.getPrivateIndexNames()) {
             RetrieveIndexFieldsResponse retrieveIndexFieldsResponse = retrieveIndexFieldsService.retrieveIndexFields(tokenProxy,
-                    new ResourceIdentifier(domain, i.title), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
+                    new ResourceIdentifier(domain, indexName), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
 
             parametricFields.addAll(retrieveIndexFieldsResponse.getAllFields());
         }
 
-        find.search("Something");
-
         for(String field : parametricFields) {
             try {
-                assertTrue(service.getParametricContainer(field).isDisplayed());
+                assertTrue(results.parametricContainer(field).isDisplayed());
             } catch (ElementNotVisibleException | NotFoundException e) {
                 fail("Could not find field '"+field+"'");
             }
@@ -556,34 +534,16 @@ public class FindITCase extends HostedTestBase {
     public void testViewDocumentsOpenFromFind(){
         find.search("Review");
 
-        for(WebElement result : service.getResults()){
+        for(WebElement result : results.results()){
             try {
-                service.scrollIntoViewAndClick(result.findElement(By.tagName("h4")));
+                ElementUtil.scrollIntoViewAndClick(result.findElement(By.tagName("h4")), getDriver());
             } catch (WebDriverException e){
                 fail("Could not click on title - most likely CSA-1767");
             }
 
-            new WebDriverWait(getDriver(),20).until(new WaitForCBoxLoadIndicatorToDisappear());
-            assertThat(service.getCBoxLoadedContent().getText(), not(containsString("500")));
-
-            assertTrue(service.viewBoxNextButton().isDisplayed());
-            assertTrue(service.viewBoxPrevButton().isDisplayed());
-            assertTrue(service.colourBox().isDisplayed());
-
-            service.closeViewBox();
-            find.loadOrFadeWait();
-        }
-    }
-
-    private class WaitForCBoxLoadIndicatorToDisappear implements ExpectedCondition<Boolean> {
-        @Override
-        public Boolean apply(WebDriver input) {
-            return !getDriver().findElement(By.cssSelector("#cboxLoadedContent .icon-spin")).isDisplayed();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return false;
+            DocumentViewer docViewer = DocumentViewer.make(getDriver());
+            verifyDocumentViewer(docViewer);
+            docViewer.close();
         }
     }
 
@@ -591,34 +551,45 @@ public class FindITCase extends HostedTestBase {
     public void testViewDocumentsOpenWithArrows(){
         find.search("Review");
 
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        service.getSearchResultTitle(1).click();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        results.searchResultTitle(1).click();
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
-            assertThat(service.getCBoxLoadedContent().getText(),not(containsString("500")));
-            assertTrue(service.viewBoxNextButton().isDisplayed());
-            assertTrue(service.viewBoxPrevButton().isDisplayed());
-            assertTrue(service.colourBox().isDisplayed());
-            service.viewBoxNextButton().click();
-        } while (!service.cBoxFirstDocument());
+            verifyDocumentViewer(docViewer);
+            docViewer.next();
+        } while (docViewer.getCurrentDocumentNumber() != 1);
+    }
+
+    private void verifyDocumentViewer(DocumentViewer docViewer) {
+        verifyThat("document visible", docViewer, displayed());
+        verifyThat("next button visible", docViewer.nextButton(), displayed());
+        verifyThat("previous button visible", docViewer.prevButton(), displayed());
+
+        String handle = getDriver().getWindowHandle();
+        getDriver().switchTo().frame(docViewer.frame());
+
+        //TODO these aren't working properly - did Fred not fix these?
+        verifyThat("no backend error", getDriver().findElements(new Locator().withTagName("h1").containingText("500")), empty());
+        verifyThat("no view server error", getDriver().findElements(new Locator().withTagName("h2").containingCaseInsensitive("error")), empty());
+        getDriver().switchTo().window(handle);
     }
 
     @Test
     public void testDateRemainsWhenClosingAndReopeningDateFilters(){
         find.search("Corbyn");
 
-        String start = getDateString(Service.DateEnum.MONTH);
-        String end = getDateString(Service.DateEnum.WEEK);
+        Date start = getDate(FindResultsPage.DateEnum.MONTH);
+        Date end = getDate(FindResultsPage.DateEnum.WEEK);
 
-        service.filterByDate(start,end);
-        find.loadOrFadeWait();
-        service.filterByDate(Service.DateEnum.CUSTOM); //For some reason doesn't close first time
-        service.filterByDate(Service.DateEnum.CUSTOM);
-        find.loadOrFadeWait();
-        service.filterByDate(Service.DateEnum.CUSTOM);
-        find.loadOrFadeWait();
+        find.filterBy(new StringDateFilter().from(start).until(end));
+        Waits.loadOrFadeWait();
+        for (int unused = 0; unused < 3; unused++) {
+            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+            Waits.loadOrFadeWait();
+        }
 
-        assertThat(service.getStartDateFilter().getAttribute("value"), is(start));
-        assertThat(service.getEndDateFilter().getAttribute("value"), is(end));
+        assertThat(find.fromDateInput().getValue(), is(find.formatInputDate(start)));
+        assertThat(find.untilDateInput().getValue(), is(find.formatInputDate(end)));
     }
 
     @Test
@@ -626,72 +597,93 @@ public class FindITCase extends HostedTestBase {
         find.search("love ");
 
         for(FileType f : FileType.values()) {
-            service.selectContentType(f.getSidebarString());
+            find.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
 
-            for(WebElement result : service.getResults()){
+            for(WebElement result : results.results()){
                 assertThat(result.findElement(By.tagName("i")).getAttribute("class"), containsString(f.getFileIconString()));
             }
 
-            service.selectContentType(f.getSidebarString());
+            find.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
         }
     }
 
     @Test
     public void testSynonyms() throws InterruptedException {
-        getDriver().switchTo().window(browserHandles.get(0));
+        String nonsense = "iuhdsafsaubfdja";
+        searchWindow.activate();
         keywordService.deleteAll(KeywordFilter.ALL);
 
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
-        getDriver().switchTo().window(browserHandles.get(1));
-        find.search("iuhdsafsaubfdja");
+        findWindow.activate();
+        find.search(nonsense);
 
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        assertThat(service.getText(), noDocs);
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        assertThat(results.getText(), noDocs);
 
         find.search("Cat");
-        service.waitForSearchLoadIndicatorToDisappear(Service.Container.MIDDLE);
-        assertThat(service.getText(), not(noDocs));
-        String firstTitle = service.getSearchResultTitle(1).getText();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        assertThat(results.getText(), not(noDocs));
 
-        getDriver().switchTo().window(browserHandles.get(0));
-        keywordService.addSynonymGroup(Language.ENGLISH, "cat iuhdsafsaubfdja");
+        searchWindow.activate();
+        keywordService.addSynonymGroup(Language.ENGLISH, "cat", nonsense);
 
-        getDriver().switchTo().window(browserHandles.get(1));
-        find.search("iuhdsafsaubfdja");
+        /* need a separate session due to caching */
+        Session secondSession = getSessionRegistry().startSession(config.getFindUrl());
+        try {
+            Find otherFind = initialiseSession(secondSession);
+            otherFind.search("Cat");
+            FindResultsPage otherResults = otherFind.getResultsPage();
+            String firstTitle = otherResults.searchResultTitle(1).getText();
 
-        assertThat(service.getText(), not(noDocs));
-        verifyThat(service.getSearchResultTitle(1).getText(), is(firstTitle));
+            otherFind.search(nonsense);
+            assertThat(otherResults.getText(), not(noDocs));
+            verifyThat(otherResults.searchResultTitle(1).getText(), is(firstTitle));
+
+        } finally {
+            getSessionRegistry().endSession(secondSession);
+        }
     }
 
     @Test
     public void testBlacklist() throws InterruptedException {
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
         keywordService.deleteAll(KeywordFilter.ALL);
 
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
 
-        getDriver().switchTo().window(browserHandles.get(1));
+        findWindow.activate();
         find.search("Cat");
 
-        assertThat(service.getText(), not(noDocs));
+        assertThat(results.getText(), not(noDocs));
 
         find.search("Holder");
 
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         keywordService.addBlacklistTerms(Language.ENGLISH, "cat");
 
-        getDriver().switchTo().window(browserHandles.get(1));
-        find.search("Cat");
+        /* need a separate session due to caching */
+        Session secondSession = getSessionRegistry().startSession(config.getFindUrl());
+        try {
+            Find otherFind = initialiseSession(secondSession);
+            otherFind.search("Cat");
 
-        assertThat(service.getText(), noDocs);
+            assertThat(otherFind.getResultsPage(), hasTextThat(noDocs));
+        } finally {
+            getSessionRegistry().endSession(secondSession);
+        }
     }
 
-    @Test
-    public void testOverlappingSynonyms(){
-
+    // TODO: this does not belong here
+    private Find initialiseSession(Session session) {
+        HSOElementFactory otherElementFactory = new HSODFindApplication().createElementFactory(session.getDriver());
+        loginTo(otherElementFactory.getFindLoginPage(), session.getDriver(), config.getDefaultUser());
+        return otherElementFactory.getFindPage();
     }
+
+    @Test   @Ignore("Not implemented")
+    public void testOverlappingSynonyms(){}
 
     @Test
     public void testBooleanOperators(){
@@ -699,48 +691,48 @@ public class FindITCase extends HostedTestBase {
         String termTwo = "\"dearly departed\"";
 
         find.search(termOne);
-        List<String> musketeersSearchResults = service.getResultTitles();
+        List<String> musketeersSearchResults = results.getResultTitles();
         int numberOfMusketeersResults = musketeersSearchResults.size();
 
         find.search(termTwo);
-        List<String> dearlyDepartedSearchResults = service.getResultTitles();
+        List<String> dearlyDepartedSearchResults = results.getResultTitles();
         int numberOfDearlyDepartedResults = dearlyDepartedSearchResults.size();
 
         find.search(termOne + " AND " + termTwo);
-        List<String> andResults = service.getResultTitles();
+        List<String> andResults = results.getResultTitles();
         int numberOfAndResults = andResults.size();
 
         assertThat(numberOfMusketeersResults,greaterThanOrEqualTo(numberOfAndResults));
         assertThat(numberOfDearlyDepartedResults, greaterThanOrEqualTo(numberOfAndResults));
         String[] andResultsArray = andResults.toArray(new String[andResults.size()]);
         assertThat(musketeersSearchResults, hasItems(andResultsArray));
-        assertThat(dearlyDepartedSearchResults,hasItems(andResultsArray));
+        assertThat(dearlyDepartedSearchResults, hasItems(andResultsArray));
 
         find.search(termOne + " OR " + termTwo);
-        List<String> orResults = service.getResultTitles();
+        List<String> orResults = results.getResultTitles();
         Set<String> concatenatedResults = new HashSet<>(ListUtils.union(musketeersSearchResults, dearlyDepartedSearchResults));
         assertThat(orResults.size(), is(concatenatedResults.size()));
         assertThat(orResults, containsInAnyOrder(concatenatedResults.toArray()));
 
         find.search(termOne + " XOR " + termTwo);
-        List<String> xorResults = service.getResultTitles();
+        List<String> xorResults = results.getResultTitles();
         concatenatedResults.removeAll(andResults);
         assertThat(xorResults.size(), is(concatenatedResults.size()));
         assertThat(xorResults, containsInAnyOrder(concatenatedResults.toArray()));
 
         find.search(termOne + " NOT " + termTwo);
-        List<String> notTermTwo = service.getResultTitles();
+        List<String> notTermTwo = results.getResultTitles();
         Set<String> t1NotT2 = new HashSet<>(concatenatedResults);
         t1NotT2.removeAll(dearlyDepartedSearchResults);
         assertThat(notTermTwo.size(), is(t1NotT2.size()));
         assertThat(notTermTwo, containsInAnyOrder(t1NotT2.toArray()));
 
         find.search(termTwo + " NOT " + termOne);
-        List<String> notTermOne = service.getResultTitles();
+        List<String> notTermOne = results.getResultTitles();
         Set<String> t2NotT1 = new HashSet<>(concatenatedResults);
         t2NotT1.removeAll(musketeersSearchResults);
         assertThat(notTermOne.size(), is(t2NotT1.size()));
-        assertThat(notTermOne,containsInAnyOrder(t2NotT1.toArray()));
+        assertThat(notTermOne, containsInAnyOrder(t2NotT1.toArray()));
     }
 
     //DUPLICATE SEARCH TEST (almost)
@@ -768,7 +760,7 @@ public class FindITCase extends HostedTestBase {
         final List<String> hiddenBooleansProximities = Arrays.asList("NOTed", "ANDREW", "ORder", "WHENCE", "SENTENCED", "PARAGRAPHING", "NEARLY", "SENTENCE1D", "PARAGRAPHING", "PARAGRAPH2inG", "SOUNDEXCLUSIVE", "XORING", "EORE", "DNEARLY", "WNEARING", "YNEARD", "AFTERWARDS", "BEFOREHAND", "NOTWHENERED");
         for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
             find.search(hiddenBooleansProximity);
-            find.loadOrFadeWait();
+            Waits.loadOrFadeWait();
             assertThat(find.getText(), not(containsString(Errors.Search.GENERAL)));
         }
     }
@@ -779,48 +771,48 @@ public class FindITCase extends HostedTestBase {
 
         int initialSearchCount = find.countSearchResults();
         find.search("leg[2:2]");
-        find.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat("Failed with the following search term: leg[2:2]  Search count should have reduced on initial search 'leg'",
                 initialSearchCount, greaterThan(find.countSearchResults()));
 
         search("red");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         initialSearchCount = searchPage.countSearchResults();
         search("red star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int secondSearchCount = searchPage.countSearchResults();
         assertThat("Failed with the following search term: red star  Search count should have increased on initial search: red",
                 initialSearchCount, lessThan(secondSearchCount));
 
         search("\"red star\"");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int thirdSearchCount = searchPage.countSearchResults();
         assertThat("Failed with the following search term: '\"red star\"'  Search count should have reduced on initial search: red star",
                 secondSearchCount, greaterThan(thirdSearchCount));
 
         search("red NOT star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int redNotStar = searchPage.countSearchResults();
         assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
                 initialSearchCount, greaterThan(redNotStar));
 
         search("star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int star = searchPage.countSearchResults();
 
         search("star NOT red");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int starNotRed = searchPage.countSearchResults();
         assertThat("Failed with the following search term: star NOT red  Search count should have reduced on initial search: star",
                 star, greaterThan(starNotRed));
 
         search("red OR star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         assertThat("Failed with the following search term: red OR star  Search count should be the same as initial search: red star",
                 secondSearchCount, CoreMatchers.is(searchPage.countSearchResults()));
 
         search("red AND star");
-        searchPage.loadOrFadeWait();
+        searchPage.Waits.loadOrFadeWait();
         final int fourthSearchCount = searchPage.countSearchResults();
         assertThat("Failed with the following search term: red AND star  Search count should have reduced on initial search: red star",
                 secondSearchCount, greaterThan(fourthSearchCount));
@@ -830,8 +822,6 @@ public class FindITCase extends HostedTestBase {
                 fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));
     }*/
 
-    String findErrorMessage = "An error occurred retrieving results";
-
     //DUPLICATE
     @Test
     public void testSearchParentheses() {
@@ -840,7 +830,7 @@ public class FindITCase extends HostedTestBase {
         for(String searchTerm : testSearchTerms){
             find.search(searchTerm);
 
-            assertThat(service.getText(), containsString(findErrorMessage));
+            assertThat(results, containsText(Errors.Search.OPERATORS));
         }
     }
 
@@ -850,7 +840,7 @@ public class FindITCase extends HostedTestBase {
         List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){
             find.search(searchTerm);
-            assertThat(service.getText(), Matchers.containsString(findErrorMessage));
+            assertThat(results, containsText(Errors.Search.QUOTES));
         }
     }
 
@@ -858,19 +848,23 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testWhitespaceSearch() {
         find.search(" ");
-        assertThat(service.getText(),containsString(findErrorMessage));
+        assertThat(results, containsText(Errors.Search.STOPWORDS));
     }
 
     @Test
     //CSA-1577
     public void testClickingCustomDateFilterDoesNotRefreshResults(){
         find.search("O Captain! My Captain!");
-        service.filterByDate(Service.DateEnum.CUSTOM);
-        assertThat(service.getResultsDiv().getText(),not(containsString("Loading")));
+        // may not happen the first time
+        for (int unused = 0; unused < 5; unused++) {
+            results.toggleDateSelection(FindResultsPage.DateEnum.CUSTOM);
+            assertThat(results.resultsDiv().getText(), not(containsString("Loading")));
+        }
     }
 
+    // CSA-1665
     @Test
-    public void testSearchTermHighlightedInResults(){
+    public void testSearchTermInResults(){
         String searchTerm = "Tiger";
 
         find.search(searchTerm);
@@ -879,33 +873,25 @@ public class FindITCase extends HostedTestBase {
             if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText(), containsString(searchTerm));
             }
-            verifyThat(searchElement.getTagName(), is("a"));
-            verifyThat(searchElement.getAttribute("class"), is("query-text"));
-
-            WebElement parent = searchElement.findElement(By.xpath(".//.."));
-            verifyThat(parent.getTagName(),is("span"));
-            verifyThat(parent.getAttribute("class"), containsString("label"));
+            verifyThat(searchElement, not(hasTagName("a")));
+            verifyThat(searchElement, hasClass("search-text"));
         }
-
-        //TODO what happens when more than one word search term
     }
 
+    // TODO: testMultiWordSearchTermInResults
+
     @Test
-    public void testRelatedConceptsHighlightedInResults(){
+    public void testRelatedConceptsInResults(){
         find.search("Tiger");
 
-        for(WebElement relatedConceptLink : service.getRelatedConcepts().findElements(By.tagName("a"))){
+        for(WebElement relatedConceptLink : results.relatedConcepts()){
             String relatedConcept = relatedConceptLink.getText();
-            for(WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'"+relatedConcept+"')]"))){
-                if(relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+            for (WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'" + relatedConcept + "')]"))) {
+                if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                     verifyThat(relatedConceptElement.getText(), containsString(relatedConcept));
                 }
-                verifyThat(relatedConceptElement.getTagName(), is("a"));
-                verifyThat(relatedConceptElement.getAttribute("class"), is("query-text"));
-
-                WebElement parent = relatedConceptElement.findElement(By.xpath(".//.."));
-                verifyThat(parent.getTagName(),is("span"));
-                verifyThat(parent.getAttribute("class"), containsString("label"));
+                verifyThat(relatedConceptElement, hasTagName("a"));
+                verifyThat(relatedConceptElement, hasClass("clickable"));
             }
         }
     }
@@ -914,19 +900,17 @@ public class FindITCase extends HostedTestBase {
     public void testSimilarDocumentsShowUp(){
         find.search("Doe");
 
-        for (WebElement similarResultLink : service.getSimilarResultLinks()){
-            new Actions(getDriver()).moveByOffset(-50,-50).build().perform();
-            service.loadOrFadeWait();
+        for (WebElement similarResultLink : Lists.reverse(results.similarResultLinks())) {
             similarResultLink.click();
 
-            WebElement popover = service.getPopover();
+            WebElement popover = results.popover();
 
             new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
 
-            assertThat(popover.findElement(By.tagName("p")).getText(),not("An error occurred fetching similar documents"));
+            assertThat(popover.findElement(By.tagName("p")).getText(), not("An error occurred fetching similar documents"));
 
             for(WebElement similarResult : popover.findElements(By.tagName("li"))){
-                assertThat(similarResult.findElement(By.tagName("h5")).getText(), not(isEmptyString()));
+                assertThat(similarResult.findElement(By.tagName("a")).getText(), not(isEmptyString()));
                 assertThat(similarResult.findElement(By.tagName("p")).getText(), not(isEmptyString()));
             }
         }
@@ -935,43 +919,33 @@ public class FindITCase extends HostedTestBase {
     @Test
     //CSA1630
     public void testAllPromotedDocumentsHaveTitles(){
-        getDriver().switchTo().window(browserHandles.get(0));
+        searchWindow.activate();
 
         PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
 
         try {
-            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"),
-                    new Search(getApplication(), getElementFactory(), "scg-2"), 10);
+            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"), "scg-2", 10);
 
-            getDriver().switchTo().window(browserHandles.get(1));
+            findWindow.activate();
 
             find.search("Tiger");
 
-            for(String title : service.getPromotionsTitles()){
+            for(String title : results.getPromotionsTitles()){
                 assertThat(title, is(not("")));
             }
 
         } finally {
-            getDriver().switchTo().window(browserHandles.get(0));
+            searchWindow.activate();
             promotionService.deleteAll();
         }
     }
 
-    private enum Index {
-        DEFAULT("default_index"),
-        FIFA("fifa"),
-        SIMPSONS_ARCHIVE("simpsonsarchive");
+    @Test
+    //CSA-1763
+    public void testPublicIndexesNotSelectedByDefault(){
+        find.search("Marina and the Diamonds");
 
-        private final String title;
-
-        Index(String index){
-            this.title = index;
-        }
-
-
-        public String getTitle() {
-            return title;
-        }
+        verifyThat(find.getSelectedPublicIndexes().size(), is(0));
     }
 
     private enum FileType {

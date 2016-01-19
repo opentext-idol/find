@@ -1,12 +1,11 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.config.ApplicationType;
-import com.autonomy.abc.selenium.config.HSOApplication;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.Platform;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -15,10 +14,6 @@ import java.util.Collections;
 @Ignore
 @RunWith(Parameterized.class)
 public abstract class HostedTestBase extends ABCTestBase {
-    public HostedTestBase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
-    }
-
     public HostedTestBase(TestConfig config) {
         super(config);
     }

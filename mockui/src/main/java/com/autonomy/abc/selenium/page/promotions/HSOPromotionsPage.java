@@ -12,22 +12,4 @@ public class HSOPromotionsPage extends PromotionsPage {
     public WebElement staticPromotionButton() {
         return findElement(By.linkText("NEW"));
     }
-
-    // use PromotionActionFactory instead
-    @Deprecated
-    public void newStaticPromotion(String title, String content, String trigger){
-        findElement(By.linkText("Promote new document")).click();
-        loadOrFadeWait();
-        findElement(By.cssSelector("[data-attribute='staticTitle']")).sendKeys(title);
-        findElement(By.cssSelector("[data-attribute='staticContent']")).sendKeys(content);
-        WebElement continueButton = findElement(By.cssSelector(".wizard-controls .next-step"));
-        continueButton.click();
-        loadOrFadeWait();
-        continueButton.click();
-        loadOrFadeWait();
-        findElement(By.cssSelector(".current-step input")).sendKeys(trigger);
-        findElement(By.cssSelector(".current-step .input-group .btn")).click();
-        loadOrFadeWait();
-        findElement(By.cssSelector(".wizard-controls .finish-step")).click();
-    }
 }

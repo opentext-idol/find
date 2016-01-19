@@ -6,8 +6,8 @@ import com.autonomy.abc.selenium.element.PasswordBox;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -38,11 +38,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[name='create-users-username']")).sendKeys(userName);
 	}
 
-	public void clearPasswords() {
-		ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password")).clear();
-		ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm")).clear();
-	}
-
 	public void addAndConfirmPassword(final String password, final String passwordConfirm) {
 		final WebElement passwordElement = ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password"));
 		passwordElement.clear();
@@ -57,22 +52,26 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[contains(text(),'" + role + "')]")).click();
 	}
 
+	@Deprecated
+	/**
+	 * @deprecated Use UserService instead
+	 */
 	public void createNewUser(final String userName, final String password, final String userLevel) {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		addUsername(userName);
 		addAndConfirmPassword(password, password);
 		ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//option[text() = '" + userLevel + "']")).click();
 		createButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void closeModal() {
 		ModalView.getVisibleModalView(getDriver()).findElement(By.cssSelector("[data-dismiss='modal']")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public int countNumberOfUsers() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		return getTable().findElements(By.cssSelector("tbody tr")).size();
 	}
 
@@ -121,12 +120,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	public abstract WebElement roleLinkFor(User user);
 
 	public abstract void setRoleValueFor(User user, Role newRole);
-
-	public void cancelPendingEditFor(User user) {
-		getUserRow(user).findElement(By.cssSelector(".editable-cancel")).click();
-	}
-
-	public abstract void submitPendingEditFor(User user);
 
 	public User changeAuth(User user, NewUser replacementAuth) {
 		return replacementAuth.replaceAuthFor(user, this);
