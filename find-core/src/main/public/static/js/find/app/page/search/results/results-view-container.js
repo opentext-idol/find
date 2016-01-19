@@ -22,7 +22,7 @@ define([
         render: function() {
             this.$el.html(this.template);
 
-            this.resultsView.setElement(this.$('.results-container')).render();
+            this.resultsView.setElement(this.$('.results-list-container')).render();
         }
 
     });
