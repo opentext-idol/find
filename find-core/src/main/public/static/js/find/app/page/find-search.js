@@ -44,8 +44,9 @@ define([
 
             this.listView = new ListView({
                 ItemView: this.ServiceView,
-                collection: this.collection,
+                collection: this.savedSearchCollection,
                 itemOptions: {
+                    queryModel: this.queryModel,
                     tagName: 'li' //TODO: change tag name and template
                 }
             });
