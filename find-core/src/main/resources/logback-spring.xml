@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2015 Hewlett-Packard Development Company, L.P.
+  ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+  -->
+
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <appender name="FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${hp.find.home:-./temp}/logs/server.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${hp.find.home:-./temp}/logs/server.%d{yyyy-MM-dd}.log</fileNamePattern>  <!-- daily rollover -->
+            <maxHistory>10</maxHistory> <!-- keep 10 days worth of history -->
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{40} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="AuditFileAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${hp.find.home:-./temp}/logs/find.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${hp.find.home:-./temp}/logs/find.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>104857600</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd}\t%d{HH:mm:ss.SSS}\t%X{username}\t%X{ip}\t%msg%n</pattern>
+        </encoder>
+        <filter class="com.hp.autonomy.frontend.logging.LogbackMarkerFilter">
+            <markerName>AUDIT</markerName>
+        </filter>
+    </appender>
+
+    <root level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FileAppender" />
+    </root>
+    <logger name="com.hp.autonomy" additivity="false">
+        <appender-ref ref="AuditFileAppender" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FileAppender" />
+    </logger>
+</configuration>

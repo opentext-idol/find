@@ -93,6 +93,18 @@ Below is an example config file:
         }
     }
 
+## Hard Coded fields
+Find looks for the following fields in Idol/HoD documents:
+* content_type
+* url
+* offset
+* author
+* category
+* date_created or created_date
+* date_modified or modified_date
+
+If content_type is audio or video, the document is treated as an audio/video file using the url and offset fields
+
 ## Is it any good?
 Yes.
 

@@ -1,0 +1,13 @@
+<!--
+  ~ Copyright 2015 Hewlett-Packard Development Company, L.P.
+  ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+  -->
+
+<service>
+    <id>%FIND_SERVICE_NAME%</id>
+    <name>%FIND_SERVICE_NAME%</name>
+    <description>HPE Find</description>
+    <executable>java</executable>
+    <arguments>-Dhp.find.home="%FIND_HOME_DIR%/" -Dserver.port=%FIND_PORT% -Dhp.find.persistentState=INMEMORY -jar "%FIND_INSTALL_DIR%"/find.war</arguments>
+    <logmode>rotate</logmode>
+</service>
