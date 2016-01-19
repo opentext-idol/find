@@ -9,12 +9,12 @@ define([
     'find/idol/app/page/find-about-page',
     'i18n!find/nls/bundle'
 ], function(FindPages, FindSearch, AboutPage, i18n) {
+
     'use strict';
 
     return FindPages.extend({
-
         initializePages: function() {
-            this.pages = this.pages.concat([
+            this.pages = [
                 {
                     constructor: FindSearch,
                     icon: 'hp-icon hp-fw hp-search',
@@ -26,7 +26,8 @@ define([
                     pageName: 'about',
                     title: i18n['app.about']
                 }
-            ]);
+            ];
         }
     });
+
 });
