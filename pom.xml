@@ -54,6 +54,17 @@
         </plugins>
     </build>
 
+    <!-- Adding dependency management section to ensure stable version of H2 used (flyway declares dependency without version) -->
+     <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.3.176</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -4,12 +4,13 @@
  */
 
 define([
-    'find/public/pages',
+    'find/app/find-pages',
     'find/hod/app/page/hod-find-search'
-], function(Pages, FindSearch) {
+], function(FindPages, FindSearch) {
     'use strict';
 
-    return Pages.extend({
+    return FindPages.extend({
+
         initializePages: function() {
             this.pages = [
                 {

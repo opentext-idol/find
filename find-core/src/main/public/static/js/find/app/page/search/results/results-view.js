@@ -266,7 +266,7 @@ define([
                     model: options.model,
                     arrayFields: DocumentModel.ARRAY_FIELDS,
                     dateFields: DocumentModel.DATE_FIELDS,
-                    fields: ['domain', 'index', 'reference']
+                    fields: ['index', 'reference', 'contentType', 'url']
                 });
             }
 
