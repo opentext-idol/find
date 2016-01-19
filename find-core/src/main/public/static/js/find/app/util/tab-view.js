@@ -37,7 +37,7 @@ define([
                 i18n: i18n
             }));
 
-            this.listView.setElement(this.$('.saved-searches-list')).render();
+            this.listView.setElement(this.$('.tab-view-list')).render();
         }
 
     });
