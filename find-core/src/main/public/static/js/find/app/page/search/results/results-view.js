@@ -110,27 +110,30 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.promotionsCollection = new PromotionsCollection();
 
-            this.listenTo(this.queryModel, 'change refresh', function() {
-                if (this.queryModel.get('queryText')) {
-                    if (!_.isEmpty(this.queryModel.get('indexes'))) {
-                        this.endOfResults = false;
-                        this.start = 1;
-                        this.maxResults = SCROLL_INCREMENT;
-                        this.loadData(false);
-                        this.$('.main-results-content .promotions').empty();
-
-                        this.$loadingSpinner.removeClass('hide');
-                        this.toggleError(false);
-                        this.$('.main-results-content .error .error-list').empty();
-                        this.$('.main-results-content .results').empty();
-                    } else {
-                        this.$loadingSpinner.addClass('hide');
-                        this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
-                    }
-                }
-            });
+            this.listenTo(this.queryModel, 'change', this.refreshResults);
+            this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
+        },
+
+        refreshResults: function() {
+            if (this.queryModel.get('queryText')) {
+                if (!_.isEmpty(this.queryModel.get('indexes'))) {
+                    this.endOfResults = false;
+                    this.start = 1;
+                    this.maxResults = SCROLL_INCREMENT;
+                    this.loadData(false);
+                    this.$('.main-results-content .promotions').empty();
+
+                    this.$loadingSpinner.removeClass('hide');
+                    this.toggleError(false);
+                    this.$('.main-results-content .error .error-list').empty();
+                    this.$('.main-results-content .results').empty();
+                } else {
+                    this.$loadingSpinner.addClass('hide');
+                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
+                }
+            }
         },
 
         clearLoadingSpinner: function() {

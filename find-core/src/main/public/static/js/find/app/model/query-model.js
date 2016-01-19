@@ -31,10 +31,6 @@ define([
             return _.any(attributes, function (attr) {
                 return _.has(this.changedAttributes(), attr);
             }, this);
-        },
-
-        refresh: function() {
-            this.trigger('refresh');
         }
     }, {
         Sort: Sort

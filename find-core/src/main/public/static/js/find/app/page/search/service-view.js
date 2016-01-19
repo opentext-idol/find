@@ -91,7 +91,7 @@ define([
                 }
             }, this);
 
-            this.listenTo(this.queryModel, 'refresh', fetchEntities);
+            this.listenTo(this.queryTextModel, 'refresh', fetchEntities);
 
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {

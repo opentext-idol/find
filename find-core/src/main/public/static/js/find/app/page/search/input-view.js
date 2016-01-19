@@ -40,11 +40,8 @@ define([
             this.listenTo(this.queryTextModel, 'change:relatedConcepts', this.updateRelatedConcepts);
 
             this.search = _.debounce(function(query) {
-                // TODO: thse branches shouldn't be the same - refresh needs to be brought back
                 if (query === options.queryTextModel.get('inputText')) {
-                    options.queryTextModel.setInputText({
-                        inputText: query
-                    });
+                    options.queryTextModel.refresh();
                 } else {
                     options.queryTextModel.setInputText({
                         inputText: query

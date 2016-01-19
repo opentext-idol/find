@@ -27,6 +27,10 @@ define([
             }
 
             return Backbone.Model.prototype.set.call(this, attributes);
+        },
+
+        refresh: function() {
+            this.trigger('refresh');
         }
     });
 
