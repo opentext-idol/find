@@ -24,10 +24,10 @@ define([
         topResultsCollection.fetch({
             reset: true,
             data: {
-                queryText: queryText,
+                text: queryText,
                 max_results: 3,
                 summary: 'context',
-                databases: this.queryModel.get('indexes'),
+                index: this.queryModel.get('indexes'),
                 highlight: false
             },
             error: _.bind(function() {
