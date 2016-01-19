@@ -65,8 +65,8 @@ define([
             this.$('.hp-logo-footer').addClass('hidden');
 
             // TODO: somebody else needs to own this
-            $('.find-navbar').removeClass('reduced').find('>').show();
-            $('.container-fluid').removeClass('reduced');
+            $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').show();
+            $('.container-fluid, .find-logo-small').removeClass('reduced');
 
             vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
@@ -80,8 +80,8 @@ define([
             this.$('.hp-logo-footer').removeClass('hidden');
 
             // TODO: somebody else needs to own this
-            $('.find-navbar').addClass('reduced').find('>').hide();
-            $('.container-fluid').addClass('reduced');
+            $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
+            $('.container-fluid, .find-logo-small').addClass('reduced');
 
             vent.navigate('find/search', {trigger: false});
         }

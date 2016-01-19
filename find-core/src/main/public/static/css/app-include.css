@@ -332,6 +332,10 @@ html, body {
     height: 28px;
 }
 
+.find-logo-small.reduced {
+    display: none;
+}
+
 .find-logo-large {
     background-image: url('../img/Find_Logo_lge.png');
     width: 500px;
@@ -724,9 +728,10 @@ input:-moz-placeholder::before {
     height: 50px;
 }
 
-.find-navbar.reduced {
+.find-banner-container.reduced {
     background: #49B59B url('../img/Find_banner.png');
     height: 125px;
+    z-index: 1;
 }
 
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 , .popover a{
