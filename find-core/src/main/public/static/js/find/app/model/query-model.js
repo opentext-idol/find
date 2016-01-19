@@ -33,12 +33,8 @@ define([
             }, this);
         },
 
-        refresh: function(queryText) {
-            if (this.get('queryText') === queryText) {
-                this.trigger('refresh');
-            } else {
-                this.set('queryText', queryText);
-            }
+        refresh: function() {
+            this.trigger('refresh');
         }
     }, {
         Sort: Sort

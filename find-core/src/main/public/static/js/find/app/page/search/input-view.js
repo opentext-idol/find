@@ -12,16 +12,13 @@ define([
 
     return Backbone.View.extend({
         events: {
-            'input .find-input': function() {
-                this.search(this.$input.typeahead('val'), false);
-            },
             'submit .find-form': function(event) {
                 event.preventDefault();
-                this.search(this.$input.typeahead('val'), true);
+                this.search(this.$input.typeahead('val'));
                 this.$input.typeahead('close');
             },
             'typeahead:select': function() {
-                this.search(this.$input.typeahead('val'), false);
+                this.search(this.$input.typeahead('val'));
             }
         },
 
@@ -31,9 +28,9 @@ define([
             // For example, when clicking one of the suggested search links
             this.listenTo(this.queryModel, 'change:queryText', this.updateText);
 
-            this.search = _.debounce(function(query, refresh) {
-                if (refresh) {
-                    options.queryModel.refresh(query);
+            this.search = _.debounce(function(query) {
+                if (query === options.queryModel.get('queryText')) {
+                    options.queryModel.refresh();
                 } else {
                     options.queryModel.set({
                         autoCorrect: true,
