@@ -2,27 +2,21 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'js-whatever/js/list-view',
+    'find/app/util/tab-view',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/saved-searches/saved-searches-view.html',
-    'text!find/templates/app/page/search/saved-searches/saved-search-item.html'
-], function(Backbone, _, $, ListView, i18n, template, itemTemplate) {
+    'text!find/templates/app/page/search/saved-searches/saved-searches-view.html'
+], function(Backbone, _, $, TabView, i18n, template) {
     "use strict";
 
     return Backbone.View.extend({
 
         template: _.template(template),
-        itemTemplate: _.template(itemTemplate),
 
         initialize: function (options) {
             this.collection = options.savedSearchesCollection;
 
-            this.listView = new ListView({
-                collection: this.collection,
-                itemOptions: {
-                    tagName: 'li',
-                    template: this.itemTemplate
-                }
+            this.tabView = new TabView({
+                collection: this.collection
             });
 
             this.listenTo(this.collection, 'reset update', this.updateVisibility);
@@ -33,7 +27,7 @@ define([
                 i18n: i18n
             }));
 
-            this.listView.setElement(this.$('.saved-searches-list')).render();
+            this.tabView.setElement(this.$('.saved-search-tab-view')).render();
             this.updateVisibility();
         },
 
