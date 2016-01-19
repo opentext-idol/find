@@ -63,6 +63,7 @@ define([
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
+            this.queryTextModel = options.queryTextModel;
 
             this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
 
@@ -90,7 +91,7 @@ define([
                 }
             }, this);
 
-            this.listenTo(this.queryModel, 'refresh', fetchEntities);
+            this.listenTo(this.queryTextModel, 'refresh', fetchEntities);
 
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
@@ -108,7 +109,8 @@ define([
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel
             });
 
             // Left Views
@@ -136,7 +138,8 @@ define([
             this.relatedConceptsView = new RelatedConceptsView({
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel
             });
 
             this.sortView = new SortView({

@@ -54,6 +54,7 @@ define([
         'placeholder.hostname': 'hostname',
         'placeholder.ip': 'IP',
         'placeholder.port': 'port',
+        'search.alsoSearchingFor': 'Also searching for',
         'search.databases': 'Databases',
         'search.dates': 'Dates',
         'search.dates.timeInterval.custom': 'Custom',

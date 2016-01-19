@@ -6,13 +6,14 @@
 define([
     'js-whatever/js/base-page',
     'find/app/model/query-model',
+    'find/app/model/query-text-model',
     'find/app/page/search/input-view',
     'find/app/page/search/service-view',
     'find/app/router',
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, QueryModel, InputView, ServiceView, router, vent, _, template) {
+], function(BasePage, QueryModel, QueryTextModel, InputView, ServiceView, router, vent, _, template) {
 
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
     var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
@@ -22,28 +23,40 @@ define([
         template: _.template(template),
 
         // will be overridden
-        constructServiceView: function (model) {
+        constructServiceView: function (model, queryTextModel) {
             return new ServiceView({
-                queryModel: model
+                queryModel: model,
+                queryTextModel: queryTextModel
             });
         },
 
         initialize: function() {
             this.queryModel = new QueryModel();
+            this.queryTextModel = new QueryTextModel();
+
             this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
 
-            this.inputView = new InputView({
-                queryModel: this.queryModel
+            this.listenTo(this.queryTextModel, 'change', function() {
+                this.queryModel.set({
+                    autoCorrect: true,
+                    queryText: this.queryTextModel.makeQueryText()
+                });
             });
 
-            this.serviceView = this.constructServiceView(this.queryModel);
+            this.inputView = new InputView({
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel
+            });
 
-            router.on('route:search', function(text) {
-                if (text) {
-                    this.queryModel.set('queryText', text);
-                } else {
-                    this.queryModel.set('queryText', '');
-                }
+            this.serviceView = this.constructServiceView(this.queryModel, this.queryTextModel);
+
+            router.on('route:search', function(text, concepts) {
+                var attributes = {
+                    inputText: text || '',
+                    relatedConcepts: concepts ? concepts.split('/') : []
+                };
+
+                this.queryTextModel.setInputText(attributes);
             }, this);
         },
 
@@ -54,6 +67,18 @@ define([
             this.serviceView.setElement(this.$('.service-view-container')).render();
 
             this.reducedState();
+        },
+
+        generateURL: function() {
+            var inputQuery = this.queryTextModel.get('inputText');
+
+            if (inputQuery){
+                inputQuery = encodeURIComponent(inputQuery) + '/';
+            }
+
+            var relatedConcepts = this.queryTextModel.get('relatedConcepts');
+
+            return inputQuery + relatedConcepts.join('/');
         },
 
         expandedState: function() {
@@ -68,7 +93,7 @@ define([
             $('.find-navbar').removeClass('reduced').find('>').show();
             $('.container-fluid').removeClass('reduced');
 
-            vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
+            vent.navigate('find/search/' + this.generateURL(), {trigger: false});
         },
 
         reducedState: function() {
