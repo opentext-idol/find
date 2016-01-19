@@ -45,7 +45,7 @@ define([
                 this.maxResults = totalResults;
                 this.endOfResults = true;
             } else {
-                this.start = this.maxResults;
+                this.start += SCROLL_INCREMENT;
                 this.maxResults += SCROLL_INCREMENT;
                 if (this.maxResults === totalResults) {
                     this.endOfResults = true;
@@ -458,7 +458,8 @@ define([
                     max_date: this.queryModel.getIsoDate('maxDate'),
                     sort: this.queryModel.get('sort')
                 },
-                reset: false
+                reset: false,
+                remove: !infiniteScroll
             }, this);
 
             if (!infiniteScroll) {

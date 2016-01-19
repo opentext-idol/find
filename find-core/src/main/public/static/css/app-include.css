@@ -113,7 +113,7 @@ html, body {
 }
 
 .bold {
-    font-weight: 600 !important;
+    font-family: Metric-Bold;
 }
 
 .uppercase {
