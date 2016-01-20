@@ -86,6 +86,7 @@ define([
         'search.indexes.empty': 'Waiting for Indexes...',
         'search.noResults': 'No results found',
         'search.noMoreResults': 'No more results found',
+        'search.preview': 'Preview',
         'search.relatedConcepts': 'Related Concepts',
         'search.relatedConcepts.topResults.error': 'An error occurred fetching top results',
         'search.relatedConcepts.topResults.none': 'No top results found',
