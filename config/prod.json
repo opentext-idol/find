@@ -18,7 +18,8 @@
         "username": "hodtest",
         "password": "Z@s=5rYbw6MEx]?X"
       },
-      "apikey" : "c4eb9531-531c-4bd2-8707-c31fcb02625e"
+      "apikey" : "c4eb9531-531c-4bd2-8707-c31fcb02625e",
+      "domain" : "2b7725de-bd04-4341-a4a0-5754f0655de8"
     },
     "index_tests": {
       "username": "TODO",
@@ -28,7 +29,8 @@
         "username": "hodtesting",
         "password": ":Z4jM8vq5`en89d>"
       },
-      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c"
+      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c",
+      "domain" : ""
     },
     "google": {
       "username": "TODO",
@@ -38,7 +40,8 @@
         "email": "hodtestqa401@gmail.com",
         "password": "qoxntlozubjaamyszerfk"
       },
-      "apikey" : ""
+      "apikey" : "",
+      "domain" : ""
     },
     "twitter": {
       "username": "TODO",
@@ -48,7 +51,8 @@
         "username": "hodtesting",
         "password": "5cUdPhYM"
       },
-      "apikey" : ""
+      "apikey" : "",
+      "domain" : ""
     },
     "facebook": {
       "username": "TODO",
@@ -58,7 +62,8 @@
         "email": "matthew.williamson@hpe.com",
         "password": "vdPAuTGU"
       },
-      "apikey" : ""
+      "apikey" : "",
+      "domain" : ""
     },
     "hp_passport": {
       "username": "TODO",
@@ -68,7 +73,8 @@
         "username": "hodtest",
         "password": "Z@s=5rYbw6MEx]?X"
       },
-      "apikey" : "c4eb9531-531c-4bd2-8707-c31fcb02625e"
+      "apikey" : "c4eb9531-531c-4bd2-8707-c31fcb02625e",
+      "domain" : "2b7725de-bd04-4341-a4a0-5754f0655de8"
     },
     "yahoo": {
       "username": "TODO",
@@ -78,7 +84,8 @@
         "username": "hodtesting",
         "password": ":Z4jM8vq5`en89d>"
       },
-      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c"
+      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c",
+      "domain" : ""
     }
   }
 }

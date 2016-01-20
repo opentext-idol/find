@@ -10,6 +10,7 @@ public class User {
     private final AuthProvider authProvider;
     public final static User NULL = NullUser.getInstance();
     private String apiKey;
+    private String domain;
 
     public User(AuthProvider provider, String username, Role role) {
         this.authProvider = provider;
@@ -53,5 +54,14 @@ public class User {
 
     public String getApiKey(){
         return apiKey;
+    }
+
+    public User withDomain(String domain) {
+        this.domain = domain;
+        return this;
+    }
+
+    public String getDomain(){
+        return domain;
     }
 }
