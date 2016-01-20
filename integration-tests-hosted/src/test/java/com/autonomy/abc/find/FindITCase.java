@@ -228,7 +228,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    // CCUK-3498
+    @KnownBug("CCUK-3498")
     public void testRelatedConceptsHover(){
         find.search("Find");
         WebElement popover = results.hoverOverRelatedConcept(0);

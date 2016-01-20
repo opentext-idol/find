@@ -41,7 +41,7 @@ public class PromotionDetailPageITCase extends ABCTestBase {
     }
 
     @Test
-    // CCUK-3586
+    @KnownBug("CCUK-3586")
     public void testEditDynamicQuery() throws InterruptedException {
         final String initialTrigger = "meow";
         final String updateTrigger = "tigre";

@@ -239,7 +239,7 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CCUK-3450
+    @KnownBug("CCUK-3450")
     public void testFindNoParametricFields(){
         Index index = new Index("index");
         indexService.setUpIndex(index);
