@@ -18,8 +18,9 @@ public class HSOUserConfigParser implements UserConfigParser {
         String username = userNode.path("username").asText();
         Role role = Role.fromString(userNode.path("role").asText());
         String apiKey = userNode.path("apikey").asText();
+        String domain = userNode.path("domain").asText();
 
-        return new User(provider, username, role).withApiKey(apiKey);
+        return new User(provider, username, role).withApiKey(apiKey).withDomain(domain);
     }
 
     @Override
