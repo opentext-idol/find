@@ -5,13 +5,13 @@
 
 package com.hp.autonomy.frontend.find.hod.savedsearches;
 
-import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchServiceImpl;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedQueryServiceImpl;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HodSavedSearchService extends SavedSearchServiceImpl<ResourceIdentifier> {
-    public HodSavedSearchService() {
+public class HodSavedQueryService extends SavedQueryServiceImpl<ResourceIdentifier> {
+    public HodSavedQueryService() {
         super(ResourceIdentifier.WIKI_ENG);
     }
 }

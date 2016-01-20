@@ -5,20 +5,18 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 import org.joda.time.DateTime;
 
 import java.util.Set;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SavedSearch<I> {
-    private final Long id;
+public abstract class SavedSearch<I> {
+    private final Integer id;
     private final String title;
     private final String queryText;
     private final Set<I> indexes;
@@ -28,34 +26,22 @@ public class SavedSearch<I> {
     private final DateTime dateCreated;
     private final DateTime dateModified;
 
-    @JsonCreator
-    public SavedSearch(
-            @JsonProperty("id") final Long id,
-            @JsonProperty("title") final String title,
-            @JsonProperty("queryText") final String queryText,
-            @JsonProperty("indexes") final Set<I> indexes,
-            @JsonProperty("parametricValues") final Set<FieldAndValue> parametricValues,
-            @JsonProperty("minDate") final DateTime minDate,
-            @JsonProperty("maxDate") final DateTime maxDate,
-            @JsonProperty("dateCreated") final DateTime dateCreated,
-            @JsonProperty("dateModified") final DateTime dateModified
-    ) {
-        this.id = id;
-        this.title = title;
-        this.queryText = queryText;
-        this.indexes = indexes;
-        this.parametricValues = parametricValues;
-        this.minDate = minDate;
-        this.maxDate = maxDate;
-        this.dateCreated = dateCreated;
-        this.dateModified = dateModified;
+    protected SavedSearch(Builder<I, ?> builder) {
+        id = builder.id;
+        title = builder.title;
+        queryText = builder.queryText;
+        indexes = builder.indexes;
+        parametricValues = builder.parametricValues;
+        minDate = builder.minDate;
+        maxDate = builder.maxDate;
+        dateCreated = builder.dateCreated;
+        dateModified = builder.dateModified;
     }
 
-    @Data
-    @Accessors(chain = true)
+    @Getter
     @NoArgsConstructor
-    public static class Builder<I> {
-        private Long id;
+    public static abstract class Builder<I, T extends SavedSearch<I>> {
+        private Integer id;
         private String title;
         private String queryText;
         private Set<I> indexes;
@@ -77,18 +63,52 @@ public class SavedSearch<I> {
             dateModified = search.dateModified;
         }
 
-        public SavedSearch<I> build() {
-            return new SavedSearch<>(
-                    id,
-                    title,
-                    queryText,
-                    indexes,
-                    parametricValues,
-                    minDate,
-                    maxDate,
-                    dateCreated,
-                    dateModified
-            );
+        public abstract T build();
+
+        public Builder<I, T> setId(Integer id) {
+            this.id = id;
+            return this;
         }
+
+        public Builder<I, T> setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder<I, T> setQueryText(String queryText) {
+            this.queryText = queryText;
+            return this;
+        }
+
+        public Builder<I, T> setIndexes(Set<I> indexes) {
+            this.indexes = indexes;
+            return this;
+        }
+
+        public Builder<I, T> setParametricValues(Set<FieldAndValue> parametricValues) {
+            this.parametricValues = parametricValues;
+            return this;
+        }
+
+        public Builder<I, T> setMinDate(DateTime minDate) {
+            this.minDate = minDate;
+            return this;
+        }
+
+        public Builder<I, T> setMaxDate(DateTime maxDate) {
+            this.maxDate = maxDate;
+            return this;
+        }
+
+        public Builder<I, T> setDateCreated(DateTime dateCreated) {
+            this.dateCreated = dateCreated;
+            return this;
+        }
+
+        public Builder<I, T> setDateModified(DateTime dateModified) {
+            this.dateModified = dateModified;
+            return this;
+        }
+
     }
 }

@@ -5,12 +5,12 @@
 
 package com.hp.autonomy.frontend.find.idol.savedsearch;
 
-import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchServiceImpl;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedQueryServiceImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IdolSavedSearchService extends SavedSearchServiceImpl<String> {
-    public IdolSavedSearchService() {
+public class IdolSavedQueryService extends SavedQueryServiceImpl<String> {
+    public IdolSavedQueryService() {
         super("Wookieepedia");
     }
 }

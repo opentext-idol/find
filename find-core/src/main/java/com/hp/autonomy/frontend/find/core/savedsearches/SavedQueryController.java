@@ -15,40 +15,40 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/public/saved-search")
-public class SavedSearchController<I> {
-    private final SavedSearchService<I> service;
+@RequestMapping("/api/public/saved-query")
+public class SavedQueryController<I> {
+    private final SavedQueryService<I> service;
 
     @Autowired
-    public SavedSearchController(final SavedSearchService<I> service) {
+    public SavedQueryController(final SavedQueryService<I> service) {
         this.service = service;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Set<SavedSearch<I>> getAll() {
+    public Set<SavedQuery<I>> getAll() {
         return service.getAll();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public SavedSearch<I> create(
-            @RequestBody final SavedSearch<I> search
+    public SavedQuery<I> create(
+            @RequestBody final SavedQuery<I> query
     ) {
-        return service.create(search);
+        return service.create(query);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public SavedSearch<I> update(
-            @PathVariable("id") final long id,
-            @RequestBody final SavedSearch<I> search
+    public SavedQuery<I> update(
+            @PathVariable("id") final int id,
+            @RequestBody final SavedQuery<I> query
     ) {
         return service.update(
-                new SavedSearch.Builder<>(search).setId(id).build()
+                new SavedQuery.Builder<>(query).setId(id).build()
         );
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void delete(
-            @PathVariable("id") final long id
+            @PathVariable("id") final int id
     ) {
         service.deleteById(id);
     }
