@@ -302,26 +302,32 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Test
     public void testSynonymTriggers(){
-        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
-        testTriggers();
+        testTriggers(CreateNewKeywordsPage.KeywordType.SYNONYM);
     }
 
     @Test
     public void testBlacklistTriggers(){
-        createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
-        testTriggers();
+        testTriggers(CreateNewKeywordsPage.KeywordType.BLACKLIST);
     }
 
-    private void testTriggers(){
+    private void testTriggers(CreateNewKeywordsPage.KeywordType type) {
+        createKeywordsPage.keywordsType(type).click();
         createKeywordsPage.continueWizardButton().click();
         triggerForm = createKeywordsPage.getTriggerForm();
-
-        SharedTriggerTests.badTriggersTest(triggerForm);
-
-        triggerForm.removeTrigger("\"Valid Trigger\"");
+        testBadTriggers(type);
+        for (String trigger : triggerForm.getTriggersAsStrings()) {
+            triggerForm.removeTrigger(trigger);
+        }
         triggerForm.addTrigger("test");
+        testBadTriggers(type);
+    }
 
-        SharedTriggerTests.badTriggersTest(triggerForm);
+    private void testBadTriggers(CreateNewKeywordsPage.KeywordType type) {
+        if (type == CreateNewKeywordsPage.KeywordType.BLACKLIST) {
+            SharedTriggerTests.badUnquotedTriggersTest(triggerForm);
+        } else {
+            SharedTriggerTests.badTriggersTest(triggerForm);
+        }
     }
 
     @Test
