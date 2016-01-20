@@ -1,19 +1,19 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import org.openqa.selenium.By;
 
 public class OPUserService extends UserService {
     private OPUsersPage usersPage;
 
-    public OPUserService(Application application, ElementFactory elementFactory) {
+    public OPUserService(SearchOptimizerApplication application, ElementFactory elementFactory) {
         super(application, elementFactory);
     }
 
     public OPUsersPage goToUsers() {
-        getBody().getTopNavBar().findElement(By.cssSelector(".dropdown-toggle .hp-settings")).click();
-        getBody().getTopNavBar().findElement(By.cssSelector("li[data-pagename='users'] a")).click();
+        getElementFactory().getTopNavBar().findElement(By.cssSelector(".dropdown-toggle .hp-settings")).click();
+        getElementFactory().getTopNavBar().findElement(By.cssSelector("li[data-pagename='users'] a")).click();
         setUsersPage(getElementFactory().getUsersPage());
         return (OPUsersPage) getUsersPage();
     }

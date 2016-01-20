@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.menu;
 
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -18,7 +19,7 @@ public class OPTopNavBar extends TopNavBar {
 
     private void clickCog(){
         findElement(By.className("hp-settings")).click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     private void clickDropdown(String page){

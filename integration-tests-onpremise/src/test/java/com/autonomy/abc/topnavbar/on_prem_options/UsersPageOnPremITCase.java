@@ -1,10 +1,12 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.DriverUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
@@ -34,8 +36,8 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
     private UsersPage usersPage;
     private UserService userService;
 
-    public UsersPageOnPremITCase(TestConfig config, String browser, ApplicationType type, Platform platform) {
-        super(config, browser, type, platform);
+    public UsersPageOnPremITCase(TestConfig config) {
+        super(config);
     }
 
     @Before
@@ -52,7 +54,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
         String baseUrl = config.getWebappUrl();
         baseUrl = baseUrl.replace("/p/","/config");
         getDriver().get(baseUrl);
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat("Users are not allowed to access the config page", getDriver().findElement(By.tagName("body")), containsText("Authentication Failed"));
     }
 
@@ -61,12 +63,12 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
         signUpAndLoginAs(aNewUser);
 
         getDriver().get(config.getWebappUrl() + "settings");
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat(getDriver().getCurrentUrl(), not(containsString("settings")));
         assertThat(getDriver().getCurrentUrl(), containsString("overview"));
 
         getDriver().get(config.getWebappUrl() + "users");
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat(getDriver().getCurrentUrl(), not(containsString("users")));
         assertThat(getDriver().getCurrentUrl(), containsString("overview"));
     }
@@ -78,11 +80,11 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
 
         logoutAndNavigateToWebApp();
         loginAs(initialUser);
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat("old password does not work", getDriver().getCurrentUrl(), containsString("login"));
 
         loginAs(updatedUser);
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat("new password works", getDriver().getCurrentUrl(), not(containsString("login")));
     }
 
@@ -138,17 +140,17 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
 
         final JavascriptExecutor executor = (JavascriptExecutor) getDriver();
         executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function(xhr) {$('body').attr('data-status', xhr.status);});");
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
 
         logoutAndNavigateToWebApp();
         loginAs(config.getDefaultUser());
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
 
         executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
-        usersPage.loadOrFadeWait();
-        assertThat(usersPage.isAlertPresent(), is(false));
+        Waits.loadOrFadeWait();
+        assertThat(DriverUtil.isAlertPresent(getDriver()), is(false));
     }
 
     @Test

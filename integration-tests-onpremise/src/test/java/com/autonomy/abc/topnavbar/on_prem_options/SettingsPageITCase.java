@@ -1,12 +1,13 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.HostAndPorts;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
+import com.autonomy.abc.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -14,7 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
@@ -40,8 +40,8 @@ public class SettingsPageITCase extends ABCTestBase {
 		}
 	}
 
-	public SettingsPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public SettingsPageITCase(final TestConfig config) {
+		super(config);
 	}
 
 	@Parameterized.Parameters
@@ -57,7 +57,7 @@ public class SettingsPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-		((OPTopNavBar) body.getTopNavBar()).goToSettingsPage();
+		((OPTopNavBar) getElementFactory().getTopNavBar()).goToSettingsPage();
 		settingsPage = getElementFactory().getSettingsPage();
 	}
 
@@ -68,14 +68,14 @@ public class SettingsPageITCase extends ABCTestBase {
 		assertThat("Correct modal not open", saveModal.getText().contains("Confirm Save"));
 
 		settingsPage.modalCancel().click();
-		settingsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 
 		settingsPage.saveChangesClick();
 		final ModalView saveModalAgain = ModalView.getVisibleModalView(getDriver());
 		assertThat("Correct modal not open", saveModalAgain.getText().contains("Confirm Save"));
 		settingsPage.modalSaveChanges().click();
 
-		settingsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		final ModalView confirmModal = ModalView.getVisibleModalView(getDriver());
 		assertThat("Correct modal not open", confirmModal.getText().contains("Success! Configuration has been saved"));
 
@@ -91,7 +91,7 @@ public class SettingsPageITCase extends ABCTestBase {
 		assertThat("Correct modal not open", revertModal.getText().contains("Revert settings"));
 
 		settingsPage.modalCancel().click();
-		settingsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 
 		settingsPage.revertChangesClick();
 		final ModalView revertModalAgain = ModalView.getVisibleModalView(getDriver());
