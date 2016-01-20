@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.page.promotions;
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -27,20 +26,6 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         new WebDriverWait(getDriver(), 10)
                 .withMessage("Failed to load Promotions Detail Page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("promotion-match-terms")));
-    }
-
-    public Dropdown editMenu() {
-        return new Dropdown(findElement(By.className("extra-functions")), getDriver());
-    }
-
-    @Deprecated
-    public void delete() {
-        System.err.println("PromotionDetailsPage.delete no longer works, see CSA-1619");
-        final Dropdown editMenu = editMenu();
-        editMenu.open();
-        editMenu.getItem("Delete").click();
-        final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
-        deleteModal.findElement(By.cssSelector(".btn-danger")).click();
     }
 
     public Editable promotionTitle() {
