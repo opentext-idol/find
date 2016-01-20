@@ -3,6 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -243,8 +244,8 @@ public class KeywordsWizardITCase extends ABCTestBase {
     }
 
     //Duplicate blacklisted terms are not allowed to be created within the same language
-    //CSA-1791
     @Test
+    @KnownBug("CSA-1791")
     public void testCreateDuplicateBlacklist() throws InterruptedException {
         final String term = "fish";
         final String other = "chips";
@@ -443,7 +444,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
     }
 
     @Test
-    //CSA-1712
+    @KnownBug("CSA-1712")
     public void testCursorDoesNotMoveToEndOfText(){
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         createKeywordsPage.continueWizardButton().click();
@@ -459,7 +460,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
     }
 
     @Test
-    //CSA-1812
+    @KnownBug("CSA-1812")
     public void testExistingSynonymsShowInWizard(){
         String[] existingSynonyms = {"pentimento", "mayday", "parade"};
         String duplicate = existingSynonyms[0];

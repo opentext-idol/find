@@ -2,6 +2,7 @@ package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -69,9 +70,9 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         keywordService.deleteAll(KeywordFilter.ALL);
     }
 
-    //CSA-1521
     //Blacklisted terms can be created on the searchpage. This link has often broken
     @Test
+    @KnownBug("CSA-1521")
     public void testCreateBlacklistedTermFromSearchPage() throws InterruptedException {
         search("noir", Language.FRENCH);
 
@@ -86,7 +87,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link not directing to blacklist wizard", createKeywordsPage.getText(), containsString("Select terms to blacklist"));
 
         TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
-        
+
         assertThat(triggerForm.getNumberOfTriggers(), is(1));
         assertThat("keywords list does not include term 'noir'", triggerForm.getTriggersAsStrings().contains("noir"));
 
@@ -115,7 +116,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link not directing to synonym group wizard", getDriver().getCurrentUrl(), containsString("keywords/create"));
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
         assertThat("link not directing to synonym group wizard", createKeywordsPage.getText(), containsString("Select synonyms"));
-        
+
         TriggerForm triggerForm = createKeywordsPage.getTriggerForm();
 
         assertThat(triggerForm.getNumberOfTriggers(), is(1));
@@ -238,7 +239,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
 
     @Test
-    //CCUK-2703
+    @KnownBug("CCUK-2703")
     public void testNoBlacklistLinkForBlacklistedSearch() throws InterruptedException {
         String blacklistMessage = Errors.Search.BLACKLIST;
         if (config.getType().equals(ApplicationType.HOSTED)) {
@@ -425,7 +426,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     @Test
-    //CSA1694
+    @KnownBug("CSA-1694")
     public void testCancellingKeywordsWizardDoesntBreakSearch(){
         search("apu", Language.ENGLISH);
         searchPage.createSynonymsLink().click();
@@ -440,9 +441,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         }
     }
 
-    //CSA-1719
-    //CSA-1792
     @Test
+    @KnownBug({"CSA-1719", "CSA-1792"})
     public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
         String blacklistOne = "cheese";
         String blacklistTwo = "mouse";
@@ -470,9 +470,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
     }
 
-    // CCUK-3471
-    // CSA-1808
     @Test
+    @KnownBug({"CCUK-3471", "CSA-1808"})
     public void testCreateLargeSynonymGroup() {
         List<String> synonyms = new ArrayList<>();
         for (int i=0; i<10; i++) {

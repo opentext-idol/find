@@ -3,6 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.Dropdown;
@@ -85,8 +86,8 @@ public class PromotionsITCase extends ABCTestBase {
 		verifyThat("correct title", getElementFactory().getTopNavBar(), containsText("Create New Promotion"));
 	}
 
-	// TODO: should work after CCUK-3394
 	@Test
+	@KnownBug("CCUK-3394")
 	public void testCorrectDocumentsInPromotion() {
 		List<String> promotedDocTitles = setUpCarsPromotion(16);
 		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
@@ -117,8 +118,8 @@ public class PromotionsITCase extends ABCTestBase {
 		SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm());
 	}
 
-	// fails on-prem due to CCUK-2671
 	@Test
+	@KnownBug("CCUK-2671")
 	public void testAddRemoveTriggers() throws InterruptedException {
 		setUpCarsPromotion(1);
 
@@ -192,7 +193,7 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
-	// CSA-2022
+	@KnownBug("CSA-2022")
 	public void testAddingLotsOfDocsToAPromotion() {
 		int size = 100;
 		boolean setUp = false;
@@ -213,6 +214,7 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
+	@KnownBug("CCUK-2671")
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
 		SearchQuery[] searches;
@@ -470,7 +472,7 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CCUK-3457
+	@KnownBug("CCUK-3457")
 	public void testPromotingItemsWithBrackets(){
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
 		SearchQuery query = new SearchQuery("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));

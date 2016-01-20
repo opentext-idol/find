@@ -2,6 +2,7 @@ package com.autonomy.abc.keywords;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -224,8 +225,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	//Notification should drop down on creation of new keywords
-	//CSA-1447
 	@Test
+	@KnownBug("CSA-1447")
 	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
 		List<String> notificationContents = new ArrayList<>();
 
@@ -461,7 +462,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CCUK-3243
+	@KnownBug("CCUK-3243")
 	public void testQuickSynonymDelete() throws InterruptedException {
 		keywordService.addSynonymGroup(Language.GERMAN, "string strong strang streng strung");
 		keywordService.goToKeywords();
@@ -482,7 +483,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CCUK-3245
+	@KnownBug("CCUK-3245")
 	public void testAddingForbiddenKeywordsFromUrl() {
 		String blacklistUrl = getConfig().getWebappUrl() + "/keywords/create/blacklisted/English/";
 		String synonymsUrl = getConfig().getWebappUrl() + "/keywords/create/synonyms/English/";
@@ -686,7 +687,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CSA-1440
+	@KnownBug("CSA-1440")
 	public void testNavigatingAwayBeforeKeywordAdded() throws InterruptedException {
 		keywordService.addKeywords(KeywordWizardType.BLACKLIST, Language.ENGLISH, Collections.singletonList("Jeff"));
 
@@ -698,7 +699,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CSA-1686
+	@KnownBug("CSA-1686")
 	public void testBlacklistTermsNotOverwritten(){
 		String blacklistOne = "uno";
 		String blacklistTwo = "duo";
