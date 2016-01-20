@@ -157,12 +157,12 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    public void testUnselectingContentTypeQuicklyDoesNotLeadToError()  {
+    public void testUnselectingContentTypeQuicklyDoesNotLeadToError() throws InterruptedException {
         find.search("wolf");
-        FindParametricCheckbox contentTypeCheckbox = results.parametricTypeCheckbox("Content Type", "TEXT/HTML");
-        contentTypeCheckbox.check();
+        results.parametricTypeCheckbox("Content Type", "TEXT/HTML").check();
         Waits.loadOrFadeWait();
-        contentTypeCheckbox.uncheck();
+        results.parametricTypeCheckbox("Content Type", "TEXT/HTML").uncheck();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 

@@ -219,7 +219,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     //CSA-1735
     public void testNavigatingToNonExistingIndexByURL(){
-        getDriver().get("https://search.dev.idolondemand.com/search/#/index/doesntexistmate");
+        getDriver().get(config.getWebappUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
         verifyThat(PageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
     }
 
@@ -234,7 +234,7 @@ public class IndexesPageITCase extends HostedTestBase {
 
         indexesPage = getElementFactory().getIndexesPage();
 
-        verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getName()));
+        verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getDisplayName()));
     }
 
     @Test
