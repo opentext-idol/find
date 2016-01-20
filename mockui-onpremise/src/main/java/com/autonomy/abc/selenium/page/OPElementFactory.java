@@ -1,5 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.menu.OPTopNavBar;
+import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
@@ -14,6 +16,11 @@ import org.openqa.selenium.WebDriver;
 public class OPElementFactory extends ElementFactory {
     public OPElementFactory(final WebDriver driver) {
         super(driver);
+    }
+
+    @Override
+    public TopNavBar getTopNavBar() {
+        return new OPTopNavBar(getDriver());
     }
 
     @Override

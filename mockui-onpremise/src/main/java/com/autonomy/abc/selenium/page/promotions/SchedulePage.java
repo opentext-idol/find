@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.DatePicker;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.apache.commons.lang3.time.DateUtils;
@@ -28,11 +30,11 @@ public class SchedulePage extends AppElement implements AppPage {
     }
 
 	public WebElement alwaysActive() {
-		return getParent(findElement(By.xpath(".//h4[contains(text(), 'Always active')]")));
+		return ElementUtil.getParent(findElement(By.xpath(".//h4[contains(text(), 'Always active')]")));
 	}
 
 	public WebElement schedule() {
-		return getParent(findElement(By.xpath(".//h4[contains(text(), 'Schedule')]")));
+		return ElementUtil.getParent(findElement(By.xpath(".//h4[contains(text(), 'Schedule')]")));
 	}
 
 	public WebElement continueButton(final WizardStep dataStep) {
@@ -106,15 +108,15 @@ public class SchedulePage extends AppElement implements AppPage {
 	}
 
 	public WebElement startDateTextBoxButton() {
-		return getParent(findElement(By.cssSelector(".promotion-schedule-start .fa-calendar-o")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-start .fa-calendar-o")));
 	}
 
 	public WebElement endDateTextBoxButton() {
-		return getParent(findElement(By.cssSelector(".promotion-schedule-end .fa-calendar-o")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-schedule-end .fa-calendar-o")));
 	}
 
 	public WebElement finalDateTextBoxButton() {
-		return getParent(findElement(By.cssSelector(".promotion-end-date .fa-calendar-o")));
+		return ElementUtil.getParent(findElement(By.cssSelector(".promotion-end-date .fa-calendar-o")));
 	}
 
 	public WebElement doNotRepeat() {
@@ -141,10 +143,10 @@ public class SchedulePage extends AppElement implements AppPage {
 	}
 
 	public void schedulePromotion(final Date startDate, final Date endDate, final Frequency frequency, final Date finalDate) {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		schedule().click();
 		continueButton(WizardStep.ENABLE_SCHEDULE).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		startDateTextBoxButton().click();
 		final DatePicker datePicker = new DatePicker(this, getDriver());
 		datePicker.calendarDateSelect(startDate);
@@ -153,16 +155,16 @@ public class SchedulePage extends AppElement implements AppPage {
 		datePicker.calendarDateSelect(endDate);
 		endDateTextBoxButton().click();
 		continueButton(WizardStep.START_END).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		repeatWithFrequencyBelow().click();
 		selectFrequency(frequency);
 		continueButton(WizardStep.FREQUENCY).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		finalDateTextBoxButton().click();
 		datePicker.calendarDateSelect(finalDate);
 		finalDateTextBoxButton().click();
 		finishButton(WizardStep.FINAL).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public List<String> getAvailableFrequencies() {
@@ -175,16 +177,16 @@ public class SchedulePage extends AppElement implements AppPage {
 	}
 
 	public void navigateWizardAndSetEndDate(final Date endDate) {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		schedule().click();
 		continueButton(SchedulePage.WizardStep.ENABLE_SCHEDULE).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		endDateTextBoxButton().click();
 		final DatePicker datePicker = new DatePicker(this, getDriver());
 		datePicker.calendarDateSelect(endDate);
 		endDateTextBoxButton().click();
 		continueButton(SchedulePage.WizardStep.START_END).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		repeatWithFrequencyBelow().click();
 	}
 

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -13,11 +14,11 @@ public class OPUsersPage extends UsersPage {
     }
 
     public void deleteUser(final String userName) {
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
         deleteButton(userName).click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
         findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 
     public Role getRoleOf(User user) {
