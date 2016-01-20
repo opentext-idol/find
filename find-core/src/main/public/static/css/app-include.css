@@ -480,7 +480,7 @@ input.find-input {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    width: 150px;
+    max-width: 150px;
     right: 70px !important;
     top: 11px !important;
 }
