@@ -2,8 +2,7 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
-import com.autonomy.abc.selenium.util.Factory;
-import org.openqa.selenium.WebDriver;
+import com.autonomy.abc.selenium.util.Waits;
 
 public class OPNewUser implements NewUser {
     private final String username;
@@ -20,7 +19,7 @@ public class OPNewUser implements NewUser {
         usersPage.addAndConfirmPassword(password, password);
         usersPage.selectRole(role);
         usersPage.createButton().click();
-        usersPage.loadOrFadeWait();
+        Waits.loadOrFadeWait();
         OPAccount auth = new OPAccount(username, password);
         return new User(auth, username, role);
     }

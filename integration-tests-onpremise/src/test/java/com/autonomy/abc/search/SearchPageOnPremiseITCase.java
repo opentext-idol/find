@@ -1,102 +1,169 @@
 package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.language.Language;
+import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.search.LanguageFilter;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.NoSuchElementException;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class SearchPageOnPremiseITCase extends ABCTestBase {
-	public SearchPageOnPremiseITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
-	}
+public class SearchPageOnPremiseITCase extends ABCTestBase{
 
-	private SearchPage searchPage;
-    private SearchActionFactory searchActionFactory;
+    private SearchService searchService;
+    private SearchPage searchPage;
 
-	@Parameterized.Parameters
-	public static Iterable<Object[]> parameters() throws IOException {
-		final Collection<ApplicationType> applicationTypes = Collections.singletonList(ApplicationType.ON_PREM);
-		return parameters(applicationTypes);
-	}
+    public SearchPageOnPremiseITCase(TestConfig config) {
+        super(config);
+    }
 
-	@Before
-	public void setUp() {
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
-		searchPage = searchActionFactory.makeSearch("example").apply();
-	}
+    @Before
+    public void setUp(){
+        searchService = getApplication().createSearchService(getElementFactory());
+        searchPage = searchService.search("text");
+
+    }
+
+    @Test
+    public void testFieldTextFilter() {
+        final String searchResultTitle = searchPage.getSearchResultTitle(1);
+        final String firstWord = getFirstWord(searchResultTitle);
+
+        final int comparisonResult = searchResultNotStarting(firstWord);
+        final String comparisonString = searchPage.getSearchResultTitle(comparisonResult);
+
+        searchPage.expand(SearchBase.Facet.FIELD_TEXT);
+        searchPage.fieldTextAddButton().click();
+        Waits.loadOrFadeWait();
+        assertThat("input visible", searchPage.fieldTextInput().getElement(), displayed());
+        assertThat("confirm button visible", searchPage.fieldTextTickConfirm(), displayed());
+
+        searchPage.filterBy(new FieldTextFilter("WILD{" + firstWord + "*}:DRETITLE"));
+        assertThat(searchPage, not(containsText(Errors.Search.HOD)));
+
+        assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
+        assertThat("remove button visible", searchPage.fieldTextRemoveButton(), displayed());
+        assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
+
+        try {
+            assertThat(searchPage.getSearchResultTitle(comparisonResult), not(comparisonString));
+        } catch (final NoSuchElementException e) {
+            // The comparison document is not present
+        }
+
+        searchPage.fieldTextRemoveButton().click();
+        Waits.loadOrFadeWait();
+        assertThat(searchPage.getSearchResultTitle(comparisonResult), is(comparisonString));
+        assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
+        assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
+    }
+
+    private String getFirstWord(String string) {
+        return string.substring(0, string.indexOf(' '));
+    }
+
+    private int searchResultNotStarting(String prefix) {
+        for (int result = 1; result <= SearchPage.RESULTS_PER_PAGE; result++) {
+            String comparisonString = searchPage.getSearchResultTitle(result);
+            if (!comparisonString.startsWith(prefix)) {
+                return result;
+            }
+        }
+        throw new IllegalStateException("Cannot test field text filter with this search");
+    }
 
 
-	@Test
-	public void testDatabaseSelection() {
-        searchActionFactory.makeSearch("car").applyFilter(new LanguageFilter("English")).apply();
-		searchPage.selectAllIndexesOrDatabases(getConfig().getType().getName());
-		final List<String> databasesList = searchPage.getAllDatabases();
-		final List<WebElement> databaseCheckboxes = searchPage.getDatabaseCheckboxes();
-		for (int i = 0; i < databasesList.size(); i++) {
-			assertThat("Database '" + databasesList.get(i) + "' is not selected", databaseCheckboxes.get(i).isSelected());
-		}
-		assertThat("'All' databases checkbox is not selected", searchPage.allDatabasesCheckbox().isSelected());
+    @Test
+    public void testEditFieldText() {
+        searchService.search(new SearchQuery("boer").withFilter(IndexFilter.ALL));
 
-		for (final String database : databasesList) {
-			if (!database.equals("wikienglish")) {
-				searchPage.deselectDatabase(database);
-			}
-		}
-		assertThat("'All' databases checkbox is not selected", searchPage.allDatabasesCheckbox().isSelected(), is(false));
-		assertThat("Only one database should be selected", searchPage.getSelectedDatabases(), hasSize(1));
-		assertThat("Correct database not selected", searchPage.getSelectedDatabases(), hasItem("wikienglish"));
-		final String wikiEnglishResult = searchPage.getSearchResult(1).getText();
+        searchPage.selectLanguage(Language.AFRIKAANS);
 
-		for (int j = 1; j <= 2; j++) {
-			for (int i = 1; i <= 6; i++) {
-				assertThat("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i), containsString("wikienglish"));
-			}
-			searchPage.javascriptClick(searchPage.forwardPageButton());
-			searchPage.loadOrFadeWait();
-		}
+        searchPage.clearFieldText();
 
-		searchPage.backToFirstPageButton().click();
-		searchPage.selectDatabase("wookiepedia");
-		searchPage.deselectDatabase("wikienglish");
-		assertThat("Only one database should be selected", searchPage.getSelectedDatabases(), hasSize(1));
-		assertThat("Correct database not selected", searchPage.getSelectedDatabases(), hasItem("wookiepedia"));
-		final String wookiepediaResult = searchPage.getSearchResult(1).getText();
-		assertThat(wookiepediaResult, not(wikiEnglishResult));
+        final String firstSearchResult = searchPage.getSearchResultTitle(1);
+        final String secondSearchResult = searchPage.getSearchResultTitle(2);
 
-		for (int j = 1; j <= 2; j++) {
-			for (int i = 1; i <= 6; i++) {
-				assertThat("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i), containsString("wookiepedia"));
-			}
-			searchPage.javascriptClick(searchPage.forwardPageButton());
-		}
+        searchPage.filterBy(new FieldTextFilter("MATCH{" + firstSearchResult + "}:DRETITLE"));
+        assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
+        assertThat(searchPage.getText(), not(containsString("No results found")));
+        assertThat(searchPage.getSearchResultTitle(1), is(firstSearchResult));
 
-		searchPage.backToFirstPageButton().click();
-		searchPage.selectDatabase("wikienglish");
-		assertThat("Only one database should be selected", searchPage.getSelectedDatabases(), hasSize(2));
-		assertThat("Correct databases not showing", searchPage.getSelectedDatabases(), hasItems("wookiepedia", "wikienglish"));
-		assertThat("Search result not from selected databases", searchPage.getSearchResult(1).getText(), isOneOf(wookiepediaResult, wikiEnglishResult));
+        searchPage.filterBy(new FieldTextFilter("MATCH{" + secondSearchResult + "}:DRETITLE"));
+        assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
+        assertThat(searchPage.getSearchResultTitle(1), is(secondSearchResult));
+    }
 
-		for (int j = 1; j <= 2; j++) {
-			for (int i = 1; i <= 6; i++) {
-				assertThat("Only results from filtered database should be showing", searchPage.getSearchResultDetails(i), anyOf(containsString("wikienglish"), containsString("wookiepedia")));
-			}
-			searchPage.javascriptClick(searchPage.forwardPageButton());
-		}
-	}
+    //TODO
+    @Test
+    public void testFieldTextRestrictionOnPromotions(){
+        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService.deleteAll();
 
+        promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "boat"), "darth", 2);
+        searchPage = getElementFactory().getSearchPage();
+        searchPage.waitForPromotionsLoadIndicatorToDisappear();
+        Waits.loadOrFadeWait();
+
+        assertThat(searchPage.getPromotionSummarySize(), is(2));
+
+        final List<String> initialPromotionsSummary = searchPage.getPromotedDocumentTitles(false);
+        searchPage.filterBy(new FieldTextFilter("MATCH{" + initialPromotionsSummary.get(0) + "}:DRETITLE"));
+
+        assertThat(searchPage.getPromotionSummarySize(), is(1));
+        assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(0)));
+
+        searchPage.filterBy(new FieldTextFilter("MATCH{" + initialPromotionsSummary.get(1) + "}:DRETITLE"));
+
+        assertThat(searchPage.getPromotionSummarySize(), is(1));
+        assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(initialPromotionsSummary.get(1)));
+    }
+
+    @Test
+    public void testFieldTextRestrictionOnPinToPositionPromotions(){
+        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService.deleteAll();
+        List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new SearchQuery("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
+
+        searchPage.waitForPromotionsLoadIndicatorToDisappear();
+
+        assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
+        assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));
+
+        searchPage.filterBy(new FieldTextFilter("WILD{*horse*}:DRETITLE"));
+
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+        Waits.loadOrFadeWait();
+
+        assertThat(promotedDocs.get(0) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(0)));
+        assertThat(promotedDocs.get(1) + " should be visible", searchPage.getText(), containsString(promotedDocs.get(1)));	//TODO Seems like this shouldn't be visible
+        assertThat("Wrong number of results displayed", searchPage.getHeadingResultsCount(), is(2));
+        assertThat("Wrong number of pin to position labels displayed", searchPage.countPinToPositionLabels(), is(2));
+
+        searchPage.filterBy(new FieldTextFilter("MATCH{" + promotedDocs.get(0) + "}:DRETITLE"));
+
+        assertThat(searchPage.getSearchResultTitle(1), is(promotedDocs.get(0)));
+        assertThat(searchPage.getHeadingResultsCount(), is(1));
+        assertThat(searchPage.countPinToPositionLabels(), is(1));
+
+        searchPage.filterBy(new FieldTextFilter("MATCH{" + promotedDocs.get(1) + "}:DRETITLE"));
+
+        assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResultTitle(1), is(promotedDocs.get(1)));
+        assertThat("Wrong number of search results", searchPage.getHeadingResultsCount(), is(1));
+        assertThat("Wrong number of pin to position labels", searchPage.countPinToPositionLabels(), is(1));
+    }
 }

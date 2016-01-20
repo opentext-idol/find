@@ -1,27 +1,15 @@
-package com.autonomy.abc.selenium.config;
+package com.autonomy.abc.selenium.application;
 
-import com.autonomy.abc.selenium.menu.SideNavBar;
-import com.autonomy.abc.selenium.menu.TopNavBar;
+import com.autonomy.abc.selenium.config.OPUserConfigParser;
+import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.OPAppBody;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.users.OPUserService;
 import org.openqa.selenium.WebDriver;
 
 
-public class OPApplication extends Application {
-    @Override
-    public OPAppBody createAppBody(WebDriver driver) {
-        return new OPAppBody(driver);
-    }
-
-    @Override
-    public OPAppBody createAppBody(WebDriver driver, TopNavBar topNavBar, SideNavBar sideNavBar) {
-        return new OPAppBody(driver, topNavBar, sideNavBar);
-    }
-
-
+public class OPISOApplication extends SearchOptimizerApplication<OPElementFactory> {
     @Override
     public OPElementFactory createElementFactory(WebDriver driver) {
         return new OPElementFactory(driver);

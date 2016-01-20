@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.admin;
 
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -21,30 +22,30 @@ public class SettingsPage extends AppElement implements AppPage {
     }
 
 	public void saveChangesClick() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		findElement(By.xpath(".//*[contains(text(), 'Save Changes')]")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void saveChanges() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		saveChangesClick();
 		modalSaveChanges().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(ModalView.getVisibleModalView(getDriver()).findElement(By.xpath(".//*[contains(text(), 'Close')]"))));
 		modalClose();
 	}
 
 	public void revertChanges() {
 		revertChangesClick();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		modalOKButton().click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public void revertChangesClick() {
 		findElement(By.xpath(".//*[contains(text(), 'Revert Changes')]")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public WebElement modalSaveChanges() {
@@ -67,9 +68,9 @@ public class SettingsPage extends AppElement implements AppPage {
 	}
 
 	public void changePort(final int portNumber, final Panel panel) {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		portBox(panel).clear();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		portBox(panel).sendKeys(Integer.toString(portNumber));
 	}
 
@@ -78,10 +79,10 @@ public class SettingsPage extends AppElement implements AppPage {
 	}
 
 	public void modalClose() {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		final ModalView modal = ModalView.getVisibleModalView(getDriver());
 		modal.findElement(By.xpath(".//*[contains(text(), 'Close')]")).click();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 	}
 
 	public WebElement hostBox(final Panel panelName) {
@@ -89,9 +90,9 @@ public class SettingsPage extends AppElement implements AppPage {
 	}
 
 	public void changeHost(final String hostname, final Panel panelName) {
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		hostBox(panelName).clear();
-		loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		hostBox(panelName).sendKeys(hostname);
 	}
 

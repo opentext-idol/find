@@ -1,24 +1,21 @@
 package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.FieldTextFilter;
-import com.autonomy.abc.selenium.search.Search;
-import com.autonomy.abc.selenium.search.SearchActionFactory;
+import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.Platform;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
@@ -31,33 +28,31 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 
-	public PromotionsPageOnPremiseITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public PromotionsPageOnPremiseITCase(final TestConfig config) {
+		super(config);
 	}
 
-	private OPPromotionsPage promotionsPage;
 	private OPPromotionsDetailPage promotionsDetailPage;
 	private SearchPage searchPage;
     private OPPromotionService promotionService;
-    private SearchActionFactory searchActionFactory;
+    private SearchService searchService;
 
 	@Before
 	public void setUp() throws MalformedURLException {
 		promotionService = (OPPromotionService) getApplication().createPromotionService(getElementFactory());
-        searchActionFactory = new SearchActionFactory(getApplication(), getElementFactory());
+        searchService = getApplication().createSearchService(getElementFactory());
 
-		promotionsPage = promotionService.deleteAll();
+		promotionService.deleteAll();
 	}
 
     private void search(String term) {
-        searchPage = searchActionFactory.makeSearch(term).apply();
+        searchPage = searchService.search(term);
     }
 
 	@Test
 	public void testInvalidFieldText() {
 		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "hot");
-		Search search = searchActionFactory.makeSearch("hot");
-		promotionService.setUpPromotion(promotion, search, 1);
+		promotionService.setUpPromotion(promotion, "hot", 1);
 		List<String> badValues = Arrays.asList("", "bad", "<h1>h1</h1>");
 
 		promotionsDetailPage = promotionService.goToDetails(promotion);
@@ -105,8 +100,7 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testPromotionFieldTextRestriction() {
         Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "hot");
-        Search search = searchActionFactory.makeSearch("hot");
-        promotionService.setUpPromotion(promotion, search, 1);
+        promotionService.setUpPromotion(promotion, "hot", 1);
 
         promotionsDetailPage = promotionService.goToDetails(promotion);
 		promotionsDetailPage.addFieldText("MATCH{hot}:DRECONTENT");
@@ -137,7 +131,7 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testPromotionFieldTextOrRestriction() {
 		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
-		promotionService.setUpPromotion(promotion, searchActionFactory.makeSearch("road"), 1);
+		promotionService.setUpPromotion(promotion, "road", 1);
 		promotionsDetailPage = promotionService.goToDetails(promotion);
 
 		promotionsDetailPage.addFieldText("MATCH{highway}:DRECONTENT OR MATCH{street}:DRECONTENT");
@@ -153,11 +147,11 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testFieldTextSubmitTextOnEnter() {
 		Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "highway street");
-		promotionService.setUpPromotion(promotion, searchActionFactory.makeSearch("road"), 1);
+		promotionService.setUpPromotion(promotion, "road", 1);
 		promotionsDetailPage = promotionService.goToDetails(promotion);
 
 		promotionsDetailPage.fieldTextAddButton().click();
-		promotionsPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		promotionsDetailPage.fieldTextInput().setValue("MATCH{test}:DRECONTENT" + Keys.RETURN);
 		promotionsDetailPage.waitForFieldTextToUpdate();
 		verifyThat("Added field text with RETURN", promotionsDetailPage.editableFieldText().getValue(), not(isEmptyOrNullString()));
@@ -169,9 +163,9 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
         Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "ming");
         String fieldText = "RANGE{.,01/01/2010}:DREDATE";
         FieldTextFilter filter = new FieldTextFilter(fieldText);
-        Search search = searchActionFactory.makeSearch("flash").applyFilter(filter);
+        SearchQuery query = new SearchQuery("flash").withFilter(filter);
 
-		promotionService.setUpPromotion(promotion, search, 1);
+		promotionService.setUpPromotion(promotion, query, 1);
         promotionsDetailPage = promotionService.goToDetails(promotion);
 
 		promotionsDetailPage.addFieldText(fieldText);

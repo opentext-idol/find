@@ -1,19 +1,22 @@
 package com.autonomy.abc.overview;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.overview.OverviewPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.PageUtil;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -22,14 +25,19 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import static com.thoughtworks.selenium.SeleneseTestBase.assertEquals;
-import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
+import static org.hamcrest.number.OrderingComparison.lessThanOrEqualTo;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class OverviewPageITCase extends ABCTestBase {
 
-	public OverviewPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public OverviewPageITCase(final TestConfig config) {
+		super(config);
 	}
 
 	private OverviewPage overviewPage;
@@ -47,41 +55,46 @@ public class OverviewPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() {
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
 		overviewPage = getElementFactory().getOverviewPage();
 	}
 
 	@Test
 	public void testZeroHitTermsGraphToggleButtons() {
 		overviewPage.zeroHitLastWeekButton().click();
-		assertThat("last week button is not active after click", overviewPage.zeroHitLastWeekButton().getAttribute("class").contains("active"));
-		assertThat("last day button is active after last week click", !overviewPage.zeroHitLastDayButton().getAttribute("class").contains("active"));
+		assertThat("last week button is not active after click", overviewPage.zeroHitLastWeekButton(), hasClass("active"));
+		assertThat("last day button is active after last week click", overviewPage.zeroHitLastDayButton(), not(hasClass("active")));
 
 		overviewPage.zeroHitLastDayButton().click();
-		assertThat("last week button is active after last day click", !overviewPage.zeroHitLastWeekButton().getAttribute("class").contains("active"));
-		assertThat("last day button is not active after click", overviewPage.zeroHitLastDayButton().getAttribute("class").contains("active"));
+		assertThat("last week button is active after last day click", overviewPage.zeroHitLastWeekButton(), not(hasClass("active")));
+		assertThat("last day button is not active after click", overviewPage.zeroHitLastDayButton(), hasClass("active"));
 	}
 
-	@Test
+    @Test
 	public void testTopSearchTermsToggleButtons() {
-		overviewPage.topSearchTermsLastTimePeriodButton("week").click();
-		assertThat("last week button is not active after click", overviewPage.topSearchTermsLastTimePeriodButton("week").getAttribute("class").contains("active"));
-		assertThat("last day button is active after last week click", !overviewPage.topSearchTermsLastTimePeriodButton("day").getAttribute("class").contains("active"));
-		assertThat("last hour button is active after last week click", !overviewPage.topSearchTermsLastTimePeriodButton("hour").getAttribute("class").contains("active"));
-		assertThat("Widget text not changed", overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("Top terms searched for last week"));
+        List<String> buttons = Arrays.asList("week", "day", "hour");
 
-		overviewPage.topSearchTermsLastTimePeriodButton("day").click();
-		assertThat("last week button is active after last day click", !overviewPage.topSearchTermsLastTimePeriodButton("week").getAttribute("class").contains("active"));
-		assertThat("last day button is not active after click", overviewPage.topSearchTermsLastTimePeriodButton("day").getAttribute("class").contains("active"));
-		assertThat("last hour button is active after last day click", !overviewPage.topSearchTermsLastTimePeriodButton("hour").getAttribute("class").contains("active"));
-		assertThat("Widget text not changed", overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("Top terms searched for yesterday"));
+		overviewPage.topSearchTermsLastTimePeriodButton(buttons.get(0)).click();
+		assertToggleButtons(buttons, buttons.get(0), "last week");
 
-		overviewPage.topSearchTermsLastTimePeriodButton("hour").click();
-		assertThat("last week button is active after last hour click", !overviewPage.topSearchTermsLastTimePeriodButton("week").getAttribute("class").contains("active"));
-		assertThat("last day button is active after last hour click", !overviewPage.topSearchTermsLastTimePeriodButton("day").getAttribute("class").contains("active"));
-		assertThat("last hour button is not active after click", overviewPage.topSearchTermsLastTimePeriodButton("hour").getAttribute("class").contains("active"));
-		assertThat("Widget text not changed", overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("Top terms searched for in the last hour"));
+        overviewPage.topSearchTermsLastTimePeriodButton(buttons.get(1)).click();
+		assertToggleButtons(buttons, buttons.get(1), "yesterday");
+
+		overviewPage.topSearchTermsLastTimePeriodButton(buttons.get(2)).click();
+		assertToggleButtons(buttons, buttons.get(2), "in the last hour");
 	}
 
+    private void assertToggleButtons(List<String> toggleButtons, String active, String widgetText) {
+        for(String button : toggleButtons){
+            if(button.equals(active)) {
+                assertThat(overviewPage.topSearchTermsLastTimePeriodButton(button), hasClass("active"));
+            } else {
+                assertThat(overviewPage.topSearchTermsLastTimePeriodButton(button), not(hasClass("active")));
+            }
+        }
+
+        assertThat("Widget text not changed", overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("Top terms searched for " + widgetText));
+    }
 	@Test
 	public void testTopSearchTermsLinks() {
 		for (final String timeUnit : Arrays.asList("hour", "day", "week")) {
@@ -96,10 +109,10 @@ public class OverviewPageITCase extends ABCTestBase {
 						tableRowLink.click();
 						final SearchPage searchPage = getElementFactory().getSearchPage();
 						new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-						assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl().contains("search/modified/" + searchTerm));
-						assertThat(searchTerm + " Title incorrect", searchPage.title().contains("Results for " + searchTerm));
+						assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl(), containsString("search/modified/" + searchTerm));
+						assertThat(searchTerm + " Title incorrect", PageUtil.getPageTitle(getDriver()), containsString("Results for " + searchTerm));
 
-						body.getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
+						getElementFactory().getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
 					}
 				}
 			} else {
@@ -112,7 +125,7 @@ public class OverviewPageITCase extends ABCTestBase {
 	public void testTopSearchTermsOrdering() {
 		for (final String timeUnit : Arrays.asList("hour", "day", "week")) {
 			overviewPage.topSearchTermsLastTimePeriodButton(timeUnit).click();
-			overviewPage.loadOrFadeWait();
+			Waits.loadOrFadeWait();
 
 			if (!overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).getText().contains("No data")) {
 				final List<WebElement> tableRowLinks = overviewPage.getWidget(OverviewPage.Widget.TOP_SEARCH_TERMS).findElements(By.cssSelector(OverviewPage.ACTIVE_TABLE_SELECTOR + " a"));
@@ -127,7 +140,7 @@ public class OverviewPageITCase extends ABCTestBase {
 				}
 
 				for (int i = 0; i < 9; i++) {
-					assertThat("Row " + Integer.toString(i + 1) + " is out of place", searchCounts.get(i) >= searchCounts.get(i + 1));
+					assertThat("Row " + Integer.toString(i + 1) + " is out of place", searchCounts.get(i), greaterThanOrEqualTo(searchCounts.get(i + 1)));
 				}
 			}
 		}
@@ -135,11 +148,10 @@ public class OverviewPageITCase extends ABCTestBase {
 
 	@Test
 	public void testZeroHitTermsLinks() throws UnsupportedEncodingException, InterruptedException {
-        body.getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
         final KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.deleteAllSynonyms();
-		keywordsPage.deleteAllBlacklistedTerms();
-		body.getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
+		keywordsPage.deleteKeywords();
+		getElementFactory().getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
 		String extraSynonym = "apple";
 
 		final List<WebElement> tableLinks = overviewPage.getWidget(OverviewPage.Widget.ZERO_HIT_TERMS).findElements(By.cssSelector(".table a"));
@@ -150,16 +162,18 @@ public class OverviewPageITCase extends ABCTestBase {
 
             final CreateNewKeywordsPage createNewKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 
-			assertThat("Have not linked to synonyms wizard", createNewKeywordsPage.getText().contains("Select synonyms"));
-			assertEquals(1, createNewKeywordsPage.countKeywords());
-			assertThat("incorrect synonym in prospective keywords list", createNewKeywordsPage.getProspectiveKeywordsList().contains(linkText));
-			assertThat("finish button should be disabled", createNewKeywordsPage.isAttributePresent(createNewKeywordsPage.finishWizardButton(), "disabled"));
+            TriggerForm triggerForm = createNewKeywordsPage.getTriggerForm();
+
+			assertThat("Have not linked to synonyms wizard", createNewKeywordsPage.getText(), containsString("Select synonyms"));
+			assertThat(triggerForm.getNumberOfTriggers(), is(1));
+			assertThat("incorrect synonym in prospective keywords list", triggerForm.getTriggersAsStrings(), hasItem(linkText));
+			assertThat("finish button should be disabled", ElementUtil.isAttributePresent(createNewKeywordsPage.finishWizardButton(), "disabled"));
 
 			extraSynonym += "z";
-			createNewKeywordsPage.addSynonyms(extraSynonym);
-			assertEquals(2, createNewKeywordsPage.countKeywords());
-			assertThat("incorrect synonym in prospective keywords list", createNewKeywordsPage.getProspectiveKeywordsList().containsAll(Arrays.asList(linkText, extraSynonym)));
-			assertThat("finish button should be enabled", !createNewKeywordsPage.isAttributePresent(createNewKeywordsPage.finishWizardButton(), "disabled"));
+			triggerForm.addTrigger(extraSynonym);
+			assertThat(triggerForm.getNumberOfTriggers(), is(2));
+			assertThat("incorrect synonym in prospective keywords list", triggerForm.getTriggersAsStrings(), hasItems(linkText, extraSynonym));
+			assertThat("finish button should be enabled", !ElementUtil.isAttributePresent(createNewKeywordsPage.finishWizardButton(), "disabled"));
 
 			createNewKeywordsPage.finishWizardButton().click();
 
@@ -167,28 +181,28 @@ public class OverviewPageITCase extends ABCTestBase {
 			new WebDriverWait(getDriver(), 4).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
 			if (!searchPage.getText().contains("An error occurred executing the search action")) {
-				assertThat("page title incorrect", searchPage.title().contains(linkText));
-				assertThat("page title incorrect", searchPage.title().contains(extraSynonym));
-				assertThat("no search results displayed", searchPage.getDocLogo(1).isDisplayed());
-				assertThat("you searched for section incorrect", searchPage.youSearchedFor().containsAll(Arrays.asList(linkText, extraSynonym)));
-				assertEquals(2, searchPage.countSynonymLists());
-				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText).contains(extraSynonym));
-				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(extraSynonym).contains(linkText));
+				assertThat("page title incorrect", PageUtil.getPageTitle(getDriver()), containsString(linkText));
+				assertThat("page title incorrect", PageUtil.getPageTitle(getDriver()), containsString(extraSynonym));
+				assertThat("no search results displayed", searchPage.docLogo(1), is(displayed()));
+				assertThat("you searched for section incorrect", searchPage.youSearchedFor(), hasItems(linkText, extraSynonym));
+				assertThat(searchPage.countSynonymLists(), is(2));
+				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText), hasItem(extraSynonym));
+				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(extraSynonym), hasItem(linkText));
 
 				final String searchResultTitle = searchPage.getSearchResultTitle(1);
-                body.getTopNavBar().search(linkText);
-				assertThat("page title incorrect", searchPage.title().contains(linkText));
-				assertThat("no search results displayed", searchPage.getDocLogo(1).isDisplayed());
-				assertEquals(searchResultTitle, searchPage.getSearchResultTitle(1));
-				assertEquals(1, searchPage.countSynonymLists());
-				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText).contains(extraSynonym));
-				assertThat("you searched for section incorrect", searchPage.youSearchedFor().contains(linkText));
-				assertThat("you searched for section incorrect", !searchPage.youSearchedFor().contains(extraSynonym));
+                getElementFactory().getTopNavBar().search(linkText);
+				assertThat("page title incorrect", PageUtil.getPageTitle(getDriver()), containsString(linkText));
+				assertThat("no search results displayed", searchPage.docLogo(1), is(displayed()));
+				assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
+				assertThat(searchPage.countSynonymLists(), is(1));
+				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText), hasItem(extraSynonym));
+				assertThat("you searched for section incorrect", searchPage.youSearchedFor(), hasItem(linkText));
+				assertThat("you searched for section incorrect", searchPage.youSearchedFor(), not(hasItem(extraSynonym)));
 			} else {
 				System.out.println(linkText + " returns a search error as part of a synonym group");
 			}
 
-			body.getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
+			getElementFactory().getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
 		}
 	}
 
@@ -205,29 +219,29 @@ public class OverviewPageITCase extends ABCTestBase {
 	@Test
 	public void testPercentageOfQueriesWithZeroHits() {
 
-		assertTrue(overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH) <= overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH));
-		assertTrue(overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH) <= overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH));
-		assertTrue(overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH) <= overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH));
+		assertThat(overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH)));
+		assertThat(overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH)));
+		assertThat(overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH), lessThanOrEqualTo(overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH)));
 
         if(percentageIsNumber(OverviewPage.Widget.TODAY_SEARCH)) {
-            assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH)),
-                    overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.TODAY_SEARCH));
+			assertThat(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.TODAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.TODAY_SEARCH)),
+					is(overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.TODAY_SEARCH)));
         } else {
-            assertEquals("N/A", overviewPage.getZeroHitPercentage(OverviewPage.Widget.TODAY_SEARCH));
+			assertThat(overviewPage.getZeroHitPercentage(OverviewPage.Widget.TODAY_SEARCH), is("N/A"));
         }
 
         if (percentageIsNumber(OverviewPage.Widget.YESTERDAY_SEARCH)) {
-            assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH)),
-                    overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.YESTERDAY_SEARCH));
+			assertThat(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.YESTERDAY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.YESTERDAY_SEARCH)),
+					is(overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.YESTERDAY_SEARCH)));
         } else {
-            assertEquals("N/A", overviewPage.getZeroHitPercentage(OverviewPage.Widget.YESTERDAY_SEARCH));
+			assertThat(overviewPage.getZeroHitPercentage(OverviewPage.Widget.YESTERDAY_SEARCH), is("N/A"));
         }
 
         if (percentageIsNumber(OverviewPage.Widget.WEEKLY_SEARCH)) {
-            assertEquals(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH)),
-                    overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.WEEKLY_SEARCH));
+			assertThat(Math.round((overviewPage.getZeroHitQueries(OverviewPage.Widget.WEEKLY_SEARCH) * 100f) / overviewPage.getTotalSearches(OverviewPage.Widget.WEEKLY_SEARCH)),
+					is(overviewPage.getZeroHitPercentageParseInt(OverviewPage.Widget.WEEKLY_SEARCH)));
         } else {
-            assertEquals("N/A", overviewPage.getZeroHitPercentage(OverviewPage.Widget.WEEKLY_SEARCH));
+			assertThat(overviewPage.getZeroHitPercentage(OverviewPage.Widget.WEEKLY_SEARCH), is("N/A"));
         }
 	}
 }

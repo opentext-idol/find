@@ -1,19 +1,17 @@
 package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
 import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -34,8 +32,8 @@ import static org.hamcrest.Matchers.not;
 
 public class LoginPageOnPremiseITCase extends ABCTestBase {
 
-	public LoginPageOnPremiseITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public LoginPageOnPremiseITCase(final TestConfig config) {
+		super(config);
 	}
 
 	private OPLoginPage loginPage;
@@ -129,12 +127,12 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testLogoutNoAccessViaUrl() {
 		getDriver().get(config.getWebappUrl() + "overview");
-		usersPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		assertThat(getDriver().getCurrentUrl(), not(containsString("overview")));
 		assertThat(getDriver().getCurrentUrl(), containsString("login"));
 
 		getDriver().get(config.getWebappUrl() + "keywords");
-		usersPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		assertThat(getDriver().getCurrentUrl(), not(containsString("keywords")));
 		assertThat(getDriver().getCurrentUrl(), containsString("login"));
 	}
@@ -142,7 +140,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	@Test
 	public void testDefaultLoginDisabled() {
 		getDriver().get(config.getWebappUrl().substring(0, config.getWebappUrl().length() - 2) + "login?defaultLogin=admin");
-		usersPage.loadOrFadeWait();
+		Waits.loadOrFadeWait();
 		loginPage = getElementFactory().getLoginPage();
 		verifyThat(loginPage.usernameInput(), not(hasAttribute("readonly")));
 		assertThat(getDriver().getCurrentUrl(), containsString("defaultLogin"));

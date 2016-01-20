@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -35,7 +36,7 @@ public class OPPromotionsDetailPage extends PromotionsDetailPage {
 
     public void addFieldText(final String fieldText) {
         fieldTextAddButton().click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
         fieldTextInput().setAndSubmit(fieldText);
         waitForFieldTextToUpdate();
     }

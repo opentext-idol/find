@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Arrays;
@@ -27,12 +28,12 @@ public class OPCreateNewPromotionsPage extends CreateNewPromotionsPage {
     public void addSpotlightPromotion(String promotionType, String searchTrigger) {
         promotionType("SPOTLIGHT").click();
         continueButton().click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
         promotionType(promotionType).click();
         continueButton().click();
-        loadOrFadeWait();
-        addSearchTrigger(searchTrigger);
+        Waits.loadOrFadeWait();
+        getTriggerForm().addTrigger(searchTrigger);
         finishButton().click();
-        loadOrFadeWait();
+        Waits.loadOrFadeWait();
     }
 }

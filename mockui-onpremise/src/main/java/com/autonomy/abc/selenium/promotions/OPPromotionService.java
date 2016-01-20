@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.config.Application;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
@@ -9,7 +9,7 @@ import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
 public class OPPromotionService extends PromotionService {
     private OPElementFactory elementFactory;
 
-    public OPPromotionService(Application application, ElementFactory elementFactory) {
+    public OPPromotionService(SearchOptimizerApplication application, ElementFactory elementFactory) {
         super(application, elementFactory);
         this.elementFactory = (OPElementFactory) elementFactory;
     }

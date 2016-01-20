@@ -1,7 +1,7 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.config.ApplicationType;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.page.OPElementFactory;
@@ -9,7 +9,6 @@ import com.autonomy.abc.selenium.page.admin.AboutPage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.Platform;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -21,8 +20,8 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 
 public class AboutPageITCase extends ABCTestBase {
 
-	public AboutPageITCase(final TestConfig config, final String browser, final ApplicationType appType, final Platform platform) {
-		super(config, browser, appType, platform);
+	public AboutPageITCase(final TestConfig config) {
+		super(config);
 	}
 
 	private AboutPage aboutPage;
@@ -40,7 +39,7 @@ public class AboutPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-        ((OPTopNavBar) body.getTopNavBar()).goToAboutPage();
+        ((OPTopNavBar) getElementFactory().getTopNavBar()).goToAboutPage();
 		aboutPage = getElementFactory().getAboutPage();
 	}
 
