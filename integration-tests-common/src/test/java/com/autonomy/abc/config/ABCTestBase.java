@@ -1,6 +1,7 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.framework.TestState;
+import com.autonomy.abc.framework.rules.KnownBugRule;
 import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
@@ -69,7 +70,9 @@ public abstract class ABCTestBase {
 
 	// StateHelperRule.finished() calls WebDriver.quit so must be the last thing called
 	@Rule
-	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this)).around(new TestArtifactRule(this));
+	public RuleChain chain = RuleChain.outerRule(new StateHelperRule(this))
+			.around(new TestArtifactRule(this))
+			.around(new KnownBugRule());
 
 	private void initialiseTest() {
 		LOGGER.info(config.toString());
