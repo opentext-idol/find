@@ -4,13 +4,14 @@ define([
     'jquery',
     'databases-view/js/databases-view',
     'i18n!find/nls/indexes',
+    'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/indexes/indexes-view.html',
     'text!find/templates/app/page/search/filters/indexes/index-list.html',
     'text!find/templates/app/page/search/filters/indexes/index-item.html'
-], function(Backbone, _, $, DatabasesView, i18n, template, listTemplate, itemTemplate) {
+], function(Backbone, _, $, DatabasesView, i18n, findI18n, template, listTemplate, itemTemplate) {
 
     var CHECKED_CLASS = 'hp-check';
-    var INDETERMINATE_CLASS = 'hp-minus';
+    var INDETERMINATE_CLASS = 'hp-remove';
     var DISABLED_CLASS = 'disabled';
 
     var ICON_SELECTOR = '> span > .database-icon';
@@ -22,6 +23,7 @@ define([
         template: _.template(template),
         categoryTemplate: _.template(listTemplate),
         databaseTemplate: _.template(itemTemplate),
+        seeMoreButtonTemplate: _.template('<li class="toggle-more clickable"><i class="hp-icon hp-plus col-md-1"></i> <span class="toggle-more-text inline-block"><%-i18n["app.seeMore"]%></span></li>'),
 
         events: {
             'click li[data-id]': function(e) {
@@ -60,6 +62,11 @@ define([
                 e.stopPropagation();
 
                 $(e.target).parent().find('> span > i[data-target]').addClass('collapsed');
+            },
+            'click .toggle-more': function(e) {
+                e.stopPropagation();
+
+                this.toggleIndexes($(e.currentTarget).hasClass('more'));
             }
         },
 
@@ -94,6 +101,27 @@ define([
             else {
                 setInitialSelection();
             }
+        },
+
+        render: function() {
+            DatabasesView.prototype.render.call(this);
+
+            if(this.$('[data-category-id="public"] ul li').length > 5) {
+                this.$('[data-category-id="public"] ul').append(this.seeMoreButtonTemplate({i18n:findI18n}));
+                this.toggleIndexes(true);
+            }
+        },
+
+        toggleIndexes: function(toggle) {
+            var lastIndexes = this.$('[data-category-id="public"] ul li').slice(5);
+            lastIndexes.toggleClass('hide', toggle);
+
+            //unhiding see more or see less buttons
+            this.$('.toggle-more').removeClass('hide');
+            this.$('.toggle-more').toggleClass('more', !toggle);
+            this.$('.toggle-more i').toggleClass('hp-minus', !toggle);
+            this.$('.toggle-more i').toggleClass('hp-add', toggle);
+            this.$('.toggle-more-text').text(toggle ? findI18n["app.seeMore"] : findI18n["app.seeLess"]);
         },
 
         check: function($input) {

@@ -881,8 +881,14 @@ input:-moz-placeholder::before {
 
 /* Indexes View */
 .database-name,
-.category-name {
+.category-name,
+.toggle-more-text {
     padding: 0 8px; /* Same as table padding so it lines up */
+}
+
+.toggle-more {
+    font-size: 11px;
+    border-bottom: none !important;
 }
 
 .category-name,
