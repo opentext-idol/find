@@ -330,13 +330,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
 
-        new WebDriverWait(getDriver(),5).until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                return !promotionsDetailPage.getPromotedTitles().contains("Unknown Document");
-            }
-        });
-
         List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
 
         verifyThat(promotedTitles, hasItem(title));
