@@ -19,7 +19,8 @@ define([
                 id: 'list',
                 selector: {
                     className: 'results-list-container',
-                    displayName: 'List'
+                    displayName: 'List',
+                    icon: 'hp-list'
                 },
                 content: new this.ResultsView({
                     documentsCollection: options.documentsCollection,
@@ -31,7 +32,8 @@ define([
                 id: 'map',
                 selector: {
                     className: 'results-map-container',
-                    displayName: 'Map'
+                    displayName: 'Map',
+                    icon: 'hp-grid'
                 },
                 content: new (Backbone.View.extend({
                     render: function() {
