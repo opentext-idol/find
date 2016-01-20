@@ -563,7 +563,7 @@ input.find-input {
     color: #00b388;
 }
 
-.results-container .result-message {
+.results-list-container .result-message {
     font-size: 28px;
     color: #425563;
 }

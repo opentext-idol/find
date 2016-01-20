@@ -10,7 +10,7 @@ define([
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
-    'find/app/page/search/results/results-view',
+    'find/app/page/search/results/results-view-container',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/sort-view',
     'find/app/page/search/spellcheck-view',
@@ -22,7 +22,7 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView, SpellCheckView, SavedSearchesView,
+            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SortView, SpellCheckView, SavedSearchesView,
             IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
 
@@ -58,9 +58,7 @@ define([
         },
 
         // will be overridden
-        constructResultsView: function (models) {
-            return new ResultsView(models);
-        },
+        constructResultsViewContainer: null,
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
@@ -109,7 +107,7 @@ define([
                 savedSearchesCollection: new Backbone.Collection()
             });
 
-            this.resultsView = this.constructResultsView({
+            this.resultsViewContainer = this.constructResultsViewContainer({
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
@@ -175,7 +173,7 @@ define([
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
 
-            this.resultsView.setElement(this.$('.results-container')).render();
+            this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
 
             this.$('.container-toggle').on('click', this.containerToggle);
 
