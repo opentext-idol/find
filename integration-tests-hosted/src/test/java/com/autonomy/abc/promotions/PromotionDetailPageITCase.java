@@ -2,6 +2,7 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.language.Language;
@@ -78,7 +79,7 @@ public class PromotionDetailPageITCase extends ABCTestBase {
     }
 
     @Test
-    //CSA-1494
+    @KnownBug("CSA-1494")
     public void testAddingMultipleTriggersNotifications() {
         Promotion promotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE,"moscow");
 
@@ -101,7 +102,7 @@ public class PromotionDetailPageITCase extends ABCTestBase {
 
 
     @Test
-    //CSA-1769
+    @KnownBug("CSA-1769")
     public void testUpdatingAndDeletingPinToPosition(){
         PinToPositionPromotion pinToPositionPromotion = new PinToPositionPromotion(1, "say anything");
 

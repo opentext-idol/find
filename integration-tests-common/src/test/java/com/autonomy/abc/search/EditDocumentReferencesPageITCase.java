@@ -288,7 +288,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         try {
             newTitles = promotionsDetailPage.getPromotedTitles();
         } catch (final TimeoutException e) {
-            // CSA-1761
+            /* due to "Unknown Document" bug */
         }
         verifyThat(newTitles, hasItem(newPromotedDoc));
         verifyThat(newTitles, hasSize(1));

@@ -2,6 +2,7 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
@@ -79,7 +80,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA-1562
+    @KnownBug("CSA-1562")
     public void testAdvancedConfigurations() {
         connectorUrl.setValue("http://www.w.ww");
         connectorName.setValue("jeremy");
@@ -125,7 +126,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA-1700 || CSA-1889
+    @KnownBug({"CSA-1700", "CSA-1889"})
     public void testUppercaseUrls(){
         List<WebConnector> uppercase = new ArrayList<WebConnector>() {{
             add(new WebConnector("HTTP://www.ExAMPle.com", "example"));
@@ -270,7 +271,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA-1789
+    @KnownBug("CSA-1789")
     public void testInvalidLongUrls(){
         List<WebConnector> invalid = new ArrayList<WebConnector>(){{
             add(new WebConnector("http://10.1.1.1", ""));
@@ -308,7 +309,7 @@ public class WebConnectorTypeITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA-1789
+    @KnownBug("CSA-1789")
     public void testValidLongUrls(){
         final List<WebConnector> valid = new ArrayList<WebConnector>(){{
             add(new WebConnector("http://www.very.very.very.very.very.very.very.very.long.domain.com", "very"));

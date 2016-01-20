@@ -2,6 +2,7 @@ package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -65,7 +66,7 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1450
+    @KnownBug("CSA-1450")
     public void testDeletingIndex(){
         Index index = new Index("index");
         indexesPage = indexService.setUpIndex(index);
@@ -78,7 +79,7 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1720
+    @KnownBug("CSA-1720")
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = getApplication().createConnectionService(getElementFactory());
         WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc", Index.DEFAULT).withDepth(2);
@@ -105,7 +106,7 @@ public class IndexesPageITCase extends HostedTestBase {
 
     @Test
     //Potentially should be in ConnectionsPageITCase
-    //CSA1710
+    @KnownBug("CSA-1710")
     public void testAttemptingToDeleteConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
@@ -137,7 +138,7 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA1626
+    @KnownBug("CSA-1626")
     public void testDeletingIndexDoesNotInvalidatePromotions(){
         //Create connection - attached to the same index (we need it to have data for a promotion)
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
@@ -177,7 +178,7 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA1544
+    @KnownBug("CSA-1544")
     public void testNoInvalidIndexNameNotifications(){
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
 
@@ -201,7 +202,7 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1689
+    @KnownBug("CSA-1689")
     public void testNewlyCreatedIndexSize (){
         IndexService indexService = getApplication().createIndexService(getElementFactory());
         indexService.deleteAllIndexes();
@@ -217,14 +218,14 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1735
+    @KnownBug("CSA-1735")
     public void testNavigatingToNonExistingIndexByURL(){
         getDriver().get(config.getWebappUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
         verifyThat(PageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
     }
 
     @Test
-    //CSA-1886
+    @KnownBug("CSA-1886")
     public void testDeletingDefaultIndex(){
         IndexService indexService = getApplication().createIndexService(getElementFactory());
 

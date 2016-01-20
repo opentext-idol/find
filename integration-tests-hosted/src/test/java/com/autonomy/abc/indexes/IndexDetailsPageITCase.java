@@ -2,6 +2,7 @@ package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -48,7 +49,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1643
+    @KnownBug("CSA-1643")
     public void testAssociatedConnections(){
         ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
         Connector connector = new WebConnector("http://www.bbc.co.uk", "connector", indexOne).withDuration(60);
@@ -87,7 +88,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1703
+    @KnownBug("CSA-1703")
     public void testGraphNoDataMessage(){
         indexesDetailPage = indexService.goToDetails(indexOne);
 
@@ -97,7 +98,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1685
+    @KnownBug("CSA-1685")
     public void testButtonsNotObscuredAfterScroll(){
         indexesDetailPage = indexService.goToDetails(indexOne);
 

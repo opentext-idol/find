@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.FindParametricCheckbox;
 import com.autonomy.abc.selenium.application.FindApplication;
 import com.autonomy.abc.selenium.application.HSODFindApplication;
@@ -374,6 +375,7 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     //TODO update this based on CSA-1657
+    @KnownBug("CSA-1767 - footer not hidden properly")
     public void testMetadata(){
         find.search("stars");
         find.filterBy(new IndexFilter(Index.DEFAULT));
@@ -528,6 +530,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-1767 - footer not hidden properly")
     public void testViewDocumentsOpenFromFind(){
         find.search("Review");
 
@@ -792,7 +795,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1577
+    @KnownBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults(){
         find.search("O Captain! My Captain!");
         // may not happen the first time
@@ -802,8 +805,8 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
-    // CSA-1665
     @Test
+    @KnownBug("CSA-1665")
     public void testSearchTermInResults(){
         String searchTerm = "Tiger";
 
@@ -857,7 +860,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA1630
+    @KnownBug("CSA-1630")
     public void testAllPromotedDocumentsHaveTitles(){
         searchWindow.activate();
 
@@ -881,7 +884,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1763
+    @KnownBug("CSA-1763")
     public void testPublicIndexesNotSelectedByDefault(){
         find.search("Marina and the Diamonds");
 
