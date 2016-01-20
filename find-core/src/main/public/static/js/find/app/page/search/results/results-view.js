@@ -36,6 +36,8 @@ define([
 
     var mediaTypes = ['audio', 'video'];
 
+    var webTypes = ['text/html', 'text/xhtml'];
+
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
 
@@ -306,12 +308,27 @@ define([
                 this.$('.main-results-content .results').append($newResult);
             }
 
-            $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
+            var colorboxArgs = this.colorboxArguments({model: model, href: href});
+            var $previewTrigger = $newResult.find('.preview-documents-trigger');
+            var $resultHeader = $newResult.find('.result-header');
 
-            $newResult.find('.dots').click(function (e) {
-                e.preventDefault();
-                $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
-            });
+            $previewTrigger.colorbox(colorboxArgs);
+
+            var contentType = model.get('contentType');
+
+            // web documents should open the original document in a new tab
+            if (contentType && _.contains(webTypes, contentType.toLowerCase())) {
+                $resultHeader.attr({
+                    href: reference,
+                    target: "_blank"
+                });
+            } else {
+                $resultHeader.click(function(e) {
+                    e.preventDefault();
+
+                    $previewTrigger.colorbox(_.extend({open: true}, colorboxArgs));
+                });
+            }
 
             popover($newResult.find('.similar-documents-trigger'), 'focus', this.handlePopover);
         },
