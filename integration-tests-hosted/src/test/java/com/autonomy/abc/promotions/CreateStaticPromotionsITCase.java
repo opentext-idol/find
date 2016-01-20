@@ -111,15 +111,17 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
 
         SharedTriggerTests.addRemoveTriggers(triggerForm, createPromotionsPage.cancelButton(), createPromotionsPage.finishButton());
 
+        final List<String> wizardTriggers = triggerForm.getTriggersAsStrings();
+
         // finish wizard, wait
         wizard.next();
         getElementFactory().getSearchPage();
 
-        PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("delta");
-        assertThat("loaded details page", promotionsDetailPage.promotionTitle().getValue(), containsString("delta"));
+        PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(wizardTriggers.get(0));
+        assertThat("loaded details page", promotionsDetailPage.promotionTitle().getValue(), containsString(wizardTriggers.get(0)));
 
-        List<String> triggers = triggerForm.getTriggersAsStrings();
-        verifyThat(triggers, hasSize(2));
-        verifyThat(triggers, hasItems("delta", "epsilon"));
+        List<String> createdTriggers = promotionsDetailPage.getTriggerForm().getTriggersAsStrings();
+        verifyThat(createdTriggers, hasSize(wizardTriggers.size()));
+        verifyThat(createdTriggers, everyItem(isIn(wizardTriggers)));
     }
 }

@@ -9,6 +9,7 @@ public class Errors {
         // triggers are converted toLowerCase, but this may change again
         public static final String CASE = DUPLICATE_EXISTING;
         public static final String BLANK = "No terms were supplied";
+        public static final String NO_QUOTES = "Terms may not contain quotation marks";
     }
 
     public static class Search {

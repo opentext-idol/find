@@ -3,6 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.Dropdown;
@@ -22,6 +23,7 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
@@ -84,10 +86,10 @@ public class PromotionsITCase extends ABCTestBase {
 		verifyThat("correct title", getElementFactory().getTopNavBar(), containsText("Create New Promotion"));
 	}
 
-	// TODO: should work after CCUK-3394
 	@Test
+	@KnownBug("CCUK-3394")
 	public void testCorrectDocumentsInPromotion() {
-		List<String> promotedDocTitles = setUpCarsPromotion(2);
+		List<String> promotedDocTitles = setUpCarsPromotion(16);
 		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
 		verifyThat(promotedDocTitles, everyItem(isIn(promotedList)));
 	}
@@ -116,8 +118,8 @@ public class PromotionsITCase extends ABCTestBase {
 		SharedTriggerTests.badTriggersTest(promotionsDetailPage.getTriggerForm());
 	}
 
-	// fails on-prem due to CCUK-2671
 	@Test
+	@KnownBug("CCUK-2671")
 	public void testAddRemoveTriggers() throws InterruptedException {
 		setUpCarsPromotion(1);
 
@@ -191,11 +193,18 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
-	// CSA-2022
+	@KnownBug("CSA-2022")
 	public void testAddingLotsOfDocsToAPromotion() {
 		int size = 100;
-		setUpPromotion(new SearchQuery("dog"), size, new SpotlightPromotion("golden retriever"));
-		assertThat(promotionsDetailPage.promotedList(), hasSize(size));
+		boolean setUp = false;
+		try {
+			setUpPromotion(new SearchQuery("dog"), size, new SpotlightPromotion("golden retriever"));
+			setUp = true;
+		} catch (TimeoutException e) {
+			/* failed to set up promotion */
+		}
+		assertThat("added promotion successfully", setUp);
+		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(size));
 	}
 
 	private void renamePromotionContaining(String oldTitle, String newTitle) {
@@ -205,6 +214,7 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
+	@KnownBug("CCUK-2671")
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
 		SearchQuery[] searches;
@@ -262,7 +272,7 @@ public class PromotionsITCase extends ABCTestBase {
 		int results = 1;
 		for(String search : Arrays.asList("dog", "wolf", "pooch")){
 			promotionsPage.clearPromotionsSearchFilter();
-			promotionsPage.sendKeys(search);
+			promotionsPage.promotionsSearchFilter().sendKeys(search);
 			verifyThat(promotionsPage, promotionsList(hasSize(results)));
 			results++;
 		}
@@ -462,7 +472,7 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CCUK-3457
+	@KnownBug("CCUK-3457")
 	public void testPromotingItemsWithBrackets(){
 		SpotlightPromotion spotlightPromotion = new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "imagine dragons");
 		SearchQuery query = new SearchQuery("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));

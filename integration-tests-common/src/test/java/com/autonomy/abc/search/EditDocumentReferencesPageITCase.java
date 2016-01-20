@@ -2,6 +2,7 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -138,8 +139,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
     }
 
-    // CSA-1755
     @Test
+    @KnownBug("CSA-1755")
     public void testRefreshEditPromotionPage() throws InterruptedException {
         String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
         verifyRefreshing();
@@ -258,6 +259,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     @Test
+    @KnownBug("CSA-1761")
     public void testCheckboxUpdatesWithBucketDelete() {
         setUpPromotion("fred", "white fluffy", 4);
         editDocumentSearch("fred");
@@ -315,7 +317,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     @Test
-    //CSA-1761
+    @KnownBug("CSA-1761")
     public void testAddedDocumentsNotUnknown(){
         setUpPromotion("smiles", "fun happiness", 2);
 

@@ -15,6 +15,7 @@ import static org.hamcrest.core.Is.is;
 
 public class SharedTriggerTests {
     private int numberOfTriggers;
+    private boolean noQuotesFlag = false;
     private final String initialTrigger = "dog";
     private final TriggerForm triggerForm;
 
@@ -56,23 +57,25 @@ public class SharedTriggerTests {
     }
 
     /* TESTS */
+    /**
+     * for trigger forms that do not accept multi-word triggers (e.g. blacklist) use badUnquoteTriggersTest instead
+     */
     public static int badTriggersTest(TriggerForm triggerForm){
         SharedTriggerTests sharedTriggerTests = new SharedTriggerTests(triggerForm);
 
-        if(!triggerForm.getTriggersAsStrings().contains(sharedTriggerTests.initialTrigger)){
-            triggerForm.addTrigger(sharedTriggerTests.initialTrigger);
-            sharedTriggerTests.numberOfTriggers++;
-        }
-
-        assertThat(triggerForm.getNumberOfTriggers(), is(sharedTriggerTests.numberOfTriggers));
-
+        sharedTriggerTests.initialiseTriggers();
         sharedTriggerTests.checkBadTriggers();
+        sharedTriggerTests.addFinalTrigger("\"Valid Trigger\"");
+        return sharedTriggerTests.numberOfTriggers;
+    }
 
-        triggerForm.typeTriggerWithoutSubmit("a");
-        verifyThat("error message is cleared", triggerForm.getTriggerError(), isEmptyOrNullString());
-        verifyThat(triggerForm.addButton(), not(disabled()));
-        triggerForm.addTrigger("\"Valid Trigger\"");
-        verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(++sharedTriggerTests.numberOfTriggers));
+    public static int badUnquotedTriggersTest(TriggerForm triggerForm) {
+        SharedTriggerTests sharedTriggerTests = new SharedTriggerTests(triggerForm);
+        sharedTriggerTests.noQuotesFlag = true;
+
+        sharedTriggerTests.initialiseTriggers();
+        sharedTriggerTests.checkBadTriggers();
+        sharedTriggerTests.addFinalTrigger("valid");
         return sharedTriggerTests.numberOfTriggers;
     }
 
@@ -105,6 +108,15 @@ public class SharedTriggerTests {
     }
 
     /* Helper methods */
+    private void initialiseTriggers() {
+        if(!triggerForm.getTriggersAsStrings().contains(initialTrigger)){
+            triggerForm.addTrigger(initialTrigger);
+            numberOfTriggers++;
+        }
+
+        assertThat(triggerForm.getNumberOfTriggers(), is(numberOfTriggers));
+    }
+
     private void checkBadTriggers(){
         checkBadTriggers(duplicateTriggers, Errors.Term.DUPLICATE_EXISTING);
         checkBadTriggers(quoteTriggers, Errors.Term.QUOTES);
@@ -138,7 +150,11 @@ public class SharedTriggerTests {
     private void checkBadTriggers(String[] triggers, String errorSubstring) {
         for (String trigger : triggers) {
             triggerForm.addTrigger(trigger);
-            verifyTriggerNotAdded(trigger, errorSubstring);
+            if (noQuotesFlag && trigger.contains("\"")) {
+                verifyTriggerNotAdded(trigger, Errors.Term.NO_QUOTES);
+            } else {
+                verifyTriggerNotAdded(trigger, errorSubstring);
+            }
         }
     }
 
@@ -173,5 +189,13 @@ public class SharedTriggerTests {
         assertThat(triggerForm.getTriggersAsStrings(), hasSize(triggerCount));
         assertThat(triggerForm.getTriggersAsStrings(), hasItem("bushy"));
         assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("tail")));
+    }
+
+    private void addFinalTrigger(String finalTrigger) {
+        triggerForm.typeTriggerWithoutSubmit("a");
+        verifyThat("error message is cleared", triggerForm.getTriggerError(), isEmptyOrNullString());
+        verifyThat(triggerForm.addButton(), not(disabled()));
+        triggerForm.addTrigger(finalTrigger);
+        verifyThat("can add valid trigger", triggerForm.getNumberOfTriggers(), is(++numberOfTriggers));
     }
 }

@@ -1,6 +1,7 @@
 package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -95,8 +96,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		}
 	}
 
-//Fails because of CSA-1542
 	@Test
+	@KnownBug("CSA-1542")
 	public void testNotificationsOverTwoWindows() throws InterruptedException {
 		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
 
