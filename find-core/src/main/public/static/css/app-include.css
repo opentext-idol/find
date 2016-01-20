@@ -887,8 +887,11 @@ input:-moz-placeholder::before {
 }
 
 .toggle-more {
-    font-size: 11px;
     border-bottom: none !important;
+}
+
+.databases-list .toggle-more i {
+    transform-origin: 20px;
 }
 
 .category-name,

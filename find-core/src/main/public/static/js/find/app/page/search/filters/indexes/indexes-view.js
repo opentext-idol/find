@@ -10,9 +10,11 @@ define([
     'text!find/templates/app/page/search/filters/indexes/index-item.html'
 ], function(Backbone, _, $, DatabasesView, i18n, findI18n, template, listTemplate, itemTemplate) {
 
-    var CHECKED_CLASS = 'hp-check';
-    var INDETERMINATE_CLASS = 'hp-remove';
+    var CHECKED_CLASS = 'hp-icon hp-fw hp-check';
+    var INDETERMINATE_CLASS = 'hp-icon hp-fw hp-minus';
     var DISABLED_CLASS = 'disabled';
+    var SHOW_MORE_CLASS = 'hp-chevron-right';
+    var SHOW_LESS_CLASS = 'hp-chevron-up';
 
     var ICON_SELECTOR = '> span > .database-icon';
 
@@ -23,7 +25,7 @@ define([
         template: _.template(template),
         categoryTemplate: _.template(listTemplate),
         databaseTemplate: _.template(itemTemplate),
-        seeMoreButtonTemplate: _.template('<li class="toggle-more clickable"><i class="hp-icon hp-plus col-md-1"></i> <span class="toggle-more-text inline-block"><%-i18n["app.seeMore"]%></span></li>'),
+        seeMoreButtonTemplate: _.template('<li class="toggle-more clickable"><i class="hp-icon <%-showMoreClass%> col-md-1"></i> <span class="toggle-more-text inline-block"><%-i18n["app.seeMore"]%></span></li>'),
 
         events: {
             'click li[data-id]': function(e) {
@@ -66,7 +68,8 @@ define([
             'click .toggle-more': function(e) {
                 e.stopPropagation();
 
-                this.toggleIndexes($(e.currentTarget).hasClass('more'));
+                var $currentTarget = $(e.currentTarget);
+                this.toggleIndexes($currentTarget.closest('ul'), $currentTarget.hasClass('more'));
             }
         },
 
@@ -106,26 +109,34 @@ define([
         render: function() {
             DatabasesView.prototype.render.call(this);
 
-            if(this.$('[data-category-id="public"] ul li').length > 5) {
-                this.$('[data-category-id="public"] ul').append(this.seeMoreButtonTemplate({i18n:findI18n}));
-                this.toggleIndexes(true);
-            }
+            _.each(this.getIndexCategories(), function(category) {
+                var $ul = this.$('[data-category-id="' + category.name + '"] ul');
+
+                if($ul.find('li').length > 5) {
+                    $ul.append(this.seeMoreButtonTemplate({
+                        i18n:findI18n,
+                        showMoreClass: SHOW_MORE_CLASS
+                    }));
+
+                    this.toggleIndexes($ul, true);
+                }
+            }, this);
         },
 
-        toggleIndexes: function(toggle) {
-            var lastIndexes = this.$('[data-category-id="public"] ul li').slice(5);
+        toggleIndexes: function($ul, toggle) {
+            var lastIndexes = $ul.find('li').slice(5);
             lastIndexes.toggleClass('hide', toggle);
 
             //unhiding see more or see less buttons
-            this.$('.toggle-more').removeClass('hide');
-            this.$('.toggle-more').toggleClass('more', !toggle);
-            this.$('.toggle-more i').toggleClass('hp-minus', !toggle);
-            this.$('.toggle-more i').toggleClass('hp-add', toggle);
-            this.$('.toggle-more-text').text(toggle ? findI18n["app.seeMore"] : findI18n["app.seeLess"]);
+            $ul.find('.toggle-more').removeClass('hide');
+            $ul.find('.toggle-more').toggleClass('more', !toggle);
+            $ul.find('.toggle-more i').toggleClass(SHOW_LESS_CLASS, !toggle);
+            $ul.find('.toggle-more i').toggleClass(SHOW_MORE_CLASS, toggle);
+            $ul.find('.toggle-more-text').text(toggle ? findI18n["app.seeMore"] : findI18n["app.seeLess"]);
         },
 
         check: function($input) {
-            $input.find(ICON_SELECTOR).addClass(CHECKED_CLASS).removeClass(INDETERMINATE_CLASS);
+            $input.find(ICON_SELECTOR).removeClass(INDETERMINATE_CLASS).addClass(CHECKED_CLASS);
         },
 
         uncheck: function($input) {
