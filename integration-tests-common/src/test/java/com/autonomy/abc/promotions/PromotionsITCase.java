@@ -22,6 +22,7 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
 import java.net.MalformedURLException;
@@ -194,7 +195,14 @@ public class PromotionsITCase extends ABCTestBase {
 	// CSA-2022
 	public void testAddingLotsOfDocsToAPromotion() {
 		int size = 100;
-		setUpPromotion(new SearchQuery("dog"), size, new SpotlightPromotion("golden retriever"));
+		boolean setUp = false;
+		try {
+			setUpPromotion(new SearchQuery("dog"), size, new SpotlightPromotion("golden retriever"));
+			setUp = true;
+		} catch (TimeoutException e) {
+			/* failed to set up promotion */
+		}
+		assertThat("added promotion successfully", setUp);
 		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(size));
 	}
 
