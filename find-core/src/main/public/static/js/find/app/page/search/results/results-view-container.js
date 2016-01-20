@@ -55,6 +55,11 @@ define([
                 var $viewElement = $(this.contentContainerTemplate(view)).toggleClass('active', index === 0).appendTo($contentList)
                 view.content.setElement($viewElement).render();
             }, this);
+
+            // Triggers a "selected" event with the id results view type
+            this.$('a[data-toggle="tab"]').on('hide.bs.tab', (function (e) {
+                this.trigger('selected', $(e.relatedTarget).attr('data-id'));
+            }).bind(this))
         }
 
     });
