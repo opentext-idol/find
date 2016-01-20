@@ -262,7 +262,7 @@ public class PromotionsITCase extends ABCTestBase {
 		int results = 1;
 		for(String search : Arrays.asList("dog", "wolf", "pooch")){
 			promotionsPage.clearPromotionsSearchFilter();
-			promotionsPage.sendKeys(search);
+			promotionsPage.promotionsSearchFilter().sendKeys(search);
 			verifyThat(promotionsPage, promotionsList(hasSize(results)));
 			results++;
 		}
