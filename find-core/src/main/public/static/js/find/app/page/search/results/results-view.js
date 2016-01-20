@@ -306,12 +306,17 @@ define([
                 this.$('.main-results-content .results').append($newResult);
             }
 
-            $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
+            if (model.get('contentType') === "text/html" || model.get('contentType') === "text/xhtml" ) {
+                $newResult.find('.result-header').attr('href', href);
+                $newResult.find('.result-header').attr('target', "_blank");
+            } else {
+                $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
 
-            $newResult.find('.dots').click(function (e) {
-                e.preventDefault();
-                $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
-            });
+                $newResult.find('.dots').click(function (e) {
+                    e.preventDefault();
+                    $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
+                });
+            }
 
             popover($newResult.find('.similar-documents-trigger'), 'focus', this.handlePopover);
         },
