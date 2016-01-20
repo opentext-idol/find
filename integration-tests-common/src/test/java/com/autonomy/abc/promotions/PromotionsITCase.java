@@ -87,7 +87,7 @@ public class PromotionsITCase extends ABCTestBase {
 	// TODO: should work after CCUK-3394
 	@Test
 	public void testCorrectDocumentsInPromotion() {
-		List<String> promotedDocTitles = setUpCarsPromotion(2);
+		List<String> promotedDocTitles = setUpCarsPromotion(16);
 		List<String> promotedList = promotionsDetailPage.getPromotedTitles();
 		verifyThat(promotedDocTitles, everyItem(isIn(promotedList)));
 	}
@@ -195,7 +195,7 @@ public class PromotionsITCase extends ABCTestBase {
 	public void testAddingLotsOfDocsToAPromotion() {
 		int size = 100;
 		setUpPromotion(new SearchQuery("dog"), size, new SpotlightPromotion("golden retriever"));
-		assertThat(promotionsDetailPage.promotedList(), hasSize(size));
+		assertThat(promotionsDetailPage.getPromotedTitles(), hasSize(size));
 	}
 
 	private void renamePromotionContaining(String oldTitle, String newTitle) {
