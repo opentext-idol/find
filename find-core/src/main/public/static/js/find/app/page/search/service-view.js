@@ -58,7 +58,7 @@ define([
         },
 
         // will be overridden
-        constructResultsViewContainer: $.noop(),
+        constructResultsViewContainer: null,
 
         initialize: function(options) {
             this.queryModel = options.queryModel;

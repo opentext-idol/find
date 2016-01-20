@@ -14,15 +14,7 @@ define([
         template: _.template(template),
         itemTemplate: _.template(itemTemplate),
 
-        initialize: function (options) {
-            this.collection = options.collection;
-
-            this.collection.add([
-                new Backbone.Model({title: 'Toronto'}),
-                new Backbone.Model({title: 'Sandwich'}),
-                new Backbone.Model({title: 'Lake of Death'})
-            ]);
-
+        initialize: function () {
             this.listView = new ListView({
                 collection: this.collection,
                 itemOptions: {
