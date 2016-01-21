@@ -295,14 +295,17 @@ define([
             }
 
             var $newResult = $(this.resultsTemplate({
-                i18n: i18n,
-                title: model.get('title'),
-                reference: reference,
-                href: href,
-                summary: summary,
-                promotion: isPromotion,
+                contentType: getContentTypeClass(model),
                 date: model.has('date') ? model.get('date').fromNow() : null,
-                contentType: getContentTypeClass(model)
+                domain: model.get('domain'), // undefined when using IDOL
+                i18n: i18n,
+                index: model.get('index'),
+                href: href,
+                promotion: isPromotion,
+                reference: reference,
+                staticPromotion: model.get('promotionType') === 'STATIC_CONTENT_PROMOTION',
+                summary: summary,
+                title: model.get('title')
             }));
 
             if (isPromotion) {
@@ -414,10 +417,18 @@ define([
             return text.replace(new RegExp(startRegex + textToFind + endRegex, 'g'), '$1' + label + '$2');
         },
 
+        // overridden for HOD/IDOL
+        getIndexForSimilarDocuments: $.noop,
+
         handlePopover: function($content, $target) {
+            var $resultsContainer = $target.closest('.main-results-container');
+
+            var reference = $resultsContainer.attr('data-reference');
+            var index = this.getIndexForSimilarDocuments($resultsContainer);
+
             var collection = new SimilarDocumentsCollection([], {
-                indexes: this.queryModel.get('indexes'),
-                reference: $target.closest('[data-reference]').attr('data-reference')
+                indexes: [index],
+                reference: reference
             });
 
             collection.fetch({
