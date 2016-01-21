@@ -160,7 +160,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1679")
+    @KnownBug({"CSA-1679","CSA-2053"})
     public void testCreateFromIndexAutoSelectsIndex(){
         Index index = new Index("index");
         IndexService indexService = getApplication().createIndexService(getElementFactory());
