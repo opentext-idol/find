@@ -32,12 +32,12 @@ define([
                 this.removeRelatedConcept(id);
             },
             'click .see-all-documents': function() {
-                this.model.set('queryText', '*');
+                this.search('*');
             }
         },
 
         initialize: function(options) {
-            this.listenTo(this.model, 'change:queryText', this.updateText);
+            this.listenTo(this.model, 'change:inputText', this.updateText);
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
             
             this.search = _.debounce(function(query) {
