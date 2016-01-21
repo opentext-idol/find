@@ -12,7 +12,6 @@ define([
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/related-concepts/related-concepts-view',
-    'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
     'find/app/page/search/spellcheck-view',
     'find/app/page/search/saved-searches-view',
@@ -23,7 +22,7 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SortView, ResultsNumberView, SpellCheckView, SavedSearchesView,
+            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, ResultsNumberView, SpellCheckView, SavedSearchesView,
             IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
 
@@ -146,10 +145,6 @@ define([
                 queryTextModel: this.queryTextModel
             });
 
-            this.sortView = new SortView({
-                queryModel: this.queryModel
-            });
-
             this.resultsNumberView = new ResultsNumberView({
                 documentsCollection: this.documentsCollection
             });
@@ -177,7 +172,6 @@ define([
 
             this.relatedConceptsViewWrapper.render();
 
-            this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
