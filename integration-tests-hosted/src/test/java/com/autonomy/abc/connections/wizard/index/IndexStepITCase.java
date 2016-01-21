@@ -2,6 +2,7 @@ package com.autonomy.abc.connections.wizard.index;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
@@ -69,7 +70,7 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA-2042 - test index name validation with character length grater than 100
+    @KnownBug("CSA-2042")
     public void testIndexNameFieldMaxCharacterLength(){
         connectorIndexStepTab.setIndexName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
 
@@ -80,7 +81,7 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA-2042 - test index name validation with character length grater than 100
+    @KnownBug("CSA-2042")
     public void testDisplayNameFieldMaxCharacterLength(){
         connectorIndexStepTab.setIndexName("name");
         connectorIndexStepTab.setIndexDisplayName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");

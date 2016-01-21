@@ -1,6 +1,7 @@
 package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.ErrorPage;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
@@ -56,9 +57,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage = (HSOUsersPage) super.usersPage;
     }
 
-    // CSA-1775
-    // CSA-1800
     @Test
+    @KnownBug({"CSA-1775", "CSA-1800"})
     public void testCannotAddInvalidEmail(){
         HSONewUser newUser = new HSONewUser("jeremy","jeremy");
 
@@ -81,9 +81,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         verifyAddingValidUser(new HSONewUser(user.getUsername(), gmailString("isValid")));
     }
 
-    //CSA-1776
-    //CSA-1800
     @Test
+    @KnownBug({"CSA-1776", "CSA-1800"})
     public void testAddingValidDuplicateAfterInvalid() {
         final String username = "bob";
         verifyAddingInvalidUser(new HSONewUser(username, "INVALID_EMAIL"));
@@ -224,6 +223,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     }
 
     @Test
+    @KnownBug("CSA-1766")
     public void testCreateUser(){
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
@@ -248,7 +248,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage.closeModal();
         verifyThat(usersPage, not(containsText("Create New Users")));   //Not sure what this is meant to be doing? Verifying modal no longer open??
 
-        //CSA-1766
         verifyThat(usersPage.getUsernames(),hasItem(username));
     }
 
