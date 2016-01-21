@@ -208,8 +208,9 @@ public class AnalyticsITCase extends HostedTestBase {
     }
 
     private void verifyPromotionTitle(String value, Promotion promotion) {
-        verifyThat(value.toLowerCase(), containsString(promotion.getName().toLowerCase()));
-        verifyThat(value.toLowerCase(), containsString(promotion.getTrigger().toLowerCase()));
+        String lowercase = (value == null) ? null : value.toLowerCase();
+        verifyThat(lowercase, containsString(promotion.getName().toLowerCase()));
+        verifyThat(lowercase, containsString(promotion.getTrigger().toLowerCase()));
     }
 
     @After

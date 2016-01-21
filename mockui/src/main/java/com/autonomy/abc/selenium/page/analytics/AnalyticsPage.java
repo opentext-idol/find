@@ -113,10 +113,6 @@ public class AnalyticsPage extends AppElement implements AppPage {
         }
     }
 
-    public Term getMostPopularSearchTerm() {
-        return getPopularSearchTerm(1);
-    }
-
     public Term getPopularSearchTerm(int num) {
         WebElement container = getPopularTermContainer();
         new WebDriverWait(getDriver(),30).until(new WaitUntilLoadingFinished(container));
