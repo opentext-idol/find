@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class AnalyticsPage extends AppElement implements AppPage {
@@ -91,6 +92,14 @@ public class AnalyticsPage extends AppElement implements AppPage {
         return getDriver().findElement(By.id("index-size-flot-chart")).findElement(By.className("flot-overlay"));
     }
 
+    public List<Container> containers() {
+        return Arrays.asList(
+                popularTerms(),
+                zeroHitTerms(),
+                promotions()
+        );
+    }
+
     private class WaitUntilLoadingFinished implements ExpectedCondition<Boolean> {
         WebElement container;
 
@@ -114,6 +123,26 @@ public class AnalyticsPage extends AppElement implements AppPage {
         WebElement topTerm = container.findElement(By.cssSelector(".list-group-item:nth-child(" + num + ")"));
 
         return new Term(topTerm);
+    }
+
+    public String getPopularSearch(int i) {
+        return popularTerms().get(i).getTerm();
+    }
+
+    public String getZeroHitSearch(int i) {
+        return zeroHitTerms().get(i).getTerm();
+    }
+
+    public Container popularTerms() {
+        return new Container(getPopularTermContainer());
+    }
+
+    public Container zeroHitTerms() {
+        return new Container(getZeroHitContainer());
+    }
+
+    public Container promotions() {
+        return new Container(getPromotionsContainer());
     }
 
 }
