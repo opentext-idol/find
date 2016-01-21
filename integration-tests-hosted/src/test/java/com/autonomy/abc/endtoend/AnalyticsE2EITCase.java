@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.analytics.ContainerItem;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -24,7 +23,6 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,19 +71,19 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     public void testAnalytics() throws InterruptedException {
         List<String> newTriggers = Arrays.asList("happy", "sad");
 
-        ContainerItem nonZeroItem;
+        String nonZeroTerm;
         try {
-            nonZeroItem = analyticsPage.getMostPopularNonZeroSearchTerm();
+            nonZeroTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
         } catch (NoSuchElementException e) {
             // CSA-1752
             LOGGER.warn("all popular search terms are zero hit terms");
-            nonZeroItem = analyticsPage.getPopularSearchTerm(2);
+            nonZeroTerm = analyticsPage.getPopularSearch(2);
         }
-        ContainerItem zeroItem = analyticsPage.getMostPopularZeroSearchTerm();
-        addSynonymGroup(nonZeroItem, zeroItem);
+        String zeroHitTerm = analyticsPage.getZeroHitSearch(0);
+        addSynonymGroup(nonZeroTerm, zeroHitTerm);
 
-        verifyTermSearch(zeroItem);
-        verifyTermSearch(nonZeroItem);
+        verifyTermSearch(zeroHitTerm);
+        verifyTermSearch(nonZeroTerm);
 
         goToAnalytics();
         tryGoToLeastPopularPromotion();
@@ -148,25 +146,21 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         analyticsPage = getElementFactory().getAnalyticsPage();
     }
 
-    private void addSynonymGroup(ContainerItem... items) {
-        List<String> synonyms = new ArrayList<>();
-        for (ContainerItem item : items) {
-            synonyms.add(item.getTerm());
-        }
+    private void addSynonymGroup(String... synonyms) {
         new KeywordService(getApplication(), getElementFactory()).addSynonymGroup(synonyms);
-        LOGGER.info("added synonym group: " + synonyms);
+        LOGGER.info("added synonym group: " + Arrays.asList(synonyms));
     }
 
-    private void verifyTermSearch(ContainerItem item) {
-        search(item.getTerm());
+    private void verifyTermSearch(String term) {
+        search(term);
         LOGGER.warn("[CSA-1724] skipping query analysis test");
 //        verifyThat(searchPage.getSynonymGroupSynonyms(item.getTerm()), hasItem(equalToIgnoringCase(item.getTerm())));
         verifyThat(searchPage, not(NO_RESULTS));
     }
 
     private void tryGoToLeastPopularPromotion() {
-        analyticsPage.reversePromotionSort();
-        analyticsPage.getMostPopularPromotion().click();
+        analyticsPage.promotions().toggleSortDirection();
+        analyticsPage.promotions().get(0).click();
         if (getDriver().getCurrentUrl().contains("detail")) {
             promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
             LOGGER.info("gone to least popular promotion");
