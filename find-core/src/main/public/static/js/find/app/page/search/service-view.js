@@ -14,6 +14,7 @@ define([
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/results/results-number-view',
     'find/app/page/search/spellcheck-view',
+    'find/app/page/search/saved-search-control/saved-search-control-view',
     'find/app/page/search/saved-searches-view',
     'find/app/page/search/filters/indexes/indexes-view',
     'find/app/util/collapsible',
@@ -22,8 +23,8 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, ResultsNumberView, SpellCheckView, SavedSearchesView,
-            IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
+            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, ResultsNumberView, SpellCheckView,
+            SavedSearchControlView, SavedSearchesView, IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
 
     var collapseView = function (title, view) {
@@ -104,6 +105,10 @@ define([
                 }));
             }, this), 500));
 
+            this.savedSearchControlView = new SavedSearchControlView({
+                queryModel: this.queryModel
+            });
+
             this.savedSearchesView = new SavedSearchesView({
                 savedSearchesCollection: new Backbone.Collection()
             });
@@ -155,6 +160,7 @@ define([
             });
 
             // Collapse wrappers
+            this.savedSearchControlViewWrapper = collapseView(i18n['search.savedSearchControl.title'], this.savedSearchControlView);
             this.indexesViewWrapper = collapseView(i18n_indexes['search.indexes'], this.indexesView);
             this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], this.relatedConceptsView);
@@ -164,6 +170,7 @@ define([
             this.$el.html(this.template);
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
+            this.savedSearchControlViewWrapper.setElement(this.$('.saved-search-controls-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
             this.parametricView.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();

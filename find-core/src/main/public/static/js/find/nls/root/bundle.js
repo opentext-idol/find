@@ -107,6 +107,8 @@ define([
         'search.topicMap.documents': 'Documents with phrase',
         'search.topicMap.relevance': 'Relevance',
         'search.topicMap.topics': 'Number of topics',
+        'search.savedSearchControl.title': 'Save Search',
+        'search.savedSearchControl.savedSearch': 'Name your search',
         'search.savedSearches': 'Saved searches',
         'search.savedSearches.noSavedSearches': 'There are no saved searches',
         'search.seeAllDocuments': 'See all documents',
