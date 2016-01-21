@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.page.analytics;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
 
 import java.util.*;
 
@@ -35,7 +35,20 @@ public class Container implements Iterable<Term> {
     }
 
     public Term get(int i) {
-        return getTerms().get(i);
+        try {
+            return getTerms().get(i);
+        } catch (IndexOutOfBoundsException e) {
+            throw new NoSuchElementException("looking for term " + (i+1) + " but there were only " + getTerms().size());
+        }
+    }
+
+    public Term get(String substring) {
+        for (Term term : this) {
+            if (term.getTerm().contains(substring)) {
+                return term;
+            }
+        }
+        throw new NoSuchElementException("could not find term containing " + substring + " in " + container);
     }
 
     public List<Term> getTerms() {

@@ -152,10 +152,10 @@ public class AnalyticsITCase extends HostedTestBase {
         searchService.search(promotion.getTrigger());
         goToAnalytics();
 
-        Term topPromotion = analytics.promotions().get(0);
-        verifyPromotionTitle(topPromotion.getTerm(), promotion);
+        Term promotionTerm = analytics.promotions().get(promotion.getTrigger());
+        verifyPromotionTitle(promotionTerm.getTerm(), promotion);
 
-        topPromotion.click();
+        promotionTerm.click();
         boolean loadsCorrectPage = false;
         String detailTitle = null;
         try {
@@ -182,7 +182,7 @@ public class AnalyticsITCase extends HostedTestBase {
             promotions.toggleSortDirection();
             promotions.selectPeriod(Container.Period.DAY);
 
-            Term bottomPromotion = analytics.promotions().get(0);
+            Term bottomPromotion = analytics.promotions().get(promotion.getTrigger());
             verifyPromotionTitle(bottomPromotion.getTerm(), promotion);
         } finally {
             promotionService.delete(promotion);
@@ -193,7 +193,7 @@ public class AnalyticsITCase extends HostedTestBase {
         Container promotions = analytics.promotions();
         promotions.toggleSortDirection();
         promotions.selectPeriod(Container.Period.DAY);
-        Term bottomPromotion = analytics.promotions().get(0);
+        Term bottomPromotion = analytics.promotions().get(promotion.getTrigger());
         verifyPromotionTitle(bottomPromotion.getTerm(), promotion);
         bottomPromotion.click();
 
