@@ -100,6 +100,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
+        promotionService.deleteAll();
         connectionService.deleteConnection(connector, true);
     }
 }

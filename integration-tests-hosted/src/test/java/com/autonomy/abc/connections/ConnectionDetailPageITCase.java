@@ -69,7 +69,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1470")
+    @KnownBug({"CSA-1470","CSA-2053"})
     public void testCancellingConnectorScheduling(){
         connector = new WebConnector("http://www.google.co.uk","google").withDuration(60);
 

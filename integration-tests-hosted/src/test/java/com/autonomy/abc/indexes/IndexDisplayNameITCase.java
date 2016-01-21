@@ -65,7 +65,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-202")
+    @KnownBug("CSA-2020")
     public void testPieChartLink(){
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         getElementFactory().getAnalyticsPage().indexSizeChart().click();

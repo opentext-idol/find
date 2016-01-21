@@ -158,7 +158,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    public void testUnselectingContentTypeQuicklyDoesNotLeadToError() throws InterruptedException {
+    public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         find.search("wolf");
         results.parametricTypeCheckbox("Content Type", "TEXT/HTML").check();
         Waits.loadOrFadeWait();
@@ -335,7 +335,6 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
-    //THIS
     @Test
     public void testDynamicPromotions(){
         int resultsToPromote = 13;
@@ -779,7 +778,7 @@ public class FindITCase extends HostedTestBase {
 
     //DUPLICATE
     @Test
-    @KnownBug("IOD-8454")
+    @KnownBug({"IOD-8454","CCUK-3634"})
     public void testSearchQuotationMarks() {
         List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){
@@ -823,7 +822,6 @@ public class FindITCase extends HostedTestBase {
     }
 
     // TODO: testMultiWordSearchTermInResults
-
     @Test
     public void testRelatedConceptsInResults(){
         find.search("Tiger");
