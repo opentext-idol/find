@@ -2,6 +2,8 @@
 
 Find is an end-user search interface for [HPE IDOL](http://www8.hp.com/uk/en/software-solutions/information-data-analytics-idol/index.html) and [Haven OnDemand](https://www.havenondemand.com)
 
+A quick tour through the pages of this wiki can be found here: [[Getting Started]]
+
 # What license does it use?
 
 The MIT license - see https://github.com/hpautonomy/find/blob/master/LICENSE for details
