@@ -410,6 +410,10 @@ input.find-input {
     text-decoration: none;
 }
 
+.selector-list {
+    margin-bottom: 10px;
+}
+
 .main-results-container {
     border-bottom: 1px solid #F2F2F2;
     width: 100%;
