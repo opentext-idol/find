@@ -6,6 +6,7 @@
 define([
     'js-whatever/js/base-page',
     'backbone',
+    'find/app/model/query-text-model',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
     'find/app/model/saved-searches/saved-search-collection',
@@ -15,7 +16,7 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, InputView, TabbedSearchView, SavedSearchCollection, SavedSearchModel, router, vent, i18n, _, template) {
+], function(BasePage, Backbone, QueryTextModel, InputView, TabbedSearchView, SavedSearchCollection, SavedSearchModel, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -30,8 +31,12 @@ define([
         ServiceView: null,
 
         initialize: function() {
+            // TODO: Resolve queryTextModel/searchModel conflict
+            
             this.savedSearchCollection = new SavedSearchCollection();
             this.savedSearchCollection.fetch({remove: false});
+
+            this.queryTextModel = new QueryTextModel();
 
             // Model representing high level search page state
             this.searchModel = new Backbone.Model({
@@ -56,7 +61,16 @@ define([
                 }
             });
 
+            this.listenTo(this.queryTextModel, 'change', function() {
+                this.queryModel.set({
+                    autoCorrect: true,
+                    queryText: this.queryTextModel.makeQueryText()
+                });
+            });
+
             this.inputView = new InputView({
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel,
                 model: this.searchModel
             });
 
@@ -73,6 +87,13 @@ define([
                 } else {
                     this.searchModel.set('queryText', '');
                 }
+
+                var attributes = {
+                    inputText: text || '',
+                    relatedConcepts: concepts ? concepts.split('/') : []
+                };
+
+                this.queryTextModel.setInputText(attributes);
             }, this);
         },
 
@@ -89,6 +110,18 @@ define([
             }
         },
 
+        generateURL: function() {
+            var inputQuery = this.queryTextModel.get('inputText');
+
+            if (inputQuery){
+                inputQuery = encodeURIComponent(inputQuery) + '/';
+            }
+
+            var relatedConcepts = this.queryTextModel.get('relatedConcepts');
+
+            return inputQuery + relatedConcepts.join('/');
+        },
+
         // Run fancy animation from large central search bar to main search page
         expandedState: function() {
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
@@ -98,8 +131,8 @@ define([
             this.$('.hp-logo-footer').addClass('hidden');
 
             // TODO: somebody else needs to own this
-            $('.find-navbar').removeClass('reduced').find('>').show();
-            $('.container-fluid').removeClass('reduced');
+            $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').show();
+            $('.container-fluid, .find-logo-small').removeClass('reduced');
         },
 
         // Set view to initial state (large central search bar)
@@ -111,8 +144,8 @@ define([
             this.$('.hp-logo-footer').removeClass('hidden');
 
             // TODO: somebody else needs to own this
-            $('.find-navbar').addClass('reduced').find('>').hide();
-            $('.container-fluid').addClass('reduced');
+            $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
+            $('.container-fluid, .find-logo-small').addClass('reduced');
         }
     });
 });

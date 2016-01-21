@@ -123,7 +123,7 @@ html, body {
 }
 
 .bold {
-    font-weight: 600 !important;
+    font-family: Metric-Bold;
 }
 
 .uppercase {
@@ -350,6 +350,10 @@ html, body {
     height: 28px;
 }
 
+.find-logo-small.reduced {
+    display: none;
+}
+
 .find-logo-large {
     background-image: url('../img/Find_Logo_lge.png');
     width: 500px;
@@ -429,7 +433,7 @@ input.find-input {
 
 .result-container-control {
     color: #00b388;
-    font-size: 13px;
+    font-size: 14px;
     text-decoration: none;
 }
 
@@ -467,6 +471,7 @@ input.find-input {
 /* Search form type ahead */
 .find-form .twitter-typeahead {
     width: 100%;
+    margin-bottom: 5px;
 }
 .find-form .tt-menu {
     background: white;
@@ -488,6 +493,15 @@ input.find-input {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.navbar-username {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 150px;
+    right: 70px !important;
+    top: 11px !important;
 }
 
 /* fancy animation */
@@ -564,7 +578,7 @@ input.find-input {
     color: #00b388;
 }
 
-.results-container .result-message {
+.results-list-container .result-message {
     font-size: 28px;
     color: #425563;
 }
@@ -641,6 +655,22 @@ input.find-input {
 
 .search-text {
     font-weight: bold
+}
+
+.also-searching-for,
+.also-searching-for:hover {
+    color:#fff;
+    padding: 3px;
+    font-weight: lighter;
+}
+
+.selected-related-concepts {
+    padding: 2px;
+    font-size: 100%;
+    font-weight: normal;
+    color: #fff;
+    border: solid 1px #00b388;
+    border-radius: 0;
 }
 
 .reverse-animated-container .see-all-documents,
@@ -744,9 +774,10 @@ input:-moz-placeholder::before {
     height: 70px;
 }
 
-.find-navbar.reduced {
+.find-banner-container.reduced {
     background: #49B59B url('../img/Find_banner.png');
     height: 125px;
+    z-index: 1;
 }
 
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 , .popover a{
@@ -896,8 +927,17 @@ input:-moz-placeholder::before {
 
 /* Indexes View */
 .database-name,
-.category-name {
+.category-name,
+.toggle-more-text {
     padding: 0 8px; /* Same as table padding so it lines up */
+}
+
+.toggle-more {
+    border-bottom: none !important;
+}
+
+.databases-list .toggle-more i {
+    transform-origin: 20px;
 }
 
 .category-name,

@@ -36,7 +36,7 @@ define([
 
     return Backbone.View.extend({
         className: 'animated fadeIn',
-        seeMoreButtonTemplate: _.template('<tr class="toggle-more clickable"><td></td><td>+ <span class="toggle-more-text"><%-i18n["app.seeMore"]%></span></td></tr>'),
+        seeMoreButtonTemplate: _.template('<tr class="toggle-more clickable"><td><i class="hp-icon hp-chevron-right"></i></td><td> <span class="toggle-more-text"><%-i18n["app.seeMore"]%></span></td></tr>'),
 
         events: {
             'click .toggle-more': function(e) {
@@ -73,6 +73,8 @@ define([
             this.$('.toggle-more').removeClass('hide');
 
             this.collapsible.$('.toggle-more').toggleClass('more', !toggle);
+            this.collapsible.$('.toggle-more i').toggleClass('hp-chevron-up', !toggle);
+            this.collapsible.$('.toggle-more i').toggleClass('hp-chevron-right', toggle);
             this.collapsible.$('.toggle-more-text').text(toggle ? i18n["app.seeMore"] : i18n["app.seeLess"]);
         },
 

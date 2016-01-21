@@ -31,14 +31,6 @@ define([
             return _.any(attributes, function (attr) {
                 return _.has(this.changedAttributes(), attr);
             }, this);
-        },
-
-        refresh: function(queryText) {
-            if (this.get('queryText') === queryText) {
-                this.trigger('refresh');
-            } else {
-                this.set('queryText', queryText);
-            }
         }
     }, {
         Sort: Sort
