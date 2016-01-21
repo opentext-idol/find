@@ -2,6 +2,7 @@ package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.connections.Connector;
@@ -64,6 +65,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-202")
     public void testPieChartLink(){
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
         getElementFactory().getAnalyticsPage().indexSizeChart().click();

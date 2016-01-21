@@ -288,7 +288,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         try {
             newTitles = promotionsDetailPage.getPromotedTitles();
         } catch (final TimeoutException e) {
-            // CSA-1761
+            /* due to "Unknown Document" bug */
         }
         verifyThat(newTitles, hasItem(newPromotedDoc));
         verifyThat(newTitles, hasSize(1));
@@ -329,13 +329,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editReferencesPage.saveButton().click();
 
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-
-        new WebDriverWait(getDriver(),5).until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                return !promotionsDetailPage.getPromotedTitles().contains("Unknown Document");
-            }
-        });
 
         List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
 

@@ -483,6 +483,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     @Test
+    @KnownBug("IOD-8445")
     public void testCreateLargeDuplicateSynonymGroups() {
         List<String> synonyms;
         for (int outer=0; outer<10; outer++) {
@@ -498,6 +499,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     @Test
+    @KnownBug("IOD-8445")
     public void testCreateLargeDistinctSynonymGroups() {
         List<String> synonyms;
         for (int outer=0; outer<10; outer++) {

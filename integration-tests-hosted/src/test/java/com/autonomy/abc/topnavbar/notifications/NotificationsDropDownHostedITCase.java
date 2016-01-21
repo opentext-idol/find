@@ -1,6 +1,7 @@
 package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -121,7 +122,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
-    // CSA-2043
+    @KnownBug("CSA-2043")
     public void testConnectorsDeletionNotifications() {
         String connectorName = "deathcabyoucutie";
         WebConnector connector = new WebConnector("http://deathcabforcutie.com/", connectorName).withDuration(60);
@@ -142,7 +143,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
-    //CSA-1698 || CSA-1687
+    @KnownBug({"CSA-1698", "CSA-1687"})
     public void testUsernameShowsInNotifications() throws Exception {
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
         String devUsername = getElementFactory().getDevsPage().getUsernames().get(0);
@@ -203,7 +204,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
-    //CSA-1583
+    @KnownBug("CSA-1583")
     public void testNotificationsPersistOverPages(){
         KeywordService keywordService = getApplication().createKeywordService(getElementFactory());
 
