@@ -5,6 +5,7 @@ define([
     'find/app/model/document-model',
     'find/app/model/promotions-collection',
     'find/app/model/similar-documents-collection',
+    'find/app/page/search/sort-view',
     'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
@@ -22,7 +23,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'colorbox'
-], function(Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, popover,
+], function(Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, popover,
             viewClient, documentMimeTypes, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate,
             moment, i18n, i18n_indexes) {
@@ -115,6 +116,10 @@ define([
             this.listenTo(this.queryModel, 'change', this.refreshResults);
             this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
 
+            this.sortView = new SortView({
+                queryModel: this.queryModel
+            });
+            
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
         },
 
@@ -150,6 +155,8 @@ define([
             this.$loadingSpinner = $(this.loadingTemplate);
 
             this.$el.append(this.$loadingSpinner);
+
+            this.sortView.setElement(this.$('.sort-container')).render();
 
             /*promotions content content*/
             this.listenTo(this.promotionsCollection, 'add', function(model) {
