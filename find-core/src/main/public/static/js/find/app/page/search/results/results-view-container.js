@@ -14,7 +14,8 @@ define([
         selectorTemplate: _.template(selectorTemplate, {variable: 'data'}),
         contentContainerTemplate: _.template(contentContainerTemplate, {variable: 'data'}),
 
-        ResultsView: $.noop,
+        // Abstract
+        ResultsView: null,
 
         initialize: function(options) {
             this.views = [{
@@ -29,7 +30,7 @@ define([
                     indexesCollection: options.indexesCollection,
                     queryModel: options.queryModel
                 })
-            }, {
+            }/*, {
                 id: 'map',
                 selector: {
                     displayNameKey: 'map',
@@ -40,7 +41,7 @@ define([
                         this.$el.html('It works!')
                     }
                 }))()
-            }];
+            }*/];
         },
 
         render: function() {
