@@ -36,7 +36,10 @@ define([
 
     var mediaTypes = ['audio', 'video'];
 
-    var webTypes = ['text/html', 'text/xhtml'];
+    function isURL(reference) {
+        var r = /^https?:\/\//;
+        return r.test(reference);
+    }
 
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
@@ -314,10 +317,8 @@ define([
 
             $previewTrigger.colorbox(colorboxArgs);
 
-            var contentType = model.get('contentType');
-
             // web documents should open the original document in a new tab
-            if (contentType && _.contains(webTypes, contentType.toLowerCase())) {
+            if (isURL(reference)) {
                 $resultHeader.attr({
                     href: reference,
                     target: "_blank"
