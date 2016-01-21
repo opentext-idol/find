@@ -13,6 +13,7 @@ define([
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/sort-view',
+    'find/app/page/search/results/results-number-view',
     'find/app/page/search/spellcheck-view',
     'find/app/page/search/saved-searches-view',
     'find/app/page/search/filters/indexes/indexes-view',
@@ -22,7 +23,7 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SortView, SpellCheckView, SavedSearchesView,
+            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SortView, ResultsNumberView, SpellCheckView, SavedSearchesView,
             IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
 
@@ -62,6 +63,7 @@ define([
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
+            this.queryTextModel = options.queryTextModel;
 
             this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
 
@@ -89,7 +91,7 @@ define([
                 }
             }, this);
 
-            this.listenTo(this.queryModel, 'refresh', fetchEntities);
+            this.listenTo(this.queryTextModel, 'refresh', fetchEntities);
 
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
@@ -106,12 +108,13 @@ define([
             this.savedSearchesView = new SavedSearchesView({
                 savedSearchesCollection: new Backbone.Collection()
             });
-
+            
             this.resultsViewContainer = this.constructResultsViewContainer({
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel
             });
 
             // Left Views
@@ -139,11 +142,16 @@ define([
             this.relatedConceptsView = new RelatedConceptsView({
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel
             });
 
             this.sortView = new SortView({
                 queryModel: this.queryModel
+            });
+
+            this.resultsNumberView = new ResultsNumberView({
+                documentsCollection: this.documentsCollection
             });
 
             this.spellCheckView = new SpellCheckView({
@@ -170,6 +178,7 @@ define([
             this.relatedConceptsViewWrapper.render();
 
             this.sortView.setElement(this.$('.sort-container')).render();
+            this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
 

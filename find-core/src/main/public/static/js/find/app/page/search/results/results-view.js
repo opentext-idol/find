@@ -36,6 +36,8 @@ define([
 
     var mediaTypes = ['audio', 'video'];
 
+    var webTypes = ['text/html', 'text/xhtml'];
+
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
 
@@ -45,7 +47,7 @@ define([
                 this.maxResults = totalResults;
                 this.endOfResults = true;
             } else {
-                this.start = this.maxResults;
+                this.start += SCROLL_INCREMENT;
                 this.maxResults += SCROLL_INCREMENT;
                 if (this.maxResults === totalResults) {
                     this.endOfResults = true;
@@ -95,7 +97,7 @@ define([
             'click .entity-text': function(e) {
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
-                this.queryModel.set('queryText', queryText);
+                this.queryTextModel.setInputText({'inputText': queryText});
             }
         },
 
@@ -103,33 +105,37 @@ define([
             _.bindAll(this, 'handlePopover');
 
             this.queryModel = options.queryModel;
+            this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
 
             this.documentsCollection = options.documentsCollection;
             this.promotionsCollection = new PromotionsCollection();
 
-            this.listenTo(this.queryModel, 'change refresh', function() {
-                if (this.queryModel.get('queryText')) {
-                    if (!_.isEmpty(this.queryModel.get('indexes'))) {
-                        this.endOfResults = false;
-                        this.start = 1;
-                        this.maxResults = SCROLL_INCREMENT;
-                        this.loadData(false);
-                        this.$('.main-results-content .promotions').empty();
-
-                        this.$loadingSpinner.removeClass('hide');
-                        this.toggleError(false);
-                        this.$('.main-results-content .error .error-list').empty();
-                        this.$('.main-results-content .results').empty();
-                    } else {
-                        this.$loadingSpinner.addClass('hide');
-                        this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
-                    }
-                }
-            });
+            this.listenTo(this.queryModel, 'change', this.refreshResults);
+            this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
+        },
+
+        refreshResults: function() {
+            if (this.queryModel.get('queryText')) {
+                if (!_.isEmpty(this.queryModel.get('indexes'))) {
+                    this.endOfResults = false;
+                    this.start = 1;
+                    this.maxResults = SCROLL_INCREMENT;
+                    this.loadData(false);
+                    this.$('.main-results-content .promotions').empty();
+
+                    this.$loadingSpinner.removeClass('hide');
+                    this.toggleError(false);
+                    this.$('.main-results-content .error .error-list').empty();
+                    this.$('.main-results-content .results').empty();
+                } else {
+                    this.$loadingSpinner.addClass('hide');
+                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
+                }
+            }
         },
 
         clearLoadingSpinner: function() {
@@ -302,12 +308,27 @@ define([
                 this.$('.main-results-content .results').append($newResult);
             }
 
-            $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
+            var colorboxArgs = this.colorboxArguments({model: model, href: href});
+            var $previewTrigger = $newResult.find('.preview-documents-trigger');
+            var $resultHeader = $newResult.find('.result-header');
 
-            $newResult.find('.dots').click(function (e) {
-                e.preventDefault();
-                $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
-            });
+            $previewTrigger.colorbox(colorboxArgs);
+
+            var contentType = model.get('contentType');
+
+            // web documents should open the original document in a new tab
+            if (contentType && _.contains(webTypes, contentType.toLowerCase())) {
+                $resultHeader.attr({
+                    href: reference,
+                    target: "_blank"
+                });
+            } else {
+                $resultHeader.click(function(e) {
+                    e.preventDefault();
+
+                    $previewTrigger.colorbox(_.extend({open: true}, colorboxArgs));
+                });
+            }
 
             popover($newResult.find('.similar-documents-trigger'), 'focus', this.handlePopover);
         },
@@ -458,7 +479,8 @@ define([
                     max_date: this.queryModel.getIsoDate('maxDate'),
                     sort: this.queryModel.get('sort')
                 },
-                reset: false
+                reset: false,
+                remove: !infiniteScroll
             }, this);
 
             if (!infiniteScroll) {

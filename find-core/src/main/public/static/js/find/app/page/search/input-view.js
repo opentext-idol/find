@@ -9,19 +9,24 @@ define([
 ], function(Backbone, $, _, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
+    var relatedConceptsTemplate = _.template('<span class="selected-related-concepts" data-id="<%-concept%>"><%-concept%> ' +
+        '<i class="clickable hp-icon hp-fw hp-close concepts-remove-icon"></i>' +
+        '</span> ');
 
     return Backbone.View.extend({
         events: {
-            'input .find-input': function() {
-                this.search(this.$input.typeahead('val'), false);
-            },
             'submit .find-form': function(event) {
                 event.preventDefault();
-                this.search(this.$input.typeahead('val'), true);
+                this.search(this.$input.typeahead('val'));
                 this.$input.typeahead('close');
             },
             'typeahead:select': function() {
-                this.search(this.$input.typeahead('val'), false);
+                this.search(this.$input.typeahead('val'));
+            },
+            'click .concepts-remove-icon': function(e) {
+                var id = $(e.currentTarget).closest("span").attr('data-id');
+
+                this.removeRelatedConcept(id);
             },
             'click .see-all-documents': function() {
                 this.queryModel.set('queryText', '*');
@@ -30,17 +35,19 @@ define([
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
+            this.queryTextModel = options.queryTextModel;
 
             // For example, when clicking one of the suggested search links
             this.listenTo(this.queryModel, 'change:queryText', this.updateText);
 
-            this.search = _.debounce(function(query, refresh) {
-                if (refresh) {
-                    options.queryModel.refresh(query);
+            this.listenTo(this.queryTextModel, 'change:relatedConcepts', this.updateRelatedConcepts);
+
+            this.search = _.debounce(function(query) {
+                if (query === options.queryTextModel.get('inputText')) {
+                    options.queryTextModel.refresh();
                 } else {
-                    options.queryModel.set({
-                        autoCorrect: true,
-                        queryText: query
+                    options.queryTextModel.setInputText({
+                        inputText: query
                     });
                 }
             }, 500);
@@ -49,6 +56,8 @@ define([
         render: function() {
             this.$el.html(html);
             this.$input = this.$('.find-input');
+            this.$additionalConcepts = this.$('.additional-concepts');
+            this.$alsoSearchingFor = this.$('.also-searching-for');
 
             this.$input.typeahead({
                 hint: false,
@@ -72,13 +81,34 @@ define([
             });
 
             this.updateText();
+            this.updateRelatedConcepts();
         },
 
         updateText: function() {
             if (this.$input) {
-                this.$input.typeahead('val', this.queryModel.get('queryText'));
+                this.$input.typeahead('val', this.queryTextModel.get('inputText'));
                 this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.queryModel.get('queryText') == '*');
             }
+        },
+
+        updateRelatedConcepts: function() {
+            if (this.$additionalConcepts) {
+                this.$additionalConcepts.empty();
+
+                _.each(this.queryTextModel.get('relatedConcepts'), function(concept) {
+                    this.$additionalConcepts.append(relatedConceptsTemplate({
+                        concept: concept
+                    }))
+                }, this);
+
+                this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.queryTextModel.get('relatedConcepts')));
+            }
+        },
+
+        removeRelatedConcept: function(id){
+            var newConcepts = _.without(this.queryTextModel.get('relatedConcepts'), id);
+
+            this.queryTextModel.set('relatedConcepts', newConcepts);
         }
     });
 

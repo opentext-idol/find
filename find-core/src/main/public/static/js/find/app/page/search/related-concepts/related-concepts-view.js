@@ -62,14 +62,22 @@ define([
         events: {
             'click .entity-text' : function(e) {
                 var $target = $(e.target);
-                var oldQueryText = this.queryModel.get('queryText');
-                var queryText = oldQueryText.concat(" AND ").concat($target.attr('data-title'));
-                this.queryModel.set('queryText', queryText);
+                var queryText = $target.attr('data-title');
+
+                if (this.queryTextModel.get('inputText') === ''){
+                    this.queryTextModel.set('inputText', queryText);
+                } else {
+                    var concepts = this.queryTextModel.get('relatedConcepts');
+
+                    var newConcepts = _.union(concepts, [queryText]);
+                    this.queryTextModel.set('relatedConcepts', newConcepts);
+                }
             }
         },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
+            this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
 
