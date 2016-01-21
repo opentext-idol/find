@@ -103,6 +103,8 @@ define([
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',
+        'search.resultsView.list': 'List',
+        'search.resultsView.map': 'Map',
         'search.savedSearches': 'Saved searches',
         'search.savedSearches.confirm.deleteMessage': 'Are you sure you want to remove {0} saved search?',
         'search.savedSearches.confirm.deleteMessage.title': 'Delete saved search',
