@@ -226,7 +226,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	//Notification should drop down on creation of new keywords
 	@Test
-	@KnownBug("CSA-1447")
+	@KnownBug({"CSA-1447", "CSA-1882"})
 	public void testNotificationForCreatedBlacklistedTermAndSynonymGroup() throws InterruptedException {
 		List<String> notificationContents = new ArrayList<>();
 
@@ -623,6 +623,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	@KnownBug("CSA-1882")
 	public void testClickingOnNotifications() throws InterruptedException {
 		keywordService.addSynonymGroup("a b c d");
 

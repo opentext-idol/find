@@ -684,7 +684,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	// IOD-6855
+	@KnownBug("IOD-6855")
 	public void testFromDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResultTitle(1);
@@ -706,7 +706,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	// IOD-6855
+	@KnownBug("IOD-6855")
 	public void testUntilDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResultTitle(1);

@@ -779,6 +779,7 @@ public class FindITCase extends HostedTestBase {
 
     //DUPLICATE
     @Test
+    @KnownBug("IOD-8454")
     public void testSearchQuotationMarks() {
         List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){

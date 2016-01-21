@@ -67,7 +67,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     }
 
     @Test
-    //IOD-4785
+    @KnownBug("IOD-4785")
     public void testSecureWebConnector(){
         String email = "matthew.williamson@hpe.com";
 
