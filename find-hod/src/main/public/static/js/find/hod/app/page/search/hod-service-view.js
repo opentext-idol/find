@@ -9,30 +9,13 @@ define([
     'find/hod/app/page/search/filters/indexes/hod-indexes-view',
     'find/hod/app/page/search/results/hod-results-view'
 ], function(ServiceView, SearchFiltersCollection, IndexesView, ResultsView) {
+
     'use strict';
 
     return ServiceView.extend({
-        constructSearchFiltersCollection: function (queryModel, datesFilterModel, indexesCollection, selectedIndexesCollection, selectedParametricValues) {
-            return new SearchFiltersCollection([], {
-                queryModel: queryModel,
-                datesFilterModel: datesFilterModel,
-                indexesCollection: indexesCollection,
-                selectedIndexesCollection: selectedIndexesCollection,
-                selectedParametricValues: selectedParametricValues
-            });
-        },
-
-        constructIndexesView: function (queryModel, indexesCollection, selectedIndexesCollection) {
-            return new IndexesView({
-                queryModel: queryModel,
-                indexesCollection: indexesCollection,
-                selectedDatabasesCollection: selectedIndexesCollection
-            });
-        },
-
-        constructResultsView: function (models) {
-            return new ResultsView(models);
-        }
+        ResultsView: ResultsView,
+        IndexesView: IndexesView,
+        SearchFiltersCollection: SearchFiltersCollection
     });
 
 });

@@ -6,25 +6,27 @@ define([
     'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
+    'find/app/model/query-model',
     'find/app/model/search-filters-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
-    'find/app/page/search/results/results-view',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/sort-view',
     'find/app/page/search/spellcheck-view',
     'find/app/page/search/saved-searches/saved-search-options',
-    'find/app/page/search/filters/indexes/indexes-view',
     'find/app/util/collapsible',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView, SpellCheckView, SavedSearchOptions,
-            IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
-    "use strict";
+], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
+            ParametricView, FilterDisplayView, DateView, RelatedConceptsView, SortView, SpellCheckView, SavedSearchOptions,
+            Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
+
+    'use strict';
+
+    var html = _.template(template)({i18n: i18n});
 
     var collapseView = function (title, view) {
         return new Collapsible({
@@ -35,58 +37,60 @@ define([
     };
 
     return Backbone.View.extend({
-        template: _.template(template)({i18n: i18n}),
+        className: 'col-xs-12',
 
-        // may be overridden
-        constructSearchFiltersCollection: function (queryModel, datesFilterModel, indexesCollection, selectedIndexesCollection, selectedParametricValues) {
-            return new SearchFiltersCollection([], {
-                queryModel: queryModel,
-                datesFilterModel: datesFilterModel,
-                indexesCollection: indexesCollection,
-                selectedIndexesCollection: selectedIndexesCollection,
-                selectedParametricValues: selectedParametricValues
-            });
-        },
+        // May be overridden
+        SearchFiltersCollection: SearchFiltersCollection,
 
-        // will be overridden
-        constructIndexesView: function (queryModel, indexesCollection, selectedIndexesCollection) {
-            return new IndexesView({
-                queryModel: queryModel,
-                indexesCollection: indexesCollection,
-                selectedDatabasesCollection: selectedIndexesCollection
-            });
-        },
-
-        // will be overridden
-        constructResultsView: function (models) {
-            return new ResultsView(models);
-        },
+        // Abstract
+        ResultsView: null,
+        IndexesView: null,
 
         initialize: function(options) {
-            this.queryModel = options.queryModel;
+            this.searchModel = options.searchModel;
+
+            this.queryModel = new QueryModel({
+                queryText: this.model.get('queryText')
+            });
+
+            this.listenTo(this.searchModel, 'change:queryText', function(model, queryText) {
+                if (model.get('selectedSearchCid') === this.model.cid) {
+                    this.queryModel.set('queryText', queryText);
+                }
+            });
 
             this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
 
             this.documentsCollection = new DocumentsCollection();
             this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
-            this.selectedParametricValues = new SelectedParametricValuesCollection();
-            this.selectedIndexesCollection = new IndexesCollection();
 
-            this.filtersCollection = this.constructSearchFiltersCollection(this.queryModel, this.datesFilterModel, this.indexesCollection, this.selectedIndexesCollection, this.selectedParametricValues);
+            // TODO: Display name?
+            this.selectedParametricValues = new SelectedParametricValuesCollection(this.model.get('parametricValues'));
+
+            // TODO: Support HOD domains
+            // TODO: Check if the index still exists?
+            this.selectedIndexesCollection = new IndexesCollection(_.map(this.model.get('indexes'), function(indexName) {
+                return {name: indexName};
+            }));
+
+            this.filtersCollection = new this.SearchFiltersCollection([], {
+                queryModel: this.queryModel,
+                datesFilterModel: this.datesFilterModel,
+                indexesCollection: this.indexesCollection,
+                selectedIndexesCollection: this.selectedIndexesCollection,
+                selectedParametricValues: this.selectedParametricValues
+            });
 
             this.indexesCollection.fetch();
 
             var fetchEntities = _.bind(function() {
                 if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                     this.entityCollection.fetch({
-                        data: {
-                            queryText: this.queryModel.get('queryText'),
-                            databases: this.queryModel.get('indexes'),
-                            fieldText: this.queryModel.get('fieldText'),
+                        data: _.extend(this.queryModel.pick(['queryText', 'indexes', 'fieldText']), {
                             minDate: this.queryModel.getIsoDate('minDate'),
                             maxDate: this.queryModel.getIsoDate('maxDate')
-                        }
+                        })
                     });
                 }
             }, this);
@@ -109,7 +113,7 @@ define([
                 savedSearchCollection: this.savedSearchCollection
             });
 
-            this.resultsView = this.constructResultsView({
+            this.resultsView = new this.ResultsView({
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
@@ -130,7 +134,11 @@ define([
             });
 
             // Left Collapsed Views
-            this.indexesView = this.constructIndexesView(this.queryModel, this.indexesCollection, this.selectedIndexesCollection);
+            this.indexesView = new this.IndexesView({
+                queryModel: this.queryModel,
+                indexesCollection: this.indexesCollection,
+                selectedDatabasesCollection: this.selectedIndexesCollection
+            });
 
             this.dateView = new DateView({
                 queryModel: this.queryModel,
@@ -160,7 +168,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template);
+            this.$el.html(html);
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
@@ -178,7 +186,6 @@ define([
             this.resultsView.setElement(this.$('.results-container')).render();
 
             this.$('.container-toggle').on('click', this.containerToggle);
-
         },
 
         containerToggle: function(event) {

@@ -317,13 +317,14 @@ html, body {
     display: inline;
 }
 
-.saved-searches-container {
+.search-tabs-container {
     background-color: #efefef;
 }
 
-.saved-searches-container h4 {
+.search-tabs-container h4 {
     vertical-align: text-bottom; /* hax? */
 }
+
 .find {
     text-align: center;
     /* We need to be on top of the static navbar */

@@ -24,21 +24,19 @@ define([
                 this.search(this.$input.typeahead('val'), false);
             },
             'click .see-all-documents': function() {
-                this.queryModel.set('queryText', '*');
+                this.model.set('queryText', '*');
             }
         },
 
         initialize: function(options) {
-            this.queryModel = options.queryModel;
-
-            // For example, when clicking one of the suggested search links
-            this.listenTo(this.queryModel, 'change:queryText', this.updateText);
+            // Bind the model to the input; for example, when clicking one of the suggested search links
+            this.listenTo(this.model, 'change:queryText', this.updateText);
 
             this.search = _.debounce(function(query, refresh) {
                 if (refresh) {
-                    options.queryModel.refresh(query);
+                    options.model.refresh(query);
                 } else {
-                    options.queryModel.set({
+                    options.model.set({
                         autoCorrect: true,
                         queryText: query
                     });
@@ -76,8 +74,8 @@ define([
 
         updateText: function() {
             if (this.$input) {
-                this.$input.typeahead('val', this.queryModel.get('queryText'));
-                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.queryModel.get('queryText') == '*');
+                this.$input.typeahead('val', this.model.get('queryText'));
+                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.model.get('queryText') === '*');
             }
         }
     });

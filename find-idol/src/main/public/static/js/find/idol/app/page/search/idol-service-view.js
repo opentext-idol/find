@@ -8,20 +8,12 @@ define([
     'find/idol/app/page/search/filters/indexes/idol-indexes-view',
     'find/idol/app/page/search/results/idol-results-view'
 ], function(ServiceView, IndexesView, ResultsView) {
+
     'use strict';
 
     return ServiceView.extend({
-        constructIndexesView: function (queryModel, indexesCollection, selectedIndexesCollection) {
-            return new IndexesView({
-                queryModel: queryModel,
-                indexesCollection: indexesCollection,
-                selectedDatabasesCollection: selectedIndexesCollection
-            });
-        },
-
-        constructResultsView: function (models) {
-            return new ResultsView(models);
-        }
+        ResultsView: ResultsView,
+        IndexesView: IndexesView
     });
 
 });

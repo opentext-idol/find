@@ -5,17 +5,19 @@
 
 define([
     'js-whatever/js/base-page',
-    'find/app/model/query-model',
+    'backbone',
     'find/app/page/search/input-view',
-    'find/app/page/search/service-view',
-    'find/app/page/search/saved-searches/saved-searches-tabs-view',
+    'find/app/page/search/tabbed-search-view',
     'find/app/model/saved-searches/saved-search-collection',
-    'js-whatever/js/list-view',
+    'find/app/model/saved-searches/saved-search-model',
     'find/app/router',
     'find/app/vent',
+    'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, QueryModel, InputView, ServiceView, SavedSearchesTabsView, SavedSearchCollection, ListView, router, vent, _, template) {
+], function(BasePage, Backbone, InputView, TabbedSearchView, SavedSearchCollection, SavedSearchModel, router, vent, i18n, _, template) {
+
+    'use strict';
 
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
     var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
@@ -24,38 +26,52 @@ define([
         className: 'search-page',
         template: _.template(template),
 
-        // Overridden
-        ServiceView: ServiceView,
+        // Abstract
+        ServiceView: null,
 
         initialize: function() {
-            this.queryModel = new QueryModel();
-            this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
-
             this.savedSearchCollection = new SavedSearchCollection();
-            this.savedSearchCollection.fetch();
+            this.savedSearchCollection.fetch({remove: false});
 
-            this.inputView = new InputView({
-                queryModel: this.queryModel
+            // Model representing high level search page state
+            this.searchModel = new Backbone.Model({
+                queryText: '',
+                selectedSearchCid: null
             });
 
-            this.savedSearchesTabsView = new SavedSearchesTabsView({
-                savedSearchesCollection: this.savedSearchCollection
-            });
+            this.listenTo(this.searchModel, 'change:queryText', function(model, queryText) {
+                // Bind search model to routing
+                vent.navigate('find/search/' + encodeURIComponent(queryText), {trigger: false});
 
-            this.listView = new ListView({
-                ItemView: this.ServiceView,
-                collection: this.savedSearchCollection,
-                itemOptions: {
-                    queryModel: this.queryModel,
-                    tagName: 'li' //TODO: change tag name and template
+                // Create a tab if the user has run a search but has no open tabs
+                if (queryText && this.searchModel.get('selectedSearchCid') === null) {
+                    var newSearch = new SavedSearchModel({
+                        queryText: queryText,
+                        title: i18n['search.newSearch']
+                    });
+
+                    this.savedSearchCollection.add(newSearch);
+                    this.searchModel.set('selectedSearchCid', newSearch.cid);
+                    this.expandedState();
                 }
             });
 
+            this.inputView = new InputView({
+                model: this.searchModel
+            });
+
+            this.tabView = new TabbedSearchView({
+                collection: this.savedSearchCollection,
+                model: this.searchModel,
+                ServiceView: this.ServiceView
+            });
+
+            // Bind routing to search model
             router.on('route:search', function(text) {
                 if (text) {
-                    this.queryModel.set('queryText', text);
+                    this.searchModel.set('queryText', text);
                 } else {
-                    this.queryModel.set('queryText', '');
+                    this.searchModel.set('queryText', '');
                 }
             }, this);
         },
@@ -64,40 +80,39 @@ define([
             this.$el.html(this.template);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
-            this.savedSearchesTabsView.setElement(this.$('.saved-searches-tabs-view-container')).render();
-            this.listView.setElement(this.savedSearchesTabsView.$('.saved-searches-list')).render();
+            this.tabView.setElement(this.$('.tabbed-search-container')).render();
 
-            this.reducedState();
+            if (this.searchModel.get('selectedSearchCid') === null) {
+                this.reducedState();
+            } else {
+                this.expandedState();
+            }
         },
 
+        // Run fancy animation from large central search bar to main search page
         expandedState: function() {
-            /*fancy animation*/
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
-            this.$('.saved-searches-tabs-view-container').show();
+            this.$('.tabbed-search-row').show();
             this.$('.app-logo').hide();
             this.$('.hp-logo-footer').addClass('hidden');
 
             // TODO: somebody else needs to own this
             $('.find-navbar').removeClass('reduced').find('>').show();
             $('.container-fluid').removeClass('reduced');
-
-            vent.navigate('find/search/' + encodeURIComponent(this.queryModel.get('queryText')), {trigger: false});
         },
 
+        // Set view to initial state (large central search bar)
         reducedState: function() {
-            /*fancy reverse animation*/
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
-            this.$('.saved-searches-tabs-view-container').hide();
+            this.$('.tabbed-search-row').hide();
             this.$('.app-logo').show();
             this.$('.hp-logo-footer').removeClass('hidden');
 
             // TODO: somebody else needs to own this
             $('.find-navbar').addClass('reduced').find('>').hide();
             $('.container-fluid').addClass('reduced');
-
-            vent.navigate('find/search', {trigger: false});
         }
     });
 });

@@ -13,8 +13,8 @@ define([
 
     return Backbone.Model.extend({
         defaults: {
-            queryText: '',
-            title: '',
+            queryText: null,
+            title: null,
             indexes: [],
             parametricValues: []
         },
