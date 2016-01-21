@@ -22,7 +22,7 @@ define([
                     okText: i18n['app.delete'],
                     okClass: 'btn-danger',
                     okIcon: '',
-                    message: i18n['search.savedSearches.confirm.deleteMessage'],
+                    message: i18n['search.savedSearches.confirm.deleteMessage'](this.model.get('title')),
                     title: i18n['search.savedSearches.confirm.deleteMessage.title'],
                     hiddenEvent: 'hidden.bs.modal',
                     okHandler: _.bind(function() {
@@ -41,7 +41,7 @@ define([
                     okText: i18n['app.reset'],
                     okClass: 'btn-danger',
                     okIcon: '',
-                    message: i18n['search.savedSearches.confirm.resetMessage'],
+                    message: i18n['search.savedSearches.confirm.resetMessage'](this.model.get('title')),
                     title: i18n['search.savedSearches.confirm.resetMessage.title'],
                     hiddenEvent: 'hidden.bs.modal',
                     okHandler: _.bind(function() {
