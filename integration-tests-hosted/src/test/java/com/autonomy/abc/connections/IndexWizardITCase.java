@@ -2,6 +2,7 @@ package com.autonomy.abc.connections;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -82,7 +83,7 @@ public class IndexWizardITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-2042 - test index name with character length grater than 100
+    @KnownBug("CSA-2042")
     public void testIndexNameFieldMaxCharacterLength(){
         Index index = new Index("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
         index.makeWizard(createNewIndexPage).getCurrentStep().apply();
@@ -93,7 +94,7 @@ public class IndexWizardITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-2042 - test index display name with character length grater than 100
+    @KnownBug("CSA-2042")
     public void testDisplayNameFieldMaxCharacterLength(){
         Index index = new Index("validname","abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
         index.makeWizard(createNewIndexPage).getCurrentStep().apply();
@@ -104,7 +105,7 @@ public class IndexWizardITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1616
+    @KnownBug("CSA-1616")
     public void testUppercaseFieldNames() {
         Index index = new Index("name");
 

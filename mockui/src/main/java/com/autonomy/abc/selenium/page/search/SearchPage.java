@@ -147,6 +147,11 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		if (showMorePromotionsButton().isDisplayed()) {
 			showMorePromotions();
 		}
+
+		if (fullList && ElementUtil.isEnabled(promotionPaginationButton(Pagination.FIRST))) {
+			ElementUtil.scrollIntoViewAndClick(promotionPaginationButton(Pagination.FIRST), getDriver());
+		}
+
 		promotionsList.addAll(getVisiblePromotedDocumentTitles());
 
 		if (fullList) {
@@ -193,7 +198,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public void switchPromotionPage(Pagination pagination) {
-		promotionPaginationButton(pagination).click();
+		ElementUtil.scrollIntoViewAndClick(promotionPaginationButton(pagination), getDriver());
 		waitForPromotionsLoadIndicatorToDisappear();
 	}
 

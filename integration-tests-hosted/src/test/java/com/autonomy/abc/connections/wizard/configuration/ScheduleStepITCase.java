@@ -2,6 +2,7 @@ package com.autonomy.abc.connections.wizard.configuration;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
@@ -54,7 +55,7 @@ public class ScheduleStepITCase extends ConnectorTypeStepBase {
     }
 
     @Test
-    //CSA1717
+    @KnownBug("CSA-1717")
     public void testConnectionSchedulingValidation() {
         List<WebElement> buttons = connectorConfigStep.getAllButtons();
 

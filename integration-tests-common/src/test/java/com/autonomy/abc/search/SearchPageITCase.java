@@ -2,6 +2,7 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
@@ -620,8 +621,8 @@ public class SearchPageITCase extends ABCTestBase {
 		return searchPage.getHeadingResultsCount();
 	}
 
-	// CSA-1818
 	@Test
+	@KnownBug("CSA-1818")
 	public void testSearchResultsCount() {
 		searchPage.selectLanguage(Language.ENGLISH);
 		for (final String query : Arrays.asList("dog", "chips", "dinosaur", "melon", "art")) {
@@ -683,7 +684,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	// IOD-6855
+	@KnownBug("IOD-6855")
 	public void testFromDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResultTitle(1);
@@ -705,7 +706,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	// IOD-6855
+	@KnownBug("IOD-6855")
 	public void testUntilDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResultTitle(1);
@@ -888,8 +889,8 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Related concepts have changed on second search of same query text", englishConcepts, contains(secondEnglishConcepts.toArray()));
 	}
 
-	// CSA-1819
 	@Test
+	@KnownBug("CSA-1819")
 	public void testNavigateToLastPageOfSearchResultsAndEditUrlToTryAndNavigateFurther() {
         search("nice");
 		searchPage.switchResultsPage(Pagination.LAST);
@@ -1015,7 +1016,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CSA-1708
+	@KnownBug("CSA-1708")
 	public void testParametricLabelsNotUndefined(){
 		searchService.search(new SearchQuery("simpsons")
 				.withFilter(new IndexFilter(Index.DEFAULT))
@@ -1027,7 +1028,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
-	//CSA-1629
+	@KnownBug("CSA-1629")
 	public void testPinToPositionPagination(){
 		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
 

@@ -2,6 +2,7 @@ package com.autonomy.abc.connections;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -39,7 +40,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1736
+    @KnownBug("CSA-1736")
     public void testWebConnectorURLOpensInNewTab() throws InterruptedException {
         String connectorURL = "https://www.google.co.uk";
         connector = new WebConnector(connectorURL,"google").withDepth(1).withDuration(60);
@@ -68,7 +69,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1470
+    @KnownBug({"CSA-1470","CSA-2053"})
     public void testCancellingConnectorScheduling(){
         connector = new WebConnector("http://www.google.co.uk","google").withDuration(60);
 
@@ -79,7 +80,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1469
+    @KnownBug("CSA-1469")
     public void testEditConnectorWithNoIndex(){
         IndexService indexService = getApplication().createIndexService(getElementFactory());
         Index indexOne = new Index("one");

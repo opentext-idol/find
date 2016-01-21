@@ -42,7 +42,7 @@ public class LabelBox implements Removable {
     public void removeAndWait(int timeout) {
         removeAsync();
         // the element itself can go stale instantly - must instead use the parent
-        new WebDriverWait(element.getDriver(), timeout).until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("../*[contains(@class, 'fa-refresh')]")));
+        new WebDriverWait(element.getDriver(), timeout).until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("..//*[contains(@class, 'fa-refresh')]")));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.autonomy.abc.connections;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.ConnectionStatistics;
 import com.autonomy.abc.selenium.connections.Credentials;
@@ -66,7 +67,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     }
 
     @Test
-    //IOD-4785
+    @KnownBug("IOD-4785")
     public void testSecureWebConnector(){
         String email = "matthew.williamson@hpe.com";
 
@@ -83,7 +84,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1795
+    @KnownBug("CSA-1795")
     public void testBackButton(){
         WebConnector webConnector = new WebConnector("http://www.bbc.co.uk","bbc").withDuration(60);
 
@@ -110,7 +111,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1798
+    @KnownBug("CSA-1798")
     public void testCanSelectLastIndex(){
         IndexService indexService = getApplication().createIndexService(getElementFactory());
         ConnectorIndexStepTab connectorIndexStepTab = null;
@@ -159,7 +160,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1679
+    @KnownBug({"CSA-1679","CSA-2053"})
     public void testCreateFromIndexAutoSelectsIndex(){
         Index index = new Index("index");
         IndexService indexService = getApplication().createIndexService(getElementFactory());

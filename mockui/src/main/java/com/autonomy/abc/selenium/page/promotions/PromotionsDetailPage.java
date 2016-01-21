@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.page.promotions;
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -27,20 +26,6 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         new WebDriverWait(getDriver(), 10)
                 .withMessage("Failed to load Promotions Detail Page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("promotion-match-terms")));
-    }
-
-    public Dropdown editMenu() {
-        return new Dropdown(findElement(By.className("extra-functions")), getDriver());
-    }
-
-    @Deprecated
-    public void delete() {
-        System.err.println("PromotionDetailsPage.delete no longer works, see CSA-1619");
-        final Dropdown editMenu = editMenu();
-        editMenu.open();
-        editMenu.getItem("Delete").click();
-        final ModalView deleteModal = ModalView.getVisibleModalView(getDriver());
-        deleteModal.findElement(By.cssSelector(".btn-danger")).click();
     }
 
     public Editable promotionTitle() {
@@ -118,39 +103,41 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         return findElement(By.className("add-more-promoted-documents"));
     }
 
-    public List<WebElement> promotedList() {
-        return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
-    }
-
     public List<WebElement> dynamicPromotedList(){
         return new WebDriverWait(getDriver(),10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".query-search-results div:not(.hide)>h3")));
     }
 
     public List<String> getDynamicPromotedTitles(){
+        waitForDynamicLoadIndicatorToDisappear();
+        final List<String> docTitles = new ArrayList<>(getVisibleDynamicPromotedTitles());
+
+        while (ElementUtil.isEnabled(promotedQueryPaginationButton(Pagination.NEXT))) {
+            switchPromotedQueryPage(Pagination.NEXT);
+            docTitles.addAll(getVisibleDynamicPromotedTitles());
+        }
+
+        return docTitles;
+    }
+
+    private List<String> getVisibleDynamicPromotedTitles() {
         final List<String> docTitles = new ArrayList<>();
 
-        do {
-            for (final WebElement docTitle : dynamicPromotedList()) {
-                if(!docTitle.getText().equals("Search for something...")) {
-                    docTitles.add(docTitle.getText());
-                }
+        for (final WebElement docTitle : dynamicPromotedList()) {
+            if(!docTitle.getText().equals("Search for something...")) {
+                docTitles.add(docTitle.getText());
             }
-        } while(clickForwardButton());
+        }
 
         return docTitles;
     }
 
     public List<String> getPromotedTitles() {
-        final List<String> docTitles = new ArrayList<>();
+        waitForPromotedTitlesToLoad();
+        return ElementUtil.getTexts(promotedList());
+    }
 
-        do {
-            waitForPromotedTitlesToLoad();
-            for (final WebElement docTitle : promotedList()) {
-                docTitles.add(docTitle.getText());
-            }
-        } while(clickForwardButton());
-
-        return docTitles;
+    private List<WebElement> promotedList() {
+        return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".promoted-documents-list h3")));
     }
 
     private void waitForPromotedTitlesToLoad() {
@@ -163,22 +150,24 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
         }));
     }
 
-    private WebElement forwardButton(){
-        return findElement(By.cssSelector(".query-search-results .fa-angle-right"));
+    private WebElement promotedQueryPaginationButton(Pagination pagination) {
+        return pagination.findInside(promotedQueryPagination());
     }
 
-    private boolean clickForwardButton(){
-        try {
-            if(!forwardButton().findElement(By.xpath(".//../..")).getAttribute("class").contains("disabled")) {
-                forwardButton().click();
-                Waits.loadOrFadeWait();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
+    private WebElement promotedQueryPagination() {
+        return findElement(By.cssSelector(".query-search-results .pagination-nav"));
+    }
+
+    private void switchPromotedQueryPage(Pagination pagination) {
+        promotedQueryPaginationButton(pagination).click();
+        waitForDynamicLoadIndicatorToDisappear();
+    }
+
+    private void waitForDynamicLoadIndicatorToDisappear() {
+        Waits.loadOrFadeWait();
+        new WebDriverWait(getDriver(), 30)
+                .withMessage("Dynamic promoted results didn't load")
+                .until(ExpectedConditions.invisibilityOfElementLocated(By.className("fa-spin")));
     }
 
     public WebElement promotedDocument(final String title) {

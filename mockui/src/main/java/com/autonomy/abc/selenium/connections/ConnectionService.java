@@ -50,7 +50,7 @@ public class ConnectionService extends ServiceBase<HSOElementFactory> {
         goToConnections();
         connectionsPage.newConnectionButton().click();
         connector.makeWizard(getElementFactory().getNewConnectionPage()).apply();
-        new WebDriverWait(getDriver(), 20)
+        new WebDriverWait(getDriver(), 30)
                 .withMessage("starting connection")
                 .until(GritterNotice.notificationContaining("started"));
         LOGGER.info("Connection '" + connector.getName() + "' started");
@@ -169,7 +169,7 @@ public class ConnectionService extends ServiceBase<HSOElementFactory> {
         Waits.loadOrFadeWait();
         newConnectionPage.finishButton().click();
 
-        new WebDriverWait(getDriver(), 10).until(GritterNotice.notificationContaining("Connector " + connector.getName() + " schedule has been cancelled successfully"));
+        new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationContaining("Connector " + connector.getName() + " schedule has been cancelled successfully"));
 
         return connectionsDetailPage;
     }

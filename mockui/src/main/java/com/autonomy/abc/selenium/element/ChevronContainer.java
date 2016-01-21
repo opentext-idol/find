@@ -44,10 +44,6 @@ public class ChevronContainer implements Collapsible {
     }
 
     private WebElement chevronIcon() {
-        try {
-            return container.findElement(By.cssSelector("[data-toggle='collapse']"));
-        } catch (NoSuchElementException e) {
-            return container.findElement(By.className("rotating-chevron"));
-        }
+        return container.findElement(By.cssSelector("[data-toggle='collapse'], .rotating-chevron"));
     }
 }

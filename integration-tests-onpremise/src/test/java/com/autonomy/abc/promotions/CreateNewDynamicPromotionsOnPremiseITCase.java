@@ -113,53 +113,24 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 	@Test
 	public void testTwoPromotionTypesForSameTrigger() {
-        searchPage = searchService.search("paris");
-        int promotionResultsCount = searchPage.getHeadingResultsCount();
-        searchPage.promoteThisQueryButton().click();
-		Waits.loadOrFadeWait();
+		DynamicPromotion promotion1 = new DynamicPromotion(Promotion.SpotlightType.SPONSORED, "cat");
+		DynamicPromotion promotion2 = new DynamicPromotion(Promotion.SpotlightType.HOTWIRE, "cat");
+		SearchQuery query1 = new SearchQuery("paris");
+		SearchQuery query2 = new SearchQuery("rome");
 
-		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		dynamicPromotionsPage.spotlightType(Promotion.SpotlightType.SPONSORED).click();
-		dynamicPromotionsPage.continueButton().click();
-		Waits.loadOrFadeWait();
-		if (getConfig().getType().equals(ApplicationType.HOSTED)) {
-			dynamicPromotionsPage.continueButton().click();
-			Waits.loadOrFadeWait();
-		}
+        searchPage = searchService.search(query1);
+        int expected = searchPage.getHeadingResultsCount();
 
-        TriggerForm triggerForm = dynamicPromotionsPage.getTriggerForm();
+		promotionService.setUpPromotion(promotion1, query1, 0);
+		searchPage = getElementFactory().getSearchPage();
+		assertThat(searchPage.getPromotedDocumentTitles(true), hasSize(expected));
 
-        triggerForm.addTrigger("cat");
-        assertThat(triggerForm.getNumberOfTriggers(), is(1));
-        assertThat(triggerForm.getTriggersAsStrings(), hasItem("cat"));
-        dynamicPromotionsPage.finishButton().click();
-        Waits.loadOrFadeWait();
+		searchPage = searchService.search(query2);
+		expected += searchPage.getHeadingResultsCount();
 
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-		int list = searchPage.getPromotedDocumentTitles(true).size();
-		Waits.loadOrFadeWait();
-		assertThat("Wrong number of promoted documents displayed", promotionResultsCount, is(list));
-
-        searchPage = searchService.search("rome");
-        promotionResultsCount = promotionResultsCount + searchPage.getHeadingResultsCount();
-		searchPage.promoteThisQueryButton().click();
-		Waits.loadOrFadeWait();
-
-		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-		dynamicPromotionsPage.spotlightType(Promotion.SpotlightType.HOTWIRE).click();
-		dynamicPromotionsPage.continueButton().click();
-		Waits.loadOrFadeWait();
-
-        triggerForm.addTrigger("cat");
-        assertThat(triggerForm.getNumberOfTriggers(), is(1));
-        assertThat(triggerForm.getTriggersAsStrings(), hasItem("cat"));
-        dynamicPromotionsPage.finishButton().click();
-        Waits.loadOrFadeWait();
-
-		new WebDriverWait(getDriver(), 8).until(ExpectedConditions.visibilityOf(searchPage.promotionsSummary()));
-		list = searchPage.getPromotedDocumentTitles(true).size();
-		Waits.loadOrFadeWait();
-		assertThat("Wrong number of promoted documents displayed", promotionResultsCount, is(list));
+		promotionService.setUpPromotion(promotion2, query2, 0);
+		searchPage = getElementFactory().getSearchPage();
+		assertThat(searchPage.getPromotedDocumentTitles(true), hasSize(expected));
 	}
 
 	@Test

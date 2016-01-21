@@ -2,6 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.FindParametricCheckbox;
 import com.autonomy.abc.selenium.application.FindApplication;
 import com.autonomy.abc.selenium.application.HSODFindApplication;
@@ -61,7 +62,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 public class FindITCase extends HostedTestBase {
     private Find find;
     private FindResultsPage results;
-    private final String domain = (getConfig().getWebappUrl().contains(".com")) ? "2b7725de-bd04-4341-a4a0-5754f0655de8" : "";
     private final Matcher<String> noDocs = containsString(Errors.Search.NO_RESULTS);
     private PromotionService<?> promotionService;
     private KeywordService keywordService;
@@ -105,7 +105,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testHtmlContentTypeValue(){
         find.search("red star");
-        find.filterBy(new ParametricFilter("Content Type","TEXT/HTML"));
+        find.filterBy(new ParametricFilter("Content Type", "TEXT/HTML"));
         for(String type : results.getDisplayedDocumentsDocumentTypes()){
             assertThat(type,containsString("html"));
         }
@@ -158,12 +158,12 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    public void testUnselectingContentTypeQuicklyDoesNotLeadToError()  {
+    public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         find.search("wolf");
-        FindParametricCheckbox contentTypeCheckbox = results.parametricTypeCheckbox("Content Type", "TEXT/HTML");
-        contentTypeCheckbox.check();
+        results.parametricTypeCheckbox("Content Type", "TEXT/HTML").check();
         Waits.loadOrFadeWait();
-        contentTypeCheckbox.uncheck();
+        results.parametricTypeCheckbox("Content Type", "TEXT/HTML").uncheck();
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
@@ -228,7 +228,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    // CCUK-3498
+    @KnownBug("CCUK-3498")
     public void testRelatedConceptsHover(){
         find.search("Find");
         WebElement popover = results.hoverOverRelatedConcept(0);
@@ -335,7 +335,6 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
-    //THIS
     @Test
     public void testDynamicPromotions(){
         int resultsToPromote = 13;
@@ -375,13 +374,10 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     //TODO update this based on CSA-1657
+    @KnownBug("CSA-1767 - footer not hidden properly")
     public void testMetadata(){
         find.search("stars");
         find.filterBy(new IndexFilter(Index.DEFAULT));
-
-        results.searchResultTitle(1).click();
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
-        String domain = docViewer.getDomain();
 
         for(WebElement searchResult : results.results()){
             String url = searchResult.findElement(By.className("document-reference")).getText();
@@ -392,7 +388,9 @@ public class FindITCase extends HostedTestBase {
                 fail("Could not click on title - most likely CSA-1767");
             }
 
-            assertThat(docViewer.getDomain(), is(domain));
+            DocumentViewer docViewer = DocumentViewer.make(getDriver());
+
+            assertThat(docViewer.getDomain(), is(getCurrentUser().getDomain()));
             assertThat(docViewer.getIndex(), not(isEmptyOrNullString()));
             assertThat(docViewer.getReference(), is(url));
             docViewer.close();
@@ -506,7 +504,7 @@ public class FindITCase extends HostedTestBase {
         final TokenProxy tokenProxy = authenticationService.authenticateApplication(
                 new ApiKey("098b8420-f85f-4164-b8a8-42263e9405a1"),
                 "733d64e8-41f7-4c46-a1c8-60d083255159",
-                domain,
+                getCurrentUser().getDomain(),
                 TokenType.simple
         );
 
@@ -516,7 +514,7 @@ public class FindITCase extends HostedTestBase {
 
         for (String indexName : find.getPrivateIndexNames()) {
             RetrieveIndexFieldsResponse retrieveIndexFieldsResponse = retrieveIndexFieldsService.retrieveIndexFields(tokenProxy,
-                    new ResourceIdentifier(domain, indexName), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
+                    new ResourceIdentifier(getCurrentUser().getDomain(), indexName), new RetrieveIndexFieldsRequestBuilder().setFieldType(FieldType.parametric));
 
             parametricFields.addAll(retrieveIndexFieldsResponse.getAllFields());
         }
@@ -531,6 +529,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-1767 - footer not hidden properly")
     public void testViewDocumentsOpenFromFind(){
         find.search("Review");
 
@@ -765,63 +764,6 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
-    /*@Test
-    public void testIdolSearchTypes() {
-        find.search("leg");
-
-        int initialSearchCount = find.countSearchResults();
-        find.search("leg[2:2]");
-        Waits.loadOrFadeWait();
-        assertThat("Failed with the following search term: leg[2:2]  Search count should have reduced on initial search 'leg'",
-                initialSearchCount, greaterThan(find.countSearchResults()));
-
-        search("red");
-        searchPage.Waits.loadOrFadeWait();
-        initialSearchCount = searchPage.countSearchResults();
-        search("red star");
-        searchPage.Waits.loadOrFadeWait();
-        final int secondSearchCount = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: red star  Search count should have increased on initial search: red",
-                initialSearchCount, lessThan(secondSearchCount));
-
-        search("\"red star\"");
-        searchPage.Waits.loadOrFadeWait();
-        final int thirdSearchCount = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: '\"red star\"'  Search count should have reduced on initial search: red star",
-                secondSearchCount, greaterThan(thirdSearchCount));
-
-        search("red NOT star");
-        searchPage.Waits.loadOrFadeWait();
-        final int redNotStar = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: red NOT star  Search count should have reduced on initial search: red",
-                initialSearchCount, greaterThan(redNotStar));
-
-        search("star");
-        searchPage.Waits.loadOrFadeWait();
-        final int star = searchPage.countSearchResults();
-
-        search("star NOT red");
-        searchPage.Waits.loadOrFadeWait();
-        final int starNotRed = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: star NOT red  Search count should have reduced on initial search: star",
-                star, greaterThan(starNotRed));
-
-        search("red OR star");
-        searchPage.Waits.loadOrFadeWait();
-        assertThat("Failed with the following search term: red OR star  Search count should be the same as initial search: red star",
-                secondSearchCount, CoreMatchers.is(searchPage.countSearchResults()));
-
-        search("red AND star");
-        searchPage.Waits.loadOrFadeWait();
-        final int fourthSearchCount = searchPage.countSearchResults();
-        assertThat("Failed with the following search term: red AND star  Search count should have reduced on initial search: red star",
-                secondSearchCount, greaterThan(fourthSearchCount));
-        assertThat("Failed with the following search term: red AND star  Search count should have increased on initial search: \"red star\"",
-                thirdSearchCount, lessThan(fourthSearchCount));
-        assertThat("Sum of 'A NOT B', 'B NOT A' and 'A AND B' should equal 'A OR B' where A is: red  and B is: star",
-                fourthSearchCount + redNotStar + starNotRed, CoreMatchers.is(secondSearchCount));
-    }*/
-
     //DUPLICATE
     @Test
     public void testSearchParentheses() {
@@ -836,6 +778,7 @@ public class FindITCase extends HostedTestBase {
 
     //DUPLICATE
     @Test
+    @KnownBug({"IOD-8454","CCUK-3634"})
     public void testSearchQuotationMarks() {
         List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){
@@ -852,7 +795,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1577
+    @KnownBug("CSA-1577")
     public void testClickingCustomDateFilterDoesNotRefreshResults(){
         find.search("O Captain! My Captain!");
         // may not happen the first time
@@ -862,14 +805,14 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
-    // CSA-1665
     @Test
+    @KnownBug("CSA-1665")
     public void testSearchTermInResults(){
         String searchTerm = "Tiger";
 
         find.search(searchTerm);
 
-        for(WebElement searchElement : getDriver().findElements(By.xpath("//*[not(self::h4) and contains(text(),'"+searchTerm+"')]"))){
+        for(WebElement searchElement : getDriver().findElements(By.xpath("//*[not(self::h4) and contains(text(),'" + searchTerm + "')]"))){
             if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText(), containsString(searchTerm));
             }
@@ -879,7 +822,6 @@ public class FindITCase extends HostedTestBase {
     }
 
     // TODO: testMultiWordSearchTermInResults
-
     @Test
     public void testRelatedConceptsInResults(){
         find.search("Tiger");
@@ -917,7 +859,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA1630
+    @KnownBug("CSA-1630")
     public void testAllPromotedDocumentsHaveTitles(){
         searchWindow.activate();
 
@@ -941,7 +883,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-1763
+    @KnownBug("CSA-1763")
     public void testPublicIndexesNotSelectedByDefault(){
         find.search("Marina and the Diamonds");
 

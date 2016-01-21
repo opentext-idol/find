@@ -37,6 +37,7 @@ public class ConnectionToSearchITCase extends HostedTestBase {
 
     public ConnectionToSearchITCase(TestConfig config) {
         super(config);
+        setInitialUser(config.getUser("index_tests"));
     }
 
     @Before

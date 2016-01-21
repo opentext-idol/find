@@ -2,6 +2,7 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -138,8 +139,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
     }
 
-    // CSA-1755
     @Test
+    @KnownBug("CSA-1755")
     public void testRefreshEditPromotionPage() throws InterruptedException {
         String originalDoc = setUpPromotion("Luke", "jedi master", 1).get(0);
         verifyRefreshing();
@@ -258,6 +259,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     @Test
+    @KnownBug("CSA-1761")
     public void testCheckboxUpdatesWithBucketDelete() {
         setUpPromotion("fred", "white fluffy", 4);
         editDocumentSearch("fred");
@@ -286,7 +288,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         try {
             newTitles = promotionsDetailPage.getPromotedTitles();
         } catch (final TimeoutException e) {
-            // CSA-1761
+            /* due to "Unknown Document" bug */
         }
         verifyThat(newTitles, hasItem(newPromotedDoc));
         verifyThat(newTitles, hasSize(1));
@@ -315,7 +317,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     @Test
-    //CSA-1761
+    @KnownBug("CSA-1761")
     public void testAddedDocumentsNotUnknown(){
         setUpPromotion("smiles", "fun happiness", 2);
 
@@ -327,13 +329,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         editReferencesPage.saveButton().click();
 
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-
-        new WebDriverWait(getDriver(),5).until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                return !promotionsDetailPage.getPromotedTitles().contains("Unknown Document");
-            }
-        });
 
         List<String> promotedTitles = promotionsDetailPage.getPromotedTitles();
 
