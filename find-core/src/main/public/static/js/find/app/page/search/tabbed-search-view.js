@@ -16,26 +16,28 @@ define([
     return Backbone.View.extend({
         events: {
             'show.bs.tab': function(event) {
-                this.model.set('selectedSearchCid', $(event.target).attr('data-search-cid'));
+                this.searchModel.set('selectedSearchCid', $(event.target).attr('data-search-cid'));
             }
         },
 
         initialize: function(options) {
+            this.searchModel = options.searchModel;
+            this.savedSearchCollection = options.savedSearchCollection;
             this.ServiceView = options.ServiceView;
 
             this.tabListView = new ListView({
-                collection: this.collection,
+                collection: this.savedSearchCollection,
                 ItemView: TabItemView
             });
 
             this.contentViews = {};
 
-            this.listenTo(this.model, 'change:selectedSearchCid', function() {
+            this.listenTo(this.searchModel, 'change:selectedSearchCid', function() {
                 this.selectContentView();
                 this.updateSelectedTab();
             });
 
-            this.listenTo(this.collection, 'remove', function(savedSearch) {
+            this.listenTo(this.savedSearchCollection, 'remove', function(savedSearch) {
                 var cid = savedSearch.cid;
                 this.contentViews[cid].remove();
                 delete this.contentViews[cid];
@@ -56,7 +58,7 @@ define([
         },
 
         selectContentView: function() {
-            var cid = this.model.get('selectedSearchCid');
+            var cid = this.searchModel.get('selectedSearchCid');
 
             _.each(this.contentViews, function(view) {
                 view.$el.addClass('hide');
@@ -67,8 +69,8 @@ define([
 
                 if (!view) {
                     view = new this.ServiceView({
-                        model: this.collection.get(cid),
-                        searchModel: this.model
+                        model: this.savedSearchCollection.get(cid),
+                        searchModel: this.searchModel
                     });
 
                     this.contentViews[cid] = view;
@@ -81,7 +83,7 @@ define([
         },
 
         updateSelectedTab: function() {
-            var cid = this.model.get('selectedSearchCid');
+            var cid = this.searchModel.get('selectedSearchCid');
             this.$('[data-search-cid="' + cid + '"]').tab('show');
         }
     });

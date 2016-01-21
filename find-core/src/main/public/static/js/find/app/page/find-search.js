@@ -59,13 +59,11 @@ define([
                 }
             });
 
-            this.inputView = new InputView({
-                model: this.searchModel
-            });
+            this.inputView = new InputView({model: this.searchModel});
 
             this.tabView = new TabbedSearchView({
-                collection: this.savedSearchCollection,
-                model: this.searchModel,
+                savedSearchCollection: this.savedSearchCollection,
+                searchModel: this.searchModel,
                 ServiceView: this.ServiceView
             });
 
