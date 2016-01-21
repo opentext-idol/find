@@ -23,8 +23,8 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SortView, SpellCheckView, SavedSearchOptions,
-            Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
+            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SortView, ResultsNumberView,
+            SpellCheckView, SavedSearchOptions, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
 
     'use strict';
 
