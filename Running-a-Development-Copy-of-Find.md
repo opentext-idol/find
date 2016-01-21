@@ -18,3 +18,5 @@ For the purposes of this guide, we're assuming that you've already cloned Find f
 ## Step Three: Open Find in your web browser
 
 - Navigate to http://localhost:8080 and you should see Find.  A config file has been generated in the Find home directory that you specified on the command line.
+
+You now want to read either [[Configuring Find for IDOL]] or [[Configuring Find for Haven OnDemand]] to get Find configured.
