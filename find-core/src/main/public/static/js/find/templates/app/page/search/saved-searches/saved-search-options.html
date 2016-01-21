@@ -3,8 +3,10 @@
         <i class="hp-icon hp-splitter hp-rotate-90"></i>
     </button>
     <ul class="dropdown-menu" role="menu" aria-labelledby="btnDropDown">
-        <li class="saved-search-option-reset"><a href><%-i18n['app.reset']%></a></li>
-        <li class="saved-search-option-rename"><a href><%-i18n['app.rename']%></a></li>
+        <% if (!model.isNew()) {%>
+            <li class="saved-search-option-reset"><a href><%-i18n['app.reset']%></a></li>
+            <li class="saved-search-option-rename"><a href><%-i18n['app.rename']%></a></li>
+        <% } %>
         <li class="saved-search-option-delete"><a href><%-i18n['app.delete']%></a></li>
     </ul>
 </div>

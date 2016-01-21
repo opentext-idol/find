@@ -113,7 +113,7 @@ define([
             }, this), 500));
 
             this.savedSearchOptions = new SavedSearchOptions({
-                savedSearchCollection: this.savedSearchCollection
+                model: this.model
             });
 
             this.resultsView = new this.ResultsViewContainer({
