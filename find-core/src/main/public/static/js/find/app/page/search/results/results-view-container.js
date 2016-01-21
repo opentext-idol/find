@@ -1,11 +1,13 @@
 define([
     'backbone',
     'underscore',
+    'jquery',
+    'i18n!find/nls/bundle',
     'find/app/page/search/results/results-view',
     'text!find/templates/app/page/search/results/results-view-container.html',
     'text!find/templates/app/page/search/results/selector.html',
     'text!find/templates/app/page/search/results/content-container.html'
-], function(Backbone, _, ResultsView, template, selectorTemplate, contentContainerTemplate) {
+], function(Backbone, _, $, i18n, ResultsView, template, selectorTemplate, contentContainerTemplate) {
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -19,7 +21,7 @@ define([
                 id: 'list',
                 selector: {
                     className: 'results-list-container',
-                    displayName: 'List',
+                    displayNameKey: 'list',
                     icon: 'hp-list'
                 },
                 content: new this.ResultsView({
@@ -32,7 +34,7 @@ define([
                 id: 'map',
                 selector: {
                     className: 'results-map-container',
-                    displayName: 'Map',
+                    displayNameKey: 'map',
                     icon: 'hp-grid'
                 },
                 content: new (Backbone.View.extend({
@@ -50,7 +52,11 @@ define([
             var $contentList = this.$('.content-list');
 
             _.each(this.views, function(view, index) {
-                $(this.selectorTemplate(view)).toggleClass('active', index === 0).appendTo($selectorList);
+                $(this.selectorTemplate({
+                    i18n: i18n,
+                    id: view.id,
+                    selector: view.selector
+                })).toggleClass('active', index === 0).appendTo($selectorList);
 
                 var $viewElement = $(this.contentContainerTemplate(view)).toggleClass('active', index === 0).appendTo($contentList)
                 view.content.setElement($viewElement).render();

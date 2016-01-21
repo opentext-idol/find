@@ -99,6 +99,8 @@ define([
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',
+        'search.resultsView.list': 'List',
+        'search.resultsView.map': 'Map',
         'search.savedSearches': 'Saved searches',
         'search.savedSearches.noSavedSearches': 'There are no saved searches',
         'search.seeAllDocuments': 'See all documents',
