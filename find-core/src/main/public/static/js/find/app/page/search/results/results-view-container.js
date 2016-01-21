@@ -20,7 +20,6 @@ define([
             this.views = [{
                 id: 'list',
                 selector: {
-                    className: 'results-list-container',
                     displayNameKey: 'list',
                     icon: 'hp-list'
                 },
@@ -33,7 +32,6 @@ define([
             }, {
                 id: 'map',
                 selector: {
-                    className: 'results-map-container',
                     displayNameKey: 'map',
                     icon: 'hp-grid'
                 },
@@ -58,7 +56,7 @@ define([
                     selector: view.selector
                 })).toggleClass('active', index === 0).appendTo($selectorList);
 
-                var $viewElement = $(this.contentContainerTemplate(view)).toggleClass('active', index === 0).appendTo($contentList)
+                var $viewElement = $(this.contentContainerTemplate(view)).toggleClass('active', index === 0).appendTo($contentList);
                 view.content.setElement($viewElement).render();
             }, this);
 
