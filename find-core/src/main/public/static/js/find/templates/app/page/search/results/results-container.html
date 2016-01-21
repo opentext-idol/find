@@ -23,7 +23,9 @@
         </p>
         <p class="text-right">
             <a class="preview-documents-trigger result-container-control m-r-lg" tabindex="-1"><%-i18n['search.preview']%></a>
-            <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+            <% if (!staticPromotion) { %>
+                <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+            <% } %>
         </p>
     </div>
 </div>

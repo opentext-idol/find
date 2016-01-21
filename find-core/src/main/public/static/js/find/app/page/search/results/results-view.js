@@ -303,6 +303,7 @@ define([
                 href: href,
                 promotion: isPromotion,
                 reference: reference,
+                staticPromotion: model.get('promotionType') === 'STATIC_CONTENT_PROMOTION',
                 summary: summary,
                 title: model.get('title')
             }));
