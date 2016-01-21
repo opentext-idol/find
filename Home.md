@@ -1,1 +1,1 @@
-Welcome to the find wiki!
+Welcome to the Find wiki!
