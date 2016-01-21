@@ -22,6 +22,14 @@ define([
             }
 
             return message;
+        },
+
+        getIndexForSimilarDocuments: function($resultsContainer) {
+            var domain = $resultsContainer.attr('data-domain');
+            var index =  $resultsContainer.attr('data-index');
+
+            // escape the domain and index and combine
+            return _.map([domain, index], encodeURIComponent).join(':');
         }
     });
 });

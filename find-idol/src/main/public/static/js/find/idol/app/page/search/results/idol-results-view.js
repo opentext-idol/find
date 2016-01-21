@@ -22,6 +22,11 @@ define([
             }
 
             return message;
+        },
+
+        // we don't need the index restriction using IDOL because similar documents work at a Content, not Database level
+        getIndexForSimilarDocuments: function($resultsContainer) {
+            return '';
         }
     });
 });
