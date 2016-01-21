@@ -17,6 +17,7 @@ import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -143,6 +144,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
+    @Ignore
     @KnownBug({"CSA-1698", "CSA-1687"})
     public void testUsernameShowsInNotifications() throws Exception {
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
