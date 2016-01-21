@@ -1,4 +1,4 @@
-Find looks for the following fields in Idol/HoD documents:
+Find looks for the following fields in IDOL or Haven OnDemand documents:
 * content_type
 * url
 * offset
