@@ -50,15 +50,17 @@ define([
 
         initialize: function(options) {
             this.searchModel = options.searchModel;
-            this.queryTextModel = options.queryTextModel;
 
             this.queryModel = new QueryModel({
                 queryText: this.model.get('queryText')
             });
 
-            this.listenTo(this.searchModel, 'change:queryText', function(model, queryText) {
-                if (model.get('selectedSearchCid') === this.model.cid) {
-                    this.queryModel.set('queryText', queryText);
+            this.listenTo(this.searchModel, 'change', function() {
+                if (this.searchModel.get('selectedSearchCid') === this.model.cid) {
+                    this.queryModel.set({
+                        autoCorrect: true,
+                        queryText: this.searchModel.makeQueryText()
+                    });
                 }
             });
 
@@ -87,22 +89,19 @@ define([
 
             this.indexesCollection.fetch();
 
-            var fetchEntities = _.bind(function() {
-                if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
-                    this.entityCollection.fetch({
-                        data: _.extend(this.queryModel.pick(['queryText', 'indexes', 'fieldText']), {
-                            minDate: this.queryModel.getIsoDate('minDate'),
-                            maxDate: this.queryModel.getIsoDate('maxDate')
-                        })
-                    });
-                }
-            }, this);
-
-            this.listenTo(this.queryTextModel, 'refresh', fetchEntities);
-
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
-                    fetchEntities();
+                    if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+                        this.entityCollection.fetch({
+                            data: {
+                                databases: this.queryModel.get('indexes'),
+                                queryText: this.queryModel.get('queryText'),
+                                fieldText: this.queryModel.get('fieldText'),
+                                minDate: this.queryModel.getIsoDate('minDate'),
+                                maxDate: this.queryModel.getIsoDate('maxDate')
+                            }
+                        });
+                    }
                 }
             });
 
@@ -116,12 +115,12 @@ define([
                 model: this.model
             });
 
-            this.resultsView = new this.ResultsViewContainer({
+            this.resultsViewContainer = new this.ResultsViewContainer({
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                searchModel: this.searchModel
             });
 
             // Left Views
@@ -154,7 +153,7 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                searchModel: this.searchModel
             });
 
             this.sortView = new SortView({

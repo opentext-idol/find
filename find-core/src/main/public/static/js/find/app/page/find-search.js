@@ -6,7 +6,7 @@
 define([
     'js-whatever/js/base-page',
     'backbone',
-    'find/app/model/query-text-model',
+    'find/app/model/search-page-model',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
     'find/app/model/saved-searches/saved-search-collection',
@@ -16,7 +16,7 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, QueryTextModel, InputView, TabbedSearchView, SavedSearchCollection, SavedSearchModel, router, vent, i18n, _, template) {
+], function(BasePage, Backbone, SearchPageModel, InputView, TabbedSearchView, SavedSearchCollection, SavedSearchModel, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -31,27 +31,25 @@ define([
         ServiceView: null,
 
         initialize: function() {
-            // TODO: Resolve queryTextModel/searchModel conflict
-            
             this.savedSearchCollection = new SavedSearchCollection();
             this.savedSearchCollection.fetch({remove: false});
 
-            this.queryTextModel = new QueryTextModel();
-
             // Model representing high level search page state
-            this.searchModel = new Backbone.Model({
-                queryText: '',
+            this.searchModel = new SearchPageModel({
+                inputText: '',
                 selectedSearchCid: null
             });
 
-            this.listenTo(this.searchModel, 'change:queryText', function(model, queryText) {
+            this.listenTo(this.searchModel, 'change', function() {
+                var inputText = this.searchModel.get('inputText');
+
                 // Bind search model to routing
-                vent.navigate('find/search/' + encodeURIComponent(queryText), {trigger: false});
+                vent.navigate('find/search/' + this.generateURL(), {trigger: false});
 
                 // Create a tab if the user has run a search but has no open tabs
-                if (queryText && this.searchModel.get('selectedSearchCid') === null) {
+                if (inputText && this.searchModel.get('selectedSearchCid') === null) {
                     var newSearch = new SavedSearchModel({
-                        queryText: queryText,
+                        queryText: this.searchModel.makeQueryText(),
                         title: i18n['search.newSearch']
                     });
 
@@ -61,16 +59,7 @@ define([
                 }
             });
 
-            this.listenTo(this.queryTextModel, 'change', function() {
-                this.queryModel.set({
-                    autoCorrect: true,
-                    queryText: this.queryTextModel.makeQueryText()
-                });
-            });
-
             this.inputView = new InputView({
-                queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel,
                 model: this.searchModel
             });
 
@@ -81,19 +70,13 @@ define([
             });
 
             // Bind routing to search model
-            router.on('route:search', function(text) {
-                if (text) {
-                    this.searchModel.set('queryText', text);
-                } else {
-                    this.searchModel.set('queryText', '');
-                }
-
+            router.on('route:search', function(text, concepts) {
                 var attributes = {
                     inputText: text || '',
                     relatedConcepts: concepts ? concepts.split('/') : []
                 };
 
-                this.queryTextModel.setInputText(attributes);
+                this.searchModel.setInputText(attributes);
             }, this);
         },
 
@@ -111,13 +94,13 @@ define([
         },
 
         generateURL: function() {
-            var inputQuery = this.queryTextModel.get('inputText');
+            var inputQuery = this.searchModel.get('inputText');
 
             if (inputQuery){
                 inputQuery = encodeURIComponent(inputQuery) + '/';
             }
 
-            var relatedConcepts = this.queryTextModel.get('relatedConcepts');
+            var relatedConcepts = this.searchModel.get('relatedConcepts');
 
             return inputQuery + relatedConcepts.join('/');
         },

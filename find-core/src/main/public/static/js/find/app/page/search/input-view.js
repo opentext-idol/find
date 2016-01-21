@@ -10,12 +10,12 @@ define([
 
     var html = _.template(template)({i18n: i18n});
     
-    var relatedConceptsTemplate = _.template('<span class="selected-related-concepts" data-id="<%-concept%>"><%-concept%> ' +
-        '<i class="clickable hp-icon hp-fw hp-close concepts-remove-icon"></i>' +
-        '</span> ');
+    var relatedConceptsTemplate = _.template(
+        '<span class="selected-related-concepts" data-id="<%-concept%>">' +
+            '<%-concept%> <i class="clickable hp-icon hp-fw hp-close concepts-remove-icon"></i>' +
+        '</span> '
+    );
 
-    // TODO: Resolve queryText/search model conflicts
-    
     return Backbone.View.extend({
         events: {
             'submit .find-form': function(event) {
@@ -37,22 +37,11 @@ define([
         },
 
         initialize: function(options) {
-            this.queryTextModel = options.queryTextModel;
-            
-            // Bind the model to the input; for example, when clicking one of the suggested search links
             this.listenTo(this.model, 'change:queryText', this.updateText);
-
-            this.listenTo(this.queryTextModel, 'change:relatedConcepts', this.updateRelatedConcepts);
+            this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
             
-            this.search = _.debounce(function(query, refresh) {
-                if (refresh) {
-                    options.model.refresh(query);
-                } else {
-                    options.model.set({
-                        autoCorrect: true,
-                        queryText: query
-                    });
-                }
+            this.search = _.debounce(function(query) {
+                options.model.set({inputText: query});
             }, 500);
         },
 
@@ -89,8 +78,8 @@ define([
 
         updateText: function() {
             if (this.$input) {
-                this.$input.typeahead('val', this.queryTextModel.get('inputText'));
-                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.model.get('queryText') == '*');
+                this.$input.typeahead('val', this.model.get('inputText'));
+                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.model.get('inputText') === '*');
             }
         },
 
@@ -98,20 +87,19 @@ define([
             if (this.$additionalConcepts) {
                 this.$additionalConcepts.empty();
 
-                _.each(this.queryTextModel.get('relatedConcepts'), function(concept) {
+                _.each(this.model.get('relatedConcepts'), function(concept) {
                     this.$additionalConcepts.append(relatedConceptsTemplate({
                         concept: concept
                     }))
                 }, this);
 
-                this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.queryTextModel.get('relatedConcepts')));
+                this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.model.get('relatedConcepts')));
             }
         },
 
         removeRelatedConcept: function(id){
-            var newConcepts = _.without(this.queryTextModel.get('relatedConcepts'), id);
-
-            this.queryTextModel.set('relatedConcepts', newConcepts);
+            var newConcepts = _.without(this.model.get('relatedConcepts'), id);
+            this.model.set('relatedConcepts', newConcepts);
         }
     });
 
