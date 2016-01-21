@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.analytics.Term;
+import com.autonomy.abc.selenium.page.analytics.ContainerItem;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -73,19 +73,19 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     public void testAnalytics() throws InterruptedException {
         List<String> newTriggers = Arrays.asList("happy", "sad");
 
-        Term nonZeroTerm;
+        ContainerItem nonZeroItem;
         try {
-            nonZeroTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
+            nonZeroItem = analyticsPage.getMostPopularNonZeroSearchTerm();
         } catch (NoSuchElementException e) {
             // CSA-1752
             LOGGER.warn("all popular search terms are zero hit terms");
-            nonZeroTerm = analyticsPage.getPopularSearchTerm(2);
+            nonZeroItem = analyticsPage.getPopularSearchTerm(2);
         }
-        Term zeroTerm = analyticsPage.getMostPopularZeroSearchTerm();
-        addSynonymGroup(nonZeroTerm, zeroTerm);
+        ContainerItem zeroItem = analyticsPage.getMostPopularZeroSearchTerm();
+        addSynonymGroup(nonZeroItem, zeroItem);
 
-        verifyTermSearch(zeroTerm);
-        verifyTermSearch(nonZeroTerm);
+        verifyTermSearch(zeroItem);
+        verifyTermSearch(nonZeroItem);
 
         goToAnalytics();
         tryGoToLeastPopularPromotion();
@@ -148,19 +148,19 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         analyticsPage = getElementFactory().getAnalyticsPage();
     }
 
-    private void addSynonymGroup(Term... terms) {
+    private void addSynonymGroup(ContainerItem... items) {
         List<String> synonyms = new ArrayList<>();
-        for (Term term : terms) {
-            synonyms.add(term.getTerm());
+        for (ContainerItem item : items) {
+            synonyms.add(item.getTerm());
         }
         new KeywordService(getApplication(), getElementFactory()).addSynonymGroup(synonyms);
         LOGGER.info("added synonym group: " + synonyms);
     }
 
-    private void verifyTermSearch(Term term) {
-        search(term.getTerm());
+    private void verifyTermSearch(ContainerItem item) {
+        search(item.getTerm());
         LOGGER.warn("[CSA-1724] skipping query analysis test");
-//        verifyThat(searchPage.getSynonymGroupSynonyms(term.getTerm()), hasItem(equalToIgnoringCase(term.getTerm())));
+//        verifyThat(searchPage.getSynonymGroupSynonyms(item.getTerm()), hasItem(equalToIgnoringCase(item.getTerm())));
         verifyThat(searchPage, not(NO_RESULTS));
     }
 

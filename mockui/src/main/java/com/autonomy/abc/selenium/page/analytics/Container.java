@@ -5,7 +5,7 @@ import org.openqa.selenium.NoSuchElementException;
 
 import java.util.*;
 
-public class Container implements Iterable<Term> {
+public class Container implements Iterable<ContainerItem> {
     private WebElement container;
 
     Container(WebElement element) {
@@ -34,34 +34,34 @@ public class Container implements Iterable<Term> {
         container.findElement(By.className("sort-top")).click();
     }
 
-    public Term get(int i) {
+    public ContainerItem get(int i) {
         try {
-            return getTerms().get(i);
+            return getItems().get(i);
         } catch (IndexOutOfBoundsException e) {
-            throw new NoSuchElementException("looking for term " + (i+1) + " but there were only " + getTerms().size());
+            throw new NoSuchElementException("looking for item " + (i+1) + " but there were only " + getItems().size());
         }
     }
 
-    public Term get(String substring) {
-        for (Term term : this) {
-            if (term.getTerm().contains(substring)) {
-                return term;
+    public ContainerItem get(String substring) {
+        for (ContainerItem item : this) {
+            if (item.getTerm().contains(substring)) {
+                return item;
             }
         }
-        throw new NoSuchElementException("could not find term containing " + substring + " in " + container);
+        throw new NoSuchElementException("could not find item containing " + substring + " in " + container);
     }
 
-    public List<Term> getTerms() {
-        final List<Term> terms = new ArrayList<>();
+    public List<ContainerItem> getItems() {
+        final List<ContainerItem> items = new ArrayList<>();
         for (WebElement term : container.findElements(By.className("list-group-item"))) {
-            terms.add(new Term(term));
+            items.add(new ContainerItem(term));
         }
-        return terms;
+        return items;
     }
 
     @Override
-    public Iterator<Term> iterator() {
-        return getTerms().iterator();
+    public Iterator<ContainerItem> iterator() {
+        return getItems().iterator();
     }
 
     public enum Period {
@@ -93,4 +93,5 @@ public class Container implements Iterable<Term> {
             return linkText;
         }
     }
+
 }

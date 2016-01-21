@@ -49,18 +49,18 @@ public class AnalyticsPage extends AppElement implements AppPage {
         return container.findElement(By.cssSelector(".list-group-item:nth-child(1) a"));
     }
 
-    public Term getMostPopularZeroSearchTerm() {
+    public ContainerItem getMostPopularZeroSearchTerm() {
         WebElement container = getZeroHitContainer();
         new WebDriverWait(getDriver(),30).until(new WaitUntilLoadingFinished(container));
         WebElement topTerm = container.findElement(By.cssSelector(".list-group-item:nth-child(1)"));
 
-        return new Term(topTerm);
+        return new ContainerItem(topTerm);
     }
 
-    public Term getMostPopularNonZeroSearchTerm() {
+    public ContainerItem getMostPopularNonZeroSearchTerm() {
         for(WebElement term : getPopularTerms()){
             if(!zeroHitTerm(term.findElement(By.tagName("a")).getText())){
-                return new Term(term);
+                return new ContainerItem(term);
             }
         }
         throw new NoSuchElementException("All popular search terms are zero hit terms");
@@ -113,12 +113,12 @@ public class AnalyticsPage extends AppElement implements AppPage {
         }
     }
 
-    public Term getPopularSearchTerm(int num) {
+    public ContainerItem getPopularSearchTerm(int num) {
         WebElement container = getPopularTermContainer();
         new WebDriverWait(getDriver(),30).until(new WaitUntilLoadingFinished(container));
         WebElement topTerm = container.findElement(By.cssSelector(".list-group-item:nth-child(" + num + ")"));
 
-        return new Term(topTerm);
+        return new ContainerItem(topTerm);
     }
 
     public String getPopularSearch(int i) {

@@ -5,19 +5,19 @@ import org.openqa.selenium.WebElement;
 
 import java.util.Comparator;
 
-public class Term {
+public class ContainerItem {
 
     private String term;
     private int searches;
     private WebElement element;
 
-    public Term(String term, int searches){
+    public ContainerItem(String term, int searches){
         this.searches = searches;
         this.term = term;
         this.element = null;
     }
 
-    public Term(WebElement element){
+    public ContainerItem(WebElement element){
         this.element = element;
         this.term = element.findElement(By.tagName("a")).getText();
         this.searches = Integer.parseInt(element.findElement(By.tagName("span")).getText());
@@ -44,12 +44,12 @@ public class Term {
 
     @Override
     public String toString() {
-        return "Term<" + term + "," + searches + ">";
+        return "Item<" + term + "," + searches + ">";
     }
 
-    public final static Comparator<Term> COUNT_ASCENDING = new Comparator<Term>() {
+    public final static Comparator<ContainerItem> COUNT_ASCENDING = new Comparator<ContainerItem>() {
         @Override
-        public int compare(Term o1, Term o2) {
+        public int compare(ContainerItem o1, ContainerItem o2) {
             return o1.getSearchCount() - o2.getSearchCount();
         }
 
@@ -59,9 +59,9 @@ public class Term {
         }
     };
 
-    public final static Comparator<Term> COUNT_DESCENDING = new Comparator<Term>() {
+    public final static Comparator<ContainerItem> COUNT_DESCENDING = new Comparator<ContainerItem>() {
         @Override
-        public int compare(Term o1, Term o2) {
+        public int compare(ContainerItem o1, ContainerItem o2) {
             return COUNT_ASCENDING.compare(o2, o1);
         }
 

@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Container;
-import com.autonomy.abc.selenium.page.analytics.Term;
+import com.autonomy.abc.selenium.page.analytics.ContainerItem;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -55,11 +55,11 @@ public class AnalyticsITCase extends HostedTestBase {
     @Test
     public void testSortDirection() {
         for (Container container : analytics.containers()) {
-            verifySorted(container.getTerms(), Term.COUNT_DESCENDING);
+            verifySorted(container.getItems(), ContainerItem.COUNT_DESCENDING);
             container.toggleSortDirection();
-            verifySorted(container.getTerms(), Term.COUNT_ASCENDING);
+            verifySorted(container.getItems(), ContainerItem.COUNT_ASCENDING);
             container.toggleSortDirection();
-            verifySorted(container.getTerms(), Term.COUNT_DESCENDING);
+            verifySorted(container.getItems(), ContainerItem.COUNT_DESCENDING);
         }
     }
 
@@ -74,17 +74,17 @@ public class AnalyticsITCase extends HostedTestBase {
         for (Container container : analytics.containers()) {
             container.selectPeriod(Container.Period.DAY);
             verifyThat(container.getSelectedPeriod(), is(Container.Period.DAY));
-            List<Term> dayTerms = container.getTerms();
+            List<ContainerItem> dayItems = container.getItems();
 
             container.selectPeriod(Container.Period.WEEK);
             verifyThat(container.getSelectedPeriod(), is(Container.Period.WEEK));
-            List<Term> weekTerms = container.getTerms();
-            verifyFirstListBigger(weekTerms, dayTerms, Term.COUNT_DESCENDING);
+            List<ContainerItem> weekItems = container.getItems();
+            verifyFirstListBigger(weekItems, dayItems, ContainerItem.COUNT_DESCENDING);
 
             container.selectPeriod(Container.Period.MONTH);
             verifyThat(container.getSelectedPeriod(), is(Container.Period.MONTH));
-            List<Term> monthTerms = container.getTerms();
-            verifyFirstListBigger(monthTerms, weekTerms, Term.COUNT_DESCENDING);
+            List<ContainerItem> monthItems = container.getItems();
+            verifyFirstListBigger(monthItems, weekItems, ContainerItem.COUNT_DESCENDING);
         }
     }
 
@@ -152,10 +152,10 @@ public class AnalyticsITCase extends HostedTestBase {
         searchService.search(promotion.getTrigger());
         goToAnalytics();
 
-        Term promotionTerm = analytics.promotions().get(promotion.getTrigger());
-        verifyPromotionTitle(promotionTerm.getTerm(), promotion);
+        ContainerItem promotionItem = analytics.promotions().get(promotion.getTrigger());
+        verifyPromotionTitle(promotionItem.getTerm(), promotion);
 
-        promotionTerm.click();
+        promotionItem.click();
         boolean loadsCorrectPage = false;
         String detailTitle = null;
         try {
@@ -182,7 +182,7 @@ public class AnalyticsITCase extends HostedTestBase {
             promotions.toggleSortDirection();
             promotions.selectPeriod(Container.Period.DAY);
 
-            Term bottomPromotion = analytics.promotions().get(promotion.getTrigger());
+            ContainerItem bottomPromotion = analytics.promotions().get(promotion.getTrigger());
             verifyPromotionTitle(bottomPromotion.getTerm(), promotion);
         } finally {
             promotionService.delete(promotion);
@@ -193,7 +193,7 @@ public class AnalyticsITCase extends HostedTestBase {
         Container promotions = analytics.promotions();
         promotions.toggleSortDirection();
         promotions.selectPeriod(Container.Period.DAY);
-        Term bottomPromotion = analytics.promotions().get(promotion.getTrigger());
+        ContainerItem bottomPromotion = analytics.promotions().get(promotion.getTrigger());
         verifyPromotionTitle(bottomPromotion.getTerm(), promotion);
         bottomPromotion.click();
 
