@@ -91,10 +91,6 @@ public class JsonConfig {
         return this.selenium.browsers;
     }
 
-    public User getDefaultUser() {
-        return getUser("default");
-    }
-
     public User getUser(String name) {
         return this.users.get(name);
     }

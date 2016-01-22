@@ -32,6 +32,17 @@
       "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c",
       "domain" : ""
     },
+    "analytics_tests": {
+      "username": "TODO",
+      "role": "Admin",
+      "auth": {
+        "type": "Facebook",
+        "email": "matthew.williamson@hpe.com",
+        "password": "vdPAuTGU"
+      },
+      "apikey" : "",
+      "domain" : ""
+    },
     "google": {
       "username": "TODO",
       "role": "Admin",

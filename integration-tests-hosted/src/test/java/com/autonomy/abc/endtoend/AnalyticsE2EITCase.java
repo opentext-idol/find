@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.analytics.Term;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -24,7 +23,6 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,18 +71,18 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     public void testAnalytics() throws InterruptedException {
         List<String> newTriggers = Arrays.asList("happy", "sad");
 
-        Term nonZeroTerm;
+        String nonZeroTerm;
         try {
             nonZeroTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
         } catch (NoSuchElementException e) {
             // CSA-1752
             LOGGER.warn("all popular search terms are zero hit terms");
-            nonZeroTerm = analyticsPage.getPopularSearchTerm(2);
+            nonZeroTerm = analyticsPage.getPopularSearch(2);
         }
-        Term zeroTerm = analyticsPage.getMostPopularZeroSearchTerm();
-        addSynonymGroup(nonZeroTerm, zeroTerm);
+        String zeroHitTerm = analyticsPage.getZeroHitSearch(0);
+        addSynonymGroup(nonZeroTerm, zeroHitTerm);
 
-        verifyTermSearch(zeroTerm);
+        verifyTermSearch(zeroHitTerm);
         verifyTermSearch(nonZeroTerm);
 
         goToAnalytics();
@@ -148,25 +146,21 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         analyticsPage = getElementFactory().getAnalyticsPage();
     }
 
-    private void addSynonymGroup(Term... terms) {
-        List<String> synonyms = new ArrayList<>();
-        for (Term term : terms) {
-            synonyms.add(term.getTerm());
-        }
+    private void addSynonymGroup(String... synonyms) {
         new KeywordService(getApplication(), getElementFactory()).addSynonymGroup(synonyms);
-        LOGGER.info("added synonym group: " + synonyms);
+        LOGGER.info("added synonym group: " + Arrays.asList(synonyms));
     }
 
-    private void verifyTermSearch(Term term) {
-        search(term.getTerm());
+    private void verifyTermSearch(String term) {
+        search(term);
         LOGGER.warn("[CSA-1724] skipping query analysis test");
-//        verifyThat(searchPage.getSynonymGroupSynonyms(term.getTerm()), hasItem(equalToIgnoringCase(term.getTerm())));
+//        verifyThat(searchPage.getSynonymGroupSynonyms(item.getTerm()), hasItem(equalToIgnoringCase(item.getTerm())));
         verifyThat(searchPage, not(NO_RESULTS));
     }
 
     private void tryGoToLeastPopularPromotion() {
-        analyticsPage.reversePromotionSort();
-        analyticsPage.getMostPopularPromotion().click();
+        analyticsPage.promotions().toggleSortDirection();
+        analyticsPage.promotions().get(0).click();
         if (getDriver().getCurrentUrl().contains("detail")) {
             promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
             LOGGER.info("gone to least popular promotion");

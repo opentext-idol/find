@@ -9,7 +9,6 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.analytics.Term;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
@@ -59,16 +58,9 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         AnalyticsPage analyticsPage = getElementFactory().getAnalyticsPage();
 
-        Term zeroSearch = analyticsPage.getMostPopularZeroSearchTerm();
-        Term nonZero = analyticsPage.getMostPopularNonZeroSearchTerm();
-
-        if(nonZero == null){
-            nonZero = new Term("replacement",0);
-        }
-
-        String searchTerm = nonZero.getTerm();
+        String searchTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
         String trigger = "Trigger";
-        String synonym = zeroSearch.getTerm();
+        String synonym = analyticsPage.getZeroHitSearch(0);
 
         promotionService.deleteAll();
 
