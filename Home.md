@@ -6,10 +6,16 @@ Find is an end-user search interface for [HPE IDOL](http://www8.hp.com/uk/en/sof
 
 ## Compiling and Running Find
 
+### Basics
+
 - [[Building Find]] - how to get the code and compile a copy of Find
 - [[Running a Development Copy of Find]] - how to test your changes
 - [[Running a Production Copy of Find]] - how to deploy your changed version of Find
+
+### Advanced
 - [[Heroku Deployment Guide]] - how to run Find on Heroku, if that's something you want to do
+- [[Understanding the Code Structure]] - info about what's going on under the surface
+- [[Vagrant]] - how to set up the Find backend virtual machine with Vagrant
 
 ## Configuring Find for IDOL
 
