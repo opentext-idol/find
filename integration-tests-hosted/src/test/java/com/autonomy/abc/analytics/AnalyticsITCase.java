@@ -18,6 +18,7 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -151,7 +152,9 @@ public class AnalyticsITCase extends HostedTestBase {
 
         HSOPromotionService promotionService = getApplication().createPromotionService(getElementFactory());
 
-        if (promotionService.goToPromotions().promotionsList().isEmpty()) {
+        try {
+            promotionService.goToPromotions().getPromotionLinkWithTitleContaining(promotion.getTrigger());
+        } catch (NoSuchElementException e) {
             promotionService.setUpStaticPromotion(promotion);
             searchService.search(promotion.getTrigger());
         }
