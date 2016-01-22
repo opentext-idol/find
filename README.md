@@ -3,12 +3,12 @@
 
 HPE Find is an end user search interface for [Haven OnDemand](https://www.havenondemand.com) and [HPE IDOL](http://www8.hp.com/uk/en/software-solutions/information-data-analytics-idol/index.html)
 
-## Can I see it?
+## How do I get it?
 - A live demo of an [older version](https://github.com/hpautonomy/find/tree/1.0.3) of HPE Find can be found at [find.idolondemand.com](http://find.idolondemand.com)
 - The latest version of Find is used in [Haven Search OnDemand](https://search.havenondemand.com/)
 - If you are an HPE IDOL Express or HPE IDOL Premium customer, Find is available to you in the HPE Big Data Download Center
 
-# Use the Wiki
+## Documentation is on the Wiki
 
 Questions about building, running, and configuring Find, plus many more subjects, are all covered on the [GitHub Wiki](https://github.com/hpautonomy/find/wiki)
 
