@@ -2,6 +2,7 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -26,7 +27,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 
-//CSA-1563
+@RelatedTo("CSA-1563")
 public class QuickSetUpITCase extends HostedTestBase {
 
     public QuickSetUpITCase(TestConfig config) {

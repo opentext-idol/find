@@ -3,6 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -337,6 +338,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     }
 
     @Test
+    @RelatedTo("CSA-893")
     public void testNotificationsForPromotions() {
         createPromotionsPage.cancelButton().click();
         searchPage = getElementFactory().getSearchPage();
@@ -358,7 +360,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
                 verifyThat(notifications.notificationNumber(1).getText().toLowerCase(),
                         containsString(("Created a new spotlight promotion: Spotlight for: MyFirstNotification" + spotlightType.replaceAll("\\s+", "")).toLowerCase()));
 
-                // TODO: CSA-893
+                // clicking notification should redirect to detail page?
 //            notifications.notificationNumber(1).click();
 //            verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail/spotlight"));
             }

@@ -3,6 +3,7 @@ package com.autonomy.abc.find;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.FindParametricCheckbox;
 import com.autonomy.abc.selenium.application.FindApplication;
 import com.autonomy.abc.selenium.application.HSODFindApplication;
@@ -373,8 +374,8 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    //TODO update this based on CSA-1657
     @KnownBug("CSA-1767 - footer not hidden properly")
+    @RelatedTo({"CSA-946", "CSA-1656", "CSA-1657", "CSA-1908"})
     public void testMetadata(){
         find.search("stars");
         find.filterBy(new IndexFilter(Index.DEFAULT));

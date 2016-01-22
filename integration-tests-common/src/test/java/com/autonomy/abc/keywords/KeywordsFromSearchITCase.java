@@ -3,6 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -240,6 +241,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
     @Test
     @KnownBug("CCUK-2703")
+    @RelatedTo({"CSA-1724", "CSA-1893"})
     public void testNoBlacklistLinkForBlacklistedSearch() throws InterruptedException {
         String blacklistMessage = Errors.Search.BLACKLIST;
         if (config.getType().equals(ApplicationType.HOSTED)) {
@@ -274,7 +276,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         assertThat(searchPage, containsText(blacklistMessage));
         assertThat("'You searched for:' section correct", searchPage.youSearchedFor(), hasItem("wizard"));
-        // TODO: CSA-1724 CSA-1893
+        // TODO: re-enable query analysis
 //        verifyThat("blacklist term appears in query analysis", searchPage.getBlacklistedTerms(), hasItem("wizard"));
         assertThat("link to blacklist or create synonyms should not be present", searchPage,
                 not(containsText("You can create synonyms or blacklist these search terms")));

@@ -16,7 +16,6 @@ public class Session implements Iterable<Window> {
     }
 
     public Window openWindow(String url) {
-        // TODO: move from DriverUtil
         String newHandle = createDriverWindow();
         Window newWindow = registerWindow(newHandle);
         newWindow.goTo(url);
@@ -26,7 +25,6 @@ public class Session implements Iterable<Window> {
 
     private String createDriverWindow() {
         Set<String> oldHandles = driver.getWindowHandles();
-        // TODO: do we want new windows, or prefer tabs?
         ((JavascriptExecutor) driver).executeScript("window.open('', '_blank', 'width=100');");
         Set<String> newHandles = driver.getWindowHandles();
         newHandles.removeAll(oldHandles);
