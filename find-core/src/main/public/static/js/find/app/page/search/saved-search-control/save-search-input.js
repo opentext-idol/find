@@ -9,25 +9,54 @@ define([
     return Backbone.View.extend({
         template: _.template(template),
 
-        save: function(name) {
-            this.savedSearchCollection.add(new SavedSearchModel({
+        saveSuccess: function() {
+            this.savedSearchControlModel.set('showSave', false);
+        },
+
+        save: function() {
+            var name = this.$input.val();
+
+            var saveArguments = {
                 title: name,
                 queryText: this.queryModel.get('queryText'),
                 indexes: this.queryModel.get('indexes'),
                 parametricValues: this.queryModel.get('parametricValues')
-            }));
+            };
+
+            var savedSearch = new SavedSearchModel();
+
+            this.savedSearchCollection.add(savedSearch);
+
+            savedSearch.save(saveArguments, {
+                success: _.bind(this.saveSuccess, this),
+                error: function() {
+                    console.log('failure to save model');
+                },
+                wait: true
+            }).always(function() {
+
+            });
         },
 
         events: {
             'submit .find-form': function (event) {
                 event.preventDefault();
-                this.save(this.$input.val());
+                this.save();
+            },
+            'click .save-confirm-button': function() {
+                event.preventDefault();
+                this.save();
+            },
+            'click .save-cancel-button': function() {
+                event.preventDefault();
+                this.savedSearchControlModel.set('showSave', false);
             }
         },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
-            this.savedSearchCollection = new SavedSearchCollection();
+            this.savedSearchCollection = options.savedSearchCollection;
+            this.savedSearchControlModel = options.savedSearchControlModel;
         },
 
         render: function() {

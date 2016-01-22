@@ -160,7 +160,6 @@ define([
             });
 
             // Collapse wrappers
-            this.savedSearchControlViewWrapper = collapseView(i18n['search.savedSearchControl.title'], this.savedSearchControlView);
             this.indexesViewWrapper = collapseView(i18n_indexes['search.indexes'], this.indexesView);
             this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], this.relatedConceptsView);
@@ -170,7 +169,7 @@ define([
             this.$el.html(this.template);
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
-            this.savedSearchControlViewWrapper.setElement(this.$('.saved-search-controls-container')).render();
+            this.savedSearchControlView.setElement(this.$('.saved-search-controls-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
             this.parametricView.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
