@@ -13,8 +13,14 @@ define([
             this.savedSearchControlModel.set('showSave', false);
         },
 
+        disable: function(disable) {
+            this.$saveInput.prop('disabled', disable);
+            this.$confirmButton.prop('disabled', disable);
+            this.$cancelButton.prop('disabled', disable);
+        },
+
         save: function() {
-            var name = this.$input.val();
+            var name = this.$saveForm.val();
 
             var saveArguments = {
                 title: name,
@@ -27,15 +33,17 @@ define([
 
             this.savedSearchCollection.add(savedSearch);
 
+            this.disable(true);
+
             savedSearch.save(saveArguments, {
                 success: _.bind(this.saveSuccess, this),
                 error: function() {
                     console.log('failure to save model');
                 },
                 wait: true
-            }).always(function() {
-
-            });
+            }).always(_.bind(function() {
+                this.disable(false);
+            }, this));
         },
 
         events: {
@@ -64,7 +72,10 @@ define([
                 i18n: i18n
             }));
 
-            this.$input = this.$('.find-input');
+            this.$saveForm = this.$('.save-input');
+            this.$saveInput = this.$('.save-input .find-input');
+            this.$confirmButton = this.$('.save-confirm-button');
+            this.$cancelButton = this.$('.save-cancel-button');
         }
     });
 
