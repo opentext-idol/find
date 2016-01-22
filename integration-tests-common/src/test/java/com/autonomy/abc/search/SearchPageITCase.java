@@ -31,8 +31,10 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -903,6 +905,13 @@ public class SearchPageITCase extends ABCTestBase {
 		getDriver().navigate().to(illegitimateUrl);
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
+
+		new WebDriverWait(getDriver(),10).until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				return searchPage.visibleDocumentsCount() != 0;
+			}
+		});
 
         assertThat("Page should still have results", searchPage, not(containsText(Errors.Search.NO_RESULTS)));
 		assertThat("Page should not have thrown an error", searchPage, not(containsText(Errors.Search.HOD)));

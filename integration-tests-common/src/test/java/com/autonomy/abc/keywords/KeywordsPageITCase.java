@@ -661,10 +661,9 @@ public class KeywordsPageITCase extends ABCTestBase {
 	 * 		- Searching for the blacklisted term will bring up no results
 	 * 		- Searching for the other terms within the synonym group will bring up results for ALL terms within the synonym group INCLUDING the blacklisted term
 	 *
-	 * @throws InterruptedException
 	 */
 	@Test
-	public void testOverlappingBlacklistSynonym() throws InterruptedException {
+	public void testOverlappingBlacklistSynonym() {
 		String blacklist = "blacklist";
 		String synonym = "synonym";
 		String[] synonymGroup = new String[]{blacklist, synonym};
