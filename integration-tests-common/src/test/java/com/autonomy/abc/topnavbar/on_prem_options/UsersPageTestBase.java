@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.NoSuchElementException;
@@ -50,7 +51,11 @@ public class UsersPageTestBase extends ABCTestBase {
     @After
     public void tearDown(){
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-            emailHandler.markAllEmailAsRead(getDriver());
+            try {
+                emailHandler.markAllEmailAsRead(getDriver());
+            } catch (TimeoutException e) {
+                LoggerFactory.getLogger(UsersPageTestBase.class).warn("Could not tear down");
+            }
         }
     }
 
