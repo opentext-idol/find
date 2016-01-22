@@ -53,15 +53,23 @@ public class TestConfig {
 	}
 
 	public User getDefaultUser() {
-		return jsonConfig.getDefaultUser();
+		return getUser("default");
 	}
 
-	public User getUser(String user){
-		return jsonConfig.getUser(user);
+	public User getUser(String name){
+		User user = jsonConfig.getUser(name);
+		if (user == null) {
+			throw new IllegalStateException("User with name " + name + " not found in config file");
+		}
+		return user;
 	}
 
 	public NewUser getNewUser(String name) {
-		return jsonConfig.getNewUser(name);
+		NewUser newUser = jsonConfig.getNewUser(name);
+		if (newUser == null) {
+			throw new IllegalStateException("NewUser with name " + name + " not found in config file");
+		}
+		return newUser;
 	}
 
 	public Browser getBrowser() {
