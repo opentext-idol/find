@@ -232,7 +232,6 @@ public class IndexesPageITCase extends HostedTestBase {
         indexService.deleteIndexViaAPICalls(Index.DEFAULT, getCurrentUser(), config.getApiUrl());
 
         getDriver().navigate().refresh();
-
         indexesPage = getElementFactory().getIndexesPage();
 
         verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getDisplayName()));

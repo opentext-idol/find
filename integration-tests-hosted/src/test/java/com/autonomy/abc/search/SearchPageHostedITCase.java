@@ -25,6 +25,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class SearchPageHostedITCase extends HostedTestBase {
@@ -81,6 +82,8 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Test
 	public void testEditFieldText() {
+		assumeThat(config.getWebappUrl(), not("http://search.havenapps.io/searchoptimizer/p"));
+
 		searchService.search(new SearchQuery("*")
 				.withFilter(IndexFilter.PUBLIC)
 				.withFilter(new FieldTextFilter("EXISTS{}:place_population")));
@@ -112,7 +115,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.searchResult(1).click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 
-		for(int i = 0; i < searchPage.RESULTS_PER_PAGE; i++){
+		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){
 			verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
 			documentViewer.next();
 		}

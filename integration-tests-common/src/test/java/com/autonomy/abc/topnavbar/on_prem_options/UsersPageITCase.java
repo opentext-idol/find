@@ -198,39 +198,15 @@ public class UsersPageITCase extends UsersPageTestBase {
 		try {
 			loginAs(user);
 		} catch (NoSuchElementException e) {
-			//If not hosted then login has totally failed
-			assertThat(config.getType(), is(ApplicationType.HOSTED));
-
 			try {
-				if(getDriver().findElement(By.tagName("body")).getText().contains("401")){
-					fail("401 Page error");
-				}
-
-				if(getDriver().findElement(By.linkText("Google")).isDisplayed()){
+				if (getDriver().findElement(By.linkText("Google")).isDisplayed()) {
 					fail("Still on login page");
 				}
-			} catch (NoSuchElementException f) {
-				WebElement modal = getDriver().findElement(By.className("js-developer-form"));
-
-				boolean validAccount = false;
-
-				for (WebElement account : modal.findElements(By.className("list-group-item"))) {
-					if (account.getText().equals(((HSOUser) user).getEmail())) {
-						account.click();
-						validAccount = true;
-						break;
-					}
-				}
-
-				if (!validAccount) {
-					fail("Account could not be found in options");
-				}
+			} catch (NoSuchElementException f){
+				/* There shouldn't be Google on the page, so it SHOULD fail */
 			}
 		}
-
-		getElementFactory().getLoginPage();
-        assertThat(getDriver().findElement(By.xpath("//*")), containsText("Please check your username and password."));
-        assertThat(getDriver().getCurrentUrl(), containsString("login"));
+		verifyThat("Directed to 401 page", getDriver().findElement(By.tagName("body")), containsText("401"));
 	}
 
 	@Test
