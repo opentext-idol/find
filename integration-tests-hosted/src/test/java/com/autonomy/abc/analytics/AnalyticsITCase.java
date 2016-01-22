@@ -2,6 +2,7 @@ package com.autonomy.abc.analytics;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -13,6 +14,7 @@ import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,6 +100,7 @@ public class AnalyticsITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-2054")
     public void testPopularTerms() {
         final String mostPopularSearchTerm = "cat";
         final String mostPopularFindTerm = "dog";
@@ -109,6 +112,7 @@ public class AnalyticsITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-2054")
     public void testZeroHitTerms() {
         final String zeroHitTerm = "zerohitterm";
         final String zeroHitTermFind = "zerohitfind";
@@ -134,6 +138,8 @@ public class AnalyticsITCase extends HostedTestBase {
         Find find = getElementFactory().getFindPage();
         for (int unused = 0; unused < repeats; unused++) {
             find.search(term);
+            find.search("");
+            Waits.loadOrFadeWait();
         }
         findWindow.close();
         searchWindow.activate();
