@@ -33,7 +33,6 @@ public class HSOUser extends User {
     @Override
     public void authenticate(Factory<WebDriver> driverFactory, SignupEmailHandler emailParser) {
         WebDriver driver = driverFactory.create();
-        driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
 
         try {
             if(emailParser.goToUrl(driver)) {
