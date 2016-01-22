@@ -44,7 +44,7 @@ define([
                 var inputText = this.searchModel.get('inputText');
 
                 // Bind search model to routing
-                vent.navigate('find/search/' + this.generateURL(), {trigger: false});
+                vent.navigate(this.generateURL(), {trigger: false});
 
                 // Create a tab if the user has run a search but has no open tabs
                 if (inputText && this.searchModel.get('selectedSearchCid') === null) {
@@ -92,15 +92,9 @@ define([
         },
 
         generateURL: function() {
-            var inputQuery = this.searchModel.get('inputText');
+            var components = [this.searchModel.get('inputText')].concat(this.searchModel.get('relatedConcepts'));
 
-            if (inputQuery){
-                inputQuery = encodeURIComponent(inputQuery) + '/';
-            }
-
-            var relatedConcepts = this.searchModel.get('relatedConcepts');
-
-            return inputQuery + relatedConcepts.join('/');
+            return 'find/search/' + _.map(components, encodeURIComponent).join('/');
         },
 
         // Run fancy animation from large central search bar to main search page
