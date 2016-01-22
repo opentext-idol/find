@@ -354,7 +354,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 
 	/* general */
 	public boolean isErrorMessageShowing() {
-		return !findElement(By.cssSelector(".search-information")).getAttribute("class").contains("hide");
+		return !findElement(By.cssSelector(".search-information")).getAttribute("class").contains("hidden");
 	}
 
 	public enum Sort {

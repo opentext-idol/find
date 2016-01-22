@@ -252,6 +252,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     }
 
     @Test
+    @KnownBug("HOD-532")
     public void testLogOutAndLogInWithNewUser() {
         final User user = userService.createNewUser(newUserFactory.create(), Role.ADMIN);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
@@ -278,6 +279,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     }
 
     @Test
+    @KnownBug("HOD-532")
     public void testUserConfirmedWithoutRefreshing(){
         final User user = userService.createNewUser(config.getNewUserFactory().create(), Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);

@@ -13,10 +13,12 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.Notification;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
@@ -144,11 +146,17 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
-    @Ignore
     @KnownBug({"CSA-1698", "CSA-1687"})
     public void testUsernameShowsInNotifications() throws Exception {
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
-        String devUsername = getElementFactory().getDevsPage().getUsernames().get(0);
+
+        HSODevelopersPage hsoDevelopersPage = getElementFactory().getDevsPage();
+        User dev = new User(null, hsoDevelopersPage.getUsernames().get(0));
+
+        String devUsername = "Brendon Urie";
+
+        hsoDevelopersPage.editUsernameLink(dev).click();
+        hsoDevelopersPage.editUsernameInput(dev).setAndSubmit(devUsername);
 
         KeywordService keywordService = new KeywordService(getApplication(), getElementFactory());
         UserService userService = getApplication().createUserService(getElementFactory());
