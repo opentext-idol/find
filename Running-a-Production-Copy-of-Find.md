@@ -8,6 +8,8 @@ You need to understand that before you **start** the Find webapp, you need to ch
 
 Follow the steps on the [[Building Find]] guide to compile your copy of the application.  Choose one of the output files mentioned at the end of the guide - either `find-hod.war` for Haven OnDemand, or `find.war` for IDOL.  Take a copy of the `.war` file - this is the application that you're going to run
 
+When building, you should specify the Maven `production` profile with `-Pproduction` to run the JavaScript and CSS optimizations.
+
 # Run the application
 ## Easy way
 
