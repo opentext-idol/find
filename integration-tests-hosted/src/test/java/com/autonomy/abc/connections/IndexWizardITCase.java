@@ -3,6 +3,7 @@ package com.autonomy.abc.connections;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -40,19 +41,7 @@ public class IndexWizardITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-949 - test the input validator which supports only A-Za-Z0-9, space and underscore characters - shouldn't be valid
-    public void testIndexDisplayNameValidatorsFail(){
-        Index index = new Index("name", "displayName #$%");
-
-        index.makeWizard(createNewIndexPage).getCurrentStep().apply();
-        FormInput displayNameInput = createNewIndexPage.getIndexNameWizardStepTab().displayNameInput();
-
-        verifyThat(displayNameInput.formGroup(), hasClass("has-error"));
-        verifyThat(displayNameInput.getErrorMessage(), containsString(Errors.Index.DISPLAY_NAME));
-    }
-
-    @Test
-    //CSA-949 - test the input validator which supports only A-Za-Z0-9, space and underscore characters - should be valid
+    @RelatedTo("CSA-949") // test the input validator which supports only A-Za-Z0-9, space and underscore characters - should be valid
     public void testIndexDisplayNameValidatorsPass(){
         Index index = new Index("name", "displayName 7894");
 
@@ -64,7 +53,19 @@ public class IndexWizardITCase extends HostedTestBase {
     }
 
     @Test
-    //CSA-949 - test that the index meta-data with the index display name is set properly according to the summary step
+    @RelatedTo("CSA-949") // test the input validator which supports only A-Za-Z0-9, space and underscore characters - shouldn't be valid
+    public void testIndexDisplayNameValidatorsFail(){
+        Index index = new Index("name", "displayName #$%");
+
+        index.makeWizard(createNewIndexPage).getCurrentStep().apply();
+        FormInput displayNameInput = createNewIndexPage.getIndexNameWizardStepTab().displayNameInput();
+
+        verifyThat(displayNameInput.formGroup(), hasClass("has-error"));
+        verifyThat(displayNameInput.getErrorMessage(), containsString(Errors.Index.DISPLAY_NAME));
+    }
+
+    @Test
+    @RelatedTo("CSA-949") // test that the index meta-data with the index display name is set properly according to the summary step
     public void testIndexDisplayNameOnSummary(){
         Index index = new Index("name", "displayName 7894");
 

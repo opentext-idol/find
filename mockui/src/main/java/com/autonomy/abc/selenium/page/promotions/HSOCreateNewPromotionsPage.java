@@ -55,12 +55,4 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
         return dataInput("staticContent");
     }
 
-    @Override
-    public void addSpotlightPromotion(final String promotionType, final String searchTrigger) {
-        // TODO: move this logic into a "SpotlightPromotion" object
-        promotionType("SPOTLIGHT").click();
-        continueButton().click();
-        getTriggerForm().addTrigger(searchTrigger);
-        finishButton().click();
-    }
 }

@@ -3,6 +3,7 @@ package com.autonomy.abc.keywords;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -350,12 +351,13 @@ public class KeywordsPageITCase extends ABCTestBase {
 		verifySynonymGroup(synonymListBees);
 	}
 
+	@RelatedTo({"CSA-1724", "CSA-1893"})
 	private void verifySearchKeywords(final List<String> synonyms) {
 		verifyThat("One of the synonyms is included in title", searchPage.getHeadingSearchTerm(), isIn(synonyms));
 		for(String searchedFor : searchPage.youSearchedFor()) {
 			verifyThat("All searched for terms are within synonym group", searchedFor, isIn(synonyms));
 		}
-		// TODO: CSA-1724 CSA-1893
+		// TODO: re-enable query analysis
 //		verifyThat("synonyms appear in query analysis", searchPage.getSynonymGroupSynonyms(synonyms.get(0)), containsItems(synonyms));
 		verifyThat(searchPage.countKeywords(), is(synonyms.size()));
 	}

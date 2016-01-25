@@ -31,5 +31,4 @@ public abstract class CreateNewPromotionsPage extends CreateNewPromotionsBase {
 		return findElement(By.cssSelector("div.position"));
 	}
 
-    public abstract void addSpotlightPromotion(String promotionType, String searchTrigger);
 }

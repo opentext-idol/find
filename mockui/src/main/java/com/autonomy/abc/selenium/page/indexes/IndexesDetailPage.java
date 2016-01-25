@@ -51,6 +51,10 @@ public class IndexesDetailPage extends SAASPageBase {
     }
 
     public void addSiteToIndex(String url){
+        // http automatically included by input box
+        if (url.startsWith("http://")) {
+            url = url.substring(7);
+        }
         WebElement inputBox = addURLInput();
         inputBox.sendKeys(url);
         inputBox.findElement(By.xpath(".//..//i")).click();

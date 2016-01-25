@@ -3,6 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -24,6 +25,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -337,7 +339,14 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
     }
 
     @Test
+    @RelatedTo("CSA-893")
     public void testNotificationsForPromotions() {
+        final List<Promotion> promotions = new ArrayList<>();
+        for (Promotion.SpotlightType type : Promotion.SpotlightType.values()) {
+            String trigger = "MyFirstNotification" + type.getOption().replaceAll("\\s+", "");
+            promotions.add(new SpotlightPromotion(type, trigger));
+        }
+
         createPromotionsPage.cancelButton().click();
         searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
@@ -345,20 +354,19 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage.promotionsBucketClose();
 
         try {
-            for (final String spotlightType : Arrays.asList("Sponsored", "Hotwire", "Top Promotions")) {
+            for (final Promotion promotion : promotions) {
                 goToWizard("dog", 1);
+                promotion.makeWizard(getElementFactory().getCreateNewPromotionsPage()).apply();
 
-                createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
-                createPromotionsPage.addSpotlightPromotion(spotlightType, "MyFirstNotification" + spotlightType.replaceAll("\\s+", ""));
                 new WebDriverWait(getDriver(), 20).until(GritterNotice.notificationAppears());
 
                 getElementFactory().getTopNavBar().notificationsDropdown();
                 final NotificationsDropDown notifications = getElementFactory().getTopNavBar().getNotifications();
                 //Match regardless of case
                 verifyThat(notifications.notificationNumber(1).getText().toLowerCase(),
-                        containsString(("Created a new spotlight promotion: Spotlight for: MyFirstNotification" + spotlightType.replaceAll("\\s+", "")).toLowerCase()));
+                        containsString(("Created a new spotlight promotion: Spotlight for: " + promotion.getTrigger()).toLowerCase()));
 
-                // TODO: CSA-893
+                // clicking notification should redirect to detail page?
 //            notifications.notificationNumber(1).click();
 //            verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail/spotlight"));
             }

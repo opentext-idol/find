@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-// TODO: CSA-1663
 public class HSONewUser implements NewUser {
 
     private final String username;

@@ -11,12 +11,6 @@ public class ContainerItem {
     private int searches;
     private WebElement element;
 
-    public ContainerItem(String term, int searches){
-        this.searches = searches;
-        this.term = term;
-        this.element = null;
-    }
-
     public ContainerItem(WebElement element){
         this.element = element;
         this.term = element.findElement(By.tagName("a")).getText();
@@ -44,7 +38,7 @@ public class ContainerItem {
 
     @Override
     public String toString() {
-        return "Item<" + term + "," + searches + ">";
+        return "ContainerItem<" + term + "," + searches + ">";
     }
 
     public final static Comparator<ContainerItem> COUNT_ASCENDING = new Comparator<ContainerItem>() {

@@ -44,6 +44,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	// "Results for term (___)"
+	// WARN: results count will not be displayed if search had an error
 	public int getHeadingResultsCount() {
 		((JavascriptExecutor) getDriver()).executeScript("scroll(0,0)");
 		final String totalWithBrackets = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();

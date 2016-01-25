@@ -79,7 +79,6 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
         createPromotionsPage.documentTitle().setValue(title);
         wizard.next();
 
-        // TODO: languages once enabled
         verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
         verifyThat(createPromotionsPage.continueButton(), not(disabled()));
         wizard.getCurrentStep().apply();
