@@ -8,6 +8,8 @@ package com.hp.autonomy.frontend.find.core.search;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -17,8 +19,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.Serializable;
 import java.util.Collections;
 
-import static org.mockito.Matchers.anySetOf;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,7 +53,7 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, R 
     @Test
     public void findSimilar() throws E {
         final String reference = "SomeReference";
-        documentsController.findSimilar(reference, Collections.<S>emptySet());
-        verify(documentsService).findSimilar(anySetOf(databaseType), eq(reference));
+        documentsController.findSimilar(reference, 1, 30, "context", Collections.<S>emptyList(), "", "relevance", null, DateTime.now(), true);
+        verify(documentsService).findSimilar(Matchers.<SuggestRequest<S>>any());
     }
 }
