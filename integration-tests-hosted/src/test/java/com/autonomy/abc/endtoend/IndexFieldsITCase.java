@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +123,14 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     private void logSearch(SearchQuery query) {
         logger.info("searching for " + query);
-        searchPage = searchService.search(query);
+        boolean quick = true;
+        try {
+            searchPage = searchService.search(query);
+        } catch (TimeoutException e) {
+            quick = false;
+            getElementFactory().getSearchPage().waitForSearchLoadIndicatorToDisappear();
+        }
+        verifyThat("search responded within a reasonable time", quick);
     }
 
     private void verifyFirstSearchResult() {
@@ -157,7 +165,14 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     private void logFind(String query) {
         logger.info("finding " + query);
-        find.search(query);
+        boolean quick = true;
+        try {
+            find.search(query);
+        } catch (TimeoutException e) {
+            quick = false;
+            find.getResultsPage().waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        }
+        verifyThat("find responded within a reasonable time", quick);
     }
 
     private void verifyFirstFindResult() {
