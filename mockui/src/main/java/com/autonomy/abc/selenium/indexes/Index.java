@@ -34,7 +34,7 @@ public class Index {
     }
 
     public Index withIndexFields(Collection<String> fields) {
-        getIndexFields().addAll(fields);
+        indexFields.addAll(fields);
         return this;
     }
 

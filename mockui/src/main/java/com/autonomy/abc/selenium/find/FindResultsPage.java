@@ -189,4 +189,8 @@ public class FindResultsPage extends AppElement {
     public WebElement searchResultTitle(int searchResultNumber) {
         return searchResult(searchResultNumber).findElement(By.tagName("h4"));
     }
+
+    public String getSearchResultReference(int searchResultNumber) {
+        return searchResult(searchResultNumber).findElement(By.className("document-reference")).getText();
+    }
 }

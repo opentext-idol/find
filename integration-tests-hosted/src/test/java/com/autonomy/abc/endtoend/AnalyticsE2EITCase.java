@@ -2,6 +2,7 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.element.Removable;
 import com.autonomy.abc.selenium.keywords.KeywordService;
@@ -32,7 +33,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.isIn;
 
-//CSA-1572
+@RelatedTo("CSA-1572")
 public class AnalyticsE2EITCase extends HostedTestBase {
 
     private AnalyticsPage analyticsPage;
@@ -71,11 +72,11 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     public void testAnalytics() throws InterruptedException {
         List<String> newTriggers = Arrays.asList("happy", "sad");
 
+        @RelatedTo("CSA-1752")
         String nonZeroTerm;
         try {
             nonZeroTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
         } catch (NoSuchElementException e) {
-            // CSA-1752
             LOGGER.warn("all popular search terms are zero hit terms");
             nonZeroTerm = analyticsPage.getPopularSearch(2);
         }
@@ -151,6 +152,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         LOGGER.info("added synonym group: " + Arrays.asList(synonyms));
     }
 
+    @RelatedTo("CSA-1724")
     private void verifyTermSearch(String term) {
         search(term);
         LOGGER.warn("[CSA-1724] skipping query analysis test");

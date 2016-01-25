@@ -2,6 +2,7 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
@@ -25,7 +26,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-//CSA-1590
+@RelatedTo("CSA-1590")
 public class AnalyticsToFindITCase extends HostedTestBase {
     private Find find;
     private FindResultsPage service;

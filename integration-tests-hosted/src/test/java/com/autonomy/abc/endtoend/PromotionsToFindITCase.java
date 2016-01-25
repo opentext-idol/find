@@ -2,6 +2,7 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
@@ -26,7 +27,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.isIn;
 
-//CSA-1566
+@RelatedTo("CSA-1566")
 public class PromotionsToFindITCase extends HostedTestBase {
     private Window searchWindow;
     private Window findWindow;

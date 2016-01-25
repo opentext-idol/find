@@ -4,6 +4,7 @@ import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.Dropdown;
@@ -349,14 +350,14 @@ public class PromotionsITCase extends ABCTestBase {
 
 		promotionsPage.selectPromotionsCategoryFilter("All Types");
 		promotionsPage.clearPromotionsSearchFilter();
-		// OP fails due to CCUK-2671
+		// OP fails due to rapid add/remove bug
 		promotionsPage.promotionsSearchFilter().sendKeys("Ridgeback");
 		verifyThat(promotionsPage, promotionsList(hasSize(1)));
 	}
 
 	@Test
+	@RelatedTo("IOD-4827")
 	public void testPromotionLanguages() {
-		// TODO: IOD-4827
 		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
 		Language[] languages = {Language.FRENCH, Language.SWAHILI, Language.AFRIKAANS};
 		//Afrikaans dog thing isn't actually a dog but it wasn't working so yolo

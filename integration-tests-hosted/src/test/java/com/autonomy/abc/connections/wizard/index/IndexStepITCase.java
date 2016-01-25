@@ -3,6 +3,7 @@ package com.autonomy.abc.connections.wizard.index;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
@@ -59,6 +60,20 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
     }
 
     @Test
+    @RelatedTo("CSA-949") // test the input validator which supports only A-Za-Z0-9, space and underscore characters - should be valid
+    public void testIndexDisplayNameValidatorsPass() {
+        connectorIndexStepTab.setIndexName("name");
+        connectorIndexStepTab.setIndexDisplayName("displayName 7894");
+        String errorMessage = connectorIndexStepTab.indexDisplayNameInput().getErrorMessage();
+        verifyThat(errorMessage, isEmptyOrNullString());
+        WebElement displayNameFormGroup = connectorIndexStepTab.indexDisplayNameInput().formGroup();
+
+        verifyThat(displayNameFormGroup, not(hasClass("has-error")));
+
+    }
+
+    @Test
+    @RelatedTo("CSA-949") // test the input validator which supports only A-Za-Z0-9, space and underscore characters - shouldn't be valid
     public void testIndexDisplayNameValidatorsFail(){
         connectorIndexStepTab.setIndexName("name");
 
@@ -90,18 +105,5 @@ public class IndexStepITCase extends ConnectorTypeStepBase {
         WebElement displayNameFormGroup = connectorIndexStepTab.indexDisplayNameInput().formGroup();
         verifyThat(displayNameFormGroup, hasClass("has-error"));
         verifyThat(errorMessage, is(Errors.Index.MAX_CHAR_LENGTH));
-    }
-
-    @Test
-    //CSA-949 - test the input validator which supports only A-Za-Z0-9, space and underscore characters - should be valid
-    public void testIndexDisplayNameValidatorsPass(){
-        connectorIndexStepTab.setIndexName("name");
-        connectorIndexStepTab.setIndexDisplayName("displayName 7894");
-        String errorMessage = connectorIndexStepTab.indexDisplayNameInput().getErrorMessage();
-        verifyThat(errorMessage, isEmptyOrNullString());
-        WebElement displayNameFormGroup = connectorIndexStepTab.indexDisplayNameInput().formGroup();
-
-        verifyThat(displayNameFormGroup, not(hasClass("has-error")));
-
     }
 }

@@ -2,6 +2,7 @@ package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.ErrorPage;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
@@ -235,6 +236,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     @KnownBug("CSA-1766")
+    @RelatedTo("CSA-1663")
     public void testCreateUser(){
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());

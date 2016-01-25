@@ -82,12 +82,12 @@ public class AnalyticsITCase extends HostedTestBase {
             container.selectPeriod(Container.Period.WEEK);
             verifyThat(container.getSelectedPeriod(), is(Container.Period.WEEK));
             List<ContainerItem> weekItems = container.getItems();
-            verifyFirstListBigger(weekItems, dayItems, ContainerItem.COUNT_DESCENDING);
+            verifyFirstListBigger(weekItems, dayItems, ContainerItem.COUNT_ASCENDING);
 
             container.selectPeriod(Container.Period.MONTH);
             verifyThat(container.getSelectedPeriod(), is(Container.Period.MONTH));
             List<ContainerItem> monthItems = container.getItems();
-            verifyFirstListBigger(monthItems, weekItems, ContainerItem.COUNT_DESCENDING);
+            verifyFirstListBigger(monthItems, weekItems, ContainerItem.COUNT_ASCENDING);
         }
     }
 

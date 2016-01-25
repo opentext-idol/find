@@ -2,6 +2,7 @@ package com.autonomy.abc.endtoend;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
@@ -25,7 +26,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.core.Is.is;
 
-//CSA-1564
+@RelatedTo("CSA-1564")
 public class IndexSetUpITCase extends HostedTestBase {
     private IndexService indexService;
     private PromotionService<?> promotionService;

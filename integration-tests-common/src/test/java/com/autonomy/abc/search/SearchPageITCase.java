@@ -3,6 +3,7 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
@@ -367,6 +368,7 @@ public class SearchPageITCase extends ABCTestBase {
 
     //TODO there are some which contain helpful error messages?
 	@Test
+	@RelatedTo("IOD-8454")
 	public void testSearchQuotationMarks() {
         List<String> emptyPhrases = Arrays.asList("\"\"","\" \"");
 		List<String> unclosedPhrases = Arrays.asList("\"","\"word","\" word","\" wo\"rd\"");
@@ -374,7 +376,7 @@ public class SearchPageITCase extends ABCTestBase {
 		String emptyError = Errors.Search.NO_TEXT;
 		String unclosedError = Errors.Search.QUOTES;
 
-		// TODO: IOD-8454
+		// HOD should return better errors
         if(getConfig().getType().equals(ApplicationType.HOSTED)){
 			emptyError = Errors.Search.HOD;
 			unclosedError = Errors.Search.HOD;
