@@ -1,16 +1,22 @@
 define([
     'backbone',
     'find/app/model/saved-searches/saved-search-collection',
-    'find/app/model/saved-searches/saved-search-model',
     'text!find/templates/app/page/search/saved-search-control/save-search-input.html',
     'i18n!find/nls/bundle'
-], function(Backbone, SavedSearchCollection, SavedSearchModel, template, i18n) {
+], function(Backbone, SavedSearchCollection, template, i18n) {
 
     return Backbone.View.extend({
         template: _.template(template),
 
         saveSuccess: function() {
             this.savedSearchControlModel.set('showSave', false);
+            this.$saveErrorMessage
+                .text('');
+        },
+
+        saveFailure: function() {
+            this.$saveErrorMessage
+                .text(i18n['search.savedSearchControl.error'])
         },
 
         disable: function(disable) {
@@ -29,17 +35,11 @@ define([
                 parametricValues: this.queryModel.get('parametricValues')
             };
 
-            var savedSearch = new SavedSearchModel();
-
-            this.savedSearchCollection.add(savedSearch);
-
             this.disable(true);
 
-            savedSearch.save(saveArguments, {
+            this.savedSearchModel.save(saveArguments, {
                 success: _.bind(this.saveSuccess, this),
-                error: function() {
-                    console.log('failure to save model');
-                },
+                error: _.bind(this.saveFailure, this),
                 wait: true
             }).always(_.bind(function() {
                 this.disable(false);
@@ -62,6 +62,7 @@ define([
         },
 
         initialize: function(options) {
+            this.savedSearchModel = options.savedSearchModel;
             this.queryModel = options.queryModel;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchControlModel = options.savedSearchControlModel;
@@ -76,6 +77,7 @@ define([
             this.$saveInput = this.$('.save-input .find-input');
             this.$confirmButton = this.$('.save-confirm-button');
             this.$cancelButton = this.$('.save-cancel-button');
+            this.$saveErrorMessage = this.$('.save-error-message');
         }
     });
 

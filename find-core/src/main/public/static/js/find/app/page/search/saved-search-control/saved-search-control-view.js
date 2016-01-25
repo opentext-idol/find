@@ -1,10 +1,11 @@
 define([
     'backbone',
     'find/app/model/saved-searches/saved-search-collection',
+    'find/app/model/saved-searches/saved-search-model',
     'find/app/page/search/saved-search-control/save-search-input',
     'text!find/templates/app/page/search/saved-search-control/saved-search-control-view.html',
     'i18n!find/nls/bundle'
-], function(Backbone, SavedSearchCollection, SaveSearchInput, template, i18n) {
+], function(Backbone, SavedSearchCollection, SavedSearchModel, SaveSearchInput, template, i18n) {
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -18,6 +19,16 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
 
+            this.savedSearchCollection = new SavedSearchCollection();
+
+            // Important: Alternative must be removed before merging into develop
+            if(options.savedSearchModel) {
+                this.savedSearchModel = options.savedSearchModel;
+            } else {
+                this.savedSearchModel = new SavedSearchModel();
+                this.savedSearchCollection.add(this.savedSearchModel);
+            }
+
             this.model = new Backbone.Model({
                 showSave: false
             });
@@ -30,9 +41,8 @@ define([
                     .attr('aria-pressed', showSave);
             });
 
-            this.savedSearchCollection = new SavedSearchCollection();
-
             this.saveSearchInput = new SaveSearchInput({
+                savedSearchModel: this.savedSearchModel,
                 queryModel: this.queryModel,
                 savedSearchCollection: this.savedSearchCollection,
                 savedSearchControlModel: this.model

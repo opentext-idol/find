@@ -106,6 +106,7 @@ define([
         'search.savedSearchControl.saveSearch': 'Save Search',
         'search.savedSearchControl.nameSearch': 'Name your search',
         'search.savedSearchControl.cancelSave': 'Cancel',
+        'search.savedSearchControl.error': 'Error saving search',
         'search.topicMap.clustering': 'Clustering Mode',
         'search.topicMap.occurrences': 'Occurrences of phrase',
         'search.topicMap.documents': 'Documents with phrase',
