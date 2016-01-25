@@ -224,6 +224,13 @@ html, body {
     text-align: center;
 }
 
+
+/*sizes determined by HPE Elements .middle-box*/
+.middle-box-wrapper {
+    height: 400px;
+    width: 300px;
+}
+
 /* find 2.0 */
 .main-content {
     background-color: white;

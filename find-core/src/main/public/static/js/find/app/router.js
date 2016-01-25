@@ -10,7 +10,8 @@ define([
 
         routes: {
             'find/search(/:text/*refinements)': 'search',
-            'find/:page': 'find'
+            'find/:page': 'find',
+            '(*path)': 'defaultRoute'
         },
 
         navigate: function() {
@@ -21,7 +22,12 @@ define([
 
         search: function() {
             this.trigger('route:find', 'search');
+        },
+
+        defaultRoute: function() {
+            this.navigate('find/search', {trigger: true, replace: true})
         }
+
     });
 
     return new Router();
