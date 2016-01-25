@@ -59,14 +59,14 @@ public class IndexesPage extends AppElement implements AppPage {
         getDriver().findElement(By.cssSelector(".modal-footer [type=submit]")).click();
     }
 
-    public List<WebElement> getIndexes() {
+    public List<WebElement> indexes() {
         return findElements(By.xpath("//*[contains(@ng-repeat,'index')]"));
     }
 
     public List<String> getIndexDisplayNames(){
         List<String> names = new ArrayList<>();
 
-        for(WebElement index : getIndexes()){
+        for(WebElement index : indexes()){
             names.add(index.findElement(By.className("listItemTitle")).getText().split("\\(")[0].trim());
         }
 

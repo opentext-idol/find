@@ -6,6 +6,7 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
@@ -25,6 +26,7 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
@@ -46,6 +48,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     public void setUp(){
         indexService = getApplication().createIndexService(getElementFactory());
         indexesPage = indexService.setUpIndex(indexOne);
+        indexesDetailPage = indexService.goToDetails(indexOne);
     }
 
     @Test
@@ -90,8 +93,6 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1703")
     public void testGraphNoDataMessage(){
-        indexesDetailPage = indexService.goToDetails(indexOne);
-
         new WebDriverWait(getDriver(),20).until(ExpectedConditions.invisibilityOfElementLocated(By.className("loadingIconSmall")));
 
         verifyThat(indexesDetailPage.filesIngestedGraph(), containsText("There is no data for this time period"));
@@ -100,8 +101,6 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1685")
     public void testButtonsNotObscuredAfterScroll(){
-        indexesDetailPage = indexService.goToDetails(indexOne);
-
         getDriver().manage().window().setSize(new Dimension(1100, 700));
 
         ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight)");
@@ -113,6 +112,16 @@ public class IndexDetailsPageITCase extends HostedTestBase {
         indexesDetailPage.backButton().click();
 
         verifyThat(getDriver().getCurrentUrl(), containsString("indexes"));
+    }
+
+    @Test
+    public void testDeleteIndex(){
+        indexesDetailPage.deleteButton().click();
+        Waits.loadOrFadeWait();
+        getDriver().findElement(By.xpath("//button[text()='Delete']")).click();
+        new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining("Index " + indexOne.getDisplayName() + " successfully deleted"));
+        indexesPage = getElementFactory().getIndexesPage();
+        verifyThat(indexesPage.getIndexDisplayNames(), not(hasItem(indexOne.getDisplayName())));
     }
 
     @After
