@@ -2,24 +2,20 @@ package com.autonomy.abc.framework.rules;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.framework.ArtifactSaveVisitor;
-import com.autonomy.abc.framework.PageSourceSaver;
-import com.autonomy.abc.framework.ScreenshotSaver;
 import com.autonomy.abc.framework.TestState;
 import com.autonomy.abc.selenium.control.Session;
-import com.autonomy.abc.selenium.control.SessionRegistry;
-import com.autonomy.abc.selenium.control.Window;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
 
 public class TestArtifactRule extends TestWatcher implements ArtifactSaveVisitor.ArtifactSaver {
     private final ArtifactSaveVisitor saveVisitor = new ArtifactSaveVisitor();
-    private final SessionRegistry sessions;
+    private final ABCTestBase testBase;
     private final String timestamp;
     private Description currentDescription;
 
     public TestArtifactRule(ABCTestBase testBase) {
-        sessions = testBase.getSessionRegistry();
+        this.testBase = testBase;
         timestamp = TestState.get().getTimestamp();
     }
 
@@ -48,6 +44,6 @@ public class TestArtifactRule extends TestWatcher implements ArtifactSaveVisitor
 
     @Override
     public Iterable<Session> getSessions() {
-        return sessions;
+        return testBase.getSessionRegistry();
     }
 }
