@@ -128,13 +128,17 @@ public class IndexFieldsITCase extends HostedTestBase {
             searchPage = searchService.search(query);
         } catch (TimeoutException e) {
             quick = false;
-            getElementFactory().getSearchPage().waitForSearchLoadIndicatorToDisappear();
+            searchPage = getElementFactory().getSearchPage();
+            searchPage.waitForSearchLoadIndicatorToDisappear();
         }
         verifyThat("search responded within a reasonable time", quick);
     }
 
     private void verifyFirstSearchResult() {
-        if (verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0))) {
+        boolean noError = verifyThat(searchPage, not(containsText(Errors.Search.HOD)));
+        // results count not shown if backend error
+        boolean hasResults = noError && verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0));
+        if (noError && hasResults) {
             searchPage.searchResult(1).click();
             DocumentViewer viewer = DocumentViewer.make(getDriver());
             verifyThat(viewer.getReference(), containsString(ingestUrl));
