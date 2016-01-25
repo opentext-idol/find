@@ -1,6 +1,6 @@
 <% var promoted = promotion ? 'promoted-document' : ''; %>
 
-<div class="main-results-container m-b-sm <%-promoted%>" data-rel="results" data-reference="<%-reference %>">
+<div class="main-results-container m-b-sm <%-promoted%>" data-rel="results" data-reference="<%-reference %>" data-domain="<%-domain%>" data-index="<%-index%>">
     <span class="pull-left m-t-xs text-muted m-r-sm content-type">
         <i class="icomoon-file-<%-contentType%>"></i>
     </span>
@@ -22,7 +22,10 @@
             <%= summary %>
         </p>
         <p class="text-right">
-            <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+            <a class="preview-documents-trigger result-container-control m-r-lg" tabindex="-1"><%-i18n['search.preview']%></a>
+            <% if (!staticPromotion) { %>
+                <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
+            <% } %>
         </p>
     </div>
 </div>

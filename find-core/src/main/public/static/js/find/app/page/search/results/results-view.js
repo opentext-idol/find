@@ -36,6 +36,11 @@ define([
 
     var mediaTypes = ['audio', 'video'];
 
+    function isURL(reference) {
+        var r = /^https?:\/\//;
+        return r.test(reference);
+    }
+
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
 
@@ -45,7 +50,7 @@ define([
                 this.maxResults = totalResults;
                 this.endOfResults = true;
             } else {
-                this.start = this.maxResults;
+                this.start += SCROLL_INCREMENT;
                 this.maxResults += SCROLL_INCREMENT;
                 if (this.maxResults === totalResults) {
                     this.endOfResults = true;
@@ -290,14 +295,17 @@ define([
             }
 
             var $newResult = $(this.resultsTemplate({
-                i18n: i18n,
-                title: model.get('title'),
-                reference: reference,
-                href: href,
-                summary: summary,
-                promotion: isPromotion,
+                contentType: getContentTypeClass(model),
                 date: model.has('date') ? model.get('date').fromNow() : null,
-                contentType: getContentTypeClass(model)
+                domain: model.get('domain'), // undefined when using IDOL
+                i18n: i18n,
+                index: model.get('index'),
+                href: href,
+                promotion: isPromotion,
+                reference: reference,
+                staticPromotion: model.get('promotionType') === 'STATIC_CONTENT_PROMOTION',
+                summary: summary,
+                title: model.get('title')
             }));
 
             if (isPromotion) {
@@ -306,12 +314,25 @@ define([
                 this.$('.main-results-content .results').append($newResult);
             }
 
-            $newResult.find('.result-header').colorbox(this.colorboxArguments({model: model, href: href}));
+            var colorboxArgs = this.colorboxArguments({model: model, href: href});
+            var $previewTrigger = $newResult.find('.preview-documents-trigger');
+            var $resultHeader = $newResult.find('.result-header');
 
-            $newResult.find('.dots').click(function (e) {
-                e.preventDefault();
-                $newResult.find('.result-header').trigger('click'); //dot-dot-dot triggers the colorbox event
-            });
+            $previewTrigger.colorbox(colorboxArgs);
+
+            // web documents should open the original document in a new tab
+            if (isURL(reference)) {
+                $resultHeader.attr({
+                    href: reference,
+                    target: "_blank"
+                });
+            } else {
+                $resultHeader.click(function(e) {
+                    e.preventDefault();
+
+                    $previewTrigger.colorbox(_.extend({open: true}, colorboxArgs));
+                });
+            }
 
             popover($newResult.find('.similar-documents-trigger'), 'focus', this.handlePopover);
         },
@@ -396,10 +417,18 @@ define([
             return text.replace(new RegExp(startRegex + textToFind + endRegex, 'g'), '$1' + label + '$2');
         },
 
+        // overridden for HOD/IDOL
+        getIndexForSimilarDocuments: $.noop,
+
         handlePopover: function($content, $target) {
+            var $resultsContainer = $target.closest('.main-results-container');
+
+            var reference = $resultsContainer.attr('data-reference');
+            var index = this.getIndexForSimilarDocuments($resultsContainer);
+
             var collection = new SimilarDocumentsCollection([], {
-                indexes: this.queryModel.get('indexes'),
-                reference: $target.closest('[data-reference]').attr('data-reference')
+                indexes: [index],
+                reference: reference
             });
 
             collection.fetch({
@@ -462,7 +491,8 @@ define([
                     max_date: this.queryModel.getIsoDate('maxDate'),
                     sort: this.queryModel.get('sort')
                 },
-                reset: false
+                reset: false,
+                remove: !infiniteScroll
             }, this);
 
             if (!infiniteScroll) {
