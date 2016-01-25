@@ -31,7 +31,7 @@ define([
                 ItemView: TabItemView
             });
 
-            this.contentViews = {};
+            this.serviceViews = {};
 
             this.listenTo(this.searchModel, 'change:selectedSearchCid', function() {
                 this.selectContentView();
@@ -40,8 +40,8 @@ define([
 
             this.listenTo(this.savedSearchCollection, 'remove', function(savedSearch) {
                 var cid = savedSearch.cid;
-                this.contentViews[cid].remove();
-                delete this.contentViews[cid];
+                this.serviceViews[cid].remove();
+                delete this.serviceViews[cid];
             });
         },
 
@@ -50,7 +50,7 @@ define([
 
             this.tabListView.setElement(this.$('.saved-search-tabs-list')).render();
 
-            _.each(this.contentViews, function(view) {
+            _.each(this.serviceViews, function(view) {
                 this.$('.search-tabs-content').append(view.$el);
             }, this);
 
@@ -61,12 +61,12 @@ define([
         selectContentView: function() {
             var cid = this.searchModel.get('selectedSearchCid');
 
-            _.each(this.contentViews, function(view) {
+            _.each(this.serviceViews, function(view) {
                 view.$el.addClass('hide');
             });
 
             if (cid) {
-                var view = this.contentViews[cid];
+                var view = this.serviceViews[cid];
 
                 if (!view) {
                     view = new this.ServiceView({
@@ -75,7 +75,7 @@ define([
                         searchModel: this.searchModel
                     });
 
-                    this.contentViews[cid] = view;
+                    this.serviceViews[cid] = view;
                     view.render();
                     this.$('.search-tabs-content').append(view.$el);
                 }
