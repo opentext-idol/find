@@ -43,7 +43,6 @@ public class IndexFieldsITCase extends HostedTestBase {
     private final ParametricFilter parametricFilter = new ParametricFilter(parametricFieldName, parametricFieldValue);
     private final FieldTextFilter matchFilter = new FieldTextFilter("MATCH{" + parametricFieldValue + "}:" + parametricFieldName);
 
-    private boolean indexWasCreated = false;
     private IndexService indexService;
     private SearchService searchService;
     private SearchPage searchPage;
@@ -65,15 +64,12 @@ public class IndexFieldsITCase extends HostedTestBase {
         searchService = getApplication().createSearchService(getElementFactory());
 
         indexService.setUpIndex(index);
-        indexWasCreated = true;
         logger.info(index + " was created");
     }
 
     @After
     public void tearDown() {
-        if (indexWasCreated) {
-            indexService.deleteIndex(index);
-        }
+        indexService.deleteAllIndexes();
     }
 
     @Test
