@@ -204,7 +204,6 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1689")
     public void testNewlyCreatedIndexSize (){
-        IndexService indexService = getApplication().createIndexService(getElementFactory());
         indexService.deleteAllIndexes();
 
         Index index = new Index("yellow cat red cat");
@@ -227,14 +226,22 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1886")
     public void testDeletingDefaultIndex(){
-        IndexService indexService = getApplication().createIndexService(getElementFactory());
-
         indexService.deleteIndexViaAPICalls(Index.DEFAULT, getCurrentUser(), config.getApiUrl());
 
         getDriver().navigate().refresh();
         indexesPage = getElementFactory().getIndexesPage();
 
         verifyThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getDisplayName()));
+    }
+
+    @Test
+    public void testDeletingSearchDefaultIndex(){
+        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), getCurrentUser(), config.getApiUrl());
+
+        getDriver().navigate().refresh();
+        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+
+        verifyThat(getElementFactory().getPromotionsPage(), containsText("There are no promotions..."));
     }
 
     @Test

@@ -188,11 +188,22 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
                 /* Happens when it's trying to log in for the second time */
             }
 
-            ErrorPage errorPage = new ErrorPage(secondDriver);
-            verifyThat(errorPage.getErrorCode(), is("401"));
+            verify401(secondDriver);
+
+            secondDriver.navigate().to(config.getWebappUrl().split("/searchoptimizer")[0]);
+            verify401(secondDriver);
+
+            secondDriver.navigate().to(config.getFindUrl());
+            Waits.loadOrFadeWait();
+            verifyThat(secondDriver.findElement(By.className("error-body")), containsText("401"));
         } finally {
             secondDriver.quit();
         }
+    }
+
+    private void verify401(WebDriver driver){
+        ErrorPage errorPage = new ErrorPage(driver);
+        verifyThat(errorPage.getErrorCode(), is("401"));
     }
 
     @Test

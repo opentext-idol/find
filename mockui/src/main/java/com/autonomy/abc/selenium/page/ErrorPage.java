@@ -35,6 +35,6 @@ public class ErrorPage implements AppPage {
     public void waitForLoad() {
         new WebDriverWait(driver, 20)
                 .withMessage("loading error page")
-                .until(ExpectedConditions.presenceOfElementLocated(By.tagName("a")));
+                .until(ExpectedConditions.presenceOfElementLocated(By.className("error-desc")));
     }
 }
