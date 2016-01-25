@@ -118,7 +118,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     public void testDeleteIndex(){
         indexesDetailPage.deleteButton().click();
         Waits.loadOrFadeWait();
-        getDriver().findElement(By.xpath("//button[text()='Delete']")).click();
+        indexesDetailPage.confirmDeleteButton().click();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining("Index " + indexOne.getDisplayName() + " successfully deleted"));
         indexesPage = getElementFactory().getIndexesPage();
         verifyThat(indexesPage.getIndexDisplayNames(), not(hasItem(indexOne.getDisplayName())));
