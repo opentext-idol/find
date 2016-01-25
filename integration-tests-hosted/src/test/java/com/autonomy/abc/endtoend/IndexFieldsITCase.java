@@ -17,6 +17,7 @@ import com.autonomy.abc.selenium.util.Errors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -34,6 +35,8 @@ public class IndexFieldsITCase extends HostedTestBase {
     private final String indexFieldValue = "speech recognition";
     private final String parametricFieldName = "publisher";
     private final String parametricFieldValue = "HPE Haven OnDemand";
+    private final ParametricFilter parametricFilter = new ParametricFilter(parametricFieldName, parametricFieldValue);
+
 
     private boolean indexWasCreated = false;
     private IndexService indexService;
@@ -101,7 +104,7 @@ public class IndexFieldsITCase extends HostedTestBase {
         searchPage = searchService.search(new SearchQuery("*").withFilter(new IndexFilter(index)));
         verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0));
 
-        searchPage.filterBy(new ParametricFilter(parametricFieldName, parametricFieldValue));
+        applyParametricFilter(searchPage);
         verifyFirstSearchResult();
 
         searchPage = searchService.search(new SearchQuery("*").withFilter(new FieldTextFilter("MATCH{" + parametricFieldValue + "}:" + parametricFieldName)));
@@ -129,7 +132,7 @@ public class IndexFieldsITCase extends HostedTestBase {
             verifyFirstFindResult();
 
             find.search("*");
-            find.filterBy(new ParametricFilter(parametricFieldName, parametricFieldValue));
+            applyParametricFilter(find);
             verifyFirstFindResult();
         } finally {
             second.close();
@@ -139,7 +142,7 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     private void verifyFirstFindResult() {
         FindResultsPage resultsPage = find.getResultsPage();
-        if (verifyThat(resultsPage.results(), not(empty()))) {
+        if (verifyThat("has results", resultsPage.results(), not(empty()))) {
             verifyThat(resultsPage.getSearchResultReference(1), containsString(ingestUrl));
 
             resultsPage.searchResultTitle(1).click();
@@ -148,6 +151,16 @@ public class IndexFieldsITCase extends HostedTestBase {
             verifyThat(viewer.getReference(), containsString(ingestUrl));
             viewer.close();
         }
+    }
+
+    private void applyParametricFilter(SearchFilter.Filterable filterable) {
+        boolean success = true;
+        try {
+            filterable.filterBy(parametricFilter);
+        } catch (NoSuchElementException e) {
+            success = false;
+        }
+        verifyThat("able to filter by " + parametricFilter, success);
     }
 
 }

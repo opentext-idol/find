@@ -63,6 +63,11 @@ public class ParametricFilter implements SearchFilter {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ParametricFilter:" + map;
+    }
+
     public interface Filterable extends SearchFilter.Filterable{
         WebElement parametricContainer();
         void waitForParametricValuesToLoad();
