@@ -26,7 +26,7 @@ define([
         },
 
         save: function() {
-            var name = this.$saveForm.val();
+            var name = this.$saveInput.val();
 
             var saveArguments = {
                 title: name,
