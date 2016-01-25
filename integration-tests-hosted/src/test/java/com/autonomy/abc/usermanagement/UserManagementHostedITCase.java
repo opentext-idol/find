@@ -190,6 +190,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
             ErrorPage errorPage = new ErrorPage(secondDriver);
             verifyThat(errorPage.getErrorCode(), is("401"));
+
+            secondDriver.navigate().to(config.getWebappUrl().split("/searchoptimizer")[0]);
+            errorPage = new ErrorPage(secondDriver);
+            verifyThat(errorPage.getErrorCode(), is("401"));
         } finally {
             secondDriver.quit();
         }
@@ -205,7 +209,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
 
-        try {
+        try {   
             userService.editUsername(user, "");
         } catch (TimeoutException e) { /* Should fail here as you're giving it an invalid username */ }
 
