@@ -39,10 +39,7 @@ define([
             indexesCollection.fetch();
 
             // Model representing high level search page state
-            this.searchModel = new SearchPageModel({
-                inputText: '',
-                selectedSearchCid: null
-            });
+            this.searchModel = new SearchPageModel();
 
             this.listenTo(this.searchModel, 'change', function() {
                 var inputText = this.searchModel.get('inputText');
