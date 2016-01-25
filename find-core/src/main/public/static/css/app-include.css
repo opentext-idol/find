@@ -318,7 +318,9 @@ html, body {
 }
 
 .search-tabs-container {
-    background-color: #efefef;
+    background-color: #EFEFEF;
+    height: 51px;
+    border-bottom: 1px solid #E4E4E4;
 }
 
 .search-tabs-container h4 {
