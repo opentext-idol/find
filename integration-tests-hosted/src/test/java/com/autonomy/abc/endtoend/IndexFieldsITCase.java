@@ -18,6 +18,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -29,6 +31,8 @@ import static org.hamcrest.Matchers.*;
 
 @RelatedTo("CSA-2056")
 public class IndexFieldsITCase extends HostedTestBase {
+    private final Logger logger = LoggerFactory.getLogger(IndexFieldsITCase.class);
+
     private final Index index;
     private final String ingestUrl = "www.havenondemand.com";
     private final String indexFieldName = "description";
@@ -36,7 +40,7 @@ public class IndexFieldsITCase extends HostedTestBase {
     private final String parametricFieldName = "publisher";
     private final String parametricFieldValue = "HPE Haven OnDemand";
     private final ParametricFilter parametricFilter = new ParametricFilter(parametricFieldName, parametricFieldValue);
-
+    private final FieldTextFilter matchFilter = new FieldTextFilter("MATCH{" + parametricFieldValue + "}:" + parametricFieldName);
 
     private boolean indexWasCreated = false;
     private IndexService indexService;
@@ -61,6 +65,7 @@ public class IndexFieldsITCase extends HostedTestBase {
 
         indexService.setUpIndex(index);
         indexWasCreated = true;
+        logger.info(index + " was created");
     }
 
     @After
@@ -81,34 +86,43 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     private void ingestDocument() {
         IndexesDetailPage detailPage = indexService.goToDetails(index);
+        logger.info("ingesting document " + ingestUrl);
         detailPage.addSiteToIndex(ingestUrl);
-
     }
 
     private void verifyIndexSearch() {
-        searchPage = searchService.search(new SearchQuery("*").withFilter(new IndexFilter(index)));
+        logSearch(new SearchQuery("*").withFilter(new IndexFilter(index)));
         assertThat(searchPage.getHeadingResultsCount(), greaterThan(0));
 
-        searchPage = searchService.search(indexFieldValue);
+        logSearch(indexFieldValue);
         verifyFirstSearchResult();
 
-        searchPage = searchService.search("\"" + indexFieldValue + "\":" + indexFieldName);
+        logSearch("\"" + indexFieldValue + "\":" + indexFieldName);
         verifyFirstSearchResult();
 
-        searchPage = searchService.search("\"" + indexFieldValue + "\":title");
+        logSearch("\"" + indexFieldValue + "\":title");
         verifyThat(searchPage.getHeadingResultsCount(), is(0));
         verifyThat(searchPage, containsText(Errors.Search.NO_RESULTS));
     }
 
     private void verifyParametricSearch() {
-        searchPage = searchService.search(new SearchQuery("*").withFilter(new IndexFilter(index)));
-        verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0));
+        logSearch(new SearchQuery("*").withFilter(new IndexFilter(index)));
+        assertThat(searchPage.getHeadingResultsCount(), greaterThan(0));
 
         applyParametricFilter(searchPage);
         verifyFirstSearchResult();
 
-        searchPage = searchService.search(new SearchQuery("*").withFilter(new FieldTextFilter("MATCH{" + parametricFieldValue + "}:" + parametricFieldName)));
+        logSearch(new SearchQuery("*").withFilter(matchFilter));
         verifyFirstSearchResult();
+    }
+
+    private void logSearch(String query) {
+        logSearch(new SearchQuery(query));
+    }
+
+    private void logSearch(SearchQuery query) {
+        logger.info("searching for " + query);
+        searchPage = searchService.search(query);
     }
 
     private void verifyFirstSearchResult() {
@@ -128,16 +142,22 @@ public class IndexFieldsITCase extends HostedTestBase {
         try {
             second.activate();
             find = getElementFactory().getFindPage();
-            find.search("\"" + indexFieldValue + "\":" + indexFieldName);
+
+            logFind("\"" + indexFieldValue + "\":" + indexFieldName);
             verifyFirstFindResult();
 
-            find.search("*");
+            logFind("*");
             applyParametricFilter(find);
             verifyFirstFindResult();
         } finally {
             second.close();
             first.activate();
         }
+    }
+
+    private void logFind(String query) {
+        logger.info("finding " + query);
+        find.search(query);
     }
 
     private void verifyFirstFindResult() {
@@ -154,6 +174,7 @@ public class IndexFieldsITCase extends HostedTestBase {
     }
 
     private void applyParametricFilter(SearchFilter.Filterable filterable) {
+        logger.info("filtering by " + parametricFilter);
         boolean success = true;
         try {
             filterable.filterBy(parametricFilter);
