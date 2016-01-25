@@ -10,6 +10,7 @@ define([
 
         saveSuccess: function() {
             this.savedSearchControlModel.set('showSave', false);
+            this.$saveInput.val('');
             this.$saveErrorMessage
                 .text('');
         },
@@ -28,16 +29,11 @@ define([
         save: function() {
             var name = this.$saveInput.val();
 
-            var saveArguments = {
-                title: name,
-                queryText: this.queryModel.get('queryText'),
-                indexes: this.queryModel.get('indexes'),
-                parametricValues: this.queryModel.get('parametricValues')
-            };
+            this.savedSearchModel.set('title', name);
 
             this.disable(true);
 
-            this.savedSearchModel.save(saveArguments, {
+            this.savedSearchModel.save({
                 success: _.bind(this.saveSuccess, this),
                 error: _.bind(this.saveFailure, this),
                 wait: true
@@ -73,7 +69,6 @@ define([
                 i18n: i18n
             }));
 
-            this.$saveForm = this.$('.save-input');
             this.$saveInput = this.$('.save-input .find-input');
             this.$confirmButton = this.$('.save-confirm-button');
             this.$cancelButton = this.$('.save-cancel-button');

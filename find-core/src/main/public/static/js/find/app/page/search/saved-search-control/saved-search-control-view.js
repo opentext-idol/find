@@ -1,11 +1,9 @@
 define([
     'backbone',
-    'find/app/model/saved-searches/saved-search-collection',
-    'find/app/model/saved-searches/saved-search-model',
     'find/app/page/search/saved-search-control/save-search-input',
     'text!find/templates/app/page/search/saved-search-control/saved-search-control-view.html',
     'i18n!find/nls/bundle'
-], function(Backbone, SavedSearchCollection, SavedSearchModel, SaveSearchInput, template, i18n) {
+], function(Backbone, SaveSearchInput, template, i18n) {
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -13,21 +11,18 @@ define([
         events: {
             'click .show-save-button': function () {
                 this.model.set('showSave', !this.model.get('showSave'));
+            },
+            'click .update-button': function() {
+                this.model.save();
             }
         },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
+            this.savedSearchCollection = options.savedSearchCollection;
+            this.savedSearchModel = options.savedSearchModel;
 
-            this.savedSearchCollection = new SavedSearchCollection();
-
-            // Important: Alternative must be removed before merging into develop
-            if(options.savedSearchModel) {
-                this.savedSearchModel = options.savedSearchModel;
-            } else {
-                this.savedSearchModel = new SavedSearchModel();
-                this.savedSearchCollection.add(this.savedSearchModel);
-            }
+            this.createMode = this.savedSearchModel.isNew();
 
             this.model = new Backbone.Model({
                 showSave: false
@@ -51,7 +46,8 @@ define([
 
         render: function() {
             this.$el.html(this.template({
-                i18n: i18n
+                i18n: i18n,
+                openEditDisplayNameKey: this.createMode ? 'create': 'edit'
             }));
 
             this.saveSearchInput.setElement(this.$('.save-search-input-container')).render();

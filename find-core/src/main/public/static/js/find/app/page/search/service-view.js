@@ -3,6 +3,8 @@ define([
     'jquery',
     'underscore',
     'find/app/model/dates-filter-model',
+    'find/app/model/saved-searches/saved-search-model',
+    'find/app/model/saved-searches/saved-search-collection',
     'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
@@ -22,7 +24,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
+], function(Backbone, $, _, DatesFilterModel, SavedSearchModel, SavedSearchCollection, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, ResultsNumberView, SpellCheckView,
             SavedSearchControlView, SavedSearchesView, IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
@@ -105,7 +107,15 @@ define([
                 }));
             }, this), 500));
 
+            // Must be removed before merging into develop:
+            this.savedSearchCollection = new SavedSearchCollection([new SavedSearchModel()]);
+            this.queryModel.on("change:queryText change:indexes change:fieldText", function() {
+                this.savedSearchCollection.models[0].set(this.queryModel.changedAttributes());
+            }, this);
+
             this.savedSearchControlView = new SavedSearchControlView({
+                savedSearchCollection: this.savedSearchCollection,
+                savedSearchModel: this.savedSearchCollection.models[0],
                 queryModel: this.queryModel
             });
 

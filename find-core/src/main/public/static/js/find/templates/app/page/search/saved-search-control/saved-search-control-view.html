@@ -1,7 +1,10 @@
 <div class="saved-search-control-view">
     <div>
+        <button type="button" class="btn button-primary update-button" aria-pressed="false" autocomplete="off">
+            <%- i18n['search.savedSearchControl.update'] %>
+        </button>
         <button type="button" class="btn button-primary show-save-button" aria-pressed="false" autocomplete="off">
-            <%- i18n['search.savedSearchControl.saveSearch'] %>
+            <%- i18n['search.savedSearchControl.openEdit.' + openEditDisplayNameKey] %>
         </button>
     </div>
     <div class="save-search-input-container hide"></div>
