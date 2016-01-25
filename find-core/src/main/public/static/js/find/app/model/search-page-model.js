@@ -4,6 +4,7 @@ define([
 
     return Backbone.Model.extend({
         defaults: {
+            selectedSearchCid: null,
             inputText: '',
             relatedConcepts: []
         },

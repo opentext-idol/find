@@ -23,26 +23,54 @@ define([
         beforeEach(function() {
             this.indexesCollection = new DatabasesCollection();
             this.selectedIndexesCollection = new DatabasesCollection();
-
             this.queryModel = new Backbone.Model();
-
-            this.indexesView = new IndexesView({
-                queryModel: this.queryModel,
-                indexesCollection: this.indexesCollection,
-                selectedDatabasesCollection: this.selectedIndexesCollection
-            });
 
             this.idElement = function(indexAttributes) {
                 return this.indexesView.$('li[data-id="' + indexAttributes.id + '"]');
             };
-
-            this.indexesView.render();
-
-            this.indexesCollection.reset(INDEXES);
-            this.queryModel.set('indexes', _.pluck(INDEXES, 'id'));
         });
 
-        describe('after initialization', function() {
+        describe('initialized with a populated indexes collection', function() {
+            beforeEach(function() {
+                this.indexesCollection.reset(INDEXES);
+                this.queryModel.set('indexes', _.pluck(INDEXES, 'id'));
+
+                this.indexesView = new IndexesView({
+                    queryModel: this.queryModel,
+                    indexesCollection: this.indexesCollection,
+                    selectedDatabasesCollection: this.selectedIndexesCollection
+                });
+
+                this.indexesView.render();
+            });
+
+            it('should display indexes in the IndexesCollection', function() {
+                var elements = this.indexesView.$el.find('[data-id]');
+
+                var dataIds = _.map(elements, function (element) {
+                    return $(element).attr('data-id');
+                });
+
+                expect(dataIds).toContain(INDEXES[0].id);
+                expect(dataIds).toContain(INDEXES[1].id);
+                expect(dataIds).toContain(INDEXES[2].id);
+            });
+        });
+
+        describe('initialized with an empty indexes collection which is then reset', function() {
+            beforeEach(function() {
+                this.indexesView = new IndexesView({
+                    queryModel: this.queryModel,
+                    indexesCollection: this.indexesCollection,
+                    selectedDatabasesCollection: this.selectedIndexesCollection
+                });
+
+                this.indexesView.render();
+
+                this.indexesCollection.reset(INDEXES);
+                this.queryModel.set('indexes', _.pluck(INDEXES, 'id'));
+            });
+
             it('should display indexes in the IndexesCollection', function() {
                 var elements = this.indexesView.$el.find('[data-id]');
 
@@ -101,38 +129,37 @@ define([
                 });
             });
 
-        });
+            describe('when selected indexes collection', function() {
+                describe('is set to contain all but the first index', function() {
+                    beforeEach(function() {
+                        this.selectedIndexesCollection.set(_.tail(INDEXES));
+                    });
 
-        describe('when selected indexes collection', function() {
-            describe('is set to contain all but the first index', function() {
-                beforeEach(function() {
-                    this.selectedIndexesCollection.set(_.tail(INDEXES));
+                    it('should select the right indexes', function() {
+                        var uncheckedCheckbox = this.idElement(INDEXES[0]).find('i');
+                        var checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                        var checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+
+                        expect(uncheckedCheckbox).not.toHaveClass('hp-check');
+                        expect(checkedCheckboxOne).toHaveClass('hp-check');
+                        expect(checkedCheckboxTwo).toHaveClass('hp-check');
+                    });
                 });
 
-                it('should select the right indexes', function() {
-                    var uncheckedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                describe('is set to contain only first index', function() {
+                    beforeEach(function() {
+                        this.selectedIndexesCollection.set(_.head(INDEXES));
+                    });
 
-                    expect(uncheckedCheckbox).not.toHaveClass('hp-check');
-                    expect(checkedCheckboxOne).toHaveClass('hp-check');
-                    expect(checkedCheckboxTwo).toHaveClass('hp-check');
-                });
-            });
+                    it('should select only the first index', function() {
+                        var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                        var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                        var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
-            describe('is set to contain only first index', function() {
-                beforeEach(function() {
-                    this.selectedIndexesCollection.set(_.head(INDEXES));
-                });
-
-                it('should select only the first index', function() {
-                    var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
-
-                    expect(checkedCheckbox).toHaveClass('hp-check');
-                    expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
-                    expect(uncheckedCheckboxTwo).not.toHaveClass('hp-check');
+                        expect(checkedCheckbox).toHaveClass('hp-check');
+                        expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
+                        expect(uncheckedCheckboxTwo).not.toHaveClass('hp-check');
+                    });
                 });
             });
         });
