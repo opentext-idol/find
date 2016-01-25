@@ -21,6 +21,7 @@ define([
         },
 
         initialize: function(options) {
+            this.indexesCollection = options.indexesCollection;
             this.searchModel = options.searchModel;
             this.savedSearchCollection = options.savedSearchCollection;
             this.ServiceView = options.ServiceView;
@@ -69,6 +70,7 @@ define([
 
                 if (!view) {
                     view = new this.ServiceView({
+                        indexesCollection: this.indexesCollection,
                         model: this.savedSearchCollection.get(cid),
                         searchModel: this.searchModel
                     });

@@ -7,6 +7,7 @@ define([
     'js-whatever/js/base-page',
     'backbone',
     'find/app/model/search-page-model',
+    'find/app/model/indexes-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
     'find/app/model/saved-searches/saved-search-collection',
@@ -16,7 +17,7 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, InputView, TabbedSearchView, SavedSearchCollection, SavedSearchModel, router, vent, i18n, _, template) {
+], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection, SavedSearchModel, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -33,6 +34,9 @@ define([
         initialize: function() {
             this.savedSearchCollection = new SavedSearchCollection();
             this.savedSearchCollection.fetch({remove: false});
+
+            var indexesCollection = new IndexesCollection();
+            indexesCollection.fetch();
 
             // Model representing high level search page state
             this.searchModel = new SearchPageModel({
@@ -62,6 +66,7 @@ define([
             this.inputView = new InputView({model: this.searchModel});
 
             this.tabView = new TabbedSearchView({
+                indexesCollection: indexesCollection,
                 savedSearchCollection: this.savedSearchCollection,
                 searchModel: this.searchModel,
                 ServiceView: this.ServiceView
@@ -93,7 +98,6 @@ define([
 
         generateURL: function() {
             var components = [this.searchModel.get('inputText')].concat(this.searchModel.get('relatedConcepts'));
-
             return 'find/search/' + _.map(components, encodeURIComponent).join('/');
         },
 

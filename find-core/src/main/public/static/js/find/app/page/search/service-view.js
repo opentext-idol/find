@@ -29,7 +29,22 @@ define([
 
     var html = _.template(template)({i18n: i18n});
 
-    var collapseView = function (title, view) {
+    function selectInitialIndexes(indexesCollection) {
+        var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
+        var selectedIndexes;
+
+        if (privateIndexes.length > 0) {
+            selectedIndexes = privateIndexes;
+        } else {
+            selectedIndexes = indexesCollection.models;
+        }
+
+        return _.map(selectedIndexes, function(indexModel) {
+            return indexModel.pick('domain', 'name');
+        });
+    }
+
+    var collapseView = function(title, view) {
         return new Collapsible({
             view: view,
             collapsed: false,
@@ -48,6 +63,7 @@ define([
         IndexesView: null,
 
         initialize: function(options) {
+            this.indexesCollection = options.indexesCollection;
             this.searchModel = options.searchModel;
 
             this.queryModel = new QueryModel({
@@ -66,17 +82,30 @@ define([
             this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
 
             this.documentsCollection = new DocumentsCollection();
-            this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
 
             // TODO: Display name?
             this.selectedParametricValues = new SelectedParametricValuesCollection(this.model.get('parametricValues'));
 
-            // TODO: Support HOD domains
+            var initialSelectedIndexes;
+            var modelIndexes = this.model.get('indexes');
+
+            if (this.model.get('indexes').length  === 0) {
+                if (this.indexesCollection.isEmpty()) {
+                    // TODO: Async loading of indexes?
+                    initialSelectedIndexes = [];
+                } else {
+                    initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
+                }
+            } else {
+                initialSelectedIndexes = _.map(modelIndexes, function(name) {
+                    // TODO: Support HOD domains
+                    return {name: name};
+                });
+            }
+
             // TODO: Check if the index still exists?
-            this.selectedIndexesCollection = new IndexesCollection(_.map(this.model.get('indexes'), function(indexName) {
-                return {name: indexName};
-            }));
+            this.selectedIndexesCollection = new IndexesCollection(initialSelectedIndexes);
 
             this.filtersCollection = new this.SearchFiltersCollection([], {
                 queryModel: this.queryModel,
@@ -85,8 +114,6 @@ define([
                 selectedIndexesCollection: this.selectedIndexesCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
-
-            this.indexesCollection.fetch();
 
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
