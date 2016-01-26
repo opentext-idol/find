@@ -117,6 +117,8 @@ define([
                     fetch.call(this);
                 }
             }, this);
+
+            fetch.call(this);
         },
 
         render: function() {

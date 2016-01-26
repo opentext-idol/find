@@ -16,13 +16,14 @@ define([
     'find/app/page/search/spellcheck-view',
     'find/app/page/search/saved-searches/saved-search-options',
     'find/app/util/collapsible',
+    'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SpellCheckView,
-            SavedSearchOptions, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
+            SavedSearchOptions, Collapsible, addChangeListener, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
 
     'use strict';
 
@@ -40,6 +41,12 @@ define([
 
         return _.map(selectedIndexes, function(indexModel) {
             return indexModel.pick('domain', 'name');
+        });
+    }
+
+    function buildQueryModelIndexes(selectedIndexesCollection) {
+        return selectedIndexesCollection.map(function(model) {
+            return model.get('domain') ? encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name')) : encodeURIComponent(model.get('name'));
         });
     }
 
@@ -63,33 +70,19 @@ define([
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
-            this.searchModel = options.searchModel;
-
-            this.queryModel = new QueryModel({
-                queryText: this.model.get('queryText')
-            });
-
-            this.listenTo(this.searchModel, 'change', function() {
-                if (this.searchModel.get('selectedSearchCid') === this.model.cid) {
-                    this.queryModel.set({
-                        autoCorrect: true,
-                        queryText: this.searchModel.makeQueryText()
-                    });
-                }
-            });
-
-            this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
+            this.queryTextModel = options.queryTextModel;
+            this.savedSearchModel = options.savedSearchModel;
 
             this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
 
             // TODO: Display name?
-            this.selectedParametricValues = new SelectedParametricValuesCollection(this.model.get('parametricValues'));
+            this.selectedParametricValues = new SelectedParametricValuesCollection(this.savedSearchModel.get('parametricValues'));
 
             var initialSelectedIndexes;
-            var modelIndexes = this.model.get('indexes');
+            var modelIndexes = this.savedSearchModel.get('indexes');
 
-            if (this.model.get('indexes').length  === 0) {
+            if (this.savedSearchModel.get('indexes').length  === 0) {
                 if (this.indexesCollection.isEmpty()) {
                     // TODO: Async loading of indexes?
                     initialSelectedIndexes = [];
@@ -106,6 +99,20 @@ define([
             // TODO: Check if the index still exists?
             this.selectedIndexesCollection = new IndexesCollection(initialSelectedIndexes);
 
+            this.queryModel = new QueryModel({
+                queryText: this.queryTextModel.makeQueryText(),
+                indexes: buildQueryModelIndexes(this.selectedIndexesCollection),
+                fieldText: this.selectedParametricValues.toFieldTextNode() || null,
+                minDate: this.savedSearchModel.get('minDate'),
+                maxDate: this.savedSearchModel.get('maxDate')
+            });
+
+            this.listenTo(this.queryTextModel, 'change', function() {
+                this.queryModel.set('queryText', this.queryTextModel.makeQueryText());
+            });
+
+            this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
+
             this.filtersCollection = new this.SearchFiltersCollection([], {
                 queryModel: this.queryModel,
                 datesFilterModel: this.datesFilterModel,
@@ -114,30 +121,14 @@ define([
                 selectedParametricValues: this.selectedParametricValues
             });
 
-            this.listenTo(this.queryModel, 'change', function() {
-                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
-                    if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
-                        this.entityCollection.fetch({
-                            data: {
-                                databases: this.queryModel.get('indexes'),
-                                queryText: this.queryModel.get('queryText'),
-                                fieldText: this.queryModel.get('fieldText'),
-                                minDate: this.queryModel.getIsoDate('minDate'),
-                                maxDate: this.queryModel.getIsoDate('maxDate')
-                            }
-                        });
-                    }
-                }
-            });
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText'], this.fetchEntities);
 
             this.listenTo(this.selectedIndexesCollection, 'update reset', _.debounce(_.bind(function() {
-                this.queryModel.set('indexes', this.selectedIndexesCollection.map(function(model) {
-                    return model.get('domain') ? encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name')) : encodeURIComponent(model.get('name'));
-                }));
+                this.queryModel.set('indexes', buildQueryModelIndexes(this.selectedIndexesCollection));
             }, this), 500));
 
             this.savedSearchOptions = new SavedSearchOptions({
-                model: this.model
+                model: this.savedSearchModel
             });
 
             this.resultsViewContainer = new this.ResultsViewContainer({
@@ -145,7 +136,7 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                searchModel: this.searchModel
+                queryTextModel: this.queryTextModel
             });
 
             // Left Views
@@ -178,7 +169,7 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                searchModel: this.searchModel
+                queryTextModel: this.queryTextModel
             });
 
             this.spellCheckView = new SpellCheckView({
@@ -209,6 +200,22 @@ define([
             this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
 
             this.$('.container-toggle').on('click', this.containerToggle);
+
+            this.fetchEntities();
+        },
+
+        fetchEntities: function() {
+            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+                this.entityCollection.fetch({
+                    data: {
+                        databases: this.queryModel.get('indexes'),
+                        queryText: this.queryModel.get('queryText'),
+                        fieldText: this.queryModel.get('fieldText'),
+                        minDate: this.queryModel.getIsoDate('minDate'),
+                        maxDate: this.queryModel.getIsoDate('maxDate')
+                    }
+                });
+            }
         },
 
         containerToggle: function(event) {

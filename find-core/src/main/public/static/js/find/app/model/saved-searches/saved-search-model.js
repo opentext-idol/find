@@ -16,7 +16,8 @@ define([
             queryText: null,
             title: null,
             indexes: [],
-            parametricValues: []
+            parametricValues: [],
+            relatedConcepts: []
         },
 
         parse: function(response) {

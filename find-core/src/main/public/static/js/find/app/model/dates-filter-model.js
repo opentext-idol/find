@@ -28,8 +28,10 @@ define([
                 this.queryModel.set({
                     minDate: this.get('minDate'),
                     maxDate: this.get('maxDate')
-                })
-            })
+                });
+            });
+
+            this.set(this.queryModel.pick('minDate', 'maxDate'));
         },
 
         setDateRange: function(range) {
