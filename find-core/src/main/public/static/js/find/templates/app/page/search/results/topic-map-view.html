@@ -1,0 +1,20 @@
+<div>
+    <%-i18n['search.topicmap.clustering']%>
+    <label class="radio i-check">
+        <input type="radio" checked value="occurrences" name="optionsRadios">
+        <%-i18n['search.topicmap.occurrences']%>
+    </label>
+    <label class="radio i-check">
+        <input type="radio" value="docsWithPhrase"  name="optionsRadios">
+        <%-i18n['search.topicmap.documents']%>
+    </label>
+    <label class="slider-input">
+        <span><%-i18n['search.topicmap.relevance']%></span>
+        <input class="relevance-slider" type="text"/>
+    </label>
+    <label class="slider-input">
+        <span><%-i18n['search.topicmap.topics']%></span>
+        <input class="amount-slider" type="text"/>
+    </label>
+    <div class="topic-map"></div>
+</div>
