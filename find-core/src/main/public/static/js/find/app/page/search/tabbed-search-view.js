@@ -101,11 +101,11 @@ define([
                     this.$('.search-tabs-content').append(viewData.view.$el);
                 }
 
-                addChangeListener(this, queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                    this.searchModel.set(queryTextModel.pick.apply(queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES));
+                addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+                    this.searchModel.set(viewData.queryTextModel.pick.apply(viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES));
                 });
 
-                this.searchModel.set(queryTextModel.pick.apply(queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES));
+                this.searchModel.set(viewData.queryTextModel.pick.apply(viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES));
                 viewData.view.$el.removeClass('hide');
             }
         },
