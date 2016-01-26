@@ -71,12 +71,10 @@ define([
 
             // Bind routing to search model
             router.on('route:search', function(text, concepts) {
-                var attributes = {
+                this.searchModel.set({
                     inputText: text || '',
                     relatedConcepts: concepts ? concepts.split('/') : []
-                };
-
-                this.searchModel.setInputText(attributes);
+                });
             }, this);
         },
 
