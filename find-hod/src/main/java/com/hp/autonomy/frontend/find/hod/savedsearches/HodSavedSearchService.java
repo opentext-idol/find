@@ -5,13 +5,13 @@
 
 package com.hp.autonomy.frontend.find.hod.savedsearches;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.NameAndDomain;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchServiceImpl;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HodSavedSearchService extends SavedSearchServiceImpl<ResourceIdentifier> {
+public class HodSavedSearchService extends SavedSearchServiceImpl {
     public HodSavedSearchService() {
-        super(ResourceIdentifier.WIKI_ENG);
+        super(new NameAndDomain("PUBLIC_INDEXES", "wiki_eng"));
     }
 }

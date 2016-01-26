@@ -13,18 +13,18 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class SavedSearchServiceImpl<I> implements SavedSearchService<I> {
-    private final Set<SavedSearch<I>> savedSearches = new HashSet<>();
+public class SavedSearchServiceImpl implements SavedSearchService {
+    private final Set<SavedSearch> savedSearches = new HashSet<>();
     private final AtomicLong idCount = new AtomicLong(2);
 
-    protected SavedSearchServiceImpl(final I index) {
+    protected SavedSearchServiceImpl(final NameAndDomain index) {
         final Set<FieldAndValue> parametricValues = new HashSet<>();
         parametricValues.add(new FieldAndValue("WIKIPEDIA_CATEGORY", "存命人物"));
 
-        final Set<I> indexes = new HashSet<>();
+        final Set<NameAndDomain> indexes = new HashSet<>();
         indexes.add(index);
 
-        final SavedSearch<I> search = new SavedSearch.Builder<I>()
+        final SavedSearch search = new SavedSearch.Builder()
                 .setId(1L)
                 .setTitle("Cats..?")
                 .setIndexes(indexes)
@@ -40,16 +40,16 @@ public class SavedSearchServiceImpl<I> implements SavedSearchService<I> {
     }
 
     @Override
-    public Set<SavedSearch<I>> getAll() {
+    public Set<SavedSearch> getAll() {
         synchronized (savedSearches) {
             return savedSearches;
         }
     }
 
     @Override
-    public SavedSearch<I> create(final SavedSearch<I> search) {
+    public SavedSearch create(final SavedSearch search) {
         synchronized (savedSearches) {
-            final SavedSearch<I> newSearch = new SavedSearch.Builder<>(search)
+            final SavedSearch newSearch = new SavedSearch.Builder(search)
                     .setId(idCount.getAndIncrement())
                     .build();
 
@@ -59,20 +59,20 @@ public class SavedSearchServiceImpl<I> implements SavedSearchService<I> {
     }
 
     @Override
-    public SavedSearch<I> update(final SavedSearch<I> search) {
+    public SavedSearch update(final SavedSearch search) {
         if (search.getId() == null || search.getTitle() == null) {
             // Placeholder only supports rename
             throw new IllegalArgumentException("ID and title required for update");
         }
 
         synchronized (savedSearches) {
-            final SavedSearch<I> existingSearch = findById(search.getId());
+            final SavedSearch existingSearch = findById(search.getId());
 
             if (existingSearch == null) {
                 throw new IllegalArgumentException("Search not found");
             }
 
-            final SavedSearch<I> newSearch = new SavedSearch.Builder<>(existingSearch)
+            final SavedSearch newSearch = new SavedSearch.Builder(existingSearch)
                     .setTitle(search.getTitle())
                     .build();
 
@@ -85,7 +85,7 @@ public class SavedSearchServiceImpl<I> implements SavedSearchService<I> {
     @Override
     public void deleteById(final long id) {
         synchronized (savedSearches) {
-            final SavedSearch<I> existingSearch = findById(id);
+            final SavedSearch existingSearch = findById(id);
 
             if (existingSearch == null) {
                 throw new IllegalArgumentException("Search not found");
@@ -95,8 +95,8 @@ public class SavedSearchServiceImpl<I> implements SavedSearchService<I> {
         }
     }
 
-    private SavedSearch<I> findById(final long id) {
-        for (final SavedSearch<I> search : savedSearches) {
+    private SavedSearch findById(final long id) {
+        for (final SavedSearch search : savedSearches) {
             if (search.getId().equals(id)) {
                 return search;
             }

@@ -16,33 +16,33 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/public/saved-search")
-public class SavedSearchController<I> {
-    private final SavedSearchService<I> service;
+public class SavedSearchController {
+    private final SavedSearchService service;
 
     @Autowired
-    public SavedSearchController(final SavedSearchService<I> service) {
+    public SavedSearchController(final SavedSearchService service) {
         this.service = service;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Set<SavedSearch<I>> getAll() {
+    public Set<SavedSearch> getAll() {
         return service.getAll();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public SavedSearch<I> create(
-            @RequestBody final SavedSearch<I> search
+    public SavedSearch create(
+            @RequestBody final SavedSearch search
     ) {
         return service.create(search);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public SavedSearch<I> update(
+    public SavedSearch update(
             @PathVariable("id") final long id,
-            @RequestBody final SavedSearch<I> search
+            @RequestBody final SavedSearch search
     ) {
         return service.update(
-                new SavedSearch.Builder<>(search).setId(id).build()
+                new SavedSearch.Builder(search).setId(id).build()
         );
     }
 

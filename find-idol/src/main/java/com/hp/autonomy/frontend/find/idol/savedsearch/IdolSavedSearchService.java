@@ -5,12 +5,13 @@
 
 package com.hp.autonomy.frontend.find.idol.savedsearch;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.NameAndDomain;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchServiceImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IdolSavedSearchService extends SavedSearchServiceImpl<String> {
+public class IdolSavedSearchService extends SavedSearchServiceImpl {
     public IdolSavedSearchService() {
-        super("Wikipedia");
+        super(new NameAndDomain(null, "Wikipedia"));
     }
 }

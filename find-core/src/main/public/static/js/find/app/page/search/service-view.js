@@ -80,7 +80,6 @@ define([
             this.selectedParametricValues = new SelectedParametricValuesCollection(this.savedSearchModel.get('parametricValues'));
 
             var initialSelectedIndexes;
-            var modelIndexes = this.savedSearchModel.get('indexes');
 
             if (this.savedSearchModel.get('indexes').length  === 0) {
                 if (this.indexesCollection.isEmpty()) {
@@ -90,10 +89,7 @@ define([
                     initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
                 }
             } else {
-                initialSelectedIndexes = _.map(modelIndexes, function(name) {
-                    // TODO: Support HOD domains
-                    return {name: name};
-                });
+                initialSelectedIndexes = this.savedSearchModel.get('indexes');
             }
 
             // TODO: Check if the index still exists?

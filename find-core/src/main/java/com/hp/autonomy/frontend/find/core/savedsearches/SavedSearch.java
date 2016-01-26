@@ -17,12 +17,12 @@ import java.util.Set;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SavedSearch<I> {
+public class SavedSearch {
     private final Long id;
     private final String title;
     private final String inputText;
     private final Set<String> relatedConcepts;
-    private final Set<I> indexes;
+    private final Set<NameAndDomain> indexes;
     private final Set<FieldAndValue> parametricValues;
     private final DateTime minDate;
     private final DateTime maxDate;
@@ -35,7 +35,7 @@ public class SavedSearch<I> {
             @JsonProperty("title") final String title,
             @JsonProperty("inputText") final String inputText,
             @JsonProperty("relatedConcepts") final Set<String> relatedConcepts,
-            @JsonProperty("indexes") final Set<I> indexes,
+            @JsonProperty("indexes") final Set<NameAndDomain> indexes,
             @JsonProperty("parametricValues") final Set<FieldAndValue> parametricValues,
             @JsonProperty("minDate") final DateTime minDate,
             @JsonProperty("maxDate") final DateTime maxDate,
@@ -57,11 +57,11 @@ public class SavedSearch<I> {
     @Data
     @Accessors(chain = true)
     @NoArgsConstructor
-    public static class Builder<I> {
+    public static class Builder {
         private Long id;
         private String title;
         private String inputText;
-        private Set<I> indexes;
+        private Set<NameAndDomain> indexes;
         private Set<FieldAndValue> parametricValues;
         private DateTime minDate;
         private DateTime maxDate;
@@ -69,7 +69,7 @@ public class SavedSearch<I> {
         private DateTime dateModified;
         private Set<String> relatedConcepts;
 
-        public Builder(final SavedSearch<I> search) {
+        public Builder(final SavedSearch search) {
             id = search.id;
             title = search.title;
             inputText = search.inputText;
@@ -82,8 +82,8 @@ public class SavedSearch<I> {
             relatedConcepts = search.relatedConcepts;
         }
 
-        public SavedSearch<I> build() {
-            return new SavedSearch<>(
+        public SavedSearch build() {
+            return new SavedSearch(
                     id,
                     title,
                     inputText,
