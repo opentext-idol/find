@@ -20,7 +20,8 @@ import java.util.Set;
 public class SavedSearch<I> {
     private final Long id;
     private final String title;
-    private final String queryText;
+    private final String inputText;
+    private final Set<String> relatedConcepts;
     private final Set<I> indexes;
     private final Set<FieldAndValue> parametricValues;
     private final DateTime minDate;
@@ -32,7 +33,8 @@ public class SavedSearch<I> {
     public SavedSearch(
             @JsonProperty("id") final Long id,
             @JsonProperty("title") final String title,
-            @JsonProperty("queryText") final String queryText,
+            @JsonProperty("inputText") final String inputText,
+            @JsonProperty("relatedConcepts") final Set<String> relatedConcepts,
             @JsonProperty("indexes") final Set<I> indexes,
             @JsonProperty("parametricValues") final Set<FieldAndValue> parametricValues,
             @JsonProperty("minDate") final DateTime minDate,
@@ -42,7 +44,8 @@ public class SavedSearch<I> {
     ) {
         this.id = id;
         this.title = title;
-        this.queryText = queryText;
+        this.inputText = inputText;
+        this.relatedConcepts = relatedConcepts;
         this.indexes = indexes;
         this.parametricValues = parametricValues;
         this.minDate = minDate;
@@ -57,31 +60,34 @@ public class SavedSearch<I> {
     public static class Builder<I> {
         private Long id;
         private String title;
-        private String queryText;
+        private String inputText;
         private Set<I> indexes;
         private Set<FieldAndValue> parametricValues;
         private DateTime minDate;
         private DateTime maxDate;
         private DateTime dateCreated;
         private DateTime dateModified;
+        private Set<String> relatedConcepts;
 
         public Builder(final SavedSearch<I> search) {
             id = search.id;
             title = search.title;
-            queryText = search.queryText;
+            inputText = search.inputText;
             indexes = search.indexes;
             parametricValues = search.parametricValues;
             minDate = search.minDate;
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
             dateModified = search.dateModified;
+            relatedConcepts = search.relatedConcepts;
         }
 
         public SavedSearch<I> build() {
             return new SavedSearch<>(
                     id,
                     title,
-                    queryText,
+                    inputText,
+                    relatedConcepts,
                     indexes,
                     parametricValues,
                     minDate,

@@ -11,6 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class IdolSavedSearchService extends SavedSearchServiceImpl<String> {
     public IdolSavedSearchService() {
-        super("Wookieepedia");
+        super("Wikipedia");
     }
 }

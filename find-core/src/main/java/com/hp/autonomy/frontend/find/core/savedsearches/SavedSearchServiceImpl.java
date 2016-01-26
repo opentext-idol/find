@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,17 +19,18 @@ public class SavedSearchServiceImpl<I> implements SavedSearchService<I> {
 
     protected SavedSearchServiceImpl(final I index) {
         final Set<FieldAndValue> parametricValues = new HashSet<>();
-        parametricValues.add(new FieldAndValue("CATEGORY", "PERSON"));
+        parametricValues.add(new FieldAndValue("WIKIPEDIA_CATEGORY", "存命人物"));
 
         final Set<I> indexes = new HashSet<>();
         indexes.add(index);
 
         final SavedSearch<I> search = new SavedSearch.Builder<I>()
                 .setId(1L)
-                .setTitle("Star Wars")
+                .setTitle("Cats..?")
                 .setIndexes(indexes)
+                .setRelatedConcepts(Collections.singleton("シグマ セブン"))
                 .setParametricValues(parametricValues)
-                .setQueryText("jedi OR sith")
+                .setInputText("cat")
                 .setDateCreated(DateTime.now())
                 .setDateModified(DateTime.now())
                 .setMinDate(DateTime.now().minus(Months.EIGHT))
