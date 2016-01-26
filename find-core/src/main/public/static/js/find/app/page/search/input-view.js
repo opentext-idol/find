@@ -41,7 +41,10 @@ define([
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
             
             this.search = _.debounce(function(query) {
-                options.model.set({inputText: query});
+                options.model.set({
+                    inputText: query,
+                    relatedConcepts: []
+                });
             }, 500);
         },
 
@@ -90,7 +93,7 @@ define([
                 _.each(this.model.get('relatedConcepts'), function(concept) {
                     this.$additionalConcepts.append(relatedConceptsTemplate({
                         concept: concept
-                    }))
+                    }));
                 }, this);
 
                 this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.model.get('relatedConcepts')));
