@@ -62,4 +62,25 @@ public class CommonMatchers {
             }
         };
     }
+
+    public static <T> Matcher<Iterable<? extends T>> hasItemThat(final Matcher<? super T> matcher) {
+        return new TypeSafeMatcher<Iterable<? extends T>>() {
+            @Override
+            protected boolean matchesSafely(Iterable<? extends T> item) {
+                for (T value : item) {
+                    if (matcher.matches(value)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description
+                        .appendText("a collection containing an item that ")
+                        .appendDescriptionOf(matcher);
+            }
+        };
+    }
 }

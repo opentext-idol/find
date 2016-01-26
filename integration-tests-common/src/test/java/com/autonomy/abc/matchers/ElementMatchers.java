@@ -25,12 +25,16 @@ public class ElementMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("a parent element containing a child ").appendValue(by);
+                description
+                        .appendText("contains a child element ")
+                        .appendValue(by);
             }
 
             @Override
         public void describeMismatchSafely(final WebElement webElement, final Description description) {
-                description.appendText("no child found inside ").appendValue(webElement);
+                description
+                        .appendText("no child found inside ")
+                        .appendValue(webElement);
             }
         };
     }
@@ -46,7 +50,9 @@ public class ElementMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("a tag containing ").appendValue(text);
+                description
+                        .appendText("contains text ")
+                        .appendValue(text);
             }
 
             @Override
@@ -89,7 +95,9 @@ public class ElementMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("a tag whose text is ").appendDescriptionOf(matcher);
+                description
+                        .appendText("has text that is ")
+                        .appendDescriptionOf(matcher);
             }
 
             @Override
@@ -115,7 +123,9 @@ public class ElementMatchers {
 
             @Override
             public void describeMismatchSafely(final WebElement item, final Description description) {
-                description.appendText("element was ").appendText(item.toString());
+                description
+                        .appendText("element was ")
+                        .appendText(item.toString());
             }
         };
     }
@@ -130,12 +140,16 @@ public class ElementMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("a tag with attribute ").appendValue(text);
+                description
+                        .appendText("has attribute ")
+                        .appendValue(text);
             }
 
             @Override
             public void describeMismatchSafely(final WebElement item, final Description description) {
-                description.appendText("element was ").appendText(item.toString());
+                description
+                        .appendText("element was ")
+                        .appendText(item.toString());
             }
         };
     }
@@ -149,12 +163,16 @@ public class ElementMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("an element with attribute ").appendDescriptionOf(valueMatcher);
+                description
+                        .appendText("has attribute that ")
+                        .appendDescriptionOf(valueMatcher);
             }
 
             @Override
             protected void describeMismatchSafely(WebElement item, Description mismatchDescription) {
-                mismatchDescription.appendText("element's " + attribute + " attribute was ").appendValue(item.getAttribute(attribute));
+                mismatchDescription
+                        .appendText("element's " + attribute + " attribute was ")
+                        .appendValue(item.getAttribute(attribute));
             }
         };
     }
@@ -172,12 +190,16 @@ public class ElementMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("an element with class ").appendValue(className);
+                description
+                        .appendText("has class ")
+                        .appendValue(className);
             }
 
             @Override
             protected void describeMismatchSafely(WebElement item, Description mismatchDescription) {
-                mismatchDescription.appendText("element's class attribute was ").appendText(item.getAttribute("class"));
+                mismatchDescription
+                        .appendText("element's class attribute was ")
+                        .appendText(item.getAttribute("class"));
             }
         };
     }
@@ -197,55 +219,9 @@ public class ElementMatchers {
 
             @Override
             public void describeMismatchSafely(final WebElement item, final Description description) {
-                description.appendText("element was ").appendText(item.toString());
-            }
-        };
-    }
-
-    public static Matcher<? super AppElement> appearsWithin(final int seconds) {
-        return new TypeSafeMatcher<AppElement>() {
-            @Override
-            protected boolean matchesSafely(AppElement item) {
-                try {
-                    new WebDriverWait(item.getDriver(), seconds).until(ExpectedConditions.visibilityOf(item));
-                    return true;
-                } catch (TimeoutException e) {
-                    return false;
-                }
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("an element appeared within " + seconds + " seconds");
-            }
-
-            @Override
-            protected void describeMismatchSafely(AppElement item, Description description) {
-                description.appendText("element was ").appendText(item.toString());
-            }
-        };
-    }
-
-    public static  Matcher<? super WebElement> appearsWithin(final int seconds, final WebDriver driver) {
-        return new TypeSafeMatcher<WebElement>() {
-            @Override
-            protected boolean matchesSafely(WebElement item) {
-                try {
-                    new WebDriverWait(driver, seconds).until(ExpectedConditions.visibilityOf(item));
-                    return true;
-                } catch (TimeoutException e) {
-                    return false;
-                }
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("an element appeared within " + seconds + " seconds");
-            }
-
-            @Override
-            protected void describeMismatchSafely(WebElement item, Description description) {
-                description.appendText("element was ").appendText(item.toString());
+                description
+                        .appendText("element was ")
+                        .appendText(item.toString());
             }
         };
     }
