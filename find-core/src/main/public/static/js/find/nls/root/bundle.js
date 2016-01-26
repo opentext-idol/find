@@ -87,6 +87,8 @@ define([
         'search.noResults': 'No results found',
         'search.noMoreResults': 'No more results found',
         'search.preview': 'Preview',
+        'search.preview.previewMode': 'Preview Mode',
+        'search.preview.selectDocument': 'Select a document from the list to preview',
         'search.relatedConcepts': 'Related Concepts',
         'search.relatedConcepts.topResults.error': 'An error occurred fetching top results',
         'search.relatedConcepts.topResults.none': 'No top results found',

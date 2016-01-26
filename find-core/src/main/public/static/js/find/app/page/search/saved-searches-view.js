@@ -12,6 +12,15 @@ define([
 
         template: _.template(template),
 
+        events: {
+            'click .preview-mode-button': function(e) {
+                $('.right-side-container').toggle();
+                $('.preview-mode-wrapper').toggleClass('hide');
+                $('.main-results-content').toggleClass('col-md-6');
+                $('.results-view-container .tab-pane').toggleClass('row');
+            }
+        },
+
         initialize: function (options) {
             this.collection = options.savedSearchesCollection;
 
