@@ -222,6 +222,12 @@ public class AnalyticsITCase extends HostedTestBase {
         verifyThat(lowercase, containsString(promotion.getTrigger().toLowerCase()));
     }
 
+    @Test
+    @KnownBug("CSA-1752")
+    public void testNonZeroSearchTerm() {
+        verifyThat(analytics.getMostPopularNonZeroSearchTerm(), not(isEmptyOrNullString()));
+    }
+    
     @After
     public void tearDown(){
 
