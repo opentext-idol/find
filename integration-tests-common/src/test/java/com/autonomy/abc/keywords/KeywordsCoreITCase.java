@@ -16,6 +16,7 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.Matchers.*;
 
+@Category(CoreFeature.class)
 public class KeywordsCoreITCase extends ABCTestBase {
     private KeywordService keywordService;
     private SearchService searchService;
@@ -36,7 +37,6 @@ public class KeywordsCoreITCase extends ABCTestBase {
     }
 
     @Test
-    @Category(CoreFeature.class)
     public void testCreateBlacklist() {
         final String blacklist = "naughty";
         keywordService.addBlacklistTerms(blacklist);
@@ -45,7 +45,6 @@ public class KeywordsCoreITCase extends ABCTestBase {
     }
 
     @Test
-    @Category(CoreFeature.class)
     public void testCreateSynonyms() {
         final String hasResults = "car";
         final String noResults = "zxpqw";
@@ -55,7 +54,6 @@ public class KeywordsCoreITCase extends ABCTestBase {
     }
 
     @Test
-    @Category(CoreFeature.class)
     public void testDeleteKeyword() {
         final String keyword = "asdfghjkl";
         keywordService.addBlacklistTerms(keyword);
