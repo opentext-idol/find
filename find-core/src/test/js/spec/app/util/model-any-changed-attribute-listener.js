@@ -18,7 +18,7 @@ define([
 
             this.listener = _.extend({}, Backbone.Events);
             this.callback = jasmine.createSpy('callback');
-            anyAttributeChange(this.listener, this.model, ['age', 'job'], this.callback);
+            this.changeCallback = anyAttributeChange(this.listener, this.model, ['age', 'job'], this.callback);
         });
 
         it('ignores change events if a target attribute has not changed', function() {
@@ -45,6 +45,13 @@ define([
             expect(this.callback.calls.count()).toBe(1);
             expect(this.callback.calls.first().object).toBe(this.listener);
             expect(this.callback.calls.first().args[0]).toBe(this.model);
+        });
+
+        it('returns the callback used to listen to the model so it can be removed', function() {
+            this.listener.stopListening(this.model, 'change', this.changeCallback);
+            this.model.set('age', 26);
+
+            expect(this.callback).not.toHaveBeenCalled();
         });
     });
 
