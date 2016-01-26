@@ -68,7 +68,7 @@ public class ConnectionService extends ServiceBase<HSOElementFactory> {
             int timeTaken = (int) ((System.currentTimeMillis() - startTime) / 1000);
             int duration = ((WebConnector) connector).getDuration();
             if(timeTaken > duration) {
-                LOGGER.error("CONNECTION '" + connector.getName() + "' TOOK " + timeTaken + " SECONDS TO COMPLETE, SHOULD HAVE TAKEN " + duration + " SECONDS");
+                LOGGER.error("Connection '" + connector.getName() + "' took " + timeTaken + " seconds to complete, should have taken " + duration + " seconds");
             }
         }
     }
