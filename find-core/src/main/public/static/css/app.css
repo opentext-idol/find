@@ -12,6 +12,7 @@
 @import "../bower_components/datatables.net-bs/css/dataTables.bootstrap.css";
 @import "../bower_components/hp-autonomy-about-page/src/css/about-page.css";
 @import "../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css";
+@import "../bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css";
 @import 'HPEElements.css';
 @import 'app-include.css';
 @import 'colorbox.css';

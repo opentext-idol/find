@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.joda.time.DateTime;
@@ -22,7 +23,7 @@ import java.util.List;
 @Controller
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
-public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
+public abstract class RelatedConceptsController<R extends RelatedConceptsRequest<S>, Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
     public static final String RELATED_CONCEPTS_PATH = "/api/public/search/find-related-concepts";
 
     public static final String QUERY_TEXT_PARAM = "queryText";
@@ -31,13 +32,15 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S
     public static final String MIN_DATE_PARAM = "minDate";
     public static final String MAX_DATE_PARAM = "maxDate";
 
-    protected final RelatedConceptsService<Q, S, E> relatedConceptsService;
+    protected final RelatedConceptsService<R, Q, S, E> relatedConceptsService;
     protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
-    protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
+    protected RelatedConceptsController(final RelatedConceptsService<R, Q, S, E> relatedConceptsService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
         this.relatedConceptsService = relatedConceptsService;
         this.queryRestrictionsBuilder = queryRestrictionsBuilder;
     }
+
+    protected abstract R buildRelatedConceptsRequest(QueryRestrictions<S> queryRestrictions);
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -47,6 +50,8 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S
                                        @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                        @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate);
-        return relatedConceptsService.findRelatedConcepts(queryRestrictions);
+
+        final R relatedConceptsRequest = buildRelatedConceptsRequest(queryRestrictions);
+        return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
     }
 }
