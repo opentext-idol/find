@@ -28,7 +28,8 @@ define([
                     documentsCollection: options.documentsCollection,
                     entityCollection: options.entityCollection,
                     indexesCollection: options.indexesCollection,
-                    queryModel: options.queryModel
+                    queryModel: options.queryModel,
+                    queryTextModel: options.queryTextModel
                 })
             }/*, {
                 id: 'map',
@@ -62,11 +63,10 @@ define([
             }, this);
 
             // Triggers a "selected" event with the id results view type
-            this.$('a[data-toggle="tab"]').on('hide.bs.tab', (function (e) {
+            this.$('a[data-toggle="tab"]').on('hide.bs.tab', _.bind(function (e) {
                 this.trigger('selected', $(e.relatedTarget).attr('data-id'));
-            }).bind(this))
+            }, this));
         }
-
     });
 
 });
