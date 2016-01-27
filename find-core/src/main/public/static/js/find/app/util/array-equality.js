@@ -8,16 +8,22 @@ define([
             return _.any(b, function(bItem) {
                 // that matches the predicate
                 return predicate(aItem, bItem);
-            })
-        })
+            });
+        });
+    }
+
+    function referenceEquality(aItem, bItem) {
+        return aItem === bItem
     }
 
     return function(a, b, predicate) {
-        if (!(a && b)) return false
+        if (!a && !b) return true;
+        if (!a || !b) return false;
+
         if (a.length !== b.length) return false;
 
-        predicate = predicate || function(aItem, bItem) {return aItem === bItem};
+        predicate = predicate || referenceEquality;
 
         return containsAll(a, b, predicate) && containsAll(b, a, predicate);
-    }
+    };
 });
