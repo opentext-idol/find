@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.containsTextIgnoringCase;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
@@ -226,6 +227,11 @@ public class AnalyticsITCase extends HostedTestBase {
     @KnownBug("CSA-1752")
     public void testNonZeroSearchTerm() {
         verifyThat(analytics.getMostPopularNonZeroSearchTerm(), not(isEmptyOrNullString()));
+    }
+
+    @Test
+    public void testNoErrorsOnPageLoad(){
+        verifyThat(analytics, not(containsTextIgnoringCase("error")));
     }
     
     @After

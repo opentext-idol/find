@@ -1022,7 +1022,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testParametricLabelsNotUndefined(){
 		searchService.search(new SearchQuery("simpsons")
 				.withFilter(new IndexFilter(Index.DEFAULT))
-				.withFilter(new ParametricFilter("Content Type","TEXT/HTML")));
+				.withFilter(new ParametricFilter("Content Type", "TEXT/HTML")));
 
 		for(WebElement filter : searchPage.findElements(By.cssSelector(".filter-display-view span"))){
 			assertThat(filter.getText().toLowerCase(),not(containsString("undefined")));
@@ -1124,5 +1124,12 @@ public class SearchPageITCase extends ABCTestBase {
 			}
 			searchPage.switchResultsPage(Pagination.NEXT);
 		}
+	}
+
+	@Test
+	public void testHeadingCount(){
+		searchService.search(new SearchQuery("dog").withFilter(IndexFilter.ALL));
+
+		verifyThat(searchPage.getHeadingResultsCount(), lessThanOrEqualTo(2501));
 	}
 }

@@ -35,10 +35,10 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     private ConnectionService connectionService;
     private KeywordService keywordService;
     private SearchService searchService;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
     private IndexService indexService;
     private final Index index = new Index("fifa");
-    private final WebConnector connector = new WebConnector("http://www.fifa.com", index.getName(), index);
+    private final WebConnector connector = new WebConnector("http://www.fifa.com", index.getName(), index).withDuration(180);
     private final String searchTerm = "football";
     private final String trigger = "corruption";
 
@@ -61,6 +61,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     }
 
     @Test
+    //Fails due to Unhandled Exception when attempting to create promotion
     public void testConnectionsToFind() throws InterruptedException {
         connectionService.setUpConnection(connector);
 
