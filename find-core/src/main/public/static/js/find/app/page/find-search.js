@@ -4,16 +4,17 @@
  */
 
 define([
+    'jquery',
     'js-whatever/js/base-page',
     'find/app/model/query-model',
     'find/app/model/query-text-model',
     'find/app/page/search/input-view',
-    'find/app/page/search/service-view',
     'find/app/router',
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, QueryModel, QueryTextModel, InputView, ServiceView, router, vent, _, template) {
+], function($, BasePage, QueryModel, QueryTextModel, InputView, router, vent, _, template) {
+    "use strict";
 
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
     var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
@@ -23,15 +24,12 @@ define([
         template: _.template(template),
 
         // will be overridden
-        constructServiceView: function (model, queryTextModel) {
-            return new ServiceView({
-                queryModel: model,
-                queryTextModel: queryTextModel
-            });
-        },
+        QueryServiceView: null,
+        SuggestServiceView: null,
+        suggestCallback: null,
 
         initialize: function() {
-            this.queryModel = new QueryModel();
+            this.queryModel = new QueryModel({}, {action: "query"});
             this.queryTextModel = new QueryTextModel();
 
             this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
@@ -41,6 +39,14 @@ define([
                     autoCorrect: true,
                     queryText: this.queryTextModel.makeQueryText()
                 });
+
+                var searchUrl = 'find/search/query/' + this.generateURL();
+                vent.navigate(searchUrl);
+            });
+
+            this.listenTo(this.queryTextModel, 'refresh', function() {
+                var searchUrl = 'find/search/query/' + this.generateURL();
+                vent.navigate(searchUrl);
             });
 
             this.inputView = new InputView({
@@ -48,7 +54,10 @@ define([
                 queryTextModel: this.queryTextModel
             });
 
-            this.serviceView = this.constructServiceView(this.queryModel, this.queryTextModel);
+            this.queryServiceView = new this.QueryServiceView({
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel}
+            );
 
             router.on('route:search', function(text, concepts) {
                 var attributes = {
@@ -57,6 +66,13 @@ define([
                 };
 
                 this.queryTextModel.setInputText(attributes);
+                this.$('.query-service-view-container').removeClass('hide');
+                this.$('.suggest-service-view-container').addClass('hide');
+            }, this);
+
+            router.on('route:suggest', function() {
+                var suggestOptions = this.suggestOptions.apply(this, arguments);
+                this.suggest(suggestOptions);
             }, this);
         },
 
@@ -64,7 +80,7 @@ define([
             this.$el.html(this.template);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
-            this.serviceView.setElement(this.$('.service-view-container')).render();
+            this.queryServiceView.setElement(this.$('.query-service-view-container')).render();
 
             this.reducedState();
         },
@@ -85,22 +101,20 @@ define([
             /*fancy animation*/
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
-            this.$('.service-view-container').show();
+            this.$('.query-service-view-container').show();
             this.$('.app-logo').hide();
             this.$('.hp-logo-footer').addClass('hidden');
 
             // TODO: somebody else needs to own this
             $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').show();
             $('.container-fluid, .find-logo-small').removeClass('reduced');
-
-            vent.navigate('find/search/' + this.generateURL(), {trigger: false});
         },
 
         reducedState: function() {
             /*fancy reverse animation*/
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
-            this.$('.service-view-container').hide();
+            this.$('.query-service-view-container').hide();
             this.$('.app-logo').show();
             this.$('.hp-logo-footer').removeClass('hidden');
 
@@ -108,7 +122,37 @@ define([
             $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
             $('.container-fluid, .find-logo-small').addClass('reduced');
 
-            vent.navigate('find/search', {trigger: false});
+            vent.navigate('find/search/query', {trigger: false});
+        },
+
+        suggest: function(suggestOptions) {
+            var self = this;
+            $.ajax({
+                url: '../api/public/search/get-document-content',
+                data: {
+                    reference: suggestOptions.reference,
+                    database: suggestOptions.database
+                },
+                success: function (result) {
+                    var queryModel = new QueryModel({}, {action: "suggest"});
+                    queryModel.set(_.extend({
+                        document: result
+                    }, suggestOptions.suggestParams));
+                    var suggestServiceView = new self.SuggestServiceView({
+                        queryModel: queryModel,
+                        backUrl: 'find/search/query/' + self.generateURL()
+                    });
+                    $('.query-service-view-container').addClass('hide');
+                    var container = self.$('.suggest-service-view-container');
+                    container.removeClass('hide');
+                    suggestServiceView.setElement(container).render();
+                },
+                error: function (xhr) {
+                    if (xhr && xhr.status === 403) {
+                        location.reload();
+                    }
+                }
+            });
         }
     });
 });

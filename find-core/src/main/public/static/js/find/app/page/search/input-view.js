@@ -6,7 +6,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
     'typeahead'
-], function(Backbone, $, _, stringBlank, i18n, template) {
+], function (Backbone, $, _, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
     var relatedConceptsTemplate = _.template('<span class="selected-related-concepts" data-id="<%-concept%>"><%-concept%> ' +
@@ -15,22 +15,22 @@ define([
 
     return Backbone.View.extend({
         events: {
-            'submit .find-form': function(event) {
+            'submit .find-form': function (event) {
                 event.preventDefault();
                 this.search(this.$input.typeahead('val'));
                 this.$input.typeahead('close');
             },
-            'typeahead:select': function() {
+            'typeahead:select': function () {
                 this.search(this.$input.typeahead('val'));
             },
-            'click .concepts-remove-icon': function(e) {
+            'click .concepts-remove-icon': function (e) {
                 var id = $(e.currentTarget).closest("span").attr('data-id');
 
                 this.removeRelatedConcept(id);
             }
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
 
@@ -39,7 +39,7 @@ define([
 
             this.listenTo(this.queryTextModel, 'change:relatedConcepts', this.updateRelatedConcepts);
 
-            this.search = _.debounce(function(query) {
+            this.search = _.debounce(function (query) {
                 if (query === options.queryTextModel.get('inputText')) {
                     options.queryTextModel.refresh();
                 } else {
@@ -50,7 +50,7 @@ define([
             }, 500);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(html);
             this.$input = this.$('.find-input');
             this.$additionalConcepts = this.$('.additional-concepts');
@@ -63,14 +63,14 @@ define([
             }, {
                 async: true,
                 limit: 7,
-                source: function(query, sync, async) {
+                source: function (query, sync, async) {
                     // Don't look for suggestions if the query is blank
                     if (stringBlank(query)) {
                         sync([]);
                     } else {
                         $.get('../api/public/typeahead', {
                             text: query
-                        }, function(results) {
+                        }, function (results) {
                             async(results);
                         });
                     }
@@ -81,17 +81,17 @@ define([
             this.updateRelatedConcepts();
         },
 
-        updateText: function() {
+        updateText: function () {
             if (this.$input) {
                 this.$input.typeahead('val', this.queryTextModel.get('inputText'));
             }
         },
 
-        updateRelatedConcepts: function() {
+        updateRelatedConcepts: function () {
             if (this.$additionalConcepts) {
                 this.$additionalConcepts.empty();
 
-                _.each(this.queryTextModel.get('relatedConcepts'), function(concept) {
+                _.each(this.queryTextModel.get('relatedConcepts'), function (concept) {
                     this.$additionalConcepts.append(relatedConceptsTemplate({
                         concept: concept
                     }))
@@ -101,7 +101,7 @@ define([
             }
         },
 
-        removeRelatedConcept: function(id){
+        removeRelatedConcept: function (id) {
             var newConcepts = _.without(this.queryTextModel.get('relatedConcepts'), id);
 
             this.queryTextModel.set('relatedConcepts', newConcepts);

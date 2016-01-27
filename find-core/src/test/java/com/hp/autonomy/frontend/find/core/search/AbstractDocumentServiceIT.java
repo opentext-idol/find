@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,7 +31,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
     @Test
     public void query() throws Exception {
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", not(empty())));
@@ -38,7 +39,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
     @Test
     public void queryWithPagination() throws Exception {
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "51").param(DocumentsController.MAX_RESULTS_PARAM, "100").param(DocumentsController.AUTO_CORRECT_PARAM, "false").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "51").param(DocumentsController.MAX_RESULTS_PARAM, "100").param(DocumentsController.AUTO_CORRECT_PARAM, "false").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", not(empty())));
@@ -46,7 +47,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
     @Test
     public void queryForPromotions() throws Exception {
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.PROMOTIONS_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.PROMOTIONS_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", empty()));
@@ -54,8 +55,27 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
     @Test
     public void findSimilar() throws Exception {
+        final String reference = getValidReference();
+
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.SIMILAR_DOCUMENTS_PATH).param(DocumentsController.REFERENCE_PARAM, reference).param(DocumentsController.INDEXES_PARAM, indexesArray).param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.documents", not(empty())));
+    }
+
+    @Test
+    public void getDocumentContent() throws Exception {
+        final String reference = getValidReference();
+
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.GET_DOCUMENT_CONTENT_PATH).param(DocumentsController.REFERENCE_PARAM, reference).param(DocumentsController.DATABASE_PARAM, indexesArray[0]))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", not(nullValue())));
+    }
+
+    private String getValidReference() throws Exception {
         final String[] reference = new String[1];
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andDo(new ResultHandler() {
                     @SuppressWarnings("InnerClassTooDeeplyNested")
                     @Override
@@ -67,10 +87,6 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
                         }
                     }
                 });
-
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.SIMILAR_DOCUMENTS_PATH).param(DocumentsController.REFERENCE_PARAM, reference).param(DocumentsController.INDEXES_PARAM, indexesArray).param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.documents", not(empty())));
+        return reference[0];
     }
 }

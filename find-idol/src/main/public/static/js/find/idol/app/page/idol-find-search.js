@@ -4,17 +4,23 @@
  */
 
 define([
+    'jquery',
+    'find/app/model/query-model',
     'find/app/page/find-search',
-    'find/idol/app/page/search/idol-service-view'
-], function(FindSearch, ServiceView) {
+    'find/idol/app/page/search/idol-query-service-view',
+    'find/idol/app/page/search/idol-suggest-service-view'
+], function($, QueryModel, FindSearch, QueryServiceView, SuggestServiceView) {
     'use strict';
 
     return FindSearch.extend({
-        constructServiceView: function (model, queryTextModel) {
-            return new ServiceView({
-                queryModel: model,
-                queryTextModel: queryTextModel
-            });
-        },
+        QueryServiceView: QueryServiceView,
+        SuggestServiceView: SuggestServiceView,
+
+        suggestOptions: function (database, reference) {
+            return {
+                database: database,
+                reference: reference
+            };
+        }
     });
 });

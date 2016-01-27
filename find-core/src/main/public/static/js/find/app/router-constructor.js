@@ -6,10 +6,10 @@
 define([
     'backbone'
 ], function(Backbone) {
-    var Router = Backbone.Router.extend({
+    return Backbone.Router.extend({
 
         routes: {
-            'find/search(/:text/*refinements)': 'search',
+            'find/search/query(/:text/*refinements)': 'search',
             'find/:page': 'find'
         },
 
@@ -23,6 +23,4 @@ define([
             this.trigger('route:find', 'search');
         }
     });
-
-    return new Router();
 });

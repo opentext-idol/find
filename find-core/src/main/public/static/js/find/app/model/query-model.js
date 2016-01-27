@@ -1,6 +1,7 @@
 define([
     'backbone'
 ], function(Backbone) {
+    "use strict";
 
     var Sort = {
         date: 'date',
@@ -16,6 +17,10 @@ define([
             minDate: undefined,
             maxDate: undefined,
             sort: Sort.relevance
+        },
+
+        initialize: function (attributes, options) {
+            this.action = options.action;
         },
 
         getIsoDate: function(type) {

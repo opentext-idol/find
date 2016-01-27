@@ -92,6 +92,8 @@ define([
         'search.relatedConcepts.topResults.none': 'No top results found',
         'search.relatedConcepts.notLoading': 'The list of indexes has not yet been retrieved',
         'search.relatedConcepts.none': 'There are no related concepts',
+        'search.results.message.back': 'Back',
+        'search.results.message.similarDocuments': 'Similar results to document with title ',
         'search.results': 'results',
         'search.results.pagination.of': 'of',
         'search.results.pagination.showing': 'Showing',
