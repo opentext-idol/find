@@ -52,30 +52,12 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return new SOCheckbox(element, getDriver());
 	}
 
-	public String getSearchResultTitle(final int searchResultNumber) {
-		return searchResult(searchResultNumber).getText();
-	}
-
-	public WebElement searchResult(final int searchResultNumber) {
-		return new WebDriverWait(getDriver(),60)
-				.withMessage("Waiting for the #" + searchResultNumber + " search result")
-				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") h3")));
-	}
-
-	public String getSearchResultDetails(final int searchResultNumber) {
-		return ElementUtil.getParent(searchResult(searchResultNumber)).findElement(By.cssSelector(".details")).getText();
+	public SOSearchResult getSearchResult(final int searchResult) {
+		return new SOSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
 	}
 
 	public int visibleDocumentsCount() {
 		return findElements(By.cssSelector(".search-page-contents .search-result-item")).size();
-	}
-
-	public Date getDateFromResult(final int index) throws ParseException {
-		final String dateString = ElementUtil.getParent(searchResult(index)).findElement(By.cssSelector(".date")).getText();
-		if (dateString.isEmpty()) {
-			return null;
-		}
-		return RESULT_DATE_FORMAT.parse(dateString.split(", ")[1]);
 	}
 
 	public List<Float> getWeightsOnPage(final int numberOfPages) {

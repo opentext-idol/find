@@ -60,7 +60,7 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
     public void testDynamicPromotionCreation() {
         searchPage = searchService.search(new SearchQuery("lapin").withFilter(new LanguageFilter(Language.FRENCH)));
 
-        final String firstDocTitle = searchPage.getSearchResultTitle(1);
+        final String firstDocTitle = searchPage.getSearchResult(1).getTitleString();
         searchPage.promoteThisQueryButton().click();
         dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         Waits.loadOrFadeWait();

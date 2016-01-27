@@ -135,7 +135,7 @@ public class IndexFieldsITCase extends HostedTestBase {
         // results count not shown if backend error
         boolean hasResults = noError && verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0));
         if (noError && hasResults) {
-            searchPage.searchResult(1).click();
+            searchPage.getSearchResult(1).title().click();
             DocumentViewer viewer = DocumentViewer.make(getDriver());
             verifyThat(viewer.getReference(), containsString(ingestUrl));
             viewer.close();
@@ -177,10 +177,10 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     private void verifyFirstFindResult() {
         FindResultsPage resultsPage = find.getResultsPage();
-        if (verifyThat("has results", resultsPage.results(), not(empty()))) {
-            verifyThat(resultsPage.getSearchResultReference(1), containsString(ingestUrl));
+        if (verifyThat("has results", resultsPage.getResults(), not(empty()))) {
+            verifyThat(resultsPage.searchResult(1).getReference(), containsString(ingestUrl));
 
-            resultsPage.searchResultTitle(1).click();
+            resultsPage.searchResult(1).title().click();
             DocumentViewer viewer = DocumentViewer.make(getDriver());
             verifyThat(viewer.getIndex(), is(index.getDisplayName()));
             verifyThat(viewer.getReference(), containsString(ingestUrl));

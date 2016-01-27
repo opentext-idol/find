@@ -240,8 +240,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         for (int j = 1; j <= 2; j++) {
             for (int i = 1; i <= 5; i++) {
-                final String searchResultTitle = editReferencesPage.getSearchResultTitle(i);
-                editReferencesPage.searchResult(i).click();
+                final String searchResultTitle = editReferencesPage.getSearchResult(i).getTitleString();
+                editReferencesPage.getSearchResult(i).title().click();
                 checkDocumentViewable(searchResultTitle);
             }
             editReferencesPage.switchResultsPage(Pagination.NEXT);
@@ -252,7 +252,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         for (int i = 1; i < 5; i++) {
             editReferencesPage.searchResultCheckbox(i).click();
-            final String docTitle = editReferencesPage.getSearchResultTitle(i);
+            final String docTitle = editReferencesPage.getSearchResult(i).getTitleString();
             editReferencesPage.promotionBucketElementByTitle(docTitle).click();
             checkDocumentViewable(docTitle);
         }
@@ -278,7 +278,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
 
         editReferencesPage.searchResultCheckbox(6).click();
-        final String newPromotedDoc = editReferencesPage.getSearchResultTitle(6);
+        final String newPromotedDoc = editReferencesPage.getSearchResult(6).getTitleString();
 
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
@@ -323,7 +323,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         editDocumentSearch("Friday");
 
-        String title = editReferencesPage.getSearchResultTitle(5);
+        String title = editReferencesPage.getSearchResult(5).getTitleString();
         editReferencesPage.searchResultCheckbox(5).click();
 
         editReferencesPage.saveButton().click();

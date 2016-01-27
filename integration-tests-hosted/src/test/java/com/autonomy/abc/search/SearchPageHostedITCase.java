@@ -97,7 +97,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 	private void verifyResults(String index){
 		assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
 		assertThat(searchPage.getText(), not(containsString(Errors.Search.NO_RESULTS)));
-		searchPage.searchResult(1).click();
+		searchPage.getSearchResult(1).title().click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){
 			verifyThat(documentViewer.getIndex(), containsString(index));
@@ -112,7 +112,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		String author = "FIFA.com";
 		searchPage = searchService.search(new SearchQuery("blatter").withFilter(new ParametricFilter("Author", author)));
 
-		searchPage.searchResult(1).click();
+		searchPage.getSearchResult(1).title().click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 
 		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){

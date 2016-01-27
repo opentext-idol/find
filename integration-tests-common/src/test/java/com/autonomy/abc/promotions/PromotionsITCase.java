@@ -479,7 +479,7 @@ public class PromotionsITCase extends ABCTestBase {
 		SearchQuery query = new SearchQuery("\"Selenium (software)\"").withFilter(new IndexFilter("wiki_eng"));
 
 		SearchPage searchPage = searchService.search(query);
-		assumeThat("Was expecting Selenium (Software) to be the first result",searchPage.getSearchResultTitle(1), is("Selenium (software)"));
+		assumeThat("Was expecting Selenium (Software) to be the first result", searchPage.getSearchResult(1).getTitleString(), is("Selenium (software)"));
 
 		promotionService.setUpPromotion(spotlightPromotion, query, 1);
 		PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails(spotlightPromotion);

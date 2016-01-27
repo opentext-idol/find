@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.ParametricFilter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,7 +92,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         verifyPinToPosition(promotionTitles, 6, 10);
 
         find.filterBy(IndexFilter.PRIVATE);
-        service.filterByParametric("Source Connector", "SIMPSONSARCHIVE");
+        find.filterBy(new ParametricFilter("Source Connector", "SIMPSONSARCHIVE"));
         verifyPinToPosition(promotionTitles, 6, 10);
 
         searchWindow.activate();
