@@ -1,4 +1,4 @@
-package com.autonomy.abc.connections;
+package com.autonomy.abc.indexes;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;

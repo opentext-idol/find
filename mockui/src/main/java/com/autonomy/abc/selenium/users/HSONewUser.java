@@ -69,4 +69,9 @@ public class HSONewUser implements NewUser {
     public AuthProvider getProvider() {
         return provider;
     }
+
+    @Override
+    public String toString() {
+        return "NewUser<" + username + ":" + email + "|" + provider + ">";
+    }
 }
