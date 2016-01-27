@@ -56,7 +56,7 @@ public class ConnectionToSearchITCase extends HostedTestBase {
         final String handle = getDriver().getWindowHandle();
         searchPage.getSearchResult(1).title().click();
         DocumentViewer documentViewer = DocumentViewer.make(getDriver());
-        verifyThat("search result in correct index", documentViewer.getIndex(), is(index.getName()));
+        verifyThat("search result in correct index", documentViewer.getIndex(), is(index));
         getDriver().switchTo().frame(documentViewer.frame());
         verifyThat("search result is viewable", getDriver().findElement(By.xpath(".//*")).getText(), containsString(searchTerm));
         getDriver().switchTo().window(handle);

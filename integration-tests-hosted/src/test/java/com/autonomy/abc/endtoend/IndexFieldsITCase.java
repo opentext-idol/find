@@ -182,7 +182,7 @@ public class IndexFieldsITCase extends HostedTestBase {
 
             resultsPage.searchResult(1).title().click();
             DocumentViewer viewer = DocumentViewer.make(getDriver());
-            verifyThat(viewer.getIndex(), is(index.getDisplayName()));
+            verifyThat(viewer.getIndex(), is(index));
             verifyThat(viewer.getReference(), containsString(ingestUrl));
             viewer.close();
         }

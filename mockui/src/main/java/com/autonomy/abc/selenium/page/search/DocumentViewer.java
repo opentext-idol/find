@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -68,8 +69,8 @@ public class DocumentViewer extends AppElement implements AppPage {
         return getField("Domain");
     }
 
-    public String getIndex() {
-        return getField("Index");
+    public Index getIndex() {
+        return new Index(getField("Index"));
     }
 
     public String getReference() {

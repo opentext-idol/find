@@ -393,7 +393,7 @@ public class FindITCase extends HostedTestBase {
             DocumentViewer docViewer = DocumentViewer.make(getDriver());
 
             assertThat(docViewer.getDomain(), is(getCurrentUser().getDomain()));
-            assertThat(docViewer.getIndex(), not(isEmptyOrNullString()));
+            assertThat(docViewer.getIndex(), is(Index.DEFAULT));
             assertThat(docViewer.getReference(), is(url));
             docViewer.close();
         }
@@ -409,7 +409,7 @@ public class FindITCase extends HostedTestBase {
         title.click();
 
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
-        String index = docViewer.getIndex();
+        Index index = docViewer.getIndex();
 
         docViewer.close();
 
@@ -428,7 +428,7 @@ public class FindITCase extends HostedTestBase {
         results.searchResult(1).title().click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
-            assertThat(docViewer.getIndex(), is(indexTitle));
+            assertThat(docViewer.getIndex().getDisplayName(), is(indexTitle));
             docViewer.next();
         } while (docViewer.getCurrentDocumentNumber() != 1);
     }

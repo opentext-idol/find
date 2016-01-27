@@ -100,7 +100,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.getSearchResult(1).title().click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){
-			verifyThat(documentViewer.getIndex(), containsString(index));
+			verifyThat(documentViewer.getIndex().getDisplayName(), containsString(index));
 			documentViewer.next();
 		}
 		documentViewer.close();
