@@ -6,6 +6,7 @@
 define([
     'jquery',
     'js-whatever/js/base-page',
+    'find/app/model/indexes-collection',
     'find/app/model/query-model',
     'find/app/model/query-text-model',
     'find/app/page/search/input-view',
@@ -13,7 +14,7 @@ define([
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function($, BasePage, QueryModel, QueryTextModel, InputView, router, vent, _, template) {
+], function($, BasePage, IndexesCollection, QueryModel, QueryTextModel, InputView, router, vent, _, template) {
     "use strict";
 
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
@@ -54,10 +55,14 @@ define([
                 queryTextModel: this.queryTextModel
             });
 
+            this.indexesCollection = new IndexesCollection();
+            this.indexesCollection.fetch();
+
             this.queryServiceView = new this.QueryServiceView({
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel}
-            );
+                queryTextModel: this.queryTextModel,
+                indexesCollection: this.indexesCollection
+            });
 
             router.on('route:search', function(text, concepts) {
                 var attributes = {
@@ -140,6 +145,7 @@ define([
                     }, suggestOptions.suggestParams));
                     var suggestServiceView = new self.SuggestServiceView({
                         queryModel: queryModel,
+                        indexesCollection: self.indexesCollection,
                         backUrl: 'find/search/query/' + self.generateURL()
                     });
                     $('.query-service-view-container').addClass('hide');

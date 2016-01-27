@@ -8,12 +8,11 @@ define([
     'jquery',
     'underscore',
     'find/app/model/similar-documents-collection',
-    'find/app/model/indexes-collection',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-message-view',
     'find/app/page/search/results/results-number-view',
     'text!find/templates/app/page/search/suggest-service-view.html'
-], function(Backbone, $, _, DocumentsCollection, IndexesCollection, SortView, ResultsMessageView, ResultsNumberView, template) {
+], function(Backbone, $, _, DocumentsCollection, SortView, ResultsMessageView, ResultsNumberView, template) {
     "use strict";
 
     return Backbone.View.extend({
@@ -24,12 +23,11 @@ define([
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
+            this.indexesCollection = options.indexesCollection;
             this.backUrl = options.backUrl;
 
             this.documentsCollection = new DocumentsCollection();
-            this.indexesCollection = new IndexesCollection();
 
-            this.indexesCollection.fetch();
 
             this.resultsView = new this.ResultsView({
                 documentsCollection: this.documentsCollection,

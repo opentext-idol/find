@@ -48,11 +48,11 @@ define([
         initialize: function (options) {
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
+            this.indexesCollection = options.indexesCollection;
 
             this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
 
             this.documentsCollection = new DocumentsCollection();
-            this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
             this.selectedParametricValues = new SelectedParametricValuesCollection();
             this.selectedIndexesCollection = new IndexesCollection();
@@ -64,8 +64,6 @@ define([
                 selectedIndexesCollection: this.selectedIndexesCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
-
-            this.indexesCollection.fetch();
 
             var fetchEntities = _.bind(function () {
                 if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
