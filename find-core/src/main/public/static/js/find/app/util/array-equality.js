@@ -1,14 +1,20 @@
 define([
     'underscore'
 ], function(_) {
-    function containsAll(a, b, predicate) {
+    function bagEquality(a, b, predicate) {
         // for every item in a...
-        return _.all(a, function(aItem) {
-            // there exists an item in b...
-            return _.any(b, function(bItem) {
-                // that matches the predicate
-                return predicate(aItem, bItem);
-            });
+        return _.all(a, function(ai) {
+            // create a version of predicate which checks equality to ai
+            var boundPredicate = _.partial(predicate, ai);
+
+            // find everything in a which is the same as ai
+            var as = _.filter(a, boundPredicate);
+
+            // find everything in b which is the same as ai
+            var bs = _.filter(b, boundPredicate);
+
+            // if ai occurs the same number of times in a and b, they are equal
+            return as.length === bs.length;
         });
     }
 
@@ -24,6 +30,6 @@ define([
 
         predicate = predicate || referenceEquality;
 
-        return containsAll(a, b, predicate) && containsAll(b, a, predicate);
+        return bagEquality(a, b, predicate)
     };
 });
