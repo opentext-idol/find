@@ -434,6 +434,14 @@ input.find-input {
     background-color: #f2f2f2;
 }
 
+.preview-mode-metadata td {
+    padding-left: 10px;
+}
+
+.preview-mode-document-title {
+    color: #676a6c !important;
+}
+
 .content-type i {
     font-size: 23px;
 }

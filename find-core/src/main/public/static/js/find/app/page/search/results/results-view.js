@@ -112,7 +112,7 @@ define([
                 $target.addClass('selected-document');
 
                 this.$('.no-document-selected-placeholder').addClass('hide');
-                this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
+                this.$('.preview-mode-document-title').text(selectedDocument.get('title')).removeClass('hide');
 
                 this.previewModeView.renderView(selectedDocument);
             }
