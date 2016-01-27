@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -12,6 +11,11 @@ public abstract class SearchResult {
     protected WebElement title;
     protected String description;
     protected WebElement icon;
+
+    SearchResult(WebElement result){
+        this.result = result;
+        description = result.findElement(By.className("result-summary")).getText();
+    }
 
     public WebElement title() {
         return title;
@@ -34,11 +38,7 @@ public abstract class SearchResult {
     }
 
     public boolean isPromoted(){
-        try {
-            return result.findElement(By.className("promoted-label")).isDisplayed();
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        return result.findElements(By.className("promoted-label")).size() > 0;
     }
 
     public WebElement star() {

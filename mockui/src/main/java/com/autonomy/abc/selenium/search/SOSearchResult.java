@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.search;
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.Index;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -18,11 +17,10 @@ public class SOSearchResult extends SearchResult {
     private Date date;
 
     public SOSearchResult(WebElement result, WebDriver driver){
-        this.result = result;
+        super(result);
         this.driver = driver;
 
         title = result.findElement(By.cssSelector("h3 a"));
-        description = result.findElement(By.className("result-summary")).getText();
         icon = result.findElement(By.cssSelector(".result-icon a"));
 
         index = new Index(result.findElement(By.className("index")).getText().split(":")[1].trim());
@@ -60,10 +58,6 @@ public class SOSearchResult extends SearchResult {
     }
 
     public SOCheckbox getCheckbox(){
-        try {
-            return new SOCheckbox(result.findElement(By.className("checkbox")), driver);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+        return new SOCheckbox(result.findElement(By.className("checkbox")), driver);
     }
 }

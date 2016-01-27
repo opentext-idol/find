@@ -8,10 +8,9 @@ public class FindSearchResult extends SearchResult {
     private final String reference;
 
     public FindSearchResult(WebElement result){
-        this.result = result;
+        super(result);
 
         title = result.findElement(By.tagName("h4"));
-        description = result.findElement(By.className("result-summary")).getText();
         icon = result.findElement(By.cssSelector(".content-type i"));
 
         similarDocuments = result.findElement(By.className("similar-documents-trigger"));
