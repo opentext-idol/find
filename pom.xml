@@ -26,6 +26,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
+        <npm.binExtension/>
     </properties>
 
     <build>
@@ -102,6 +103,17 @@
             <id>production</id>
             <properties>
                 <static-resources-dir>${project.build.directory}/webapp</static-resources-dir>
+            </properties>
+        </profile>
+        <profile>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <id>windows</id>
+            <properties>
+                <npm.binExtension>.cmd</npm.binExtension>
             </properties>
         </profile>
     </profiles>

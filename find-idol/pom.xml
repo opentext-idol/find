@@ -196,10 +196,9 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>node</executable>
+                                    <executable>${basedir}/node_modules/.bin/blessc${npm.binExtension}</executable>
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
-                                        <argument>${basedir}/node_modules/bless/bin/blessc</argument>
                                         <argument>-f</argument>
                                         <argument>target/classes/static/css/app.css</argument>
                                     </arguments>
