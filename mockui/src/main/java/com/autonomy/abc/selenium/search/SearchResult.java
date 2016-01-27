@@ -1,14 +1,21 @@
 package com.autonomy.abc.selenium.search;
 
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class SearchResult {
+public abstract class SearchResult {
+    protected WebDriver driver;
+
     protected WebElement title;
     protected String description;
     protected WebElement icon;
 
-    public WebElement getTitle() {
+    public WebElement title() {
         return title;
+    }
+
+    public String getTitleString(){
+        return title.getText();
     }
 
     public String getDescription() {
