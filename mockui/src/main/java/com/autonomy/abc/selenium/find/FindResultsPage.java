@@ -43,14 +43,18 @@ public class FindResultsPage extends AppElement {
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
     }
 
-    public List<WebElement> promotions() {
-        return promotionsDiv().findElements(By.className("promoted-document"));
+    public List<FindSearchResult> promotions() {
+        List<FindSearchResult> results = new ArrayList<>();
+        for(WebElement result : promotionsDiv().findElements(By.className("promoted-document"))) {
+            results.add(new FindSearchResult(result));
+        }
+        return results;
     }
 
     public List<String> getPromotionsTitles(){
         List<String> titles = new ArrayList<>();
-        for(WebElement promotion : promotions()){
-            titles.add(promotion.findElement(By.tagName("h4")).getText());
+        for(FindSearchResult promotion : promotions()){
+            titles.add(promotion.getTitleString());
         }
         return titles;
     }

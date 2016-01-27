@@ -12,8 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SOSearchResult extends SearchResult {
-    private final WebElement result;
-
     private final Index index;
     private final float weight;
     private final WebElement trashCan;

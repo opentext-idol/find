@@ -39,6 +39,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -324,12 +325,12 @@ public class FindITCase extends HostedTestBase {
 
             findWindow.activate();
             find.search(trigger);
-            List<WebElement> promotions = results.promotions();
+            List<FindSearchResult> promotions = results.promotions();
 
             assertThat(promotions.size(), is(1));
-            WebElement staticPromotion = promotions.get(0);
-            assertThat(staticPromotion.findElement(By.tagName("h4")).getText(), is(title));
-            assertThat(staticPromotion.findElement(By.className("result-summary")).getText(), containsString(content));
+            FindSearchResult staticPromotion = promotions.get(0);
+            assertThat(staticPromotion.getTitleString(), is(title));
+            assertThat(staticPromotion.getDescription(), containsString(content));
             promotionShownCorrectly(staticPromotion);
         } finally {
             searchWindow.activate();
@@ -362,14 +363,13 @@ public class FindITCase extends HostedTestBase {
         }
     }
 
-    private void promotionShownCorrectly (WebElement promotion) {
-        assertThat(promotion.getAttribute("class"), containsString("promoted-document"));
-        assertThat(promotion.findElement(By.className("promoted-label")).getText(), containsString("Promoted"));
-        assertThat(promotion.findElement(By.className("fa-star")), displayed());
+    private void promotionShownCorrectly (FindSearchResult promotion){
+        verifyThat(promotion.isPromoted(), is(true));
+        verifyThat(promotion.star(), displayed());
     }
 
-    private void promotionShownCorrectly (List<WebElement> promotions){
-        for(WebElement promotion : promotions){
+    private void promotionShownCorrectly (List<FindSearchResult> promotions){
+        for(FindSearchResult promotion : promotions){
             promotionShownCorrectly(promotion);
         }
     }
