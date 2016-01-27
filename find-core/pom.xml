@@ -80,7 +80,7 @@
                             <executable>node</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${basedir}/node_modules/bower/bin/bower</argument>
+                                <argument>${basedir}/node_modules/bower/lib/bin/bower</argument>
                                 <argument>install</argument>
                             </arguments>
                         </configuration>
