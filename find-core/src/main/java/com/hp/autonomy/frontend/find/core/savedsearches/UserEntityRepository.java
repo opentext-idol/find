@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
-public interface UserEntityRepository extends CrudRepository<UserEntity, Integer> {
+public interface UserEntityRepository extends CrudRepository<UserEntity, Long> {
 
     // Propagation set to REQUIRES_NEW in order to run this query in a new transaction, thereby avoiding an
     // infinite loop caused by spring JPA auditing (and the fact we run this query from the AuditAware.getCurrentAuditor() method).

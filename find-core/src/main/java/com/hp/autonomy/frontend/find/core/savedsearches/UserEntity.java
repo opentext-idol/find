@@ -24,7 +24,7 @@ public class UserEntity {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userId;
+    private Long userId;
     private String domain;
 
     @Column(name = "user_store")

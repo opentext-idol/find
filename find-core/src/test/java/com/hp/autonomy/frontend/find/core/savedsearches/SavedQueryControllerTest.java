@@ -48,7 +48,7 @@ public class SavedQueryControllerTest {
 
         final SavedQuery updatedQuery = savedQueryController.update(42, savedQuery);
         verify(savedQueryService).update(Matchers.isA(SavedQuery.class));
-        assertEquals(updatedQuery.getId(), new Integer(42));
+        assertEquals(updatedQuery.getId(), new Long(42L));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class SavedQueryControllerTest {
 
     @Test
     public void delete() {
-        savedQueryController.delete(42);
-        verify(savedQueryService).deleteById(eq(42));
+        savedQueryController.delete(42L);
+        verify(savedQueryService).deleteById(eq(42L));
     }
 }

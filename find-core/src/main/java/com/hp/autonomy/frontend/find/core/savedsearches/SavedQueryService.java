@@ -15,6 +15,6 @@ public interface SavedQueryService {
 
     SavedQuery update(SavedQuery search);
 
-    void deleteById(int id);
+    void deleteById(long id);
 
 }

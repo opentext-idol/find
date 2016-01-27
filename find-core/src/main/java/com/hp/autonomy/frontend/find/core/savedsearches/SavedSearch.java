@@ -34,7 +34,7 @@ public abstract class SavedSearch {
     @Id
     @Column(name = "search_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @CreatedBy
     @ManyToOne
@@ -105,7 +105,7 @@ public abstract class SavedSearch {
     @Getter
     @NoArgsConstructor
     public static abstract class Builder<T extends SavedSearch> {
-        private Integer id;
+        private Long id;
         private String title = "";
         private String queryText = "";
         private Set<EmbeddableIndex> indexes;
@@ -133,7 +133,7 @@ public abstract class SavedSearch {
 
         public abstract T build();
 
-        public Builder<T> setId(Integer id) {
+        public Builder<T> setId(Long id) {
             this.id = id;
             return this;
         }

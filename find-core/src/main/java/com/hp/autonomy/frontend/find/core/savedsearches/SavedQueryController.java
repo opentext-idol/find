@@ -40,7 +40,7 @@ public class SavedQueryController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public SavedQuery update(
-            @PathVariable("id") final int id,
+            @PathVariable("id") final long id,
             @RequestBody final SavedQuery query
     ) {
         return service.update(
@@ -50,7 +50,7 @@ public class SavedQueryController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void delete(
-            @PathVariable("id") final int id
+            @PathVariable("id") final long id
     ) {
         service.deleteById(id);
     }

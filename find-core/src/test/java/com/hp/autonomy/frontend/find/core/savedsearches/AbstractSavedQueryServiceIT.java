@@ -32,7 +32,7 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
                 .build();
 
         final SavedQuery entity = savedQueryService.create(savedQuery);
-        assertThat(entity.getId(), isA(Integer.class));
+        assertThat(entity.getId(), isA(Long.class));
         assertNotNull(entity.getId());
 
         entity.setQueryText("*");

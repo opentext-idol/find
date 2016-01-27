@@ -14,7 +14,7 @@ import java.util.Set;
  * Repository containing actions which can be performed on the main searches table
  * Spring automatically implements basic operations
  */
-public interface SavedQueryRepository extends CrudRepository<SavedQuery, Integer>
+public interface SavedQueryRepository extends CrudRepository<SavedQuery, Long>
 {
-    Set<SavedQuery> findByActiveTrueAndUser_UserId(Integer userId);
+    Set<SavedQuery> findByActiveTrueAndUser_UserId(Long userId);
 }

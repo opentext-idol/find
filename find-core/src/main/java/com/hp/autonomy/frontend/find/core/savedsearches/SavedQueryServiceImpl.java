@@ -26,7 +26,7 @@ public class SavedQueryServiceImpl implements SavedQueryService {
 
     @Override
     public Set<SavedQuery> getAll() {
-        final Integer userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
         return savedQueryRepository.findByActiveTrueAndUser_UserId(userId);
     }
 
@@ -41,7 +41,7 @@ public class SavedQueryServiceImpl implements SavedQueryService {
     }
 
     @Override
-    public void deleteById(final int id) {
+    public void deleteById(final long id) {
         final SavedQuery savedQuery = savedQueryRepository.findOne(id);
         savedQuery.setActive(false);
         savedQueryRepository.save(savedQuery);
