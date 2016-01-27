@@ -77,10 +77,9 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>node</executable>
+                            <executable>${basedir}/node_modules/.bin/bower${npm.binExtension}</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${basedir}/node_modules/bower/bin/bower</argument>
                                 <argument>install</argument>
                             </arguments>
                         </configuration>
@@ -92,10 +91,9 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>node</executable>
+                            <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${project.basedir}/node_modules/grunt-cli/bin/grunt</argument>
                                 <argument>test</argument>
                             </arguments>
                             <skip>${skipTests}</skip>
@@ -134,7 +132,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-core</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
         </dependency>
 
         <dependency>
@@ -226,9 +224,6 @@
     </dependencies>
 
     <profiles>
-        <profile>
-            <id>dev</id>
-        </profile>
         <profile>
             <id>production</id>
         </profile>

@@ -104,9 +104,6 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.promotionsCollection = new PromotionsCollection();
 
-            this.listenTo(this.queryModel, 'change', this.refreshResults);
-            this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
-
             this.sortView = new SortView({
                 queryModel: this.queryModel
             });
@@ -194,6 +191,9 @@ define([
 
                 this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
+
+            this.listenTo(this.queryModel, 'change', this.refreshResults);
+            this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 if (!this.entityCollection.isEmpty()) {

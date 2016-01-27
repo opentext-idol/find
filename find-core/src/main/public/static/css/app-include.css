@@ -597,6 +597,12 @@ input.find-input {
     display: block;
     overflow: hidden;
 }
+
+.topic-map {
+    width: 800px;
+    height: 600px;
+}
+
 /* Loading spinner */
 .loading-spinner {
     text-align: center;
@@ -1008,6 +1014,27 @@ input:-moz-placeholder::before {
 #cboxLoadedContent .table > tbody > tr > th,
 #cboxLoadedContent .table > tbody > tr > td {
     border-top: 0;
+}
+
+.slider-input{
+    padding-left: 20px;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.slider-input > span{
+    padding-right: 20px;
+}
+
+.slider-track-low, .slider-track-high{
+    background: rgba(1,169,130,0.1);
+}
+.slider-selection {
+    background: rgba(1,169,130,0.2);
+}
+
+.slider-handle {
+    background: #01A982;
 }
 
 @media (min-width: 980px) {
