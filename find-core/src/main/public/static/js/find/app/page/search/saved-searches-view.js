@@ -16,7 +16,8 @@ define([
             'click .preview-mode-button': function(e) {
                 $('.right-side-container').toggle();
                 $('.preview-mode-wrapper').toggleClass('hide');
-                $('.main-results-content').toggleClass('col-md-6');
+                $('.main-results-content').toggleClass('col-md-6 preview-mode');
+                $('.main-results-container').removeClass('selected-document');
                 $('.results-view-container .tab-pane').toggleClass('row');
             }
         },

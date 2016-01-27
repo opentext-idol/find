@@ -100,6 +100,19 @@ define([
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
                 this.queryTextModel.setInputText({'inputText': queryText});
+            },
+            'click .preview-mode [data-reference]': function(e) {
+                var $target = $(e.currentTarget);
+
+                //getting currently selected document model
+                var selectedDocument = this.documentsCollection.find(function(model){return model.get('reference') === $target.data('reference')});
+
+                //preventing multiple select
+                this.$('.main-results-container').removeClass('selected-document');
+                $target.addClass('selected-document');
+
+                this.$('.no-document-selected-placeholder').addClass('hide');
+                this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
             }
         },
 
