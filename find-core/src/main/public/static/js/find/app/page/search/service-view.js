@@ -109,14 +109,14 @@ define([
 
             // Must be removed before merging into develop:
             this.savedSearchCollection = new SavedSearchCollection([new SavedSearchModel()]);
-            this.queryModel.on("change:queryText change:indexes change:fieldText", function() {
-                this.savedSearchCollection.models[0].set(this.queryModel.changedAttributes());
-            }, this);
 
             this.savedSearchControlView = new SavedSearchControlView({
                 savedSearchCollection: this.savedSearchCollection,
                 savedSearchModel: this.savedSearchCollection.models[0],
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel,
+                selectedIndexesCollection: this.selectedIndexesCollection,
+                selectedParametricValues: this.selectedParametricValues
             });
 
             this.savedSearchesView = new SavedSearchesView({
