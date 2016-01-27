@@ -217,7 +217,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
         List<String> titles = new ArrayList<>();
 
         for(int i = 0; i < numberOfResults; i++){
-            titles.add(getSearchResultTitle((i % 6) + 1));
+            titles.add(getSearchResult((i % 6) + 1).getTitleString());
 
             if((i + 1) % 6 == 0 && (i + 1) != numberOfResults){
 				switchResultsPage(Pagination.NEXT);
@@ -330,7 +330,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		for (int i = 0; i < finalNumberOfDocs; i++) {
 			final int checkboxIndex = i % RESULTS_PER_PAGE + 1;
 			searchResultCheckbox(checkboxIndex).click();
-			promotedDocTitles.add(getSearchResultTitle(checkboxIndex));
+			promotedDocTitles.add(getSearchResult(checkboxIndex).getTitleString());
 
 			// Change page when we have checked all boxes on the current page, if we have more to check
 			if (i < finalNumberOfDocs - 1 && checkboxIndex == RESULTS_PER_PAGE) {

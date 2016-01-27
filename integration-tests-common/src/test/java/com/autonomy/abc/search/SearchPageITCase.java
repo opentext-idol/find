@@ -211,7 +211,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		assertThat("Promoted items count should equal 1", searchPage.promotedItemsCount(), is(1));
-		assertThat("File in bucket description does not match file added", searchPage.getSearchResultTitle(1), equalToIgnoringCase(searchPage.bucketDocumentTitle(1)));
+		assertThat("File in bucket description does not match file added", searchPage.getSearchResult(1).getTitleString(), equalToIgnoringCase(searchPage.bucketDocumentTitle(1)));
 	}
 
 	@Test
@@ -412,10 +412,10 @@ public class SearchPageITCase extends ABCTestBase {
 
 		searchPage.searchResultCheckbox(5).click();
 		final List<String> docTitles = new ArrayList<>();
-		docTitles.add(searchPage.getSearchResultTitle(5));
+		docTitles.add(searchPage.getSearchResult(5).getTitleString());
 		searchPage.switchResultsPage(Pagination.NEXT);
 		searchPage.searchResultCheckbox(3).click();
-		docTitles.add(searchPage.getSearchResultTitle(3));
+		docTitles.add(searchPage.getSearchResult(3).getTitleString());
 
 		final List<String> bucketListNew = searchPage.promotionsBucketList();
 		assertThat("Wrong number of documents in the bucket", bucketListNew, hasSize(2));
@@ -483,7 +483,7 @@ public class SearchPageITCase extends ABCTestBase {
 			for (int i = 1; i <= 3; i++) {
 				final String handle = getDriver().getWindowHandle();
 				searchPage.searchResultCheckbox(i).click();
-				final String docTitle = searchPage.getSearchResultTitle(i);
+				final String docTitle = searchPage.getSearchResult(i).getTitleString();
 				ElementUtil.scrollIntoViewAndClick(searchPage.promotionBucketElementByTitle(docTitle), getDriver());
 
 				DocumentViewer viewer = DocumentViewer.make(getDriver());
@@ -501,7 +501,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	public void testChangeLanguage() {
 		assumeThat("Lanugage not implemented in Hosted", getConfig().getType(), Matchers.not(ApplicationType.HOSTED));
-		String docTitle = searchPage.getSearchResultTitle(1);
+		String docTitle = searchPage.getSearchResult(1).getTitleString();
 		search("1");
 
 		List<Language> languages = Arrays.asList(Language.ENGLISH, Language.AFRIKAANS, Language.FRENCH, Language.ARABIC, Language.URDU, Language.HINDI, Language.CHINESE, Language.SWAHILI);
@@ -510,9 +510,9 @@ public class SearchPageITCase extends ABCTestBase {
 			assertThat(searchPage.getSelectedLanguage(), is(language));
 
 			searchPage.waitForSearchLoadIndicatorToDisappear();
-			assertThat(searchPage.getSearchResultTitle(1), not(docTitle));
+			assertThat(searchPage.getSearchResult(1).getTitleString(), not(docTitle));
 
-			docTitle = searchPage.getSearchResultTitle(1);
+			docTitle = searchPage.getSearchResult(1).getTitleString();
 		}
 	}
 
@@ -689,7 +689,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@KnownBug("IOD-6855")
 	public void testFromDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
-		final String firstResult = searchPage.getSearchResultTitle(1);
+		final String firstResult = searchPage.getSearchResult(1).getTitleString();
 		final Date validDate = date;
 		final Date invalidDate = DateUtils.addMinutes(date, 1);
 
@@ -711,7 +711,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@KnownBug("IOD-6855")
 	public void testUntilDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
-		final String firstResult = searchPage.getSearchResultTitle(1);
+		final String firstResult = searchPage.getSearchResult(1).getTitleString();
 
 		// plus 1 minute to be inclusive
 		final Date validDate = DateUtils.addMinutes(date, 1);
@@ -738,7 +738,7 @@ public class SearchPageITCase extends ABCTestBase {
 		if (date == null) {
 			throw new IllegalStateException("date filter test requires first search result to have a date");
 		}
-		logger.info("First Result: " + searchPage.getSearchResultTitle(1) + " " + date);
+		logger.info("First Result: " + searchPage.getSearchResult(1).getTitleString() + " " + date);
 		return date;
 	}
 
@@ -746,7 +746,7 @@ public class SearchPageITCase extends ABCTestBase {
 		logger.info("from: " + searchPage.fromDateInput().getValue());
 		logger.info("until: " + searchPage.untilDateInput().getValue());
 		if (verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0))) {
-			verifyThat("Document should be displayed again", searchPage.getSearchResultTitle(1), is(firstResult));
+			verifyThat("Document should be displayed again", searchPage.getSearchResult(1).getTitleString(), is(firstResult));
 		}
 	}
 
@@ -754,7 +754,7 @@ public class SearchPageITCase extends ABCTestBase {
 		logger.info("from: " + searchPage.fromDateInput().getValue());
 		logger.info("until: " + searchPage.untilDateInput().getValue());
 		if (searchPage.getHeadingResultsCount() > 0) {
-			verifyThat("Document should not be displayed", searchPage.getSearchResultTitle(1), not(firstResult));
+			verifyThat("Document should not be displayed", searchPage.getSearchResult(1).getTitleString(), not(firstResult));
 		}
 	}
 
@@ -897,7 +897,7 @@ public class SearchPageITCase extends ABCTestBase {
         search("nice");
 		searchPage.switchResultsPage(Pagination.LAST);
 		final int currentPage = searchPage.getCurrentPageNumber();
-		final String docTitle = searchPage.getSearchResultTitle(1);
+		final String docTitle = searchPage.getSearchResult(1).getTitleString();
 		final String url = getDriver().getCurrentUrl();
 		assertThat("Url and current page number are out of sync", url, containsString("nice/" + currentPage));
 
@@ -911,7 +911,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Page number should not have changed", currentPage, is(searchPage.getCurrentPageNumber()));
 		assertThat("Url should have reverted to original url", url, is(getDriver().getCurrentUrl()));
 		assertThat("Error message should not be showing", searchPage.isErrorMessageShowing(), is(false));
-		assertThat("Search results have changed on last page", docTitle, is(searchPage.getSearchResultTitle(1)));
+		assertThat("Search results have changed on last page", docTitle, is(searchPage.getSearchResult(1).getTitleString()));
 	}
 
 	@Test
@@ -1055,13 +1055,13 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.switchResultsPage(Pagination.LAST);
 
 		int results = searchPage.getHeadingResultsCount();
-		String deletedDoc = searchPage.getSearchResultTitle(1);
+		String deletedDoc = searchPage.getSearchResult(1).getTitleString();
 
 		// Might wanna check this doesn't come up --- hp-icon hp-trash hp-lg fa-spin fa-circle-o-notch
 		searchService.deleteDocument(deletedDoc);
 
 		verifyThat(searchPage.getHeadingResultsCount(), is(--results));
-		verifyThat(searchPage.getSearchResultTitle(1), not(is(deletedDoc)));
+		verifyThat(searchPage.getSearchResult(1).getTitleString(), not(is(deletedDoc)));
 	}
 
 	@Test

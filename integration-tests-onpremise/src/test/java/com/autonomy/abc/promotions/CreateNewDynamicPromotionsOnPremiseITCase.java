@@ -73,7 +73,7 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 	private void addDynamicPromotion(final String searchTerm, final Language language, final Promotion.SpotlightType promotionType, final String trigger) {
 		searchPage = searchService.search(new SearchQuery(searchTerm).withFilter(new LanguageFilter(language)));
 
-		final String firstDocTitle = searchPage.getSearchResultTitle(1);
+		final String firstDocTitle = searchPage.getSearchResult(1).getTitleString();
 		searchPage.promoteThisQueryButton().click();
 		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
 		Waits.loadOrFadeWait();

@@ -52,10 +52,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		return new SOCheckbox(element, getDriver());
 	}
 
-	public String getSearchResultTitle(final int searchResultNumber) {
-		return getSearchResult(searchResultNumber).getTitleString();
-	}
-
 	public SOSearchResult getSearchResult(final int searchResult) {
 		return new SOSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
 	}

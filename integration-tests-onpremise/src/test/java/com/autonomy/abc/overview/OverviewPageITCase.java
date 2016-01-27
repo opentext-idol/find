@@ -189,11 +189,11 @@ public class OverviewPageITCase extends ABCTestBase {
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText), hasItem(extraSynonym));
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(extraSynonym), hasItem(linkText));
 
-				final String searchResultTitle = searchPage.getSearchResultTitle(1);
+				final String searchResultTitle = searchPage.getSearchResult(1).getTitleString();
                 getElementFactory().getTopNavBar().search(linkText);
 				assertThat("page title incorrect", PageUtil.getPageTitle(getDriver()), containsString(linkText));
 				assertThat("no search results displayed", searchPage.docLogo(1), is(displayed()));
-				assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
+				assertThat(searchPage.getSearchResult(1).getTitleString(), is(searchResultTitle));
 				assertThat(searchPage.countSynonymLists(), is(1));
 				assertThat("Synonym groups displayed incorrectly", searchPage.getSynonymGroupSynonyms(linkText), hasItem(extraSynonym));
 				assertThat("you searched for section incorrect", searchPage.youSearchedFor(), hasItem(linkText));
