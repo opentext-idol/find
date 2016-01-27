@@ -133,7 +133,6 @@ public class TestConfig {
 		}
 
 		JsonConfig jsonConfig = defaultConfig.overrideUsing(userSpecifiedConfig);
-		LOGGER.info("Effective config: " + jsonConfig);
 
 		if (applicationTypes.contains(jsonConfig.getAppType())) {
 			for (int i = 0; i < jsonConfig.getBrowsers().size(); i++) {
@@ -157,7 +156,7 @@ public class TestConfig {
 
 	@Override
 	public String toString() {
-		return "parameter-set: [" + getIndex() + "]; browser: " + getBrowser() + "; platform: " + getPlatform() + "; type: " + getType();
+		return "parameter-set: [" + getIndex() + "]; browser: " + getBrowser() + "; platform: " + getPlatform() + "; effective config: " + jsonConfig;
 	}
 }
 
