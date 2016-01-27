@@ -40,11 +40,11 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
     @Test
     public void testFieldTextFilter() {
-        final String searchResultTitle = searchPage.getSearchResultTitle(1);
+        final String searchResultTitle = searchPage.getSearchResult(1).getTitleString();
         final String firstWord = getFirstWord(searchResultTitle);
 
         final int comparisonResult = searchResultNotStarting(firstWord);
-        final String comparisonString = searchPage.getSearchResultTitle(comparisonResult);
+        final String comparisonString = searchPage.getSearchResult(comparisonResult).getTitleString();
 
         searchPage.expand(SearchBase.Facet.FIELD_TEXT);
         searchPage.fieldTextAddButton().click();
@@ -57,19 +57,19 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
         assertThat("edit button visible", searchPage.fieldTextEditButton(), displayed());
         assertThat("remove button visible", searchPage.fieldTextRemoveButton(), displayed());
-        assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
+        assertThat(searchPage.getSearchResult(1).getTitleString(), is(searchResultTitle));
 
         try {
-            assertThat(searchPage.getSearchResultTitle(comparisonResult), not(comparisonString));
+            assertThat(searchPage.getSearchResult(comparisonResult).getTitleString(), not(comparisonString));
         } catch (final NoSuchElementException e) {
             // The comparison document is not present
         }
 
         searchPage.fieldTextRemoveButton().click();
         Waits.loadOrFadeWait();
-        assertThat(searchPage.getSearchResultTitle(comparisonResult), is(comparisonString));
+        assertThat(searchPage.getSearchResult(comparisonResult).getTitleString(), is(comparisonString));
         assertThat("Field text add button not visible", searchPage.fieldTextAddButton().isDisplayed());
-        assertThat(searchPage.getSearchResultTitle(1), is(searchResultTitle));
+        assertThat(searchPage.getSearchResult(1).getTitleString(), is(searchResultTitle));
     }
 
     private String getFirstWord(String string) {
@@ -78,7 +78,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
     private int searchResultNotStarting(String prefix) {
         for (int result = 1; result <= SearchPage.RESULTS_PER_PAGE; result++) {
-            String comparisonString = searchPage.getSearchResultTitle(result);
+            String comparisonString = searchPage.getSearchResult(result).getTitleString();
             if (!comparisonString.startsWith(prefix)) {
                 return result;
             }
@@ -95,17 +95,17 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
         searchPage.clearFieldText();
 
-        final String firstSearchResult = searchPage.getSearchResultTitle(1);
-        final String secondSearchResult = searchPage.getSearchResultTitle(2);
+        final String firstSearchResult = searchPage.getSearchResult(1).getTitleString();
+        final String secondSearchResult = searchPage.getSearchResult(2).getTitleString();
 
         searchPage.filterBy(new FieldTextFilter("MATCH{" + firstSearchResult + "}:DRETITLE"));
         assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
         assertThat(searchPage.getText(), not(containsString("No results found")));
-        assertThat(searchPage.getSearchResultTitle(1), is(firstSearchResult));
+        assertThat(searchPage.getSearchResult(1).getTitleString(), is(firstSearchResult));
 
         searchPage.filterBy(new FieldTextFilter("MATCH{" + secondSearchResult + "}:DRETITLE"));
         assertThat("Field Text should not have caused an error", searchPage.getText(), not(containsString(Errors.Search.HOD)));
-        assertThat(searchPage.getSearchResultTitle(1), is(secondSearchResult));
+        assertThat(searchPage.getSearchResult(1).getTitleString(), is(secondSearchResult));
     }
 
     //TODO
@@ -156,13 +156,13 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
         searchPage.filterBy(new FieldTextFilter("MATCH{" + promotedDocs.get(0) + "}:DRETITLE"));
 
-        assertThat(searchPage.getSearchResultTitle(1), is(promotedDocs.get(0)));
+        assertThat(searchPage.getSearchResult(1).getTitleString(), is(promotedDocs.get(0)));
         assertThat(searchPage.getHeadingResultsCount(), is(1));
         assertThat(searchPage.countPinToPositionLabels(), is(1));
 
         searchPage.filterBy(new FieldTextFilter("MATCH{" + promotedDocs.get(1) + "}:DRETITLE"));
 
-        assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResultTitle(1), is(promotedDocs.get(1)));
+        assertThat(promotedDocs.get(1) + " not visible in the search title", searchPage.getSearchResult(1).getTitleString(), is(promotedDocs.get(1)));
         assertThat("Wrong number of search results", searchPage.getHeadingResultsCount(), is(1));
         assertThat("Wrong number of pin to position labels", searchPage.countPinToPositionLabels(), is(1));
     }

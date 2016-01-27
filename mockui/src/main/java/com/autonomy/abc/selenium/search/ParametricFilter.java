@@ -40,7 +40,7 @@ public class ParametricFilter implements SearchFilter {
     }
 
     private WebElement fieldCheckbox(WebElement filterContainer, String field){
-        return filterContainer.findElement(By.cssSelector("[data-value='" + field.toUpperCase() + "']"));
+        return filterContainer.findElement(By.cssSelector("[data-value='" + field.toUpperCase() + "'] .parametric-value-text"));
     }
 
     private boolean isUnchecked(WebElement checkBox){

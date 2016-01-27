@@ -49,7 +49,7 @@ public class PromotionDetailPageITCase extends ABCTestBase {
         final String updateQueryTerm = "kitty";
 
         SearchPage searchPage = searchService.search(new SearchQuery(updateQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)));
-        final String updatePromotedResult = searchPage.searchResult(1).getText();
+        final String updatePromotedResult = searchPage.getSearchResult(1).title().getText();
         Promotion promotion = new DynamicPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, initialTrigger);
         final String initialPromotedResult = promotionService.setUpPromotion(promotion, new SearchQuery(initialQueryTerm).withFilter(new LanguageFilter(Language.FRENCH)), 1).get(0);
 

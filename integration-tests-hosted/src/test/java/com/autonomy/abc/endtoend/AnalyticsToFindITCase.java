@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.search.FindSearchResult;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,15 +83,14 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         verifyThat(findPromotions, containsInAnyOrder(createdPromotions.toArray()));
         verifyThat(service.getResultTitles(), contains(triggerResults.toArray()));
 
-        for(WebElement promotion : service.promotions()){
+        for(FindSearchResult promotion : service.promotions()){
             promotionShownCorrectly(promotion);
         }
     }
 
-    private void promotionShownCorrectly (WebElement promotion) {
-        verifyThat(promotion, hasClass("promoted-document"));
-        verifyThat(promotion.findElement(By.className("promoted-label")).getText(),containsString("Promoted"));
-        verifyThat(promotion.findElement(By.className("fa-star")), displayed());
+    private void promotionShownCorrectly (FindSearchResult promotion){
+        verifyThat(promotion.isPromoted(), is(true));
+        verifyThat(promotion.star(), displayed());
     }
 
     @After
