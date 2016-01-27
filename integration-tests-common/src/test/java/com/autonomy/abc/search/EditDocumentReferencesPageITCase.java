@@ -241,7 +241,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         for (int j = 1; j <= 2; j++) {
             for (int i = 1; i <= 5; i++) {
                 final String searchResultTitle = editReferencesPage.getSearchResultTitle(i);
-                editReferencesPage.searchResult(i).click();
+                editReferencesPage.getSearchResult(i).title().click();
                 checkDocumentViewable(searchResultTitle);
             }
             editReferencesPage.switchResultsPage(Pagination.NEXT);

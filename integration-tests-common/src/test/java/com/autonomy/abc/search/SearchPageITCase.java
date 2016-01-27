@@ -734,7 +734,7 @@ public class SearchPageITCase extends ABCTestBase {
 	private Date beginDateFilterTest() throws ParseException {
 		// not all indexes have times configured
 		search(new SearchQuery("Dog").withFilter(new IndexFilter("news_eng")));
-		Date date = searchPage.getDateFromResult(1);
+		Date date = searchPage.getSearchResult(1).getDate();
 		if (date == null) {
 			throw new IllegalStateException("date filter test requires first search result to have a date");
 		}
@@ -1088,11 +1088,11 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("all indexes checkbox not selected", indexesTree.allIndexes().isSelected(), is(false));
 		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
 		assertThat("correct index selected", indexesTree.getSelected(), hasItem(firstIndex));
-		final String firstIndexResult = searchPage.searchResult(1).getText();
+		final String firstIndexResult = searchPage.getSearchResult(1).getTitleString();
 
 		for (int j = 1; j <= 2; j++) {
 			for (int i = 1; i <= 6; i++) {
-				assertThat("result " + i + " from " + firstIndex, searchPage.getSearchResultDetails(i), containsString(firstIndex.getName()));
+				assertThat("result " + i + " from " + firstIndex, searchPage.getSearchResult(i).getIndex(), is(firstIndex));
 			}
 			searchPage.switchResultsPage(Pagination.NEXT);
 		}
@@ -1102,12 +1102,12 @@ public class SearchPageITCase extends ABCTestBase {
 		indexesTree.deselect(firstIndex);
 		assertThat("only one index should be selected", indexesTree.getSelected(), hasSize(1));
 		assertThat("correct index selected", indexesTree.getSelected(), hasItem(secondIndex));
-		final String secondIndexResult = searchPage.searchResult(1).getText();
+		final String secondIndexResult = searchPage.getSearchResult(1).getTitleString();
 		assertThat(secondIndexResult, not(firstIndexResult));
 
 		for (int j = 1; j <= 2; j++) {
 			for (int i = 1; i <= 6; i++) {
-				assertThat("result " + i + " from " + secondIndex, searchPage.getSearchResultDetails(i), containsString(secondIndex.getName()));
+				assertThat("result " + i + " from " + secondIndex, searchPage.getSearchResult(i).getIndex(), is(secondIndex));
 			}
 			searchPage.switchResultsPage(Pagination.NEXT);
 		}
@@ -1116,11 +1116,11 @@ public class SearchPageITCase extends ABCTestBase {
 		indexesTree.select(firstIndex);
 		assertThat("2 indexes should be selected", indexesTree.getSelected(), hasSize(2));
 		assertThat("correct indexes selected", indexesTree.getSelected(), hasItems(firstIndex, secondIndex));
-		assertThat("search result from selected indexes", searchPage.searchResult(1).getText(), isOneOf(firstIndexResult, secondIndexResult));
+		assertThat("search result from selected indexes", searchPage.getSearchResult(1).getTitleString(), isOneOf(firstIndexResult, secondIndexResult));
 
 		for (int j = 1; j <= 2; j++) {
 			for (int i = 1; i <= 6; i++) {
-				assertThat("result " + i + " from either index", searchPage.getSearchResultDetails(i), anyOf(containsString(firstIndex.getName()), containsString(secondIndex.getName())));
+				assertThat("result " + i + " from either index", searchPage.getSearchResult(i).getIndex(), anyOf(is(firstIndex), is(secondIndex)));
 			}
 			searchPage.switchResultsPage(Pagination.NEXT);
 		}

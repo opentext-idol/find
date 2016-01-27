@@ -135,7 +135,7 @@ public class IndexFieldsITCase extends HostedTestBase {
         // results count not shown if backend error
         boolean hasResults = noError && verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0));
         if (noError && hasResults) {
-            searchPage.searchResult(1).click();
+            searchPage.getSearchResult(1).title().click();
             DocumentViewer viewer = DocumentViewer.make(getDriver());
             verifyThat(viewer.getReference(), containsString(ingestUrl));
             viewer.close();
