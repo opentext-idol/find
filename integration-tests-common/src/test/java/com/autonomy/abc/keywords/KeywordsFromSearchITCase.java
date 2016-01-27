@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.categories.SlowTest;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -473,6 +475,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     @Test
+    @Category(SlowTest.class)
     @KnownBug({"CCUK-3471", "CSA-1808"})
     public void testCreateLargeSynonymGroup() {
         List<String> synonyms = new ArrayList<>();
@@ -485,6 +488,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     @Test
+    @Category(SlowTest.class)
     @KnownBug("IOD-8445")
     public void testCreateLargeDuplicateSynonymGroups() {
         List<String> synonyms;
@@ -501,6 +505,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     @Test
+    @Category(SlowTest.class)
     @KnownBug("IOD-8445")
     public void testCreateLargeDistinctSynonymGroups() {
         List<String> synonyms;

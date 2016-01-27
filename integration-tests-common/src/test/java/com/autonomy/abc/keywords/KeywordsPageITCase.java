@@ -4,6 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.categories.SlowTest;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -25,6 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -156,6 +158,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	// This takes too long for a nightly test but is a useful test that need run periodically as the application has failed in the past with a large number of synonym groups.
 	// Failure can present itself on other pages other than the KeywordsPage
 	@Test
+	@Category(SlowTest.class)
 	public void testAddLotsOfSynonymGroups() {
 		final List<String> groupsOfFiveSynonyms = readSynonymFile();
 

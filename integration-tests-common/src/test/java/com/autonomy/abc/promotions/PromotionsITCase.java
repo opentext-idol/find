@@ -5,6 +5,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.framework.categories.SlowTest;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.Dropdown;
@@ -23,6 +24,7 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -194,6 +196,7 @@ public class PromotionsITCase extends ABCTestBase {
 	}
 
 	@Test
+	@Category(SlowTest.class)
 	@KnownBug("CSA-2022")
 	public void testAddingLotsOfDocsToAPromotion() {
 		int size = 100;
