@@ -11,29 +11,35 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@JsonDeserialize(builder = SavedSearch.Builder.class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class SavedQuery<I> extends SavedSearch<I> {
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-    private SavedQuery(final Builder<I> builder) {
+@Entity
+@DiscriminatorValue(SavedSearchType.Values.QUERY)
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@JsonDeserialize(builder = SavedQuery.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SavedQuery extends SavedSearch {
+
+    private SavedQuery(final Builder builder) {
         super(builder);
     }
 
     @NoArgsConstructor
     @Getter
-    @Setter
     @Accessors(chain = true)
-    public static class Builder<I> extends SavedSearch.Builder<I, SavedQuery<I>> {
+    public static class Builder extends SavedSearch.Builder<SavedQuery> {
 
-        public Builder(final SavedQuery<I> query) {
+        public Builder(final SavedQuery query) {
             super(query);
         }
 
         @Override
-        public SavedQuery<I> build() {
-            return new SavedQuery<>(this);
+        public SavedQuery build() {
+            return new SavedQuery(this);
         }
     }
 }
+

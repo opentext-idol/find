@@ -7,13 +7,13 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import java.util.Set;
 
-public interface SavedQueryService<I> {
+public interface SavedQueryService {
 
-    Set<SavedQuery<I>> getAll();
+    Set<SavedQuery> getAll();
 
-    SavedQuery<I> create(SavedQuery<I> search);
+    SavedQuery create(SavedQuery search);
 
-    SavedQuery<I> update(SavedQuery<I> search);
+    SavedQuery update(SavedQuery search);
 
     void deleteById(int id);
 
