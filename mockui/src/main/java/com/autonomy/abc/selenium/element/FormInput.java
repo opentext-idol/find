@@ -36,7 +36,7 @@ public class FormInput {
     }
 
     public void setValue(String value) {
-        element.clear();
+        clear();
         element.sendKeys(value);
     }
 
