@@ -56,6 +56,30 @@ public class ElementMatchers {
         };
     }
 
+    public static Matcher<? super WebElement> containsTextIgnoringCase(final String text) {
+        return new TypeSafeMatcher<WebElement>() {
+            private Matcher<String> container = containsString(text.toLowerCase());
+
+            @Override
+            protected boolean matchesSafely(WebElement item) {
+                return container.matches(item.getText().toLowerCase());
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("a tag containing '" + text + "' irrelevant of case");
+            }
+
+            @Override
+            public void describeMismatchSafely(final WebElement item, final Description description) {
+                description
+                        .appendText("<" + item.getTagName() + "> tag had text ")
+                        .appendValue(item.getText())
+                        .appendText(" ignoring case");
+            }
+        };
+    }
+
     public static Matcher<? super WebElement> hasTextThat(final Matcher<String> matcher) {
         return new TypeSafeMatcher<WebElement>() {
             @Override

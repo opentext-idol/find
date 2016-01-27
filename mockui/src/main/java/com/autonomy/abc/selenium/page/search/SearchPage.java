@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.search;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
@@ -50,8 +51,8 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		final String totalWithBrackets = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
 		final String totalNoBrackets = totalWithBrackets.substring(1, totalWithBrackets.length() - 1);
 
-		if (totalNoBrackets.equalsIgnoreCase("more than " + MAX_RESULTS)) {
-			return MAX_RESULTS + 1;
+		if (totalNoBrackets.equalsIgnoreCase("more than ")) {
+			return Integer.parseInt(totalNoBrackets.split(" ")[2]) + 1;
 		}
 		return Integer.parseInt(totalNoBrackets);
 	}
