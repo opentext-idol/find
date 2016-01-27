@@ -72,7 +72,10 @@ public class ElementMatchers {
 
             @Override
             public void describeMismatchSafely(final WebElement item, final Description description) {
-                description.appendText("<" + item.getTagName() + "> tag had text ").appendValue(item.getText()).appendText(" ignoring case");
+                description
+                        .appendText("<" + item.getTagName() + "> tag had text ")
+                        .appendValue(item.getText())
+                        .appendText(" ignoring case");
             }
         };
     }

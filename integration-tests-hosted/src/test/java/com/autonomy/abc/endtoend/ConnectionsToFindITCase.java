@@ -35,7 +35,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     private ConnectionService connectionService;
     private KeywordService keywordService;
     private SearchService searchService;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
     private IndexService indexService;
     private final Index index = new Index("fifa");
     private final WebConnector connector = new WebConnector("http://www.fifa.com", index.getName(), index).withDuration(180);
@@ -44,7 +44,7 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     private List<String> synonyms = Arrays.asList(searchTerm,"evil","malfoy","slytherin","greed");
     private SearchPage searchPage;
-    private List promotedTitles;
+    private List<String> promotedTitles;
 
     public ConnectionsToFindITCase(TestConfig config) {
         super(config);
