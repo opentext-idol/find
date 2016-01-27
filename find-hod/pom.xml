@@ -141,6 +141,13 @@
             <version>0.2.0</version>
         </dependency>
 
+        <!-- It's not clear why, but we need to define dependency here as well, not just at the find-core level.  Otherwise the hibernate classloader does not pick this up. -->
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+            <version>5.0.0.GA</version>
+        </dependency>
+
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>find-core</artifactId>
