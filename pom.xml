@@ -26,6 +26,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
+        <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <npm.binExtension/>
     </properties>
 
@@ -90,15 +91,6 @@
     </repositories>
 
     <profiles>
-        <profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <id>dev</id>
-            <properties>
-                <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
-            </properties>
-        </profile>
         <profile>
             <id>production</id>
             <properties>
