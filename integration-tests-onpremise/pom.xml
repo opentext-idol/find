@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
-    <artifactId>integration-tests</artifactId>
+    <artifactId>integration-tests-onpremise</artifactId>
     <version>10.9.0-SNAPSHOT</version>
 
     <build>
@@ -20,9 +20,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.15</version>
                 <configuration>
-                    <dependenciesToScan>
-                        <dependency>com.hp.autonomy.frontend.havensearch:integration-tests-common</dependency>
-                    </dependenciesToScan>
+                    <skipTests>${build.skip.onprem}</skipTests>
                 </configuration>
                 <executions>
                     <execution>

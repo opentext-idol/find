@@ -27,6 +27,9 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.15</version>
+                <configuration>
+                    <skipTests>${build.skip.hosted}</skipTests>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

@@ -1,9 +1,9 @@
 {
   "app": {
-    "type": "Hosted"
+    "type": "${config.app.type}"
   },
   "selenium": {
-    "browsers": ["${config.selenium.browser}"],
+    "browsers": ${config.selenium.browsers},
     "url": "${config.selenium.url}"
   }
 }

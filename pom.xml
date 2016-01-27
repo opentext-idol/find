@@ -16,17 +16,22 @@
     </parent>
 
     <modules>
-      <module>mockui</module>
-      <module>integration-tests-common</module>
-      <module>integration-tests-hosted</module>
+        <module>mockui</module>
+        <module>mockui-onpremise</module>
+        <module>integration-tests-common</module>
+        <module>integration-tests-hosted</module>
+        <module>integration-tests-onpremise</module>
     </modules>
 
     <!-- specify defaults -->
     <properties>
-        <build.config.location>default.json</build.config.location>
+        <build.config.base>default.json</build.config.base>
         <build.config.override>maven.json</build.config.override>
+        <build.skip.hosted>false</build.skip.hosted>
+        <build.skip.onprem>true</build.skip.onprem>
         <config.selenium.url>http://localhost:4444/wd/hub</config.selenium.url>
-        <config.selenium.browser>chrome</config.selenium.browser>
+        <config.selenium.browsers>["chrome"]</config.selenium.browsers>
+        <config.app.type>Hosted</config.app.type>
     </properties>
 
     <build>
@@ -44,7 +49,7 @@
                 </executions>
                 <configuration>
                     <systemPropertyVariables>
-                        <com.autonomy.baseConfig>${build.config.location}</com.autonomy.baseConfig>
+                        <com.autonomy.baseConfig>${build.config.base}</com.autonomy.baseConfig>
                         <com.autonomy.configFile>${build.config.override}</com.autonomy.configFile>
                         <com.autonomy.mavenFlag>true</com.autonomy.mavenFlag>
                     </systemPropertyVariables>
@@ -56,57 +61,59 @@
     <profiles>
         <profile>
             <id>onprem</id>
-            <activation>
-                <property>
-                    <name>com.autonomy.applicationType</name>
-                    <value>On Premise</value>
-                </property>
-            </activation>
             <properties>
-                <build.config.location>onprem.json</build.config.location>
+                <build.config.base>onprem.json</build.config.base>
+                <build.skip.hosted>true</build.skip.hosted>
+                <build.skip.onprem>false</build.skip.onprem>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>com.hp.autonomy.frontend.searchoptimizer</groupId>
-                    <artifactId>mockui</artifactId>
-                    <version>10.9.0-SNAPSHOT</version>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>hod-jenkins</id>
-            <activation>
-                <property>
-                    <name>com.autonomy.hubUrl</name>
-                    <value>http://16.46.34.8:4444/wd/hub</value>
-                </property>
-            </activation>
             <properties>
                 <config.selenium.url>http://16.46.34.8:4444/wd/hub</config.selenium.url>
             </properties>
         </profile>
         <profile>
             <id>fenkins</id>
-            <activation>
-                <property>
-                    <name>com.autonomy.hubUrl</name>
-                    <value>http://10.2.112.233:4444/wd/hub</value>
-                </property>
-            </activation>
             <properties>
-                <build.config.location>onprem.json</build.config.location>
                 <build.config.override>fenkins.json</build.config.override>
             </properties>
         </profile>
-
+        <profile>
+            <id>production</id>
+            <properties>
+                <build.config.base>prod.json</build.config.base>
+            </properties>
+        </profile>
+        <profile>
+            <id>core</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <groups>com.autonomy.abc.framework.categories.CoreFeature</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>skipAll</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <build.skip.hosted>true</build.skip.hosted>
+                <build.skip.onprem>true</build.skip.onprem>
+            </properties>
+        </profile>
     </profiles>
 
     <dependencies>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.havensearch</groupId>
-            <artifactId>mockui</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.selenium</groupId>
             <artifactId>selenium-utils</artifactId>

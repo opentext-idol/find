@@ -50,4 +50,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.havensearch</groupId>
+            <artifactId>mockui</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>
