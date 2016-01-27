@@ -19,10 +19,6 @@ define([
             sort: Sort.relevance
         },
 
-        initialize: function (attributes, options) {
-            this.action = options.action;
-        },
-
         getIsoDate: function(type) {
             var date = this.get(type);
             if(date) {

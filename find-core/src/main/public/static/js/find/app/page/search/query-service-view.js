@@ -16,6 +16,7 @@ define([
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/sort-view',
+    'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/results-number-view',
     'find/app/page/search/spellcheck-view',
     'find/app/util/collapsible',
@@ -25,7 +26,7 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/query-service-view.html'
 ], function (Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection,
-             ParametricView, FilterDisplayView, DateView, RelatedConceptsView, SortView, ResultsNumberView, SpellCheckView,
+             ParametricView, FilterDisplayView, DateView, RelatedConceptsView, SortView, queryStrategy, ResultsNumberView, SpellCheckView,
              Collapsible, databaseNameResolver, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
 
@@ -98,7 +99,8 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                queryTextModel: this.queryTextModel,
+                queryStrategy: queryStrategy
             });
 
             // Left Views

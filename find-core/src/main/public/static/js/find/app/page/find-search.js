@@ -30,7 +30,7 @@ define([
         suggestCallback: null,
 
         initialize: function() {
-            this.queryModel = new QueryModel({}, {action: "query"});
+            this.queryModel = new QueryModel();
             this.queryTextModel = new QueryTextModel();
 
             this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
@@ -139,7 +139,7 @@ define([
                     database: suggestOptions.database
                 },
                 success: function (result) {
-                    var queryModel = new QueryModel({}, {action: "suggest"});
+                    var queryModel = new QueryModel();
                     queryModel.set(_.extend({
                         document: result
                     }, suggestOptions.suggestParams));

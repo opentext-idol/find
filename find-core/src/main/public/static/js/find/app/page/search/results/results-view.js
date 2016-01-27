@@ -108,6 +108,8 @@ define([
         },
 
         initialize: function (options) {
+            this.queryStrategy = options.queryStrategy;
+
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
@@ -122,8 +124,11 @@ define([
         },
 
         refreshResults: function () {
-            if (this.queryModel.get('queryText') || this.queryModel.get('document')) {
-                if (!_.isEmpty(this.queryModel.get('indexes')) || this.queryModel.action === 'suggest') {
+            if (this.queryStrategy.validateQuery(this.queryModel)) {
+                if (this.queryStrategy.waitForIndexes(this.queryModel)) {
+                    this.$loadingSpinner.addClass('hide');
+                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
+                } else {
                     this.endOfResults = false;
                     this.start = 1;
                     this.maxResults = SCROLL_INCREMENT;
@@ -134,9 +139,6 @@ define([
                     this.toggleError(false);
                     this.$('.main-results-content .error .error-list').empty();
                     this.$('.main-results-content .results').empty();
-                } else {
-                    this.$loadingSpinner.addClass('hide');
-                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
                 }
             }
         },
@@ -443,7 +445,7 @@ define([
             this.$loadingSpinner.removeClass('hide');
             this.resultsFinished = false;
 
-            var requestData = {
+            var requestData = _.extend({
                 start: this.start,
                 max_results: this.maxResults,
                 summary: 'context',
@@ -452,15 +454,7 @@ define([
                 min_date: this.queryModel.getIsoDate('minDate'),
                 max_date: this.queryModel.getIsoDate('maxDate'),
                 sort: this.queryModel.get('sort')
-            };
-
-            var action = this.queryModel.action;
-            if (action === 'query') {
-                requestData.text = this.queryModel.get('queryText');
-                requestData.auto_correct = infiniteScroll ? false : this.queryModel.get('autoCorrect');
-            } else if (action === 'suggest') {
-                requestData.reference = this.queryModel.get('document').reference;
-            }
+            }, this.queryStrategy.requestParams(this.queryModel, infiniteScroll));
 
             this.documentsCollection.fetch({
                 data: requestData,
@@ -468,7 +462,7 @@ define([
                 remove: !infiniteScroll
             }, this);
 
-            if (action === 'query' && !infiniteScroll) {
+            if (this.queryStrategy.displayPromotions() && !infiniteScroll) {
                 this.promotionsFinished = false;
                 this.promotionsCollection.fetch({
                     data: requestData,
@@ -479,7 +473,7 @@ define([
 
         checkScroll: function() {
             var triggerPoint = 500;
-            var resultsPresent = this.documentsCollection.size() > 0 && (this.queryModel.get('queryText') || this.queryModel.get('document'));
+            var resultsPresent = this.documentsCollection.size() > 0 && this.queryStrategy.validateQuery(this.queryModel);
             if (resultsPresent && this.resultsFinished && this.el.scrollHeight > 0 && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
                     this.infiniteScroll();
                 }

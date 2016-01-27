@@ -11,8 +11,9 @@ define([
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-message-view',
     'find/app/page/search/results/results-number-view',
+    'find/app/page/search/results/suggest-strategy',
     'text!find/templates/app/page/search/suggest-service-view.html'
-], function(Backbone, $, _, DocumentsCollection, SortView, ResultsMessageView, ResultsNumberView, template) {
+], function(Backbone, $, _, DocumentsCollection, SortView, ResultsMessageView, ResultsNumberView, suggestStrategy, template) {
     "use strict";
 
     return Backbone.View.extend({
@@ -32,7 +33,8 @@ define([
             this.resultsView = new this.ResultsView({
                 documentsCollection: this.documentsCollection,
                 indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel
+                queryModel: this.queryModel,
+                queryStrategy: suggestStrategy
             });
 
             this.sortView = new SortView({
