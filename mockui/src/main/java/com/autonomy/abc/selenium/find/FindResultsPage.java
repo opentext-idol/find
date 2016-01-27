@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.FindParametricCheckbox;
+import com.autonomy.abc.selenium.search.FindSearchResult;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -60,8 +61,8 @@ public class FindResultsPage extends AppElement {
 
     public List<String> getResultTitles() {
         List<String> titles = new ArrayList<>();
-        for(WebElement result : results()){
-            titles.add(result.findElement(By.tagName("h4")).getText());
+        for(FindSearchResult result : getResults()){
+            titles.add(result.getTitleString());
         }
         return titles;
     }
@@ -74,10 +75,6 @@ public class FindResultsPage extends AppElement {
         }
 
         return titles;
-    }
-
-    public void filterByParametric(String header, String filter) {
-        findElement(By.cssSelector("[data-field='" + header.toLowerCase().replace(" ", "_") + "'] [data-value='" + filter.toUpperCase() + "']"));
     }
 
     public List<WebElement> similarResultLinks() {
@@ -122,14 +119,18 @@ public class FindResultsPage extends AppElement {
         return getDriver().findElement(By.className("results"));
     }
 
-    public List<WebElement> results(){
-        return resultsDiv().findElements(By.cssSelector("[data-rel='results']"));
+    public List<FindSearchResult> getResults(){
+        List<FindSearchResult> results = new ArrayList<>();
+        for(WebElement result : findElements(By.cssSelector("[data-rel='results']"))){
+            results.add(new FindSearchResult(result));
+        }
+        return results;
     }
 
     public List<String> getDisplayedDocumentsDocumentTypes(){
         List<String> documentTypes = new ArrayList<String>();
-        for(WebElement result : results()){
-            documentTypes.add(result.findElement(By.cssSelector(".content-type i")).getAttribute("class"));
+        for(FindSearchResult result : getResults()){
+            documentTypes.add(result.getIcon().getAttribute("class"));
         }
         return documentTypes;
     }
@@ -182,15 +183,7 @@ public class FindResultsPage extends AppElement {
         });
     }
 
-    public WebElement searchResult(int searchResultNumber) {
-        return findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")"));
-    }
-
-    public WebElement searchResultTitle(int searchResultNumber) {
-        return searchResult(searchResultNumber).findElement(By.tagName("h4"));
-    }
-
-    public String getSearchResultReference(int searchResultNumber) {
-        return searchResult(searchResultNumber).findElement(By.className("document-reference")).getText();
+    public FindSearchResult searchResult(int searchResultNumber) {
+        return new FindSearchResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")")));
     }
 }

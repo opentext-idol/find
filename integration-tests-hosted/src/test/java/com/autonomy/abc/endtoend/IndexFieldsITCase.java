@@ -177,10 +177,10 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     private void verifyFirstFindResult() {
         FindResultsPage resultsPage = find.getResultsPage();
-        if (verifyThat("has results", resultsPage.results(), not(empty()))) {
-            verifyThat(resultsPage.getSearchResultReference(1), containsString(ingestUrl));
+        if (verifyThat("has results", resultsPage.getResults(), not(empty()))) {
+            verifyThat(resultsPage.searchResult(1).getReference(), containsString(ingestUrl));
 
-            resultsPage.searchResultTitle(1).click();
+            resultsPage.searchResult(1).title().click();
             DocumentViewer viewer = DocumentViewer.make(getDriver());
             verifyThat(viewer.getIndex(), is(index.getDisplayName()));
             verifyThat(viewer.getReference(), containsString(ingestUrl));
