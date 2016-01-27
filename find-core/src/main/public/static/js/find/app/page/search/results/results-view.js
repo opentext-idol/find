@@ -113,6 +113,8 @@ define([
 
                 this.$('.no-document-selected-placeholder').addClass('hide');
                 this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
+
+                this.previewModeView.renderView(selectedDocument);
             }
         },
 
