@@ -420,6 +420,10 @@ input.find-input {
     padding: 0 10px;
 }
 
+.preview-mode .main-results-container {
+    cursor: pointer;
+}
+
 .document-reference {
     overflow: hidden;
     white-space: nowrap;
