@@ -18,7 +18,7 @@ public class FindIndexCheckbox extends Checkbox {
 
     @Override
     public boolean isChecked() {
-        return ElementUtil.hasClass("fa-check", box.findElement(By.tagName("i")));
+        return ElementUtil.hasClass("hp-check", box.findElement(By.tagName("i")));
     }
 
     @Override

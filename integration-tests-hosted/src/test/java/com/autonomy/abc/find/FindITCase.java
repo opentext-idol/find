@@ -381,11 +381,13 @@ public class FindITCase extends HostedTestBase {
         find.search("stars");
         find.filterBy(new IndexFilter(Index.DEFAULT));
 
-        for(FindSearchResult searchResult : results.getResults()){
-            String url = searchResult.getReference();
+        List<FindSearchResult> searchResults = results.getResults();
+
+        for(int i = 0; i < 6; i++){
+            String url = searchResults.get(i).getReference();
 
             try {
-                searchResult.title().click();
+                searchResults.get(i).title().click();
             } catch (WebDriverException e) {
                 fail("Could not click on title - most likely CSA-1767");
             }
@@ -393,9 +395,27 @@ public class FindITCase extends HostedTestBase {
             DocumentViewer docViewer = DocumentViewer.make(getDriver());
 
             assertThat(docViewer.getDomain(), is(getCurrentUser().getDomain()));
-            assertThat(docViewer.getIndex(), not(isEmptyOrNullString()));
+            assertThat(docViewer.getIndex(), is(Index.DEFAULT));
             assertThat(docViewer.getReference(), is(url));
             docViewer.close();
+        }
+    }
+
+    @Test
+    public void testAuthor(){
+        String author = "FIFA.COM";
+
+        find.search("football");
+        find.filterBy(new IndexFilter("Fifa"));
+        find.filterBy(new ParametricFilter("Author", author));
+
+        List<FindSearchResult> searchResults = results.getResults();
+
+        for(int i = 0; i < 6; i++){
+            searchResults.get(i).title().click();
+            DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+            verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
+            documentViewer.close();
         }
     }
 
@@ -409,7 +429,7 @@ public class FindITCase extends HostedTestBase {
         title.click();
 
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
-        String index = docViewer.getIndex();
+        Index index = docViewer.getIndex();
 
         docViewer.close();
 
@@ -428,7 +448,7 @@ public class FindITCase extends HostedTestBase {
         results.searchResult(1).title().click();
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         do{
-            assertThat(docViewer.getIndex(), is(indexTitle));
+            assertThat(docViewer.getIndex().getDisplayName(), is(indexTitle));
             docViewer.next();
         } while (docViewer.getCurrentDocumentNumber() != 1);
     }

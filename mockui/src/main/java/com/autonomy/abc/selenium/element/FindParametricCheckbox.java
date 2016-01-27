@@ -20,7 +20,7 @@ public class FindParametricCheckbox extends Checkbox {
 
     @Override
     public boolean isChecked() {
-        return !ElementUtil.hasClass("hide", box.findElement(By.className("fa-check")));
+        return !ElementUtil.hasClass("hide", box.findElement(By.className("hp-check")));
     }
 
     public int getResultsCount() {
