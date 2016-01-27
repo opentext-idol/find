@@ -6,7 +6,7 @@
     "api" : "https://api.havenondemand.com"
   },
   "selenium": {
-    "url": "http://16.46.34.8:4444/wd/hub",
+    "url": "http://localhost:4444/wd/hub",
     "browsers": ["chrome"]
   },
   "newusers": {
