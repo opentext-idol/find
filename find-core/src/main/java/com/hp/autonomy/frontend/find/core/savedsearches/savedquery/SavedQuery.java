@@ -3,11 +3,13 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.core.savedsearches.savedquery;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import lombok.*;
 import lombok.experimental.Accessors;
 

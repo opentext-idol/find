@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQuery;
 import org.junit.Test;
 
 import java.util.HashSet;
