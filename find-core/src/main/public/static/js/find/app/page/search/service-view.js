@@ -3,8 +3,6 @@ define([
     'jquery',
     'underscore',
     'find/app/model/dates-filter-model',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/app/model/saved-searches/saved-search-collection',
     'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
@@ -21,14 +19,12 @@ define([
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-search-control/saved-search-control-view',
-    'find/app/page/search/saved-searches-view',
-    'find/app/page/search/filters/indexes/indexes-view',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, SavedSearchModel, SavedSearchCollection, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
+], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SpellCheckView,
-            SavedSearchOptions, Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, SavedSearchesView, IndexesView, i18n, i18n_indexes, template) {
+            SavedSearchOptions, Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -129,8 +125,7 @@ define([
             }, this), 500));
 
             this.savedSearchControlView = new SavedSearchControlView({
-                savedSearchCollection: this.savedSearchCollection,
-                savedSearchModel: this.savedSearchCollection.models[0],
+                savedSearchModel: this.savedSearchModel,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryTextModel,
                 selectedIndexesCollection: this.selectedIndexesCollection,
@@ -188,7 +183,7 @@ define([
             });
 
             // Collapse wrappers
-            this.indexesViewWrapper = collapseView(i18n_indexes['search.indexes'], this.indexesView);
+            this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
             this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], this.relatedConceptsView);
         },

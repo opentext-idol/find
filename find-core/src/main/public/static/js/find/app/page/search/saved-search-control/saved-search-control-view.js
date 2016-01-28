@@ -48,9 +48,8 @@ define([
             this.saveSearchInput = new SaveSearchInput({
                 savedSearchModel: this.savedSearchModel,
                 queryModel: this.queryModel,
-                savedSearchCollection: this.savedSearchCollection,
                 savedSearchControlModel: this.model
-            })
+            });
         },
 
         searchChanged: function() {

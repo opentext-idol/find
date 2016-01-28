@@ -1,23 +1,20 @@
 define([
     'backbone',
-    'find/app/model/saved-searches/saved-search-collection',
     'text!find/templates/app/page/search/saved-search-control/save-search-input.html',
     'i18n!find/nls/bundle'
-], function(Backbone, SavedSearchCollection, template, i18n) {
+], function(Backbone, template, i18n) {
+
+    var html = _.template(template)({i18n: i18n});
 
     return Backbone.View.extend({
-        template: _.template(template),
-
         saveSuccess: function() {
             this.savedSearchControlModel.set('showSave', false);
             this.$saveInput.val('');
-            this.$saveErrorMessage
-                .text('');
+            this.$saveErrorMessage.text('');
         },
 
         saveFailure: function() {
-            this.$saveErrorMessage
-                .text(i18n['search.savedSearchControl.error'])
+            this.$saveErrorMessage.text(i18n['search.savedSearchControl.error']);
         },
 
         disable: function(disable) {
@@ -60,14 +57,11 @@ define([
         initialize: function(options) {
             this.savedSearchModel = options.savedSearchModel;
             this.queryModel = options.queryModel;
-            this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchControlModel = options.savedSearchControlModel;
         },
 
         render: function() {
-            this.$el.html(this.template({
-                i18n: i18n
-            }));
+            this.$el.html(html);
 
             this.$saveInput = this.$('.save-input .find-input');
             this.$confirmButton = this.$('.save-confirm-button');
