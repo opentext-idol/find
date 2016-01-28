@@ -20,6 +20,8 @@ define([
         },
 
         renderView: function(model) {
+            this.$('.preview-mode-contents').removeClass('hide');
+
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
                 i18n:i18n,
                 model: model,
