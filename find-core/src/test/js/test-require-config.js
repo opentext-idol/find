@@ -16,6 +16,8 @@ require.config({
     map: {
         '*': {
             'find/app/configuration': 'mock/configuration',
+            'find/app/router': 'mock/router',
+            'find/app/util/database-name-resolver': 'mock/database-name-resolver',
             'find/lib/backbone/backbone-extensions': 'backbone'
         },
         'find/app/page/search/service-view': {
