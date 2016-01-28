@@ -19,6 +19,9 @@ define([
                 $('.main-results-content').toggleClass('col-md-6 preview-mode');
                 $('.main-results-container').removeClass('selected-document');
                 $('.results-view-container .tab-pane').toggleClass('row');
+
+                $('.preview-mode-button i').toggleClass('hp-show-preview hp-hide-preview');
+                $('.preview-mode-button').toggleClass('pressed-down');
             }
         },
 
