@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.joda.time.DateTime;
@@ -47,6 +48,8 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S
                                        @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                        @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate);
-        return relatedConceptsService.findRelatedConcepts(queryRestrictions);
+        return relatedConceptsService.findRelatedConcepts(buildRelatedConceptsRequest(queryRestrictions));
     }
+
+    protected abstract RelatedConceptsRequest<S> buildRelatedConceptsRequest(final QueryRestrictions<S> queryRestrictions);
 }

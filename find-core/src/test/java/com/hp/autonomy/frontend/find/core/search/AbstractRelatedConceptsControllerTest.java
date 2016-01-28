@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.junit.Test;
@@ -33,6 +33,6 @@ public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySumma
     @Test
     public void query() throws E {
         relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null);
-        verify(relatedConceptsService).findRelatedConcepts(Matchers.<QueryRestrictions<S>>any());
+        verify(relatedConceptsService).findRelatedConcepts(Matchers.<RelatedConceptsRequest<S>>any());
     }
 }
