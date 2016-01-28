@@ -135,6 +135,13 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>haven-search-components-core</artifactId>
+            <version>${haven.search.components.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-idol</artifactId>
             <version>${haven.search.components.version}</version>
             <type>test-jar</type>

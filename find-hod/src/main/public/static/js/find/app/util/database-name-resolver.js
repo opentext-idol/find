@@ -15,6 +15,10 @@ define(['jquery'], function ($) {
 
         resolveDatabaseNameForModel: function (model) {
             return constructDatabaseString(model.get('domain'), model.get('name'));
+        },
+
+        resolveDatabaseNameForDocumentModel: function (model) {
+            return constructDatabaseString(model.get('domain'), model.get('index'));
         }
     }
 });

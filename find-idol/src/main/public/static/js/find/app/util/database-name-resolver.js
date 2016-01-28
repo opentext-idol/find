@@ -9,6 +9,10 @@ define([], function () {
     return {
         resolveDatabaseNameForModel: function (model) {
             return encodeURIComponent(model.get('name'));
+        },
+
+        resolveDatabaseNameForDocumentModel: function (model) {
+            return encodeURIComponent(model.get('index'));
         }
     }
 });

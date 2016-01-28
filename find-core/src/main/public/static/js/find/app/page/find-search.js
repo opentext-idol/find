@@ -5,6 +5,7 @@
 
 define([
     'jquery',
+    'backbone',
     'js-whatever/js/base-page',
     'find/app/model/indexes-collection',
     'find/app/model/query-model',
@@ -14,7 +15,7 @@ define([
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function($, BasePage, IndexesCollection, QueryModel, QueryTextModel, InputView, router, vent, _, template) {
+], function ($, Backbone, BasePage, IndexesCollection, QueryModel, QueryTextModel, InputView, router, vent, _, template) {
     "use strict";
 
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
@@ -29,13 +30,13 @@ define([
         SuggestServiceView: null,
         suggestCallback: null,
 
-        initialize: function() {
+        initialize: function () {
             this.queryModel = new QueryModel();
             this.queryTextModel = new QueryTextModel();
 
             this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
 
-            this.listenTo(this.queryTextModel, 'change', function() {
+            this.listenTo(this.queryTextModel, 'change', function () {
                 this.queryModel.set({
                     autoCorrect: true,
                     queryText: this.queryTextModel.makeQueryText()
@@ -45,7 +46,7 @@ define([
                 vent.navigate(searchUrl);
             });
 
-            this.listenTo(this.queryTextModel, 'refresh', function() {
+            this.listenTo(this.queryTextModel, 'refresh', function () {
                 var searchUrl = 'find/search/query/' + this.generateURL();
                 vent.navigate(searchUrl);
             });
@@ -64,7 +65,7 @@ define([
                 indexesCollection: this.indexesCollection
             });
 
-            router.on('route:search', function(text, concepts) {
+            router.on('route:search', function (text, concepts) {
                 var attributes = {
                     inputText: text || '',
                     relatedConcepts: concepts ? concepts.split('/') : []
@@ -75,13 +76,13 @@ define([
                 this.$('.suggest-service-view-container').addClass('hide');
             }, this);
 
-            router.on('route:suggest', function() {
+            router.on('route:suggest', function () {
                 var suggestOptions = this.suggestOptions.apply(this, arguments);
                 this.suggest(suggestOptions);
             }, this);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
@@ -90,10 +91,10 @@ define([
             this.reducedState();
         },
 
-        generateURL: function() {
+        generateURL: function () {
             var inputQuery = this.queryTextModel.get('inputText');
 
-            if (inputQuery){
+            if (inputQuery) {
                 inputQuery = encodeURIComponent(inputQuery) + '/';
             }
 
@@ -102,7 +103,7 @@ define([
             return inputQuery + relatedConcepts.join('/');
         },
 
-        expandedState: function() {
+        expandedState: function () {
             /*fancy animation*/
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
@@ -115,7 +116,7 @@ define([
             $('.container-fluid, .find-logo-small').removeClass('reduced');
         },
 
-        reducedState: function() {
+        reducedState: function () {
             /*fancy reverse animation*/
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
@@ -130,35 +131,39 @@ define([
             vent.navigate('find/search/query', {trigger: false});
         },
 
-        suggest: function(suggestOptions) {
+        suggest: function (suggestOptions) {
             var self = this;
-            $.ajax({
-                url: '../api/public/search/get-document-content',
-                data: {
-                    reference: suggestOptions.reference,
-                    database: suggestOptions.database
-                },
-                success: function (result) {
+
+            var model = new (Backbone.Model.extend({
+                url: '../api/public/search/get-document-content'
+            }))();
+
+            model
+                .fetch({
+                    data: {
+                        reference: suggestOptions.reference,
+                        database: suggestOptions.database
+                    }
+                })
+                .done(function () {
                     var queryModel = new QueryModel();
+
                     queryModel.set(_.extend({
-                        document: result
+                        document: model
                     }, suggestOptions.suggestParams));
+
                     var suggestServiceView = new self.SuggestServiceView({
                         queryModel: queryModel,
                         indexesCollection: self.indexesCollection,
                         backUrl: 'find/search/query/' + self.generateURL()
                     });
-                    $('.query-service-view-container').addClass('hide');
+
+                    self.$('.query-service-view-container').addClass('hide');
+
                     var container = self.$('.suggest-service-view-container');
                     container.removeClass('hide');
                     suggestServiceView.setElement(container).render();
-                },
-                error: function (xhr) {
-                    if (xhr && xhr.status === 403) {
-                        location.reload();
-                    }
-                }
-            });
+                });
         }
     });
 });

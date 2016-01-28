@@ -13,7 +13,7 @@ define([
 
     function requestParams(queryModel) {
         return {
-            reference: queryModel.get('document').reference
+            reference: queryModel.get('document').get('reference')
         };
     }
 
@@ -26,6 +26,7 @@ define([
     }
 
     return {
+        colourboxGrouping: 'similar-document-results',
         displayPromotions: displayPromotions,
         requestParams: requestParams,
         validateQuery: validateQuery,

@@ -16,12 +16,13 @@ import java.util.List;
 
 @Controller
 public class ListIndexesController<D extends IdolDatabase, E extends Exception> {
+    public static final String LIST_INDEXES_PATH = "/api/public/search/list-indexes";
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private IndexesService<D, E> indexesService;
 
-    @RequestMapping(value = "/api/public/search/list-indexes", method = RequestMethod.GET)
+    @RequestMapping(value = LIST_INDEXES_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<D> listActiveIndexes() throws E {
         return indexesService.listVisibleIndexes();

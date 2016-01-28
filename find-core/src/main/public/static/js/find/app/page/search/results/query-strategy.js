@@ -26,6 +26,7 @@ define([], function () {
     }
 
     return {
+        colourboxGrouping: 'results',
         displayPromotions: displayPromotions,
         requestParams: requestParams,
         validateQuery: validateQuery,

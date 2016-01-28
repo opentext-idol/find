@@ -2,31 +2,27 @@ define([
     'backbone',
     'jquery',
     'underscore',
-    'find/app/model/document-model',
     'find/app/model/promotions-collection',
     'find/app/model/similar-documents-collection',
     'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
+    'find/app/util/viewing-colourbox',
     'find/app/vent',
     'js-whatever/js/escape-regex',
     'text!find/templates/app/page/search/results-popover.html',
     'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
-    'text!find/templates/app/page/colorbox-controls.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/view/media-player.html',
-    'text!find/templates/app/page/view/view-document.html',
     'text!find/templates/app/page/search/results/entity-label.html',
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'colorbox'
-], function (Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, popover,
-             viewClient, documentMimeTypes, vent, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
-             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate,
-             moment, i18n, i18n_indexes) {
+], function (Backbone, $, _, PromotionsCollection, SimilarDocumentsCollection, popover,
+             viewClient, documentMimeTypes, viewingColourbox, vent, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
+             loadingSpinnerTemplate, entityTemplate, moment, i18n, i18n_indexes) {
     "use strict";
 
     /** Whitespace OR character in set bounded by [] */
@@ -35,13 +31,6 @@ define([
     var startRegex = '(^|' + boundaryChars + ')';
     /** End of input OR boundary chars */
     var endRegex = '($|' + boundaryChars + ')';
-
-    var mediaTypes = ['audio', 'video'];
-
-    function isURL(reference) {
-        var r = /^https?:\/\//;
-        return r.test(reference);
-    }
 
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
@@ -74,14 +63,7 @@ define([
         return matchedType.className;
     };
 
-    var $window = $(window);
-    var SIZE = '90%';
-
     var SCROLL_INCREMENT = 30;
-
-    var onResize = function () {
-        $.colorbox.resize({width: SIZE, height: SIZE});
-    };
 
     return Backbone.View.extend({
         //to be overridden
@@ -94,10 +76,8 @@ define([
         popoverMessageTemplate: _.template(popoverMessageTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
-        mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         popoverTemplate: _.template(popoverTemplate),
         entityTemplate: _.template(entityTemplate),
-        viewDocumentTemplate: _.template(viewDocumentTemplate),
 
         events: {
             'click .entity-text': function (e) {
@@ -214,74 +194,7 @@ define([
 
             $('.main-content').scroll(_.bind(this.checkScroll, this));
 
-            /*colorbox fancy button override*/
-            $('#colorbox').append(_.template(colorboxControlsTemplate));
-            $('.nextBtn').on('click', this.handleNextResult);
-            $('.prevBtn').on('click', this.handlePrevResult);
-        },
-
-        handlePrevResult: function () {
-            $.colorbox.prev();
-        },
-
-        handleNextResult: function () {
-            $.colorbox.next();
-        },
-
-        colorboxArguments: function (options) {
-            var args = {
-                current: '{current} of {total}',
-                height: '70%',
-                iframe: false,
-                rel: 'results',
-                width: '70%',
-                onClosed: function () {
-                    $window.off('resize', onResize);
-                },
-                onComplete: _.bind(function () {
-                    $('#cboxPrevious, #cboxNext').remove(); //removing default colorbox nav buttons
-
-                    var $viewServerPage = $('.view-server-page');
-
-                    $viewServerPage.on('load', function () {
-                        $('.view-server-loading-indicator').addClass('hidden');
-                        $('.view-server-page').removeClass('hidden');
-                    });
-
-                    // Adding the source attribute after the colorbox has loaded prevents the iframe from loading
-                    // a very quick response (such as an error) before the listener is attached
-                    $viewServerPage.attr("src", options.href);
-
-                    $window.resize(onResize);
-                }, this)
-            };
-
-            var contentType = options.model.get('contentType') || '';
-
-            var media = _.find(mediaTypes, function (mediaType) {
-                return contentType.indexOf(mediaType) === 0;
-            });
-
-            var url = options.model.get('url');
-
-            if (media && url) {
-                args.html = this.mediaPlayerTemplate({
-                    media: media,
-                    url: url,
-                    offset: options.model.get('offset')
-                });
-            } else {
-                args.html = this.viewDocumentTemplate({
-                    src: options.href,
-                    i18n: i18n,
-                    model: options.model,
-                    arrayFields: DocumentModel.ARRAY_FIELDS,
-                    dateFields: DocumentModel.DATE_FIELDS,
-                    fields: ['index', 'reference', 'contentType', 'url']
-                });
-            }
-
-            return args;
+            viewingColourbox.fancyButtonOverride();
         },
 
         formatResult: function (model, isPromotion) {
@@ -293,7 +206,7 @@ define([
             if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
                 href = viewClient.getStaticContentPromotionHref(reference);
             } else {
-                href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
+                href = viewClient.getHref(reference, model);
             }
 
             var $newResult = $(this.resultsTemplate({
@@ -316,25 +229,11 @@ define([
                 this.$('.main-results-content .results').append($newResult);
             }
 
-            var colorboxArgs = this.colorboxArguments({model: model, href: href});
             var $previewTrigger = $newResult.find('.preview-documents-trigger');
             var $resultHeader = $newResult.find('.result-header');
 
-            $previewTrigger.colorbox(colorboxArgs);
-
-            // web documents should open the original document in a new tab
-            if (isURL(reference)) {
-                $resultHeader.attr({
-                    href: reference,
-                    target: "_blank"
-                });
-            } else {
-                $resultHeader.click(function(e) {
-                    e.preventDefault();
-
-                    $previewTrigger.colorbox(_.extend({open: true}, colorboxArgs));
-                });
-            }
+            var colorboxOptions = {model: model, href: href, grouping: this.queryStrategy.colourboxGrouping};
+            viewingColourbox.nearNativeOrTab(colorboxOptions, reference, $resultHeader, $previewTrigger);
 
             var self = this;
             $newResult.find('.similar-documents-trigger').click(function (event) {
