@@ -1,12 +1,42 @@
 define([
     'backbone',
-    'text!find/templates/app/page/search/saved-search-control/save-search-input.html',
+    'text!find/templates/app/page/search/saved-searches/save-search-input.html',
     'i18n!find/nls/bundle'
 ], function(Backbone, template, i18n) {
 
     var html = _.template(template)({i18n: i18n});
 
     return Backbone.View.extend({
+        events: {
+            'submit .find-form': function (event) {
+                event.preventDefault();
+                this.save();
+            },
+            'click .save-confirm-button': function() {
+                event.preventDefault();
+                this.save();
+            },
+            'click .save-cancel-button': function() {
+                event.preventDefault();
+                this.savedSearchControlModel.set('showSave', false);
+            }
+        },
+
+        initialize: function(options) {
+            this.savedSearchModel = options.savedSearchModel;
+            this.queryModel = options.queryModel;
+            this.savedSearchControlModel = options.savedSearchControlModel;
+        },
+
+        render: function() {
+            this.$el.html(html);
+
+            this.$saveInput = this.$('.save-input .find-input');
+            this.$confirmButton = this.$('.save-confirm-button');
+            this.$cancelButton = this.$('.save-cancel-button');
+            this.$saveErrorMessage = this.$('.save-error-message');
+        },
+
         saveSuccess: function() {
             this.savedSearchControlModel.set('showSave', false);
             this.$saveInput.val('');
@@ -37,36 +67,6 @@ define([
             }).always(_.bind(function() {
                 this.disable(false);
             }, this));
-        },
-
-        events: {
-            'submit .find-form': function (event) {
-                event.preventDefault();
-                this.save();
-            },
-            'click .save-confirm-button': function() {
-                event.preventDefault();
-                this.save();
-            },
-            'click .save-cancel-button': function() {
-                event.preventDefault();
-                this.savedSearchControlModel.set('showSave', false);
-            }
-        },
-
-        initialize: function(options) {
-            this.savedSearchModel = options.savedSearchModel;
-            this.queryModel = options.queryModel;
-            this.savedSearchControlModel = options.savedSearchControlModel;
-        },
-
-        render: function() {
-            this.$el.html(html);
-
-            this.$saveInput = this.$('.save-input .find-input');
-            this.$confirmButton = this.$('.save-confirm-button');
-            this.$cancelButton = this.$('.save-cancel-button');
-            this.$saveErrorMessage = this.$('.save-error-message');
         }
     });
 

@@ -1,8 +1,8 @@
 define([
     'backbone',
     'find/app/util/array-equality',
-    'find/app/page/search/saved-search-control/save-search-input',
-    'text!find/templates/app/page/search/saved-search-control/saved-search-control-view.html',
+    'find/app/page/search/saved-searches/save-search-input',
+    'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle'
 ], function(Backbone, arrayEquality, SaveSearchInput, template, i18n) {
 
@@ -52,15 +52,6 @@ define([
             });
         },
 
-        searchChanged: function() {
-            return this.savedSearchModel.get('inputText') !== this.queryTextModel.get('inputText')
-                && arrayEquality(this.savedSearchModel.get('relatedConcepts'), this.queryTextModel.get('relatedConcepts'))
-                && arrayEquality(this.savedSearchModel.get('indexes'), this.selectedIndexesCollection.toResourceIdentifiers(), _.isEqual)
-                && arrayEquality(this.savedSearchModel.get('parametricValues'), _.map(this.selectedParametricValues, function(model) {
-                    return model.pick('field', 'value');
-                }), _.isEqual);
-        },
-
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
@@ -70,6 +61,15 @@ define([
             this.saveSearchInput.setElement(this.$('.save-search-input-container')).render();
 
             this.$updateButton = this.$('.update-button');
+        },
+
+        searchChanged: function() {
+            return this.savedSearchModel.get('inputText') !== this.queryTextModel.get('inputText')
+                && arrayEquality(this.savedSearchModel.get('relatedConcepts'), this.queryTextModel.get('relatedConcepts'))
+                && arrayEquality(this.savedSearchModel.get('indexes'), this.selectedIndexesCollection.toResourceIdentifiers(), _.isEqual)
+                && arrayEquality(this.savedSearchModel.get('parametricValues'), _.map(this.selectedParametricValues, function(model) {
+                    return model.pick('field', 'value');
+                }), _.isEqual);
         }
     });
 
