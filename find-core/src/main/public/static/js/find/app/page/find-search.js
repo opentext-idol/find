@@ -43,20 +43,15 @@ define([
                 });
             });
 
-            this.inputView = new InputView({
-                queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
-            });
+            this.inputView = new InputView({model: this.queryTextModel});
 
             this.serviceView = this.constructServiceView(this.queryModel, this.queryTextModel);
 
             router.on('route:search', function(text, concepts) {
-                var attributes = {
+                this.queryTextModel.set({
                     inputText: text || '',
                     relatedConcepts: concepts ? concepts.split('/') : []
-                };
-
-                this.queryTextModel.setInputText(attributes);
+                });
             }, this);
         },
 

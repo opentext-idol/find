@@ -97,7 +97,11 @@ define([
             'click .entity-text': function(e) {
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
-                this.queryTextModel.setInputText({'inputText': queryText});
+
+                this.queryTextModel.set({
+                    inputText: queryText,
+                    relatedConcepts: []
+                });
             }
         },
 
