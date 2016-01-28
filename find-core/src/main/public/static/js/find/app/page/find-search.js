@@ -51,6 +51,7 @@ define([
                 if (inputText && this.searchModel.get('selectedSearchCid') === null) {
                     var newSearch = new SavedSearchModel({
                         inputText: inputText,
+                        relatedConcepts: this.searchModel.get('relatedConcepts'),
                         title: i18n['search.newSearch']
                     });
 
@@ -71,9 +72,12 @@ define([
 
             // Bind routing to search model
             router.on('route:search', function(text, concepts) {
+                // The concepts string starts with a leading /
+                var conceptsArray = concepts ? _.tail(concepts.split('/')) : [];
+
                 this.searchModel.set({
                     inputText: text || '',
-                    relatedConcepts: concepts ? concepts.split('/') : []
+                    relatedConcepts: conceptsArray
                 });
             }, this);
         },
