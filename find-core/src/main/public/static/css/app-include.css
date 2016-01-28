@@ -134,6 +134,10 @@ html, body {
     box-shadow: none !important;
 }
 
+.position-right {
+    right: 0px;
+}
+
 .right-side-container td,
 .left-side-container td {
     border-bottom: 1px solid #C9C9C9;
@@ -617,6 +621,10 @@ input.find-input {
 .loading-spinner.loading-spinner-lg {
     font-size: 28px;
     line-height: 32px;
+}
+
+.thin-btn {
+    padding: 0px 7px
 }
 
 /* fancy colourbox buttons */

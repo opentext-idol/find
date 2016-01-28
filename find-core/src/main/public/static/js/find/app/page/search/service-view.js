@@ -3,6 +3,8 @@ define([
     'jquery',
     'underscore',
     'find/app/model/dates-filter-model',
+    'find/app/model/saved-searches/saved-search-model',
+    'find/app/model/saved-searches/saved-search-collection',
     'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
@@ -18,12 +20,15 @@ define([
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/selected-values-collection',
+    'find/app/page/search/saved-search-control/saved-search-control-view',
+    'find/app/page/search/saved-searches-view',
+    'find/app/page/search/filters/indexes/indexes-view',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
+], function(Backbone, $, _, DatesFilterModel, SavedSearchModel, SavedSearchCollection, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SpellCheckView,
-            SavedSearchOptions, Collapsible, addChangeListener, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
+            SavedSearchOptions, Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, SavedSearchesView, IndexesView, i18n, i18n_indexes, template) {
 
     'use strict';
 
@@ -123,6 +128,15 @@ define([
                 this.queryModel.set('indexes', buildQueryModelIndexes(this.selectedIndexesCollection));
             }, this), 500));
 
+            this.savedSearchControlView = new SavedSearchControlView({
+                savedSearchCollection: this.savedSearchCollection,
+                savedSearchModel: this.savedSearchCollection.models[0],
+                queryModel: this.queryModel,
+                queryTextModel: this.queryTextModel,
+                selectedIndexesCollection: this.selectedIndexesCollection,
+                selectedParametricValues: this.selectedParametricValues
+            });
+            
             this.savedSearchOptions = new SavedSearchOptions({
                 model: this.savedSearchModel
             });
@@ -183,6 +197,7 @@ define([
             this.$el.html(html);
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
+            this.savedSearchControlView.setElement(this.$('.saved-search-controls-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
             this.parametricView.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
