@@ -11,8 +11,8 @@ define([
     var html = _.template(template)({i18n: i18n});
     
     var relatedConceptsTemplate = _.template(
-        '<span class="selected-related-concepts" data-id="<%-concept%>">' +
-            '<%-concept%> <i class="clickable hp-icon hp-fw hp-close concepts-remove-icon"></i>' +
+        '<span class="selected-related-concept" data-id="<%-concept%>">' +
+            '<%-concept%> <i class="clickable hp-icon hp-fw hp-close concept-remove-icon"></i>' +
         '</span> '
     );
 
@@ -26,26 +26,19 @@ define([
             'typeahead:select': function() {
                 this.search(this.$input.typeahead('val'));
             },
-            'click .concepts-remove-icon': function(e) {
+            'click .concept-remove-icon': function(e) {
                 var id = $(e.currentTarget).closest("span").attr('data-id');
 
                 this.removeRelatedConcept(id);
             },
             'click .see-all-documents': function() {
-                this.search('*');
+                this.queryModel.set('queryText', '*');
             }
         },
 
-        initialize: function(options) {
+        initialize: function() {
             this.listenTo(this.model, 'change:inputText', this.updateText);
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
-            
-            this.search = _.debounce(function(query) {
-                options.model.set({
-                    inputText: query,
-                    relatedConcepts: []
-                });
-            }, 500);
         },
 
         render: function() {
@@ -77,6 +70,13 @@ define([
 
             this.updateText();
             this.updateRelatedConcepts();
+        },
+
+        search: function(query) {
+            this.model.set({
+                inputText: $.trim(query),
+                relatedConcepts: []
+            });
         },
 
         updateText: function() {
