@@ -1002,10 +1002,6 @@ input:-moz-placeholder::before {
 
 /* View server */
 .view-server-loading-indicator {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     font-size: 32px;
     color: #00b388;
     text-align: center;
@@ -1021,6 +1017,20 @@ input:-moz-placeholder::before {
     border-radius: 3px;
     background-image: none;
     box-shadow: none;
+}
+
+.preview-document-frame {
+    width: 100%;
+    height: 100vh;
+    display: block;
+    border: 0;
+    padding-top: 10px;
+    margin: 0;
+}
+
+.preview-media-player {
+    width: 100%;
+    margin-top: 10px;
 }
 
 #cboxLoadedContent .table > tbody > tr > th,
