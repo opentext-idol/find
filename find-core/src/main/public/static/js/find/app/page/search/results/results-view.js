@@ -114,7 +114,33 @@ define([
                 this.$('.no-document-selected-placeholder').addClass('hide');
                 this.$('.preview-mode-document-title').text(selectedDocument.get('title')).removeClass('hide');
 
-                this.previewModeView.renderView(selectedDocument);
+                var src = viewClient.getHref(selectedDocument.get('reference'), selectedDocument.get('index'), selectedDocument.get('domain'));
+
+                var contentType = selectedDocument.get('contentType') || '';
+
+                var media = _.find(mediaTypes, function(mediaType) {
+                    return contentType.indexOf(mediaType) === 0;
+                });
+
+                var url = selectedDocument.get('url');
+
+                var args = {};
+
+                if (media && url) {
+                    args = {
+                        model: selectedDocument,
+                        media: media,
+                        url: url,
+                        offset: selectedDocument.get('offset')
+                    };
+                } else {
+                    args = {
+                        src: src,
+                        model: selectedDocument
+                    };
+                }
+
+                this.previewModeView.renderView(args);
             }
         },
 
