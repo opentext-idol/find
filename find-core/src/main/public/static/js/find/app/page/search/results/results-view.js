@@ -112,7 +112,8 @@ define([
                 $target.addClass('selected-document');
 
                 this.$('.no-document-selected-placeholder').addClass('hide');
-                this.$('.preview-mode-document-title').text(selectedDocument.get('title')).removeClass('hide');
+                this.$('.preview-mode-contents').removeClass('hide');
+                this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
 
                 var src = viewClient.getHref(selectedDocument.get('reference'), selectedDocument.get('index'), selectedDocument.get('domain'));
 

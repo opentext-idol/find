@@ -24,7 +24,6 @@ define([
         },
 
         renderView: function(args) {
-            this.$('.preview-mode-contents').removeClass('hide');
 
             var model = args.model;
 
