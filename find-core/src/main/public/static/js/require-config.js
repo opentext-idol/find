@@ -19,7 +19,7 @@ require.config({
         'peg': '../bower_components/pegjs/peg-0.8.0',
         'fieldtext': '../bower_components/hp-autonomy-fieldtext-js/src',
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
-        iCheck: '../bower_components/iCheck/iCheck',
+        iCheck: '../bower_components/iCheck/icheck',
         jquery: '../bower_components/jquery/jquery',
         'js-whatever': '../bower_components/hp-autonomy-js-whatever/src',
         json2: '../bower_components/json/json2',

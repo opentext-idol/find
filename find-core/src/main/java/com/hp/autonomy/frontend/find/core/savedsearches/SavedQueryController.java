@@ -15,34 +15,36 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/public/saved-search")
-public class SavedSearchController {
-    private final SavedSearchService service;
+@RequestMapping(SavedQueryController.PATH)
+public class SavedQueryController {
+    public static final String PATH = "/api/public/saved-query";
+
+    private final SavedQueryService service;
 
     @Autowired
-    public SavedSearchController(final SavedSearchService service) {
+    public SavedQueryController(final SavedQueryService service) {
         this.service = service;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Set<SavedSearch> getAll() {
+    public Set<SavedQuery> getAll() {
         return service.getAll();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public SavedSearch create(
-            @RequestBody final SavedSearch search
+    public SavedQuery create(
+            @RequestBody final SavedQuery query
     ) {
-        return service.create(search);
+        return service.create(query);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public SavedSearch update(
+    public SavedQuery update(
             @PathVariable("id") final long id,
-            @RequestBody final SavedSearch search
+            @RequestBody final SavedQuery query
     ) {
         return service.update(
-                new SavedSearch.Builder(search).setId(id).build()
+                new SavedQuery.Builder(query).setId(id).build()
         );
     }
 
