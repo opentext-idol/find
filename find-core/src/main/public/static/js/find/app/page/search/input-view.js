@@ -9,8 +9,8 @@ define([
 ], function(Backbone, $, _, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
-    var relatedConceptsTemplate = _.template('<span class="selected-related-concepts" data-id="<%-concept%>"><%-concept%> ' +
-        '<i class="clickable hp-icon hp-fw hp-close concepts-remove-icon"></i>' +
+    var relatedConceptsTemplate = _.template('<span class="selected-related-concept" data-id="<%-concept%>"><%-concept%> ' +
+        '<i class="clickable hp-icon hp-fw hp-close concept-remove-icon"></i>' +
         '</span> ');
 
     return Backbone.View.extend({
@@ -23,31 +23,16 @@ define([
             'typeahead:select': function() {
                 this.search(this.$input.typeahead('val'));
             },
-            'click .concepts-remove-icon': function(e) {
+            'click .concept-remove-icon': function(e) {
                 var id = $(e.currentTarget).closest("span").attr('data-id');
 
                 this.removeRelatedConcept(id);
             }
         },
 
-        initialize: function(options) {
-            this.queryModel = options.queryModel;
-            this.queryTextModel = options.queryTextModel;
-
-            // For example, when clicking one of the suggested search links
-            this.listenTo(this.queryModel, 'change:queryText', this.updateText);
-
-            this.listenTo(this.queryTextModel, 'change:relatedConcepts', this.updateRelatedConcepts);
-
-            this.search = _.debounce(function(query) {
-                if (query === options.queryTextModel.get('inputText')) {
-                    options.queryTextModel.refresh();
-                } else {
-                    options.queryTextModel.setInputText({
-                        inputText: query
-                    });
-                }
-            }, 500);
+        initialize: function() {
+            this.listenTo(this.model, 'change:inputText', this.updateText);
+            this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
         },
 
         render: function() {
@@ -81,9 +66,22 @@ define([
             this.updateRelatedConcepts();
         },
 
+        search: function(query) {
+            if (query === this.model.get('inputText')) {
+                this.model.refresh();
+            } else {
+                var trimmedText = $.trim(query);
+
+                this.model.set({
+                    inputText: trimmedText,
+                    relatedConcepts: []
+                });
+            }
+        },
+
         updateText: function() {
             if (this.$input) {
-                this.$input.typeahead('val', this.queryTextModel.get('inputText'));
+                this.$input.typeahead('val', this.model.get('inputText'));
             }
         },
 
@@ -91,20 +89,20 @@ define([
             if (this.$additionalConcepts) {
                 this.$additionalConcepts.empty();
 
-                _.each(this.queryTextModel.get('relatedConcepts'), function(concept) {
+                _.each(this.model.get('relatedConcepts'), function(concept) {
                     this.$additionalConcepts.append(relatedConceptsTemplate({
                         concept: concept
                     }))
                 }, this);
 
-                this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.queryTextModel.get('relatedConcepts')));
+                this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.model.get('relatedConcepts')));
             }
         },
 
         removeRelatedConcept: function(id){
-            var newConcepts = _.without(this.queryTextModel.get('relatedConcepts'), id);
+            var newConcepts = _.without(this.model.get('relatedConcepts'), id);
 
-            this.queryTextModel.set('relatedConcepts', newConcepts);
+            this.model.set('relatedConcepts', newConcepts);
         }
     });
 
