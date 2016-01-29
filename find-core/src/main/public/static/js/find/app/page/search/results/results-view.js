@@ -99,7 +99,11 @@ define([
             'click .entity-text': function(e) {
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
-                this.queryTextModel.setInputText({'inputText': queryText});
+
+                this.queryTextModel.set({
+                    inputText: queryText,
+                    relatedConcepts: []
+                });
             },
             'click .preview-mode [data-reference]': function(e) {
                 var $target = $(e.currentTarget);
@@ -155,9 +159,6 @@ define([
 
             this.documentsCollection = options.documentsCollection;
             this.promotionsCollection = new PromotionsCollection();
-
-            this.listenTo(this.queryModel, 'change', this.refreshResults);
-            this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
 
             this.sortView = new SortView({
                 queryModel: this.queryModel
@@ -243,6 +244,9 @@ define([
 
                 this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
+
+            this.listenTo(this.queryModel, 'change', this.refreshResults);
+            this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 if (!this.entityCollection.isEmpty()) {

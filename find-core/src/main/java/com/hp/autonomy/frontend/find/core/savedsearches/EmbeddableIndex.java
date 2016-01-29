@@ -12,20 +12,23 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 
+/**
+ * Embeddable version of what is essentially a ResourceIdentifier.  Defines a unified entity to be used
+ * as part of a {@link SavedSearch}, so we don't have to parametrise its type (which causes havoc for JPA/hibernate).
+ */
 @Embeddable
 @Data
 @NoArgsConstructor
-public class FieldAndValue {
-
-    private String field;
-    private String value;
+public class EmbeddableIndex {
+    private String name;
+    private String domain;
 
     @JsonCreator
-    public FieldAndValue(
-            @JsonProperty("field") final String field,
-            @JsonProperty("value") final String value
+    public EmbeddableIndex(
+            @JsonProperty("name") final String name,
+            @JsonProperty("domain") final String domain
     ) {
-        this.field = field;
-        this.value = value;
+        this.name = name;
+        this.domain = domain;
     }
 }

@@ -107,7 +107,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-idol</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.user</groupId>
@@ -124,6 +124,14 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.0</version>
+        </dependency>
+
+        <!-- It's not clear why, but we need to define dependency here as well, not just at the find-core level.  Otherwise the hibernate classloader does not pick this up. -->
+        <!-- TODO: investigate this further. -->
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+            <version>5.0.0.GA</version>
         </dependency>
 
         <dependency>
@@ -143,9 +151,6 @@
     </dependencies>
 
     <profiles>
-        <profile>
-            <id>dev</id>
-        </profile>
         <profile>
             <id>production</id>
             <build>
@@ -196,10 +201,9 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>node</executable>
+                                    <executable>${basedir}/node_modules/.bin/blessc${npm.binExtension}</executable>
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
-                                        <argument>${basedir}/node_modules/bless/bin/blessc</argument>
                                         <argument>-f</argument>
                                         <argument>target/classes/static/css/app.css</argument>
                                     </arguments>

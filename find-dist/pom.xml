@@ -56,9 +56,6 @@
 
     <profiles>
         <profile>
-            <id>dev</id>
-        </profile>
-        <profile>
             <id>production</id>
         </profile>
     </profiles>

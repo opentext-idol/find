@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.junit.Test;
@@ -20,19 +20,19 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
+public abstract class AbstractRelatedConceptsControllerTest<R extends RelatedConceptsRequest<S>, Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
     @Mock
-    protected RelatedConceptsService<Q, S, E> relatedConceptsService;
+    protected RelatedConceptsService<R, Q, S, E> relatedConceptsService;
 
     @Mock
     protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
-    protected RelatedConceptsController<Q, S, E> relatedConceptsController;
+    protected RelatedConceptsController<R, Q, S, E> relatedConceptsController;
     protected Class<S> databaseType;
 
     @Test
     public void query() throws E {
         relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null);
-        verify(relatedConceptsService).findRelatedConcepts(Matchers.<QueryRestrictions<S>>any());
+        verify(relatedConceptsService).findRelatedConcepts(Matchers.<R>any());
     }
 }
