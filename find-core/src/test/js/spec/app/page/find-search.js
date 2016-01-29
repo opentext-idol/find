@@ -6,48 +6,46 @@ define([
     describe('Find Search', function() {
         beforeEach(function() {
             this.findSearch = new (FindSearch.extend({
-                constructServiceView: function () {
-                    return new Backbone.View();
-                }
+                ServiceView: Backbone.View
             }))();
         });
 
-        it("should show the service view when the queryText is not the empty string", function() {
+        it('should show the service view when the inputText is not the empty string', function() {
             this.findSearch.render();
 
-            this.findSearch.queryModel.set('queryText', 'text');
+            this.findSearch.searchModel.set('inputText', 'text');
 
-            var $serviceViewContainer = this.findSearch.$el.find('.service-view-container');
+            var $tabbedSearchContainer = this.findSearch.$('.tabbed-search-container');
 
-            expect($serviceViewContainer.css('display')).not.toEqual('none');
+            expect($tabbedSearchContainer.css('display')).not.toEqual('none');
         });
 
-        it("should hide the service view when the queryText is the empty string", function() {
+        it('should hide the service view when the inputText is the empty string', function() {
             this.findSearch.render();
 
-            this.findSearch.queryModel.set('queryText', '');
+            this.findSearch.searchModel.set('inputText', '');
 
-            var $serviceViewContainer = this.findSearch.$el.find('.service-view-container');
+            var $tabbedSearchContainer = this.findSearch.$('.tabbed-search-container');
 
-            expect($serviceViewContainer.css('display')).toEqual('none');
+            expect($tabbedSearchContainer.css('display')).toEqual('none');
         });
 
-        it("should animate the input view when the queryText is not the empty string", function() {
+        it('should animate the input view when the inputText is not the empty string', function() {
             this.findSearch.render();
 
-            this.findSearch.queryModel.set('queryText', 'text');
+            this.findSearch.searchModel.set('inputText', 'text');
 
-            var $animatedContainer = this.findSearch.$el.find('.animated-container');
+            var $animatedContainer = this.findSearch.$('.animated-container');
 
             expect($animatedContainer).not.toEqual([]);
         });
 
-        it("should reverse-animate the input view when the queryText is the empty string", function() {
+        it('should reverse-animate the input view when the inputText is the empty string', function() {
             this.findSearch.render();
 
-            this.findSearch.queryModel.set('queryText', '');
+            this.findSearch.searchModel.set('inputText', '');
 
-            var $animatedContainer = this.findSearch.$el.find('.reverse-animated-container');
+            var $animatedContainer = this.findSearch.$('.reverse-animated-container');
 
             expect($animatedContainer).not.toEqual([]);
         });
