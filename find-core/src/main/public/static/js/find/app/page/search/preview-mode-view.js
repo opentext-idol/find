@@ -22,20 +22,16 @@ define([
                 i18n:i18n
             }));
 
-            var offset     = this.$el.offset();
-            var topPadding = 15;
-
             var $main = $('.main-content');
+
             $main.scroll(_.bind(function() {
-                if ($main.scrollTop() > offset.top) {
-                    this.$el.stop().animate({
-                        marginTop: $main.scrollTop() - offset.top + topPadding
-                    });
+                var $viewServerPage = this.$('.preview-document-frame');
+                if (this.$el.offsetParent().offset().top < 0) {
+                    this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
                 } else {
-                    this.$el.stop().animate({
-                        marginTop: 0
-                    });
+                    this.$el.css('margin-top', 0);
                 }
+                $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30);
             }, this));
         },
 
@@ -71,6 +67,7 @@ define([
                 }, this));
 
                 $viewServerPage.attr("src", args.src);
+                $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30);
             }
         }
     });

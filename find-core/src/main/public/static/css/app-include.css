@@ -1033,7 +1033,7 @@ input:-moz-placeholder::before {
 
 .preview-document-frame {
     width: 100%;
-    height: 100vh;
+    height: 50vh;
     display: block;
     border: 0;
     padding-top: 10px;
