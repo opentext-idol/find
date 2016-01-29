@@ -1,0 +1,32 @@
+<% _.each(fields, function(field) { %>
+  <% if(model.has(field)) { %>
+    <tr>
+      <th class="font-bold"><%-i18n['search.document.' + field]%></th>
+      <td class="break-all"><%-model.get(field)%></td>
+    </tr>
+  <% } %>
+<% }); %>
+
+  <% _.each(arrayFields, function(field) { %>
+    <% if (model.get(field).length) { %>
+    <tr>
+      <th class="font-bold"><%-i18n['search.document.' + field]%></th>
+      <td class="break-all">
+        <ul class="list-unstyled m-b-nil">
+          <% _.each(model.get(field), function(value) { %>
+          <li><%-value%></li>
+          <% }); %>
+        </ul>
+      </td>
+    </tr>
+    <% } %>
+  <% }); %>
+
+  <% _.each(dateFields, function(field) { %>
+    <% if(model.has(field)) { %>
+    <tr>
+      <th class="font-bold"><%-i18n['search.document.' + field]%></th>
+      <td><%-model.get(field).format('LLLL')%></td>
+    </tr>
+  <% } %>
+<% });%>
