@@ -10,7 +10,7 @@ define([
     return Backbone.View.extend({
         events: {
             'click .save-confirm-button': 'saveSearch',
-            'submit .find-form': function(event) {
+            'submit .save-input': function(event) {
                 event.preventDefault();
                 this.saveSearch();
             },
