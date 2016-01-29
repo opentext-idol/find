@@ -5,13 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.*;
 import com.hp.autonomy.types.requests.Documents;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)
@@ -44,6 +40,8 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String REFERENCE_PARAM = "reference";
     public static final String INDEXES_PARAM = "indexes";
     public static final String AUTOCORRECT_PARAM = "auto_correct";
+
+    public static final int FIND_SIMILAR_MAX_RESULTS = 3;
 
     protected final DocumentsService<S, R, E> documentsService;
     protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
@@ -97,7 +95,13 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
 
     @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<R> findSimilar(@RequestParam(REFERENCE_PARAM) final String reference, @RequestParam(INDEXES_PARAM) final Set<S> indexes) throws E {
-        return documentsService.findSimilar(indexes, reference);
+    public Documents<R> findSimilar(@RequestParam(REFERENCE_PARAM) final String reference, @RequestParam(INDEXES_PARAM) final List<S> indexes) throws E {
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(null, null, indexes != null ? indexes : Collections.<S>emptyList(), null, null);
+        final SuggestRequest<S> suggestRequest = new SuggestRequest<>();
+        suggestRequest.setQueryRestrictions(queryRestrictions);
+        suggestRequest.setReference(reference);
+        suggestRequest.setSummary("concept");
+        suggestRequest.setMaxResults(FIND_SIMILAR_MAX_RESULTS);
+        return documentsService.findSimilar(suggestRequest);
     }
 }

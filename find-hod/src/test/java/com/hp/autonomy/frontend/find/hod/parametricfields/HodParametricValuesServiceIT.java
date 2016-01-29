@@ -22,6 +22,6 @@ public class HodParametricValuesServiceIT extends AbstractParametricValuesServic
     }
 
     public HodParametricValuesServiceIT() {
-        super(new String[]{ResourceIdentifier.NEWS_ENG.toString()}, new String[]{"TODO"});
+        super(new String[]{ResourceIdentifier.WIKI_ENG.toString()}, new String[]{"WIKIPEDIA_CATEGORY"});
     }
 }

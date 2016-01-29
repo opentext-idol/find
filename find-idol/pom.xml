@@ -107,7 +107,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-idol</artifactId>
-            <version>0.2.0</version>
+            <version>${haven.search.components.version}</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.user</groupId>
@@ -143,8 +143,15 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>haven-search-components-core</artifactId>
+            <version>${haven.search.components.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-idol</artifactId>
-            <version>0.1.0</version>
+            <version>${haven.search.components.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

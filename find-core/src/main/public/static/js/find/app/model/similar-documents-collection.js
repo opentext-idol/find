@@ -13,6 +13,10 @@ define([
         url: '../api/public/search/similar-documents',
         model: DocumentModel,
 
+        parse: function(response) {
+            return response.documents;
+        },
+
         initialize: function(models, options) {
             this.indexes = options.indexes;
             this.reference = options.reference;

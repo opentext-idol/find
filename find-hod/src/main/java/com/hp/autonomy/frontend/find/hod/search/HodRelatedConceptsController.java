@@ -11,6 +11,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodRelatedConceptsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
-public class HodRelatedConceptsController extends RelatedConceptsController<HodRelatedConceptsRequest, Entity, ResourceIdentifier, HodErrorException> {
+public class HodRelatedConceptsController extends RelatedConceptsController<Entity, ResourceIdentifier, HodErrorException> {
     @Autowired
-    public HodRelatedConceptsController(final RelatedConceptsService<HodRelatedConceptsRequest, Entity, ResourceIdentifier, HodErrorException> relatedConceptsService, final QueryRestrictionsBuilder<ResourceIdentifier> queryRestrictionsBuilder) {
+    public HodRelatedConceptsController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService, final QueryRestrictionsBuilder<ResourceIdentifier> queryRestrictionsBuilder) {
         super(relatedConceptsService, queryRestrictionsBuilder);
     }
 
     @Override
-    protected HodRelatedConceptsRequest buildRelatedConceptsRequest(QueryRestrictions<ResourceIdentifier> queryRestrictions) {
+    protected RelatedConceptsRequest<ResourceIdentifier> buildRelatedConceptsRequest(QueryRestrictions<ResourceIdentifier> queryRestrictions) {
         final HodRelatedConceptsRequest hodRelatedConceptsRequest = new HodRelatedConceptsRequest();
         hodRelatedConceptsRequest.setQueryRestrictions(queryRestrictions);
         return hodRelatedConceptsRequest;

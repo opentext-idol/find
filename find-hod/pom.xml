@@ -138,7 +138,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-hod</artifactId>
-            <version>0.2.0</version>
+            <version>${haven.search.components.version}</version>
         </dependency>
 
         <!-- It's not clear why, but we need to define dependency here as well, not just at the find-core level.  Otherwise the hibernate classloader does not pick this up. -->

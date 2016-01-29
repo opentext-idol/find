@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
-public class IdolRelatedConceptsController extends RelatedConceptsController<IdolRelatedConceptsRequest, QsElement, String, AciErrorException> {
+public class IdolRelatedConceptsController extends RelatedConceptsController<QsElement, String, AciErrorException> {
 
     public static final int QUERY_SUMMARY_LENGTH = 50;
 
     @Autowired
-    public IdolRelatedConceptsController(final RelatedConceptsService<IdolRelatedConceptsRequest, QsElement, String, AciErrorException> relatedConceptsService, final QueryRestrictionsBuilder<String> queryRestrictionsBuilder) {
+    public IdolRelatedConceptsController(final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService, final QueryRestrictionsBuilder<String> queryRestrictionsBuilder) {
         super(relatedConceptsService, queryRestrictionsBuilder);
     }
 

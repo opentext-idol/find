@@ -20,19 +20,19 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractRelatedConceptsControllerTest<R extends RelatedConceptsRequest<S>, Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
+public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
     @Mock
-    protected RelatedConceptsService<R, Q, S, E> relatedConceptsService;
+    protected RelatedConceptsService<Q, S, E> relatedConceptsService;
 
     @Mock
     protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
-    protected RelatedConceptsController<R, Q, S, E> relatedConceptsController;
+    protected RelatedConceptsController<Q, S, E> relatedConceptsController;
     protected Class<S> databaseType;
 
     @Test
     public void query() throws E {
         relatedConceptsController.findRelatedConcepts("Some query text", null, Collections.<S>emptyList(), null, null);
-        verify(relatedConceptsService).findRelatedConcepts(Matchers.<R>any());
+        verify(relatedConceptsService).findRelatedConcepts(Matchers.<RelatedConceptsRequest<S>>any());
     }
 }

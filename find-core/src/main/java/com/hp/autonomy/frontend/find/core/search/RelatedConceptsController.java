@@ -23,7 +23,7 @@ import java.util.List;
 @Controller
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
-public abstract class RelatedConceptsController<R extends RelatedConceptsRequest<S>, Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
+public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S extends Serializable, E extends Exception> {
     public static final String RELATED_CONCEPTS_PATH = "/api/public/search/find-related-concepts";
 
     public static final String QUERY_TEXT_PARAM = "queryText";
@@ -32,15 +32,15 @@ public abstract class RelatedConceptsController<R extends RelatedConceptsRequest
     public static final String MIN_DATE_PARAM = "minDate";
     public static final String MAX_DATE_PARAM = "maxDate";
 
-    protected final RelatedConceptsService<R, Q, S, E> relatedConceptsService;
+    protected final RelatedConceptsService<Q, S, E> relatedConceptsService;
     protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
-    protected RelatedConceptsController(final RelatedConceptsService<R, Q, S, E> relatedConceptsService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
+    protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
         this.relatedConceptsService = relatedConceptsService;
         this.queryRestrictionsBuilder = queryRestrictionsBuilder;
     }
 
-    protected abstract R buildRelatedConceptsRequest(QueryRestrictions<S> queryRestrictions);
+    protected abstract RelatedConceptsRequest<S> buildRelatedConceptsRequest(final QueryRestrictions<S> queryRestrictions);
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -51,7 +51,7 @@ public abstract class RelatedConceptsController<R extends RelatedConceptsRequest
                                        @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate);
 
-        final R relatedConceptsRequest = buildRelatedConceptsRequest(queryRestrictions);
+        final RelatedConceptsRequest<S> relatedConceptsRequest = buildRelatedConceptsRequest(queryRestrictions);
         return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
     }
 }
