@@ -18,7 +18,7 @@ define([
 
     return Backbone.View.extend({
         events: {
-            'show.bs.tab': function(event) {
+            'shown.bs.tab [data-search-cid]': function(event) {
                 this.searchModel.set('selectedSearchCid', $(event.target).attr('data-search-cid'));
             }
         },
