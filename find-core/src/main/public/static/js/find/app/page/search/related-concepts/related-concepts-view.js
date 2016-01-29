@@ -43,6 +43,7 @@ define([
                             title: model.get('title'),
                             summary: model.get('summary').trim().substring(0, 100) + '...'
                         }));
+
                         $content.find('ul').append(listItem);
                     }, this);
                 }
@@ -64,11 +65,10 @@ define([
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
 
-                if (this.queryTextModel.get('inputText') === ''){
+                if (this.queryTextModel.get('inputText') === '') {
                     this.queryTextModel.set('inputText', queryText);
                 } else {
                     var concepts = this.queryTextModel.get('relatedConcepts');
-
                     var newConcepts = _.union(concepts, [queryText]);
                     this.queryTextModel.set('relatedConcepts', newConcepts);
                 }
@@ -142,10 +142,11 @@ define([
                 none: this.$none,
                 notLoading: this.$notLoading
             });
+
             if (this.indexesCollection.isEmpty()) {
                 this.selectViewState(['notLoading']);
             } else {
-                this.selectViewState(['processing'])
+                this.selectViewState(['processing']);
             }
         }
     });

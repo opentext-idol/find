@@ -24,7 +24,6 @@ define([
 
                 var attributes = {
                     field: $field.attr('data-field'),
-                    fieldDisplayName: $field.attr('data-field-display-name'),
                     value: $target.attr('data-value')
                 };
 
@@ -110,13 +109,13 @@ define([
                 }
             }
 
-            this.listenTo(this.queryTextModel, 'refresh', fetch);
-
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'])) {
                     fetch.call(this);
                 }
             }, this);
+
+            fetch.call(this);
         },
 
         render: function() {

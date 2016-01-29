@@ -130,8 +130,25 @@ html, body {
     text-transform: uppercase;
 }
 
+.button-primary:focus.pressed-down,
+.pressed-down {
+    background-color: #018062;
+    border-color: #018062;
+    color: #ffffff;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    outline: 0;
+}
+
 .no-box-shadow {
     box-shadow: none !important;
+}
+
+.position-right {
+    right: 0px;
+}
+
+.btn-group .dropdown-toggle:focus {
+    outline-style: none;
 }
 
 .right-side-container td,
@@ -317,13 +334,16 @@ html, body {
     display: inline;
 }
 
-.saved-searches-container {
-    background-color: #efefef;
+.search-tabs-container {
+    background-color: #EFEFEF;
+    height: 51px;
+    border-bottom: 1px solid #E4E4E4;
 }
 
-.saved-searches-container h4 {
+.search-tabs-container h4 {
     vertical-align: text-bottom; /* hax? */
 }
+
 .find {
     text-align: center;
     /* We need to be on top of the static navbar */
@@ -420,6 +440,10 @@ input.find-input {
     padding: 0 10px;
 }
 
+.preview-mode .main-results-container {
+    cursor: pointer;
+}
+
 .document-reference {
     overflow: hidden;
     white-space: nowrap;
@@ -428,6 +452,18 @@ input.find-input {
     display: inline-block;
     color: #aeaeae;
     font-size: 13px;
+}
+
+.selected-document {
+    background-color: #f2f2f2;
+}
+
+.preview-mode-metadata td {
+    padding-left: 10px;
+}
+
+.preview-mode-document-title {
+    color: #676a6c !important;
 }
 
 .content-type i {
@@ -610,6 +646,16 @@ input.find-input {
 .loading-spinner.loading-spinner-lg {
     font-size: 28px;
     line-height: 32px;
+}
+
+.thin-btn {
+    padding: 0px 7px
+}
+
+.preview-mode-loading.loading-spinner {
+    position: absolute;
+    left: 225px;
+    top: 165px
 }
 
 /* fancy colourbox buttons */
@@ -983,10 +1029,6 @@ input:-moz-placeholder::before {
 
 /* View server */
 .view-server-loading-indicator {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     font-size: 32px;
     color: #00b388;
     text-align: center;
@@ -1002,6 +1044,25 @@ input:-moz-placeholder::before {
     border-radius: 3px;
     background-image: none;
     box-shadow: none;
+}
+
+.preview-document-frame {
+    width: 100%;
+    height: 50vh;
+    display: block;
+    border: 0;
+    padding-top: 10px;
+    margin: 0;
+}
+
+.preview-media-player {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.preview-mode-document-title {
+    word-break: break-all;
+    white-space: normal !important;
 }
 
 #cboxLoadedContent .table > tbody > tr > th,
