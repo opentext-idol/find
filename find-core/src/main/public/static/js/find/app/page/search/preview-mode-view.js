@@ -63,7 +63,7 @@ define([
             } else {
                 $preview.html(this.documentTemplate({i18n: i18n}));
 
-                var $viewServerPage = this.$('.view-document-frame');
+                var $viewServerPage = this.$('.preview-document-frame');
 
                 $viewServerPage.on('load', _.bind(function() {
                     this.$('.view-server-loading-indicator').addClass('hidden');
