@@ -5,15 +5,21 @@
 
 define([
     'js-whatever/js/base-page',
-    'find/app/model/query-model',
-    'find/app/model/query-text-model',
+    'backbone',
+    'find/app/model/search-page-model',
+    'find/app/model/indexes-collection',
     'find/app/page/search/input-view',
-    'find/app/page/search/service-view',
+    'find/app/page/search/tabbed-search-view',
+    'find/app/model/saved-searches/saved-search-collection',
     'find/app/router',
     'find/app/vent',
+    'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, QueryModel, QueryTextModel, InputView, ServiceView, router, vent, _, template) {
+], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection,
+            router, vent, i18n, _, template) {
+
+    'use strict';
 
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
     var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
@@ -22,35 +28,45 @@ define([
         className: 'search-page',
         template: _.template(template),
 
-        // will be overridden
-        constructServiceView: function (model, queryTextModel) {
-            return new ServiceView({
-                queryModel: model,
-                queryTextModel: queryTextModel
-            });
-        },
+        // Abstract
+        ServiceView: null,
 
         initialize: function() {
-            this.queryModel = new QueryModel();
-            this.queryTextModel = new QueryTextModel();
+            this.savedSearchCollection = new SavedSearchCollection();
+            this.savedSearchCollection.fetch({remove: false});
 
-            this.listenTo(this.queryModel, 'change:queryText', this.expandedState);
+            var indexesCollection = new IndexesCollection();
+            indexesCollection.fetch();
 
-            this.listenTo(this.queryTextModel, 'change', function() {
-                this.queryModel.set({
-                    autoCorrect: true,
-                    queryText: this.queryTextModel.makeQueryText()
-                });
+            // Model representing high level search page state
+            this.searchModel = new SearchPageModel();
+
+            this.listenTo(this.searchModel, 'change', function() {
+                // Bind search model to routing
+                vent.navigate(this.generateURL(), {trigger: false});
+
+                if (this.searchModel.get('inputText')) {
+                    this.expandedState();
+                }
             });
 
-            this.inputView = new InputView({model: this.queryTextModel});
+            this.inputView = new InputView({model: this.searchModel});
 
-            this.serviceView = this.constructServiceView(this.queryModel, this.queryTextModel);
+            this.tabView = new TabbedSearchView({
+                indexesCollection: indexesCollection,
+                savedSearchCollection: this.savedSearchCollection,
+                searchModel: this.searchModel,
+                ServiceView: this.ServiceView
+            });
 
+            // Bind routing to search model
             router.on('route:search', function(text, concepts) {
-                this.queryTextModel.set({
+                // The concepts string starts with a leading /
+                var conceptsArray = concepts ? _.tail(concepts.split('/')) : [];
+
+                this.searchModel.set({
                     inputText: text || '',
-                    relatedConcepts: concepts ? concepts.split('/') : []
+                    relatedConcepts: conceptsArray
                 });
             }, this);
         },
@@ -59,51 +75,44 @@ define([
             this.$el.html(this.template);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
-            this.serviceView.setElement(this.$('.service-view-container')).render();
+            this.tabView.setElement(this.$('.tabbed-search-container')).render();
 
-            this.reducedState();
+            if (this.searchModel.get('selectedSearchCid') === null) {
+                this.reducedState();
+            } else {
+                this.expandedState();
+            }
         },
 
         generateURL: function() {
-            var inputQuery = this.queryTextModel.get('inputText');
-
-            if (inputQuery){
-                inputQuery = encodeURIComponent(inputQuery) + '/';
-            }
-
-            var relatedConcepts = this.queryTextModel.get('relatedConcepts');
-
-            return inputQuery + relatedConcepts.join('/');
+            var components = [this.searchModel.get('inputText')].concat(this.searchModel.get('relatedConcepts'));
+            return 'find/search/' + _.map(components, encodeURIComponent).join('/');
         },
 
+        // Run fancy animation from large central search bar to main search page
         expandedState: function() {
-            /*fancy animation*/
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
-            this.$('.service-view-container').show();
+            this.$('.tabbed-search-row').show();
             this.$('.app-logo').hide();
             this.$('.hp-logo-footer').addClass('hidden');
 
             // TODO: somebody else needs to own this
             $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').show();
             $('.container-fluid, .find-logo-small').removeClass('reduced');
-
-            vent.navigate('find/search/' + this.generateURL(), {trigger: false});
         },
 
+        // Set view to initial state (large central search bar)
         reducedState: function() {
-            /*fancy reverse animation*/
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
-            this.$('.service-view-container').hide();
+            this.$('.tabbed-search-row').hide();
             this.$('.app-logo').show();
             this.$('.hp-logo-footer').removeClass('hidden');
 
             // TODO: somebody else needs to own this
             $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
             $('.container-fluid, .find-logo-small').addClass('reduced');
-
-            vent.navigate('find/search', {trigger: false});
         }
     });
 });

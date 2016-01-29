@@ -32,7 +32,7 @@ define([
                 this.removeRelatedConcept(id);
             },
             'click .see-all-documents': function() {
-                this.model.set('queryText', '*');
+                this.search('*');
             }
         },
 
@@ -73,22 +73,16 @@ define([
         },
 
         search: function(query) {
-            if (query === this.model.get('inputText')) {
-                this.model.refresh();
-            } else {
-                var trimmedText = $.trim(query);
-
-                this.model.set({
-                    inputText: trimmedText,
-                    relatedConcepts: []
-                });
-            }
+            this.model.set({
+                inputText: $.trim(query),
+                relatedConcepts: []
+            });
         },
 
         updateText: function() {
             if (this.$input) {
                 this.$input.typeahead('val', this.model.get('inputText'));
-                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.model.get('inputText') == '*');
+                this.$('.see-all-documents').toggleClass('disabled-clicks cursor-not-allowed', this.model.get('inputText') === '*');
             }
         },
 
@@ -99,7 +93,7 @@ define([
                 _.each(this.model.get('relatedConcepts'), function(concept) {
                     this.$additionalConcepts.append(relatedConceptsTemplate({
                         concept: concept
-                    }))
+                    }));
                 }, this);
 
                 this.$alsoSearchingFor.toggleClass('hide', _.isEmpty(this.model.get('relatedConcepts')));
@@ -108,7 +102,6 @@ define([
 
         removeRelatedConcept: function(id){
             var newConcepts = _.without(this.model.get('relatedConcepts'), id);
-
             this.model.set('relatedConcepts', newConcepts);
         }
     });

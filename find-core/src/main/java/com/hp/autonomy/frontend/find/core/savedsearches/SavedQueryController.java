@@ -38,7 +38,7 @@ public class SavedQueryController {
         return service.create(query);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public SavedQuery update(
             @PathVariable("id") final long id,
             @RequestBody final SavedQuery query

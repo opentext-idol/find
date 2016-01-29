@@ -73,37 +73,14 @@ define([
             }
         },
 
-        initialize: function (options) {
-            var childCategories = this.getIndexCategories();
+        initialize: function(options) {
             DatabasesView.prototype.initialize.call(this, {
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
                 selectedDatabasesCollection: options.selectedDatabasesCollection,
                 topLevelDisplayName: i18n['search.indexes.all'],
-                childCategories: childCategories
+                childCategories: this.getIndexCategories()
             });
-
-            var setInitialSelection = _.bind(function() {
-                var privateIndexes = options.indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
-
-                if(privateIndexes.length > 0) {
-                    _.each(privateIndexes, function(index) {
-                        this.selectDatabase(index.get('name'), index.get('domain'), true);
-                    }, this);
-                }
-                else {
-                    _.each(options.indexesCollection.where({domain: 'PUBLIC_INDEXES'}), function(index) {
-                        this.selectDatabase(index.get('name'), index.get('domain'), true);
-                    }, this);
-                }
-            }, this);
-
-            if(options.indexesCollection.isEmpty()) {
-                options.indexesCollection.once('update', setInitialSelection);
-            }
-            else {
-                setInitialSelection();
-            }
         },
 
         render: function() {
@@ -112,9 +89,9 @@ define([
             _.each(this.getIndexCategories(), function(category) {
                 var $ul = this.$('[data-category-id="' + category.name + '"] ul');
 
-                if($ul.find('li').length > 5) {
+                if ($ul.find('li').length > 5) {
                     $ul.append(this.seeMoreButtonTemplate({
-                        i18n:findI18n,
+                        i18n: findI18n,
                         showMoreClass: SHOW_MORE_CLASS
                     }));
 

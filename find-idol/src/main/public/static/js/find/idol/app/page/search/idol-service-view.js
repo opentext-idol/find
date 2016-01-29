@@ -11,17 +11,8 @@ define([
     'use strict';
 
     return ServiceView.extend({
-        constructIndexesView: function (queryModel, indexesCollection, selectedIndexesCollection) {
-            return new IndexesView({
-                queryModel: queryModel,
-                indexesCollection: indexesCollection,
-                selectedDatabasesCollection: selectedIndexesCollection
-            });
-        },
-
-        constructResultsViewContainer: function (models) {
-            return new ResultsViewContainer(models);
-        }
+        ResultsViewContainer: ResultsViewContainer,
+        IndexesView: IndexesView
     });
 
 });

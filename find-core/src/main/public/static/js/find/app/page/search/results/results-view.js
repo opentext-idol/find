@@ -6,11 +6,12 @@ define([
     'find/app/model/promotions-collection',
     'find/app/model/similar-documents-collection',
     'find/app/page/search/sort-view',
+    'find/app/page/search/results/results-number-view',
     'find/app/page/search/preview-mode-view',
     'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
-    'js-whatever/js/escape-regex',
+    'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/results-popover.html',
     'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results/results-view.html',
@@ -19,25 +20,16 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/view/media-player.html',
     'text!find/templates/app/page/view/view-document.html',
-    'text!find/templates/app/page/search/results/entity-label.html',
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'colorbox'
-], function(Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, PreviewModeView, popover,
-            viewClient, documentMimeTypes, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
-            colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate, entityTemplate,
+], function(Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, ResultsNumberView, PreviewModeView, popover,
+            viewClient, documentMimeTypes, addLinksToSummary, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
+            colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
             moment, i18n, i18n_indexes) {
 
-    /** Whitespace OR character in set bounded by [] */
-    var boundaryChars = '\\s|[,.-:;?\'"!\\(\\)\\[\\]{}]';
-    /** Start of input OR boundary chars */
-    var startRegex = '(^|' + boundaryChars + ')';
-    /** End of input OR boundary chars */
-    var endRegex = '($|' + boundaryChars + ')';
-
     var mediaTypes = ['audio', 'video'];
-
     var webTypes = ['text/html', 'text/xhtml'];
 
     function infiniteScroll() {
@@ -92,7 +84,6 @@ define([
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
         mediaPlayerTemplate: _.template(mediaPlayerTemplate),
         popoverTemplate: _.template(popoverTemplate),
-        entityTemplate: _.template(entityTemplate),
         viewDocumentTemplate: _.template(viewDocumentTemplate),
 
         events: {
@@ -142,6 +133,11 @@ define([
                 queryModel: this.queryModel
             });
 
+            this.resultsNumberView = new ResultsNumberView({
+                documentsCollection: this.documentsCollection
+            });
+
+
             this.previewModeView = new PreviewModeView();
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
@@ -186,7 +182,7 @@ define([
                     this.$('.main-results-content .results').empty();
                 } else {
                     this.$loadingSpinner.addClass('hide');
-                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes["search.error.noIndexes"]}));
+                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
                 }
             }
         },
@@ -206,6 +202,7 @@ define([
 
             this.sortView.setElement(this.$('.sort-container')).render();
             this.previewModeView.setElement(this.$('.preview-mode-container')).render();
+            this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
             /*promotions content content*/
             this.listenTo(this.promotionsCollection, 'add', function(model) {
@@ -248,18 +245,17 @@ define([
             });
 
             this.listenTo(this.queryModel, 'change', this.refreshResults);
-            this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 if (!this.entityCollection.isEmpty()) {
                     this.documentsCollection.each(function(document) {
-                        var summary = this.addLinksToSummary(document.get('summary'));
+                        var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
 
                         this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
                     }, this);
 
                     this.promotionsCollection.each(function(document) {
-                        var summary = this.addLinksToSummary(document.get('summary'));
+                        var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
 
                         this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
                     }, this);
@@ -272,6 +268,8 @@ define([
             $('#colorbox').append(_.template(colorboxControlsTemplate));
             $('.nextBtn').on('click', this.handleNextResult);
             $('.prevBtn').on('click', this.handlePrevResult);
+
+            this.refreshResults();
         },
 
         handlePrevResult: function() {
@@ -340,7 +338,7 @@ define([
 
         formatResult: function(model, isPromotion) {
             var reference = model.get('reference');
-            var summary = this.addLinksToSummary(model.get('summary'));
+            var summary = addLinksToSummary(this.entityCollection, model.get('summary'));
 
             var href;
 
@@ -390,86 +388,6 @@ define([
             }
 
             popover($newResult.find('.similar-documents-trigger'), 'focus', this.handlePopover);
-        },
-
-        addLinksToSummary: function(summary) {
-            // Find highlighted query terms
-            var queryTextRegex = /<HavenSearch-QueryText-Placeholder>(.*?)<\/HavenSearch-QueryText-Placeholder>/g;
-            var queryText = [];
-            var resultsArray;
-            while ((resultsArray = queryTextRegex.exec(summary)) !==null) {
-                queryText.push(resultsArray[1]);
-            }
-
-            // Protect us from XSS (but leave injected highlight tags alone)
-            var otherText = summary.split(/<HavenSearch-QueryText-Placeholder>.*?<\/HavenSearch-QueryText-Placeholder>/);
-            var escapedSummaryElements = [];
-            escapedSummaryElements.push(_.escape(otherText[0]));
-            for (var i = 0; i < queryText.length; i++) {
-                escapedSummaryElements.push('<span class="search-text">' + _.escape(queryText[i]) + '</span>');
-                escapedSummaryElements.push(_.escape(otherText[i + 1]));
-            }
-            var escapedSummary = escapedSummaryElements.join('');
-
-            // Create an array of the entity titles, longest first
-            var entities = this.entityCollection.map(function(entity) {
-                return {
-                    text: entity.get('text'),
-                    id: _.uniqueId('Find-IOD-Entity-Placeholder')
-                };
-            }).sort(function(a, b) {
-                return b.text.length - a.text.length;
-            });
-
-            // Loop through entities, replacing each with a unique id to prevent later replaces finding what we've
-            // changed here and messing things up badly
-            _.each(entities, function(entity) {
-                escapedSummary = this.replaceBoundedText(escapedSummary, entity.text, entity.id);
-            }, this);
-
-            // Loop through entities again, replacing text with labels
-            _.each(entities, function(entity) {
-                escapedSummary = this.replaceTextWithLabel(escapedSummary, entity.id, {
-                    elementType: 'a',
-                    replacement: entity.text,
-                    elementClasses: 'entity-text entity-label label clickable'
-                })
-            }, this);
-
-            return escapedSummary;
-        },
-
-        /**
-         * Finds a string that's bounded by [some regex stuff] and replaces it with something else.
-         * Used as part 1 of highlighting text in result summaries.
-         * @param text  The text to search in
-         * @param textToFind  The text to search for
-         * @param replacement  What to replace textToFind with
-         * @returns {string|XML|void}  `text`, but with replacements made
-         */
-        replaceBoundedText: function(text, textToFind, replacement) {
-            return text.replace(new RegExp(startRegex + escapeRegex(textToFind) + endRegex, 'gi'), '$1' + replacement + '$2');
-        },
-
-
-        /**
-         * @typedef EntityTemplateOptions
-         * @property elementType {string} The html element type the text should be in
-         * @property replacement {string} The text of the element
-         * @property elementClasses {string} The classes to apple to the html element defined in elementType
-         */
-        /**
-         * Finds a string and replaces it with an HTML label.
-         * Used as part 2 of highlighting text in results summaries.
-         * @param {string} text  The text to search in
-         * @param {string} textToFind  The text to replace with a label
-         * @param {EntityTemplateOptions} templateOptions A hash of options to configure the template
-         * @returns {string|XML|*}  `text`, but with replacements made
-         */
-        replaceTextWithLabel: function(text, textToFind, templateOptions) {
-            var label = this.entityTemplate(templateOptions);
-
-            return text.replace(new RegExp(startRegex + textToFind + endRegex, 'g'), '$1' + label + '$2');
         },
 
         handlePopover: function($content, $target) {

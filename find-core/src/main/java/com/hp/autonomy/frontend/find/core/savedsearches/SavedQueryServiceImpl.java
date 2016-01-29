@@ -37,7 +37,20 @@ public class SavedQueryServiceImpl implements SavedQueryService {
 
     @Override
     public SavedQuery update(final SavedQuery query) {
-        return savedQueryRepository.save(query);
+        final SavedQuery existing = savedQueryRepository.findOne(query.getId());
+
+        if (existing == null) {
+            throw new IllegalArgumentException("Saved query not found");
+        } else {
+            existing.setIndexes(query.getIndexes());
+            existing.setMaxDate(query.getMaxDate());
+            existing.setMinDate(query.getMinDate());
+            existing.setParametricValues(query.getParametricValues());
+            existing.setRelatedConcepts(query.getRelatedConcepts());
+            existing.setQueryText(query.getQueryText());
+            existing.setTitle(query.getTitle());
+            return savedQueryRepository.save(existing);
+        }
     }
 
     @Override

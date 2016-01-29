@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone'
 ], function(Backbone) {
@@ -9,28 +14,17 @@ define([
         },
 
         makeQueryText: function(){
-            if (!this.get('inputText')){
-                this.set('relatedConcepts', []);
+            var inputText = this.get('inputText');
+
+            if (!inputText){
                 return '';
             }
 
             if (_.isEmpty(this.get('relatedConcepts'))){
-                return this.get('inputText');
+                return inputText;
             }
 
-            return "(" + this.get('inputText') + ") AND " + this.get('relatedConcepts').join(' AND ');
-        },
-
-        setInputText: function(attributes) {
-            if (_.has(attributes, 'inputText')){
-                attributes.inputText = attributes.inputText.trim();
-            }
-
-            return Backbone.Model.prototype.set.call(this, attributes);
-        },
-
-        refresh: function() {
-            this.trigger('refresh');
+            return '(' + inputText + ') AND ' + this.get('relatedConcepts').join(' AND ');
         }
     });
 

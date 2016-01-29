@@ -143,6 +143,14 @@ html, body {
     box-shadow: none !important;
 }
 
+.position-right {
+    right: 0px;
+}
+
+.btn-group .dropdown-toggle:focus {
+    outline-style: none;
+}
+
 .right-side-container td,
 .left-side-container td {
     border-bottom: 1px solid #C9C9C9;
@@ -326,13 +334,16 @@ html, body {
     display: inline;
 }
 
-.saved-searches-container {
-    background-color: #efefef;
+.search-tabs-container {
+    background-color: #EFEFEF;
+    height: 51px;
+    border-bottom: 1px solid #E4E4E4;
 }
 
-.saved-searches-container h4 {
+.search-tabs-container h4 {
     vertical-align: text-bottom; /* hax? */
 }
+
 .find {
     text-align: center;
     /* We need to be on top of the static navbar */
@@ -635,6 +646,10 @@ input.find-input {
 .loading-spinner.loading-spinner-lg {
     font-size: 28px;
     line-height: 32px;
+}
+
+.thin-btn {
+    padding: 0px 7px
 }
 
 .preview-mode-loading.loading-spinner {
