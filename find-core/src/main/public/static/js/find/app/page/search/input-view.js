@@ -32,7 +32,7 @@ define([
                 this.removeRelatedConcept(id);
             },
             'click .see-all-documents': function() {
-                this.queryModel.set('queryText', '*');
+                this.search('*');
             }
         },
 
