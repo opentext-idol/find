@@ -19,13 +19,8 @@ public class HSOApplication extends SearchOptimizerApplication<HSOElementFactory
     @Override
     public Application<HSOElementFactory> inWindow(Window window) {
         this.window = window;
-        this.factory = createElementFactory(window.getSession().getDriver());
+        this.factory = new HSOElementFactory(window.getSession().getDriver());
         return this;
-    }
-
-    @Override
-    public HSOElementFactory createElementFactory(WebDriver driver) {
-        return new HSOElementFactory(driver);
     }
 
     public HSOElementFactory elementFactory() {

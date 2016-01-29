@@ -4,6 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FindParametricCheckbox;
@@ -695,7 +696,7 @@ public class FindITCase extends HostedTestBase {
 
     // TODO: this does not belong here
     private Find initialiseSession(Session session) {
-        HSOElementFactory otherElementFactory = getApplication().createElementFactory(session.getDriver());
+        HSOElementFactory otherElementFactory = new HSODFind(session.getActiveWindow()).elementFactory();
         loginTo(otherElementFactory.getFindLoginPage(), session.getDriver(), config.getDefaultUser());
         return otherElementFactory.getFindPage();
     }

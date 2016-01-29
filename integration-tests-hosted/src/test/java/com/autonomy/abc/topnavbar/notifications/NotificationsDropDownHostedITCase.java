@@ -3,8 +3,10 @@ package com.autonomy.abc.topnavbar.notifications;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.HSOApplication;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
@@ -145,6 +147,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         assertThat(notifications.notificationNumber(2).getText(), is(deletingNotification));
     }
 
+    // TODO: this is a mess
     @Test
     @KnownBug({"CSA-1698", "CSA-1687"})
     public void testUsernameShowsInNotifications() throws Exception {
@@ -160,7 +163,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
         KeywordService keywordService = new KeywordService(getApplication(), getElementFactory());
         UserService userService = getApplication().createUserService(getElementFactory());
-        WebDriver adminDriver = null;
+        Session session = null;
 
         SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
 
@@ -180,17 +183,14 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
                 /* User has likely already been authenticated recently, attempt to continue */
             }
 
-            adminDriver = config.getWebDriverFactory().create();
-            adminDriver.get(config.getWebappUrl());
+            session = getSessionRegistry().startSession(config.getWebappUrl());
+            HSOElementFactory secondFactory = new HSOApplication().inWindow(session.getActiveWindow()).elementFactory();
 
-            HSOElementFactory elementFactory = new HSOElementFactory(adminDriver);
+            loginTo(secondFactory.getLoginPage(), session.getDriver(), user);
 
-            loginTo(elementFactory.getLoginPage(), adminDriver, user);
+            secondFactory.getPromotionsPage();
 
-            elementFactory.getPromotionsPage();
-            ElementFactory secondFactory = getApplication().createElementFactory(adminDriver);
-
-            new KeywordService(getApplication(),elementFactory).addSynonymGroup("Messi", "Campbell");
+            new KeywordService(getApplication(),secondFactory).addSynonymGroup("Messi", "Campbell");
 
             verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
             secondFactory.getTopNavBar().notificationsDropdown();
@@ -202,8 +202,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
 
         } finally {
-            if(adminDriver != null) {
-                adminDriver.quit();
+            if (session != null) {
+                getSessionRegistry().endSession(session);
             }
 
             userService.deleteOtherUsers();

@@ -3,6 +3,7 @@ package com.autonomy.abc.topnavbar.notifications;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
@@ -110,7 +111,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		final Window secondWindow = getMainSession().openWindow(config.getWebappUrl());
 
 		secondWindow.activate();
-		ElementFactory elementFactoryTwo = getApplication().createElementFactory(getDriver());
+		ElementFactory elementFactoryTwo = SearchOptimizerApplication.ofType(config.getType()).inWindow(secondWindow).elementFactory();
 		TopNavBar topNavBarWindowTwo = elementFactoryTwo.getTopNavBar();
 		SideNavBar sideNavBarWindowTwo = elementFactoryTwo.getSideNavBar();
 
