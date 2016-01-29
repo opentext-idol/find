@@ -35,7 +35,7 @@ public class QuickSetUpITCase extends HostedTestBase {
     }
 
     private GettingStartedPage gettingStarted;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
 
     @Before
     public void setUp(){

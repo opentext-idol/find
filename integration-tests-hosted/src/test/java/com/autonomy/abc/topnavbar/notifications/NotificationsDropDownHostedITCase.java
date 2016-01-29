@@ -103,7 +103,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
         WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName).withDuration(60);
 
-        ConnectionService cs = new ConnectionService(getApplication(), getElementFactory());
+        ConnectionService cs = ((HSOApplication) getApplication()).connectionService();
         try {
             cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
 
@@ -130,7 +130,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         String deletingNotification = "Deleting connection " + connectorName;
         String successfulNotification = "Connection " + connectorName + " successfully removed";
 
-        ConnectionService cs = new ConnectionService(getApplication(), getElementFactory());
+        ConnectionService cs = ((HSOApplication) getApplication()).connectionService();
         cs.setUpConnection(connector);
 
         cs.deleteConnection(connector, true);        //Because of the WebDriverWait within no need to wait for the notifications
@@ -156,7 +156,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         hsoDevelopersPage.editUsernameLink(dev).click();
         hsoDevelopersPage.editUsernameInput(dev).setAndSubmit(devUsername);
 
-        KeywordService keywordService = new KeywordService(getApplication(), getElementFactory());
+        KeywordService keywordService = getApplication().keywordService();
         UserService userService = getApplication().userService();
         Session session = null;
 
@@ -185,7 +185,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
             secondFactory.getPromotionsPage();
 
-            new KeywordService(getApplication(),secondFactory).addSynonymGroup("Messi", "Campbell");
+            keywordService.addSynonymGroup("Messi", "Campbell");
 
             verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
             secondFactory.getTopNavBar().notificationsDropdown();

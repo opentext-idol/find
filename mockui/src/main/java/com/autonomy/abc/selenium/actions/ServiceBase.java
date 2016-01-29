@@ -5,12 +5,12 @@ import com.autonomy.abc.selenium.page.ElementFactory;
 import org.openqa.selenium.WebDriver;
 
 public abstract class ServiceBase<T extends ElementFactory> {
-    private SearchOptimizerApplication application;
-    private T elementFactory;
+    private final SearchOptimizerApplication<? extends T> application;
+    private final T elementFactory;
 
-    protected ServiceBase(SearchOptimizerApplication application, T elementFactory) {
+    protected ServiceBase(SearchOptimizerApplication<? extends T> application) {
         this.application = application;
-        this.elementFactory = elementFactory;
+        this.elementFactory = application.elementFactory();
     }
 
     protected WebDriver getDriver() {
@@ -21,7 +21,7 @@ public abstract class ServiceBase<T extends ElementFactory> {
         return elementFactory;
     }
 
-    protected SearchOptimizerApplication getApplication() {
+    protected SearchOptimizerApplication<? extends T> getApplication() {
         return application;
     }
 }

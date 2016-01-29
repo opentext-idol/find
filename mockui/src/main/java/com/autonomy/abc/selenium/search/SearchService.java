@@ -9,11 +9,11 @@ import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SearchService extends ServiceBase {
+public class SearchService extends ServiceBase<ElementFactory> {
     SearchPage searchPage;
 
-    public SearchService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        super(application, elementFactory);
+    public SearchService(SearchOptimizerApplication<?> application) {
+        super(application);
     }
 
     public SearchPage search(final SearchQuery query) {

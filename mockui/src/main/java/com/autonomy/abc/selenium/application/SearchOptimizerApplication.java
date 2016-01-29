@@ -25,11 +25,11 @@ public abstract class SearchOptimizerApplication<T extends ElementFactory> imple
     public abstract UserService userService();
 
     public KeywordService keywordService() {
-        return new KeywordService(this, elementFactory());
+        return new KeywordService(this);
     }
 
     public SearchService searchService() {
-        return new SearchService(this, elementFactory());
+        return new SearchService(this);
     }
 
     public abstract UserConfigParser getUserConfigParser();

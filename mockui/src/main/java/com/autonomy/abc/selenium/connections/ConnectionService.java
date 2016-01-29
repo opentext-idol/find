@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -25,8 +26,8 @@ public class ConnectionService extends ServiceBase<HSOElementFactory> {
     private ConnectionsDetailPage connectionsDetailPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(ConnectionService.class);
 
-    public ConnectionService(SearchOptimizerApplication application, HSOElementFactory elementFactory) {
-        super(application, elementFactory);
+    public ConnectionService(HSOApplication application) {
+        super(application);
     }
 
     public ConnectionsPage goToConnections() {

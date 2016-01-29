@@ -27,24 +27,24 @@ public class HSOApplication extends SearchOptimizerApplication<HSOElementFactory
 
     @Override
     public HSOPromotionService promotionService() {
-        return new HSOPromotionService(this, elementFactory());
+        return new HSOPromotionService(this);
     }
 
     @Override
     public HSOUserService userService(){
-        return new HSOUserService(this, elementFactory());
+        return new HSOUserService(this);
     }
 
     public ConnectionService connectionService() {
-        return new ConnectionService(this, elementFactory());
+        return new ConnectionService(this);
     }
 
     public IndexService indexService() {
-        return new IndexService(this, elementFactory());
+        return new IndexService(this);
     }
 
     public HSODeveloperService developerService() {
-        return new HSODeveloperService(this, elementFactory());
+        return new HSODeveloperService(this);
     }
 
     @Override

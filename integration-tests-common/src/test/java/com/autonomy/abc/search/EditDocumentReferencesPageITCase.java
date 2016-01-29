@@ -39,7 +39,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     private SearchPage searchPage;
     private PromotionsDetailPage promotionsDetailPage;
     private EditDocumentReferencesPage editReferencesPage;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
     private SearchService searchService;
 
     @Before

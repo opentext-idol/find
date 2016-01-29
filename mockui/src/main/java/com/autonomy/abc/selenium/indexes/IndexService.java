@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -20,8 +21,8 @@ import java.util.List;
 public class IndexService extends ServiceBase<HSOElementFactory> {
     private IndexesPage indexesPage;
 
-    public IndexService(SearchOptimizerApplication application, HSOElementFactory elementFactory) {
-        super(application, elementFactory);
+    public IndexService(HSOApplication application) {
+        super(application);
     }
 
     public IndexesPage goToIndexes() {

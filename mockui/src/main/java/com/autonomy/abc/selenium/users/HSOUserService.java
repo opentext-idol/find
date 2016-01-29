@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -16,8 +17,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HSOUserService extends UserService<HSOElementFactory> {
     private HSOUsersPage usersPage;
 
-    public HSOUserService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        super(application, (HSOElementFactory) elementFactory);
+    public HSOUserService(HSOApplication application) {
+        super(application);
     }
 
     @Override

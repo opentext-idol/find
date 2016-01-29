@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
+import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.ElementFactory;
@@ -14,8 +15,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HSODeveloperService extends ServiceBase<HSOElementFactory> {
     private HSODevelopersPage devsPage;
 
-    public HSODeveloperService(SearchOptimizerApplication application, ElementFactory elementFactory){
-        super(application, (HSOElementFactory) elementFactory);
+    public HSODeveloperService(HSOApplication application){
+        super(application);
     }
 
     public HSODevelopersPage goToDevs(){

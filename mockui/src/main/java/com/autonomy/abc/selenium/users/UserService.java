@@ -13,8 +13,8 @@ public abstract class UserService<T extends ElementFactory> extends ServiceBase<
 
     protected UsersPage usersPage;
 
-    public UserService(SearchOptimizerApplication application, T elementFactory) {
-        super(application, elementFactory);
+    public UserService(SearchOptimizerApplication<? extends T> application) {
+        super(application);
     }
 
     public abstract void deleteUser(User user);

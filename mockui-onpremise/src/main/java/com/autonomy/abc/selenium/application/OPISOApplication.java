@@ -26,12 +26,12 @@ public class OPISOApplication extends SearchOptimizerApplication<OPElementFactor
 
     @Override
     public OPPromotionService promotionService() {
-        return new OPPromotionService(this, elementFactory());
+        return new OPPromotionService(this);
     }
 
     @Override
     public OPUserService userService() {
-        return new OPUserService(this, elementFactory());
+        return new OPUserService(this);
     }
 
     @Override

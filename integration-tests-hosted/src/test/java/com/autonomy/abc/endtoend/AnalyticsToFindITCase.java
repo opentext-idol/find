@@ -42,7 +42,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
     @Before
     public void setUp(){
         promotionService = getApplication().promotionService();
-        keywordService = new KeywordService(getApplication(), getElementFactory());
+        keywordService = getApplication().keywordService();
 
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());

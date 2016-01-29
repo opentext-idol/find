@@ -24,8 +24,8 @@ import java.util.List;
 public class PromotionService<T extends ElementFactory> extends ServiceBase<T> {
     private PromotionsPage promotionsPage;
 
-    public PromotionService(SearchOptimizerApplication application, T elementFactory) {
-        super(application, elementFactory);
+    public PromotionService(SearchOptimizerApplication<T> application) {
+        super(application);
     }
 
     public PromotionsPage goToPromotions() {

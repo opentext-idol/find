@@ -135,7 +135,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
     @Test
     public void testFieldTextRestrictionOnPinToPositionPromotions(){
-        PromotionService promotionService = getApplication().promotionService();
+        PromotionService<?> promotionService = getApplication().promotionService();
         promotionService.deleteAll();
         List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new SearchQuery("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
 
