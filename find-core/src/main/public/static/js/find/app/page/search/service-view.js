@@ -76,7 +76,6 @@ define([
             this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
 
-            // TODO: Display name?
             this.selectedParametricValues = new SelectedParametricValuesCollection(this.savedSearchModel.toSelectedParametricValues());
 
             var initialSelectedIndexes;

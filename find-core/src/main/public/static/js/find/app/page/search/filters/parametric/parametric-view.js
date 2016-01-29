@@ -24,7 +24,6 @@ define([
 
                 var attributes = {
                     field: $field.attr('data-field'),
-                    fieldDisplayName: $field.attr('data-field-display-name'),
                     value: $target.attr('data-value')
                 };
 
