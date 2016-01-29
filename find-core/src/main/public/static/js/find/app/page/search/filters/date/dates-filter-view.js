@@ -12,6 +12,19 @@ define([
 
     var DATES_DISPLAY_FORMAT = 'YYYY/MM/DD HH:mm';
 
+    function dateUpdater(attribute) {
+        return function() {
+            var display = '';
+            var value = this.queryModel.get(attribute);
+
+            if (value) {
+                display = value.format(DATES_DISPLAY_FORMAT);
+            }
+
+            this['$' + attribute].find('input').val(display);
+        };
+    }
+
     return Backbone.View.extend({
         template: _.template(template),
         datepickerTemplate: _.template(datepicker),
@@ -63,26 +76,9 @@ define([
                 }
             });
 
-            _.each(['minDate', 'maxDate'], function(date) {
-                this.listenTo(this.queryModel, 'change:' + date, function(model, value) {
-                    var display = '';
-
-                    if(value) {
-                        display = value.format(DATES_DISPLAY_FORMAT);
-                    }
-
-                    this['$' + date].find('input').val(display);
-                });
-            }, this);
-
-            this.listenTo(this.datesFilterModel, 'change:dateRange', function(datesFilterModel, dateRange) {
-                // Clear all checkboxes, check selected
-                this.$('.date-filters-list i').addClass('hide');
-                this.$("[data-id='" + dateRange + "'] i").removeClass('hide');
-
-                // If custom show custom options
-                this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== DatesFilterModel.dateRange.custom);
-            });
+            this.listenTo(this.queryModel, 'change:minDate', this.updateMinDate);
+            this.listenTo(this.queryModel, 'change:maxDate', this.updateMaxDate);
+            this.listenTo(this.datesFilterModel, 'change:dateRange', this.updateForDateRange);
         },
 
         render: function() {
@@ -110,7 +106,7 @@ define([
                     previous: 'hp-icon hp-fw hp-chevron-left'
                 }
             }).on('dp.change', _.bind(function(ev) {
-                this.setMinDate(ev.date);
+                this.datesFilterModel.setMinDate(ev.date);
             }, this));
 
             this.$maxDate.datetimepicker({
@@ -124,17 +120,26 @@ define([
                     previous: 'hp-icon hp-fw hp-chevron-left'
                 }
             }).on('dp.change', _.bind(function(ev) {
-                this.setMaxDate(ev.date);
+                this.datesFilterModel.setMaxDate(ev.date);
             }, this));
 
+            this.updateForDateRange();
+            this.updateMinDate();
+            this.updateMaxDate();
         },
 
-        setMinDate: function(date) {
-            this.datesFilterModel.setMinDate(date);
-        },
+        updateMinDate: dateUpdater('minDate'),
+        updateMaxDate: dateUpdater('maxDate'),
 
-        setMaxDate: function(date) {
-            this.datesFilterModel.setMaxDate(date);
+        updateForDateRange: function() {
+            var dateRange = this.datesFilterModel.get('dateRange');
+
+            // Clear all checkboxes, check selected
+            this.$('.date-filters-list i').addClass('hide');
+            this.$('[data-id=\'' + dateRange + '\'] i').removeClass('hide');
+
+            // If custom show custom options
+            this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== DatesFilterModel.dateRange.custom);
         }
     });
 

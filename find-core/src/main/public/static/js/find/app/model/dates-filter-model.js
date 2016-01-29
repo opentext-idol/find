@@ -31,7 +31,14 @@ define([
                 });
             });
 
-            this.set(this.queryModel.pick('minDate', 'maxDate'));
+            this.customMinDate = this.queryModel.get('minDate') || undefined;
+            this.customMaxDate = this.queryModel.get('minDate') || undefined;
+
+            this.set({
+                dateRange: (this.customMinDate || this.customMaxDate) ? dateRange.custom : null,
+                minDate: this.customMinDate,
+                maxDate: this.customMaxDate
+            });
         },
 
         setDateRange: function(range) {
