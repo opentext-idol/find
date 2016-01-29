@@ -107,7 +107,6 @@ define([
             },
             'click .preview-mode [data-reference]': function(e) {
                 var $target = $(e.currentTarget);
-                var selectedDocument = this.documentsCollection.find(function(model){return model.get('reference') === $target.data('reference')});
 
                 if ($target.hasClass('selected-document')) {
                     //disable preview mode
@@ -119,41 +118,7 @@ define([
                     //enable/choose another preview view
                     this.togglePreviewMode(true);
 
-                    //TODO: pull out into a function
-                    this.$('.main-results-container').removeClass('selected-document');
-                    $target.addClass('selected-document');
-
-                    this.$('.preview-mode-contents').removeClass('hide');
-                    this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
-
-                    //render of the actual view server stuff
-                    var src = viewClient.getHref(selectedDocument.get('reference'), selectedDocument.get('index'), selectedDocument.get('domain'));
-
-                    var contentType = selectedDocument.get('contentType') || '';
-
-                    var media = _.find(mediaTypes, function(mediaType) {
-                        return contentType.indexOf(mediaType) === 0;
-                    });
-
-                    var url = selectedDocument.get('url');
-
-                    var args = {};
-
-                    if (media && url) {
-                        args = {
-                            model: selectedDocument,
-                            media: media,
-                            url: url,
-                            offset: selectedDocument.get('offset')
-                        };
-                    } else {
-                        args = {
-                            src: src,
-                            model: selectedDocument
-                        };
-                    }
-
-                    this.previewModeView.renderView(args);
+                    this.populatePreview($target);
                 }
             },
             'click .close-preview-mode': function() {
@@ -598,10 +563,49 @@ define([
         },
 
         checkScroll: function() {
-                var triggerPoint = 500;
-                if (this.documentsCollection.size() > 0 && this.queryModel.get('queryText') && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
-                    this.infiniteScroll();
-                }
+            var triggerPoint = 500;
+            if (this.documentsCollection.size() > 0 && this.queryModel.get('queryText') && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
+                this.infiniteScroll();
             }
+        },
+
+        populatePreview: function ($target) {
+            var selectedDocument = this.documentsCollection.find(function(model){return model.get('reference') === $target.data('reference')});
+
+            this.$('.main-results-container').removeClass('selected-document');
+            $target.addClass('selected-document');
+
+            this.$('.preview-mode-contents').removeClass('hide');
+            this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
+
+            //render of the actual view server stuff
+            var src = viewClient.getHref(selectedDocument.get('reference'), selectedDocument.get('index'), selectedDocument.get('domain'));
+
+            var contentType = selectedDocument.get('contentType') || '';
+
+            var media = _.find(mediaTypes, function (mediaType) {
+                return contentType.indexOf(mediaType) === 0;
+            });
+
+            var url = selectedDocument.get('url');
+
+            var args = {};
+
+            if (media && url) {
+                args = {
+                    model: selectedDocument,
+                    media: media,
+                    url: url,
+                    offset: selectedDocument.get('offset')
+                };
+            } else {
+                args = {
+                    src: src,
+                    model: selectedDocument
+                };
+            }
+
+            this.previewModeView.renderView(args);
+        }
     });
 });
