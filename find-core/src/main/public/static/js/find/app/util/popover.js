@@ -34,6 +34,8 @@ define([
             // popover openings. The .popover-content-inner element will be destroyed each time, so we don't have to track
             // the state ourselves.
             callback($target.siblings('.popover').find('.popover-content-inner'), $target);
+        }).on('click', function(e) {
+            e.stopPropagation();
         });
     };
 

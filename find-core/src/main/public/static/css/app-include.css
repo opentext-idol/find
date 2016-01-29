@@ -1045,6 +1045,11 @@ input:-moz-placeholder::before {
     margin-top: 10px;
 }
 
+.preview-mode-document-title {
+    word-break: break-all;
+    white-space: normal !important;
+}
+
 #cboxLoadedContent .table > tbody > tr > th,
 #cboxLoadedContent .table > tbody > tr > td {
     border-top: 0;

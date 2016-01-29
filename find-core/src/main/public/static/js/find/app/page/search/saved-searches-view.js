@@ -12,34 +12,6 @@ define([
 
         template: _.template(template),
 
-        events: {
-            //TODO: we need to move this into saved-search-options when we merge with dev
-            'click .preview-mode-button': function() {
-                $('.right-side-container').toggle();
-                $('.preview-mode-wrapper').toggleClass('hide');
-                $('.main-results-content').toggleClass('col-md-6 preview-mode');
-                $('.main-results-container').removeClass('selected-document');
-                $('.results-view-container .tab-pane').toggleClass('row');
-
-                $('.preview-mode-button i').toggleClass('hp-show-preview hp-hide-preview');
-                $('.preview-mode-button').toggleClass('pressed-down');
-
-                $('.results-view-type-list .loading-spinner').toggleClass('preview-mode-loading');
-
-                //when we turn off preview mode, preview div gets 'hide' class and we need to reset its elements
-                var hiddenPreviewModeWrapper = $('.preview-mode-wrapper.hide');
-
-                //showing placeholder again
-                hiddenPreviewModeWrapper.find('.no-document-selected-placeholder').removeClass('hide');
-
-                //hiding and clearing the preview document's divs for future re-population
-                hiddenPreviewModeWrapper.find('.preview-mode-contents').addClass('hide');
-                hiddenPreviewModeWrapper.find('.preview-mode-document-title').empty();
-                hiddenPreviewModeWrapper.find('.preview-mode-metadata').empty();
-                hiddenPreviewModeWrapper.find('.preview-mode-document').empty();
-            }
-        },
-
         initialize: function (options) {
             this.collection = options.savedSearchesCollection;
 

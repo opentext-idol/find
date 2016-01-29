@@ -107,45 +107,58 @@ define([
             },
             'click .preview-mode [data-reference]': function(e) {
                 var $target = $(e.currentTarget);
-
-                //getting currently selected document model
                 var selectedDocument = this.documentsCollection.find(function(model){return model.get('reference') === $target.data('reference')});
 
-                //preventing multiple select
-                this.$('.main-results-container').removeClass('selected-document');
-                $target.addClass('selected-document');
+                if ($target.hasClass('selected-document')) {
+                    //disable preview mode
+                    this.togglePreviewMode(false);
 
-                this.$('.no-document-selected-placeholder').addClass('hide');
-                this.$('.preview-mode-contents').removeClass('hide');
-                this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
-
-                var src = viewClient.getHref(selectedDocument.get('reference'), selectedDocument.get('index'), selectedDocument.get('domain'));
-
-                var contentType = selectedDocument.get('contentType') || '';
-
-                var media = _.find(mediaTypes, function(mediaType) {
-                    return contentType.indexOf(mediaType) === 0;
-                });
-
-                var url = selectedDocument.get('url');
-
-                var args = {};
-
-                if (media && url) {
-                    args = {
-                        model: selectedDocument,
-                        media: media,
-                        url: url,
-                        offset: selectedDocument.get('offset')
-                    };
+                    //resetting selected-document class
+                    this.$('.main-results-container').removeClass('selected-document');
                 } else {
-                    args = {
-                        src: src,
-                        model: selectedDocument
-                    };
-                }
+                    //enable/choose another preview view
+                    this.togglePreviewMode(true);
 
-                this.previewModeView.renderView(args);
+                    //TODO: pull out into a function
+                    this.$('.main-results-container').removeClass('selected-document');
+                    $target.addClass('selected-document');
+
+                    this.$('.preview-mode-contents').removeClass('hide');
+                    this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
+
+                    //render of the actual view server stuff
+                    var src = viewClient.getHref(selectedDocument.get('reference'), selectedDocument.get('index'), selectedDocument.get('domain'));
+
+                    var contentType = selectedDocument.get('contentType') || '';
+
+                    var media = _.find(mediaTypes, function(mediaType) {
+                        return contentType.indexOf(mediaType) === 0;
+                    });
+
+                    var url = selectedDocument.get('url');
+
+                    var args = {};
+
+                    if (media && url) {
+                        args = {
+                            model: selectedDocument,
+                            media: media,
+                            url: url,
+                            offset: selectedDocument.get('offset')
+                        };
+                    } else {
+                        args = {
+                            src: src,
+                            model: selectedDocument
+                        };
+                    }
+
+                    this.previewModeView.renderView(args);
+                }
+            },
+            'click .close-preview-mode': function() {
+                this.togglePreviewMode(false);
+                this.$('.main-results-container').removeClass('selected-document');
             }
         },
 
@@ -167,6 +180,30 @@ define([
             this.previewModeView = new PreviewModeView();
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
+        },
+
+        togglePreviewMode: function(previewMode) {
+            $('.right-side-container').toggle(!previewMode);
+            $('.preview-mode-wrapper').toggleClass('hide', !previewMode);
+
+            //making main results container smaller or bigger
+            this.$('.main-results-content').toggleClass('col-md-6', previewMode);
+
+            //aligning middle and right container
+            this.$('.results-view-container .tab-pane').toggleClass('row', previewMode);
+
+            //aligning loading container in the middle
+            $('.results-view-type-list .loading-spinner').toggleClass('preview-mode-loading', previewMode);
+
+            if(!previewMode) {
+                var hiddenPreviewModeWrapper = this.$('.preview-mode-wrapper.hide');
+
+                //hiding and clearing the preview document's divs for future re-population
+                hiddenPreviewModeWrapper.find('.preview-mode-document-title').empty();
+                hiddenPreviewModeWrapper.find('.preview-mode-metadata').empty();
+                hiddenPreviewModeWrapper.find('.preview-mode-document').empty();
+            }
+
         },
 
         refreshResults: function() {
