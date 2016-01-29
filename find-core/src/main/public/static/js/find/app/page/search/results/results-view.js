@@ -199,7 +199,7 @@ define([
 
             this.$loadingSpinner = $(this.loadingTemplate);
 
-            this.$el.append(this.$loadingSpinner);
+            this.$el.find('.results').after(this.$loadingSpinner);
 
             this.sortView.setElement(this.$('.sort-container')).render();
             this.previewModeView.setElement(this.$('.preview-mode-container')).render();
