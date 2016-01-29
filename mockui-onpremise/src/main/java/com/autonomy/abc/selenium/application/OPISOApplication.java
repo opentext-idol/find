@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.application;
 
 import com.autonomy.abc.selenium.config.OPUserConfigParser;
 import com.autonomy.abc.selenium.config.UserConfigParser;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
@@ -10,6 +11,21 @@ import org.openqa.selenium.WebDriver;
 
 
 public class OPISOApplication extends SearchOptimizerApplication<OPElementFactory> {
+    private Window window;
+    private OPElementFactory factory;
+
+    @Override
+    public OPElementFactory elementFactory() {
+        return factory;
+    }
+
+    @Override
+    public Application<OPElementFactory> inWindow(Window window) {
+        this.window = window;
+        this.factory = createElementFactory(window.getSession().getDriver());
+        return this;
+    }
+
     @Override
     public OPElementFactory createElementFactory(WebDriver driver) {
         return new OPElementFactory(driver);
