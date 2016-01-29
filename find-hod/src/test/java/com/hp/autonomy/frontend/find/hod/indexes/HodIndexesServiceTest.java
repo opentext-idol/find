@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.hod.indexes;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.IodConfig;
+import com.hp.autonomy.frontend.find.hod.test.HodUnitTestUtils;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
 import com.hp.autonomy.hod.client.api.resource.Resource;
@@ -17,8 +18,6 @@ import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.hod.sso.HodAuthentication;
-import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.hod.fields.IndexFieldsService;
@@ -43,23 +42,12 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HodIndexesServiceTest {
-    public static final String SAMPLE_DOMAIN = "SomeDomain";
-
     private static SecurityContext existingSecurityContext;
 
     @BeforeClass
     public static void init() {
         existingSecurityContext = SecurityContextHolder.getContext();
-
-        final SecurityContext securityContext = mock(SecurityContext.class);
-        final HodAuthentication hodAuthentication = mock(HodAuthentication.class);
-        final HodAuthenticationPrincipal hodAuthenticationPrincipal = mock(HodAuthenticationPrincipal.class);
-        final ResourceIdentifier resourceIdentifier = mock(ResourceIdentifier.class);
-        when(resourceIdentifier.getDomain()).thenReturn(SAMPLE_DOMAIN);
-        when(hodAuthenticationPrincipal.getApplication()).thenReturn(resourceIdentifier);
-        when(hodAuthentication.getPrincipal()).thenReturn(hodAuthenticationPrincipal);
-        when(securityContext.getAuthentication()).thenReturn(hodAuthentication);
-        SecurityContextHolder.setContext(securityContext);
+        HodUnitTestUtils.mockSpringSecurityContext();
     }
 
     @AfterClass
@@ -88,7 +76,7 @@ public class HodIndexesServiceTest {
         final Database privateDatabase = new Database.Builder().setName("Database1").build();
         final Database privateDatabase2 = new Database.Builder().setName("Database2").build();
         final Database publicDatabase = new Database.Builder().setName("PublicDatabase1").setIsPublic(true).build();
-        when(databasesService.getDatabases(SAMPLE_DOMAIN)).thenReturn(new HashSet<>(Arrays.asList(privateDatabase, privateDatabase2, publicDatabase)));
+        when(databasesService.getDatabases(HodUnitTestUtils.SAMPLE_DOMAIN)).thenReturn(new HashSet<>(Arrays.asList(privateDatabase, privateDatabase2, publicDatabase)));
     }
 
     @Test

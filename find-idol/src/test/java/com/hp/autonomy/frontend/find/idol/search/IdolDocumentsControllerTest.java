@@ -14,7 +14,7 @@ import org.junit.Test;
 public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, SearchResult, AciErrorException> {
     @Before
     public void setUp() {
-        documentsController = new IdolDocumentsController(documentsService, queryRestrictionsBuilder);
+        documentsController = new IdolDocumentsController(documentsService, new IdolQueryRestrictionsBuilder());
         databaseType = String.class;
     }
 

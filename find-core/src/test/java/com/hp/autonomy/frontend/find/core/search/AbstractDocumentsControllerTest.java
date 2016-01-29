@@ -29,9 +29,6 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, R 
     @Mock
     protected DocumentsService<S, R, E> documentsService;
 
-    @Mock
-    protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
-
     protected DocumentsController<S, R, E> documentsController;
     protected Class<S> databaseType;
 

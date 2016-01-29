@@ -13,7 +13,6 @@ import org.junit.Before;
 public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<QsElement, String, AciErrorException> {
     @Before
     public void setUp() {
-        relatedConceptsController = new IdolRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilder);
-        databaseType = String.class;
+        relatedConceptsController = new IdolRelatedConceptsController(relatedConceptsService, new IdolQueryRestrictionsBuilder());
     }
 }

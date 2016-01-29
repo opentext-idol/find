@@ -9,36 +9,31 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.typeahead.GetSuggestionsFailedException;
 import com.hp.autonomy.frontend.find.core.typeahead.TypeAheadService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-@Primary
+@Service("typeAheadService")
 public class IdolTypeAheadService implements TypeAheadService {
-    private final ConfigService<IdolFindConfig> configService;
-    private final TermExpandTypeAheadService termExpandService;
-    private final QmsTypeAheadService qmsService;
+    private final ConfigService<? extends HavenSearchCapable> configService;
+    private final TypeAheadService termExpandService;
+    private final TypeAheadService qmsService;
 
     @Autowired
     public IdolTypeAheadService(
-            final ConfigService<IdolFindConfig> configService,
-            final TermExpandTypeAheadService termExpandService,
-            final QmsTypeAheadService qmsService
+            final ConfigService<? extends HavenSearchCapable> configService,
+            final TypeAheadService termExpandTypeAheadService,
+            final TypeAheadService qmsTypeAheadService
     ) {
         this.configService = configService;
-        this.termExpandService = termExpandService;
-        this.qmsService = qmsService;
+        termExpandService = termExpandTypeAheadService;
+        qmsService = qmsTypeAheadService;
     }
 
     @Override
-    public List<String> getSuggestions(final String text) throws GetSuggestionsFailedException{
-        if (configService.getConfig().getQueryManipulation().isEnabled()) {
-            return qmsService.getSuggestions(text);
-        } else {
-            return termExpandService.getSuggestions(text);
-        }
+    public List<String> getSuggestions(final String text) throws GetSuggestionsFailedException {
+        return configService.getConfig().getQueryManipulation().isEnabled() ? qmsService.getSuggestions(text) : termExpandService.getSuggestions(text);
     }
 }

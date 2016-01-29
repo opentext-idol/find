@@ -17,7 +17,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, ResourceIdentifier, HodErrorException> {
     @Before
     public void setUp() {
-        relatedConceptsController = new HodRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilder);
-        databaseType = ResourceIdentifier.class;
+        relatedConceptsController = new HodRelatedConceptsController(relatedConceptsService, new HodQueryRestrictionsBuilder());
     }
 }

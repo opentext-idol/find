@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.typeahead;
 
 import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.typeahead.GetSuggestionsFailedException;
 import com.hp.autonomy.frontend.find.core.typeahead.TypeAheadConstants;
@@ -24,17 +25,19 @@ import java.util.List;
 
 @Service
 public class TermExpandTypeAheadService implements TypeAheadService {
-    private final GetSuggestionsAciExecutor<TermExpandResponseData> executor;
+    private final GetSuggestionsAciExecutor executor;
+    private final AciService contentAciService;
+    private final Processor<TermExpandResponseData> processor;
 
     @Autowired
     public TermExpandTypeAheadService(
+            final GetSuggestionsAciExecutor executor,
             final AciService contentAciService,
             final AciResponseJaxbProcessorFactory processorFactory
     ) {
-        this.executor = new GetSuggestionsAciExecutor<>(
-                contentAciService,
-                processorFactory.createAciResponseProcessor(TermExpandResponseData.class)
-        );
+        this.executor = executor;
+        this.contentAciService = contentAciService;
+        processor = processorFactory.createAciResponseProcessor(TermExpandResponseData.class);
     }
 
     @Override
@@ -46,7 +49,7 @@ public class TermExpandTypeAheadService implements TypeAheadService {
         parameters.put(TermExpandParams.Type.name(), ExpandTypeParam.DocOccs);
         parameters.put(TermExpandParams.Text.name(), text);
 
-        final TermExpandResponseData response = executor.executeAction(parameters);
+        final TermExpandResponseData response = executor.executeAction(contentAciService, processor, parameters);
         final List<String> output = new LinkedList<>();
 
         for (final TermExpandResponseData.Term term : response.getTerm()) {
