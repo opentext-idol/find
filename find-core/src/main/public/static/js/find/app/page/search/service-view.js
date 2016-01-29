@@ -81,10 +81,13 @@ define([
             var initialSelectedIndexes;
             var savedSelectedIndexes = this.savedSearchModel.toSelectedIndexes();
 
-            if (savedSelectedIndexes.length  === 0) {
+            if (savedSelectedIndexes.length === 0) {
                 if (this.indexesCollection.isEmpty()) {
-                    // TODO: Async loading of indexes?
                     initialSelectedIndexes = [];
+
+                    this.listenToOnce(this.indexesCollection, 'sync', function() {
+                        this.selectedIndexesCollection.set(selectInitialIndexes(this.indexesCollection));
+                    });
                 } else {
                     initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
                 }
