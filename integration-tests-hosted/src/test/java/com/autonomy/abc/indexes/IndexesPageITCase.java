@@ -62,7 +62,7 @@ public class IndexesPageITCase extends HostedTestBase {
     public void setUp() {
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
         indexesPage = getElementFactory().getIndexesPage();
-        indexService = getApplication().createIndexService(getElementFactory());
+        indexService = getApplication().indexService();
     }
 
     @Test
@@ -81,7 +81,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1720")
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
-        ConnectionService cs = getApplication().createConnectionService(getElementFactory());
+        ConnectionService cs = getApplication().connectionService();
         WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc", Index.DEFAULT).withDepth(2);
 
         //Create connection
@@ -110,7 +110,7 @@ public class IndexesPageITCase extends HostedTestBase {
     public void testAttemptingToDeleteConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
-        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
+        ConnectionService connectionService = getApplication().connectionService();
 
         //Create connector; index will be automatically set to 'bbc'
         WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
@@ -141,13 +141,13 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1626")
     public void testDeletingIndexDoesNotInvalidatePromotions(){
         //Create connection - attached to the same index (we need it to have data for a promotion)
-        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
+        ConnectionService connectionService = getApplication().connectionService();
         WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
 
         connectionService.setUpConnection(connector);
 
         //Create a promotion (using the index created)
-        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        PromotionService promotionService = getApplication().promotionService();
         PinToPositionPromotion ptpPromotion = new PinToPositionPromotion(1,"trigger");
         SearchQuery search = new SearchQuery("bbc").withFilter(new IndexFilter(connector.getIndex()));
 
@@ -180,7 +180,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1544")
     public void testNoInvalidIndexNameNotifications(){
-        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
+        ConnectionService connectionService = getApplication().connectionService();
 
         Connector hassleRecords = new WebConnector("http://www.hasslerecords.com","hassle records").withDepth(1);
         String errorMessage = "Index name invalid";
@@ -270,8 +270,8 @@ public class IndexesPageITCase extends HostedTestBase {
     @After
     public void tearDown(){
         try {
-            getApplication().createConnectionService(getElementFactory()).deleteAllConnections(false);
-            getApplication().createIndexService(getElementFactory()).deleteAllIndexes();
+            getApplication().connectionService().deleteAllConnections(false);
+            getApplication().indexService().deleteAllIndexes();
         } catch (Exception e) {
             LOGGER.warn("Failed to tear down");
         }

@@ -28,7 +28,7 @@ public class ConnectionsCoreITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        connectionService = getApplication().createConnectionService(getElementFactory());
+        connectionService = getApplication().connectionService();
     }
 
     @After

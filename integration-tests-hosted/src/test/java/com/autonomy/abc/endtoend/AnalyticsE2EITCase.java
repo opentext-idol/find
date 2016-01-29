@@ -55,8 +55,8 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         List<String> triggers = Arrays.asList("trigger1", "trigger2", "trigger3");
         List<Integer> searchOrder = Arrays.asList(0, 1, 0, 1, 0, 2);
 
-        searchService = getApplication().createSearchService(getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchService = getApplication().searchService();
+        promotionService = getApplication().promotionService();
 
         deleteAllKeywords();
         for (int i=0; i < searchTerms.size(); i++) {

@@ -47,7 +47,7 @@ public class AnalyticsITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        searchService = getApplication().createSearchService(getElementFactory());
+        searchService = getApplication().searchService();
 
         goToAnalytics();
     }
@@ -152,7 +152,7 @@ public class AnalyticsITCase extends HostedTestBase {
     public void testExistingPromotion() {
         final StaticPromotion promotion = new StaticPromotion("title", "body", "trigger");
 
-        HSOPromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        HSOPromotionService promotionService = getApplication().promotionService();
 
         try {
             promotionService.goToPromotions().getPromotionLinkWithTitleContaining(promotion.getTrigger());
@@ -184,7 +184,7 @@ public class AnalyticsITCase extends HostedTestBase {
     public void testDeletedPromotion() {
         final StaticPromotion promotion = new StaticPromotion("title", "body", "deleted");
 
-        HSOPromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        HSOPromotionService promotionService = getApplication().promotionService();
         promotionService.setUpStaticPromotion(promotion);
         try {
             goToAnalytics();

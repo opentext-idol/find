@@ -24,7 +24,7 @@ public class IndexCoreITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        indexService = getApplication().createIndexService(getElementFactory());
+        indexService = getApplication().indexService();
     }
 
     @After

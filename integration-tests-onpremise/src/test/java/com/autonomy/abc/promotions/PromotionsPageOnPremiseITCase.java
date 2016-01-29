@@ -39,8 +39,8 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		promotionService = (OPPromotionService) getApplication().createPromotionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+		promotionService = (OPPromotionService) getApplication().promotionService();
+        searchService = getApplication().searchService();
 
 		promotionService.deleteAll();
 	}

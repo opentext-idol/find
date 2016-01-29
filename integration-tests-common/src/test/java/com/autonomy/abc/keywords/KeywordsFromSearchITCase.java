@@ -62,8 +62,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        keywordService = getApplication().createKeywordService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        keywordService = getApplication().keywordService();
+        searchService = getApplication().searchService();
 
         keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
     }

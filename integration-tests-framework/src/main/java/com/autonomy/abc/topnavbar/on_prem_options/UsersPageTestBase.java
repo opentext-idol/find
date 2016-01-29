@@ -43,7 +43,7 @@ public class UsersPageTestBase extends ABCTestBase {
 
     @Before
     public void setUp() throws MalformedURLException, InterruptedException {
-        userService = getApplication().createUserService(getElementFactory());
+        userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
     }

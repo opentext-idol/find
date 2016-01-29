@@ -44,8 +44,8 @@ public class CreateNewDynamicPromotionsITCase extends ABCTestBase {
 
     @Before
     public void setUp() throws InterruptedException {
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        promotionService = getApplication().promotionService();
+        searchService = getApplication().searchService();
 
         promotionsPage = promotionService.deleteAll();
         searchPage = searchService.search("fox");

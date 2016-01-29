@@ -23,7 +23,6 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
@@ -50,8 +49,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Before
 	public void serviceSetUp() {
-		keywordService = getApplication().createKeywordService(getElementFactory());
-		promotionService = getApplication().createPromotionService(getElementFactory());
+		keywordService = getApplication().keywordService();
+		promotionService = getApplication().promotionService();
 	}
 
 	@Test

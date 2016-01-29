@@ -65,7 +65,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws MalformedURLException {
 		topNavBar = getElementFactory().getTopNavBar();
-		searchService = getApplication().createSearchService(getElementFactory());
+		searchService = getApplication().searchService();
 		searchPage = searchService.search("example");
 	}
 
@@ -227,7 +227,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testMultiDocPromotionDrawerExpandAndPagination() {
 		Promotion promotion = new SpotlightPromotion("boat");
 
-		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		PromotionService promotionService = getApplication().promotionService();
 		promotionService.deleteAll();
 		promotionService.setUpPromotion(promotion, "freeze", 18);
 
@@ -1032,7 +1032,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CSA-1629")
 	public void testPinToPositionPagination(){
-		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		PromotionService promotionService = getApplication().promotionService();
 
 		try {
 			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), "*", SearchPage.RESULTS_PER_PAGE + 2);

@@ -20,19 +20,19 @@ public abstract class SearchOptimizerApplication<T extends ElementFactory> imple
         FACTORY_MAP.put(ApplicationType.ON_PREM, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.application.OPISOApplication"));
     }
 
-    public abstract PromotionService createPromotionService(ElementFactory elementFactory);
+    public abstract PromotionService promotionService();
 
-    public abstract UserService createUserService(ElementFactory elementFactory);
+    public abstract UserService userService();
+
+    public KeywordService keywordService() {
+        return new KeywordService(this, elementFactory());
+    }
+
+    public SearchService searchService() {
+        return new SearchService(this, elementFactory());
+    }
 
     public abstract UserConfigParser getUserConfigParser();
-
-    public KeywordService createKeywordService(ElementFactory elementFactory) {
-        return new KeywordService(this, elementFactory);
-    }
-
-    public SearchService createSearchService(ElementFactory elementFactory) {
-        return new SearchService(this, elementFactory);
-    }
 
     public static SearchOptimizerApplication<?> ofType(ApplicationType type) {
         return FACTORY_MAP.get(type).create();

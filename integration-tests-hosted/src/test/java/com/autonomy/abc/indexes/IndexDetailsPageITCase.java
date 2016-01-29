@@ -46,7 +46,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        indexService = getApplication().createIndexService(getElementFactory());
+        indexService = getApplication().indexService();
         indexesPage = indexService.setUpIndex(indexOne);
         indexesDetailPage = indexService.goToDetails(indexOne);
     }
@@ -54,7 +54,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1643")
     public void testAssociatedConnections(){
-        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
+        ConnectionService connectionService = getApplication().connectionService();
         Connector connector = new WebConnector("http://www.bbc.co.uk", "connector", indexOne).withDuration(60);
 
         indexService.setUpIndex(indexTwo);
@@ -126,7 +126,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
 
     @After
     public void tearDown(){
-        getApplication().createConnectionService(getElementFactory()).deleteAllConnections(true);
+        getApplication().connectionService().deleteAllConnections(true);
         indexService.deleteAllIndexes();
     }
 }

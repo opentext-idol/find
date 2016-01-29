@@ -78,8 +78,8 @@ public class FindITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        keywordService = getApplication().createKeywordService(getElementFactory());
+        promotionService = getApplication().promotionService();
+        keywordService = getApplication().keywordService();
 
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());
@@ -884,7 +884,7 @@ public class FindITCase extends HostedTestBase {
     public void testAllPromotedDocumentsHaveTitles(){
         searchWindow.activate();
 
-        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        PromotionService promotionService = getApplication().promotionService();
 
         try {
             promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"), "scg-2", 10);

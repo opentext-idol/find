@@ -47,7 +47,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-        UserService userService = getApplication().createUserService(getElementFactory());
+        UserService userService = getApplication().userService();
         usersPage = userService.goToUsers();
 		userService.deleteOtherUsers();
 		usersPage.createUserButton().click();

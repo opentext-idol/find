@@ -27,8 +27,8 @@ public class KeywordsCoreITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        keywordService = getApplication().createKeywordService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        keywordService = getApplication().keywordService();
+        searchService = getApplication().searchService();
     }
 
     @After

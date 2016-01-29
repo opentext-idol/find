@@ -54,7 +54,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService = getApplication().promotionService();
 
 		promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
 		elementFactory = (OPElementFactory) getElementFactory();

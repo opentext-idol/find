@@ -21,7 +21,7 @@ public class DevelopersITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        developerService = getApplication().createDeveloperService(getElementFactory());
+        developerService = getApplication().developerService();
         developersPage = developerService.goToDevs();
     }
 

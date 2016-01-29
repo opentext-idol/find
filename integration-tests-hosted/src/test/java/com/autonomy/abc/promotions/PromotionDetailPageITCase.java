@@ -36,8 +36,8 @@ public class PromotionDetailPageITCase extends ABCTestBase {
 
     @Before
     public void setUp(){
-        searchService = getApplication().createSearchService(getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchService = getApplication().searchService();
+        promotionService = getApplication().promotionService();
     }
 
     @Test

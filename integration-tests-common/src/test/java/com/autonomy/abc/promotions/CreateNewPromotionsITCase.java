@@ -26,7 +26,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -76,8 +75,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        searchService = getApplication().createSearchService(getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchService = getApplication().searchService();
+        promotionService = getApplication().promotionService();
         promotedDocTitle = goToWizard("fox", 1).get(0);
     }
 

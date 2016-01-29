@@ -44,7 +44,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		searchService = getApplication().createSearchService(getElementFactory());
+		searchService = getApplication().searchService();
 		searchPage = searchService.search("example");
 	}
 

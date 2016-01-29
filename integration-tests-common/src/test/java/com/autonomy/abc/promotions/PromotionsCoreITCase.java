@@ -29,8 +29,8 @@ public class PromotionsCoreITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        promotionService = getApplication().promotionService();
+        searchService = getApplication().searchService();
     }
 
     @After

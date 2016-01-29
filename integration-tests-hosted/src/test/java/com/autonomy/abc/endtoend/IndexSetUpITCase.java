@@ -45,7 +45,7 @@ public class IndexSetUpITCase extends HostedTestBase {
     @Before
     public void setUp(){
         indexService = new IndexService(getApplication(), getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService = getApplication().promotionService();
 
         LOGGER.info("Will create index " + index);
         indexService.setUpIndex(index);

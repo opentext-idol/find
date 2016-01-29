@@ -36,7 +36,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        connectionService = getApplication().createConnectionService(getElementFactory());
+        connectionService = getApplication().connectionService();
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1469")
     public void testEditConnectorWithNoIndex(){
-        IndexService indexService = getApplication().createIndexService(getElementFactory());
+        IndexService indexService = getApplication().indexService();
         Index indexOne = new Index("one");
         Index indexTwo = new Index("two");
 
@@ -116,6 +116,6 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     @After
     public void tearDown(){
         connectionService.deleteAllConnections(true);
-        getApplication().createIndexService(getElementFactory()).deleteAllIndexes();
+        getApplication().indexService().deleteAllIndexes();
     }
 }

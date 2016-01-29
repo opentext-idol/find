@@ -45,7 +45,7 @@ public class PromotionService<T extends ElementFactory> extends ServiceBase<T> {
     }
 
     public List<String> setUpPromotion(Promotion promotion, SearchQuery query, int numberOfDocs) {
-        SearchPage searchPage = getApplication().createSearchService(getElementFactory()).search(query);
+        SearchPage searchPage = getApplication().searchService().search(query);
         searchPage.promoteTheseDocumentsButton().click();
         List<String> promotedDocTitles = searchPage.addToBucket(numberOfDocs);
 
