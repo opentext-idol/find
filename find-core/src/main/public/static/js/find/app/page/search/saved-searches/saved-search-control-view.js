@@ -2,74 +2,121 @@ define([
     'backbone',
     'find/app/util/array-equality',
     'find/app/page/search/saved-searches/save-search-input',
+    'find/app/model/saved-searches/saved-search-model',
+    'find/app/util/confirm-view',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle'
-], function(Backbone, arrayEquality, SaveSearchInput, template, i18n) {
+], function(Backbone, arrayEquality, SaveSearchInput, SavedSearchModel, Confirm, template, i18n) {
+
+    'use strict';
+
+    var html = _.template(template)({i18n: i18n});
 
     return Backbone.View.extend({
-        template: _.template(template),
-
         events: {
-            'click .show-save-button': function () {
-                this.model.set('showSave', !this.model.get('showSave'));
+            'click .show-save-as-button': function() {
+                this.model.set('showSaveAs', !this.model.get('showSaveAs'));
             },
-            'click .update-button': function() {
-                this.model.save();
+            'click .save-search-button': function() {
+                var attributes = SavedSearchModel.attributesFromQueryState(this.queryState);
+
+                // TODO: Handle success/error
+                this.savedSearchModel.save(attributes, {wait: true});
+            },
+            'click .saved-search-delete-option': function(e) {
+                e.preventDefault();
+
+                new Confirm({
+                    cancelClass: 'btn-default',
+                    cancelIcon: '',
+                    cancelText: i18n['app.cancel'],
+                    okText: i18n['app.delete'],
+                    okClass: 'btn-danger',
+                    okIcon: '',
+                    message: i18n['search.savedSearches.confirm.deleteMessage'](this.savedSearchModel.get('title')),
+                    title: i18n['search.savedSearches.confirm.deleteMessage.title'],
+                    hiddenEvent: 'hidden.bs.modal',
+                    okHandler: _.bind(function() {
+                        // TODO: Handle success/error
+                        this.savedSearchModel.destroy();
+                    }, this)
+                });
+            },
+            'click .search-reset-option': function(e) {
+                e.preventDefault();
+
+                new Confirm({
+                    cancelClass: 'btn-default',
+                    cancelIcon: '',
+                    cancelText: i18n['app.cancel'],
+                    okText: i18n['app.reset'],
+                    okClass: 'btn-danger',
+                    okIcon: '',
+                    message: i18n['search.savedSearches.confirm.resetMessage'](this.savedSearchModel.get('title')),
+                    title: i18n['search.savedSearches.confirm.resetMessage.title'],
+                    hiddenEvent: 'hidden.bs.modal',
+                    okHandler: _.bind(function() {
+                        this.queryState.queryTextModel.set(this.savedSearchModel.toQueryTextModelAttributes());
+                        this.queryState.queryModel.set(this.savedSearchModel.toQueryModelAttributes());
+                        this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());
+                        this.queryState.selectedParametricValues.set(this.savedSearchModel.toSelectedParametricValues());
+                    }, this)
+                });
             }
         },
 
         initialize: function(options) {
-            this.queryModel = options.queryModel;
-            this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
 
-            this.queryTextModel = options.queryTextModel;
-            this.selectedParametricValues = options.selectedParametricValues;
-            this.selectedIndexesCollection = options.selectedIndexesCollection;
+            this.queryState = {
+                queryTextModel: options.queryTextModel,
+                queryModel: options.queryModel,
+                selectedIndexes: options.selectedIndexesCollection,
+                selectedParametricValues: options.selectedParametricValues
+            };
 
-            this.createMode = this.savedSearchModel.isNew();
+            this.model = new Backbone.Model({showSaveAs: false});
 
-            this.model = new Backbone.Model({
-                showSave: false
-            });
+            this.listenTo(this.model, 'change:showSaveAs', this.updateShowSaveAsVisibility);
+            this.listenTo(this.savedSearchModel, 'change:id', this.updateShowSaveAsButtonText);
 
-            this.listenTo(this.model, 'change:showSave', function (model, showSave) {
-                this.saveSearchInput.$el.toggleClass('hide', !showSave);
-
-                this.$('.show-save-button')
-                    .toggleClass('active', showSave)
-                    .attr('aria-pressed', showSave);
-            });
-
-            this.listenTo(this.queryModel, 'change', function() {
-                this.$updateButton.toggleClass('hide', this.searchChanged());
-            });
+            this.listenTo(this.savedSearchModel, 'change', this.updateResetAndSaveControls);
+            this.listenTo(this.queryState.queryModel, 'change', this.updateResetAndSaveControls);
 
             this.saveSearchInput = new SaveSearchInput({
                 savedSearchModel: this.savedSearchModel,
-                queryModel: this.queryModel,
+                queryState: this.queryState,
                 savedSearchControlModel: this.model
             });
         },
 
         render: function() {
-            this.$el.html(this.template({
-                i18n: i18n,
-                openEditDisplayNameKey: this.createMode ? 'create': 'edit'
-            }));
+            this.$el.html(html);
 
             this.saveSearchInput.setElement(this.$('.save-search-input-container')).render();
 
-            this.$updateButton = this.$('.update-button');
+            this.updateResetAndSaveControls();
+            this.updateShowSaveAsButtonText();
+            this.updateShowSaveAsVisibility();
         },
 
-        searchChanged: function() {
-            return this.savedSearchModel.get('inputText') !== this.queryTextModel.get('inputText')
-                && arrayEquality(this.savedSearchModel.get('relatedConcepts'), this.queryTextModel.get('relatedConcepts'))
-                && arrayEquality(this.savedSearchModel.get('indexes'), this.selectedIndexesCollection.toResourceIdentifiers(), _.isEqual)
-                && arrayEquality(this.savedSearchModel.get('parametricValues'), _.map(this.selectedParametricValues, function(model) {
-                    return model.pick('field', 'value');
-                }), _.isEqual);
+        updateResetAndSaveControls: function() {
+            var hide = this.savedSearchModel.isNew() || this.savedSearchModel.equalsQueryState(this.queryState);
+            this.$('.search-reset-option, .save-search-button').toggleClass('hide', hide);
+        },
+
+        updateShowSaveAsButtonText: function() {
+            var keySuffix = (this.savedSearchModel.isNew() ? 'create' : 'edit');
+            this.$('.show-save-as-button').text(i18n['search.savedSearchControl.openEdit.' + keySuffix]);
+        },
+
+        updateShowSaveAsVisibility: function() {
+            var showSaveAs = this.model.get('showSaveAs');
+            this.saveSearchInput.$el.toggleClass('hide', !showSaveAs);
+
+            this.$('.show-save-as-button')
+                .toggleClass('active', showSaveAs)
+                .attr('aria-pressed', showSaveAs);
         }
     });
 

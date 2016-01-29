@@ -321,10 +321,6 @@ html, body {
     display: inline;
 }
 
-.saved-search-options {
-    padding: 10px;
-}
-
 .search-tabs-container {
     background-color: #EFEFEF;
     height: 51px;

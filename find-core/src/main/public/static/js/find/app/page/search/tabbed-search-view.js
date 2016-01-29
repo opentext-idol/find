@@ -85,7 +85,7 @@ define([
                 if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
-                    var queryTextModel = new QueryTextModel(savedSearchModel.pick.apply(savedSearchModel, QUERY_TEXT_MODEL_ATTRIBUTES));
+                    var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
 
                     this.serviceViews[cid] = viewData = {
                         queryTextModel: queryTextModel,
@@ -102,10 +102,10 @@ define([
                 }
 
                 addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                    this.searchModel.set(viewData.queryTextModel.pick.apply(viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES));
+                    this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
                 });
 
-                this.searchModel.set(viewData.queryTextModel.pick.apply(viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES));
+                this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
                 viewData.view.$el.removeClass('hide');
             }
         },

@@ -50,7 +50,7 @@ define([
                 // Create a tab if the user has run a search but has no open tabs
                 if (inputText && this.searchModel.get('selectedSearchCid') === null) {
                     var newSearch = new SavedSearchModel({
-                        inputText: inputText,
+                        queryText: inputText,
                         relatedConcepts: this.searchModel.get('relatedConcepts'),
                         title: i18n['search.newSearch']
                     });

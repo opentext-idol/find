@@ -14,7 +14,6 @@ define([
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/spellcheck-view',
-    'find/app/page/search/saved-searches/saved-search-options',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/selected-values-collection',
@@ -24,7 +23,7 @@ define([
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SpellCheckView,
-            SavedSearchOptions, Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, i18n, i18nIndexes, template) {
+            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -78,11 +77,12 @@ define([
             this.entityCollection = new EntityCollection();
 
             // TODO: Display name?
-            this.selectedParametricValues = new SelectedParametricValuesCollection(this.savedSearchModel.get('parametricValues'));
+            this.selectedParametricValues = new SelectedParametricValuesCollection(this.savedSearchModel.toSelectedParametricValues());
 
             var initialSelectedIndexes;
+            var savedSelectedIndexes = this.savedSearchModel.toSelectedIndexes();
 
-            if (this.savedSearchModel.get('indexes').length  === 0) {
+            if (savedSelectedIndexes.length  === 0) {
                 if (this.indexesCollection.isEmpty()) {
                     // TODO: Async loading of indexes?
                     initialSelectedIndexes = [];
@@ -90,19 +90,17 @@ define([
                     initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
                 }
             } else {
-                initialSelectedIndexes = this.savedSearchModel.get('indexes');
+                initialSelectedIndexes = savedSelectedIndexes;
             }
 
             // TODO: Check if the index still exists?
             this.selectedIndexesCollection = new IndexesCollection(initialSelectedIndexes);
 
-            this.queryModel = new QueryModel({
+            this.queryModel = new QueryModel(_.extend({
                 queryText: this.queryTextModel.makeQueryText(),
                 indexes: buildQueryModelIndexes(this.selectedIndexesCollection),
-                fieldText: this.selectedParametricValues.toFieldTextNode() || null,
-                minDate: this.savedSearchModel.get('minDate'),
-                maxDate: this.savedSearchModel.get('maxDate')
-            });
+                fieldText: this.selectedParametricValues.toFieldTextNode() || null
+            }, this.savedSearchModel.toQueryModelAttributes()));
 
             this.listenTo(this.queryTextModel, 'change', function() {
                 this.queryModel.set('queryText', this.queryTextModel.makeQueryText());
@@ -132,10 +130,6 @@ define([
                 selectedParametricValues: this.selectedParametricValues
             });
             
-            this.savedSearchOptions = new SavedSearchOptions({
-                model: this.savedSearchModel
-            });
-
             this.resultsViewContainer = new this.ResultsViewContainer({
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
@@ -192,12 +186,11 @@ define([
             this.$el.html(html);
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
-            this.savedSearchControlView.setElement(this.$('.saved-search-controls-container')).render();
+            this.savedSearchControlView.setElement(this.$('.search-options-container')).render();
             this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
             this.parametricView.setElement(this.$('.parametric-container')).render();
             this.dateViewWrapper.setElement(this.$('.date-container')).render();
             this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
-            this.savedSearchOptions.setElement(this.$('.saved-search-options')).render();
 
             this.relatedConceptsViewWrapper.render();
 

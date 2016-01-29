@@ -1,11 +1,16 @@
-<div class="saved-search-control-view">
-    <div>
-        <button type="button" class="btn button-primary update-button hide" aria-pressed="false" autocomplete="off">
-            <%- i18n['search.savedSearchControl.update'] %>
-        </button>
-        <button type="button" class="btn button-primary show-save-button" aria-pressed="false" autocomplete="off">
-            <%- i18n['search.savedSearchControl.openEdit.' + openEditDisplayNameKey] %>
-        </button>
-    </div>
-    <div class="save-search-input-container hide"></div>
+<div>
+    <button type="button" class="btn button-primary save-search-button hide" aria-pressed="false" autocomplete="off">
+        <%- i18n['search.savedSearchControl.update'] %>
+    </button>
+    <button type="button" class="btn button-primary show-save-as-button" aria-pressed="false" autocomplete="off"></button>
+</div>
+<div class="save-search-input-container hide"></div>
+<div class="btn-group">
+    <button data-toggle="dropdown" class="btn btn-icon btn-circular button-primary btn-lg dropdown-toggle" aria-expanded="false" id="btnDropDown">
+        <i class="hp-icon hp-splitter hp-rotate-90"></i>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="btnDropDown">
+        <li class="search-reset-option hide"><a href><%-i18n['app.reset']%></a></li>
+        <li class="saved-search-delete-option"><a href><%-i18n['app.delete']%></a></li>
+    </ul>
 </div>
