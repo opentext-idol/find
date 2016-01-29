@@ -27,6 +27,8 @@
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
         <haven.search.components.version>0.3.1</haven.search.components.version>
+        <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
+        <npm.binExtension/>
     </properties>
 
     <build>
@@ -91,18 +93,20 @@
 
     <profiles>
         <profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <id>dev</id>
-            <properties>
-                <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
-            </properties>
-        </profile>
-        <profile>
             <id>production</id>
             <properties>
                 <static-resources-dir>${project.build.directory}/webapp</static-resources-dir>
+            </properties>
+        </profile>
+        <profile>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <id>windows</id>
+            <properties>
+                <npm.binExtension>.cmd</npm.binExtension>
             </properties>
         </profile>
     </profiles>

@@ -224,6 +224,13 @@ html, body {
     text-align: center;
 }
 
+
+/*sizes determined by HPE Elements .middle-box*/
+.middle-box-wrapper {
+    height: 400px;
+    width: 300px;
+}
+
 /* find 2.0 */
 .main-content {
     background-color: white;
@@ -327,9 +334,9 @@ html, body {
 
 .find-logo-small {
     background: url('../img/Find_Logo_sml.png') no-repeat;
-    background-size: 210px 28px;
-    width: 210px;
-    height: 28px;
+    background-size: 100px 20px;
+    width: 100px;
+    height: 20px;
 }
 
 .find-logo-small.reduced {
@@ -338,8 +345,8 @@ html, body {
 
 .find-logo-large {
     background-image: url('../img/Find_Logo_lge.png');
-    width: 500px;
-    height: 70px;
+    width: 240px;
+    height: 45px;
     display: inline-block;
     vertical-align: middle;
 }
@@ -646,7 +653,7 @@ input.find-input {
     font-weight: lighter;
 }
 
-.selected-related-concepts {
+.selected-related-concept {
     padding: 2px;
     font-size: 100%;
     font-weight: normal;

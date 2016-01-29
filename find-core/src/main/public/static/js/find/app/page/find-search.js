@@ -51,10 +51,7 @@ define([
                 vent.navigate(searchUrl);
             });
 
-            this.inputView = new InputView({
-                queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
-            });
+            this.inputView = new InputView({model: this.queryTextModel});
 
             this.indexesCollection = new IndexesCollection();
             this.indexesCollection.fetch();
@@ -65,13 +62,12 @@ define([
                 indexesCollection: this.indexesCollection
             });
 
-            router.on('route:search', function (text, concepts) {
-                var attributes = {
+            router.on('route:search', function(text, concepts) {
+                this.queryTextModel.set({
                     inputText: text || '',
                     relatedConcepts: concepts ? concepts.split('/') : []
-                };
+                });
 
-                this.queryTextModel.setInputText(attributes);
                 this.$('.query-service-view-container').removeClass('hide');
                 this.$('.suggest-service-view-container').addClass('hide');
             }, this);

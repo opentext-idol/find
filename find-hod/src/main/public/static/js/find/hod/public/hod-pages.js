@@ -5,8 +5,9 @@
 
 define([
     'find/app/find-pages',
-    'find/hod/app/page/hod-find-search'
-], function(FindPages, FindSearch) {
+    'find/hod/app/page/hod-find-search',
+    'find/app/page/default/default-page'
+], function(FindPages, FindSearch, DefaultPage) {
     'use strict';
 
     return FindPages.extend({
@@ -16,6 +17,11 @@ define([
                 {
                     constructor: FindSearch
                     , pageName: 'search'
+                },
+                {
+                    constructor: DefaultPage
+                    , defaultPage: true
+                    , pageName: 'default'
                 }
             ];
         }
