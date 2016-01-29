@@ -280,7 +280,6 @@ define([
             });
 
             this.listenTo(this.queryModel, 'change', this.refreshResults);
-            this.listenTo(this.queryTextModel, 'refresh', this.refreshResults);
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 if (!this.entityCollection.isEmpty()) {

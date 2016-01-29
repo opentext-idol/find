@@ -7,10 +7,6 @@ define([
             selectedSearchCid: null,
             inputText: '',
             relatedConcepts: []
-        },
-
-        refresh: function() {
-            this.trigger('refresh');
         }
     });
 

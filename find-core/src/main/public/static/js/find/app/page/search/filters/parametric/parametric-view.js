@@ -109,8 +109,6 @@ define([
                 }
             }
 
-            this.listenTo(this.queryTextModel, 'refresh', fetch);
-
             this.listenTo(this.queryModel, 'change', function() {
                 if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'])) {
                     fetch.call(this);
