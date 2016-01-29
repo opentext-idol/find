@@ -25,20 +25,6 @@ public class Predicates {
         return true;
     }
 
-    public static ExpectedCondition<Boolean> invisibilityOfAll(final List<? extends WebElement> elements) {
-        return new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver input) {
-                return areAllInvisible(elements);
-            }
-
-            @Override
-        public String toString() {
-                return "elements " + elements + " to no longer be visible";
-            }
-        };
-    }
-
     public static ExpectedCondition<Boolean> invisibilityOfAllElementsLocated(final By locator) {
         return new ExpectedCondition<Boolean>() {
             @Override
