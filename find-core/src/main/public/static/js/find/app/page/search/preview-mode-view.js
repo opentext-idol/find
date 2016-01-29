@@ -21,6 +21,22 @@ define([
             this.$el.html(this.template({
                 i18n:i18n
             }));
+
+            var offset     = this.$el.offset();
+            var topPadding = 15;
+
+            var $main = $('.main-content');
+            $main.scroll(_.bind(function() {
+                if ($main.scrollTop() > offset.top) {
+                    this.$el.stop().animate({
+                        marginTop: $main.scrollTop() - offset.top + topPadding
+                    });
+                } else {
+                    this.$el.stop().animate({
+                        marginTop: 0
+                    });
+                }
+            }, this));
         },
 
         renderView: function(args) {
