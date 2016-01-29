@@ -6,7 +6,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/input-view.html',
     'typeahead'
-], function(Backbone, $, _, stringBlank, i18n, template) {
+], function (Backbone, $, _, stringBlank, i18n, template) {
 
     var html = _.template(template)({i18n: i18n});
     var relatedConceptsTemplate = _.template('<span class="selected-related-concept" data-id="<%-concept%>"><%-concept%> ' +
@@ -15,15 +15,15 @@ define([
 
     return Backbone.View.extend({
         events: {
-            'submit .find-form': function(event) {
+            'submit .find-form': function (event) {
                 event.preventDefault();
                 this.search(this.$input.typeahead('val'));
                 this.$input.typeahead('close');
             },
-            'typeahead:select': function() {
+            'typeahead:select': function () {
                 this.search(this.$input.typeahead('val'));
             },
-            'click .concept-remove-icon': function(e) {
+            'click .concept-remove-icon': function (e) {
                 var id = $(e.currentTarget).closest("span").attr('data-id');
 
                 this.removeRelatedConcept(id);
@@ -35,7 +35,7 @@ define([
             this.listenTo(this.model, 'change:relatedConcepts', this.updateRelatedConcepts);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(html);
             this.$input = this.$('.find-input');
             this.$additionalConcepts = this.$('.additional-concepts');
@@ -48,14 +48,14 @@ define([
             }, {
                 async: true,
                 limit: 7,
-                source: function(query, sync, async) {
+                source: function (query, sync, async) {
                     // Don't look for suggestions if the query is blank
                     if (stringBlank(query)) {
                         sync([]);
                     } else {
                         $.get('../api/public/typeahead', {
                             text: query
-                        }, function(results) {
+                        }, function (results) {
                             async(results);
                         });
                     }
@@ -66,7 +66,7 @@ define([
             this.updateRelatedConcepts();
         },
 
-        search: function(query) {
+        search: function (query) {
             if (query === this.model.get('inputText')) {
                 this.model.refresh();
             } else {
@@ -85,11 +85,11 @@ define([
             }
         },
 
-        updateRelatedConcepts: function() {
+        updateRelatedConcepts: function () {
             if (this.$additionalConcepts) {
                 this.$additionalConcepts.empty();
 
-                _.each(this.model.get('relatedConcepts'), function(concept) {
+                _.each(this.model.get('relatedConcepts'), function (concept) {
                     this.$additionalConcepts.append(relatedConceptsTemplate({
                         concept: concept
                     }))
@@ -99,7 +99,7 @@ define([
             }
         },
 
-        removeRelatedConcept: function(id){
+        removeRelatedConcept: function (id) {
             var newConcepts = _.without(this.model.get('relatedConcepts'), id);
 
             this.model.set('relatedConcepts', newConcepts);

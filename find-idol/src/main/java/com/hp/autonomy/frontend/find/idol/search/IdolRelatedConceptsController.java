@@ -8,7 +8,10 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolRelatedConceptsRequest;
 import com.hp.autonomy.types.idol.QsElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,8 +20,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
 public class IdolRelatedConceptsController extends RelatedConceptsController<QsElement, String, AciErrorException> {
+    public static final int QUERY_SUMMARY_LENGTH = 50;
+
     @Autowired
     public IdolRelatedConceptsController(final RelatedConceptsService<QsElement, String, AciErrorException> relatedConceptsService, final QueryRestrictionsBuilder<String> queryRestrictionsBuilder) {
         super(relatedConceptsService, queryRestrictionsBuilder);
+    }
+
+    @Override
+    protected RelatedConceptsRequest<String> buildRelatedConceptsRequest(final QueryRestrictions<String> queryRestrictions) {
+        return new IdolRelatedConceptsRequest.Builder()
+                .setQueryRestrictions(queryRestrictions)
+                .setQuerySummaryLength(QUERY_SUMMARY_LENGTH)
+                .build();
     }
 }

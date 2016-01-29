@@ -138,13 +138,27 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-hod</artifactId>
-            <version>0.1.0</version>
+            <version>${haven.search.components.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>find-core</artifactId>
             <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>haven-search-components-core</artifactId>
+            <version>${haven.search.components.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>haven-search-components-hod</artifactId>
+            <version>${haven.search.components.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

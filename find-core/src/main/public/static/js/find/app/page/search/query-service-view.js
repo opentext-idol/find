@@ -1,3 +1,8 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'jquery',
@@ -6,24 +11,23 @@ define([
     'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
-    'find/app/model/search-filters-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
-    'find/app/page/search/results/results-view',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/sort-view',
+    'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/results-number-view',
     'find/app/page/search/spellcheck-view',
-    'find/app/page/search/filters/indexes/indexes-view',
     'find/app/util/collapsible',
+    'find/app/util/database-name-resolver',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
-    'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsView, RelatedConceptsView, SortView, ResultsNumberView, SpellCheckView,
-            IndexesView, Collapsible, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
+    'text!find/templates/app/page/search/query-service-view.html'
+], function (Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection,
+             ParametricView, FilterDisplayView, DateView, RelatedConceptsView, SortView, queryStrategy, ResultsNumberView, SpellCheckView,
+             Collapsible, databaseNameResolver, SelectedParametricValuesCollection, i18n, i18n_indexes, template) {
     "use strict";
 
     var collapseView = function (title, view) {
@@ -37,48 +41,32 @@ define([
     return Backbone.View.extend({
         template: _.template(template)({i18n: i18n}),
 
-        // may be overridden
-        constructSearchFiltersCollection: function (queryModel, datesFilterModel, indexesCollection, selectedIndexesCollection, selectedParametricValues) {
-            return new SearchFiltersCollection([], {
-                queryModel: queryModel,
-                datesFilterModel: datesFilterModel,
-                indexesCollection: indexesCollection,
-                selectedIndexesCollection: selectedIndexesCollection,
-                selectedParametricValues: selectedParametricValues
-            });
-        },
-
         // will be overridden
-        constructIndexesView: function (queryModel, indexesCollection, selectedIndexesCollection) {
-            return new IndexesView({
-                queryModel: queryModel,
-                indexesCollection: indexesCollection,
-                selectedDatabasesCollection: selectedIndexesCollection
-            });
-        },
+        IndexesView: null,
+        ResultsView: null,
+        SearchFiltersCollection: null,
 
-        // will be overridden
-        constructResultsView: function (models) {
-            return new ResultsView(models);
-        },
-
-        initialize: function(options) {
+        initialize: function (options) {
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
+            this.indexesCollection = options.indexesCollection;
 
             this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
 
             this.documentsCollection = new DocumentsCollection();
-            this.indexesCollection = new IndexesCollection();
             this.entityCollection = new EntityCollection();
             this.selectedParametricValues = new SelectedParametricValuesCollection();
             this.selectedIndexesCollection = new IndexesCollection();
 
-            this.filtersCollection = this.constructSearchFiltersCollection(this.queryModel, this.datesFilterModel, this.indexesCollection, this.selectedIndexesCollection, this.selectedParametricValues);
+            this.filtersCollection = new this.SearchFiltersCollection([], {
+                queryModel: this.queryModel,
+                datesFilterModel: this.datesFilterModel,
+                indexesCollection: this.indexesCollection,
+                selectedIndexesCollection: this.selectedIndexesCollection,
+                selectedParametricValues: this.selectedParametricValues
+            });
 
-            this.indexesCollection.fetch();
-
-            var fetchEntities = _.bind(function() {
+            var fetchEntities = _.bind(function () {
                 if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                     this.entityCollection.fetch({
                         data: {
@@ -94,24 +82,25 @@ define([
 
             this.listenTo(this.queryTextModel, 'refresh', fetchEntities);
 
-            this.listenTo(this.queryModel, 'change', function() {
-                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText'])) {
+            this.listenTo(this.queryModel, 'change', function () {
+                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'])) {
                     fetchEntities();
                 }
             });
 
-            this.listenTo(this.selectedIndexesCollection, 'update reset', _.debounce(_.bind(function() {
-                this.queryModel.set('indexes', this.selectedIndexesCollection.map(function(model) {
-                    return model.get('domain') ? encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name')) : encodeURIComponent(model.get('name'));
-                }));
+            this.listenTo(this.selectedIndexesCollection, 'update reset', _.debounce(_.bind(function () {
+                this.queryModel.set('indexes', this.selectedIndexesCollection.map(function (model) {
+                    return databaseNameResolver.resolveDatabaseNameForModel(model);
+                }, this));
             }, this), 500));
 
-            this.resultsView = this.constructResultsView({
+            this.resultsView = new this.ResultsView({
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                queryTextModel: this.queryTextModel,
+                queryStrategy: queryStrategy
             });
 
             // Left Views
@@ -128,7 +117,11 @@ define([
             });
 
             // Left Collapsed Views
-            this.indexesView = this.constructIndexesView(this.queryModel, this.indexesCollection, this.selectedIndexesCollection);
+            this.indexesView = new this.IndexesView({
+                queryModel: this.queryModel,
+                indexesCollection: this.indexesCollection,
+                selectedDatabasesCollection: this.selectedIndexesCollection
+            });
 
             this.dateView = new DateView({
                 queryModel: this.queryModel,
@@ -162,7 +155,7 @@ define([
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], this.relatedConceptsView);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template);
 
             this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
@@ -184,7 +177,7 @@ define([
 
         },
 
-        containerToggle: function(event) {
+        containerToggle: function (event) {
             var $containerToggle = $(event.currentTarget);
             var $sideContainer = $containerToggle.closest('.side-container');
             var hide = !$sideContainer.hasClass('small-container');

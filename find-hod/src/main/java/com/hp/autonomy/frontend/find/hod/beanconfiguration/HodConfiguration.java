@@ -8,12 +8,12 @@ package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
-import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
 import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteService;
 import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteServiceImpl;
@@ -29,13 +29,13 @@ import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
+import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -63,9 +63,6 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
-    private ConfigFileService<HodFindConfig> configService;
-
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
     @Autowired
@@ -78,7 +75,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public SingleUserAuthenticationValidator singleUserAuthenticationValidator() {
+    public SingleUserAuthenticationValidator singleUserAuthenticationValidator(final ConfigService<? extends AuthenticationConfig<?>> configService) {
         final SingleUserAuthenticationValidator singleUserAuthenticationValidator = new SingleUserAuthenticationValidator();
         singleUserAuthenticationValidator.setConfigService(configService);
 
@@ -144,17 +141,13 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public HodAuthenticationRequestService hodAuthenticationRequestService() {
-        return new HodAuthenticationRequestServiceImpl(configService, authenticationService(), unboundTokenService());
+    public HodAuthenticationRequestService hodAuthenticationRequestService(final ConfigService<? extends HodSsoConfig> configService, final AuthenticationService authenticationService, final UnboundTokenService<TokenType.HmacSha1> unboundTokenService) {
+        return new HodAuthenticationRequestServiceImpl(configService, authenticationService, unboundTokenService);
     }
 
     @Bean
-    public UnboundTokenService<TokenType.HmacSha1> unboundTokenService() {
-        try {
-            return new UnboundTokenServiceImpl(authenticationService(), configService);
-        } catch (final HodErrorException e) {
-            throw new BeanInitializationException("Exception creating UnboundTokenService", e);
-        }
+    public UnboundTokenService<TokenType.HmacSha1> unboundTokenService(final ConfigService<? extends HodSsoConfig> configService, final AuthenticationService authenticationService) throws HodErrorException {
+        return new UnboundTokenServiceImpl(authenticationService, configService);
     }
 
     @Bean

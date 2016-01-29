@@ -13,18 +13,10 @@ define([
         url: '../api/public/search/similar-documents',
         model: DocumentModel,
 
-        initialize: function(models, options) {
-            this.indexes = options.indexes;
-            this.reference = options.reference;
-        },
+        parse: function(response) {
+            this.totalResults = response.totalResults;
 
-        fetch: function(options) {
-            return BaseCollection.prototype.fetch.call(this, _.extend(options || {}, {
-                data: {
-                    indexes: this.indexes,
-                    reference: this.reference
-                }
-            }));
+            return response.documents;
         }
     });
 

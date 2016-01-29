@@ -4,7 +4,7 @@
  */
 
 require(['require-config'], function() {
-    require(['find/app/app'], function(App) {
+    require(['find/app/admin-app'], function(App) {
         new App();
     });
 });

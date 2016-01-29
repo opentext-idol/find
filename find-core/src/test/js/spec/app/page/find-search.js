@@ -1,10 +1,13 @@
 define([
+    'backbone',
     'find/app/page/find-search'
-], function (FindSearch) {
+], function (BackBone, FindSearch) {
 
     describe('Find Search', function() {
         beforeEach(function() {
-            this.findSearch = new FindSearch();
+            this.findSearch = new (FindSearch.extend({
+                QueryServiceView: BackBone.View
+            }))();
         });
 
         it("should show the service view when the queryText is not the empty string", function() {

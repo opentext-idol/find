@@ -24,12 +24,11 @@ define([
             return message;
         },
 
-        getIndexForSimilarDocuments: function($resultsContainer) {
-            var domain = $resultsContainer.attr('data-domain');
-            var index =  $resultsContainer.attr('data-index');
-
-            // escape the domain and index and combine
-            return _.map([domain, index], encodeURIComponent).join(':');
+        generateSuggestRoute : function (resultNode) {
+            var domain = encodeURIComponent(resultNode.attr('data-domain'));
+            var index = encodeURIComponent(resultNode.attr('data-index'));
+            var reference = encodeURIComponent(resultNode.attr('data-reference'));
+            return 'find/search/suggest/' + domain + '/' + index + '/' + reference;
         }
     });
 });

@@ -132,7 +132,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-core</artifactId>
-            <version>0.1.0</version>
+            <version>${haven.search.components.version}</version>
         </dependency>
 
         <dependency>
