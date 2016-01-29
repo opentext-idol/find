@@ -4,12 +4,13 @@ define([
     'jquery',
     'find/app/page/search/search-tab-item-view',
     'find/app/model/query-text-model',
+    'find/app/model/saved-searches/saved-search-model',
     'find/app/util/model-any-changed-attribute-listener',
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/tabbed-search-view.html',
     'bootstrap'
-], function(Backbone, _, $, TabItemView, QueryTextModel, addChangeListener, ListView, i18n, template) {
+], function(Backbone, _, $, TabItemView, QueryTextModel, SavedSearchModel, addChangeListener, ListView, i18n, template) {
 
     'use strict';
 
@@ -41,6 +42,20 @@ define([
                 this.updateSelectedTab();
             });
 
+            this.listenTo(this.searchModel, 'change', function() {
+                // Create a tab if the user has run a search but has no open tabs
+                if (this.searchModel.get('selectedSearchCid') === null && this.searchModel.get('inputText')) {
+                    var newSearch = new SavedSearchModel({
+                        queryText: this.searchModel.get('inputText'),
+                        relatedConcepts: this.searchModel.get('relatedConcepts'),
+                        title: i18n['search.newSearch']
+                    });
+
+                    this.savedSearchCollection.add(newSearch);
+                    this.searchModel.set('selectedSearchCid', newSearch.cid);
+                }
+            });
+
             addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
                 var selectedSearchCid = this.searchModel.get('selectedSearchCid');
 
@@ -54,6 +69,21 @@ define([
                 var cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
                 delete this.serviceViews[cid];
+
+                if (this.searchModel.get('selectedSearchCid') === cid) {
+                    var lastModel = this.savedSearchCollection.last();
+
+                    if (lastModel) {
+                        this.searchModel.set('selectedSearchCid', lastModel.cid);
+                    } else {
+                        // If the user closes their last tab, run a search for *
+                        this.searchModel.set({
+                            selectedSearchCid: null,
+                            inputText: '*',
+                            relatedConcepts: []
+                        });
+                    }
+                }
             });
         },
 

@@ -11,13 +11,13 @@ define([
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
     'find/app/model/saved-searches/saved-search-collection',
-    'find/app/model/saved-searches/saved-search-model',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection, SavedSearchModel, router, vent, i18n, _, template) {
+], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection,
+            router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -42,21 +42,10 @@ define([
             this.searchModel = new SearchPageModel();
 
             this.listenTo(this.searchModel, 'change', function() {
-                var inputText = this.searchModel.get('inputText');
-
                 // Bind search model to routing
                 vent.navigate(this.generateURL(), {trigger: false});
 
-                // Create a tab if the user has run a search but has no open tabs
-                if (inputText && this.searchModel.get('selectedSearchCid') === null) {
-                    var newSearch = new SavedSearchModel({
-                        queryText: inputText,
-                        relatedConcepts: this.searchModel.get('relatedConcepts'),
-                        title: i18n['search.newSearch']
-                    });
-
-                    this.savedSearchCollection.add(newSearch);
-                    this.searchModel.set('selectedSearchCid', newSearch.cid);
+                if (this.searchModel.get('inputText')) {
                     this.expandedState();
                 }
             });
