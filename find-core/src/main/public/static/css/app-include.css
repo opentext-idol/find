@@ -138,6 +138,10 @@ html, body {
     right: 0px;
 }
 
+.btn-group .dropdown-toggle:focus {
+    outline-style: none;
+}
+
 .right-side-container td,
 .left-side-container td {
     border-bottom: 1px solid #C9C9C9;
