@@ -25,7 +25,9 @@ define([
                 } else {
                     this.$el.css('margin-top', 0);
                 }
-                $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30);
+                if (!this.media) {
+                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30);
+                }
             }, this)
         },
 
@@ -48,6 +50,8 @@ define([
                 dateFields: DocumentModel.DATE_FIELDS,
                 fields: ['index', 'reference', 'contentType', 'url']
             }));
+
+            this.media = args.media;
 
             var $preview = this.$('.preview-mode-document');
 
