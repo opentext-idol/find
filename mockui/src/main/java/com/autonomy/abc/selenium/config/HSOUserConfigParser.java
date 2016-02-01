@@ -11,7 +11,7 @@ import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 
 import java.util.Map;
 
-public class HSOUserConfigParser implements UserConfigParser {
+public class HSOUserConfigParser extends UserConfigParser {
     @Override
     public User parseUser(JsonNode userNode) {
         AuthProvider provider = authProvider(userNode.path("auth"));

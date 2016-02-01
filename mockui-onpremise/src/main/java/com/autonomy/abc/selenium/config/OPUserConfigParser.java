@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class OPUserConfigParser implements UserConfigParser {
+public class OPUserConfigParser extends UserConfigParser {
     @Override
     public User parseUser(JsonNode userNode) {
         String username = userNode.path("username").asText();

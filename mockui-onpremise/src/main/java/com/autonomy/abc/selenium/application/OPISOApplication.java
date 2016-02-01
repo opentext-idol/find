@@ -1,7 +1,5 @@
 package com.autonomy.abc.selenium.application;
 
-import com.autonomy.abc.selenium.config.OPUserConfigParser;
-import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
@@ -32,11 +30,6 @@ public class OPISOApplication extends SearchOptimizerApplication<OPElementFactor
     @Override
     public OPUserService userService() {
         return new OPUserService(this);
-    }
-
-    @Override
-    public UserConfigParser getUserConfigParser() {
-        return new OPUserConfigParser();
     }
 
     @Override
