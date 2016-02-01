@@ -1,5 +1,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot;
 
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
@@ -15,13 +16,13 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
-public class SavedSnapshotController {
+public abstract class SavedSnapshotController {
     public static final String PATH = "/api/public/saved-snapshot";
 
     //autowire document service, get state toke for snapshot restrictions, build from stuff inside savedsnapshot s. Add state toke to the snapshot s.
-    private final DocumentsService documentsService;
+    protected final DocumentsService documentsService;
 
-    private final SavedSnapshotService service;
+    protected final SavedSnapshotService service;
 
     @Autowired
     public SavedSnapshotController(final SavedSnapshotService service, final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService) {
@@ -37,7 +38,7 @@ public class SavedSnapshotController {
     @RequestMapping(method = RequestMethod.POST)
     public SavedSnapshot create(
             @RequestBody final SavedSnapshot snapshot
-    ) {
+    ) throws Exception {
         return service.create(snapshot);
     }
 
