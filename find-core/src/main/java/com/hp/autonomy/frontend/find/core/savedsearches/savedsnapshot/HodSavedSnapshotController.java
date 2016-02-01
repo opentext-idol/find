@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,14 +33,7 @@ public class HodSavedSnapshotController extends SavedSnapshotController {
     public SavedSnapshot create(
             @RequestBody final SavedSnapshot snapshot
     ) throws Exception {
-        HodQueryRestrictions.Builder queryRestrictionsBuilder = new HodQueryRestrictions.Builder()
-            .setDatabases(this.getDatabases(snapshot.getIndexes()))
-            .setQueryText(snapshot.getQueryText() + StringUtils.join(snapshot.getRelatedConcepts(), " AND "))
-            .setFieldText(this.getFieldText(snapshot.getParametricValues()))
-            .setMaxDate(snapshot.getMaxDate())
-            .setMinDate(snapshot.getMinDate());
-
-        snapshot.setStateToken(documentsService.getStateToken(queryRestrictionsBuilder.build(), Integer.MAX_VALUE));
+        snapshot.setStateToken(this.getStateToken(snapshot));
 
         return super.create(snapshot);
     }
@@ -66,19 +58,13 @@ public class HodSavedSnapshotController extends SavedSnapshotController {
         return databases;
     }
 
-    private String getFieldText(Set<FieldAndValue> fieldAndValues) {
-        List<FieldText> matchNodes = new ArrayList<>();
+    private String getStateToken(SavedSnapshot snapshot) throws Exception {
+        HodQueryRestrictions.Builder queryRestrictionsBuilder = new HodQueryRestrictions.Builder()
+                .setDatabases(this.getDatabases(snapshot.getIndexes()))
+                .setQueryText(this.getQueryText(snapshot)).setFieldText(this.getFieldText(snapshot.getParametricValues()))
+                .setMaxDate(snapshot.getMaxDate())
+                .setMinDate(snapshot.getMinDate());
 
-        for(FieldAndValue fieldAndValue: fieldAndValues) {
-            matchNodes.add(new MATCH(fieldAndValue.getField(), new String[]{fieldAndValue.getValue()}));
-        }
-
-        FieldText fieldtext = matchNodes.get(0);
-
-        for(int i=1; i<matchNodes.size()-1; i++) {
-            fieldtext.AND(matchNodes.get(i));
-        }
-
-        return fieldtext.toString();
+        return documentsService.getStateToken(queryRestrictionsBuilder.build(), Integer.MAX_VALUE);
     }
 }
