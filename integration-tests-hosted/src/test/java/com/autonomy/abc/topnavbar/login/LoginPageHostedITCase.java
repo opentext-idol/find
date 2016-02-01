@@ -124,7 +124,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLoginSSOtoDevConsole(){
         loginAs(config.getDefaultUser());
 
-        getDriver().navigate().to(config.getApiUrl().replace("api", "www"));
+        getDriver().navigate().to(config.getDevConsoleUrl());
         DevConsoleHomePage devConsole = getElementFactory().getDevConsoleHomePage();
 
         verifyThat(devConsole.loginButton(), not(displayed()));
@@ -132,7 +132,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     @Test
     public void testLoginDevConsoletoSSO() {
-        getDriver().navigate().to(config.getApiUrl().replace("api", "www"));
+        getDriver().navigate().to(config.getDevConsoleUrl());
 
         DevConsoleHomePage devConsole = getElementFactory().getDevConsoleHomePage();
         devConsole.loginButton().click();
@@ -140,7 +140,6 @@ public class LoginPageHostedITCase extends HostedTestBase {
         loginTo(getElementFactory().getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
 
         getDriver().navigate().to(config.getWebappUrl());
-
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
     }
 
@@ -150,23 +149,20 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
         logout();
 
-        getDriver().navigate().to(config.getApiUrl().replace("api", "www"));
-
+        getDriver().navigate().to(config.getDevConsoleUrl());
         verifyThat(getElementFactory().getDevConsoleHomePage().loginButton(), displayed());
     }
 
     @Test
     public void testLogoutDevConsoletoSSO() {
-        getDriver().navigate().to(config.getApiUrl().replace("api", "www"));
+        getDriver().navigate().to(config.getDevConsoleUrl());
 
         getElementFactory().getDevConsoleHomePage().loginButton().click();
-
         loginTo(getElementFactory().getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
 
         logOutDevConsole();
 
         getDriver().navigate().to(config.getWebappUrl());
-
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
 
