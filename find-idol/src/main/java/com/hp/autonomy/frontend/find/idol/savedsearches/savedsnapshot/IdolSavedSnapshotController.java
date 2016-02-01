@@ -1,13 +1,12 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.savedsnapshot;
 
+import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotController;
 import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotService;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,10 +18,10 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(SavedSnapshotController.PATH)
-public class IdolSavedSnapshotController extends SavedSnapshotController {
+public class IdolSavedSnapshotController extends SavedSnapshotController<String, SearchResult, AciErrorException> {
 
     @Autowired
-    public IdolSavedSnapshotController(SavedSnapshotService service, DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService) {
+    public IdolSavedSnapshotController(SavedSnapshotService service, DocumentsService<String, SearchResult, AciErrorException> documentsService) {
         super(service, documentsService);
     }
 
