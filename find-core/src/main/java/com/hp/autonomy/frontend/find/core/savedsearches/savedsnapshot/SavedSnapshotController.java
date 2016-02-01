@@ -1,5 +1,9 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot;
 
+import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,11 +18,15 @@ import java.util.Set;
 public class SavedSnapshotController {
     public static final String PATH = "/api/public/saved-snapshot";
 
+    //autowire document service, get state toke for query restrictions, build from stuff inside savedsnapshot s. Add state toke to the snapshot s.
+    private final DocumentsService documentsService;
+
     private final SavedSnapshotService service;
 
     @Autowired
-    public SavedSnapshotController(final SavedSnapshotService service) {
+    public SavedSnapshotController(final SavedSnapshotService service, final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService) {
         this.service = service;
+        this.documentsService = documentsService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
