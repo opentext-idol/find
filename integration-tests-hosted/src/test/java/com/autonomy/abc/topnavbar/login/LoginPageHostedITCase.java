@@ -2,6 +2,7 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Ignore;
@@ -74,7 +75,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     }
 
     @Test
-    public void testLoginFindToSearchOptimizer() throws InterruptedException {
+    public void testLoginFindToSearchOptimizer(){
         getElementFactory().getLoginPage();
 
         getDriver().navigate().to(config.getFindUrl());
@@ -84,6 +85,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
     }
 
+    @Test
     public void testLogOutSearchOptimizerToFind(){
         loginAs(config.getDefaultUser());
 
@@ -91,6 +93,24 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
         getDriver().navigate().to(config.getFindUrl());
         getElementFactory().getFindLoginPage();
+
+        verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
+    }
+
+    @Test
+    public void testLogOutFindToSearchOptimizer(){
+        getElementFactory().getLoginPage();
+
+        getDriver().navigate().to(config.getFindUrl());
+        loginTo(getElementFactory().getFindLoginPage(), getDriver(), config.getDefaultUser());
+
+        Find find = getElementFactory().getFindPage();
+        find.logOut();
+
+        getElementFactory().getFindLoginPage();
+
+        getDriver().navigate().to(config.getWebappUrl());
+        getElementFactory().getLoginPage();
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
