@@ -2,13 +2,18 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static org.hamcrest.CoreMatchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 /*
@@ -74,7 +79,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     }
 
     @Test
-    public void testLoginFindToSearchOptimizer() throws InterruptedException {
+    public void testLoginFindToSearchOptimizer(){
         getElementFactory().getLoginPage();
 
         getDriver().navigate().to(config.getFindUrl());
@@ -84,14 +89,87 @@ public class LoginPageHostedITCase extends HostedTestBase {
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
     }
 
+    @Test
     public void testLogOutSearchOptimizerToFind(){
         loginAs(config.getDefaultUser());
 
-        getElementFactory().getTopNavBar().logOut();
+        logout();
 
         getDriver().navigate().to(config.getFindUrl());
         getElementFactory().getFindLoginPage();
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
+    }
+
+    @Test
+    public void testLogOutFindToSearchOptimizer(){
+        getElementFactory().getLoginPage();
+
+        getDriver().navigate().to(config.getFindUrl());
+        loginTo(getElementFactory().getFindLoginPage(), getDriver(), config.getDefaultUser());
+
+        Find find = getElementFactory().getFindPage();
+        find.logOut();
+
+        getElementFactory().getFindLoginPage();
+
+        getDriver().navigate().to(config.getWebappUrl());
+        getElementFactory().getLoginPage();
+
+        verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
+    }
+
+    @Test
+    //Assume that logging into Search/Find are the same
+    public void testLoginSSOtoDevConsole(){
+        loginAs(config.getDefaultUser());
+
+        getDriver().navigate().to(config.getDevConsoleUrl());
+        DevConsoleHomePage devConsole = getElementFactory().getDevConsoleHomePage();
+
+        verifyThat(devConsole.loginButton(), not(displayed()));
+    }
+
+    @Test
+    public void testLoginDevConsoletoSSO() {
+        getDriver().navigate().to(config.getDevConsoleUrl());
+
+        DevConsoleHomePage devConsole = getElementFactory().getDevConsoleHomePage();
+        devConsole.loginButton().click();
+
+        loginTo(getElementFactory().getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
+
+        getDriver().navigate().to(config.getWebappUrl());
+        verifyThat(getElementFactory().getPromotionsPage(), displayed());
+    }
+
+    @Test
+    public void testLogoutSSOtoDevConsole() {
+        loginAs(config.getDefaultUser());
+
+        logout();
+
+        getDriver().navigate().to(config.getDevConsoleUrl());
+        verifyThat(getElementFactory().getDevConsoleHomePage().loginButton(), displayed());
+    }
+
+    @Test
+    public void testLogoutDevConsoletoSSO() {
+        getDriver().navigate().to(config.getDevConsoleUrl());
+
+        getElementFactory().getDevConsoleHomePage().loginButton().click();
+        loginTo(getElementFactory().getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
+
+        logOutDevConsole();
+
+        getDriver().navigate().to(config.getWebappUrl());
+        verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
+    }
+
+    private void logOutDevConsole(){
+        getDriver().findElement(By.className("navigation-icon-user")).click();
+        getDriver().findElement(By.id("loginLogout")).click();
+        Waits.loadOrFadeWait();
+        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("loginLogout")));
     }
 }

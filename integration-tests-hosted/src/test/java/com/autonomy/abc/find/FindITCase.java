@@ -911,6 +911,21 @@ public class FindITCase extends HostedTestBase {
         verifyThat(find.getSelectedPublicIndexes().size(), is(0));
     }
 
+    @Test
+    public void testAutoScroll(){
+        find.search("my very easy method just speeds up naming ");
+
+        verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
+
+        ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight)");
+
+        verifyThat(results.findElement(By.className(FindResultsPage.Container.MIDDLE + "-container")).findElement(By.className("fa-spin")), displayed());
+
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+
+        verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(30), lessThanOrEqualTo(60)));
+    }
+
     private enum FileType {
         HTML("TEXT/HTML","html"),
         PDF("APPLICATION/PDF","pdf"),

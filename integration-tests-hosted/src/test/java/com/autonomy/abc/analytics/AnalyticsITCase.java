@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class AnalyticsITCase extends HostedTestBase {
 
     private <T> void verifySorted(List<T> toCheck, Comparator<T> sorter) {
         List<T> sorted = new ArrayList<>(toCheck);
-        sorted.sort(sorter);
+        Collections.sort(sorted, sorter);
         verifyThat("sorted " + sorter, toCheck, is(sorted));
     }
 

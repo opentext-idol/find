@@ -148,4 +148,14 @@ public class Find extends AppElement implements AppPage,
     public void waitForParametricValuesToLoad() {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.invisibilityOfElementLocated(By.className("parametric-processing-indicator")));
     }
+
+    public void logOut(){
+        WebElement cog = getDriver().findElement(By.className("hp-settings"));
+        if(!cog.isDisplayed()){
+            search("hp");
+        }
+
+        cog.click();
+        getDriver().findElement(By.className("navigation-logout")).click();
+    }
 }

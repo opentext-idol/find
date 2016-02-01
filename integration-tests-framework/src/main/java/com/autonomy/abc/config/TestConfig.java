@@ -52,6 +52,10 @@ public class TestConfig {
 		return jsonConfig.getApiUrl().toString();
 	}
 
+	public String getDevConsoleUrl(){
+		return jsonConfig.getApiUrl().toString().replace("api","www");
+	}
+
 	public User getDefaultUser() {
 		return getUser("default");
 	}
