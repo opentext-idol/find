@@ -13,7 +13,6 @@ import java.util.Date;
 public class SOSearchResult extends SearchResult {
     private final Index index;
     private final float weight;
-    private final WebElement trashCan;
     private Date date;
 
     public SOSearchResult(WebElement result, WebDriver driver){
@@ -37,8 +36,6 @@ public class SOSearchResult extends SearchResult {
                 date = null;
             }
         }
-
-        trashCan = result.findElement(By.className("hp-trash"));
     }
 
     public Index getIndex() {
@@ -49,8 +46,8 @@ public class SOSearchResult extends SearchResult {
         return weight;
     }
 
-    public WebElement getTrashCan() {
-        return trashCan;
+    public WebElement trashCan() {
+        return result.findElement(By.className("hp-trash"));
     }
 
     public Date getDate() {

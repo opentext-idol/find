@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -51,7 +52,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		final String totalWithBrackets = new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".page-heading span"))).getText();
 		final String totalNoBrackets = totalWithBrackets.substring(1, totalWithBrackets.length() - 1);
 
-		if (totalNoBrackets.equalsIgnoreCase("more than ")) {
+		if (StringUtils.containsIgnoreCase(totalNoBrackets, "more than ")) {
 			return Integer.parseInt(totalNoBrackets.split(" ")[2]) + 1;
 		}
 		return Integer.parseInt(totalNoBrackets);
