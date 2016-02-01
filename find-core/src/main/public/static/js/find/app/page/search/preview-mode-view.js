@@ -19,14 +19,10 @@ define([
 
         initialize: function() {
             this.scrollFollow = _.bind(function() {
-                var $viewServerPage = this.$('.preview-document-frame');
                 if (this.$el.offsetParent().offset().top < 0) {
                     this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
                 } else {
                     this.$el.css('margin-top', 0);
-                }
-                if (!this.media) {
-                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30);
                 }
             }, this)
         },
@@ -70,11 +66,13 @@ define([
                 $viewServerPage.on('load', _.bind(function() {
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     $viewServerPage.removeClass('hidden');
+                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30)
                 }, this));
 
                 $viewServerPage.attr("src", args.src);
                 $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30);
             }
+            this.scrollFollow();
         },
 
         remove: function() {
