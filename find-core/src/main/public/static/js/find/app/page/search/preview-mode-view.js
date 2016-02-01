@@ -24,6 +24,11 @@ define([
                 } else {
                     this.$el.css('margin-top', 0);
                 }
+                if (!this.media)
+                {
+                    var $viewServerPage = this.$('.preview-document-frame');
+                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30)
+                }
             }, this)
         },
 
