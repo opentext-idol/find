@@ -12,7 +12,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue(SavedSearchType.Values.QUERY)
+@DiscriminatorValue(SavedSearchType.Values.SNAPSHOT)
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)

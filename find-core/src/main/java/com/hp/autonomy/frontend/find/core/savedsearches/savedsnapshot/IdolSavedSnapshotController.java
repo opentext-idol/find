@@ -6,6 +6,7 @@ import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,6 +17,8 @@ import java.util.Set;
 @Controller
 @RequestMapping(SavedSnapshotController.PATH)
 public class IdolSavedSnapshotController extends SavedSnapshotController {
+
+    @Autowired
     public IdolSavedSnapshotController(SavedSnapshotService service, DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService) {
         super(service, documentsService);
     }
