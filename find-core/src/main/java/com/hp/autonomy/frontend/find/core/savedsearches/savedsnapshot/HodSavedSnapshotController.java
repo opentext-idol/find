@@ -24,28 +24,9 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(SavedSnapshotController.PATH)
-public class HodSavedSnapshotController extends SavedSnapshotController {
+public class HodSavedSnapshotController extends SavedSnapshotController<ResourceIdentifier, HodSearchResult, HodErrorException> {
     public HodSavedSnapshotController(SavedSnapshotService service, DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService) {
         super(service, documentsService);
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public SavedSnapshot create(
-            @RequestBody final SavedSnapshot snapshot
-    ) throws Exception {
-        snapshot.setStateToken(this.getStateToken(snapshot));
-
-        return super.create(snapshot);
-    }
-
-    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public SavedSnapshot update(
-            @PathVariable("id") final long id,
-            @RequestBody final SavedSnapshot snapshot
-    ) {
-        return this.service.update(
-                new SavedSnapshot.Builder(snapshot).setId(id).build()
-        );
     }
 
     private List<ResourceIdentifier> getDatabases(Set<EmbeddableIndex> indexes) {
@@ -58,7 +39,8 @@ public class HodSavedSnapshotController extends SavedSnapshotController {
         return databases;
     }
 
-    private String getStateToken(SavedSnapshot snapshot) throws Exception {
+    @Override
+    protected String getStateToken(final SavedSnapshot snapshot) throws Exception {
         HodQueryRestrictions.Builder queryRestrictionsBuilder = new HodQueryRestrictions.Builder()
                 .setDatabases(this.getDatabases(snapshot.getIndexes()))
                 .setQueryText(this.getQueryText(snapshot)).setFieldText(this.getFieldText(snapshot.getParametricValues()))
