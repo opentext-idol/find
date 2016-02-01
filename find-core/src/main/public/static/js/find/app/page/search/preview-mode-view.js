@@ -17,14 +17,8 @@ define([
         documentTemplate: _.template(documentTemplate),
         mediaTemplate: _.template(mediaTemplate),
 
-        render: function() {
-            this.$el.html(this.template({
-                i18n:i18n
-            }));
-
-            var $main = $('.main-content');
-
-            $main.scroll(_.bind(function() {
+        initialize: function() {
+            this.scrollFollow = _.bind(function() {
                 var $viewServerPage = this.$('.preview-document-frame');
                 if (this.$el.offsetParent().offset().top < 0) {
                     this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
@@ -32,7 +26,15 @@ define([
                     this.$el.css('margin-top', 0);
                 }
                 $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30);
-            }, this));
+            }, this)
+        },
+
+        render: function() {
+            this.$el.html(this.template({
+                i18n:i18n
+            }));
+
+            $('.main-content').scroll(this.scrollFollow);
         },
 
         renderView: function(args) {
@@ -69,6 +71,12 @@ define([
                 $viewServerPage.attr("src", args.src);
                 $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30);
             }
+        },
+
+        remove: function() {
+            Backbone.View.prototype.remove.call(this);
+
+            $('.main-content').off('scroll', this.scrollFollow);
         }
     });
 

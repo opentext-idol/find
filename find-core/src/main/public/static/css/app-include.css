@@ -653,7 +653,6 @@ input.find-input {
 }
 
 .preview-mode-loading.loading-spinner {
-    position: absolute;
     left: 225px;
     top: 165px
 }
