@@ -18,7 +18,7 @@ import java.util.Set;
 public class SavedSnapshotController {
     public static final String PATH = "/api/public/saved-snapshot";
 
-    //autowire document service, get state toke for query restrictions, build from stuff inside savedsnapshot s. Add state toke to the snapshot s.
+    //autowire document service, get state toke for snapshot restrictions, build from stuff inside savedsnapshot s. Add state toke to the snapshot s.
     private final DocumentsService documentsService;
 
     private final SavedSnapshotService service;
@@ -36,18 +36,18 @@ public class SavedSnapshotController {
 
     @RequestMapping(method = RequestMethod.POST)
     public SavedSnapshot create(
-            @RequestBody final SavedSnapshot query
+            @RequestBody final SavedSnapshot snapshot
     ) {
-        return service.create(query);
+        return service.create(snapshot);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public SavedSnapshot update(
             @PathVariable("id") final long id,
-            @RequestBody final SavedSnapshot query
+            @RequestBody final SavedSnapshot snapshot
     ) {
         return service.update(
-                new SavedSnapshot.Builder(query).setId(id).build()
+                new SavedSnapshot.Builder(snapshot).setId(id).build()
         );
     }
 
