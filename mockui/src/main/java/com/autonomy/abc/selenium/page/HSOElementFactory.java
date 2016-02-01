@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.page.devconsole.DevConsoleSearchPage;
 import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
@@ -51,6 +52,10 @@ public class HSOElementFactory extends ElementFactory {
 
     public LoginPage getFindLoginPage() {
         return new HSOLoginPage(getDriver(), new FindHasLoggedIn(this));
+    }
+
+    public LoginPage getDevConsoleLoginPage(){
+        return new HSOLoginPage(getDriver(), new DevConsoleHasLoggedIn(getDriver()));
     }
 
     @Override
@@ -152,5 +157,9 @@ public class HSOElementFactory extends ElementFactory {
 
     public DevConsoleSearchPage getDevConsoleSearchPage() {
         return new DevConsoleSearchPage(getDriver());
+    }
+
+    public DevConsoleHomePage getDevConsoleHomePage() {
+        return new DevConsoleHomePage(getDriver());
     }
 }

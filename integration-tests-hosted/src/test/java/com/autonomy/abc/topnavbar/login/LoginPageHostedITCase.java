@@ -3,13 +3,14 @@ package com.autonomy.abc.topnavbar.login;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static org.hamcrest.CoreMatchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 /*
@@ -113,5 +114,30 @@ public class LoginPageHostedITCase extends HostedTestBase {
         getElementFactory().getLoginPage();
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
+    }
+
+    @Test
+    //Assume that logging into Search/Find are the same
+    public void testLoginSSOtoDevConsole(){
+        loginAs(config.getDefaultUser());
+
+        getDriver().navigate().to(config.getApiUrl().replace("api", "www"));
+        DevConsoleHomePage devConsole = getElementFactory().getDevConsoleHomePage();
+
+        verifyThat(devConsole.loginButton(), not(displayed()));
+    }
+
+    @Test
+    public void testLoginDevConsoletoSSO() {
+        getDriver().navigate().to(config.getApiUrl().replace("api","www"));
+
+        DevConsoleHomePage devConsole = getElementFactory().getDevConsoleHomePage();
+        devConsole.loginButton().click();
+
+        loginTo(getElementFactory().getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
+
+        getDriver().navigate().to(config.getWebappUrl());
+
+        verifyThat(getElementFactory().getPromotionsPage(), displayed());
     }
 }
