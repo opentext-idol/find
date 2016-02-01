@@ -31,7 +31,7 @@ public class HSOApplication extends SearchOptimizerApplication<HSOElementFactory
     }
 
     @Override
-    public HSOUserService userService(){
+    public HSOUserService userService() {
         return new HSOUserService(this);
     }
 

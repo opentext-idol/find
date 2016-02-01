@@ -24,7 +24,7 @@ public class OPUserService extends UserService<OPElementFactory> {
     public User createNewUser(NewUser newUser, Role role) {
         usersPage = goToUsers();
         usersPage.createButton().click();
-        User user = newUser.signUpAs(role, usersPage);
+        User user = usersPage.addNewUser(newUser, role);
         usersPage.closeModal();
         return user;
     }

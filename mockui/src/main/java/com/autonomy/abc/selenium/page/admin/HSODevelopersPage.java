@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.users.HSOUser;
+import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.By;
@@ -10,6 +11,11 @@ import org.openqa.selenium.WebElement;
 public class HSODevelopersPage extends HSOUserManagementPage {
     public HSODevelopersPage(WebDriver driver) {
         super(driver);
+    }
+
+    @Override
+    public User addNewUser(NewUser newUser, Role role) {
+        throw new UnsupportedOperationException("Cannot add new developers to a tenancy");
     }
 
     @Override

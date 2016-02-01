@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.SafeClassLoader;
@@ -22,7 +23,7 @@ public abstract class SearchOptimizerApplication<T extends ElementFactory> imple
 
     public abstract PromotionService promotionService();
 
-    public abstract UserService userService();
+    public abstract UserService<?> userService();
 
     public KeywordService keywordService() {
         return new KeywordService(this);

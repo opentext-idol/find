@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
-import com.autonomy.abc.selenium.util.Waits;
 
 public class OPNewUser implements NewUser {
     private final String username;
@@ -13,15 +12,17 @@ public class OPNewUser implements NewUser {
         this.password = password;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
     @Override
-    public User signUpAs(Role role, UsersPage usersPage) {
-        usersPage.addUsername(username);
-        usersPage.addAndConfirmPassword(password, password);
-        usersPage.selectRole(role);
-        usersPage.createButton().click();
-        Waits.loadOrFadeWait();
-        OPAccount auth = new OPAccount(username, password);
-        return new User(auth, username, role);
+    public User withRole(Role role) {
+        return new User(new OPAccount(username, password), username, role);
     }
 
     @Override
