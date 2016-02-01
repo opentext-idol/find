@@ -387,7 +387,13 @@ define([
                 });
             }
 
-            popover($newResult.find('.similar-documents-trigger'), 'focus', this.handlePopover);
+            var $similarDocumentsTrigger = $newResult.find('.similar-documents-trigger');
+            popover($similarDocumentsTrigger, 'focus', this.handlePopover);
+
+            //prevent preview mode opening when clicking similar documents
+            $similarDocumentsTrigger.on('click', function(e) {
+                e.stopPropagation();
+            })
         },
 
         handlePopover: function($content, $target) {
