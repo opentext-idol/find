@@ -46,7 +46,7 @@ public class SOSearchResult extends SearchResult {
         return weight;
     }
 
-    public WebElement getTrashCan() {
+    public WebElement trashCan() {
         return result.findElement(By.className("hp-trash"));
     }
 

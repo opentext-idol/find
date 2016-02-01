@@ -127,7 +127,7 @@ public class TestConfig {
 			defaultConfig = getMavenConfig(BASE_CONFIG_LOCATION);
 			userSpecifiedConfig = getMavenConfig(OVERRIDE_CONFIG_LOCATION);
 		} else {
-			String basePath = BASE_CONFIG_LOCATION == null ? "../config/default.json" : BASE_CONFIG_LOCATION;
+			String basePath = BASE_CONFIG_LOCATION == null ? "../config/hsod-dev.json" : BASE_CONFIG_LOCATION;
 			defaultConfig = getLocalConfig(basePath);
 			userSpecifiedConfig = getLocalConfig(OVERRIDE_CONFIG_LOCATION);
 		}
