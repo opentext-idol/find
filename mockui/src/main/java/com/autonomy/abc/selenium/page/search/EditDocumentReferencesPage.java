@@ -19,11 +19,6 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
         super(driver.findElement(By.className("wrapper-content")), driver);
     }
 
-    @Deprecated
-    public static EditDocumentReferencesPage make(final WebDriver driver) {
-        return new Factory().create(driver);
-    }
-
     private static void waitForLoad(WebDriver driver) {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("promotions-bucket-well")));
     }

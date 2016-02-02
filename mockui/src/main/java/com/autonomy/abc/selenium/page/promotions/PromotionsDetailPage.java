@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PromotionsDetailPage extends AppElement implements AppPage {
-    public PromotionsDetailPage(WebDriver driver) {
+    protected PromotionsDetailPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
         waitForLoad();
     }

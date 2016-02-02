@@ -5,21 +5,23 @@ import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.menu.PageMapper;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
-import com.autonomy.abc.selenium.users.OPUsersPage;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.page.keywords.*;
+import com.autonomy.abc.selenium.page.keywords.OPCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.OPKeywordsPage;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
 import com.autonomy.abc.selenium.page.overview.OverviewPage;
-import com.autonomy.abc.selenium.page.promotions.*;
+import com.autonomy.abc.selenium.page.promotions.OPCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
+import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.SchedulePage;
 import com.autonomy.abc.selenium.page.search.OPSearchPage;
+import com.autonomy.abc.selenium.users.OPUsersPage;
 import org.openqa.selenium.WebDriver;
 
 public class OPElementFactory extends ElementFactory {
-    private PageMapper<OPISOPage> mapper = new PageMapper<>(OPISOPage.class);
-
     public OPElementFactory(final WebDriver driver) {
-        super(driver);
+        super(driver, new PageMapper<>(OPISOPage.class));
     }
 
     @Override
@@ -81,14 +83,5 @@ public class OPElementFactory extends ElementFactory {
 
     public SettingsPage getSettingsPage() {
         return loadPage(SettingsPage.class);
-    }
-
-    public <T> T switchTo(Class<T> type) {
-        getSideNavBar().switchPage(mapper.getId(type));
-        return loadPage(type);
-    }
-
-    public <T> T loadPage(Class<T> type) {
-        return mapper.load(type, getDriver());
     }
 }

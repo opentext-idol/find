@@ -22,7 +22,6 @@ import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
@@ -33,10 +32,8 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
 public class HSOElementFactory extends ElementFactory {
-    private PageMapper<HSODPage> mapper = new PageMapper<>(HSODPage.class);
-
     public HSOElementFactory(final WebDriver driver) {
-        super(driver);
+        super(driver, new PageMapper<>(HSODPage.class));
     }
 
     @Override
@@ -165,14 +162,5 @@ public class HSOElementFactory extends ElementFactory {
 
     public DevConsoleHomePage getDevConsoleHomePage() {
         return new DevConsoleHomePage(getDriver());
-    }
-
-    public <T> T switchTo(Class<T> type) {
-        getSideNavBar().switchPage(mapper.getId(type));
-        return loadPage(type);
-    }
-
-    public <T> T loadPage(Class<T> type) {
-        return mapper.load(type, getDriver());
     }
 }

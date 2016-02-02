@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.menu.PageMapper;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
@@ -15,9 +16,11 @@ import org.openqa.selenium.WebDriver;
 
 public abstract class ElementFactory {
     private final WebDriver driver;
+    private final PageMapper<?> mapper;
 
-    protected ElementFactory(WebDriver driver){
+    protected ElementFactory(WebDriver driver, PageMapper<?> mapper){
         this.driver = driver;
+        this.mapper = mapper;
     }
 
     public abstract TopNavBar getTopNavBar();
@@ -31,11 +34,11 @@ public abstract class ElementFactory {
     public abstract CreateNewPromotionsPage getCreateNewPromotionsPage();
 
     public PromotionsDetailPage getPromotionsDetailPage() {
-        return new PromotionsDetailPage(driver);
+        return loadPage(PromotionsDetailPage.class);
     };
 
     public EditDocumentReferencesPage getEditDocumentReferencesPage() {
-        return EditDocumentReferencesPage.make(driver);
+        return loadPage(EditDocumentReferencesPage.class);
     }
 
     public abstract KeywordsPage getKeywordsPage();
@@ -51,4 +54,13 @@ public abstract class ElementFactory {
     }
 
     public abstract UsersPage getUsersPage();
+
+    public <T> T switchTo(Class<T> type) {
+        getSideNavBar().switchPage(mapper.getId(type));
+        return loadPage(type);
+    }
+
+    public <T> T loadPage(Class<T> type) {
+        return mapper.load(type, getDriver());
+    }
 }
