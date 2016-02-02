@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -24,9 +25,9 @@ public class SchedulePage extends AppElement implements AppPage {
         super(driver.findElement(By.cssSelector(".pd-wizard")), driver);
     }
 
+	@Deprecated
     public static SchedulePage make(final WebDriver driver) {
-        SchedulePage.waitForLoad(driver);
-        return new SchedulePage(driver);
+		return new Factory().create(driver);
     }
 
 	public WebElement alwaysActive() {
@@ -216,4 +217,10 @@ public class SchedulePage extends AppElement implements AppPage {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".pd-wizard .current-step-pill")));
     }
 
+	public static class Factory implements ParametrizedFactory<WebDriver, SchedulePage> {
+		public SchedulePage create(WebDriver context) {
+			SchedulePage.waitForLoad(context);
+			return new SchedulePage(context);
+		}
+	}
 }

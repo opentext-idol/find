@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.admin;
 
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -14,9 +15,9 @@ public class AboutPage extends AppElement implements AppPage {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
+	@Deprecated
     public static AboutPage make(final WebDriver driver) {
-        AboutPage.waitForLoad(driver);
-        return new AboutPage(driver);
+        return new Factory().create(driver);
     }
 
 	public void setTableSize(final String tableSize) {
@@ -66,4 +67,10 @@ public class AboutPage extends AppElement implements AppPage {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='FOSS Acknowledgements']")));
     }
 
+	public static class Factory implements ParametrizedFactory<WebDriver, AboutPage> {
+		public AboutPage create(WebDriver context) {
+			AboutPage.waitForLoad(context);
+			return new AboutPage(context);
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.login;
 
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -32,4 +33,9 @@ public class OPLoginPage extends LoginPage {
         return driver.findElement(By.cssSelector("[placeholder='Username']"));
     }
 
+    public static class Factory implements ParametrizedFactory<WebDriver, OPLoginPage> {
+        public OPLoginPage create(WebDriver context) {
+            return new OPLoginPage(context);
+        }
+    }
 }

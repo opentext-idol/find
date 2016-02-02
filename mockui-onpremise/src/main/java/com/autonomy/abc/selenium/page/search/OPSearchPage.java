@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.OPLanguageDropdown;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -50,5 +51,11 @@ public class OPSearchPage extends SearchPage {
 
     private List<String> getPromotionTypeLabels() {
         return ElementUtil.getTexts(findElements(By.className("promotion-name")));
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, OPSearchPage> {
+        public OPSearchPage create(WebDriver context) {
+            return new OPSearchPage(context);
+        }
     }
 }

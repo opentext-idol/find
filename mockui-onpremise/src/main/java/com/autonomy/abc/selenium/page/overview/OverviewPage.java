@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.overview;
 
 
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -15,9 +16,9 @@ public class OverviewPage extends AppElement implements AppPage {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
+	@Deprecated
     public static OverviewPage make(final WebDriver driver) {
-        OverviewPage.waitForLoad(driver);
-        return new OverviewPage(driver);
+		return new Factory().create(driver);
     }
 
 	public int searchTermSearchCount(final String searchTerm) {
@@ -88,4 +89,11 @@ public class OverviewPage extends AppElement implements AppPage {
     public static void waitForLoad(final WebDriver driver) {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//h3[text()='Zero Hit Terms']")));
     }
+
+	public static class Factory implements ParametrizedFactory<WebDriver, OverviewPage> {
+		public OverviewPage create(WebDriver context) {
+			OverviewPage.waitForLoad(context);
+			return new OverviewPage(context);
+		}
+	}
 }

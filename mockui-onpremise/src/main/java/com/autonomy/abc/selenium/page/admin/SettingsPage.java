@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.admin;
 
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -16,9 +17,9 @@ public class SettingsPage extends AppElement implements AppPage {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
+	@Deprecated
     public static SettingsPage make(final WebDriver driver) {
-        SettingsPage.waitForLoad(driver);
-        return new SettingsPage(driver);
+		return new Factory().create(driver);
     }
 
 	public void saveChangesClick() {
@@ -150,6 +151,13 @@ public class SettingsPage extends AppElement implements AppPage {
     private static void waitForLoad(WebDriver driver) {
         new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".settings-control")));
     }
+
+	public static class Factory implements ParametrizedFactory<WebDriver, SettingsPage> {
+		public SettingsPage create(WebDriver context) {
+			SettingsPage.waitForLoad(context);
+			return new SettingsPage(context);
+		}
+	}
 
 }
 

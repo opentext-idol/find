@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
@@ -63,5 +64,11 @@ public class OPUsersPage extends UsersPage {
     public void clearPasswords() {
         ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-password")).clear();
         ModalView.getVisibleModalView(getDriver()).findElement(By.id("create-users-passwordConfirm")).clear();
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, OPUsersPage> {
+        public OPUsersPage create(WebDriver context) {
+            return new OPUsersPage(context);
+        }
     }
 }
