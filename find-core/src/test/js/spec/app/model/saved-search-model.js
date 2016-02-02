@@ -15,7 +15,7 @@ define([
     var MAX_DATE = 555555555;
     var MIN_DATE = 444444444;
 
-    var INDEXES = [
+    var BASE_INDEXES = [
         {domain: 'DOMAIN', name: 'DOCUMENTS'}
     ];
 
@@ -32,7 +32,7 @@ define([
                 maxDate: moment(MAX_DATE),
                 minDate: moment(MIN_DATE),
                 relatedConcepts: RELATED_CONCEPTS,
-                indexes: INDEXES,
+                indexes: BASE_INDEXES,
                 parametricValues: PARAMETRIC_VALUES
             });
 
@@ -46,7 +46,7 @@ define([
                 minDate: moment(MIN_DATE)
             });
 
-            this.selectedIndexes = new DatabasesCollection(INDEXES);
+            this.selectedIndexes = new DatabasesCollection(BASE_INDEXES);
 
             // The real selected parametric values collection also contains display names
             this.selectedParametricValues = new Backbone.Collection(_.map(PARAMETRIC_VALUES, function(data, index) {
@@ -116,10 +116,10 @@ define([
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
 
-            it('returns true if the only difference is an index domain being null rather than undefined', function() {
-                var DATABASE_NAME = 'MORE_DOCUMENTS';
-                this.selectedIndexes.add({domain: null, name: DATABASE_NAME});
-                this.model.set('indexes', INDEXES.concat([{name: DATABASE_NAME}]));
+            it('returns true if the only difference is an index domain being the empty string rather than null', function() {
+                var databaseName = 'MORE_DOCUMENTS';
+                this.selectedIndexes.add({domain: '', name: databaseName});
+                this.model.set('indexes', BASE_INDEXES.concat([{domain: null, name: databaseName}]));
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(true);
             });
@@ -140,8 +140,12 @@ define([
                 expect(this.attributes.maxDate.isSame(moment(MAX_DATE))).toBe(true);
             });
 
-            it('returns the selected indexes', function() {
-                expect(this.attributes.indexes).toEqual(INDEXES);
+            it('returns the selected indexes with empty domains normalised to null', function() {
+                var databaseName = 'NEW_DATABASE';
+                this.queryState.selectedIndexes.push({name: databaseName, domain: undefined});
+
+                var output = SavedSearchModel.attributesFromQueryState(this.queryState);
+                expect(output.indexes).toEqual(BASE_INDEXES.concat([{name: databaseName, domain: null}]));
             });
 
             it('returns the selected parametric values', function() {

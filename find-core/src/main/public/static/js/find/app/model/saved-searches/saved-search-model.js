@@ -45,34 +45,22 @@ define([
         return input === null || input === undefined;
     }
 
-    function strictEqual(input1, input2) {
-        return input1 === input2;
-    }
-
-    // Compare two optional values
-    function optionalEqual(compareValues) {
-        return function(optional1, optional2) {
-            if (nullOrUndefined(optional1)) {
-                return nullOrUndefined(optional2);
-            } else if (nullOrUndefined(optional2)) {
-                return false;
-            } else {
-                return compareValues(optional1, optional2);
-            }
-        };
-    }
-
-    // Treat domains as equal if they are both either null or undefined, or are strictly equal
-    var optionalDomainsEqual = optionalEqual(strictEqual);
-
-    function indexesEqual(index1, index2) {
-        return strictEqual(index1.name, index2.name) && optionalDomainsEqual(index1.domain, index2.domain);
-    }
-
     // Treat moments are equal if they are both either null or undefined, or represent the same instant
-    var optionalMomentsEqual = optionalEqual(function(moment1, moment2) {
-        return moment1.isSame(moment2);
-    });
+    function optionalMomentsEqual(optionalMoment1, optionalMoment2) {
+        if (nullOrUndefined(optionalMoment1)) {
+            return nullOrUndefined(optionalMoment2);
+        } else if (nullOrUndefined(optionalMoment2)) {
+            return false;
+        } else {
+            return optionalMoment1.isSame(optionalMoment2);
+        }
+    }
+
+    // TODO: Remove this when toResourceIdentifiers consistently returns null for domains against IDOL
+    function selectedIndexToResourceIdentifier(selectedIndex) {
+        // Selected indexes against IDOL are either null, undefined or the empty string; normalize to null here
+        return {name: selectedIndex.name, domain: selectedIndex.domain || null};
+    }
 
     return Backbone.Model.extend({
         defaults: {
@@ -104,11 +92,13 @@ define([
          * @return {Boolean}
          */
         equalsQueryState: function(queryState) {
+            var selectedIndexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
+
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
                     && optionalMomentsEqual(this.get('minDate'), queryState.queryModel.get('minDate'))
                     && optionalMomentsEqual(this.get('maxDate'), queryState.queryModel.get('maxDate'))
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'))
-                    && arraysEqual(this.get('indexes'), queryState.selectedIndexes.toResourceIdentifiers(), indexesEqual)
+                    && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
         },
 
@@ -137,7 +127,7 @@ define([
          * @return {SavedSearchModelAttributes}
          */
         attributesFromQueryState: function(queryState) {
-            var indexes = queryState.selectedIndexes.toResourceIdentifiers();
+            var indexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
             var parametricValues = queryState.selectedParametricValues.map(pickFieldAndValue);
 
             return _.extend({
