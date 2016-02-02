@@ -16,7 +16,8 @@ require.config({
     map: {
         '*': {
             'find/app/configuration': 'mock/configuration',
-            'find/lib/backbone/backbone-extensions': 'backbone'
+            'find/lib/backbone/backbone-extensions': 'backbone',
+            'find/app/util/confirm-view': 'mock/util/confirm-view'
         },
         'find/app/page/search/service-view': {
             'find/app/model/indexes-collection': 'mock/model/indexes-collection'

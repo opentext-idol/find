@@ -41,14 +41,25 @@ define([
         return model.pick('field', 'value');
     }
 
-    function momentsEqual(maybeMoment1, maybeMoment2) {
-        if (!maybeMoment1) {
-            return !maybeMoment2;
-        } else if (!maybeMoment2) {
+    function nullOrUndefined(input) {
+        return input === null || input === undefined;
+    }
+
+    // Treat moments are equal if they are both either null or undefined, or represent the same instant
+    function optionalMomentsEqual(optionalMoment1, optionalMoment2) {
+        if (nullOrUndefined(optionalMoment1)) {
+            return nullOrUndefined(optionalMoment2);
+        } else if (nullOrUndefined(optionalMoment2)) {
             return false;
         } else {
-            return maybeMoment1.isSame(maybeMoment2);
+            return optionalMoment1.isSame(optionalMoment2);
         }
+    }
+
+    // TODO: Remove this when toResourceIdentifiers consistently returns null for domains against IDOL
+    function selectedIndexToResourceIdentifier(selectedIndex) {
+        // Selected indexes against IDOL are either null, undefined or the empty string; normalize to null here
+        return {name: selectedIndex.name, domain: selectedIndex.domain || null};
     }
 
     return Backbone.Model.extend({
@@ -68,17 +79,26 @@ define([
             return _.defaults(dateAttributes, response);
         },
 
+        destroy: function(options) {
+            return Backbone.Model.prototype.destroy.call(this, _.extend(options || options, {
+                // The server returns an empty body (ie: not JSON)
+                dataType: 'text'
+            }));
+        },
+
         /**
          * Does this model represent the same search as the given query state?
          * @param {QueryState} queryState
          * @return {Boolean}
          */
         equalsQueryState: function(queryState) {
+            var selectedIndexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
+
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
-                    && momentsEqual(this.get('minDate'), queryState.queryModel.get('minDate'))
-                    && momentsEqual(this.get('maxDate'), queryState.queryModel.get('maxDate'))
+                    && optionalMomentsEqual(this.get('minDate'), queryState.queryModel.get('minDate'))
+                    && optionalMomentsEqual(this.get('maxDate'), queryState.queryModel.get('maxDate'))
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'))
-                    && arraysEqual(this.get('indexes'), queryState.selectedIndexes.toResourceIdentifiers(), _.isEqual)
+                    && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
         },
 
@@ -107,7 +127,7 @@ define([
          * @return {SavedSearchModelAttributes}
          */
         attributesFromQueryState: function(queryState) {
-            var indexes = queryState.selectedIndexes.toResourceIdentifiers();
+            var indexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
             var parametricValues = queryState.selectedParametricValues.map(pickFieldAndValue);
 
             return _.extend({

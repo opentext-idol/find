@@ -1,30 +1,69 @@
 define([
     'backbone',
     'find/app/util/array-equality',
-    'find/app/page/search/saved-searches/save-search-input',
+    'find/app/page/search/saved-searches/search-title-input',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/util/confirm-view',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle'
-], function(Backbone, arrayEquality, SaveSearchInput, SavedSearchModel, Confirm, template, i18n) {
+], function(Backbone, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, template, i18n) {
 
     'use strict';
 
     var html = _.template(template)({i18n: i18n});
 
-    return Backbone.View.extend({
-        events: {
-            'click .show-save-as-button': function() {
-                this.model.set('showSaveAs', !this.model.get('showSaveAs'));
-            },
-            'click .save-search-button': function() {
-                var attributes = SavedSearchModel.attributesFromQueryState(this.queryState);
+    var SavedState = {
+        NEW: 'NEW',
+        MODIFIED: 'MODIFIED',
+        SAVED: 'SAVED'
+    };
 
-                // TODO: Handle success/error
-                this.savedSearchModel.save(attributes, {wait: true});
+    var TitleEditState = {
+        OFF: 'OFF',
+        RENAME: 'RENAME',
+        SAVE_AS: 'SAVE_AS'
+    };
+
+    function resolveSavedState(queryState, savedSearchModel) {
+        if (savedSearchModel.isNew()) {
+            return SavedState.NEW;
+        } else {
+            return savedSearchModel.equalsQueryState(queryState) ? SavedState.SAVED : SavedState.MODIFIED;
+        }
+    }
+
+    function toggleTitleEditState(titleEditState) {
+        return function() {
+            var isCurrentMethod = this.model.get('titleEditState') === titleEditState;
+
+            this.model.set({
+                error: null,
+                titleEditState: isCurrentMethod ? TitleEditState.OFF : titleEditState
+            });
+        };
+    }
+
+    return Backbone.View.extend({
+        titleInput: null,
+
+        events: {
+            'click .show-save-as-button': toggleTitleEditState(TitleEditState.SAVE_AS),
+            'click .show-rename-button': toggleTitleEditState(TitleEditState.RENAME),
+            'click .save-search-button': function() {
+                this.model.set({error: null, loading: true});
+
+                this.savedSearchModel.save(SavedSearchModel.attributesFromQueryState(this.queryState), {
+                    wait: true,
+                    error: _.bind(function() {
+                        this.model.set({error: i18n['search.savedSearchControl.error'], loading: false});
+                    }, this),
+                    success: _.bind(function() {
+                        this.model.set({error: null, loading: false});
+                    }, this)
+                });
             },
-            'click .saved-search-delete-option': function(e) {
-                e.preventDefault();
+            'click .saved-search-delete-option': function() {
+                this.model.set('error', null);
 
                 new Confirm({
                     cancelClass: 'btn-default',
@@ -37,13 +76,22 @@ define([
                     title: i18n['search.savedSearches.confirm.deleteMessage.title'],
                     hiddenEvent: 'hidden.bs.modal',
                     okHandler: _.bind(function() {
-                        // TODO: Handle success/error
-                        this.savedSearchModel.destroy();
+                        this.model.set({error: null, loading: true});
+
+                        this.savedSearchModel.destroy({
+                            wait: true,
+                            error: _.bind(function() {
+                                this.model.set({error: i18n['search.savedSearches.deleteFailed'], loading: false});
+                            }, this),
+                            success: _.bind(function() {
+                                this.model.set({error: null, loading: false});
+                            }, this)
+                        });
                     }, this)
                 });
             },
-            'click .search-reset-option': function(e) {
-                e.preventDefault();
+            'click .search-reset-option': function() {
+                this.model.set('error', null);
 
                 new Confirm({
                     cancelClass: 'btn-default',
@@ -66,6 +114,7 @@ define([
         },
 
         initialize: function(options) {
+            this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
 
             this.queryState = {
@@ -75,48 +124,142 @@ define([
                 selectedParametricValues: options.selectedParametricValues
             };
 
-            this.model = new Backbone.Model({showSaveAs: false});
+            this.model = new Backbone.Model({
+                // Is the saved search new, modified or up to date with the server?
+                savedState: resolveSavedState(this.queryState, this.savedSearchModel),
 
-            this.listenTo(this.model, 'change:showSaveAs', this.updateShowSaveAsVisibility);
-            this.listenTo(this.savedSearchModel, 'change:id', this.updateShowSaveAsButtonText);
+                // Are we renaming, saving a new search or neither?
+                titleEditState: TitleEditState.OFF,
 
-            this.listenTo(this.savedSearchModel, 'change', this.updateResetAndSaveControls);
-            this.listenTo(this.queryState.queryModel, 'change', this.updateResetAndSaveControls);
+                // Is there a save or delete in progress?
+                loading: false,
 
-            this.saveSearchInput = new SaveSearchInput({
-                savedSearchModel: this.savedSearchModel,
-                queryState: this.queryState,
-                savedSearchControlModel: this.model
+                // Either null or an error message to display
+                error: null
             });
+
+            this.listenTo(this.model, 'change:loading', this.updateLoading);
+            this.listenTo(this.model, 'change:error', this.updateErrorMessage);
+            this.listenTo(this.model, 'change:savedState', this.updateForSavedState);
+            this.listenTo(this.model, 'change:titleEditState', this.updateForTitleEditState);
+
+            var updateSavedState = _.bind(function() {
+                var savedState = resolveSavedState(this.queryState, this.savedSearchModel);
+                var attributes = {savedState: savedState};
+
+                if (savedState === SavedState.NEW) {
+                    // This shouldn't happen; a saved model cannot become new again
+                    attributes.titleEditState = TitleEditState.OFF;
+                }
+
+                this.model.set(attributes);
+            }, this);
+
+            this.listenTo(this.savedSearchModel, 'change', updateSavedState);
+            this.listenTo(this.queryState.queryModel, 'change', updateSavedState);
+
+            // Index and parametric value selection only updates the query model after a debounce but we want to update
+            // the save and reset buttons immediately
+            this.listenTo(this.queryState.selectedIndexes, 'add remove', updateSavedState);
+            this.listenTo(this.queryState.selectedParametricValues, 'add remove', updateSavedState);
         },
 
         render: function() {
             this.$el.html(html);
 
-            this.saveSearchInput.setElement(this.$('.save-search-input-container')).render();
+            this.renderTitleInput();
 
-            this.updateResetAndSaveControls();
-            this.updateShowSaveAsButtonText();
-            this.updateShowSaveAsVisibility();
+            this.updateErrorMessage();
+            this.updateForSavedState();
+            this.updateForTitleEditState();
+            this.updateLoading();
         },
 
-        updateResetAndSaveControls: function() {
-            var hide = this.savedSearchModel.isNew() || this.savedSearchModel.equalsQueryState(this.queryState);
-            this.$('.search-reset-option, .save-search-button').toggleClass('hide', hide);
+        updateForSavedState: function() {
+            var savedState = this.model.get('savedState');
+
+            this.$('.search-reset-option, .save-search-button').toggleClass('hide', savedState !== SavedState.MODIFIED);
+            this.$('.show-rename-button').toggleClass('hide', savedState === SavedState.NEW);
+
+            var createOrEdit = savedState === SavedState.NEW ? 'create' : 'edit';
+            this.$('.show-save-as-button').text(i18n['search.savedSearchControl.openEdit.' + createOrEdit]);
         },
 
-        updateShowSaveAsButtonText: function() {
-            var keySuffix = (this.savedSearchModel.isNew() ? 'create' : 'edit');
-            this.$('.show-save-as-button').text(i18n['search.savedSearchControl.openEdit.' + keySuffix]);
-        },
-
-        updateShowSaveAsVisibility: function() {
-            var showSaveAs = this.model.get('showSaveAs');
-            this.saveSearchInput.$el.toggleClass('hide', !showSaveAs);
+        updateForTitleEditState: function() {
+            var titleEditState = this.model.get('titleEditState');
 
             this.$('.show-save-as-button')
-                .toggleClass('active', showSaveAs)
-                .attr('aria-pressed', showSaveAs);
+                .toggleClass('active', TitleEditState.SAVE_AS === titleEditState)
+                .attr('aria-pressed', TitleEditState.SAVE_AS === titleEditState);
+
+            this.$('.show-rename-button')
+                .toggleClass('active', TitleEditState.RENAME === titleEditState)
+                .attr('aria-pressed', TitleEditState.RENAME === titleEditState);
+
+            // Destroy the title input if we are not editing the title
+            if (titleEditState === TitleEditState.OFF) {
+                this.destroyTitleInput();
+            }
+
+            // Create a title input if we have clicked "Save As" or "Rename" and the title input is not displayed
+            if (titleEditState !== TitleEditState.OFF && this.titleInput === null) {
+                this.titleInput = new SearchTitleInput({
+                    savedSearchModel: this.savedSearchModel,
+                    saveCallback: _.bind(function(title, success, error) {
+                        var savedState = this.model.get('savedState');
+                        var titleEditState = this.model.get('titleEditState');
+                        var attributes = _.extend({title: title}, SavedSearchModel.attributesFromQueryState(this.queryState));
+
+                        var saveOptions = {
+                            error: error,
+                            success: success,
+                            wait: true
+                        };
+
+                        if (titleEditState === TitleEditState.SAVE_AS && savedState !== SavedState.NEW) {
+                            this.savedSearchCollection.create(attributes, saveOptions);
+                        } else {
+                            this.savedSearchModel.save(attributes, saveOptions);
+                        }
+                    }, this)
+                });
+
+                this.renderTitleInput();
+
+                this.listenTo(this.titleInput, 'remove', function() {
+                    this.model.set('titleEditState', TitleEditState.OFF);
+                });
+            }
+        },
+
+        updateErrorMessage: function() {
+            var error = this.model.get('error');
+            this.$('.search-controls-message').text(error || '');
+        },
+
+        updateLoading: function() {
+            this.$('.save-search-button').prop('disabled', this.model.get('loading'));
+        },
+
+        remove: function() {
+            this.destroyTitleInput();
+            Backbone.View.prototype.remove.call(this);
+        },
+
+        destroyTitleInput: function() {
+            if (this.titleInput !== null) {
+                this.titleInput.remove();
+                this.stopListening(this.titleInput);
+                this.titleInput = null;
+            }
+        },
+
+        renderTitleInput: function() {
+            if (this.titleInput) {
+                // Append before render so we can focus the input
+                this.$('.search-title-input-container').append(this.titleInput.$el);
+                this.titleInput.render();
+            }
         }
     });
 

@@ -71,6 +71,7 @@ define([
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
             this.queryTextModel = options.queryTextModel;
+            this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
 
             this.documentsCollection = new DocumentsCollection();
@@ -126,6 +127,7 @@ define([
 
             this.savedSearchControlView = new SavedSearchControlView({
                 savedSearchModel: this.savedSearchModel,
+                savedSearchCollection: this.savedSearchCollection,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryTextModel,
                 selectedIndexesCollection: this.selectedIndexesCollection,
