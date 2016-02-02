@@ -51,9 +51,7 @@ define([
                 // TODO: Handle success/error
                 this.savedSearchModel.save(attributes, {wait: true});
             },
-            'click .saved-search-delete-option': function(e) {
-                e.preventDefault();
-
+            'click .saved-search-delete-option': function() {
                 new Confirm({
                     cancelClass: 'btn-default',
                     cancelIcon: '',
@@ -70,9 +68,7 @@ define([
                     }, this)
                 });
             },
-            'click .search-reset-option': function(e) {
-                e.preventDefault();
-
+            'click .search-reset-option': function() {
                 new Confirm({
                     cancelClass: 'btn-default',
                     cancelIcon: '',
