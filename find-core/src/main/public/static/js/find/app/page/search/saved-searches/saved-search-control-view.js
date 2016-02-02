@@ -212,8 +212,9 @@ define([
 
         renderTitleInput: function() {
             if (this.titleInput) {
-                this.titleInput.render();
+                // Append before render so we can focus the input
                 this.$('.search-title-input-container').append(this.titleInput.$el);
+                this.titleInput.render();
             }
         }
     });

@@ -56,6 +56,7 @@ define([
 
         render: function() {
             this.$el.html(html);
+            this.$('.search-title-input').focus();
 
             this.updateError();
             this.updateLoading();
