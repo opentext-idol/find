@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OPSearchPage extends SearchPage {
-    public OPSearchPage(WebDriver driver) {
+    private OPSearchPage(WebDriver driver) {
         super(driver);
     }
 

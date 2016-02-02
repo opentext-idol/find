@@ -25,11 +25,6 @@ public class SchedulePage extends AppElement implements AppPage {
         super(driver.findElement(By.cssSelector(".pd-wizard")), driver);
     }
 
-	@Deprecated
-    public static SchedulePage make(final WebDriver driver) {
-		return new Factory().create(driver);
-    }
-
 	public WebElement alwaysActive() {
 		return ElementUtil.getParent(findElement(By.xpath(".//h4[contains(text(), 'Always active')]")));
 	}

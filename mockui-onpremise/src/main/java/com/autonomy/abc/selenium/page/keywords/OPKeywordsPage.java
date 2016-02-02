@@ -7,7 +7,7 @@
  import org.openqa.selenium.WebDriver;
 
 public class OPKeywordsPage extends KeywordsPage {
-    public OPKeywordsPage(WebDriver driver) {
+    private OPKeywordsPage(WebDriver driver) {
         super(driver);
     }
 

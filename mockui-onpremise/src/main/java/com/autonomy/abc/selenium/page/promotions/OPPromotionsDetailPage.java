@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -13,7 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class OPPromotionsDetailPage extends PromotionsDetailPage {
     private AppElement fieldTextContainer;
 
-    public OPPromotionsDetailPage(WebDriver driver) {
+    private OPPromotionsDetailPage(WebDriver driver) {
         super(driver);
         fieldTextContainer = new AppElement(findElement(By.cssSelector(".promotion-field-text")), driver);
     }
@@ -77,5 +78,11 @@ public class OPPromotionsDetailPage extends PromotionsDetailPage {
 
     public void schedulePromotion(){
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.elementToBeClickable(findElement(By.className("promotion-view-schedule")))).click();
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, OPPromotionsDetailPage> {
+        public OPPromotionsDetailPage create(WebDriver context) {
+            return new OPPromotionsDetailPage(context);
+        }
     }
 }

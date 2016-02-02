@@ -17,11 +17,6 @@ public class SettingsPage extends AppElement implements AppPage {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
-	@Deprecated
-    public static SettingsPage make(final WebDriver driver) {
-		return new Factory().create(driver);
-    }
-
 	public void saveChangesClick() {
 		Waits.loadOrFadeWait();
 		findElement(By.xpath(".//*[contains(text(), 'Save Changes')]")).click();

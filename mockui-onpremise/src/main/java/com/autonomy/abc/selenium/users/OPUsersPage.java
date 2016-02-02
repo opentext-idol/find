@@ -10,7 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class OPUsersPage extends UsersPage {
-    public OPUsersPage(WebDriver driver) {
+    private OPUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
     }

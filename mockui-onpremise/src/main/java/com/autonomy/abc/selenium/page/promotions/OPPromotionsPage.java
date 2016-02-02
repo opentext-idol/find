@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 public class OPPromotionsPage extends PromotionsPage {
-    public OPPromotionsPage(WebDriver driver) {
+    private OPPromotionsPage(WebDriver driver) {
         super(driver);
     }
 

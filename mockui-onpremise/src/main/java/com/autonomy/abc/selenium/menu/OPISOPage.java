@@ -6,10 +6,7 @@ import com.autonomy.abc.selenium.page.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.OPKeywordsPage;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
 import com.autonomy.abc.selenium.page.overview.OverviewPage;
-import com.autonomy.abc.selenium.page.promotions.OPCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.SchedulePage;
+import com.autonomy.abc.selenium.page.promotions.*;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.OPSearchPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
@@ -23,7 +20,7 @@ public enum OPISOPage implements PageMapper.Page {
 
     PROMOTIONS(NavBarTabId.PROMOTIONS, new OPPromotionsPage.Factory(), OPPromotionsPage.class),
     PROMOTION_WIZARD(new OPCreateNewPromotionsPage.Factory(), OPCreateNewPromotionsPage.class),
-    PROMOTION_DETAILS(new PromotionsDetailPage.Factory(), PromotionsDetailPage.class),
+    PROMOTION_DETAILS(new OPPromotionsDetailPage.Factory(), OPPromotionsDetailPage.class),
     EDIT_REFERENCES(new EditDocumentReferencesPage.Factory(), EditDocumentReferencesPage.class),
     SCHEDULE(new SchedulePage.Factory(), SchedulePage.class),
 

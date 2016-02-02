@@ -1,6 +1,8 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.menu.OPISOPage;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
+import com.autonomy.abc.selenium.menu.PageMapper;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
@@ -14,6 +16,8 @@ import com.autonomy.abc.selenium.page.search.OPSearchPage;
 import org.openqa.selenium.WebDriver;
 
 public class OPElementFactory extends ElementFactory {
+    private PageMapper<OPISOPage> mapper = new PageMapper<>(OPISOPage.class);
+
     public OPElementFactory(final WebDriver driver) {
         super(driver);
     }
@@ -25,57 +29,66 @@ public class OPElementFactory extends ElementFactory {
 
     @Override
     public OPPromotionsPage getPromotionsPage() {
-        return new OPPromotionsPage(getDriver());
+        return loadPage(OPPromotionsPage.class);
     }
 
     @Override
     public OPLoginPage getLoginPage() {
-        return new OPLoginPage(getDriver());
+        return loadPage(OPLoginPage.class);
     }
 
     @Override
     public OPPromotionsDetailPage getPromotionsDetailPage() {
-        return new OPPromotionsDetailPage(getDriver());
+        return loadPage(OPPromotionsDetailPage.class);
     }
 
     @Override
     public OPCreateNewPromotionsPage getCreateNewPromotionsPage() {
-        return new OPCreateNewPromotionsPage(getDriver());
+        return loadPage(OPCreateNewPromotionsPage.class);
     }
 
     @Override
     public OPKeywordsPage getKeywordsPage() {
-        return new OPKeywordsPage(getDriver());
+        return loadPage(OPKeywordsPage.class);
     }
 
     @Override
     public OPCreateNewKeywordsPage getCreateNewKeywordsPage() {
-        return new OPCreateNewKeywordsPage(getDriver());
+        return loadPage(OPCreateNewKeywordsPage.class);
     }
 
     @Override
     public OPSearchPage getSearchPage() {
-        return new OPSearchPage(getDriver());
+        return loadPage(OPSearchPage.class);
     }
 
     public OverviewPage getOverviewPage() {
-        return OverviewPage.make(getDriver());
+        return loadPage(OverviewPage.class);
     }
 
     public SchedulePage getSchedulePage() {
-        return SchedulePage.make(getDriver());
+        return loadPage(SchedulePage.class);
     }
 
     @Override
     public UsersPage getUsersPage() {
-        return new OPUsersPage(getDriver());
+        return loadPage(OPUsersPage.class);
     }
 
     public AboutPage getAboutPage() {
-        return AboutPage.make(getDriver());
+        return loadPage(AboutPage.class);
     }
 
     public SettingsPage getSettingsPage() {
-        return SettingsPage.make(getDriver());
+        return loadPage(SettingsPage.class);
+    }
+
+    public <T> T switchTo(Class<T> type) {
+        getSideNavBar().switchPage(mapper.getId(type));
+        return loadPage(type);
+    }
+
+    public <T> T loadPage(Class<T> type) {
+        return mapper.load(type, getDriver());
     }
 }

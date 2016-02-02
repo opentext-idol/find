@@ -15,11 +15,6 @@ public class AboutPage extends AppElement implements AppPage {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
-	@Deprecated
-    public static AboutPage make(final WebDriver driver) {
-        return new Factory().create(driver);
-    }
-
 	public void setTableSize(final String tableSize) {
 		findElement(By.cssSelector("[name='DataTables_Table_0_length'] option[value='" + tableSize + "']")).click();
 	}

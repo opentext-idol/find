@@ -12,7 +12,7 @@ public class OPLoginPage extends LoginPage {
 
     private final WebDriver driver;
 
-    public OPLoginPage(final WebDriver driver) {
+    private OPLoginPage(final WebDriver driver) {
         super(driver, new AbcHasLoggedIn(driver));
 
         this.driver = driver;

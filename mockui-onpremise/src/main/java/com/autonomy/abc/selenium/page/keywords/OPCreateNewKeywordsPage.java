@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class OPCreateNewKeywordsPage extends CreateNewKeywordsPage {
-    public OPCreateNewKeywordsPage(WebDriver driver) {
+    private OPCreateNewKeywordsPage(WebDriver driver) {
         super(driver);
     }
 

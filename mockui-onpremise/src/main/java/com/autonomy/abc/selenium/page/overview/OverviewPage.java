@@ -16,11 +16,6 @@ public class OverviewPage extends AppElement implements AppPage {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
     }
 
-	@Deprecated
-    public static OverviewPage make(final WebDriver driver) {
-		return new Factory().create(driver);
-    }
-
 	public int searchTermSearchCount(final String searchTerm) {
 		return Integer.parseInt(getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[3]")).getText());
 	}

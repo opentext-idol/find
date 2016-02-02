@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class OPCreateNewPromotionsPage extends CreateNewPromotionsPage {
-    public OPCreateNewPromotionsPage(WebDriver driver) {
+    private OPCreateNewPromotionsPage(WebDriver driver) {
         super(driver);
     }
 
