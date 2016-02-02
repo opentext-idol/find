@@ -28,7 +28,7 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
     @Autowired private SavedQueryService savedQueryService;
 
     @Test
-    public void createFetchDelete() {
+    public void createFetchUpdateDelete() {
         final String title = "Any old saved search";
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setTitle(title)
@@ -39,8 +39,18 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
         assertNotNull(entity.getId());
 
         entity.setQueryText("*");
-        final SavedQuery updatedEntity = savedQueryService.update(entity);
+        SavedQuery updatedEntity = savedQueryService.update(entity);
         assertEquals(updatedEntity.getQueryText(), "*");
+
+        // Mimic how the update method is likely to be called - with an entity without a user
+        final SavedQuery updateInputEntity = new SavedQuery.Builder()
+                .setTitle(title)
+                .setId(entity.getId())
+                .setQueryText("cat")
+                .build();
+        updatedEntity = savedQueryService.update(updateInputEntity);
+        assertEquals(updatedEntity.getQueryText(), "cat");
+        assertNotNull(updatedEntity.getUser());
 
         final Set<SavedQuery> fetchedEntities = savedQueryService.getAll();
         assertEquals(fetchedEntities.size(), 1);
