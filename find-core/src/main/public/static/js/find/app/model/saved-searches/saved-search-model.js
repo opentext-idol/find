@@ -91,6 +91,13 @@ define([
             return _.defaults(dateAttributes, response);
         },
 
+        destroy: function(options) {
+            return Backbone.Model.prototype.destroy.call(this, _.extend(options || options, {
+                // The server returns an empty body (ie: not JSON)
+                dataType: 'text'
+            }));
+        },
+
         /**
          * Does this model represent the same search as the given query state?
          * @param {QueryState} queryState

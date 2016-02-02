@@ -66,7 +66,7 @@ define([
                     hiddenEvent: 'hidden.bs.modal',
                     okHandler: _.bind(function() {
                         // TODO: Handle error
-                        this.savedSearchModel.destroy();
+                        this.savedSearchModel.destroy({wait: true});
                     }, this)
                 });
             },
