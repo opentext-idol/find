@@ -59,7 +59,7 @@ define([
     };
 
     return Backbone.View.extend({
-        className: 'col-xs-12',
+        className: 'inline',
 
         // May be overridden
         SearchFiltersCollection: SearchFiltersCollection,
