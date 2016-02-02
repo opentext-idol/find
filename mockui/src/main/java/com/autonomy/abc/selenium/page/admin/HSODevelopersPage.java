@@ -44,4 +44,9 @@ public class HSODevelopersPage extends HSOUserManagementPage {
     protected WebElement getUserRowByUsername(String username) {
         return findElement(By.xpath("//*[contains(@class,'user-name') and contains(.,'" + username + "')]"));
     }
+
+    public void editUsername(User dev, String devUsername) {
+        editUsernameLink(dev).click();
+        editUsernameInput(dev).setAndSubmit(devUsername);
+    }
 }

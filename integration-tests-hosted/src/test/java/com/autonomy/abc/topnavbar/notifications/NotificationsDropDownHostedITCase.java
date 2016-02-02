@@ -12,6 +12,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.Notification;
+import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
@@ -146,59 +147,44 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     @KnownBug({"CSA-1698", "CSA-1687"})
     public void testUsernameShowsInNotifications() throws Exception {
+        KeywordService keywordService = getApplication().keywordService();
+        UserService userService = getApplication().userService();
+        Session secondSession = null;
+        SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
 
         HSODevelopersPage hsoDevelopersPage = getElementFactory().getDevsPage();
         User dev = new User(null, hsoDevelopersPage.getUsernames().get(0));
-
         String devUsername = "Brendon Urie";
-
-        hsoDevelopersPage.editUsernameLink(dev).click();
-        hsoDevelopersPage.editUsernameInput(dev).setAndSubmit(devUsername);
-
-        KeywordService keywordService = getApplication().keywordService();
-        UserService userService = getApplication().userService();
-        Session session = null;
-
-        SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+        hsoDevelopersPage.editUsername(dev, devUsername);
 
         try {
-            keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
-
-            getElementFactory().getTopNavBar().notificationsDropdown();
-            for (Notification notification : getElementFactory().getTopNavBar().getNotifications().getAllNotifications()) {
-                verifyThat(notification.getUsername(), is(devUsername));
-            }
+            addKeywordsAndVerifyNotifications(keywordService, devUsername);
 
             User user = userService.createNewUser(config.getNewUser("drake"), Role.ADMIN);
 
             try {
                 user.authenticate(config.getWebDriverFactory(), emailHandler);
-            } catch (TimeoutException e) {
-                /* User has likely already been authenticated recently, attempt to continue */
-            }
+            } catch (TimeoutException e) { /* User has likely already been authenticated recently, attempt to continue */ }
 
-            session = getSessionRegistry().startSession(config.getWebappUrl());
-            HSOElementFactory secondFactory = new HSOApplication().inWindow(session.getActiveWindow()).elementFactory();
+            secondSession = getSessionRegistry().startSession(config.getWebappUrl());
+            HSOApplication secondApplication = (HSOApplication) new HSOApplication().inWindow(secondSession.getActiveWindow());
+            HSOElementFactory secondFactory = secondApplication.elementFactory();
 
-            loginTo(secondFactory.getLoginPage(), session.getDriver(), user);
-
+            loginTo(secondFactory.getLoginPage(), secondSession.getDriver(), user);
             secondFactory.getPromotionsPage();
 
-            keywordService.addSynonymGroup("Messi", "Campbell");
-
-            verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
-            secondFactory.getTopNavBar().notificationsDropdown();
-            verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
+            secondApplication.keywordService().addSynonymGroup("Messi", "Campbell");
+            secondFactory.getTopNavBar().openNotifications();
+            verifyNotificationCorrectUsername(user.getUsername(), secondFactory);
 
             keywordService.addSynonymGroup("Joel", "Lionel");
-
-            verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
-            verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
+            verifyNotificationCorrectUsername(devUsername, secondFactory);
 
         } finally {
-            if (session != null) {
-                getSessionRegistry().endSession(session);
+            if (secondSession != null) {
+                getSessionRegistry().endSession(secondSession);
             }
 
             userService.deleteOtherUsers();
@@ -206,6 +192,20 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
             emailHandler.markAllEmailAsRead(getDriver());
         }
+    }
+
+    private void addKeywordsAndVerifyNotifications(KeywordService keywordService, String devUsername){
+        keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
+
+        getElementFactory().getTopNavBar().openNotifications();
+        for (Notification notification : getElementFactory().getTopNavBar().getNotifications().getAllNotifications()) {
+            verifyThat(notification.getUsername(), is(devUsername));
+        }
+    }
+
+    private void verifyNotificationCorrectUsername(String username, ElementFactory secondFactory){
+        verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(username));
+        verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(username));
     }
 
     @Test

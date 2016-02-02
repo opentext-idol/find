@@ -82,7 +82,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1720")
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
         ConnectionService cs = getApplication().connectionService();
-        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc", Index.DEFAULT).withDepth(2);
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc", Index.DEFAULT).withDuration(150);
 
         //Create connection
         cs.setUpConnection(connector);
