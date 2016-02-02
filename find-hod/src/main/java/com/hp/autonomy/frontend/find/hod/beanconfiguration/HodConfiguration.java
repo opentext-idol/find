@@ -7,11 +7,8 @@ package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
-import com.hp.autonomy.frontend.configuration.ConfigFileService;
-import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
-import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
+import com.hp.autonomy.frontend.configuration.*;
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsDeserializer;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
@@ -27,11 +24,8 @@ import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
-import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
-import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
-import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
-import com.hp.autonomy.hod.sso.UnboundTokenService;
-import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
+import com.hp.autonomy.hod.sso.*;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -69,10 +63,11 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
     @Autowired
-    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder) {
+    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder, final QueryRestrictionsDeserializer<?> queryRestrictionsDeserializer) {
         return builder.createXmlMapper(false)
                 .mixIn(Authentication.class, HodAuthenticationMixins.class)
                 .mixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
+                .deserializerByType(QueryRestrictions.class, queryRestrictionsDeserializer)
                 .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .build();
     }

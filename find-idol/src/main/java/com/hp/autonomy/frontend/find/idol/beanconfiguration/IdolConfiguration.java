@@ -13,8 +13,10 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
+import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsDeserializer;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
@@ -35,13 +37,14 @@ public class IdolConfiguration {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
     @Autowired
-    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder) {
-        final ObjectMapper objectMapper = builder.createXmlMapper(false).build();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        objectMapper.addMixIn(ServerConfig.class, ConfigurationFilterMixin.class);
-        objectMapper.addMixIn(ViewConfig.class, ConfigurationFilterMixin.class);
-
-        return objectMapper;
+    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder, final QueryRestrictionsDeserializer<?> queryRestrictionsDeserializer) {
+        return builder
+                .createXmlMapper(false)
+                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+                .mixIn(ServerConfig.class, ConfigurationFilterMixin.class)
+                .mixIn(ViewConfig.class, ConfigurationFilterMixin.class)
+                .deserializerByType(QueryRestrictions.class, queryRestrictionsDeserializer)
+                .build();
     }
 
     @Bean
