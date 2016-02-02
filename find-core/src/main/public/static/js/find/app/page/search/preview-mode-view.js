@@ -27,7 +27,7 @@ define([
                 if (!this.media)
                 {
                     var $viewServerPage = this.$('.preview-document-frame');
-                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30)
+                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30 - this.$('.preview-mode-metadata').height())
                 }
             }, this)
         },
@@ -71,11 +71,11 @@ define([
                 $viewServerPage.on('load', _.bind(function() {
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     $viewServerPage.removeClass('hidden');
-                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30)
+                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30 - this.$('.preview-mode-metadata').height())
                 }, this));
 
                 $viewServerPage.attr("src", args.src);
-                $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30);
+                $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
             this.scrollFollow();
         },
