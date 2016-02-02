@@ -41,7 +41,6 @@ public class UsersPageITCase extends UsersPageTestBase {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
 		User user = aNewUser.signUpAs(Role.USER, usersPage);
-		Waits.loadOrFadeWait();
 		User admin = newUser2.signUpAs(Role.ADMIN, usersPage);
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));

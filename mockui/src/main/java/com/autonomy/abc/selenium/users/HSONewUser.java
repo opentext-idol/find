@@ -3,8 +3,10 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSONewUser implements NewUser {
@@ -25,22 +27,26 @@ public class HSONewUser implements NewUser {
 
     @Override
     public HSOUser signUpAs(Role role, UsersPage usersPage) {
-        HSOUsersPage hsoUsersPage = (HSOUsersPage) usersPage;
+        final HSOUsersPage hsoUsersPage = (HSOUsersPage) usersPage;
 
         hsoUsersPage.addUsername(username);
         hsoUsersPage.addEmail(email);
         hsoUsersPage.selectRole(role);
         hsoUsersPage.createButton().click();
 
-        new WebDriverWait(usersPage.getDriver(),15).withMessage("User hasn't been created").until(GritterNotice.notificationContaining("Created user"));
-
-        Waits.loadOrFadeWait();
-
-        if (hsoUsersPage.getUsernameInput().getValue().equals("")) {
-            return new HSOUser(username, email, role, provider);
+        try {
+            new WebDriverWait(usersPage.getDriver(), 15).withMessage("User hasn't been created").until(GritterNotice.notificationContaining("Created user"));
+            new WebDriverWait(usersPage.getDriver(), 5).withMessage("User input hasn't cleared").until(new ExpectedCondition<Boolean>() {
+                @Override
+                public Boolean apply(WebDriver driver) {
+                    return hsoUsersPage.getUsernameInput().getValue().equals("");
+                }
+            });
+        } catch (TimeoutException e) {
+            throw new UserNotCreatedException(this);
         }
 
-        throw new UserNotCreatedException(this);
+        return new HSOUser(username, email, role, provider);
     }
 
     @Override
