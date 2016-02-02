@@ -804,6 +804,7 @@ public class FindITCase extends HostedTestBase {
         List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){
             find.search(searchTerm);
+            Waits.loadOrFadeWait();
             assertThat(results, containsText(Errors.Search.QUOTES));
         }
     }

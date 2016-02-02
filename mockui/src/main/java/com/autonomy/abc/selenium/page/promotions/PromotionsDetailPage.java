@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.promotions;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -171,7 +172,7 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
     }
 
     public WebElement promotedDocument(final String title) {
-        return findElement(By.cssSelector("ul.promoted-documents-list")).findElement(By.xpath(".//a[contains(text(), '" + title + "')]/../.."));
+        return ElementUtil.ancestor(findElement(new Locator().withTagName("a").containingText(title)), 2);
     }
 
     public Removable removablePromotedDocument(final String title) {
