@@ -160,6 +160,7 @@ define([
                         view: new this.ServiceView({
                             indexesCollection: this.indexesCollection,
                             searchModel: this.searchModel,
+                            savedSearchCollection: this.savedSearchCollection,
                             queryTextModel: queryTextModel,
                             savedSearchModel: savedSearchModel
                         })
