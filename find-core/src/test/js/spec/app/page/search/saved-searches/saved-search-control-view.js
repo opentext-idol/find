@@ -442,6 +442,21 @@ define([
                     });
                 });
             });
+
+            describe('then the selected indexes are changed', function() {
+                beforeEach(function() {
+                    this.queryState.selectedIndexes.add({
+                        name: 'NEW_DATABASE'
+                    });
+                });
+
+                // Index and parametric value selection only updates the query model after a debounce but we want to update
+                // the save and reset buttons immediately
+                it('updates the save and reset buttons immediately', function() {
+                    expect(this.view.$('.show-rename-button')).not.toHaveClass('hide');
+                    expect(this.view.$('.search-reset-option')).not.toHaveClass('hide');
+                });
+            });
         });
     });
 

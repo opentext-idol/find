@@ -157,6 +157,11 @@ define([
 
             this.listenTo(this.savedSearchModel, 'change', updateSavedState);
             this.listenTo(this.queryState.queryModel, 'change', updateSavedState);
+
+            // Index and parametric value selection only updates the query model after a debounce but we want to update
+            // the save and reset buttons immediately
+            this.listenTo(this.queryState.selectedIndexes, 'add remove', updateSavedState);
+            this.listenTo(this.queryState.selectedParametricValues, 'add remove', updateSavedState);
         },
 
         render: function() {
