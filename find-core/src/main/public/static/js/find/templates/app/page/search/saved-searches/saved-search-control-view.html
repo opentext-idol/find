@@ -1,16 +1,16 @@
-<button type="button" class="btn button-primary save-search-button hide">
+<button type="button" class="btn button-primary save-search-button">
     <%- i18n['search.savedSearchControl.update'] %>
 </button>
 <button type="button" class="btn button-primary show-rename-button" aria-pressed="false">
     <%- i18n['search.savedSearchControl.rename'] %>
 </button>
 <button type="button" class="btn button-primary show-save-as-button" aria-pressed="false"></button>
-<div class="btn-group">
+<div class="btn-group m-r-sm">
     <button data-toggle="dropdown" class="btn btn-icon btn-circular button-primary btn-lg dropdown-toggle" aria-expanded="false" id="btnDropDown">
         <i class="hp-icon hp-splitter hp-rotate-90"></i>
     </button>
     <ul class="dropdown-menu" role="menu" aria-labelledby="btnDropDown">
-        <li class="search-reset-option hide">
+        <li class="search-reset-option">
             <a><%-i18n['app.reset']%></a>
         </li>
         <li class="saved-search-delete-option">
@@ -18,4 +18,5 @@
         </li>
     </ul>
 </div>
+<span class="search-controls-message text-danger"></span>
 <div class="search-title-input-container"></div>

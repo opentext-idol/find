@@ -35,7 +35,11 @@ define([
     function toggleTitleEditState(titleEditState) {
         return function() {
             var isCurrentMethod = this.model.get('titleEditState') === titleEditState;
-            this.model.set('titleEditState', isCurrentMethod ? TitleEditState.OFF : titleEditState);
+
+            this.model.set({
+                error: null,
+                titleEditState: isCurrentMethod ? TitleEditState.OFF : titleEditState
+            });
         };
     }
 
@@ -46,12 +50,21 @@ define([
             'click .show-save-as-button': toggleTitleEditState(TitleEditState.SAVE_AS),
             'click .show-rename-button': toggleTitleEditState(TitleEditState.RENAME),
             'click .save-search-button': function() {
-                var attributes = SavedSearchModel.attributesFromQueryState(this.queryState);
+                this.model.set({error: null, loading: true});
 
-                // TODO: Handle success/error
-                this.savedSearchModel.save(attributes, {wait: true});
+                this.savedSearchModel.save(SavedSearchModel.attributesFromQueryState(this.queryState), {
+                    wait: true,
+                    error: _.bind(function() {
+                        this.model.set({error: i18n['search.savedSearchControl.error'], loading: false});
+                    }, this),
+                    success: _.bind(function() {
+                        this.model.set({error: null, loading: false});
+                    }, this)
+                });
             },
             'click .saved-search-delete-option': function() {
+                this.model.set('error', null);
+
                 new Confirm({
                     cancelClass: 'btn-default',
                     cancelIcon: '',
@@ -63,12 +76,23 @@ define([
                     title: i18n['search.savedSearches.confirm.deleteMessage.title'],
                     hiddenEvent: 'hidden.bs.modal',
                     okHandler: _.bind(function() {
-                        // TODO: Handle error
-                        this.savedSearchModel.destroy({wait: true});
+                        this.model.set({error: null, loading: true});
+
+                        this.savedSearchModel.destroy({
+                            wait: true,
+                            error: _.bind(function() {
+                                this.model.set({error: i18n['search.savedSearches.deleteFailed'], loading: false});
+                            }, this),
+                            success: _.bind(function() {
+                                this.model.set({error: null, loading: false});
+                            }, this)
+                        });
                     }, this)
                 });
             },
             'click .search-reset-option': function() {
+                this.model.set('error', null);
+
                 new Confirm({
                     cancelClass: 'btn-default',
                     cancelIcon: '',
@@ -105,9 +129,17 @@ define([
                 savedState: resolveSavedState(this.queryState, this.savedSearchModel),
 
                 // Are we renaming, saving a new search or neither?
-                titleEditState: TitleEditState.OFF
+                titleEditState: TitleEditState.OFF,
+
+                // Is there a save or delete in progress?
+                loading: false,
+
+                // Either null or an error message to display
+                error: null
             });
 
+            this.listenTo(this.model, 'change:loading', this.updateLoading);
+            this.listenTo(this.model, 'change:error', this.updateErrorMessage);
             this.listenTo(this.model, 'change:savedState', this.updateForSavedState);
             this.listenTo(this.model, 'change:titleEditState', this.updateForTitleEditState);
 
@@ -132,8 +164,10 @@ define([
 
             this.renderTitleInput();
 
+            this.updateErrorMessage();
             this.updateForSavedState();
             this.updateForTitleEditState();
+            this.updateLoading();
         },
 
         updateForSavedState: function() {
@@ -191,6 +225,15 @@ define([
                     this.model.set('titleEditState', TitleEditState.OFF);
                 });
             }
+        },
+
+        updateErrorMessage: function() {
+            var error = this.model.get('error');
+            this.$('.search-controls-message').text(error || '');
+        },
+
+        updateLoading: function() {
+            this.$('.save-search-button').prop('disabled', this.model.get('loading'));
         },
 
         remove: function() {

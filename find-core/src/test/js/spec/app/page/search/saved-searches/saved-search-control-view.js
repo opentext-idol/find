@@ -14,6 +14,61 @@ define([
     'i18n!find/nls/bundle'
 ], function(Backbone, $, SavedSearchControlView, SavedSearchModel, MockConfirmView, DatabasesCollection, moment, i18n) {
 
+    function testDeactivatesTheSaveSearchButton() {
+        it('deactivates the "Save Search" button', function() {
+            expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
+        });
+    }
+
+    function testDeactivatesTheSaveAsButton() {
+        it('deactivates the "Save As" button', function() {
+            expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
+        });
+    }
+
+    function testRemovesTheSetTitleInput() {
+        it('removes the set title input', function() {
+            expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(0);
+        });
+    }
+
+    function testShowsTheSetTitleInput() {
+        it('shows the set title input', function() {
+            expect(this.view.$('.search-title-input-container')).not.toHaveClass('hide');
+            expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(1);
+        });
+    }
+
+    function testHidesTheSaveButton() {
+        it('hides the save button', function() {
+            expect(this.view.$('.save-search-button')).toHaveClass('hide');
+        });
+    }
+
+    function testHidesTheResetButton() {
+        it('hides the reset button', function() {
+            expect(this.view.$('.search-reset-option')).toHaveClass('hide');
+        });
+    }
+
+    function testShowsTheRenameButton() {
+        it('shows the rename button', function() {
+            expect(this.view.$('.show-rename-button')).not.toHaveClass('hide');
+        });
+    }
+
+    function clickSaveAsButton() {
+        this.view.$('.show-save-as-button').click();
+    }
+
+    function clickShowRename() {
+        this.view.$('.show-rename-button').click();
+    }
+
+    function clickSaveSearchButton() {
+        this.view.$('.save-search-button').click();
+    }
+
     describe('SavedSearchControlView', function() {
         beforeEach(function() {
             var queryModel = new Backbone.Model({
@@ -69,13 +124,8 @@ define([
         });
 
         describe('when the saved search is new', function() {
-            it('hides the save button', function() {
-                expect(this.view.$('.save-search-button')).toHaveClass('hide');
-            });
-
-            it('hides the reset button', function() {
-                expect(this.view.$('.search-reset-option')).toHaveClass('hide');
-            });
+            testHidesTheSaveButton();
+            testHidesTheResetButton();
 
             it('hides the rename button', function() {
                 expect(this.view.$('.show-rename-button')).toHaveClass('hide');
@@ -86,14 +136,9 @@ define([
             });
 
             describe('then the "Save Search" button is clicked', function() {
-                beforeEach(function() {
-                    this.view.$('.show-save-as-button').click();
-                });
+                beforeEach(clickSaveAsButton);
 
-                it('shows the set title input', function() {
-                    expect(this.view.$('.search-title-input-container')).not.toHaveClass('hide');
-                    expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(1);
-                });
+                testShowsTheSetTitleInput();
 
                 it('activates the "Save Search" button', function() {
                     expect(this.view.$('.show-save-as-button')).toHaveClass('active');
@@ -114,28 +159,16 @@ define([
                 });
 
                 describe('then the "Save Search" button is clicked again', function() {
-                    beforeEach(function() {
-                        this.view.$('.show-save-as-button').click();
-                    });
+                    beforeEach(clickSaveAsButton);
 
-                    it('removes the set title input', function() {
-                        expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(0);
-                    });
-
-                    it('deactivates the "Save Search" button', function() {
-                        expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
-                    });
+                    testRemovesTheSetTitleInput();
+                    testDeactivatesTheSaveSearchButton();
 
                     // Test we can add, remove and add the search title input correctly (previously broken functionality)
                     describe('then the "Save As" button is clicked a third time', function() {
-                        beforeEach(function() {
-                            this.view.$('.show-save-as-button').click();
-                        });
+                        beforeEach(clickSaveAsButton);
 
-                        it('shows the set title input', function() {
-                            expect(this.view.$('.search-title-input-container')).not.toHaveClass('hide');
-                            expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(1);
-                        });
+                        testShowsTheSetTitleInput();
                     });
                 });
             });
@@ -149,63 +182,41 @@ define([
                 }, SavedSearchModel.attributesFromQueryState(this.queryState)));
             });
 
-            it('hides the save button', function() {
-                expect(this.view.$('.save-search-button')).toHaveClass('hide');
-            });
-
-            it('hides the reset button', function() {
-                expect(this.view.$('.search-reset-option')).toHaveClass('hide');
-            });
-
-            it('shows the rename button', function() {
-                expect(this.view.$('.show-rename-button')).not.toHaveClass('hide');
-            });
+            testHidesTheSaveButton();
+            testHidesTheResetButton();
+            testShowsTheRenameButton();
 
             it('sets the text of the show save as button to "Save As"', function() {
                 expect(this.view.$('.show-save-as-button')).toHaveText(i18n['search.savedSearchControl.openEdit.edit']);
             });
 
             describe('then the "Save As" button is clicked', function() {
-                beforeEach(function() {
-                    this.view.$('.show-save-as-button').click();
-                });
+                beforeEach(clickSaveAsButton);
 
-                it('shows the set title input', function() {
-                    expect(this.view.$('.search-title-input-container')).not.toHaveClass('hide');
-                    expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(1);
-                });
+                testShowsTheSetTitleInput();
 
                 it('activates the "Save As" button', function() {
                     expect(this.view.$('.show-save-as-button')).toHaveClass('active');
                 });
 
                 describe('then the "Save As" button is clicked again', function() {
-                    beforeEach(function() {
-                        this.view.$('.show-save-as-button').click();
-                    });
+                    beforeEach(clickSaveAsButton);
 
-                    it('removes the set title input', function() {
-                        expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(0);
-                    });
-
-                    it('deactivates the "Save As" button', function() {
-                        expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
-                    });
+                    testRemovesTheSetTitleInput();
+                    testDeactivatesTheSaveAsButton();
                 });
 
                 describe('then a new title is input and the "Rename" button is clicked', function() {
                     beforeEach(function() {
                         this.view.$('.search-title-input-container .search-title-input').val('Star Wars').trigger('input');
-                        this.view.$('.show-rename-button').click();
+                        clickShowRename.call(this);
                     });
 
                     it('the user input is not lost', function() {
                         expect(this.view.$('.search-title-input-container .search-title-input')).toHaveValue('Star Wars');
                     });
 
-                    it('deactivates the "Save As" button', function() {
-                        expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
-                    });
+                    testDeactivatesTheSaveAsButton();
 
                     it('activates the "Rename" button', function() {
                         expect(this.view.$('.show-rename-button')).toHaveClass('active');
@@ -231,38 +242,24 @@ define([
                         this.view.$('.search-title-input-container .save-title-cancel-button').click();
                     });
 
-                    it('removes the set title input', function() {
-                        expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(0);
-                    });
-
-                    it('deactivates the "Save As" button', function() {
-                        expect(this.view.$('.show-save-as-button')).not.toHaveClass('active');
-                    });
+                    testRemovesTheSetTitleInput();
+                    testDeactivatesTheSaveAsButton();
                 });
             });
 
             describe('then the "Rename" button is clicked', function() {
-                beforeEach(function() {
-                    this.view.$('.show-rename-button').click();
-                });
+                beforeEach(clickShowRename);
 
-                it('shows the set title input', function() {
-                    expect(this.view.$('.search-title-input-container')).not.toHaveClass('hide');
-                    expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(1);
-                });
+                testShowsTheSetTitleInput();
 
                 it('activates the "Rename" button', function() {
                     expect(this.view.$('.show-rename-button')).toHaveClass('active');
                 });
 
                 describe('then the "Rename" button is clicked again', function() {
-                    beforeEach(function() {
-                        this.view.$('.show-rename-button').click();
-                    });
+                    beforeEach(clickShowRename);
 
-                    it('removes the set title input', function() {
-                        expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(0);
-                    });
+                    testRemovesTheSetTitleInput();
 
                     it('deactivates the "Rename" button', function() {
                         expect(this.view.$('.show-rename-button')).not.toHaveClass('active');
@@ -272,7 +269,7 @@ define([
                 describe('then a new title is input and the "Save As" button is clicked', function() {
                     beforeEach(function() {
                         this.view.$('.search-title-input-container .search-title-input').val('Star Wars').trigger('input');
-                        this.view.$('.show-save-as-button').click();
+                        clickSaveAsButton.call(this);
                     });
 
                     it('the user input is not lost', function() {
@@ -307,9 +304,7 @@ define([
                         this.view.$('.search-title-input-container .save-title-cancel-button').click();
                     });
 
-                    it('removes the set title input', function() {
-                        expect(this.view.$('.search-title-input-container .search-title-input')).toHaveLength(0);
-                    });
+                    testRemovesTheSetTitleInput();
 
                     it('deactivates the "Rename" button', function() {
                         expect(this.view.$('.show-rename-button')).not.toHaveClass('active');
@@ -338,6 +333,24 @@ define([
                     it('destroys the saved search model', function() {
                         expect(this.savedSearchModel.destroy).toHaveBeenCalled();
                     });
+
+                    describe('then the destroy fails', function() {
+                        beforeEach(function() {
+                            this.savedSearchModel.destroy.calls.argsFor(0)[0].error({status: 500});
+                        });
+
+                        it('shows an error message', function() {
+                            expect(this.view.$('.search-controls-message')).toHaveText(i18n['search.savedSearches.deleteFailed']);
+                        });
+
+                        describe('then the "Save As" button is clicked', function() {
+                            beforeEach(clickSaveAsButton);
+
+                            it('removes the error message', function() {
+                                expect(this.view.$('.search-controls-message')).toHaveText('');
+                            });
+                        });
+                    });
                 });
             });
 
@@ -356,24 +369,56 @@ define([
                     expect(this.view.$('.search-reset-option')).not.toHaveClass('hide');
                 });
 
-                it('shows the rename button', function() {
-                    expect(this.view.$('.show-rename-button')).not.toHaveClass('hide');
-                });
+                testShowsTheRenameButton();
 
                 it('sets the text of the show save as button to "Save As"', function() {
                     expect(this.view.$('.show-save-as-button')).toHaveText(i18n['search.savedSearchControl.openEdit.edit']);
                 });
 
                 describe('then the save button is clicked', function() {
-                    beforeEach(function() {
-                        this.view.$('.save-search-button').click();
-                    });
+                    beforeEach(clickSaveSearchButton);
 
                     it('saves the new query on the saved search model', function() {
                         expect(this.savedSearchModel.save).toHaveBeenCalled();
 
                         var savedMinDate = this.savedSearchModel.save.calls.argsFor(0)[0].minDate;
                         expect(savedMinDate.valueOf()).toBe(MIN_DATE);
+                    });
+
+                    it('disables the save button', function() {
+                        expect(this.view.$('.save-search-button')).toHaveProp('disabled', true);
+                    });
+
+                    describe('then the save fails', function() {
+                        beforeEach(function() {
+                            this.savedSearchModel.save.calls.argsFor(0)[1].error({status: 500});
+                        });
+
+                        it('enables the save button', function() {
+                            expect(this.view.$('.save-search-button')).toHaveProp('disabled', false);
+                        });
+
+                        it('displays an error message', function() {
+                            expect(this.view.$('.search-controls-message')).toHaveText(i18n['search.savedSearchControl.error']);
+                        });
+
+                        describe('then the save button is clicked again', function() {
+                            beforeEach(clickSaveSearchButton);
+
+                            it('removes the error message', function() {
+                                expect(this.view.$('.search-controls-message')).toHaveText('');
+                            });
+                        });
+                    });
+
+                    describe('then the save succeeds', function() {
+                        beforeEach(function() {
+                            this.savedSearchModel.save.calls.argsFor(0)[1].success();
+                        });
+
+                        it('enables the save button', function() {
+                            expect(this.view.$('.save-search-button')).toHaveProp('disabled', false);
+                        });
                     });
                 });
 
