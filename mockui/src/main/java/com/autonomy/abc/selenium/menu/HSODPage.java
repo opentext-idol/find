@@ -56,23 +56,11 @@ public enum HSODPage {
     GETTING_STARTED(NavBarTabId.GETTING_STARTED, new GettingStartedPage.Factory(), GettingStartedPage.class),
 
     DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODevelopersPage.Factory(), HSODevelopersPage.class),
-    USERS(new HSOUsersPage.Factory(), HSOUsersPage.class);
-
-    private final static Map<Class<?>, HSODPage> TYPE_MAP = new HashMap<>();
+    USERS(NavBarTabId.USERS, new HSOUsersPage.Factory(), HSOUsersPage.class);
 
     private final Class<?> pageType;
     private final NavBarTabId tabId;
     private ParametrizedFactory<WebDriver, ?> factory;
-
-    static {
-        for (HSODPage page : HSODPage.values()) {
-            Class<?> type = page.pageType;
-            while (type != Object.class) {
-                TYPE_MAP.put(type, page);
-                type = type.getSuperclass();
-            }
-        }
-    }
 
     <T> HSODPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         tabId = tab;
@@ -96,11 +84,25 @@ public enum HSODPage {
         return this.factory.create(driver);
     }
 
-    public static NavBarTabId getId(Class<?> type) {
-        return TYPE_MAP.get(type).tabId;
-    }
+    public static class Mapper {
+        private final Map<Class<?>, HSODPage> typeMap = new HashMap<>();
 
-    public static <T> T load(Class<T> type, WebDriver driver) {
-        return TYPE_MAP.get(type).safeLoad(type, driver);
+        public Mapper() {
+            for (HSODPage page : HSODPage.values()) {
+                Class<?> type = page.pageType;
+                while (type != Object.class) {
+                    typeMap.put(type, page);
+                    type = type.getSuperclass();
+                }
+            }
+        }
+
+        public NavBarTabId getId(Class<?> type) {
+            return typeMap.get(type).tabId;
+        }
+
+        public <T> T load(Class<T> type, WebDriver driver) {
+            return typeMap.get(type).safeLoad(type, driver);
+        }
     }
 }

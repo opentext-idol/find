@@ -32,6 +32,8 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
 public class HSOElementFactory extends ElementFactory {
+    private HSODPage.Mapper mapper = new HSODPage.Mapper();
+
     public HSOElementFactory(final WebDriver driver) {
         super(driver);
     }
@@ -43,12 +45,12 @@ public class HSOElementFactory extends ElementFactory {
 
     @Override
     public HSOPromotionsPage getPromotionsPage() {
-        return new HSOPromotionsPage(getDriver());
+        return loadPage(HSOPromotionsPage.class);
     }
 
     @Override
     public LoginPage getLoginPage() {
-        return new HSOLoginPage(getDriver(), new AbcHasLoggedIn(getDriver()));
+        return loadPage(HSOLoginPage.class);
     }
 
     public LoginPage getFindLoginPage() {
@@ -61,38 +63,38 @@ public class HSOElementFactory extends ElementFactory {
 
     @Override
     public KeywordsPage getKeywordsPage() {
-        return new HSOKeywordsPage(getDriver());
+        return loadPage(HSOKeywordsPage.class);
     }
 
     @Override
     public CreateNewKeywordsPage getCreateNewKeywordsPage() {
-        return new HSOCreateNewKeywordsPage(getDriver());
+        return loadPage(HSOCreateNewKeywordsPage.class);
     }
 
     @Override
     public SearchPage getSearchPage() {
-        return new HSOSearchPage(getDriver());
+        return loadPage(HSOSearchPage.class);
     }
 
     @Override
     public HSOCreateNewPromotionsPage getCreateNewPromotionsPage() {
-        return new HSOCreateNewPromotionsPage(getDriver());
+        return loadPage(HSOCreateNewPromotionsPage.class);
     }
 
     public HSOUsersPage getUsersPage(){
-        return new HSOUsersPage(getDriver());
+        return loadPage(HSOUsersPage.class);
     }
 
     public ConnectionsPage getConnectionsPage() {
-        return ConnectionsPage.make(getDriver());
+        return loadPage(ConnectionsPage.class);
     }
 
     public NewConnectionPage getNewConnectionPage() {
-        return NewConnectionPage.make(getDriver());
+        return loadPage(NewConnectionPage.class);
     }
 
     public ConnectionsDetailPage getConnectionsDetailPage() {
-        return ConnectionsDetailPage.make(getDriver());
+        return loadPage(ConnectionsDetailPage.class);
     }
 
     public Find getFindPage() {
@@ -101,27 +103,27 @@ public class HSOElementFactory extends ElementFactory {
 
 
     public AnalyticsPage getAnalyticsPage() {
-        return new AnalyticsPage(getDriver());
+        return loadPage(AnalyticsPage.class);
     }
 
     public IndexesPage getIndexesPage() {
-        return IndexesPage.make(getDriver());
+        return loadPage(IndexesPage.class);
     }
 
     public CreateNewIndexPage getCreateNewIndexPage() {
-        return CreateNewIndexPage.make(getDriver());
+        return loadPage(CreateNewIndexPage.class);
     }
 
     public IndexesDetailPage getIndexesDetailPage() {
-        return IndexesDetailPage.make(getDriver());
+        return loadPage(IndexesDetailPage.class);
     }
 
     public GettingStartedPage getGettingStartedPage() {
-        return new GettingStartedPage(getDriver());
+        return loadPage(GettingStartedPage.class);
     }
 
     public HSODevelopersPage getDevsPage() {
-        return new HSODevelopersPage(getDriver());
+        return loadPage(HSODevelopersPage.class);
     }
 
     public void waitForPage(NavBarTabId page) {
@@ -165,7 +167,11 @@ public class HSOElementFactory extends ElementFactory {
     }
 
     public <T> T switchTo(Class<T> type) {
-        getSideNavBar().switchPage(HSODPage.getId(type));
-        return HSODPage.load(type, getDriver());
+        getSideNavBar().switchPage(mapper.getId(type));
+        return loadPage(type);
+    }
+
+    public <T> T loadPage(Class<T> type) {
+        return mapper.load(type, getDriver());
     }
 }
