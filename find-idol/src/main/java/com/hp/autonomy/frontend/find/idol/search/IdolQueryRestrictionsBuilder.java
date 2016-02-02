@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 public class IdolQueryRestrictionsBuilder implements QueryRestrictionsBuilder<String> {
     @Override
-    public QueryRestrictions<String> build(final String queryText, final String fieldText, final List<String> databases, final DateTime minDate, final DateTime maxDate) {
+    public QueryRestrictions<String> build(final String queryText, final String fieldText, final List<String> databases, final DateTime minDate, final DateTime maxDate, final List<String> stateMatchId, final List<String> stateDontMatchId) {
         return new IdolQueryRestrictions.Builder()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)
@@ -24,6 +24,8 @@ public class IdolQueryRestrictionsBuilder implements QueryRestrictionsBuilder<St
                 .setMinDate(minDate)
                 .setMaxDate(maxDate)
                 .setAnyLanguage(true)
+                .setStateMatchId(stateMatchId)
+                .setStateDontMatchId(stateDontMatchId)
                 .build();
     }
 }
