@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page.promotions;
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Locator;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -201,5 +202,12 @@ public class PromotionsDetailPage extends AppElement implements AppPage {
 
     public PromotionsDetailTriggerForm getTriggerForm() {
         return new PromotionsDetailTriggerForm(findElement(By.className("promotion-match-terms-wrapper")), getDriver());
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, PromotionsDetailPage> {
+        @Override
+        public PromotionsDetailPage create(WebDriver context) {
+            return new PromotionsDetailPage(context);
+        }
     }
 }

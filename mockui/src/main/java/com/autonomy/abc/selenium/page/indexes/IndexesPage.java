@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.indexes;
 
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -20,9 +21,9 @@ public class IndexesPage extends AppElement implements AppPage {
         super(driver.findElement(By.className("wrapper-content")), driver);
     }
 
+    @Deprecated
     public static IndexesPage make(WebDriver driver) {
-        IndexesPage.waitForLoad(driver);
-        return new IndexesPage(driver);
+        return new IndexesPage.Factory().create(driver);
     }
 
     private static void waitForLoad(WebDriver driver) {
@@ -75,5 +76,13 @@ public class IndexesPage extends AppElement implements AppPage {
 
     public int getNumberOfConnections(Index index) {
         return Integer.parseInt(indexRow(index.getDisplayName()).findElement(By.cssSelector(".listItemNormalText>.ng-scope")).getText().split(" ")[1]);
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, IndexesPage> {
+        @Override
+        public IndexesPage create(WebDriver context) {
+            IndexesPage.waitForLoad(context);
+            return new IndexesPage(context);
+        }
     }
 }

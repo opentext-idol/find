@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -16,9 +17,9 @@ public class NewConnectionPage extends SAASPageBase {
         super(driver);
     }
 
+    @Deprecated
     public static NewConnectionPage make(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wizard")));
-        return new NewConnectionPage(driver);
+        return new NewConnectionPage.Factory().create(driver);
     }
 
     public ConnectorTypeStepTab getConnectorTypeStep(){
@@ -63,5 +64,13 @@ public class NewConnectionPage extends SAASPageBase {
 
     public AppElement connectorSummaryStepTab() {
         return new AppElement(findElement(By.id("stepAnchor4")), getDriver());
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, NewConnectionPage> {
+        @Override
+        public NewConnectionPage create(WebDriver context) {
+            new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wizard")));
+            return new NewConnectionPage(context);
+        }
     }
 }

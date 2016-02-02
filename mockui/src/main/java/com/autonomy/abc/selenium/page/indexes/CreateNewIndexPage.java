@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.autonomy.abc.selenium.page.indexes.wizard.IndexConfigStepTab;
 import com.autonomy.abc.selenium.page.indexes.wizard.IndexNameWizardStepTab;
 import com.autonomy.abc.selenium.page.indexes.wizard.IndexSummaryStepTab;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,9 +16,9 @@ public class CreateNewIndexPage extends SAASPageBase {
         super(driver);
     }
 
+    @Deprecated
     public static CreateNewIndexPage make(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("content")));
-        return new CreateNewIndexPage(driver);
+        return new Factory().create(driver);
     }
 
     /* navigation */
@@ -67,5 +68,13 @@ public class CreateNewIndexPage extends SAASPageBase {
 
     public IndexSummaryStepTab getIndexSummaryStepTab() {
         return IndexSummaryStepTab.make(getDriver());
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, CreateNewIndexPage> {
+        @Override
+        public CreateNewIndexPage create(WebDriver context) {
+            new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("content")));
+            return new CreateNewIndexPage(context);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.page.admin;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -100,5 +101,11 @@ public class HSOUsersPage extends HSOUserManagementPage {
     @Override
     protected WebElement getUserRowByUsername(String username){
         return findElement(By.xpath("//*[contains(@class,'user-name') and text()='" + username + "']/.."));
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, HSOUsersPage> {
+        public HSOUsersPage create(WebDriver context) {
+            return new HSOUsersPage(context);
+        }
     }
 }

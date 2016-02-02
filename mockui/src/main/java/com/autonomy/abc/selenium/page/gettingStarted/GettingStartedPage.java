@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.gettingStarted;
 
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -36,5 +37,11 @@ public class GettingStartedPage extends AppElement implements AppPage {
         Waits.loadOrFadeWait();
         inputBox.findElement(By.xpath(".//..//i")).click();
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Document \"" + url + "\" was uploaded successfully"));
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, GettingStartedPage> {
+        public GettingStartedPage create(WebDriver context) {
+            return new GettingStartedPage(context);
+        }
     }
 }

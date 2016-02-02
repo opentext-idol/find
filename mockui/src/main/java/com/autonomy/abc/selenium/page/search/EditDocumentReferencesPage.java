@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.search;
 
 import com.autonomy.abc.selenium.element.LabelBox;
 import com.autonomy.abc.selenium.element.Removable;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -18,9 +19,9 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
         super(driver.findElement(By.className("wrapper-content")), driver);
     }
 
+    @Deprecated
     public static EditDocumentReferencesPage make(final WebDriver driver) {
-        waitForLoad(driver);
-        return new EditDocumentReferencesPage(driver);
+        return new Factory().create(driver);
     }
 
     private static void waitForLoad(WebDriver driver) {
@@ -50,5 +51,13 @@ public class EditDocumentReferencesPage extends SearchBase implements AppPage {
 
     public WebElement cancelButton() {
         return findElement(By.xpath(".//*[contains(text(), 'Cancel')]"));
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, EditDocumentReferencesPage> {
+        @Override
+        public EditDocumentReferencesPage create(WebDriver context) {
+            waitForLoad(context);
+            return new EditDocumentReferencesPage(context);
+        }
     }
 }

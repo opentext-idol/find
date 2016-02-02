@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.menu;
 
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
@@ -11,171 +10,91 @@ import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
-import com.autonomy.abc.selenium.page.promotions.*;
+import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.HSOSearchPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public enum HSODPage {
-    LOGIN(LoginPage.class, HSOLoginPage.class) {
+    LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
         @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new HSOLoginPage(driver, new AbcHasLoggedIn(driver));
+        public HSOLoginPage create(WebDriver context) {
+            return new HSOLoginPage(context, new AbcHasLoggedIn(context));
         }
-    },
+    }, HSOLoginPage.class),
 
-    ANALYTICS(NavBarTabId.ANALYTICS, AnalyticsPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new AnalyticsPage(driver);
-        }
-    },
+    ANALYTICS(NavBarTabId.ANALYTICS, new AnalyticsPage.Factory(), AnalyticsPage.class),
 
-    SEARCH(NavBarTabId.SEARCH, SearchPage.class, HSOSearchPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new HSOSearchPage(driver);
-        }
-    },
+    SEARCH(NavBarTabId.SEARCH, new HSOSearchPage.Factory(), HSOSearchPage.class),
 
-    CONNECTIONS(NavBarTabId.CONNECTIONS, ConnectionsPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return ConnectionsPage.make(driver);
-        }
-    },
-    CONNECTION_WIZARD(NewConnectionPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return NewConnectionPage.make(driver);
-        }
-    },
-    CONNECTION_DETAILS(ConnectionsDetailPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return ConnectionsDetailPage.make(driver);
-        }
-    },
+    CONNECTIONS(NavBarTabId.CONNECTIONS, new ConnectionsPage.Factory(), ConnectionsPage.class),
+    CONNECTION_WIZARD(new NewConnectionPage.Factory(), NewConnectionPage.class),
+    CONNECTION_DETAILS(new ConnectionsDetailPage.Factory(), ConnectionsDetailPage.class),
 
-    INDEXES(NavBarTabId.INDEXES, IndexesPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return IndexesPage.make(driver);
-        }
-    },
-    INDEX_WIZARD(CreateNewIndexPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return CreateNewIndexPage.make(driver);
-        }
-    },
-    INDEX_DETAILS(IndexesDetailPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return IndexesDetailPage.make(driver);
-        }
-    },
+    INDEXES(NavBarTabId.INDEXES, new IndexesPage.Factory(), IndexesPage.class),
+    INDEX_WIZARD(new CreateNewIndexPage.Factory(), CreateNewIndexPage.class),
+    INDEX_DETAILS(new IndexesDetailPage.Factory(), IndexesDetailPage.class),
 
-    PROMOTIONS(NavBarTabId.PROMOTIONS, PromotionsPage.class, HSOPromotionsPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new HSOPromotionsPage(driver);
-        }
-    },
-    PROMOTION_WIZARD(CreateNewPromotionsBase.class, CreateNewPromotionsPage.class, HSOCreateNewPromotionsPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new HSOCreateNewPromotionsPage(driver);
-        }
-    },
-    PROMOTION_DETAILS(PromotionsDetailPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new PromotionsDetailPage(driver);
-        }
-    },
-    EDIT_REFERENCES(EditDocumentReferencesPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return EditDocumentReferencesPage.make(driver);
-        }
-    },
+    PROMOTIONS(NavBarTabId.PROMOTIONS, new HSOPromotionsPage.Factory(), HSOPromotionsPage.class),
+    PROMOTION_WIZARD(new HSOCreateNewPromotionsPage.Factory(), HSOCreateNewPromotionsPage.class),
+    PROMOTION_DETAILS(new PromotionsDetailPage.Factory(), PromotionsDetailPage.class),
+    EDIT_REFERENCES(new EditDocumentReferencesPage.Factory(), EditDocumentReferencesPage.class),
 
-    KEYWORDS(NavBarTabId.KEYWORDS, KeywordsPage.class, HSOKeywordsPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new HSOKeywordsPage(driver);
-        }
-    },
-    KEYWORD_WIZARD(CreateNewKeywordsPage.class, HSOCreateNewPromotionsPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new HSOCreateNewPromotionsPage(driver);
-        }
-    },
+    KEYWORDS(NavBarTabId.KEYWORDS, new HSOKeywordsPage.Factory(), HSOKeywordsPage.class),
+    KEYWORD_WIZARD(new HSOCreateNewKeywordsPage.Factory(), HSOCreateNewKeywordsPage.class),
 
-    GETTING_STARTED(NavBarTabId.GETTING_STARTED, GettingStartedPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new GettingStartedPage(driver);
-        }
-    },
+    GETTING_STARTED(NavBarTabId.GETTING_STARTED, new GettingStartedPage.Factory(), GettingStartedPage.class),
 
-    DEVELOPERS(NavBarTabId.DEVELOPERS, HSODevelopersPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new HSODevelopersPage(driver);
-        }
-    },
-    USERS(UsersPage.class, HSOUsersPage.class) {
-        @Override
-        protected Object safeLoad(WebDriver driver) {
-            return new HSOUsersPage(driver);
-        }
-    };
+    DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODevelopersPage.Factory(), HSODevelopersPage.class),
+    USERS(new HSOUsersPage.Factory(), HSOUsersPage.class);
 
-    private final List<Class<?>> pageTypes;
-    private final NavBarTabId tabId;
     private final static Map<Class<?>, HSODPage> TYPE_MAP = new HashMap<>();
+
+    private final Class<?> pageType;
+    private final NavBarTabId tabId;
+    private ParametrizedFactory<WebDriver, ?> factory;
 
     static {
         for (HSODPage page : HSODPage.values()) {
-            for (Class<?> type : page.pageTypes) {
+            Class<?> type = page.pageType;
+            while (type != Object.class) {
                 TYPE_MAP.put(type, page);
+                type = type.getSuperclass();
             }
         }
     }
 
-    HSODPage(Class<?>... types) {
-        this(null, types);
+    <T> HSODPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
+        tabId = tab;
+        pageType = type;
+        this.factory = factory;
     }
 
-    HSODPage(NavBarTabId tab, Class<?>... types) {
-        tabId = tab;
-        pageTypes = Arrays.asList(types);
+    <T> HSODPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
+        this(null, factory, type);
     }
 
     @SuppressWarnings("unchecked")
     private <T> T safeLoad(Class<T> type, WebDriver driver) {
-        if (pageTypes.contains(type)) {
+        if (type.isAssignableFrom(pageType)) {
             return (T) safeLoad(driver);
         }
         return null;
     }
 
-    protected abstract Object safeLoad(WebDriver driver);
+    protected Object safeLoad(WebDriver driver) {
+        return this.factory.create(driver);
+    }
 
     public static NavBarTabId getId(Class<?> type) {
         return TYPE_MAP.get(type).tabId;

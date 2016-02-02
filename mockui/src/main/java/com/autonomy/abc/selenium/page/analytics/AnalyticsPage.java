@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.analytics;
 
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -101,5 +102,10 @@ public class AnalyticsPage extends AppElement implements AppPage {
         return false;
     }
 
-
+    public static class Factory implements ParametrizedFactory<WebDriver, AnalyticsPage> {
+        @Override
+        public AnalyticsPage create(WebDriver context) {
+            return new AnalyticsPage(context);
+        }
+    }
 }

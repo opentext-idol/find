@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.users.HSOUser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -43,5 +44,11 @@ public class HSODevelopersPage extends HSOUserManagementPage {
     @Override
     protected WebElement getUserRowByUsername(String username) {
         return findElement(By.xpath("//*[contains(@class,'user-name') and contains(.,'" + username + "')]"));
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, HSODevelopersPage> {
+        public HSODevelopersPage create(WebDriver context) {
+            return new HSODevelopersPage(context);
+        }
     }
 }

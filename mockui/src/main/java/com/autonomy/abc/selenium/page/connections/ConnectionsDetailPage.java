@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.connections;
 
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,9 +17,9 @@ public class ConnectionsDetailPage extends SAASPageBase {
         super(driver);
     }
 
+    @Deprecated
     public static ConnectionsDetailPage make(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("first-cable")));
-        return new ConnectionsDetailPage(driver);
+        return new ConnectionsDetailPage.Factory().create(driver);
     }
 
     private WebElement menuButton(String text) {
@@ -76,5 +77,13 @@ public class ConnectionsDetailPage extends SAASPageBase {
 
     public String getScheduleString() {
         return ElementUtil.ancestor(findElement(By.className("hp-schedule")),1).findElement(By.cssSelector("div:nth-child(1)")).getText();
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, ConnectionsDetailPage> {
+        @Override
+        public ConnectionsDetailPage create(WebDriver context) {
+            new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("first-cable")));
+            return new ConnectionsDetailPage(context);
+        }
     }
 }

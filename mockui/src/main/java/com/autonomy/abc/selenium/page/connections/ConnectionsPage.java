@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,9 +21,9 @@ public class ConnectionsPage extends SAASPageBase {
         super(driver);
     }
 
+    @Deprecated
     public static ConnectionsPage make(WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("base-page-content")));
-        return new ConnectionsPage(driver);
+        return new ConnectionsPage.Factory().create(driver);
     }
 
     private WebElement toolbar() {
@@ -63,5 +64,13 @@ public class ConnectionsPage extends SAASPageBase {
 
     public String getIndexOf(Connector connector) {
         return ElementUtil.ancestor(connectionWithTitleContaining(connector.getName()), 9).findElement(By.cssSelector(".listItemNormalText.ng-scope")).getText().split(":")[1].trim();
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, ConnectionsPage> {
+        @Override
+        public ConnectionsPage create(WebDriver context) {
+            new WebDriverWait(context, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("base-page-content")));
+            return new ConnectionsPage(context);
+        }
     }
 }
