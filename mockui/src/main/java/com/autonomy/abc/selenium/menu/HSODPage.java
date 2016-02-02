@@ -25,7 +25,7 @@ import org.openqa.selenium.WebDriver;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum HSODPage {
+public enum HSODPage implements PageMapper.Page {
     LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
         @Override
         public HSOLoginPage create(WebDriver context) {
@@ -73,7 +73,7 @@ public enum HSODPage {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T safeLoad(Class<T> type, WebDriver driver) {
+    public <T> T safeLoad(Class<T> type, WebDriver driver) {
         if (type.isAssignableFrom(pageType)) {
             return (T) safeLoad(driver);
         }
@@ -84,25 +84,13 @@ public enum HSODPage {
         return this.factory.create(driver);
     }
 
-    public static class Mapper {
-        private final Map<Class<?>, HSODPage> typeMap = new HashMap<>();
+    @Override
+    public Class<?> getPageType() {
+        return pageType;
+    }
 
-        public Mapper() {
-            for (HSODPage page : HSODPage.values()) {
-                Class<?> type = page.pageType;
-                while (type != Object.class) {
-                    typeMap.put(type, page);
-                    type = type.getSuperclass();
-                }
-            }
-        }
-
-        public NavBarTabId getId(Class<?> type) {
-            return typeMap.get(type).tabId;
-        }
-
-        public <T> T load(Class<T> type, WebDriver driver) {
-            return typeMap.get(type).safeLoad(type, driver);
-        }
+    @Override
+    public NavBarTabId getId() {
+        return tabId;
     }
 }

@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
 import com.autonomy.abc.selenium.menu.HSODPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.menu.PageMapper;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
@@ -32,7 +33,7 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
 public class HSOElementFactory extends ElementFactory {
-    private HSODPage.Mapper mapper = new HSODPage.Mapper();
+    private PageMapper<HSODPage> mapper = new PageMapper<>(HSODPage.class);
 
     public HSOElementFactory(final WebDriver driver) {
         super(driver);
