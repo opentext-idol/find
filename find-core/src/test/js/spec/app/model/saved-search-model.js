@@ -115,6 +115,14 @@ define([
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
+
+            it('returns true if the only difference is an index domain being null rather than undefined', function() {
+                var DATABASE_NAME = 'MORE_DOCUMENTS';
+                this.selectedIndexes.add({domain: null, name: DATABASE_NAME});
+                this.model.set('indexes', INDEXES.concat([{name: DATABASE_NAME}]));
+
+                expect(this.model.equalsQueryState(this.queryState)).toBe(true);
+            });
         });
 
         describe('attributesFromQueryState', function() {

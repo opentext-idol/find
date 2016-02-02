@@ -41,15 +41,38 @@ define([
         return model.pick('field', 'value');
     }
 
-    function momentsEqual(maybeMoment1, maybeMoment2) {
-        if (!maybeMoment1) {
-            return !maybeMoment2;
-        } else if (!maybeMoment2) {
-            return false;
-        } else {
-            return maybeMoment1.isSame(maybeMoment2);
-        }
+    function nullOrUndefined(input) {
+        return input === null || input === undefined;
     }
+
+    function strictEqual(input1, input2) {
+        return input1 === input2;
+    }
+
+    // Compare two optional values
+    function optionalEqual(compareValues) {
+        return function(optional1, optional2) {
+            if (nullOrUndefined(optional1)) {
+                return nullOrUndefined(optional2);
+            } else if (nullOrUndefined(optional2)) {
+                return false;
+            } else {
+                return compareValues(optional1, optional2);
+            }
+        };
+    }
+
+    // Treat domains as equal if they are both either null or undefined, or are strictly equal
+    var optionalDomainsEqual = optionalEqual(strictEqual);
+
+    function indexesEqual(index1, index2) {
+        return strictEqual(index1.name, index2.name) && optionalDomainsEqual(index1.domain, index2.domain);
+    }
+
+    // Treat moments are equal if they are both either null or undefined, or represent the same instant
+    var optionalMomentsEqual = optionalEqual(function(moment1, moment2) {
+        return moment1.isSame(moment2);
+    });
 
     return Backbone.Model.extend({
         defaults: {
@@ -75,10 +98,10 @@ define([
          */
         equalsQueryState: function(queryState) {
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
-                    && momentsEqual(this.get('minDate'), queryState.queryModel.get('minDate'))
-                    && momentsEqual(this.get('maxDate'), queryState.queryModel.get('maxDate'))
+                    && optionalMomentsEqual(this.get('minDate'), queryState.queryModel.get('minDate'))
+                    && optionalMomentsEqual(this.get('maxDate'), queryState.queryModel.get('maxDate'))
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'))
-                    && arraysEqual(this.get('indexes'), queryState.selectedIndexes.toResourceIdentifiers(), _.isEqual)
+                    && arraysEqual(this.get('indexes'), queryState.selectedIndexes.toResourceIdentifiers(), indexesEqual)
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
         },
 
