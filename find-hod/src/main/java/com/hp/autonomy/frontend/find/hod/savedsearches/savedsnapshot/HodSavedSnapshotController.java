@@ -37,7 +37,7 @@ public class HodSavedSnapshotController extends SavedSnapshotController<Resource
     }
 
     @Override
-    protected String getStateToken(final SavedSnapshot snapshot) throws Exception {
+    protected String getStateToken(final SavedSnapshot snapshot) throws HodErrorException {
         HodQueryRestrictions.Builder queryRestrictionsBuilder = new HodQueryRestrictions.Builder()
                 .setDatabases(this.getDatabases(snapshot.getIndexes()))
                 .setQueryText(this.getQueryText(snapshot)).setFieldText(this.getFieldText(snapshot.getParametricValues()))

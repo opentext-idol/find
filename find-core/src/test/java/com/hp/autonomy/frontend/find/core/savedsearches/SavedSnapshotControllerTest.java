@@ -18,6 +18,9 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.Serializable;
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
@@ -26,38 +29,36 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SavedSnapshotControllerTest {
+public abstract class SavedSnapshotControllerTest<S extends Serializable, R extends SearchResult, E extends Exception> {
 
     @Mock
-    private SavedSnapshotService savedSnapshotService;
+    protected SavedSnapshotService savedSnapshotService;
 
     @Mock
-    private DocumentsService<String, SearchResult, AciErrorException> documentsService;
+    protected DocumentsService<S, R, E> documentsService;
 
-    private SavedSnapshotController savedSnapshotController;
+    private SavedSnapshotController<S, R, E> savedSnapshotController;
 
     private final SavedSnapshot savedSnapshot = new SavedSnapshot.Builder()
             .setTitle("Any old saved search")
+            .setIndexes(Collections.singleton(new EmbeddableIndex("index", "domain")))
             .build();
+
+    protected abstract SavedSnapshotController<S, R, E> getControllerInstance();
 
     @Before
     public void setUp() {
-        savedSnapshotController = new SavedSnapshotController(savedSnapshotService, documentsService) {
-            @Override
-            protected String getStateToken(SavedSnapshot snapshot) throws Exception {
-                return "MockStateToken";
-            }
-        };
+        savedSnapshotController = getControllerInstance();
     }
 
     @Test
-    public void create() throws Exception {
+    public void create() throws E {
         savedSnapshotController.create(savedSnapshot);
-        verify(savedSnapshotService).create(Matchers.same(savedSnapshot));
+        verify(savedSnapshotService).create(Matchers.any(SavedSnapshot.class));
     }
 
     @Test
-    public void update() {
+    public void update() throws E {
         when(savedSnapshotService.update(any(SavedSnapshot.class))).then(returnsFirstArg());
 
         final SavedSnapshot updatedQuery = savedSnapshotController.update(42, savedSnapshot);

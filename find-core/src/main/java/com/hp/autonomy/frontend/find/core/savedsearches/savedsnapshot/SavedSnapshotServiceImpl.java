@@ -11,35 +11,35 @@ import java.util.Set;
 @Service
 public class SavedSnapshotServiceImpl implements SavedSnapshotService {
 
-    private SavedSnapshotRepository SavedSnapshotRepository;
+    private SavedSnapshotRepository savedSnapshotRepository;
     private AuditorAware<UserEntity> userEntityAuditorAware;
 
     @Autowired
-    public SavedSnapshotServiceImpl(final SavedSnapshotRepository SavedSnapshotRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {
-        this.SavedSnapshotRepository = SavedSnapshotRepository;
+    public SavedSnapshotServiceImpl(final SavedSnapshotRepository savedSnapshotRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {
+        this.savedSnapshotRepository = savedSnapshotRepository;
         this.userEntityAuditorAware = userEntityAuditorAware;
     }
 
     @Override
     public Set<SavedSnapshot> getAll() {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
-        return SavedSnapshotRepository.findByActiveTrueAndUser_UserId(userId);
+        return savedSnapshotRepository.findByActiveTrueAndUser_UserId(userId);
     }
 
     @Override
-    public SavedSnapshot create(final SavedSnapshot query) {
-        return SavedSnapshotRepository.save(query);
+    public SavedSnapshot create(final SavedSnapshot snapshot) {
+        return savedSnapshotRepository.save(snapshot);
     }
 
     @Override
-    public SavedSnapshot update(final SavedSnapshot query) {
-        return SavedSnapshotRepository.save(query);
+    public SavedSnapshot update(final SavedSnapshot snapshot) {
+        return savedSnapshotRepository.save(snapshot);
     }
 
     @Override
     public void deleteById(final long id) {
-        final SavedSnapshot SavedSnapshot = SavedSnapshotRepository.findOne(id);
-        SavedSnapshot.setActive(false);
-        SavedSnapshotRepository.save(SavedSnapshot);
+        final SavedSnapshot savedSnapshot = savedSnapshotRepository.findOne(id);
+        savedSnapshot.setActive(false);
+        savedSnapshotRepository.save(savedSnapshot);
     }
 }

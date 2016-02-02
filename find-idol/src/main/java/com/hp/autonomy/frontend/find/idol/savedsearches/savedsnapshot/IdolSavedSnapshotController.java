@@ -36,7 +36,7 @@ public class IdolSavedSnapshotController extends SavedSnapshotController<String,
     }
 
     @Override
-    protected String getStateToken(final SavedSnapshot snapshot) throws Exception {
+    protected String getStateToken(final SavedSnapshot snapshot) throws AciErrorException {
         IdolQueryRestrictions.Builder queryRestrictionsBuilder = new IdolQueryRestrictions.Builder()
                 .setDatabases(this.getDatabases(snapshot.getIndexes()))
                 .setQueryText(this.getQueryText(snapshot)).setFieldText(this.getFieldText(snapshot.getParametricValues()))
