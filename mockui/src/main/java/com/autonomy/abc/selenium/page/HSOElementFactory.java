@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page;
 
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
+import com.autonomy.abc.selenium.menu.HSODPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
@@ -161,5 +162,10 @@ public class HSOElementFactory extends ElementFactory {
 
     public DevConsoleHomePage getDevConsoleHomePage() {
         return new DevConsoleHomePage(getDriver());
+    }
+
+    public <T> T switchTo(Class<T> type) {
+        getSideNavBar().switchPage(HSODPage.getId(type));
+        return HSODPage.load(type, getDriver());
     }
 }

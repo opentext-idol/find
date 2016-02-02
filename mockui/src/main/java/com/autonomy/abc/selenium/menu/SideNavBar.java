@@ -14,6 +14,10 @@ public class SideNavBar extends AppElement {
     }
 
     public void switchPage(final NavBarTabId tab) {
+        if (tab == null) {
+            return;
+        }
+
         if (!this.isDisplayed()) {
             toggle();
         }
