@@ -2,6 +2,7 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -14,7 +15,12 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.Notification;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
+import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
+import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
@@ -209,9 +215,11 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
-    @KnownBug("CSA-1583")
+    @RelatedTo("CSA-1586")
+    @KnownBug("CSA-1542")
     public void testNotificationsPersistOverPages(){
         KeywordService keywordService = getApplication().keywordService();
+        keywordService.deleteAll(KeywordFilter.ALL);
 
         keywordService.addSynonymGroup("Pop", "Punk");
         keywordService.addBlacklistTerms("Shola", "Ameobi");
@@ -220,14 +228,19 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         getElementFactory().getTopNavBar().notificationsDropdown();
         List<Notification> notifications = getElementFactory().getTopNavBar().getNotifications().getAllNotifications();
 
-        for(NavBarTabId page : Arrays.asList(NavBarTabId.ANALYTICS, NavBarTabId.CONNECTIONS, NavBarTabId.PROMOTIONS, NavBarTabId.KEYWORDS, NavBarTabId.USERS)){
+        for (Class<?> page : Arrays.asList(
+                PromotionsPage.class,
+                AnalyticsPage.class,
+                KeywordsPage.class,
+                ConnectionsPage.class,
+                UsersPage.class
+        )) {
             navigateAndVerifyNotifications(page, notifications);
         }
     }
 
-    private void navigateAndVerifyNotifications(NavBarTabId page, List<Notification> notifications){
-        getElementFactory().getSideNavBar().switchPage(page);
-        getElementFactory().waitForPage(page);
+    private void navigateAndVerifyNotifications(Class<?> page, List<Notification> notifications) {
+        getElementFactory().switchTo(page);
         logger.info("on page " + page);
 
         getElementFactory().getTopNavBar().openNotifications();

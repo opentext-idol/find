@@ -124,38 +124,6 @@ public class HSOElementFactory extends ElementFactory {
         return loadPage(HSODevelopersPage.class);
     }
 
-    public void waitForPage(NavBarTabId page) {
-        switch(page){
-            case ANALYTICS:
-                getAnalyticsPage();
-                break;
-            case SEARCH:
-                getSearchPage();
-                break;
-            case CONNECTIONS:
-                getConnectionsPage();
-                break;
-            case INDEXES:
-                getIndexesPage();
-                break;
-            case PROMOTIONS:
-                getPromotionsPage();
-                break;
-            case KEYWORDS:
-                getKeywordsPage();
-                break;
-            case GETTING_STARTED:
-                getGettingStartedPage();
-                break;
-            case DEVELOPERS:
-                getDevsPage();
-                break;
-            case USERS:
-                getUsersPage();
-                break;
-        }
-    }
-
     public DevConsoleSearchPage getDevConsoleSearchPage() {
         return new DevConsoleSearchPage(getDriver());
     }
