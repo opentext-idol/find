@@ -21,6 +21,12 @@ import java.util.List;
 
 
 public abstract class QueryRestrictionsDeserializer<S extends Serializable> extends JsonDeserializer<QueryRestrictions<S>> {
+    private final NodeParser<S> databaseNodeParser;
+
+    protected QueryRestrictionsDeserializer(NodeParser<S> databaseNodeParser) {
+        this.databaseNodeParser = databaseNodeParser;
+    }
+
     protected ObjectMapper createObjectMapper() {
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JodaModule());
@@ -32,36 +38,42 @@ public abstract class QueryRestrictionsDeserializer<S extends Serializable> exte
         return jsonNode != null ? objectMapper.treeToValue(jsonNode, String.class) : null;
     }
 
-    protected List<S> parseDatabaseArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) {
-        final List<S> fields = new ArrayList<>();
-        final JsonNode databasesNode = node.get(fieldName);
-        if (databasesNode != null) {
-            final Iterator<JsonNode> iterator = databasesNode.elements();
-            while (iterator.hasNext()) {
-                fields.add(parseDatabaseNode(iterator.next()));
-            }
-        }
-
-        return fields;
-    }
-
-    protected List<String> parseStringArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) {
-        final List<String> fields = new ArrayList<>();
-        final JsonNode databasesNode = node.get(fieldName);
-        if (databasesNode != null) {
-            final Iterator<JsonNode> iterator = databasesNode.elements();
-            while (iterator.hasNext()) {
-                fields.add(iterator.next().asText());
-            }
-        }
-
-        return fields;
-    }
-
-    protected abstract S parseDatabaseNode(final JsonNode databaseNode);
-
     protected DateTime parseDate(final ObjectMapper objectMapper, @SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) throws IOException {
         final JsonNode childNode = node.get(fieldName);
         return childNode != null ? objectMapper.treeToValue(childNode, DateTime.class) : null;
+    }
+
+    protected List<S> parseDatabaseArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) {
+        return parseArray(node, fieldName, databaseNodeParser);
+    }
+    
+    protected List<String> parseStringArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName) {
+        return parseArray(node, fieldName, new StringNodeParser());
+    }
+
+    protected <T> List<T> parseArray(@SuppressWarnings("TypeMayBeWeakened") final JsonNode node, final String fieldName, final NodeParser<T> parser) {
+        final List<T> fields = new ArrayList<>();
+        final JsonNode arrayNode = node.get(fieldName);
+        if (arrayNode != null) {
+            final Iterator<JsonNode> iterator = arrayNode.elements();
+            while (iterator.hasNext()) {
+                fields.add(parser.parse(iterator.next()));
+            }
+        }
+
+        return fields;
+    }
+
+    protected static class StringNodeParser implements NodeParser<String> {
+        public StringNodeParser() {}
+
+        @Override
+        public String parse(final JsonNode jsonNode) {
+            return jsonNode.asText();
+        }
+    }
+
+    protected interface NodeParser<T> {
+        T parse(final JsonNode jsonNode);
     }
 }

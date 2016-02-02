@@ -18,6 +18,10 @@ import java.io.IOException;
 
 @Component
 public class IdolQueryRestrictionsDeserializer extends QueryRestrictionsDeserializer<String> {
+    public IdolQueryRestrictionsDeserializer() {
+        super(new StringNodeParser());
+    }
+
     @Override
     public QueryRestrictions<String> deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
         final ObjectMapper objectMapper = createObjectMapper();
@@ -36,9 +40,11 @@ public class IdolQueryRestrictionsDeserializer extends QueryRestrictionsDeserial
                 .build();
     }
 
-    @Override
-    protected String parseDatabaseNode(final JsonNode databaseNode) {
-        return databaseNode.asText();
+    protected class StringDatabaseNodeParser implements NodeParser<String> {
+        @Override
+        public String parse(final JsonNode databaseNode) {
+            return databaseNode.asText();
+        }
     }
 }
 

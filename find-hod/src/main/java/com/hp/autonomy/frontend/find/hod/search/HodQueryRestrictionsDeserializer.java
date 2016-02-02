@@ -19,6 +19,10 @@ import java.io.IOException;
 
 @Component
 public class HodQueryRestrictionsDeserializer extends QueryRestrictionsDeserializer<ResourceIdentifier> {
+    public HodQueryRestrictionsDeserializer() {
+        super(new ResourceIdentifierNodeParser());
+    }
+
     @Override
     public QueryRestrictions<ResourceIdentifier> deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
         final ObjectMapper objectMapper = createObjectMapper();
@@ -35,8 +39,10 @@ public class HodQueryRestrictionsDeserializer extends QueryRestrictionsDeseriali
                 .build();
     }
 
-    @Override
-    protected ResourceIdentifier parseDatabaseNode(final JsonNode databaseNode) {
-        return new ResourceIdentifier(databaseNode.get("domain").asText(), databaseNode.get("name").asText());
+    protected static class ResourceIdentifierNodeParser implements NodeParser<ResourceIdentifier> {
+        @Override
+        public ResourceIdentifier parse(final JsonNode databaseNode) {
+            return new ResourceIdentifier(databaseNode.get("domain").asText(), databaseNode.get("name").asText());
+        }
     }
 }
