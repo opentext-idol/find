@@ -7,8 +7,8 @@ package com.hp.autonomy.frontend.find.core.indexes;
 
 import com.hp.autonomy.types.IdolDatabase;
 
-import java.util.List;
+import java.util.Set;
 
 public interface IndexesService<D extends IdolDatabase, E extends Exception> {
-    List<D> listVisibleIndexes() throws E;
+    Set<D> listVisibleIndexes() throws E;
 }

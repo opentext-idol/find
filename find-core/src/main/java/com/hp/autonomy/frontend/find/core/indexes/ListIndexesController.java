@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
+import java.util.Set;
 
 @Controller
 public class ListIndexesController<D extends IdolDatabase, E extends Exception> {
@@ -24,7 +24,7 @@ public class ListIndexesController<D extends IdolDatabase, E extends Exception> 
 
     @RequestMapping(value = LIST_INDEXES_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<D> listActiveIndexes() throws E {
+    public Set<D> listActiveIndexes() throws E {
         return indexesService.listVisibleIndexes();
     }
 }

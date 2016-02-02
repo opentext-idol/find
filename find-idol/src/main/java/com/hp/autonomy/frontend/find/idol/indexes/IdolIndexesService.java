@@ -17,8 +17,9 @@ import com.hp.autonomy.types.requests.idol.actions.status.StatusActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class IdolIndexesService implements IndexesService<Database, AciErrorException> {
@@ -33,10 +34,10 @@ public class IdolIndexesService implements IndexesService<Database, AciErrorExce
     }
 
     @Override
-    public List<Database> listVisibleIndexes() throws AciErrorException {
+    public Set<Database> listVisibleIndexes() throws AciErrorException {
         final GetStatusResponseData responseData = contentAciService.executeAction(new AciParameters(StatusActions.GetStatus.name()), responseProcessor);
         final List<Database> allDatabases = responseData.getDatabases().getDatabase();
-        final List<Database> publicDatabases = new ArrayList<>(allDatabases.size());
+        final Set<Database> publicDatabases = new LinkedHashSet<>(allDatabases.size());
         for (final Database database : allDatabases) {
             if (!database.isInternal()) {
                 publicDatabases.add(database);

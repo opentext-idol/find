@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.indexes;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.web.AuthenticationInformationRetriever;
 import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
@@ -18,20 +19,19 @@ import com.hp.autonomy.hod.client.api.resource.Resources;
 import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
+import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.hod.fields.IndexFieldsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 public class HodIndexesServiceImpl implements HodIndexesService {
@@ -39,13 +39,15 @@ public class HodIndexesServiceImpl implements HodIndexesService {
     private static final Set<ResourceFlavour> FLAVOURS_TO_REMOVE = ResourceFlavour.of(ResourceFlavour.QUERY_MANIPULATION, ResourceFlavour.CATEGORIZATION);
 
     private final ConfigService<HodFindConfig> configService;
+    private final AuthenticationInformationRetriever<HodAuthentication> authenticationInformationRetriever;
     private final ResourcesService resourcesService;
     private final IndexFieldsService indexFieldsService;
     private final DatabasesService databasesService;
 
     @Autowired
-    public HodIndexesServiceImpl(final ConfigService<HodFindConfig> configService, final ResourcesService resourcesService, final IndexFieldsService indexFieldsService, final DatabasesService databasesService) {
+    public HodIndexesServiceImpl(final ConfigService<HodFindConfig> configService, final AuthenticationInformationRetriever<HodAuthentication> authenticationInformationRetriever, final ResourcesService resourcesService, final IndexFieldsService indexFieldsService, final DatabasesService databasesService) {
         this.configService = configService;
+        this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.resourcesService = resourcesService;
         this.indexFieldsService = indexFieldsService;
         this.databasesService = databasesService;
@@ -79,12 +81,12 @@ public class HodIndexesServiceImpl implements HodIndexesService {
 
     @Override
     @Cacheable(value = FindCacheNames.VISIBLE_INDEXES, key = "#root.methodName")
-    public List<Database> listVisibleIndexes() throws HodErrorException {
+    public Set<Database> listVisibleIndexes() throws HodErrorException {
         final List<ResourceIdentifier> activeIndexes = configService.getConfig().getIod().getActiveIndexes();
 
         if (activeIndexes.isEmpty()) {
-            final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            final String domain = ((HodAuthenticationPrincipal) auth.getPrincipal()).getApplication().getDomain();
+            final HodAuthentication auth = authenticationInformationRetriever.getAuthentication();
+            final String domain = auth.getPrincipal().getApplication().getDomain();
 
             final Set<Database> validDatabases;
             final Set<Database> allDatabases = databasesService.getDatabases(domain);
@@ -101,9 +103,9 @@ public class HodIndexesServiceImpl implements HodIndexesService {
                 }
             }
 
-            return new ArrayList<>(validDatabases);
+            return new TreeSet<>(validDatabases);
         } else {
-            final List<Database> activeDatabases = new ArrayList<>();
+            final Set<Database> activeDatabases = new TreeSet<>();
 
             for (final ResourceIdentifier index : activeIndexes) {
                 activeDatabases.add(new Database.Builder()
