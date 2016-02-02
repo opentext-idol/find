@@ -60,8 +60,8 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        indexService = getApplication().createIndexService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        indexService = getApplication().indexService();
+        searchService = getApplication().searchService();
 
         indexService.setUpIndex(index);
         logger.info(index + " was created");

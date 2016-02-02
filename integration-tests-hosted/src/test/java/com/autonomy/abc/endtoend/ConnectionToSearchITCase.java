@@ -42,8 +42,8 @@ public class ConnectionToSearchITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        connectionService = getApplication().createConnectionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        connectionService = getApplication().connectionService();
+        searchService = getApplication().searchService();
     }
 
     @Test

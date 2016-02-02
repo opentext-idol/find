@@ -1,9 +1,11 @@
 package com.autonomy.abc.selenium.application;
 
+import com.autonomy.abc.selenium.control.Window;
 import org.openqa.selenium.WebDriver;
 
-interface Application<T> {
-    // will likely be replaced with plain elementFactory() accessor
-    T createElementFactory(WebDriver driver);
+public interface Application<T> {
+    T elementFactory();
     ApplicationType getType();
+    // TODO: remove this once Applications are initialized with a Window
+    Application<T> inWindow(Window window);
 }

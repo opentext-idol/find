@@ -28,12 +28,12 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 
-public class UsersPageTestBase extends ABCTestBase {
+public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected final NewUser aNewUser = config.getNewUser("james");
     protected final NewUser newUser2 = config.getNewUser("john");
     protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
     protected UsersPage usersPage;
-    protected UserService userService;
+    protected UserService<?> userService;
     protected final SignupEmailHandler emailHandler;
 
     public UsersPageTestBase(TestConfig config) {
@@ -43,7 +43,7 @@ public class UsersPageTestBase extends ABCTestBase {
 
     @Before
     public void setUp() throws MalformedURLException, InterruptedException {
-        userService = getApplication().createUserService(getElementFactory());
+        userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
     }
@@ -63,7 +63,7 @@ public class UsersPageTestBase extends ABCTestBase {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
         final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-        User user = aNewUser.signUpAs(Role.USER, usersPage);
+        User user = usersPage.addNewUser(aNewUser, Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         verifyUserAdded(newUserModal, user);
@@ -71,11 +71,11 @@ public class UsersPageTestBase extends ABCTestBase {
         return user;
     }
 
-    protected void signUpAndLoginAs(NewUser newUser) {
+    protected void signUpAndLoginAs(T newUser) {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
 
-        User user = newUser.signUpAs(Role.USER, usersPage);
+        User user = usersPage.addNewUser(newUser, Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
         usersPage.closeModal();
 

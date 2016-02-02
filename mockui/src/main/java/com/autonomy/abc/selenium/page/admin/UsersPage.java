@@ -24,6 +24,8 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	protected UsersPage(final WebDriver driver) {
 		super(driver.findElement(By.cssSelector(".wrapper-content")), driver);
 	}
+	
+	public abstract User addNewUser(NewUser newUser, Role role);
 
 	public WebElement createUserButton() {
 		return findElement(By.id("create-user"));

@@ -42,6 +42,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
 
     private PromotionService promotionService;
     private SearchService searchService;
+    private KeywordService keywordService;
     private final static Matcher<? super WebElement> NO_RESULTS = containsText("No results found");
     private final static Logger LOGGER = LoggerFactory.getLogger(AnalyticsE2EITCase.class);
 
@@ -55,8 +56,9 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         List<String> triggers = Arrays.asList("trigger1", "trigger2", "trigger3");
         List<Integer> searchOrder = Arrays.asList(0, 1, 0, 1, 0, 2);
 
-        searchService = getApplication().createSearchService(getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchService = getApplication().searchService();
+        promotionService = getApplication().promotionService();
+        keywordService = getApplication().keywordService();
 
         deleteAllKeywords();
         for (int i=0; i < searchTerms.size(); i++) {
@@ -148,7 +150,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     }
 
     private void addSynonymGroup(String... synonyms) {
-        new KeywordService(getApplication(), getElementFactory()).addSynonymGroup(synonyms);
+        keywordService.addSynonymGroup(synonyms);
         LOGGER.info("added synonym group: " + Arrays.asList(synonyms));
     }
 

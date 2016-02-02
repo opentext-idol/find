@@ -43,7 +43,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        indexService = getApplication().createIndexService(getElementFactory());
+        indexService = getApplication().indexService();
         testIndex = new Index("thisisabittooyobbish5me","D1spl4y Nam3 AbC 123");
         indexesPage = indexService.setUpIndex(testIndex);
     }
@@ -122,7 +122,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
             verifyThat(getElementFactory().getConnectionsPage().getIndexOf(connector), is(testIndex.getDisplayName()));
         } finally {
-            getApplication().createConnectionService(getElementFactory()).deleteAllConnections(true);
+            getApplication().connectionService().deleteAllConnections(true);
         }
     }
 }

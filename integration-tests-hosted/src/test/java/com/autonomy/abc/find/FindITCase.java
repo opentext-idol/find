@@ -4,11 +4,10 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.selenium.element.FindParametricCheckbox;
-import com.autonomy.abc.selenium.application.FindApplication;
-import com.autonomy.abc.selenium.application.HSODFindApplication;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
+import com.autonomy.abc.selenium.element.FindParametricCheckbox;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
@@ -24,7 +23,10 @@ import com.autonomy.abc.selenium.search.FindSearchResult;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.search.StringDateFilter;
-import com.autonomy.abc.selenium.util.*;
+import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.util.Locator;
+import com.autonomy.abc.selenium.util.Waits;
 import com.google.common.collect.Lists;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -39,7 +41,6 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,7 +71,6 @@ public class FindITCase extends HostedTestBase {
     private KeywordService keywordService;
     private Window searchWindow;
     private Window findWindow;
-    private FindApplication<?> findApplication;
 
     public FindITCase(TestConfig config) {
         super(config);
@@ -78,12 +78,11 @@ public class FindITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        keywordService = getApplication().createKeywordService(getElementFactory());
+        promotionService = getApplication().promotionService();
+        keywordService = getApplication().keywordService();
 
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());
-        findApplication = FindApplication.ofType(config.getType());
         find = getElementFactory().getFindPage();
         results = find.getResultsPage();
     }
@@ -697,7 +696,7 @@ public class FindITCase extends HostedTestBase {
 
     // TODO: this does not belong here
     private Find initialiseSession(Session session) {
-        HSOElementFactory otherElementFactory = new HSODFindApplication().createElementFactory(session.getDriver());
+        HSOElementFactory otherElementFactory = new HSODFind(session.getActiveWindow()).elementFactory();
         loginTo(otherElementFactory.getFindLoginPage(), session.getDriver(), config.getDefaultUser());
         return otherElementFactory.getFindPage();
     }
@@ -885,7 +884,7 @@ public class FindITCase extends HostedTestBase {
     public void testAllPromotedDocumentsHaveTitles(){
         searchWindow.activate();
 
-        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        PromotionService promotionService = getApplication().promotionService();
 
         try {
             promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"), "scg-2", 10);

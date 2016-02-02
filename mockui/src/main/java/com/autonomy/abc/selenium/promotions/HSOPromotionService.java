@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
+import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
@@ -11,8 +12,8 @@ public class HSOPromotionService extends PromotionService<HSOElementFactory> {
     private HSOPromotionsPage promotionsPage;
     private HSOCreateNewPromotionsPage createNewPromotionsPage;
 
-    public HSOPromotionService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        super(application, (HSOElementFactory) elementFactory);
+    public HSOPromotionService(HSOApplication application) {
+        super(application);
     }
 
     @Override

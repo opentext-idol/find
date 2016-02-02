@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
@@ -11,6 +12,23 @@ public class OPUsersPage extends UsersPage {
     public OPUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
+    }
+
+    @Override
+    public User addNewUser(NewUser newUser, Role role) {
+        if (newUser instanceof OPNewUser) {
+            return addOPNewUser((OPNewUser) newUser, role);
+        }
+        throw new IllegalStateException("Cannot create user " + newUser);
+    }
+
+    private User addOPNewUser(OPNewUser newUser, Role role) {
+        addUsername(newUser.getUsername());
+        addAndConfirmPassword(newUser.getPassword(), newUser.getPassword());
+        selectRole(role);
+        createButton().click();
+        Waits.loadOrFadeWait();
+        return newUser.withRole(role);
     }
 
     public void deleteUser(final String userName) {

@@ -3,6 +3,7 @@ package com.autonomy.abc.topnavbar.notifications;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
@@ -22,7 +23,6 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
@@ -49,8 +49,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Before
 	public void serviceSetUp() {
-		keywordService = getApplication().createKeywordService(getElementFactory());
-		promotionService = getApplication().createPromotionService(getElementFactory());
+		keywordService = getApplication().keywordService();
+		promotionService = getApplication().promotionService();
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		final Window secondWindow = getMainSession().openWindow(config.getWebappUrl());
 
 		secondWindow.activate();
-		ElementFactory elementFactoryTwo = getApplication().createElementFactory(getDriver());
+		ElementFactory elementFactoryTwo = SearchOptimizerApplication.ofType(config.getType()).inWindow(secondWindow).elementFactory();
 		TopNavBar topNavBarWindowTwo = elementFactoryTwo.getTopNavBar();
 		SideNavBar sideNavBarWindowTwo = elementFactoryTwo.getSideNavBar();
 

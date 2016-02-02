@@ -1,9 +1,8 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.util.Waits;
@@ -16,8 +15,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HSOUserService extends UserService<HSOElementFactory> {
     private HSOUsersPage usersPage;
 
-    public HSOUserService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        super(application, (HSOElementFactory) elementFactory);
+    public HSOUserService(HSOApplication application) {
+        super(application);
     }
 
     @Override
@@ -32,7 +31,7 @@ public class HSOUserService extends UserService<HSOElementFactory> {
         usersPage = goToUsers();
         usersPage.createUserButton().click();
         try {
-            return (HSOUser) newUser.signUpAs(role, usersPage);
+            return usersPage.addNewUser(newUser, role);
         } finally {
             usersPage.closeModal();
         }

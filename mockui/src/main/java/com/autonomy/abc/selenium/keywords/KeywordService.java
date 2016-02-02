@@ -23,13 +23,13 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class KeywordService extends ServiceBase {
+public class KeywordService extends ServiceBase<ElementFactory> {
     private final static Logger LOGGER = LoggerFactory.getLogger(KeywordService.class);
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage newKeywordsPage;
 
-    public KeywordService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        super(application, elementFactory);
+    public KeywordService(SearchOptimizerApplication<? extends ElementFactory> application) {
+        super(application);
     }
 
     public KeywordsPage goToKeywords() {

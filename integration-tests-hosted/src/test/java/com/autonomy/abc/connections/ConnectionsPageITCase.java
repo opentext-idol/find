@@ -40,7 +40,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        connectionService = getApplication().createConnectionService(getElementFactory());
+        connectionService = getApplication().connectionService();
 
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
         connectionsPage = getElementFactory().getConnectionsPage();
@@ -113,7 +113,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1798")
     public void testCanSelectLastIndex(){
-        IndexService indexService = getApplication().createIndexService(getElementFactory());
+        IndexService indexService = getApplication().indexService();
         ConnectorIndexStepTab connectorIndexStepTab = null;
 
         try {
@@ -163,7 +163,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     @KnownBug({"CSA-1679","CSA-2053"})
     public void testCreateFromIndexAutoSelectsIndex(){
         Index index = new Index("index");
-        IndexService indexService = getApplication().createIndexService(getElementFactory());
+        IndexService indexService = getApplication().indexService();
 
         try {
             indexService.setUpIndex(index);

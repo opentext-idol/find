@@ -53,11 +53,11 @@ public class ConnectionsToFindITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        connectionService = getApplication().createConnectionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        keywordService = getApplication().createKeywordService(getElementFactory());
-        indexService = getApplication().createIndexService(getElementFactory());
+        connectionService = getApplication().connectionService();
+        searchService = getApplication().searchService();
+        promotionService = getApplication().promotionService();
+        keywordService = getApplication().keywordService();
+        indexService = getApplication().indexService();
     }
 
     @Test

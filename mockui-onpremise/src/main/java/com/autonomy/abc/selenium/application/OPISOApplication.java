@@ -1,33 +1,35 @@
 package com.autonomy.abc.selenium.application;
 
-import com.autonomy.abc.selenium.config.OPUserConfigParser;
-import com.autonomy.abc.selenium.config.UserConfigParser;
-import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.page.OPElementFactory;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.users.OPUserService;
-import org.openqa.selenium.WebDriver;
 
 
 public class OPISOApplication extends SearchOptimizerApplication<OPElementFactory> {
+    private Window window;
+    private OPElementFactory factory;
+
     @Override
-    public OPElementFactory createElementFactory(WebDriver driver) {
-        return new OPElementFactory(driver);
+    public OPElementFactory elementFactory() {
+        return factory;
     }
 
     @Override
-    public OPPromotionService createPromotionService(ElementFactory elementFactory) {
-        return new OPPromotionService(this, elementFactory);
+    public Application<OPElementFactory> inWindow(Window window) {
+        this.window = window;
+        this.factory = new OPElementFactory(window.getSession().getDriver());
+        return this;
     }
 
     @Override
-    public OPUserService createUserService(ElementFactory elementFactory) {
-        return new OPUserService(this, elementFactory);
+    public OPPromotionService promotionService() {
+        return new OPPromotionService(this);
     }
 
     @Override
-    public UserConfigParser getUserConfigParser() {
-        return new OPUserConfigParser();
+    public OPUserService userService() {
+        return new OPUserService(this);
     }
 
     @Override

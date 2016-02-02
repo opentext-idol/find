@@ -2,7 +2,6 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
@@ -44,8 +43,8 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        promotionService = getApplication().promotionService();
+        searchService = getApplication().searchService();
 
         searchPage = searchService.search("fox");
     }

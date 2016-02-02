@@ -35,11 +35,11 @@ public class QuickSetUpITCase extends HostedTestBase {
     }
 
     private GettingStartedPage gettingStarted;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
 
     @Before
     public void setUp(){
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService = getApplication().promotionService();
         promotionService.deleteAll();
 
         getElementFactory().getSideNavBar().switchPage(NavBarTabId.GETTING_STARTED);
@@ -51,7 +51,7 @@ public class QuickSetUpITCase extends HostedTestBase {
         String site = "http://www.cnet.com";
         gettingStarted.addSiteToIndex(site);
 
-        SearchService searchService = getApplication().createSearchService(getElementFactory());
+        SearchService searchService = getApplication().searchService();
         //Can't search for forward slash, so take those out
         SearchQuery searchQuery = new SearchQuery(site.split("//")[1]).withFilter(new IndexFilter(Index.DEFAULT));
 

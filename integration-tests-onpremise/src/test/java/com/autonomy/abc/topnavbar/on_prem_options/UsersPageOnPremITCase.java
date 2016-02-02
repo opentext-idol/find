@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.UnhandledAlertException;
 
 import java.net.MalformedURLException;
@@ -42,7 +41,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
 
     @Before
     public void setUp() throws MalformedURLException, InterruptedException {
-        userService = getApplication().createUserService(getElementFactory());
+        userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
     }

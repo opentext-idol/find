@@ -17,13 +17,10 @@ import com.autonomy.abc.selenium.search.FindSearchResult;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -44,8 +41,8 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        keywordService = new KeywordService(getApplication(), getElementFactory());
+        promotionService = getApplication().promotionService();
+        keywordService = getApplication().keywordService();
 
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());

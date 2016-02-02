@@ -45,7 +45,6 @@ public abstract class ABCTestBase {
 	private final SessionRegistry sessionRegistry;
 	private WebDriver driver;
 	private Session mainSession;
-	private ElementFactory elementFactory;
 	private User initialUser;
 	private String initialUrl;
 	private User currentUser;
@@ -79,6 +78,7 @@ public abstract class ABCTestBase {
 
 		mainSession = sessionRegistry.startSession();
 		driver = mainSession.getDriver();
+		application.inWindow(mainSession.getActiveWindow());
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
 		testState.addStatementHandler(new StatementArtifactHandler(this));
@@ -87,8 +87,6 @@ public abstract class ABCTestBase {
 	private void goToInitialPage() {
 		getDriver().get(initialUrl);
 		getDriver().manage().window().maximize();
-
-		elementFactory = getApplication().createElementFactory(driver);
 	}
 
 	protected void postLogin() throws Exception {
@@ -148,7 +146,7 @@ public abstract class ABCTestBase {
 	}
 
 	public ElementFactory getElementFactory() {
-		return elementFactory;
+		return application.elementFactory();
 	}
 
 	protected final void loginAs(User user) {

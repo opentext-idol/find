@@ -96,7 +96,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         usersPage.createUserButton().click();
 
         try {
-            invalidUser.signUpAs(Role.ADMIN, usersPage);
+            usersPage.addNewUser(invalidUser, Role.ADMIN);
         } catch (TimeoutException | HSONewUser.UserNotCreatedException e){
             /* Expected behaviour */
         }
@@ -116,7 +116,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
-        HSOUser user = validUser.signUpAs(Role.ADMIN, usersPage);
+        HSOUser user = usersPage.addNewUser(validUser, Role.ADMIN);
 
         verifyModalElements();
         verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), not(containsString(Errors.User.CREATING)));

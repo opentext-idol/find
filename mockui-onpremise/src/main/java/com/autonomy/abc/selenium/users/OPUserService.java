@@ -1,14 +1,16 @@
 package com.autonomy.abc.selenium.users;
 
+import com.autonomy.abc.selenium.application.OPISOApplication;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.OPElementFactory;
 import org.openqa.selenium.By;
 
-public class OPUserService extends UserService {
+public class OPUserService extends UserService<OPElementFactory> {
     private OPUsersPage usersPage;
 
-    public OPUserService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        super(application, elementFactory);
+    public OPUserService(OPISOApplication application) {
+        super(application);
     }
 
     public OPUsersPage goToUsers() {
@@ -22,7 +24,7 @@ public class OPUserService extends UserService {
     public User createNewUser(NewUser newUser, Role role) {
         usersPage = goToUsers();
         usersPage.createButton().click();
-        User user = newUser.signUpAs(role, usersPage);
+        User user = usersPage.addNewUser(newUser, role);
         usersPage.closeModal();
         return user;
     }

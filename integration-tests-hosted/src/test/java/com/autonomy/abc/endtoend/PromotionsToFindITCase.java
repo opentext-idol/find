@@ -43,7 +43,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService = getApplication().promotionService();
 
         promotionService.deleteAll();
         searchWindow = getMainSession().getActiveWindow();

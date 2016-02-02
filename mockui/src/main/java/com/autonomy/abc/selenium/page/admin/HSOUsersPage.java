@@ -2,19 +2,52 @@ package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.users.HSOUser;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSOUsersPage extends HSOUserManagementPage {
     public HSOUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
+    }
+
+    @Override
+    public HSOUser addNewUser(NewUser newUser, Role role) {
+        if (newUser instanceof HSONewUser) {
+            return addHSONewUser((HSONewUser) newUser, role);
+        }
+        throw new IllegalStateException("Cannot create new user " + newUser);
+    }
+
+    private HSOUser addHSONewUser(HSONewUser newUser, Role role) {
+        addUsername(newUser.getUsername());
+        addEmail(newUser.getEmail());
+        selectRole(role);
+        createButton().click();
+
+        try {
+            new WebDriverWait(getDriver(), 15)
+                    .withMessage("User hasn't been created")
+                    .until(GritterNotice.notificationContaining("Created user"));
+            new WebDriverWait(getDriver(), 5)
+                    .withMessage("User input hasn't cleared")
+                    .until(new ExpectedCondition<Boolean>() {
+                        @Override
+                        public Boolean apply(WebDriver driver) {
+                            return getUsernameInput().getValue().isEmpty();
+                        }
+                    });
+        } catch (TimeoutException e) {
+            throw new HSONewUser.UserNotCreatedException(newUser);
+        }
+
+        return newUser.withRole(role);
     }
 
     public WebElement getUserRow(User user){

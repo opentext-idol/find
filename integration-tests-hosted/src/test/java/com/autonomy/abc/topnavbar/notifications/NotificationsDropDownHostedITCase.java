@@ -5,24 +5,21 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.Notification;
-import com.autonomy.abc.selenium.page.ElementFactory;
 import com.autonomy.abc.selenium.page.HSOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
-import com.autonomy.abc.selenium.util.Waits;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +46,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testStaticPromotionNotifications(){
-        HSOPromotionService ps = (HSOPromotionService) getApplication().createPromotionService(getElementFactory());
+        HSOPromotionService ps = (HSOPromotionService) getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -67,7 +64,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testRemovingStaticPromotionNotifications(){
-        HSOPromotionService ps = (HSOPromotionService) getApplication().createPromotionService(getElementFactory());
+        HSOPromotionService ps = (HSOPromotionService) getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -85,7 +82,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     public void testCreateIndexNotifications() {
         Index index = new Index("danye west");
-        IndexService indexService = ((HSOApplication) getApplication()).createIndexService(getElementFactory());
+        IndexService indexService = ((HSOApplication) getApplication()).indexService();
 
         try {
             indexService.setUpIndex(index);
@@ -106,7 +103,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
         WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName).withDuration(60);
 
-        ConnectionService cs = new ConnectionService(getApplication(), getElementFactory());
+        ConnectionService cs = ((HSOApplication) getApplication()).connectionService();
         try {
             cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
 
@@ -133,7 +130,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         String deletingNotification = "Deleting connection " + connectorName;
         String successfulNotification = "Connection " + connectorName + " successfully removed";
 
-        ConnectionService cs = new ConnectionService(getApplication(), getElementFactory());
+        ConnectionService cs = ((HSOApplication) getApplication()).connectionService();
         cs.setUpConnection(connector);
 
         cs.deleteConnection(connector, true);        //Because of the WebDriverWait within no need to wait for the notifications
@@ -145,6 +142,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         assertThat(notifications.notificationNumber(2).getText(), is(deletingNotification));
     }
 
+    // TODO: this is a mess
     @Test
     @KnownBug({"CSA-1698", "CSA-1687"})
     public void testUsernameShowsInNotifications() throws Exception {
@@ -158,9 +156,9 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         hsoDevelopersPage.editUsernameLink(dev).click();
         hsoDevelopersPage.editUsernameInput(dev).setAndSubmit(devUsername);
 
-        KeywordService keywordService = new KeywordService(getApplication(), getElementFactory());
-        UserService userService = getApplication().createUserService(getElementFactory());
-        WebDriver adminDriver = null;
+        KeywordService keywordService = getApplication().keywordService();
+        UserService userService = getApplication().userService();
+        Session session = null;
 
         SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
 
@@ -180,17 +178,14 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
                 /* User has likely already been authenticated recently, attempt to continue */
             }
 
-            adminDriver = config.getWebDriverFactory().create();
-            adminDriver.get(config.getWebappUrl());
+            session = getSessionRegistry().startSession(config.getWebappUrl());
+            HSOElementFactory secondFactory = new HSOApplication().inWindow(session.getActiveWindow()).elementFactory();
 
-            HSOElementFactory elementFactory = new HSOElementFactory(adminDriver);
+            loginTo(secondFactory.getLoginPage(), session.getDriver(), user);
 
-            loginTo(elementFactory.getLoginPage(), adminDriver, user);
+            secondFactory.getPromotionsPage();
 
-            elementFactory.getPromotionsPage();
-            ElementFactory secondFactory = getApplication().createElementFactory(adminDriver);
-
-            new KeywordService(getApplication(),elementFactory).addSynonymGroup("Messi", "Campbell");
+            keywordService.addSynonymGroup("Messi", "Campbell");
 
             verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
             secondFactory.getTopNavBar().notificationsDropdown();
@@ -202,8 +197,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
 
         } finally {
-            if(adminDriver != null) {
-                adminDriver.quit();
+            if (session != null) {
+                getSessionRegistry().endSession(session);
             }
 
             userService.deleteOtherUsers();
@@ -216,7 +211,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     @KnownBug("CSA-1583")
     public void testNotificationsPersistOverPages(){
-        KeywordService keywordService = getApplication().createKeywordService(getElementFactory());
+        KeywordService keywordService = getApplication().keywordService();
 
         keywordService.addSynonymGroup("Pop", "Punk");
         keywordService.addBlacklistTerms("Shola", "Ameobi");
