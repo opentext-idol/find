@@ -21,11 +21,6 @@ public class IndexesPage extends AppElement implements AppPage {
         super(driver.findElement(By.className("wrapper-content")), driver);
     }
 
-    @Deprecated
-    public static IndexesPage make(WebDriver driver) {
-        return new IndexesPage.Factory().create(driver);
-    }
-
     private static void waitForLoad(WebDriver driver) {
         new WebDriverWait(driver, 30)
                 .withMessage("Indexes failed to load")

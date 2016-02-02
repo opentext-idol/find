@@ -13,7 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSOUsersPage extends HSOUserManagementPage {
-    public HSOUsersPage(WebDriver driver) {
+    private HSOUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
     }

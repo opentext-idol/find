@@ -12,13 +12,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class CreateNewIndexPage extends SAASPageBase {
-    public CreateNewIndexPage(WebDriver driver) {
+    private CreateNewIndexPage(WebDriver driver) {
         super(driver);
-    }
-
-    @Deprecated
-    public static CreateNewIndexPage make(WebDriver driver) {
-        return new Factory().create(driver);
     }
 
     /* navigation */

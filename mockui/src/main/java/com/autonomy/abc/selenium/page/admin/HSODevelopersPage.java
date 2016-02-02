@@ -10,7 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class HSODevelopersPage extends HSOUserManagementPage {
-    public HSODevelopersPage(WebDriver driver) {
+    private HSODevelopersPage(WebDriver driver) {
         super(driver);
     }
 

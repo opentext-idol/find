@@ -136,7 +136,7 @@ public class ConnectionService extends ServiceBase<HSOElementFactory> {
         goToDetails(connector);
         connectionsDetailPage.editButton().click();
 
-        NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
+        NewConnectionPage newConnectionPage = getElementFactory().getNewConnectionPage();
 
         for(int i = 0; i < 2; i++) {
             newConnectionPage.nextButton().click();
@@ -159,7 +159,7 @@ public class ConnectionService extends ServiceBase<HSOElementFactory> {
 
         connectionsDetailPage.editButton().click();
 
-        NewConnectionPage newConnectionPage = NewConnectionPage.make(getDriver());
+        NewConnectionPage newConnectionPage = getElementFactory().getNewConnectionPage();
 
         newConnectionPage.nextButton().click();
         Waits.loadOrFadeWait();

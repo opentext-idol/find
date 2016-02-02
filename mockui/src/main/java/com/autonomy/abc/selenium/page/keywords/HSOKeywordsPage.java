@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 public class HSOKeywordsPage extends KeywordsPage {
-    public HSOKeywordsPage(WebDriver driver) {
+    private HSOKeywordsPage(WebDriver driver) {
         super(driver);
     }
 

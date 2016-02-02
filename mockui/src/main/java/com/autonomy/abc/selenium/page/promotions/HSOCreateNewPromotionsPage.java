@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
-    public HSOCreateNewPromotionsPage(WebDriver driver) {
+    private HSOCreateNewPromotionsPage(WebDriver driver) {
         super(driver);
     }
 

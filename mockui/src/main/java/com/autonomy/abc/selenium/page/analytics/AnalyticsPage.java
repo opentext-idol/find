@@ -16,7 +16,7 @@ import java.util.List;
 
 public class AnalyticsPage extends AppElement implements AppPage {
 
-    public AnalyticsPage(WebDriver driver) {
+    private AnalyticsPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
         waitForLoad();
     }

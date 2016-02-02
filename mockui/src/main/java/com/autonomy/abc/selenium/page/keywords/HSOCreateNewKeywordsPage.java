@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 
 public class HSOCreateNewKeywordsPage extends CreateNewKeywordsPage {
 
-    public HSOCreateNewKeywordsPage(WebDriver driver) {
+    private HSOCreateNewKeywordsPage(WebDriver driver) {
         super(driver);
     }
 

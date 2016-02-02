@@ -17,11 +17,6 @@ public class ConnectionsDetailPage extends SAASPageBase {
         super(driver);
     }
 
-    @Deprecated
-    public static ConnectionsDetailPage make(WebDriver driver) {
-        return new ConnectionsDetailPage.Factory().create(driver);
-    }
-
     private WebElement menuButton(String text) {
         return findElement(By.cssSelector(".toolbar .affix-element")).findElement(By.xpath(".//a[contains(text(), '" + text + "')]"));
     }

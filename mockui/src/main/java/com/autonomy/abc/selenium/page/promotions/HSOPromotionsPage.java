@@ -6,7 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class HSOPromotionsPage extends PromotionsPage {
-    public HSOPromotionsPage(WebDriver driver) {
+    private HSOPromotionsPage(WebDriver driver) {
         super(driver);
     }
 

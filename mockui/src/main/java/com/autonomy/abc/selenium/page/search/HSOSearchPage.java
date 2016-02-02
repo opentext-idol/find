@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 
 public class HSOSearchPage extends SearchPage {
 
-    public HSOSearchPage(final WebDriver driver) {
+    private HSOSearchPage(final WebDriver driver) {
         super(driver);
     }
 

@@ -17,11 +17,6 @@ public class NewConnectionPage extends SAASPageBase {
         super(driver);
     }
 
-    @Deprecated
-    public static NewConnectionPage make(WebDriver driver) {
-        return new NewConnectionPage.Factory().create(driver);
-    }
-
     public ConnectorTypeStepTab getConnectorTypeStep(){
         return ConnectorTypeStepTab.make(getDriver());
     }

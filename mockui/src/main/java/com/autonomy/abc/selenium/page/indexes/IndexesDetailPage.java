@@ -14,13 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IndexesDetailPage extends SAASPageBase {
-    public IndexesDetailPage(WebDriver driver) {
+    private IndexesDetailPage(WebDriver driver) {
         super(driver);
-    }
-
-    @Deprecated
-    public static IndexesDetailPage make(WebDriver driver) {
-        return new Factory().create(driver);
     }
 
     public String getIndexHeader(){

@@ -24,7 +24,7 @@ public class DevConsoleSearchPage extends AppElement implements AppPage {
     public AnalyticsPage launchSearchOptimizer(){
         try {
             findElement(By.xpath("//a[text()='Launch app']")).click();
-            return new AnalyticsPage(getDriver());
+            return new AnalyticsPage.Factory().create(getDriver());
         } catch (NoSuchElementException e) {
             LOGGER.error("Not signed in to Dev Console");
         }

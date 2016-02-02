@@ -21,11 +21,6 @@ public class ConnectionsPage extends SAASPageBase {
         super(driver);
     }
 
-    @Deprecated
-    public static ConnectionsPage make(WebDriver driver) {
-        return new ConnectionsPage.Factory().create(driver);
-    }
-
     private WebElement toolbar() {
         if (toolbar == null) {
             toolbar = findElement(By.cssSelector(".affix-toolbar"));
