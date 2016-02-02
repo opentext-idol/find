@@ -25,33 +25,31 @@ define([
         },
 
         initialize: function(options) {
-            this.views = _.map([{
+            var constructorArguments = {
+                documentsCollection: options.documentsCollection,
+                entityCollection: options.entityCollection,
+                indexesCollection: options.indexesCollection,
+                queryModel: options.queryModel,
+                queryTextModel: options.queryTextModel
+            };
+
+            this.views = [{
+                content: new this.ResultsView(constructorArguments),
                 id: 'list',
-                Constructor: this.ResultsView,
+                uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
                     displayNameKey: 'list',
                     icon: 'hp-list'
                 }
             }, {
+                content: new TopicMapView(constructorArguments),
                 id: 'topic-map',
-                Constructor: TopicMapView,
+                uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
                     displayNameKey: 'topic-map',
                     icon: 'hp-grid'
                 }
-            }], function(viewData) {
-                // Add a unique ID for DOM ids and construct the view
-                return _.extend({
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    content: new viewData.Constructor({
-                        documentsCollection: options.documentsCollection,
-                        entityCollection: options.entityCollection,
-                        indexesCollection: options.indexesCollection,
-                        queryModel: options.queryModel,
-                        queryTextModel: options.queryTextModel
-                    })
-                }, viewData);
-            });
+            }];
 
             this.model = new Backbone.Model({
                 // ID of the currently selected tab
@@ -65,7 +63,7 @@ define([
             this.$el.html(viewHtml);
 
             var $selectorList = this.$('.selector-list');
-            var $contentList = this.$('.content-list');
+            this.$contentList = this.$('.content-list');
 
             var selectedTab = this.model.get('selectedTab');
 
@@ -79,7 +77,7 @@ define([
                     selector: viewData.selector
                 })).toggleClass('active', isSelectedTab).appendTo($selectorList);
 
-                var $viewElement = $(this.contentContainerTemplate(viewData)).toggleClass('active', isSelectedTab).appendTo($contentList);
+                var $viewElement = $(this.contentContainerTemplate(viewData)).toggleClass('active', isSelectedTab).appendTo(this.$contentList);
                 viewData.content.setElement($viewElement);
             }, this);
 
@@ -89,6 +87,10 @@ define([
         selectTab: function() {
             var tabId = this.model.get('selectedTab');
             var viewData = _.findWhere(this.views, {id: tabId});
+
+            // Deactivate all tabs and activate the selected tab
+            this.$('.content-list .tab-pane').removeClass('active');
+            this.$('.content-list [id="' + viewData.uniqueId + '"]').addClass('active')
 
             if (viewData) {
                 if (!viewData.rendered) {
