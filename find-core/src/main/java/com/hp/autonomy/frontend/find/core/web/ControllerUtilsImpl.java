@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,18 +29,21 @@ public class ControllerUtilsImpl implements ControllerUtils {
     private final String commit;
 
     @Autowired
-    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value("${application.commit}") final String commit)
-    {
+    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value("${application.commit}") final String commit) {
         this.objectMapper = objectMapper;
         this.messageSource = messageSource;
         this.commit = commit;
     }
 
     @Override
-    public String convertToJson(final Object object) throws JsonProcessingException
-    {
+    public String convertToJson(final Object object) throws JsonProcessingException {
         // As we are inserting into a script tag escape </ to prevent injection
         return JSON_ESCAPE_PATTERN.matcher(objectMapper.writeValueAsString(object)).replaceAll("<\\/");
+    }
+
+    @Override
+    public String getMessage(final String code, final Object[] args) throws NoSuchMessageException {
+        return messageSource.getMessage(code, args, Locale.ENGLISH);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -52,15 +56,13 @@ public class ControllerUtilsImpl implements ControllerUtils {
             final Integer statusCode,
             final boolean contactSupport
     ) {
-        final Locale locale = Locale.ENGLISH;
-
         final ModelAndView modelAndView = new ModelAndView("error");
-        modelAndView.addObject("mainMessage", messageSource.getMessage(mainMessageCode, null, locale));
-        modelAndView.addObject("subMessage", messageSource.getMessage(subMessageCode, subMessageArguments, locale));
+        modelAndView.addObject("mainMessage", getMessage(mainMessageCode, null));
+        modelAndView.addObject("subMessage", getMessage(subMessageCode, subMessageArguments));
         modelAndView.addObject("baseUrl", getBaseUrl(request));
         modelAndView.addObject("statusCode", statusCode);
         if (contactSupport) {
-            modelAndView.addObject("contactSupport", messageSource.getMessage("error.contactSupport", null, locale));
+            modelAndView.addObject("contactSupport", getMessage("error.contactSupport", null));
         }
         modelAndView.addObject(MvcConstants.GIT_COMMIT.value(), commit);
 

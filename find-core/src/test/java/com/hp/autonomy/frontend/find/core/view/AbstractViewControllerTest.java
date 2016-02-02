@@ -29,12 +29,10 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractViewControllerTest<C extends ViewController<V, S, E>, V extends ViewServerService<S, E>, S extends Serializable, E extends Exception> {
     @Mock
-    protected V viewServerService;
-
-    @Mock
     protected ControllerUtils controllerUtils;
 
     protected C viewController;
+    protected V viewServerService;
     protected MockHttpServletResponse response;
 
     @Before
