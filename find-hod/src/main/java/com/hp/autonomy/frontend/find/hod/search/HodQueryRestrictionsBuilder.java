@@ -17,7 +17,7 @@ import java.util.List;
 @Component
 public class HodQueryRestrictionsBuilder implements QueryRestrictionsBuilder<ResourceIdentifier> {
     @Override
-    public QueryRestrictions<ResourceIdentifier> build(final String queryText, final String fieldText, final List<ResourceIdentifier> databases, final DateTime minDate, final DateTime maxDate) {
+    public QueryRestrictions<ResourceIdentifier> build(final String queryText, final String fieldText, final List<ResourceIdentifier> databases, final DateTime minDate, final DateTime maxDate, final List<String> stateMatchId, final List<String> stateDontMatchId) {
         return new HodQueryRestrictions.Builder()
                 .setQueryText(queryText)
                 .setFieldText(fieldText)

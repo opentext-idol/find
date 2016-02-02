@@ -12,5 +12,5 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface QueryRestrictionsBuilder<S extends Serializable> {
-    QueryRestrictions<S> build(final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate);
+    QueryRestrictions<S> build(final String queryText, final String fieldText, final List<S> databases, final DateTime minDate, final DateTime maxDate, final List<String> stateMatchId, final List<String> stateDontMatchId);
 }

@@ -89,14 +89,14 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
 
     @SuppressWarnings("MethodWithTooManyParameters")
     protected SearchRequest<S> parseRequestParamsToObject(final String text, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final boolean autoCorrect) {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate);
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
         return new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, sort, highlight, autoCorrect, null);
     }
 
     @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public Documents<R> findSimilar(@RequestParam(REFERENCE_PARAM) final String reference, @RequestParam(INDEXES_PARAM) final List<S> indexes) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(null, null, indexes != null ? indexes : Collections.<S>emptyList(), null, null);
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(null, null, indexes != null ? indexes : Collections.<S>emptyList(), null, null, Collections.<String>emptyList(), Collections.<String>emptyList());
         final SuggestRequest<S> suggestRequest = new SuggestRequest<>();
         suggestRequest.setQueryRestrictions(queryRestrictions);
         suggestRequest.setReference(reference);
