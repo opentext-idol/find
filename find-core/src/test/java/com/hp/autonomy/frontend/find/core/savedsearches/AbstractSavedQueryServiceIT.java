@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQuery;
+import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQueryService;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.joda.time.DateTime;
 import org.junit.Test;

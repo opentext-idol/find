@@ -5,6 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQuery;
+import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQueryController;
+import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQueryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
