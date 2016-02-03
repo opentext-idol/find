@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.page.devconsole;
 
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -53,6 +54,12 @@ public class DevConsoleSearchPage extends AppElement implements AppPage {
             getDriver().findElement(By.id("loginLogout")).click();
         } catch (NoSuchElementException | ElementNotVisibleException e) {
             LOGGER.error("Already logged in");
+        }
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, DevConsoleSearchPage> {
+        public DevConsoleSearchPage create(WebDriver context) {
+            return new DevConsoleSearchPage(context);
         }
     }
 }

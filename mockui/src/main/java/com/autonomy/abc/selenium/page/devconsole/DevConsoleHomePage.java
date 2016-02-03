@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.devconsole;
 
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -20,5 +21,11 @@ public class DevConsoleHomePage extends AppElement implements AppPage {
 
     public WebElement loginButton(){
         return findElement(By.id("loginLogout"));
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, DevConsoleHomePage> {
+        public DevConsoleHomePage create(WebDriver context) {
+            return new DevConsoleHomePage(context);
+        }
     }
 }
