@@ -2,10 +2,13 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.navigation.HSODFindElementFactory;
 import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Waits;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -20,10 +23,16 @@ import static org.openqa.selenium.lift.Matchers.displayed;
  * TODO Possibly make sure a gritter with 'Signed in' comes up, correct colour circle etc. May be difficult to do considering it occurs during tryLogIn()
  */
 public class LoginPageHostedITCase extends HostedTestBase {
+    private HSODFindElementFactory findFactory;
 
     public LoginPageHostedITCase(TestConfig config) {
         super(config);
         setInitialUser(User.NULL);
+    }
+
+    @Before
+    public void setUp() {
+        findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
     }
 
     @Test   @Ignore("No account")
@@ -75,7 +84,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         loginAs(user);
 
         getDriver().navigate().to(config.getFindUrl());
-        verifyThat(getElementFactory().getFindPage(), displayed());
+        verifyThat(findFactory.getFindPage(), displayed());
     }
 
     @Test
@@ -83,7 +92,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         getElementFactory().getLoginPage();
 
         getDriver().navigate().to(config.getFindUrl());
-        loginTo(getElementFactory().getFindLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(findFactory.getFindLoginPage(), getDriver(), config.getDefaultUser());
 
         getDriver().navigate().to(config.getWebappUrl());
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
@@ -96,7 +105,8 @@ public class LoginPageHostedITCase extends HostedTestBase {
         logout();
 
         getDriver().navigate().to(config.getFindUrl());
-        getElementFactory().getFindLoginPage();
+        findFactory.getFindLoginPage();
+
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
@@ -106,12 +116,12 @@ public class LoginPageHostedITCase extends HostedTestBase {
         getElementFactory().getLoginPage();
 
         getDriver().navigate().to(config.getFindUrl());
-        loginTo(getElementFactory().getFindLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(findFactory.getFindLoginPage(), getDriver(), config.getDefaultUser());
 
-        FindPage findPage = getElementFactory().getFindPage();
+        FindPage findPage = findFactory.getFindPage();
         findPage.logOut();
 
-        getElementFactory().getFindLoginPage();
+        findFactory.getFindLoginPage();
 
         getDriver().navigate().to(config.getWebappUrl());
         getElementFactory().getLoginPage();

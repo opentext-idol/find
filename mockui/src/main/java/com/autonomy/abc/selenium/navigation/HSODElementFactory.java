@@ -49,10 +49,6 @@ public class HSODElementFactory extends SOElementFactory {
         return loadPage(HSOLoginPage.class);
     }
 
-    public LoginPage getFindLoginPage() {
-        return new HSOLoginPage(getDriver(), new FindHasLoggedIn(this));
-    }
-
     public LoginPage getDevConsoleLoginPage(){
         return new HSOLoginPage(getDriver(), new DevConsoleHasLoggedIn(getDriver()));
     }
