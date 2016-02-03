@@ -6,12 +6,12 @@
 define([
     'find/app/page/search/service-view',
     'find/idol/app/page/search/filters/indexes/idol-indexes-view',
-    'find/idol/app/page/search/results/idol-results-view-container'
-], function(ServiceView, IndexesView, ResultsViewContainer) {
+    'find/idol/app/page/search/results/idol-results-view'
+], function(ServiceView, IndexesView, ResultsView) {
     'use strict';
 
     return ServiceView.extend({
-        ResultsViewContainer: ResultsViewContainer,
+        ResultsView: ResultsView,
         IndexesView: IndexesView
     });
 
