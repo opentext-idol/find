@@ -40,7 +40,7 @@ define([
             });
 
             this.datesFilterModel = new Backbone.Model({
-                dateRange: DatesFilterModel.dateRange.custom,
+                dateRange: DatesFilterModel.DateRange.CUSTOM,
                 minDate: INITIAL_MIN_DATE
             });
 
@@ -88,7 +88,7 @@ define([
                 this.queryModel.set('maxDate', this.maxDate);
 
                 this.datesFilterModel.set({
-                    dateRange: DatesFilterModel.dateRange.custom,
+                    dateRange: DatesFilterModel.DateRange.CUSTOM,
                     maxDate: this.maxDate
                 });
             });
@@ -110,7 +110,7 @@ define([
                 this.minDate = moment(INITIAL_MIN_DATE).subtract(2, 'days');
 
                 this.datesFilterModel.set({
-                    dateRange: DatesFilterModel.dateRange.custom,
+                    dateRange: DatesFilterModel.DateRange.CUSTOM,
                     minDate: this.minDate
                 });
 

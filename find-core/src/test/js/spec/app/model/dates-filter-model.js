@@ -15,7 +15,7 @@ define([
 
         describe('calling setDateRange with weeks', function() {
             beforeEach(function() {
-                this.datesFilterModel.setDateRange(DatesFilterModel.dateRange.week);
+                this.datesFilterModel.setDateRange(DatesFilterModel.DateRange.WEEK);
             });
 
             it('should set maxDate and minDate on the queryModel to an interval spanning a week', function() {
@@ -35,7 +35,7 @@ define([
 
             describe('calling setDateRange with custom', function() {
                 beforeEach(function() {
-                    this.datesFilterModel.setDateRange(DatesFilterModel.dateRange.custom);
+                    this.datesFilterModel.setDateRange(DatesFilterModel.DateRange.CUSTOM);
                 });
 
                 it('should set maxDate and minDate to falsy values', function() {
@@ -55,8 +55,8 @@ define([
             });
 
             it('should set the value of its dateRange attribute to custom', function() {
-                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.dateRange.custom);
-            })
+                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.DateRange.CUSTOM);
+            });
         });
 
         describe('calling setMinDate', function() {
@@ -69,8 +69,8 @@ define([
             });
 
             it('should set the value of its dateRange attribute to custom', function() {
-                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.dateRange.custom);
-            })
+                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.DateRange.CUSTOM);
+            });
         });
 
     });

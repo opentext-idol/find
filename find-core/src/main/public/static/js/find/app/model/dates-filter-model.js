@@ -3,17 +3,17 @@ define([
     'moment'
 ], function(Backbone, moment) {
 
-    var dateRange = {
-        custom: 'custom',
-        year: 'year',
-        month: 'month',
-        week: 'week'
+    var DateRange = {
+        CUSTOM: 'CUSTOM',
+        YEAR: 'YEAR',
+        MONTH: 'MONTH',
+        WEEK: 'WEEK'
     };
 
     var dateRangeDescription = {
-        year:  {maxDate: moment(), minDate: moment().subtract(1, 'years')},
-        month: {maxDate: moment(), minDate: moment().subtract(1, 'months')},
-        week: {maxDate: moment(), minDate: moment().subtract(1, 'weeks')}
+        YEAR: {maxDate: moment(), minDate: moment().subtract(1, 'years')},
+        MONTH: {maxDate: moment(), minDate: moment().subtract(1, 'months')},
+        WEEK: {maxDate: moment(), minDate: moment().subtract(1, 'weeks')}
     };
 
     return Backbone.Model.extend({
@@ -35,20 +35,20 @@ define([
             this.customMaxDate = this.queryModel.get('minDate') || undefined;
 
             this.set({
-                dateRange: (this.customMinDate || this.customMaxDate) ? dateRange.custom : null,
+                dateRange: (this.customMinDate || this.customMaxDate) ? DateRange.CUSTOM : null,
                 minDate: this.customMinDate,
                 maxDate: this.customMaxDate
             });
         },
 
         setDateRange: function(range) {
-            if(range === dateRange.custom) {
+            if (range === DateRange.CUSTOM) {
                 this.set({
                     minDate: this.customMinDate,
                     maxDate: this.customMaxDate,
-                    dateRange: dateRange.custom
+                    dateRange: DateRange.CUSTOM
                 });
-            } else if(range) {
+            } else if (range) {
                 var dateRangeProperties = dateRangeDescription[range] || {};
 
                 this.set({
@@ -72,7 +72,7 @@ define([
             this.customMinDate = date;
 
             this.set({
-                dateRange: dateRange.custom,
+                dateRange: DateRange.CUSTOM,
                 minDate: date,
                 maxDate: this.customMaxDate
             });
@@ -85,12 +85,12 @@ define([
             this.customMaxDate = date;
 
             this.set({
-                dateRange: dateRange.custom,
+                dateRange: DateRange.CUSTOM,
                 minDate: this.customMinDate,
                 maxDate: date
             });
         }
     }, {
-        dateRange: dateRange
+        DateRange: DateRange
     });
 });

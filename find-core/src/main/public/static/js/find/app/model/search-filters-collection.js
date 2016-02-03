@@ -72,10 +72,11 @@ define([
                 var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
                 var dateRange = this.datesFilterModel.get('dateRange');
 
-                if(!_.isEmpty(dateFilterTypes)) {
-                    if(dateRange === DatesFilterModel.dateRange.custom) {
+                if (!_.isEmpty(dateFilterTypes)) {
+
+                    if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
                         this.intervalDate(dateFilterTypes);
-                    } else if(dateRange) {
+                    } else if (dateRange) {
                         this.humanDate();
                     } else {
                         this.removeAllDateFilters();
@@ -191,7 +192,7 @@ define([
                             text: filterText
                         });
                     }
-                } else if(filterModel) {
+                } else if (filterModel) {
                     this.remove(filterModel);
                 }
             }, this);

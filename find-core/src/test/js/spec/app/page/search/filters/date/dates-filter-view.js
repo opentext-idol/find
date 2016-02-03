@@ -40,16 +40,16 @@ define([
                 this.datesFilterModel.set({
                     minDate: moment(),
                     maxDate: moment(),
-                    dateRange: DatesFilterModel.dateRange.week
+                    dateRange: DatesFilterModel.DateRange.WEEK
                 });
             });
 
             it('should tick the weeks checkbox', function() {
-                expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.dateRange.week + "'] i").hasClass('hide')).toBe(false);
+                expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.DateRange.WEEK + "'] i").hasClass('hide')).toBe(false);
             });
 
             it('should change the dateRange on the queryModel to weeks', function() {
-                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.dateRange.week);
+                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.DateRange.WEEK);
             });
 
             describe('after this.datesFilterModel.setDateRange is called with null', function() {
@@ -71,33 +71,33 @@ define([
 
         describe('after this.datesFilterModel.setDateRange is called with custom', function() {
             beforeEach(function() {
-                this.datesFilterModel.set('dateRange', DatesFilterModel.dateRange.custom);
+                this.datesFilterModel.set('dateRange', DatesFilterModel.DateRange.CUSTOM);
             });
 
             it('should tick the custom checkbox', function() {
-                expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.dateRange.custom + "'] i").hasClass('hide')).toBe(false);
+                expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.DateRange.CUSTOM + "'] i").hasClass('hide')).toBe(false);
             });
 
             it('should change the dateRange on the datesFilterModel to custom', function() {
-                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.dateRange.custom);
+                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.DateRange.CUSTOM);
             });
 
             describe('then this.datesFilterModel.setDateRange is called with month', function() {
                 beforeEach(function() {
-                    this.datesFilterModel.set('dateRange', DatesFilterModel.dateRange.month);
+                    this.datesFilterModel.set('dateRange', DatesFilterModel.DateRange.MONTH);
                 });
 
                 it('should tick the months checkbox', function() {
-                    expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.dateRange.month + "'] i").hasClass('hide')).toBe(false);
+                    expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.DateRange.MONTH + "'] i").hasClass('hide')).toBe(false);
                 });
 
                 describe('then this.datesFilterModel.setDateRange is called with custom', function() {
                     beforeEach(function() {
-                        this.datesFilterModel.set('dateRange', DatesFilterModel.dateRange.custom);
+                        this.datesFilterModel.set('dateRange', DatesFilterModel.DateRange.CUSTOM);
                     });
 
                     it('should tick the custom checkbox', function() {
-                        expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.dateRange.custom + "'] i").hasClass('hide')).toBe(false);
+                        expect(this.datesFilterView.$("[data-id='" + DatesFilterModel.DateRange.CUSTOM + "'] i").hasClass('hide')).toBe(false);
                     });
                 });
             });

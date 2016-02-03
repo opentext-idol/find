@@ -40,7 +40,7 @@ define([
             });
 
             this.datesFilterModel = new Backbone.Model({
-                dateRange: DatesFilterModel.dateRange.custom,
+                dateRange: DatesFilterModel.DateRange.CUSTOM,
                 minDate: INITIAL_MIN_DATE
             });
 

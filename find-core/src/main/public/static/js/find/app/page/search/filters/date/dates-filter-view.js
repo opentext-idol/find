@@ -50,20 +50,20 @@ define([
 
             this.dateFiltersCollection = new Backbone.Collection([
                 {
-                    id: DatesFilterModel.dateRange.week,
-                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.week]
+                    id: DatesFilterModel.DateRange.WEEK,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.DateRange.WEEK]
                 },
                 {
-                    id: DatesFilterModel.dateRange.month,
-                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.month]
+                    id: DatesFilterModel.DateRange.MONTH,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.DateRange.MONTH]
                 },
                 {
-                    id: DatesFilterModel.dateRange.year,
-                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRange.year]
+                    id: DatesFilterModel.DateRange.YEAR,
+                    label: i18n['search.dates.timeInterval.' + DatesFilterModel.DateRange.YEAR]
                 },
                 {
-                    id: DatesFilterModel.dateRange.custom,
-                    label: i18n['search.dates.timeInterval.'  + DatesFilterModel.dateRange.custom]
+                    id: DatesFilterModel.DateRange.CUSTOM,
+                    label: i18n['search.dates.timeInterval.'  + DatesFilterModel.DateRange.CUSTOM]
                 }
             ]);
 
@@ -139,7 +139,7 @@ define([
             this.$('[data-id=\'' + dateRange + '\'] i').removeClass('hide');
 
             // If custom show custom options
-            this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== DatesFilterModel.dateRange.custom);
+            this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== DatesFilterModel.DateRange.CUSTOM);
         }
     });
 
