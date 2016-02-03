@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot;
+package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -15,7 +15,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @DiscriminatorValue(SavedSearchType.Values.SNAPSHOT)

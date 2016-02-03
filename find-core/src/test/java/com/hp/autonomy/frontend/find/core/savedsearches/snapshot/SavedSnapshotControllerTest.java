@@ -3,12 +3,9 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
-import com.autonomy.aci.client.services.AciErrorException;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshot;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotController;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotService;
+import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import org.junit.Before;

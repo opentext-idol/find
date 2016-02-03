@@ -1,9 +1,9 @@
-package com.hp.autonomy.frontend.find.hod.savedsearches.savedsnapshot;
+package com.hp.autonomy.frontend.find.hod.savedsearches.snapshot;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshot;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotController;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotService;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshotController;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshotService;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;

@@ -1,10 +1,10 @@
-package com.hp.autonomy.frontend.find.idol.savedsearches.savedsnapshot;
+package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshot;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotController;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotService;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshotController;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshotService;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;

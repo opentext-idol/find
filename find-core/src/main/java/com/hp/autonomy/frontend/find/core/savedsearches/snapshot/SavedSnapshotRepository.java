@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot;
+package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
 import org.springframework.data.repository.CrudRepository;
 

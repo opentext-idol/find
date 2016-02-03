@@ -3,11 +3,8 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
-import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQuery;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQueryController;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQueryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

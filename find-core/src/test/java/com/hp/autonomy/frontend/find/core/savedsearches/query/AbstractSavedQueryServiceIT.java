@@ -3,10 +3,8 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
-import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQuery;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQueryService;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.joda.time.DateTime;
 import org.junit.Test;

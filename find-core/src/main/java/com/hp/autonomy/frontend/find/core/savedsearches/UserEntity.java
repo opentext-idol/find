@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedquery.SavedQuery;
+import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

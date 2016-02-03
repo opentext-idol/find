@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot;
+package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;

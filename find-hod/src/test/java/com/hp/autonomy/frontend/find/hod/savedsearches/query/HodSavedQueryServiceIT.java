@@ -3,10 +3,10 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.savedsearches;
+package com.hp.autonomy.frontend.find.hod.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.HodFindApplication;
-import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedQueryServiceIT;
+import com.hp.autonomy.frontend.find.core.savedsearches.query.AbstractSavedQueryServiceIT;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
 @SpringApplicationConfiguration(classes = HodFindApplication.class)

@@ -3,11 +3,11 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.savedsearches;
+package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.IdolFindApplication;
-import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedQueryServiceIT;
+import com.hp.autonomy.frontend.find.core.savedsearches.query.AbstractSavedQueryServiceIT;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;

@@ -1,9 +1,6 @@
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshot;
-import com.hp.autonomy.frontend.find.core.savedsearches.savedsnapshot.SavedSnapshotService;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;

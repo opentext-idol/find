@@ -1,8 +1,8 @@
-package com.hp.autonomy.frontend.find.idol.savedsearches;
+package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.IdolFindApplication;
-import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSnapshotServiceIT;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.AbstractSavedSnapshotServiceIT;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;

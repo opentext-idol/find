@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.savedsearches.savedquery;
+package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
