@@ -7,12 +7,12 @@ define([
     'find/app/page/search/service-view',
     'find/hod/app/model/hod-search-filters-collection',
     'find/hod/app/page/search/filters/indexes/hod-indexes-view',
-    'find/hod/app/page/search/results/hod-results-view-container'
-], function(ServiceView, SearchFiltersCollection, IndexesView, ResultsViewContainer) {
+    'find/idol/app/page/search/results/idol-results-view'
+], function(ServiceView, SearchFiltersCollection, IndexesView, ResultsView) {
     'use strict';
 
     return ServiceView.extend({
-        ResultsViewContainer: ResultsViewContainer,
+        ResultsView: ResultsView,
         IndexesView: IndexesView,
         SearchFiltersCollection: SearchFiltersCollection
     });

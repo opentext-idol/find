@@ -12,18 +12,20 @@ define([
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/results/results-view-container',
+    'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/spellcheck-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
+    'find/app/page/search/results/topic-map-view',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, RelatedConceptsView, SpellCheckView,
-            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, i18n, i18nIndexes, template) {
+            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
+            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -65,7 +67,7 @@ define([
         SearchFiltersCollection: SearchFiltersCollection,
 
         // Abstract
-        ResultsViewContainer: null,
+        ResultsView: null,
         IndexesView: null,
 
         initialize: function(options) {
@@ -133,13 +135,46 @@ define([
                 selectedIndexesCollection: this.selectedIndexesCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
-            
-            this.resultsViewContainer = new this.ResultsViewContainer({
+
+            var constructorArguments = {
                 documentsCollection: this.documentsCollection,
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryTextModel
+            };
+
+            var resultsViews = [{
+                content: new this.ResultsView(constructorArguments),
+                id: 'list',
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'list',
+                    icon: 'hp-list'
+                }
+            }, {
+                content: new TopicMapView(constructorArguments),
+                id: 'topic-map',
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'topic-map',
+                    icon: 'hp-grid'
+                }
+            }];
+
+            var selectionModel = new Backbone.Model({
+                // ID of the currently selected tab
+                selectedTab: resultsViews[0].id
+            });
+
+            this.resultsViewSelection = new ResultsViewSelection({
+                views: resultsViews,
+                model: selectionModel
+            });
+
+            this.resultsViewContainer = new ResultsViewContainer({
+                views: resultsViews,
+                model: selectionModel
             });
 
             // Left Views
@@ -200,6 +235,7 @@ define([
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
 
+            this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
             this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
 
             this.$('.container-toggle').on('click', this.containerToggle);
