@@ -47,3 +47,7 @@
 #colorbox {
     overflow: initial;
 }
+
+#cboxLoadedContent video {
+    display: block;
+}

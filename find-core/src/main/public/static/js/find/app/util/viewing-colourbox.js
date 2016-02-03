@@ -8,10 +8,11 @@ define([
     'underscore',
     'find/app/model/document-model',
     'text!find/templates/app/page/colorbox-controls.html',
+    'text!find/templates/app/page/view/document-content.html',
     'text!find/templates/app/page/view/media-player.html',
     'text!find/templates/app/page/view/view-document.html',
     'i18n!find/nls/bundle'
-], function ($, _, DocumentModel, colorboxControlsTemplate, mediaPlayerTemplateString, viewDocumentTemplateString, i18n) {
+], function ($, _, DocumentModel, colorboxControlsTemplate, documentContentTemplateString, mediaPlayerTemplateString, viewDocumentTemplateString, i18n) {
     "use strict";
 
     var SIZE = '90%';
@@ -19,6 +20,7 @@ define([
     var mediaTypes = ['audio', 'video'];
     var isUrlRegex = /^https?:\/\//;
 
+    var documentContentTemplate = _.template(documentContentTemplateString);
     var mediaPlayerTemplate = _.template(mediaPlayerTemplateString);
     var viewDocumentTemplate = _.template(viewDocumentTemplateString);
 
@@ -76,22 +78,28 @@ define([
 
         var url = options.model.get('url');
 
+        var content;
         if (media && url) {
-            args.html = mediaPlayerTemplate({
+            content = mediaPlayerTemplate({
                 media: media,
                 url: url,
                 offset: options.model.get('offset')
             });
         } else {
-            args.html = viewDocumentTemplate({
-                src: options.href,
-                i18n: i18n,
-                model: options.model,
-                arrayFields: DocumentModel.ARRAY_FIELDS,
-                dateFields: DocumentModel.DATE_FIELDS,
-                fields: ['index', 'reference', 'contentType', 'url']
+            content = documentContentTemplate({
+                i18n: i18n
             });
         }
+
+        args.html = viewDocumentTemplate({
+            src: options.href,
+            i18n: i18n,
+            model: options.model,
+            content: content,
+            arrayFields: DocumentModel.ARRAY_FIELDS,
+            dateFields: DocumentModel.DATE_FIELDS,
+            fields: ['index', 'reference', 'contentType', 'url']
+        });
 
         return args;
     }
