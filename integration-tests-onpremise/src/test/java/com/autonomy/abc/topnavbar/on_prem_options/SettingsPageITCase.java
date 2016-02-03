@@ -1,8 +1,8 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.HostAndPorts;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.navigation.OPISOElementFactory;

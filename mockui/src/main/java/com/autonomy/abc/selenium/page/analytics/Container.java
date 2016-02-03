@@ -1,7 +1,8 @@
 package com.autonomy.abc.selenium.page.analytics;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 import java.util.*;
 

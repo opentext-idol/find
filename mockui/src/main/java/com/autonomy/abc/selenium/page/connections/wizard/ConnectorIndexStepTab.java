@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.page.connections.wizard;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.SAASPageBase;
-import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

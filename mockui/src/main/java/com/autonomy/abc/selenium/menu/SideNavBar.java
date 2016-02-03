@@ -3,9 +3,6 @@ package com.autonomy.abc.selenium.menu;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
-import java.util.List;
 
 public class SideNavBar extends AppElement {
 

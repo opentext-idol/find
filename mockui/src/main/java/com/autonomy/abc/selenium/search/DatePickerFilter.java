@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.element.DatePicker;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DatePickerFilter implements SearchFilter {

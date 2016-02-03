@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.util.Factory;
 import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
