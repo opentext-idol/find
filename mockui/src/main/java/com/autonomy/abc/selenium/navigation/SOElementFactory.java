@@ -56,4 +56,17 @@ public abstract class SOElementFactory extends ElementFactoryBase {
     protected void handleSwitch(NavBarTabId tab) {
         getSideNavBar().switchPage(tab);
     }
+
+    static class SideNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
+        private final NavBarTabId tab;
+
+        SideNavStrategy(NavBarTabId tabId) {
+            tab = tabId;
+        }
+
+        @Override
+        public void switchTo(SOElementFactory context) {
+            context.getSideNavBar().switchPage(tab);
+        }
+    }
 }

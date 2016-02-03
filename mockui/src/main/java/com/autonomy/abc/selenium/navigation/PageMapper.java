@@ -39,4 +39,8 @@ class PageMapper<T extends Enum<T> & PageMapper.Page> {
         NavBarTabId getId();
         Object loadAsObject(WebDriver driver);
     }
+
+    interface SwitchStrategy<T> {
+        void switchTo(T context);
+    }
 }

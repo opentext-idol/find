@@ -59,10 +59,12 @@ enum HSODPage implements PageMapper.Page {
 
     private final Class<?> pageType;
     private final NavBarTabId tabId;
+    private final PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
     private ParametrizedFactory<WebDriver, ?> factory;
 
     <T extends AppPage> HSODPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         tabId = tab;
+        switchStrategy = new HSODElementFactory.SideNavStrategy(tab);
         pageType = type;
         this.factory = factory;
     }
