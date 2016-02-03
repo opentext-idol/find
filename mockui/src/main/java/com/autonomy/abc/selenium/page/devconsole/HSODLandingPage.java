@@ -36,7 +36,7 @@ public class HSODLandingPage extends AppElement implements AppPage {
     public FindPage launchFind(){
         try {
             findElement(By.className("hsod-find-button")).click();
-            return new FindPage(getDriver());
+            return new FindPage.Factory().create(getDriver());
         } catch (NoSuchElementException e) {
             LOGGER.error("Not signed in to Dev Console");
         }

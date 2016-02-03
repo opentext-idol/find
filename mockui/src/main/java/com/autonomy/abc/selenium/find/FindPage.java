@@ -33,8 +33,7 @@ public class FindPage extends AppElement implements AppPage,
     private final FormInput input;
     private final FindResultsPage results;
 
-    @Deprecated
-    public FindPage(WebDriver driver){
+    private FindPage(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
