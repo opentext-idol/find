@@ -21,11 +21,11 @@ import java.io.Serializable;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public abstract class AbstractComparisonServiceIT<S extends Serializable, R extends SearchResult, E extends Exception> extends AbstractFindIT {
-
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private ComparisonService<R, E> comparisonService;
@@ -63,7 +63,7 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .setSecondQueryToken(sixDocStateToken)
                 .build();
 
-        mockMvc.perform(post(ComparisonController.PATH + '/')
+        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -82,7 +82,7 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .setSecondDifferenceStateToken(secondDiffStateToken)
                 .build();
 
-        mockMvc.perform(post(ComparisonController.PATH + '/')
+        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -99,7 +99,7 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .setSecondQueryToken(sixDocStateToken)
                 .build();
 
-        mockMvc.perform(post(ComparisonController.PATH + '/')
+        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -116,7 +116,7 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .setSecondRestrictions(buildQueryRestrictions())
                 .build();
 
-        mockMvc.perform(post(ComparisonController.PATH + '/')
+        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -133,7 +133,7 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .setSecondRestrictions(buildQueryRestrictions())
                 .build();
 
-        mockMvc.perform(post(ComparisonController.PATH + '/')
+        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -141,5 +141,24 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .andExpect(jsonPath("$.documentsInBoth.documents", not(empty())))
                 .andExpect(jsonPath("$.documentsInFirst.documents", empty()))
                 .andExpect(jsonPath("$.documentsInSecond.documents", empty()));
+    }
+
+    @Test
+    public void getResults() throws Exception {
+        final String[] stateMatchIds = {sixDocStateToken};
+        final String[] stateDontMatchIds = {twoDocStateToken};
+
+        mockMvc.perform(get(ComparisonController.BASE_PATH + '/' + ComparisonController.RESULTS_PATH + '/')
+                .param(ComparisonController.STATE_MATCH_PARAM, stateMatchIds)
+                .param(ComparisonController.STATE_DONT_MATCH_PARAM, stateDontMatchIds)
+                .param(ComparisonController.RESULTS_START_PARAM, "1")
+                .param(ComparisonController.MAX_RESULTS_PARAM, "6")
+                .param(ComparisonController.SUMMARY_PARAM, "context")
+                .param(ComparisonController.SORT_PARAM, "relevance")
+                .param(ComparisonController.HIGHLIGHT_PARAM, "false")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.documents", hasSize(4)));
     }
 }

@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
@@ -108,5 +110,19 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
                 .build();
 
         comparisonController.compare(comparisonRequest);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getResults() throws E {
+        final List<String> stateMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_1);
+        final List<String> stateDontMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_2);
+        final int start = 3;
+        final int maxResults = 6;
+        final String summary = "context";
+        final String sort = "relevance";
+        final boolean highlight = true;
+
+        comparisonController.getResults(stateMatchIds, stateDontMatchIds, start, maxResults, summary, sort, highlight);
+        verify(comparisonService).getResults(eq(stateMatchIds), eq(stateDontMatchIds), eq(start), eq(maxResults), eq(summary), eq(sort), eq(highlight));
     }
 }

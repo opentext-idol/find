@@ -44,7 +44,12 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
             return getEmptyResults();
         }
 
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build("*", "", Collections.<S>emptyList(), null, null, Collections.singletonList(stateToken), Collections.<String>emptyList());
+        return getResults(Collections.singletonList(stateToken), Collections.<String>emptyList(), resultsStart, maxResults, summary, sort, highlight);
+    }
+
+    @Override
+    public Documents<R> getResults(final List<String> stateMatchIds, final List<String> stateDontMatchIds, final int resultsStart, final int maxResults, final String summary, final String sort, final boolean highlight) throws E {
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build("*", "", Collections.<S>emptyList(), null, null, stateMatchIds, stateDontMatchIds);
         final SearchRequest<S> searchRequest = new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, sort, highlight, false, SearchRequest.QueryType.RAW);
         return documentsService.queryTextIndex(searchRequest);
     }
