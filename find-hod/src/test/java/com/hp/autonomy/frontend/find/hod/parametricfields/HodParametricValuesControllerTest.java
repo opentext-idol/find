@@ -7,12 +7,12 @@ package com.hp.autonomy.frontend.find.hod.parametricfields;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesControllerTest;
-import com.hp.autonomy.frontend.find.core.web.AuthenticationInformationRetriever;
 import com.hp.autonomy.frontend.find.hod.search.HodQueryRestrictionsBuilder;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationCapable;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;

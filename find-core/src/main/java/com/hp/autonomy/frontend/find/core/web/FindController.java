@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;

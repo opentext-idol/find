@@ -7,13 +7,13 @@ package com.hp.autonomy.frontend.find.hod.view;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
-import com.hp.autonomy.frontend.find.core.web.AuthenticationInformationRetriever;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.sso.HodAuthentication;
 import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationCapable;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import com.hp.autonomy.searchcomponents.hod.view.HodViewService;

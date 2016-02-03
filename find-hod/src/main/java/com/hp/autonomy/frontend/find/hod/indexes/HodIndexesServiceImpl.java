@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.hod.indexes;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.core.web.AuthenticationInformationRetriever;
 import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
@@ -20,6 +19,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourcesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.sso.HodAuthentication;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.hod.fields.IndexFieldsService;

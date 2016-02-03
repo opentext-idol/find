@@ -12,6 +12,8 @@ import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
 import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.hod.sso.HodAuthentication;
+import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationCapable;
@@ -25,8 +27,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindHodDocumentService extends HodDocumentsService {
     @Autowired
-    public FindHodDocumentService(final FindSimilarService<HodSearchResult> findSimilarService, final ConfigService<? extends QueryManipulationCapable> configService, final QueryTextIndexService<HodSearchResult> queryTextIndexService, final GetContentService<HodSearchResult> getContentService) {
-        super(findSimilarService, configService, queryTextIndexService, getContentService);
+    public FindHodDocumentService(final FindSimilarService<HodSearchResult> findSimilarService, final ConfigService<? extends QueryManipulationCapable> configService, final QueryTextIndexService<HodSearchResult> queryTextIndexService, final GetContentService<HodSearchResult> getContentService, final AuthenticationInformationRetriever<HodAuthentication> authenticationRetriever) {
+        super(findSimilarService, configService, queryTextIndexService, getContentService, authenticationRetriever);
     }
 
     @Override
