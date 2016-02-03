@@ -35,16 +35,26 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
         final SavedSnapshot entity = savedSnapshotService.create(savedSnapshot);
         assertThat(entity.getId(), isA(Long.class));
         assertEquals(entity.getResultCount(), resultCount);
-        assertThat(entity.getStateToken(), isA(List.class));
-        assertEquals(entity.getStateToken().size(), 1);
+        assertThat(entity.getStateTokens(), isA(List.class));
+        assertEquals(entity.getStateTokens().size(), 1);
         assertNotNull(entity.getId());
 
         entity.setQueryText("*");
-        final SavedSnapshot updatedEntity = savedSnapshotService.update(entity);
+        SavedSnapshot updatedEntity = savedSnapshotService.update(entity);
         assertEquals(updatedEntity.getResultCount(), resultCount);
-        assertThat(updatedEntity.getStateToken(), isA(List.class));
-        assertEquals(updatedEntity.getStateToken().size(), 1);
+        assertThat(updatedEntity.getStateTokens(), isA(List.class));
+        assertEquals(updatedEntity.getStateTokens().size(), 1);
         assertEquals(updatedEntity.getQueryText(), "*");
+
+        // Mimic how the update method is likely to be called - with an entity without a user
+        final SavedSnapshot updateInputEntity = new SavedSnapshot.Builder()
+                .setTitle(title)
+                .setId(entity.getId())
+                .setQueryText("cat")
+                .build();
+        updatedEntity = savedSnapshotService.update(updateInputEntity);
+        assertEquals(updatedEntity.getQueryText(), "cat");
+        assertNotNull(updatedEntity.getUser());
 
         final Set<SavedSnapshot> fetchedEntities = savedSnapshotService.getAll();
         assertEquals(fetchedEntities.size(), 1);

@@ -30,7 +30,7 @@ public class SavedQuery extends SavedSearch {
     }
 
     @NoArgsConstructor
-    @Getter
+    @Setter
     @Accessors(chain = true)
     public static class Builder extends SavedSearch.Builder<SavedQuery> {
 

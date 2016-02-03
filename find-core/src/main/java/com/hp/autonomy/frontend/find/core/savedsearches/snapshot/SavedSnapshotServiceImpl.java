@@ -33,7 +33,22 @@ public class SavedSnapshotServiceImpl implements SavedSnapshotService {
 
     @Override
     public SavedSnapshot update(final SavedSnapshot snapshot) {
-        return savedSnapshotRepository.save(snapshot);
+        final SavedSnapshot existing = savedSnapshotRepository.findOne(snapshot.getId());
+
+        if (existing == null) {
+            throw new IllegalArgumentException("Saved snapshot not found");
+        } else {
+            existing.setIndexes(snapshot.getIndexes());
+            existing.setMaxDate(snapshot.getMaxDate());
+            existing.setMinDate(snapshot.getMinDate());
+            existing.setParametricValues(snapshot.getParametricValues());
+            existing.setRelatedConcepts(snapshot.getRelatedConcepts());
+            existing.setQueryText(snapshot.getQueryText());
+            existing.setTitle(snapshot.getTitle());
+            existing.setResultCount(snapshot.getResultCount());
+            existing.setStateTokens(snapshot.getStateTokens());
+            return savedSnapshotRepository.save(existing);
+        }
     }
 
     @Override

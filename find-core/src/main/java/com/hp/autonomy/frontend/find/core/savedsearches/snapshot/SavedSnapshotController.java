@@ -24,7 +24,6 @@ import java.util.Set;
 public abstract class SavedSnapshotController<S extends Serializable, R extends SearchResult, E extends Exception> {
     public static final String PATH = "/api/public/saved-snapshot";
 
-    //autowire document service, get state toke for snapshot restrictions, build from stuff inside savedsnapshot s. Add state toke to the snapshot s.
     protected final DocumentsService<S, R, E> documentsService;
 
     protected final SavedSnapshotService service;

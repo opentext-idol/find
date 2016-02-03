@@ -30,19 +30,19 @@ public class SavedSnapshot extends SavedSearch {
             @JoinColumn(name = "search_id")
     })
     @Column(name = "state_token")
-    private List<String> stateToken;
+    private List<String> stateTokens;
 
     @Column(name = "total_results")
     private Long resultCount;
 
     private SavedSnapshot(final Builder builder) {
         super(builder);
-        stateToken = builder.stateToken;
+        stateTokens = builder.stateToken;
         resultCount = builder.resultCount;
     }
 
     @NoArgsConstructor
-    @Getter
+    @Setter
     @Accessors(chain = true)
     public static class Builder extends SavedSearch.Builder<SavedSnapshot> {
         private List<String> stateToken;
@@ -51,18 +51,8 @@ public class SavedSnapshot extends SavedSearch {
         public Builder(final SavedSnapshot snapshot) {
             super(snapshot);
 
-            stateToken = snapshot.stateToken;
+            stateToken = snapshot.stateTokens;
             resultCount = snapshot.resultCount;
-        }
-
-        public Builder setStateToken(List<String> stateToken) {
-            this.stateToken = stateToken;
-            return this;
-        }
-
-        public Builder setResultCount(Long resultCount) {
-            this.resultCount = resultCount;
-            return this;
         }
 
         @Override
