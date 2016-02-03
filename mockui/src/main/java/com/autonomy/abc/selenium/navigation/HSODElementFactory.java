@@ -47,10 +47,6 @@ public class HSODElementFactory extends SOElementFactory {
         return loadPage(HSOLoginPage.class);
     }
 
-    public LoginPage getDevConsoleLoginPage(){
-        return new HSOLoginPage(getDriver(), new DevConsoleHasLoggedIn(getDriver()));
-    }
-
     @Override
     public KeywordsPage getKeywordsPage() {
         return loadPage(HSOKeywordsPage.class);
@@ -109,13 +105,5 @@ public class HSODElementFactory extends SOElementFactory {
 
     public HSODevelopersPage getDevsPage() {
         return loadPage(HSODevelopersPage.class);
-    }
-
-    public DevConsoleSearchPage getDevConsoleSearchPage() {
-        return new DevConsoleSearchPage(getDriver());
-    }
-
-    public DevConsoleHomePage getDevConsoleHomePage() {
-        return new DevConsoleHomePage(getDriver());
     }
 }

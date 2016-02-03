@@ -2,8 +2,10 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.application.DevConsole;
 import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.navigation.DevConsoleElementFactory;
 import com.autonomy.abc.selenium.navigation.HSODFindElementFactory;
 import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.users.User;
@@ -24,6 +26,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
  */
 public class LoginPageHostedITCase extends HostedTestBase {
     private HSODFindElementFactory findFactory;
+    private DevConsoleElementFactory devFactory;
 
     public LoginPageHostedITCase(TestConfig config) {
         super(config);
@@ -33,6 +36,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     @Before
     public void setUp() {
         findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
+        devFactory = new DevConsole(getMainSession().getActiveWindow()).elementFactory();
     }
 
     @Test   @Ignore("No account")
@@ -135,7 +139,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         loginAs(config.getDefaultUser());
 
         getDriver().navigate().to(config.getDevConsoleUrl());
-        DevConsoleHomePage devConsole = getElementFactory().getDevConsoleHomePage();
+        DevConsoleHomePage devConsole = devFactory.getDevConsoleHomePage();
 
         verifyThat(devConsole.loginButton(), not(displayed()));
     }
@@ -144,10 +148,10 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLoginDevConsoletoSSO() {
         getDriver().navigate().to(config.getDevConsoleUrl());
 
-        DevConsoleHomePage devConsole = getElementFactory().getDevConsoleHomePage();
-        devConsole.loginButton().click();
+        DevConsoleHomePage homePage = devFactory.getDevConsoleHomePage();
+        homePage.loginButton().click();
 
-        loginTo(getElementFactory().getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(devFactory.getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
 
         getDriver().navigate().to(config.getWebappUrl());
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
@@ -160,15 +164,15 @@ public class LoginPageHostedITCase extends HostedTestBase {
         logout();
 
         getDriver().navigate().to(config.getDevConsoleUrl());
-        verifyThat(getElementFactory().getDevConsoleHomePage().loginButton(), displayed());
+        verifyThat(devFactory.getDevConsoleHomePage().loginButton(), displayed());
     }
 
     @Test
     public void testLogoutDevConsoletoSSO() {
         getDriver().navigate().to(config.getDevConsoleUrl());
 
-        getElementFactory().getDevConsoleHomePage().loginButton().click();
-        loginTo(getElementFactory().getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
+        devFactory.getDevConsoleHomePage().loginButton().click();
+        loginTo(devFactory.getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
 
         logOutDevConsole();
 
@@ -176,6 +180,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
 
+    // TODO: move this
     private void logOutDevConsole(){
         getDriver().findElement(By.className("navigation-icon-user")).click();
         getDriver().findElement(By.id("loginLogout")).click();

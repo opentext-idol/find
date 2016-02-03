@@ -2,6 +2,8 @@ package com.autonomy.abc.external;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.application.DevConsole;
+import com.autonomy.abc.selenium.navigation.DevConsoleElementFactory;
 import com.autonomy.abc.selenium.page.devconsole.DevConsoleSearchPage;
 import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
@@ -13,8 +15,11 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
 public class DevConsoleITCase extends HostedTestBase {
+    private DevConsoleElementFactory devFactory;
+
     private DevConsoleSearchPage devConsole;
 
+    // TODO: this test should get all urls from config
     public DevConsoleITCase(TestConfig config) {
         super(config);
         setInitialUrl("http://search.havenondemand.com");
@@ -23,14 +28,12 @@ public class DevConsoleITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        getElementFactory().getDevConsoleSearchPage().clickLogInButton();
-        getElementFactory().getLoginPage();
-        try {
-            loginAs(config.getDefaultUser());
-        } catch (NoSuchElementException e) {
-            /* This happens because it's expecting to sign into Search Optimizer */
-        }
-        devConsole = getElementFactory().getDevConsoleSearchPage();
+        devFactory = new DevConsole(getMainSession().getActiveWindow()).elementFactory();
+
+        devFactory.getDevConsoleSearchPage().clickLogInButton();
+
+        loginTo(devFactory.getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
+        devConsole = devFactory.getDevConsoleSearchPage();
     }
 
     @Test
