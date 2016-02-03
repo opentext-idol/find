@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page;
 
+import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.PageMapper;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -12,22 +13,17 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-public abstract class SOElementFactory {
-    private final WebDriver driver;
-    private final PageMapper<?> mapper;
-
-    protected SOElementFactory(WebDriver driver, PageMapper<?> mapper){
-        this.driver = driver;
-        this.mapper = mapper;
+public abstract class SOElementFactory extends ElementFactoryBase {
+    protected SOElementFactory(WebDriver driver, PageMapper<?> mapper) {
+        super(driver, mapper);
     }
 
     public abstract TopNavBar getTopNavBar();
 
     public SideNavBar getSideNavBar() {
-        return new SideNavBar(driver);
+        return new SideNavBar(getDriver());
     }
 
     public abstract PromotionsPage getPromotionsPage();
@@ -36,7 +32,7 @@ public abstract class SOElementFactory {
 
     public PromotionsDetailPage getPromotionsDetailPage() {
         return loadPage(PromotionsDetailPage.class);
-    };
+    }
 
     public EditDocumentReferencesPage getEditDocumentReferencesPage() {
         return loadPage(EditDocumentReferencesPage.class);
@@ -50,18 +46,15 @@ public abstract class SOElementFactory {
 
     public abstract LoginPage getLoginPage();
 
-    public WebDriver getDriver() {
-        return driver;
-    }
-
     public abstract UsersPage getUsersPage();
 
-    public <T extends AppPage> T switchTo(Class<T> type) {
-        getSideNavBar().switchPage(mapper.getId(type));
-        return loadPage(type);
+    @Override
+    public WebDriver getDriver() {
+        return super.getDriver();
     }
 
-    public <T extends AppPage> T loadPage(Class<T> type) {
-        return mapper.load(type, getDriver());
+    @Override
+    protected void handleSwitch(NavBarTabId tab) {
+        getSideNavBar().switchPage(tab);
     }
 }
