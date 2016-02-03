@@ -20,12 +20,13 @@ define([
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/topic-map-view',
+    'find/app/page/search/compare-modal',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
-            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, i18n, i18nIndexes, template) {
+            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -69,6 +70,18 @@ define([
         // Abstract
         ResultsView: null,
         IndexesView: null,
+
+        events: {
+            'click .compare-modal-button': function() {
+                new CompareModal({
+                    savedSearchCollection: this.savedSearchCollection,
+                    selectedSearch: this.savedSearchModel,
+                    callback: _.bind(function(selectedCid) {
+                        //TODO: call a compareSavedSearches() function here
+                    }, this)
+                });
+            }
+        },
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;

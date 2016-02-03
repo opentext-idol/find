@@ -470,6 +470,20 @@ input.find-input {
     font-size: 23px;
 }
 
+.saved-search-box .hpebox-content {
+    width: 100px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid #e7eaec;
+}
+
+.selected-saved-search .hpebox-content {
+    background-color: #00b388;
+    color: #fff;
+}
+
 .result-container-control {
     color: #00b388;
     font-size: 14px;
