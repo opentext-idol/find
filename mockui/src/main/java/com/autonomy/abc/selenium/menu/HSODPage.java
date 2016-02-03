@@ -20,6 +20,7 @@ import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.HSOSearchPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 import java.util.HashMap;
@@ -62,18 +63,18 @@ public enum HSODPage implements PageMapper.Page {
     private final NavBarTabId tabId;
     private ParametrizedFactory<WebDriver, ?> factory;
 
-    <T> HSODPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
+    <T extends AppPage> HSODPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         tabId = tab;
         pageType = type;
         this.factory = factory;
     }
 
-    <T> HSODPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
+    <T extends AppPage> HSODPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         this(null, factory, type);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T safeLoad(Class<T> type, WebDriver driver) {
+    public <T extends AppPage> T safeLoad(Class<T> type, WebDriver driver) {
         if (type.isAssignableFrom(pageType)) {
             return (T) safeLoad(driver);
         }

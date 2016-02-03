@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.menu;
 
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 import java.util.EnumSet;
@@ -23,7 +24,7 @@ public class PageMapper<T extends Enum<T> & PageMapper.Page> {
         return typeMap.get(type).getId();
     }
 
-    public <S> S load(Class<S> type, WebDriver driver) {
+    public <S extends AppPage> S load(Class<S> type, WebDriver driver) {
         return typeMap.get(type).safeLoad(type, driver);
     }
 
@@ -32,6 +33,6 @@ public class PageMapper<T extends Enum<T> & PageMapper.Page> {
 
         NavBarTabId getId();
 
-        <T> T safeLoad(Class<T> type, WebDriver driver);
+        <T extends AppPage> T safeLoad(Class<T> type, WebDriver driver);
     }
 }

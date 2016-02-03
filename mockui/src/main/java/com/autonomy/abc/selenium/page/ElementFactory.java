@@ -12,6 +12,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 public abstract class ElementFactory {
@@ -55,12 +56,12 @@ public abstract class ElementFactory {
 
     public abstract UsersPage getUsersPage();
 
-    public <T> T switchTo(Class<T> type) {
+    public <T extends AppPage> T switchTo(Class<T> type) {
         getSideNavBar().switchPage(mapper.getId(type));
         return loadPage(type);
     }
 
-    public <T> T loadPage(Class<T> type) {
+    public <T extends AppPage> T loadPage(Class<T> type) {
         return mapper.load(type, getDriver());
     }
 }

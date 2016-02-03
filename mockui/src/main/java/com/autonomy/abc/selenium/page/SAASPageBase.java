@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public abstract class SAASPageBase {
+public abstract class SAASPageBase implements AppPage {
     private AppElement page;
 
     public SAASPageBase(WebDriver driver) {
@@ -30,5 +31,10 @@ public abstract class SAASPageBase {
 
     protected List<WebElement> findElements(By location) {
         return page.findElements(location);
+    }
+
+    @Override
+    public void waitForLoad() {
+        new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[ui-view]")));
     }
 }

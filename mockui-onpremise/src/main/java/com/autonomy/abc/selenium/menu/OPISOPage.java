@@ -14,6 +14,7 @@ import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.OPSearchPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 public enum OPISOPage implements PageMapper.Page {
@@ -40,11 +41,11 @@ public enum OPISOPage implements PageMapper.Page {
     private final NavBarTabId tabId;
     private ParametrizedFactory<WebDriver, ?> factory;
 
-    <T> OPISOPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
+    <T extends AppPage> OPISOPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         this(null, factory, type);
     }
 
-    <T> OPISOPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
+    <T extends AppPage> OPISOPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         tabId = tab;
         pageType = type;
         this.factory = factory;
@@ -61,7 +62,7 @@ public enum OPISOPage implements PageMapper.Page {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T safeLoad(Class<T> type, WebDriver driver) {
+    public <T extends AppPage> T safeLoad(Class<T> type, WebDriver driver) {
         if (type.isAssignableFrom(pageType)) {
             return (T) safeLoad(driver);
         }

@@ -24,6 +24,7 @@ import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
@@ -228,7 +229,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         getElementFactory().getTopNavBar().notificationsDropdown();
         List<Notification> notifications = getElementFactory().getTopNavBar().getNotifications().getAllNotifications();
 
-        for (Class<?> page : Arrays.asList(
+        for (Class<? extends AppPage> page : Arrays.asList(
                 PromotionsPage.class,
                 AnalyticsPage.class,
                 KeywordsPage.class,
@@ -239,7 +240,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         }
     }
 
-    private void navigateAndVerifyNotifications(Class<?> page, List<Notification> notifications) {
+    private void navigateAndVerifyNotifications(Class<? extends AppPage> page, List<Notification> notifications) {
         getElementFactory().switchTo(page);
         logger.info("on page " + page);
 
