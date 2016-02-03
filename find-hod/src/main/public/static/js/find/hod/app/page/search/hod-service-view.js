@@ -7,7 +7,7 @@ define([
     'find/app/page/search/service-view',
     'find/hod/app/model/hod-search-filters-collection',
     'find/hod/app/page/search/filters/indexes/hod-indexes-view',
-    'find/idol/app/page/search/results/idol-results-view'
+    'find/hod/app/page/search/results/hod-results-view'
 ], function(ServiceView, SearchFiltersCollection, IndexesView, ResultsView) {
     'use strict';
 
