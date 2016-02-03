@@ -207,7 +207,8 @@ define([
 
             var href;
 
-            if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
+            var isStaticContentPromotion = model.get('promotionCategory') === 'STATIC_CONTENT_PROMOTION';
+            if (isStaticContentPromotion) {
                 href = viewClient.getStaticContentPromotionHref(reference);
             } else {
                 href = viewClient.getHref(reference, model);
@@ -222,7 +223,7 @@ define([
                 href: href,
                 promotion: isPromotion,
                 reference: reference,
-                staticPromotion: model.get('promotionType') === 'STATIC_CONTENT_PROMOTION',
+                staticPromotion: isStaticContentPromotion,
                 summary: summary,
                 title: model.get('title')
             }));
