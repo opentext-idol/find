@@ -26,14 +26,17 @@ class PageMapper<T extends Enum<T> & PageMapper.Page> {
     }
 
     public <S extends AppPage> S load(Class<S> type, WebDriver driver) {
-        return typeMap.get(type).safeLoad(type, driver);
+        if (type.isAssignableFrom(typeMap.get(type).getPageType())) {
+            @SuppressWarnings("unchecked")
+            S value = (S) typeMap.get(type).loadAsObject(driver);
+            return value;
+        }
+        return null;
     }
 
     interface Page {
         Class<?> getPageType();
-
         NavBarTabId getId();
-
-        <T extends AppPage> T safeLoad(Class<T> type, WebDriver driver);
+        Object loadAsObject(WebDriver driver);
     }
 }

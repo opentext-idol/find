@@ -71,15 +71,7 @@ enum HSODPage implements PageMapper.Page {
         this(null, factory, type);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends AppPage> T safeLoad(Class<T> type, WebDriver driver) {
-        if (type.isAssignableFrom(pageType)) {
-            return (T) safeLoad(driver);
-        }
-        return null;
-    }
-
-    protected Object safeLoad(WebDriver driver) {
+    public Object loadAsObject(WebDriver driver) {
         return this.factory.create(driver);
     }
 
