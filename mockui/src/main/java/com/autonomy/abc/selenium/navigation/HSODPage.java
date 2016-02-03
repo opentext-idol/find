@@ -24,7 +24,7 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-public enum HSODPage implements PageMapper.Page {
+enum HSODPage implements PageMapper.Page {
     LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
         @Override
         public HSOLoginPage create(WebDriver context) {

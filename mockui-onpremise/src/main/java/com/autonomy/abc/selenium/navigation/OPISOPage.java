@@ -18,7 +18,7 @@ import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-public enum OPISOPage implements PageMapper.Page {
+enum OPISOPage implements PageMapper.Page {
     LOGIN(new OPLoginPage.Factory(), OPLoginPage.class),
 
     OVERVIEW(NavBarTabId.OVERVIEW, new OverviewPage.Factory(), OverviewPage.class),

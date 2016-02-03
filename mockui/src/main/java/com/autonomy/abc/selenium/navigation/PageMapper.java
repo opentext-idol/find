@@ -8,7 +8,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PageMapper<T extends Enum<T> & PageMapper.Page> {
+class PageMapper<T extends Enum<T> & PageMapper.Page> {
     private final Map<Class<?>, T> typeMap = new HashMap<>();
 
     public PageMapper(Class<T> enumerator) {
