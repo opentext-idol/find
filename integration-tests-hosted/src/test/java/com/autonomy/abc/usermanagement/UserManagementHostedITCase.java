@@ -5,7 +5,7 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.ErrorPage;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
@@ -275,7 +275,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         getDriver().get(config.getFindUrl());
         loginAs(user);
 
-        if(!new FindHasLoggedIn((HSOElementFactory) getElementFactory()).hasLoggedIn()){
+        if(!new FindHasLoggedIn((HSODElementFactory) getElementFactory()).hasLoggedIn()){
             fail("Haven't been logged in to find");
         }
     }

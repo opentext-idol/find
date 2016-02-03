@@ -1,14 +1,14 @@
 package com.autonomy.abc.selenium.page.login;
 
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class FindHasLoggedIn implements HasLoggedIn {
-    private HSOElementFactory elementFactory;
+    private HSODElementFactory elementFactory;
 
-    public FindHasLoggedIn(HSOElementFactory elementFactory) {
+    public FindHasLoggedIn(HSODElementFactory elementFactory) {
         this.elementFactory = elementFactory;
     }
 

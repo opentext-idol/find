@@ -2,7 +2,7 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.page.OPElementFactory;
+import com.autonomy.abc.selenium.page.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
@@ -40,8 +40,8 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	private UsersPage usersPage;
 
 	@Override
-	public OPElementFactory getElementFactory() {
-		return (OPElementFactory) super.getElementFactory();
+	public OPISOElementFactory getElementFactory() {
+		return (OPISOElementFactory) super.getElementFactory();
 	}
 
 

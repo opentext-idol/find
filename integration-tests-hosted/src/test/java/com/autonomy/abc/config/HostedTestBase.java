@@ -2,7 +2,7 @@ package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.HSOApplication;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -26,8 +26,8 @@ public abstract class HostedTestBase extends ABCTestBase {
 
 
     @Override
-    public HSOElementFactory getElementFactory() {
-        return (HSOElementFactory) super.getElementFactory();
+    public HSODElementFactory getElementFactory() {
+        return (HSODElementFactory) super.getElementFactory();
     }
 
     @Override

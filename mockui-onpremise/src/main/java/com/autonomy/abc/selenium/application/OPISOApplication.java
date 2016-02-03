@@ -1,24 +1,24 @@
 package com.autonomy.abc.selenium.application;
 
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.page.OPElementFactory;
+import com.autonomy.abc.selenium.page.OPISOElementFactory;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.users.OPUserService;
 
 
-public class OPISOApplication extends SearchOptimizerApplication<OPElementFactory> {
+public class OPISOApplication extends SearchOptimizerApplication<OPISOElementFactory> {
     private Window window;
-    private OPElementFactory factory;
+    private OPISOElementFactory factory;
 
     @Override
-    public OPElementFactory elementFactory() {
+    public OPISOElementFactory elementFactory() {
         return factory;
     }
 
     @Override
-    public Application<OPElementFactory> inWindow(Window window) {
+    public Application<OPISOElementFactory> inWindow(Window window) {
         this.window = window;
-        this.factory = new OPElementFactory(window.getSession().getDriver());
+        this.factory = new OPISOElementFactory(window.getSession().getDriver());
         return this;
     }
 

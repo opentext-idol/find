@@ -14,7 +14,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -696,7 +696,7 @@ public class FindITCase extends HostedTestBase {
 
     // TODO: this does not belong here
     private Find initialiseSession(Session session) {
-        HSOElementFactory otherElementFactory = new HSODFind(session.getActiveWindow()).elementFactory();
+        HSODElementFactory otherElementFactory = new HSODFind(session.getActiveWindow()).elementFactory();
         loginTo(otherElementFactory.getFindLoginPage(), session.getDriver(), config.getDefaultUser());
         return otherElementFactory.getFindPage();
     }

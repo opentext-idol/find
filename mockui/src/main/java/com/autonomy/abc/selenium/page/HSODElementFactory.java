@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.page;
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
 import com.autonomy.abc.selenium.menu.HSODPage;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.PageMapper;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
@@ -31,8 +30,8 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
-public class HSOElementFactory extends ElementFactory {
-    public HSOElementFactory(final WebDriver driver) {
+public class HSODElementFactory extends SOElementFactory {
+    public HSODElementFactory(final WebDriver driver) {
         super(driver, new PageMapper<>(HSODPage.class));
     }
 

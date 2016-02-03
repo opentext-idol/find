@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSOUserService extends UserService<HSOElementFactory> {
+public class HSOUserService extends UserService<HSODElementFactory> {
     private HSOUsersPage usersPage;
 
     public HSOUserService(HSOApplication application) {

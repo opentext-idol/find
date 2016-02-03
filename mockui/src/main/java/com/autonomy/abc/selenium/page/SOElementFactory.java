@@ -15,11 +15,11 @@ import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-public abstract class ElementFactory {
+public abstract class SOElementFactory {
     private final WebDriver driver;
     private final PageMapper<?> mapper;
 
-    protected ElementFactory(WebDriver driver, PageMapper<?> mapper){
+    protected SOElementFactory(WebDriver driver, PageMapper<?> mapper){
         this.driver = driver;
         this.mapper = mapper;
     }

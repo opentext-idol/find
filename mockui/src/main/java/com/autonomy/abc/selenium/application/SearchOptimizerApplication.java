@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.application;
 
 import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.users.UserService;
@@ -11,7 +11,7 @@ import com.autonomy.abc.selenium.util.SafeClassLoader;
 import java.util.EnumMap;
 import java.util.Map;
 
-public abstract class SearchOptimizerApplication<T extends ElementFactory> implements Application<T> {
+public abstract class SearchOptimizerApplication<T extends SOElementFactory> implements Application<T> {
     private final static Map<ApplicationType, Factory<? extends SearchOptimizerApplication>> FACTORY_MAP = new EnumMap<>(ApplicationType.class);
 
     static {

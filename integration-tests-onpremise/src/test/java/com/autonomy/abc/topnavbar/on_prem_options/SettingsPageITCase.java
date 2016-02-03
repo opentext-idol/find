@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.config.HostAndPorts;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
-import com.autonomy.abc.selenium.page.OPElementFactory;
+import com.autonomy.abc.selenium.page.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.autonomy.abc.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -51,8 +51,8 @@ public class SettingsPageITCase extends ABCTestBase {
 	}
 
 	@Override
-	public OPElementFactory getElementFactory() {
-		return (OPElementFactory) super.getElementFactory();
+	public OPISOElementFactory getElementFactory() {
+		return (OPISOElementFactory) super.getElementFactory();
 	}
 
 	@Before

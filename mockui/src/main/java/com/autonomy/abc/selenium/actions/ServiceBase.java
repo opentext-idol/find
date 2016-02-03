@@ -1,10 +1,10 @@
 package com.autonomy.abc.selenium.actions;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.SOElementFactory;
 import org.openqa.selenium.WebDriver;
 
-public abstract class ServiceBase<T extends ElementFactory> {
+public abstract class ServiceBase<T extends SOElementFactory> {
     private final SearchOptimizerApplication<? extends T> application;
     private final T elementFactory;
 

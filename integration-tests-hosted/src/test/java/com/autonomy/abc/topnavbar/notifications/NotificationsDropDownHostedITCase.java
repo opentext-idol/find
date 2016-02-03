@@ -13,7 +13,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.Notification;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
@@ -47,8 +47,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Override
-    public HSOElementFactory getElementFactory() {
-        return (HSOElementFactory) super.getElementFactory();
+    public HSODElementFactory getElementFactory() {
+        return (HSODElementFactory) super.getElementFactory();
     }
 
     @Test
@@ -186,7 +186,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             }
 
             session = getSessionRegistry().startSession(config.getWebappUrl());
-            HSOElementFactory secondFactory = new HSOApplication().inWindow(session.getActiveWindow()).elementFactory();
+            HSODElementFactory secondFactory = new HSOApplication().inWindow(session.getActiveWindow()).elementFactory();
 
             loginTo(secondFactory.getLoginPage(), session.getDriver(), user);
 

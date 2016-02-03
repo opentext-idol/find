@@ -5,7 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.OPElementFactory;
+import com.autonomy.abc.selenium.page.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -50,14 +50,14 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	private DatePicker datePicker;
 	private final Pattern pattern = Pattern.compile("\\s+");
     private PromotionService promotionService;
-	private OPElementFactory elementFactory;
+	private OPISOElementFactory elementFactory;
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
         promotionService = getApplication().promotionService();
 
 		promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
-		elementFactory = (OPElementFactory) getElementFactory();
+		elementFactory = (OPISOElementFactory) getElementFactory();
 	}
 
 	@Test

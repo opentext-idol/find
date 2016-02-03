@@ -15,7 +15,7 @@ import com.autonomy.abc.selenium.keywords.KeywordWizardType;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
@@ -260,7 +260,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		if (config.getType().equals(ApplicationType.HOSTED)) {
 			// TODO: belongs in a hosted notifications test
 			getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
+			((HSODElementFactory) getElementFactory()).getAnalyticsPage();
 		}
 		verifyNotifications(notificationContents);
 	}
@@ -647,7 +647,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
 			getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
 
-			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
+			((HSODElementFactory) getElementFactory()).getAnalyticsPage();
 		} else {
 			getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 		}

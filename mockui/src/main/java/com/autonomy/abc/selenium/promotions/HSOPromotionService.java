@@ -1,14 +1,12 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.application.HSOApplication;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 
-public class HSOPromotionService extends PromotionService<HSOElementFactory> {
+public class HSOPromotionService extends PromotionService<HSODElementFactory> {
     private HSOPromotionsPage promotionsPage;
     private HSOCreateNewPromotionsPage createNewPromotionsPage;
 

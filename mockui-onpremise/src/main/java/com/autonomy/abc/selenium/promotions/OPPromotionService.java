@@ -1,13 +1,11 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.application.OPISOApplication;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.OPElementFactory;
+import com.autonomy.abc.selenium.page.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
 
-public class OPPromotionService extends PromotionService<OPElementFactory> {
+public class OPPromotionService extends PromotionService<OPISOElementFactory> {
     public OPPromotionService(OPISOApplication application) {
         super(application);
     }

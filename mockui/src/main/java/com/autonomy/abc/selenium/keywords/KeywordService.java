@@ -6,7 +6,7 @@ import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.SOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -23,12 +23,12 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class KeywordService extends ServiceBase<ElementFactory> {
+public class KeywordService extends ServiceBase<SOElementFactory> {
     private final static Logger LOGGER = LoggerFactory.getLogger(KeywordService.class);
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage newKeywordsPage;
 
-    public KeywordService(SearchOptimizerApplication<? extends ElementFactory> application) {
+    public KeywordService(SearchOptimizerApplication<? extends SOElementFactory> application) {
         super(application);
     }
 

@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.ElementFactory;
+import com.autonomy.abc.selenium.page.SOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -21,7 +21,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class PromotionService<T extends ElementFactory> extends ServiceBase<T> {
+public class PromotionService<T extends SOElementFactory> extends ServiceBase<T> {
     private PromotionsPage promotionsPage;
 
     public PromotionService(SearchOptimizerApplication<T> application) {

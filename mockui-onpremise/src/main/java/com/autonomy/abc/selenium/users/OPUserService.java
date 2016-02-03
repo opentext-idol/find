@@ -1,12 +1,10 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.OPISOApplication;
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.OPElementFactory;
+import com.autonomy.abc.selenium.page.OPISOElementFactory;
 import org.openqa.selenium.By;
 
-public class OPUserService extends UserService<OPElementFactory> {
+public class OPUserService extends UserService<OPISOElementFactory> {
     private OPUsersPage usersPage;
 
     public OPUserService(OPISOApplication application) {

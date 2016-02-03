@@ -14,8 +14,8 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
+import com.autonomy.abc.selenium.page.SOElementFactory;
+import com.autonomy.abc.selenium.page.HSODElementFactory;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
@@ -110,7 +110,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		final Window secondWindow = getMainSession().openWindow(config.getWebappUrl());
 
 		secondWindow.activate();
-		ElementFactory elementFactoryTwo = SearchOptimizerApplication.ofType(config.getType()).inWindow(secondWindow).elementFactory();
+		SOElementFactory elementFactoryTwo = SearchOptimizerApplication.ofType(config.getType()).inWindow(secondWindow).elementFactory();
 		TopNavBar topNavBarWindowTwo = elementFactoryTwo.getTopNavBar();
 		SideNavBar sideNavBarWindowTwo = elementFactoryTwo.getSideNavBar();
 
@@ -146,7 +146,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			if (getConfig().getType().equals(ApplicationType.HOSTED)) {
 				sideNavBar.switchPage(NavBarTabId.ANALYTICS);
 				newBody();
-				((HSOElementFactory) getElementFactory()).getAnalyticsPage();
+				((HSODElementFactory) getElementFactory()).getAnalyticsPage();
 				topNavBar.notificationsDropdown();
 				notifications = topNavBar.getNotifications();
 				assertThat(notifications.countNotifications(), is(2));

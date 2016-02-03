@@ -19,8 +19,8 @@ import com.autonomy.abc.selenium.page.search.OPSearchPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
 import org.openqa.selenium.WebDriver;
 
-public class OPElementFactory extends ElementFactory {
-    public OPElementFactory(final WebDriver driver) {
+public class OPISOElementFactory extends SOElementFactory {
+    public OPISOElementFactory(final WebDriver driver) {
         super(driver, new PageMapper<>(OPISOPage.class));
     }
 
