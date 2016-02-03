@@ -3,6 +3,7 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
@@ -46,7 +47,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());
-        findPage = getElementFactory().getFindPage();
+        findPage = new HSODFind(findWindow).elementFactory().getFindPage();
         service = findPage.getResultsPage();
         searchWindow.activate();
     }

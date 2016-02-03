@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.navigation;
 
-import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
@@ -87,11 +86,6 @@ public class HSODElementFactory extends SOElementFactory {
     public ConnectionsDetailPage getConnectionsDetailPage() {
         return loadPage(ConnectionsDetailPage.class);
     }
-
-    public FindPage getFindPage() {
-        return new FindPage(getDriver());
-    }
-
 
     public AnalyticsPage getAnalyticsPage() {
         return loadPage(AnalyticsPage.class);

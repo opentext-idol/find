@@ -4,6 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
@@ -149,7 +150,7 @@ public class IndexFieldsITCase extends HostedTestBase {
         Window second = getMainSession().openWindow(config.getFindUrl());
         try {
             second.activate();
-            findPage = getElementFactory().getFindPage();
+            findPage = new HSODFind(second).elementFactory().getFindPage();
 
             logFind("\"" + indexFieldValue + "\":" + indexFieldName);
             verifyFirstFindResult();

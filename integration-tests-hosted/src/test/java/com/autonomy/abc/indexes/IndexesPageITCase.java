@@ -3,6 +3,7 @@ package com.autonomy.abc.indexes;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -255,7 +256,7 @@ public class IndexesPageITCase extends HostedTestBase {
 
         try {
             findWindow.activate();
-            FindPage findPage = getElementFactory().getFindPage();
+            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
 
             findPage.search("search");
             findPage.filterBy(new IndexFilter(index));

@@ -3,10 +3,12 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.navigation.HSODFindElementFactory;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.Promotion;
@@ -32,6 +34,8 @@ import static org.hamcrest.Matchers.isIn;
 public class PromotionsToFindITCase extends HostedTestBase {
     private Window searchWindow;
     private Window findWindow;
+
+    private HSODFindElementFactory findFactory;
     private FindPage findPage;
     private FindResultsPage service;
     private PromotionService<?> promotionService;
@@ -48,7 +52,8 @@ public class PromotionsToFindITCase extends HostedTestBase {
         promotionService.deleteAll();
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());
-        findPage = getElementFactory().getFindPage();
+        findFactory = new HSODFind(findWindow).elementFactory();
+        findPage = findFactory.getFindPage();
         service = findPage.getResultsPage();
         searchWindow.activate();
     }
@@ -129,7 +134,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
 
     private void refreshFind() {
         getDriver().navigate().refresh();
-        findPage = getElementFactory().getFindPage();
+        findPage = findFactory.getFindPage();
         service = findPage.getResultsPage();
         service.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }

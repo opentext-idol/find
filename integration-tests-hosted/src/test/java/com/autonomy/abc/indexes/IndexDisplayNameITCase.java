@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Window;
@@ -79,7 +80,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
         Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
         try {
-            FindPage findPage = getElementFactory().getFindPage();
+            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
             findPage.search("This woman's work");
 
             verifyIndexOrDefault(findPage.indexesTree().privateIndexes());

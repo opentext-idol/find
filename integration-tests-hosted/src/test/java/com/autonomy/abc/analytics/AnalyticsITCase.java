@@ -3,6 +3,7 @@ package com.autonomy.abc.analytics;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -137,15 +138,18 @@ public class AnalyticsITCase extends HostedTestBase {
         Window searchWindow = getMainSession().getActiveWindow();
         Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
-        findWindow.activate();
-        FindPage findPage = getElementFactory().getFindPage();
-        for (int unused = 0; unused < repeats; unused++) {
-            findPage.search(term);
-            findPage.search("");
-            Waits.loadOrFadeWait();
+        try {
+            findWindow.activate();
+            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+            for (int unused = 0; unused < repeats; unused++) {
+                findPage.search(term);
+                findPage.search("");
+                Waits.loadOrFadeWait();
+            }
+        } finally {
+            findWindow.close();
+            searchWindow.activate();
         }
-        findWindow.close();
-        searchWindow.activate();
     }
 
     @Test
