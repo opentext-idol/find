@@ -4,12 +4,11 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.DevConsole;
 import com.autonomy.abc.selenium.navigation.DevConsoleElementFactory;
-import com.autonomy.abc.selenium.page.devconsole.DevConsoleSearchPage;
+import com.autonomy.abc.selenium.page.devconsole.HSODLandingPage;
 import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -17,7 +16,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 public class DevConsoleITCase extends HostedTestBase {
     private DevConsoleElementFactory devFactory;
 
-    private DevConsoleSearchPage devConsole;
+    private HSODLandingPage devConsole;
 
     // TODO: this test should get all urls from config
     public DevConsoleITCase(TestConfig config) {
@@ -30,10 +29,10 @@ public class DevConsoleITCase extends HostedTestBase {
     public void setUp(){
         devFactory = new DevConsole(getMainSession().getActiveWindow()).elementFactory();
 
-        devFactory.getDevConsoleSearchPage().clickLogInButton();
+        devFactory.getHSODPage().clickLogInButton();
 
-        loginTo(devFactory.getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
-        devConsole = devFactory.getDevConsoleSearchPage();
+        loginTo(devFactory.getLoginPage(), getDriver(), config.getDefaultUser());
+        devConsole = devFactory.getHSODPage();
     }
 
     @Test

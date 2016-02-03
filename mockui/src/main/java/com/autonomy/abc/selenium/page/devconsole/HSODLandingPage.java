@@ -14,11 +14,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DevConsoleSearchPage extends AppElement implements AppPage {
+public class HSODLandingPage extends AppElement implements AppPage {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DevConsoleSearchPage.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(HSODLandingPage.class);
 
-    public DevConsoleSearchPage(WebDriver driver) {
+    private HSODLandingPage(WebDriver driver) {
         super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.id("solution-overall-container"))), driver);
     }
 
@@ -57,9 +57,9 @@ public class DevConsoleSearchPage extends AppElement implements AppPage {
         }
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, DevConsoleSearchPage> {
-        public DevConsoleSearchPage create(WebDriver context) {
-            return new DevConsoleSearchPage(context);
+    public static class Factory implements ParametrizedFactory<WebDriver, HSODLandingPage> {
+        public HSODLandingPage create(WebDriver context) {
+            return new HSODLandingPage(context);
         }
     }
 }

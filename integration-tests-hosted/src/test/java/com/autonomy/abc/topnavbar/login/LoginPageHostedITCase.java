@@ -96,7 +96,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         getElementFactory().getLoginPage();
 
         getDriver().navigate().to(config.getFindUrl());
-        loginTo(findFactory.getFindLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(findFactory.getLoginPage(), getDriver(), config.getDefaultUser());
 
         getDriver().navigate().to(config.getWebappUrl());
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
@@ -109,7 +109,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         logout();
 
         getDriver().navigate().to(config.getFindUrl());
-        findFactory.getFindLoginPage();
+        findFactory.getLoginPage();
 
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
@@ -120,12 +120,12 @@ public class LoginPageHostedITCase extends HostedTestBase {
         getElementFactory().getLoginPage();
 
         getDriver().navigate().to(config.getFindUrl());
-        loginTo(findFactory.getFindLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(findFactory.getLoginPage(), getDriver(), config.getDefaultUser());
 
         FindPage findPage = findFactory.getFindPage();
         findPage.logOut();
 
-        findFactory.getFindLoginPage();
+        findFactory.getLoginPage();
 
         getDriver().navigate().to(config.getWebappUrl());
         getElementFactory().getLoginPage();
@@ -139,7 +139,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         loginAs(config.getDefaultUser());
 
         getDriver().navigate().to(config.getDevConsoleUrl());
-        DevConsoleHomePage devConsole = devFactory.getDevConsoleHomePage();
+        DevConsoleHomePage devConsole = devFactory.getHomePage();
 
         verifyThat(devConsole.loginButton(), not(displayed()));
     }
@@ -148,10 +148,10 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLoginDevConsoletoSSO() {
         getDriver().navigate().to(config.getDevConsoleUrl());
 
-        DevConsoleHomePage homePage = devFactory.getDevConsoleHomePage();
+        DevConsoleHomePage homePage = devFactory.getHomePage();
         homePage.loginButton().click();
 
-        loginTo(devFactory.getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(devFactory.getLoginPage(), getDriver(), config.getDefaultUser());
 
         getDriver().navigate().to(config.getWebappUrl());
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
@@ -164,15 +164,15 @@ public class LoginPageHostedITCase extends HostedTestBase {
         logout();
 
         getDriver().navigate().to(config.getDevConsoleUrl());
-        verifyThat(devFactory.getDevConsoleHomePage().loginButton(), displayed());
+        verifyThat(devFactory.getHomePage().loginButton(), displayed());
     }
 
     @Test
     public void testLogoutDevConsoletoSSO() {
         getDriver().navigate().to(config.getDevConsoleUrl());
 
-        devFactory.getDevConsoleHomePage().loginButton().click();
-        loginTo(devFactory.getDevConsoleLoginPage(), getDriver(), config.getDefaultUser());
+        devFactory.getHomePage().loginButton().click();
+        loginTo(devFactory.getLoginPage(), getDriver(), config.getDefaultUser());
 
         logOutDevConsole();
 

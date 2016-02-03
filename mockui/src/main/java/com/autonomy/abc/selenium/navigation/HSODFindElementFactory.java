@@ -13,7 +13,7 @@ public class HSODFindElementFactory extends ElementFactoryBase {
         super(driver, new PageMapper<>(Page.class));
     }
 
-    public LoginPage getFindLoginPage() {
+    public LoginPage getLoginPage() {
         return loadPage(LoginPage.class);
     }
 

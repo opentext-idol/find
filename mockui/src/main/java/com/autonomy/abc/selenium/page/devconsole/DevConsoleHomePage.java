@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DevConsoleHomePage extends AppElement implements AppPage {
-    public DevConsoleHomePage(WebDriver driver) {
+    private DevConsoleHomePage(WebDriver driver) {
         super(driver.findElement(By.className("wrapper")), driver);
     }
 

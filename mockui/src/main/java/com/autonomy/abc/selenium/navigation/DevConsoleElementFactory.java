@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.navigation;
 
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
-import com.autonomy.abc.selenium.page.devconsole.DevConsoleSearchPage;
+import com.autonomy.abc.selenium.page.devconsole.HSODLandingPage;
 import com.autonomy.abc.selenium.page.login.DevConsoleHasLoggedIn;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
@@ -15,15 +15,15 @@ public class DevConsoleElementFactory extends ElementFactoryBase {
         super(driver, new PageMapper<>(Page.class));
     }
 
-    public LoginPage getDevConsoleLoginPage(){
+    public LoginPage getLoginPage(){
         return loadPage(LoginPage.class);
     }
 
-    public DevConsoleSearchPage getDevConsoleSearchPage() {
-        return loadPage(DevConsoleSearchPage.class);
+    public HSODLandingPage getHSODPage() {
+        return loadPage(HSODLandingPage.class);
     }
 
-    public DevConsoleHomePage getDevConsoleHomePage() {
+    public DevConsoleHomePage getHomePage() {
         return loadPage(DevConsoleHomePage.class);
     }
 
@@ -40,7 +40,7 @@ public class DevConsoleElementFactory extends ElementFactoryBase {
             }
         }, HSOLoginPage.class),
         HOME(new DevConsoleHomePage.Factory(), DevConsoleHomePage.class),
-        SEARCH(new DevConsoleSearchPage.Factory(), DevConsoleSearchPage.class);
+        SEARCH(new HSODLandingPage.Factory(), HSODLandingPage.class);
 
         private final Class<? extends AppPage> pageType;
         private ParametrizedFactory<WebDriver, ? extends AppPage> factory;

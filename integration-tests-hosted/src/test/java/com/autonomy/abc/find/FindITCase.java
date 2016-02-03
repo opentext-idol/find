@@ -697,7 +697,7 @@ public class FindITCase extends HostedTestBase {
     // TODO: this does not belong here
     private FindPage initialiseSession(Session session) {
         HSODFindElementFactory otherElementFactory = new HSODFind(session.getActiveWindow()).elementFactory();
-        loginTo(otherElementFactory.getFindLoginPage(), session.getDriver(), config.getDefaultUser());
+        loginTo(otherElementFactory.getLoginPage(), session.getDriver(), config.getDefaultUser());
         return otherElementFactory.getFindPage();
     }
 
