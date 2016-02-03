@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone'
 ], function(Backbone) {
@@ -20,17 +25,12 @@ define([
 
         getIsoDate: function(type) {
             var date = this.get(type);
-            if(date) {
+
+            if (date) {
                 return date.toISOString();
             } else {
                 return null;
             }
-        },
-
-        hasAnyChangedAttributes: function(attributes) {
-            return _.any(attributes, function (attr) {
-                return _.has(this.changedAttributes(), attr);
-            }, this);
         }
     }, {
         Sort: Sort

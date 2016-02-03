@@ -1,12 +1,16 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'underscore',
     'moment',
     'find/app/model/dates-filter-model',
-    'find/app/page/search/filters/date/dates-filter-view',
-    'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes'
-], function(Backbone, _, moment, DatesFilterModel, datesFilterView, i18n, i18n_indexes) {
+    'find/app/util/model-any-changed-attribute-listener',
+    'i18n!find/nls/bundle'
+], function(Backbone, _, moment, DatesFilterModel, addChangeListener, i18n) {
 
     var FilterTypes = {
         indexes: 'indexes',
@@ -63,21 +67,18 @@ define([
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
             this.listenTo(this.selectedIndexesCollection, 'reset update', this.updateDatabases);
 
-            this.listenTo(this.queryModel, 'change', function() {
-                if (this.queryModel.hasAnyChangedAttributes(['minDate', 'maxDate'])) {
-                    var changed = this.queryModel.changedAttributes();
-                    var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
+            addChangeListener(this, this.queryModel, ['maxDate', 'minDate'], function() {
+                var changed = this.queryModel.changedAttributes();
+                var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
+                var dateRange = this.datesFilterModel.get('dateRange');
 
-                    var dateRange = this.datesFilterModel.get('dateRange');
-
-                    if(!_.isEmpty(dateFilterTypes)) {
-                        if(dateRange === DatesFilterModel.dateRange.custom) {
-                            this.intervalDate(dateFilterTypes);
-                        } else if(dateRange) {
-                            this.humanDate();
-                        } else {
-                            this.removeAllDateFilters();
-                        }
+                if(!_.isEmpty(dateFilterTypes)) {
+                    if(dateRange === DatesFilterModel.dateRange.custom) {
+                        this.intervalDate(dateFilterTypes);
+                    } else if(dateRange) {
+                        this.humanDate();
+                    } else {
+                        this.removeAllDateFilters();
                     }
                 }
             });

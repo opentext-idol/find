@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
@@ -33,10 +38,6 @@ define([
             this.queryModel = new Backbone.Model({
                 minDate: INITIAL_MIN_DATE
             });
-
-            this.queryModel.hasAnyChangedAttributes = function() {
-                return true;
-            };
 
             this.datesFilterModel = new Backbone.Model({
                 dateRange: DatesFilterModel.dateRange.custom,
