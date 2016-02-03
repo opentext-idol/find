@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.OPISOApplication;
-import com.autonomy.abc.selenium.page.OPISOElementFactory;
+import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
 import org.openqa.selenium.By;
 
 public class OPUserService extends UserService<OPISOElementFactory> {

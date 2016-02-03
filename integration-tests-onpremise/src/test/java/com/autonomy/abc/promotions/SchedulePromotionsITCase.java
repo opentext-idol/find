@@ -5,7 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.OPISOElementFactory;
+import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;

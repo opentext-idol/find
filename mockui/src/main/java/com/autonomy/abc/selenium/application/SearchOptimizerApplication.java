@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.application;
 
 import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.page.SOElementFactory;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.users.UserService;

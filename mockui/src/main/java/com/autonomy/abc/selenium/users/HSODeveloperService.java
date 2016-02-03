@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.HSODElementFactory;
+import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.WebElement;

@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.page.login;
 
-import com.autonomy.abc.selenium.page.HSODElementFactory;
+import com.autonomy.abc.selenium.navigation.HSODElementFactory;
+import com.autonomy.abc.selenium.page.login.SSOFailureException;
 import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

@@ -10,7 +10,7 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.SessionRegistry;
-import com.autonomy.abc.selenium.page.SOElementFactory;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.login.SSOFailureException;
 import com.autonomy.abc.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;

@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page;
+package com.autonomy.abc.selenium.page.login;
 
 import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
 import org.openqa.selenium.By;

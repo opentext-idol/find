@@ -1,5 +1,6 @@
-package com.autonomy.abc.selenium.menu;
+package com.autonomy.abc.selenium.navigation;
 
+import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
@@ -22,9 +23,6 @@ import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public enum HSODPage implements PageMapper.Page {
     LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {

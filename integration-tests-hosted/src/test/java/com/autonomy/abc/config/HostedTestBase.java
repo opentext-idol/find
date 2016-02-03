@@ -2,7 +2,7 @@ package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.HSOApplication;
-import com.autonomy.abc.selenium.page.HSODElementFactory;
+import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

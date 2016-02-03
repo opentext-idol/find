@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.application;
 
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.page.OPISOElementFactory;
+import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.users.OPUserService;
 

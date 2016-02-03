@@ -4,7 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
-import com.autonomy.abc.selenium.page.OPISOElementFactory;
+import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
 import org.junit.Before;
 import org.junit.Test;

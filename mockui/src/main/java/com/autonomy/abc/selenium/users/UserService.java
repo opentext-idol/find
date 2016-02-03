@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.page.SOElementFactory;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;

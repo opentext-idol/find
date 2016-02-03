@@ -1,9 +1,7 @@
-package com.autonomy.abc.selenium.page;
+package com.autonomy.abc.selenium.navigation;
 
 import com.autonomy.abc.selenium.find.Find;
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
-import com.autonomy.abc.selenium.menu.HSODPage;
-import com.autonomy.abc.selenium.menu.PageMapper;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
@@ -21,6 +19,7 @@ import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.page.login.DevConsoleHasLoggedIn;
 import com.autonomy.abc.selenium.page.login.FindHasLoggedIn;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;

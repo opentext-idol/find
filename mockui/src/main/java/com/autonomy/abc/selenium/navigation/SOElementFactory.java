@@ -1,7 +1,6 @@
-package com.autonomy.abc.selenium.page;
+package com.autonomy.abc.selenium.navigation;
 
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.menu.PageMapper;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.UsersPage;

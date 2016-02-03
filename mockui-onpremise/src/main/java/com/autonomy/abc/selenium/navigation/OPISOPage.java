@@ -1,5 +1,6 @@
-package com.autonomy.abc.selenium.menu;
+package com.autonomy.abc.selenium.navigation;
 
+import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.autonomy.abc.selenium.page.keywords.OPCreateNewKeywordsPage;

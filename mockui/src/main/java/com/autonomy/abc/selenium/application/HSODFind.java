@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.application;
 
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.page.HSODElementFactory;
+import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 
 public class HSODFind implements Application<HSODElementFactory> {
     private Window window;

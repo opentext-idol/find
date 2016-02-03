@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.application;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.page.HSODElementFactory;
+import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.users.HSODeveloperService;
 import com.autonomy.abc.selenium.users.HSOUserService;
