@@ -2,7 +2,7 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Waits;
@@ -108,8 +108,8 @@ public class LoginPageHostedITCase extends HostedTestBase {
         getDriver().navigate().to(config.getFindUrl());
         loginTo(getElementFactory().getFindLoginPage(), getDriver(), config.getDefaultUser());
 
-        Find find = getElementFactory().getFindPage();
-        find.logOut();
+        FindPage findPage = getElementFactory().getFindPage();
+        findPage.logOut();
 
         getElementFactory().getFindLoginPage();
 

@@ -4,7 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
@@ -26,7 +26,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("CSA-1590")
 public class AnalyticsToFindITCase extends HostedTestBase {
-    private Find find;
+    private FindPage findPage;
     private FindResultsPage service;
     private Window searchWindow;
     private Window findWindow;
@@ -46,8 +46,8 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());
-        find = getElementFactory().getFindPage();
-        service = find.getResultsPage();
+        findPage = getElementFactory().getFindPage();
+        service = findPage.getResultsPage();
         searchWindow.activate();
     }
 
@@ -68,11 +68,11 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         keywordService.addSynonymGroup(Language.ENGLISH, trigger, synonym);
 
         findWindow.activate();
-        find.search(trigger);
+        findPage.search(trigger);
 
         List<String> triggerResults = service.getResultTitles();
 
-        find.search(synonym);
+        findPage.search(synonym);
 
         List<String> findPromotions = service.getPromotionsTitles();
 

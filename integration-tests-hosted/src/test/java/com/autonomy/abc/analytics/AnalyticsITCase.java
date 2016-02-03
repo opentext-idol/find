@@ -4,7 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Container;
@@ -138,10 +138,10 @@ public class AnalyticsITCase extends HostedTestBase {
         Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
         findWindow.activate();
-        Find find = getElementFactory().getFindPage();
+        FindPage findPage = getElementFactory().getFindPage();
         for (int unused = 0; unused < repeats; unused++) {
-            find.search(term);
-            find.search("");
+            findPage.search(term);
+            findPage.search("");
             Waits.loadOrFadeWait();
         }
         findWindow.close();

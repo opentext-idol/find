@@ -9,7 +9,7 @@ import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
@@ -79,10 +79,10 @@ public class IndexDisplayNameITCase extends HostedTestBase {
         Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
         try {
-            Find find = getElementFactory().getFindPage();
-            find.search("This woman's work");
+            FindPage findPage = getElementFactory().getFindPage();
+            findPage.search("This woman's work");
 
-            verifyIndexOrDefault(find.indexesTree().privateIndexes());
+            verifyIndexOrDefault(findPage.indexesTree().privateIndexes());
         } finally {
             findWindow.close();
             searchWindow.activate();

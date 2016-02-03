@@ -4,7 +4,7 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.isIn;
 public class PromotionsToFindITCase extends HostedTestBase {
     private Window searchWindow;
     private Window findWindow;
-    private Find find;
+    private FindPage findPage;
     private FindResultsPage service;
     private PromotionService<?> promotionService;
     private final static Logger LOGGER = LoggerFactory.getLogger(PromotionsToFindITCase.class);
@@ -48,8 +48,8 @@ public class PromotionsToFindITCase extends HostedTestBase {
         promotionService.deleteAll();
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());
-        find = getElementFactory().getFindPage();
-        service = find.getResultsPage();
+        findPage = getElementFactory().getFindPage();
+        service = findPage.getResultsPage();
         searchWindow.activate();
     }
 
@@ -65,7 +65,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         LOGGER.info("set up pin to position");
 
         findWindow.activate();
-        find.search(searchTrigger);
+        findPage.search(searchTrigger);
         verifyPinToPosition(promotionTitles, 1, 5);
 
         searchWindow.activate();
@@ -85,14 +85,14 @@ public class PromotionsToFindITCase extends HostedTestBase {
         LOGGER.info("added secondary trigger");
 
         findWindow.activate();
-        find.search(secondaryTrigger);
+        findPage.search(secondaryTrigger);
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        find.filterBy(new IndexFilter(Index.DEFAULT));
+        findPage.filterBy(new IndexFilter(Index.DEFAULT));
         verifyPinToPosition(promotionTitles, 6, 10);
 
-        find.filterBy(IndexFilter.PRIVATE);
-        find.filterBy(new ParametricFilter("Source Connector", "SIMPSONSARCHIVE"));
+        findPage.filterBy(IndexFilter.PRIVATE);
+        findPage.filterBy(new ParametricFilter("Source Connector", "SIMPSONSARCHIVE"));
         verifyPinToPosition(promotionTitles, 6, 10);
 
         searchWindow.activate();
@@ -100,7 +100,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
         LOGGER.info("set up spotlight promotion");
 
         findWindow.activate();
-        find.search(searchTrigger);
+        findPage.search(searchTrigger);
 
         verifyPinToPosition(promotionTitles, 6, 10);
         verifySpotlight(spotlightPromotionTitles);
@@ -123,14 +123,14 @@ public class PromotionsToFindITCase extends HostedTestBase {
         LOGGER.info("deleted spotlight promotion");
 
         findWindow.activate();
-        find.search("Other");
-        find.search(searchTrigger);
+        findPage.search("Other");
+        findPage.search(searchTrigger);
     }
 
     private void refreshFind() {
         getDriver().navigate().refresh();
-        find = getElementFactory().getFindPage();
-        service = find.getResultsPage();
+        findPage = getElementFactory().getFindPage();
+        service = findPage.getResultsPage();
         service.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 

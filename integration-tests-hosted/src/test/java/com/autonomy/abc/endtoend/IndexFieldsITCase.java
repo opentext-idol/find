@@ -5,7 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
@@ -46,7 +46,7 @@ public class IndexFieldsITCase extends HostedTestBase {
     private IndexService indexService;
     private SearchService searchService;
     private SearchPage searchPage;
-    private Find find;
+    private FindPage findPage;
 
     public IndexFieldsITCase(TestConfig config) {
         super(config);
@@ -149,13 +149,13 @@ public class IndexFieldsITCase extends HostedTestBase {
         Window second = getMainSession().openWindow(config.getFindUrl());
         try {
             second.activate();
-            find = getElementFactory().getFindPage();
+            findPage = getElementFactory().getFindPage();
 
             logFind("\"" + indexFieldValue + "\":" + indexFieldName);
             verifyFirstFindResult();
 
             logFind("*");
-            applyParametricFilter(find);
+            applyParametricFilter(findPage);
             verifyFirstFindResult();
         } finally {
             second.close();
@@ -167,16 +167,16 @@ public class IndexFieldsITCase extends HostedTestBase {
         logger.info("finding " + query);
         boolean quick = true;
         try {
-            find.search(query);
+            findPage.search(query);
         } catch (TimeoutException e) {
             quick = false;
-            find.getResultsPage().waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+            findPage.getResultsPage().waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         }
         verifyThat("find responded within a reasonable time", quick);
     }
 
     private void verifyFirstFindResult() {
-        FindResultsPage resultsPage = find.getResultsPage();
+        FindResultsPage resultsPage = findPage.getResultsPage();
         if (verifyThat("has results", resultsPage.getResults(), not(empty()))) {
             verifyThat(resultsPage.searchResult(1).getReference(), containsString(ingestUrl));
 

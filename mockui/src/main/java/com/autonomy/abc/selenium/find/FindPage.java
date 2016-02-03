@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Find extends AppElement implements AppPage,
+public class FindPage extends AppElement implements AppPage,
         IndexFilter.Filterable,
         DatePickerFilter.Filterable,
         StringDateFilter.Filterable,
@@ -32,7 +33,8 @@ public class Find extends AppElement implements AppPage,
     private final FormInput input;
     private final FindResultsPage results;
 
-    public Find(WebDriver driver){
+    @Deprecated
+    public FindPage(WebDriver driver){
         super(new WebDriverWait(driver,30)
                 .withMessage("loading Find page")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("container-fluid"))),driver);
@@ -157,5 +159,11 @@ public class Find extends AppElement implements AppPage,
 
         cog.click();
         getDriver().findElement(By.className("navigation-logout")).click();
+    }
+
+    public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
+        public FindPage create(WebDriver context) {
+            return new FindPage(context);
+        }
     }
 }

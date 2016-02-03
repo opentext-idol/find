@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
@@ -255,12 +255,12 @@ public class IndexesPageITCase extends HostedTestBase {
 
         try {
             findWindow.activate();
-            Find find = getElementFactory().getFindPage();
+            FindPage findPage = getElementFactory().getFindPage();
 
-            find.search("search");
-            find.filterBy(new IndexFilter(index));
+            findPage.search("search");
+            findPage.filterBy(new IndexFilter(index));
 
-            verifyThat(find.getResultsPage().resultsDiv().getText(), is("No results found"));
+            verifyThat(findPage.getResultsPage().resultsDiv().getText(), is("No results found"));
         } finally {
             findWindow.close();
             searchWindow.activate();
