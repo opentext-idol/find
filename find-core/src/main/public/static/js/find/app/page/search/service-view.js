@@ -232,6 +232,8 @@ define([
             this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
             this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], this.relatedConceptsView);
+
+            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
         },
 
         render: function() {
@@ -253,7 +255,12 @@ define([
 
             this.$('.container-toggle').on('click', this.containerToggle);
 
+            this.updateCompareModalButton();
             this.fetchEntities();
+        },
+
+        updateCompareModalButton: function() {
+            this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
         fetchEntities: function() {
