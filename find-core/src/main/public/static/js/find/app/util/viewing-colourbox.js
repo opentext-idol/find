@@ -43,7 +43,7 @@ define([
         $.colorbox.resize({width: SIZE, height: SIZE});
     }
 
-    function colorboxArguments(options) {
+    function colorboxArguments(options, isUrl) {
         var args = {
             current: '{current} of {total}',
             height: '70%',
@@ -97,7 +97,7 @@ define([
         }
 
         args.html = viewDocumentTemplate({
-            src: options.href,
+            src: isUrl ?  options.model.get('reference') : options.href,
             i18n: i18n,
             model: options.model,
             content: content,
@@ -114,14 +114,15 @@ define([
     }
 
     function nearNativeOrTab(options, reference, targetNode, triggerNode) {
-        var colorboxArgs = colorboxArguments(options);
+        var isUrl = isURL(reference);
+        var colorboxArgs = colorboxArguments(options, isUrl);
 
         if (triggerNode) {
             triggerNode.colorbox(colorboxArgs);
         }
 
         // web documents should open the original document in a new tab
-        if (isURL(reference)) {
+        if (isUrl) {
             targetNode.attr({
                 href: reference,
                 target: "_blank"
