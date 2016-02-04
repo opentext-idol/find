@@ -12,20 +12,24 @@ define([
     'i18n!find/nls/bundle'
 ], function(Backbone, _, moment, DatesFilterModel, addChangeListener, i18n) {
 
-    var FilterTypes = {
-        indexes: 'indexes',
-        maxDate: 'maxDate',
-        minDate: 'minDate',
-        dateRange: 'dateRange',
+    var FilterType = {
+        INDEXES: 'INDEXES',
+        MAX_DATE: 'MAX_DATE',
+        MIN_DATE: 'MIN_DATE',
+        DATE_RANGE: 'DATE_RANGE',
         PARAMETRIC: 'PARAMETRIC'
     };
 
-    var metaFilterType = {
-        date: 'date'
+    var MetaFilterType = {
+        DATE: 'DATE'
     };
 
+    function filterTypeFromDateAttribute(attribute) {
+        return attribute === 'minDate' ? FilterType.MIN_DATE : FilterType.MAX_DATE;
+    }
+
     function getDateFilterText(filterType, dateString) {
-        var textPrefixKey = filterType === FilterTypes.maxDate ? 'app.until' : 'app.from';
+        var textPrefixKey = filterType === FilterType.MAX_DATE ? 'app.until' : 'app.from';
         return i18n[textPrefixKey] + ': ' + dateString;
     }
 
@@ -46,7 +50,7 @@ define([
                 id: parametricFilterId(field),
                 field: field,
                 text: parametricFilterText(values),
-                type: FilterTypes.PARAMETRIC
+                type: FilterType.PARAMETRIC
             };
         });
     }
@@ -73,7 +77,6 @@ define([
                 var dateRange = this.datesFilterModel.get('dateRange');
 
                 if (!_.isEmpty(dateFilterTypes)) {
-
                     if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
                         this.intervalDate(dateFilterTypes);
                     } else if (dateRange) {
@@ -87,36 +90,36 @@ define([
             this.on('remove', function(model) {
                 var type = model.get('type');
 
-                if (type === FilterTypes.PARAMETRIC) {
+                if (type === FilterType.PARAMETRIC) {
                     var field = model.get('field');
                     this.selectedParametricValues.remove(this.selectedParametricValues.where({field: field}));
-                } else if (type === FilterTypes.indexes) {
+                } else if (type === FilterType.INDEXES) {
                     this.selectedIndexesCollection.set(this.indexesCollection.toResourceIdentifiers());
                 }
             });
 
             if (this.queryModel.get('minDate')) {
                 models.push({
-                    id: FilterTypes.minDate,
-                    type: FilterTypes.minDate,
-                    metaType: metaFilterType.date,
-                    text: getDateFilterText(FilterTypes.minDate, moment(this.queryModel.get('minDate')).format('LLL'))
+                    id: FilterType.MIN_DATE,
+                    type: FilterType.MIN_DATE,
+                    metaType: MetaFilterType.DATE,
+                    text: getDateFilterText(FilterType.MIN_DATE, moment(this.queryModel.get('minDate')).format('LLL'))
                 });
             }
 
             if (this.queryModel.get('maxDate')) {
                 models.push({
-                    id: FilterTypes.maxDate,
-                    type: FilterTypes.maxDate,
-                    metaType: metaFilterType.date,
-                    text: getDateFilterText(FilterTypes.maxDate, moment(this.queryModel.get('maxDate')).format('LLL'))
+                    id: FilterType.MAX_DATE,
+                    type: FilterType.MAX_DATE,
+                    metaType: MetaFilterType.DATE,
+                    text: getDateFilterText(FilterType.MAX_DATE, moment(this.queryModel.get('maxDate')).format('LLL'))
                 });
             }
 
             if (!this.allIndexesSelected()) {
                 models.push({
-                    id: FilterTypes.indexes,
-                    type: FilterTypes.indexes,
+                    id: FilterType.INDEXES,
+                    type: FilterType.INDEXES,
                     text: this.getDatabasesFilterText()
                 });
             }
@@ -134,7 +137,7 @@ define([
         },
 
         updateDatabases: function() {
-            var filterModel = this.get(FilterTypes.indexes);
+            var filterModel = this.get(FilterType.INDEXES);
 
             if (!this.allIndexesSelected()) {
                 var filterText = this.getDatabasesFilterText();
@@ -143,7 +146,7 @@ define([
                     filterModel.set('text', filterText);
                 } else {
                     // The databases filter model has equal id and type since only one filter of this type can be present
-                    this.add({id: FilterTypes.indexes, type: FilterTypes.indexes, text: filterText});
+                    this.add({id: FilterType.INDEXES, type: FilterType.INDEXES, text: filterText});
                 }
             } else if (this.contains(filterModel)) {
                 this.remove(filterModel);
@@ -151,7 +154,7 @@ define([
         },
 
         removeAllDateFilters: function() {
-            this.remove(this.where({metaType: metaFilterType.date}));
+            this.remove(this.where({metaType: MetaFilterType.DATE}));
         },
 
         humanDate: function() {
@@ -162,20 +165,20 @@ define([
             if (dateRange) {
                 this.add({
                     id: dateRange,
-                    type: FilterTypes.dateRange,
-                    metaType: metaFilterType.date,
+                    type: FilterType.DATE_RANGE,
+                    metaType: MetaFilterType.DATE,
                     text: i18n['search.dates.timeInterval.' + dateRange]
                 });
             }
         },
 
-        intervalDate: function(filterTypes) {
-            this.remove(this.where({type: FilterTypes.dateRange}));
+        intervalDate: function(dateAttributes) {
+            this.remove(this.where({type: FilterType.DATE_RANGE}));
 
-            _.each(filterTypes, function(filterType) {
+            _.each(dateAttributes, function(attribute) {
+                var filterType = filterTypeFromDateAttribute(attribute);
                 var filterModel = this.get(filterType);
-
-                var date = this.queryModel.get(filterType);
+                var date = this.queryModel.get(attribute);
 
                 if (date) {
                     var displayDate = date.format('LLL');
@@ -188,7 +191,7 @@ define([
                         this.add({
                             id: filterType,
                             type: filterType,
-                            metaType: metaFilterType.date,
+                            metaType: MetaFilterType.DATE,
                             text: filterText
                         });
                     }
@@ -209,7 +212,7 @@ define([
                     id: id,
                     field: field,
                     text: parametricFilterText(_.invoke(modelsForField, 'get', 'value')),
-                    type: FilterTypes.PARAMETRIC
+                    type: FilterType.PARAMETRIC
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name
                     merge: true
@@ -221,12 +224,12 @@ define([
         },
 
         resetParametricSelection: function() {
-            this.remove(this.where({type: FilterTypes.PARAMETRIC}));
+            this.remove(this.where({type: FilterType.PARAMETRIC}));
             this.add(extractParametricFilters(this.selectedParametricValues));
         }
     }, {
-        FilterTypes: FilterTypes,
-        metaFilterTypes: metaFilterType
+        FilterType: FilterType,
+        MetaFilterType: MetaFilterType
     });
 
 });

@@ -58,7 +58,7 @@ define([
         });
 
         it('contains a databases filter model', function () {
-            var model = this.collection.get(FiltersCollection.FilterTypes.indexes);
+            var model = this.collection.get(FiltersCollection.FilterType.indexes);
             expect(model).toBeDefined();
             expect(model.get('text')).toContain(WIKI_ENG.displayName);
             expect(model.get('text')).not.toContain(WOOKIEPEDIA.displayName);

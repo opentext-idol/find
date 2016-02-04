@@ -26,7 +26,7 @@ define([
 
             ListItemView.prototype.remove.apply(this, arguments);
         }
-});
+    });
 
     // Each of the collection's models should have an id and a text attribute
     return Backbone.View.extend({
@@ -88,14 +88,15 @@ define([
         },
 
         removeFilter: function(id, metaType, type) {
-            if (metaType && metaType === SearchFiltersCollection.metaFilterTypes.date) {
-                if (type === SearchFiltersCollection.FilterTypes.dateRange) {
+            if (metaType && metaType === SearchFiltersCollection.MetaFilterType.DATE) {
+
+                if (type === SearchFiltersCollection.FilterType.DATE_RANGE) {
                     this.datesFilterModel.setDateRange(null);
                 }
-                if (type === SearchFiltersCollection.FilterTypes.minDate) {
+                if (type === SearchFiltersCollection.FilterType.MIN_DATE) {
                     this.datesFilterModel.setMinDate(null);
                 }
-                if (type === SearchFiltersCollection.FilterTypes.maxDate) {
+                if (type === SearchFiltersCollection.FilterType.MAX_DATE) {
                     this.datesFilterModel.setMaxDate(null);
                 }
             } else {
