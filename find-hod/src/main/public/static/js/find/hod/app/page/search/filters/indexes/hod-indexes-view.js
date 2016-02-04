@@ -13,18 +13,18 @@ define([
         getIndexCategories: function () {
             return [
                 {
+                    name: 'private',
+                    displayName: i18n['search.indexes.privateIndexes'],
+                    className: 'list-unstyled',
+                    filter: function(model) {
+                    return model.get('domain') !== 'PUBLIC_INDEXES';
+                }
+            }, {
                     name: 'public',
                     displayName: i18n['search.indexes.publicIndexes'],
                     className: 'list-unstyled',
                     filter: function(model) {
                         return model.get('domain') === 'PUBLIC_INDEXES';
-                    }
-                }, {
-                    name: 'private',
-                    displayName: i18n['search.indexes.privateIndexes'],
-                    className: 'list-unstyled',
-                    filter: function(model) {
-                        return model.get('domain') !== 'PUBLIC_INDEXES';
                     }
                 }
             ];
