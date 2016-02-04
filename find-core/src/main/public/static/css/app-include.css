@@ -306,6 +306,7 @@ html, body {
     overflow: hidden;
     white-space: pre-line;
     text-overflow: ellipsis;
+    word-break: break-all;
 }
 
 .filter-display-container h4 {
@@ -626,7 +627,7 @@ input.find-input {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    max-height: 41px;
+    max-height: 43px;
 }
 
 .related-concepts-list {
