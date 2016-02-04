@@ -59,7 +59,10 @@
 }
 
 #cboxAudioImage {
-    position: absolute;
-    top: 40%;
-    left: 45%;
+    color: #01a982;
+    font-size: 30px;
+    position: relative;
+    top: 50%;
+    text-align: center;
+    transform: translateY(-50%);
 }
