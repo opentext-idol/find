@@ -54,9 +54,10 @@ public class IndexesDetailPage extends SAASPageBase {
         WebElement inputBox = addURLInput();
         inputBox.sendKeys(url);
         inputBox.findElement(By.xpath(".//..//i")).click();
+        waitForSiteToIndex(url);
     }
 
-    public void waitForSiteToIndex(String url) {
+    private void waitForSiteToIndex(String url) {
         String fullUrl = url.startsWith("http://") ? url : "http://" + url;
         new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Document \"" + fullUrl + "\" was uploaded successfully"));
     }
