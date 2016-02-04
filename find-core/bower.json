@@ -29,7 +29,7 @@
     "jquery": "components/jquery#~1.10.2",
     "json": "json2#*",
     "underscore": "~1.8.3",
-    "hp-autonomy-js-whatever": "~2.3.0",
+    "hp-autonomy-js-whatever": "~2.5.0",
     "hp-autonomy-login-page": "~1.0.2",
     "hp-autonomy-settings-page": "~0.1.0",
     "hp-autonomy-bootstrap-2": "~2.3.2",
@@ -52,7 +52,7 @@
   },
   "resolutions": {
     "underscore": "~1.8.3",
-    "hp-autonomy-js-whatever": "~2.3.0",
+    "hp-autonomy-js-whatever": "~2.5.0",
     "jquery": "~1.10.2",
     "backbone": "~1.2.1",
     "jasmine": ">=2"
