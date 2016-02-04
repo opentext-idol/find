@@ -2,6 +2,7 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
@@ -32,6 +33,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 
+@RelatedTo("CSA-1583")
 public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -41,13 +43,18 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Override
+    public HSOApplication getApplication() {
+        return (HSOApplication) super.getApplication();
+    }
+
+    @Override
     public HSOElementFactory getElementFactory() {
         return (HSOElementFactory) super.getElementFactory();
     }
 
     @Test
     public void testStaticPromotionNotifications(){
-        HSOPromotionService ps = (HSOPromotionService) getApplication().promotionService();
+        HSOPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -65,7 +72,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testRemovingStaticPromotionNotifications(){
-        HSOPromotionService ps = (HSOPromotionService) getApplication().promotionService();
+        HSOPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -81,15 +88,23 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
-    public void testCreateIndexNotifications() {
-        Index index = new Index("danye west");
-        IndexService indexService = ((HSOApplication) getApplication()).indexService();
+    @RelatedTo("CSA-2014")
+    public void testCreateDeleteIndexNotifications() {
+        Index noDisplay = new Index("danye west");
+        verifyIndexNotifications(noDisplay, noDisplay.getName());
+        Index display = new Index("something", "Display Name 123");
+        verifyIndexNotifications(display, display.getDisplayName());
+    }
 
+    private void verifyIndexNotifications(Index index, String expectedName) {
+        IndexService indexService = getApplication().indexService();
         try {
             indexService.setUpIndex(index);
-            checkForNotificationNoWait("Created a new index: " + index.getName());
+            checkForNotificationNoWait("Created a new index: " + expectedName);
         } finally {
             indexService.deleteIndex(index);
+            checkForNotificationNoWait("Index " + expectedName + " successfully deleted");
+            checkForNotificationNoWait("Deleting index " + expectedName, 2);
         }
     }
 
@@ -104,7 +119,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
         WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName).withDuration(60);
 
-        ConnectionService cs = ((HSOApplication) getApplication()).connectionService();
+        ConnectionService cs = getApplication().connectionService();
         try {
             cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
 
@@ -131,7 +146,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         String deletingNotification = "Deleting connection " + connectorName;
         String successfulNotification = "Connection " + connectorName + " successfully removed";
 
-        ConnectionService cs = ((HSOApplication) getApplication()).connectionService();
+        ConnectionService cs = getApplication().connectionService();
         cs.setUpConnection(connector);
 
         cs.deleteConnection(connector, true);        //Because of the WebDriverWait within no need to wait for the notifications
@@ -209,7 +224,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
-    @KnownBug("CSA-1583")
+    @KnownBug("CSA-1542")
     public void testNotificationsPersistOverPages(){
         KeywordService keywordService = getApplication().keywordService();
 
