@@ -304,7 +304,7 @@ html, body {
     font-weight: bold;
     font-size: 18px;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: pre-line;
     text-overflow: ellipsis;
 }
 
