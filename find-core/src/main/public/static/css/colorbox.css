@@ -48,7 +48,18 @@
     overflow: initial;
 }
 
-#cboxLoadedContent audio,
+#cboxLoadedContent audio {
+    display: block;
+    position: absolute;
+    bottom: 0;
+}
+
 #cboxLoadedContent video {
     display: block;
+}
+
+#cboxAudioImage {
+    position: absolute;
+    top: 40%;
+    left: 45%;
 }

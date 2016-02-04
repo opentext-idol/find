@@ -9,19 +9,20 @@ define([
     'find/app/model/document-model',
     'text!find/templates/app/page/colorbox-controls.html',
     'text!find/templates/app/page/view/document-content.html',
-    'text!find/templates/app/page/view/media-player.html',
+    'text!find/templates/app/page/view/audio-player.html',
+    'text!find/templates/app/page/view/video-player.html',
     'text!find/templates/app/page/view/view-document.html',
     'i18n!find/nls/bundle'
-], function ($, _, DocumentModel, colorboxControlsTemplate, documentContentTemplateString, mediaPlayerTemplateString, viewDocumentTemplateString, i18n) {
+], function ($, _, DocumentModel, colorboxControlsTemplate, documentContentTemplateString, audioPlayerTemplateString, videoPlayerTemplateString, viewDocumentTemplateString, i18n) {
     "use strict";
 
     var SIZE = '90%';
     var window = $(window);
-    var mediaTypes = ['audio', 'video'];
     var isUrlRegex = /^https?:\/\//;
 
     var documentContentTemplate = _.template(documentContentTemplateString);
-    var mediaPlayerTemplate = _.template(mediaPlayerTemplateString);
+    var audioPlayerTemplate = _.template(audioPlayerTemplateString);
+    var videoPlayerTemplate = _.template(videoPlayerTemplateString);
     var viewDocumentTemplate = _.template(viewDocumentTemplateString);
 
     function fancyButtonOverride() {
@@ -72,16 +73,20 @@ define([
 
         var contentType = options.model.get('contentType') || '';
 
-        var media = _.find(mediaTypes, function (mediaType) {
+        var identifyMedia = function (mediaType) {
             return contentType.indexOf(mediaType) === 0;
-        });
+        };
 
         var url = options.model.get('url');
 
         var content;
-        if (media && url) {
-            content = mediaPlayerTemplate({
-                media: media,
+        if (identifyMedia('audio') && url) {
+            content = audioPlayerTemplate({
+                url: url,
+                offset: options.model.get('offset')
+            });
+        } else if (identifyMedia('video') && url) {
+            content = videoPlayerTemplate({
                 url: url,
                 offset: options.model.get('offset')
             });
