@@ -527,7 +527,7 @@ input.find-input {
     font-size: 23px !important;
     border: 2px solid #CCC !important;
     transition: all 1s ease;
-    padding: 10px;
+    padding-left: 10px;
     font-family: inherit;
     font-style: italic;
 }
