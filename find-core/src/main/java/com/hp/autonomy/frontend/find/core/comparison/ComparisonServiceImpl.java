@@ -84,17 +84,17 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
         final Comparison<R> comparison = new Comparison<>();
         comparison.setFirstQueryStateToken(firstStateToken);
         comparison.setSecondQueryStateToken(secondStateToken);
-        comparison.setDocumentsInFirstStateToken(docsInFirstStateToken);
-        comparison.setDocumentsInSecondStateToken(docsInSecondStateToken);
+        comparison.setDocumentsOnlyInFirstStateToken(docsInFirstStateToken);
+        comparison.setDocumentsOnlyInSecondStateToken(docsInSecondStateToken);
 
         // Generate the set of results for the documents in our first query without those from the second
         // Use the state token previously generated as it's marginally easier than using the original state tokens
         final Documents<R> docsInFirstQueryOnly = getResultsForStateToken(docsInFirstStateToken, resultsStart, maxResults, summary, sort, highlight);
-        comparison.setDocumentsInFirst(docsInFirstQueryOnly);
+        comparison.setDocumentsOnlyInFirst(docsInFirstQueryOnly);
 
         // Generate the set of results for the documents in our second query without those from the first
         final Documents<R> docsInSecondQueryOnly = getResultsForStateToken(docsInSecondStateToken, resultsStart, maxResults, summary, sort, highlight);
-        comparison.setDocumentsInSecond(docsInSecondQueryOnly);
+        comparison.setDocumentsOnlyInSecond(docsInSecondQueryOnly);
 
         // State tokens to match all documents, if either of these is null then the intersection is empty so return early
         if(firstStateToken == null || secondStateToken == null) {

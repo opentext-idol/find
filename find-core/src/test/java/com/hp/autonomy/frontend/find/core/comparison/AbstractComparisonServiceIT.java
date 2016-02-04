@@ -52,15 +52,15 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
 
         // Comparison service is the easiest way to generate the diff state tokens without having to re-implement comparison logic
         final Comparison<R> comparison = comparisonService.compareStateTokens(twoDocStateToken, sixDocStateToken, 1, Integer.MAX_VALUE, "context", null, false);
-        firstDiffStateToken = comparison.getDocumentsInFirstStateToken();
-        secondDiffStateToken = comparison.getDocumentsInSecondStateToken();
+        firstDiffStateToken = comparison.getDocumentsOnlyInFirstStateToken();
+        secondDiffStateToken = comparison.getDocumentsOnlyInSecondStateToken();
     }
 
     @Test
     public void compareQueryStateTokens() throws Exception {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryToken(twoDocStateToken)
-                .setSecondQueryToken(sixDocStateToken)
+                .setFirstQueryStateToken(twoDocStateToken)
+                .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
         mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
@@ -69,17 +69,17 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                     .andExpect(jsonPath("$.documentsInBoth.documents", hasSize(2)))
-                    .andExpect(jsonPath("$.documentsInFirst.documents", empty()))
-                    .andExpect(jsonPath("$.documentsInSecond.documents", hasSize(4)));
+                    .andExpect(jsonPath("$.documentsOnlyInFirst.documents", empty()))
+                    .andExpect(jsonPath("$.documentsOnlyInSecond.documents", hasSize(4)));
     }
 
     @Test
     public void compareDiffStateTokens() throws Exception {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryToken(twoDocStateToken)
-                .setSecondQueryToken(sixDocStateToken)
-                .setFirstDifferenceStateToken(firstDiffStateToken)
-                .setSecondDifferenceStateToken(secondDiffStateToken)
+                .setFirstQueryStateToken(twoDocStateToken)
+                .setSecondQueryStateToken(sixDocStateToken)
+                .setDocumentsOnlyInFirstStateToken(firstDiffStateToken)
+                .setDocumentsOnlyInSecondStateToken(secondDiffStateToken)
                 .build();
 
         mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
@@ -88,15 +88,15 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documentsInBoth.documents", hasSize(2)))
-                .andExpect(jsonPath("$.documentsInFirst.documents", empty()))
-                .andExpect(jsonPath("$.documentsInSecond.documents", hasSize(4)));
+                .andExpect(jsonPath("$.documentsOnlyInFirst.documents", empty()))
+                .andExpect(jsonPath("$.documentsOnlyInSecond.documents", hasSize(4)));
     }
 
     @Test
     public void compareRestrictionsAndToken() throws Exception {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
                 .setFirstRestrictions(buildQueryRestrictions())
-                .setSecondQueryToken(sixDocStateToken)
+                .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
         mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
@@ -105,14 +105,14 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documentsInBoth.documents", hasSize(6)))
-                .andExpect(jsonPath("$.documentsInFirst.documents", not(empty())))
-                .andExpect(jsonPath("$.documentsInSecond.documents", empty()));
+                .andExpect(jsonPath("$.documentsOnlyInFirst.documents", not(empty())))
+                .andExpect(jsonPath("$.documentsOnlyInSecond.documents", empty()));
     }
 
     @Test
     public void compareTokenAndRestrictions() throws Exception {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryToken(twoDocStateToken)
+                .setFirstQueryStateToken(twoDocStateToken)
                 .setSecondRestrictions(buildQueryRestrictions())
                 .build();
 
@@ -122,8 +122,8 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documentsInBoth.documents", hasSize(2)))
-                .andExpect(jsonPath("$.documentsInFirst.documents", empty()))
-                .andExpect(jsonPath("$.documentsInSecond.documents", not(empty())));
+                .andExpect(jsonPath("$.documentsOnlyInFirst.documents", empty()))
+                .andExpect(jsonPath("$.documentsOnlyInSecond.documents", not(empty())));
     }
 
     @Test
@@ -139,8 +139,8 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documentsInBoth.documents", not(empty())))
-                .andExpect(jsonPath("$.documentsInFirst.documents", empty()))
-                .andExpect(jsonPath("$.documentsInSecond.documents", empty()));
+                .andExpect(jsonPath("$.documentsOnlyInFirst.documents", empty()))
+                .andExpect(jsonPath("$.documentsOnlyInSecond.documents", empty()));
     }
 
     @Test

@@ -16,11 +16,11 @@ import lombok.NoArgsConstructor;
 public class Comparison<R extends SearchResult> {
 
     private Documents<R> documentsInBoth;
-    private Documents<R> documentsInFirst;
-    private Documents<R> documentsInSecond;
+    private Documents<R> documentsOnlyInFirst;
+    private Documents<R> documentsOnlyInSecond;
 
     private String firstQueryStateToken;
     private String secondQueryStateToken;
-    private String documentsInFirstStateToken;
-    private String documentsInSecondStateToken;
+    private String documentsOnlyInFirstStateToken;
+    private String documentsOnlyInSecondStateToken;
 }

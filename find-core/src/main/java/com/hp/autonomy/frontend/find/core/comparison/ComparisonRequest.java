@@ -24,10 +24,10 @@ public class ComparisonRequest<S extends Serializable> implements Serializable {
 
     private final QueryRestrictions<S> firstRestrictions;
     private final QueryRestrictions<S> secondRestrictions;
-    private final String firstQueryToken;
-    private final String secondQueryToken;
-    private final String firstDifferenceToken;
-    private final String secondDifferenceToken;
+    private final String firstQueryStateToken;
+    private final String secondQueryStateToken;
+    private final String documentsOnlyInFirstStateToken;
+    private final String documentsOnlyInSecondStateToken;
     private final int resultsStart;
     private final int maxResults;
     private final String summary;
@@ -37,10 +37,10 @@ public class ComparisonRequest<S extends Serializable> implements Serializable {
     private ComparisonRequest(final Builder<S> builder) {
         firstRestrictions = builder.firstRestrictions;
         secondRestrictions = builder.secondRestrictions;
-        firstQueryToken = builder.firstQueryToken;
-        secondQueryToken = builder.secondQueryToken;
-        firstDifferenceToken = builder.firstDifferenceStateToken;
-        secondDifferenceToken = builder.secondDifferenceStateToken;
+        firstQueryStateToken = builder.firstQueryStateToken;
+        secondQueryStateToken = builder.secondQueryStateToken;
+        documentsOnlyInFirstStateToken = builder.documentsOnlyInFirstStateToken;
+        documentsOnlyInSecondStateToken = builder.documentsOnlyInSecondStateToken;
         resultsStart = builder.resultsStart;
         maxResults = builder.maxResults;
         summary = builder.summary;
@@ -54,10 +54,10 @@ public class ComparisonRequest<S extends Serializable> implements Serializable {
     public static class Builder<S extends Serializable> {
         private QueryRestrictions<S> firstRestrictions;
         private QueryRestrictions<S> secondRestrictions;
-        private String firstQueryToken;
-        private String secondQueryToken;
-        private String firstDifferenceStateToken;
-        private String secondDifferenceStateToken;
+        private String firstQueryStateToken;
+        private String secondQueryStateToken;
+        private String documentsOnlyInFirstStateToken;
+        private String documentsOnlyInSecondStateToken;
         private int resultsStart = 1;
         private int maxResults;
         private String summary;
