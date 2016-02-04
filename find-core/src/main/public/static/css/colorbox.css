@@ -48,6 +48,7 @@
     overflow: initial;
 }
 
+#cboxLoadedContent audio,
 #cboxLoadedContent video {
     display: block;
 }
