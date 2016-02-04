@@ -722,7 +722,7 @@ input.find-input {
 }
 
 .search-text {
-    font-weight: bold
+    font-family: Metric-Bold;
 }
 
 .also-searching-for,
