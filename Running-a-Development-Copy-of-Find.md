@@ -8,7 +8,9 @@ For the purposes of this guide, we're assuming that you've already cloned Find f
 
 ## Step One: Compile and Install the modules
 
-- `mvn clean install`
+- `mvn install`
+
+It's important to run the `install` step, as this "installs" the modules to your local Maven repository.  This makes the `find-core` module available for `find-idol` and `find-hod` to use as a dependency.
 
 ## Step Two: Use Spring Boot to run a local server
 
