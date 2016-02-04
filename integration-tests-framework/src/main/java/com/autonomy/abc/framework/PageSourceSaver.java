@@ -22,7 +22,7 @@ public class PageSourceSaver {
         try {
             PrintStream out = new PrintStream(new FileOutputStream(dest));
             out.print(driver.getPageSource());
-            LOGGER.info("Saved page source: " + dest.getAbsolutePath());
+            LOGGER.error("Saved page source: " + dest.getAbsolutePath());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
