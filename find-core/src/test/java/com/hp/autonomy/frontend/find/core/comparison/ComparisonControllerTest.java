@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
@@ -45,8 +47,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     @Test
     public void compareStateTokens() throws E {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryToken(MOCK_STATE_TOKEN_1)
-                .setSecondQueryToken(MOCK_STATE_TOKEN_2)
+                .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
+                .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
 
         comparisonController.compare(comparisonRequest);
@@ -56,7 +58,7 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     @Test
     public void compareTokenAndRestriction() throws E {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryToken(MOCK_STATE_TOKEN_1)
+                .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
@@ -68,7 +70,7 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     public void compareRestrictionAndToken() throws E {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
                 .setFirstRestrictions(queryRestrictions)
-                .setSecondQueryToken(MOCK_STATE_TOKEN_2)
+                .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
 
         comparisonController.compare(comparisonRequest);
@@ -89,10 +91,10 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     @Test
     public void compareDiffStateTokens() throws E {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryToken(MOCK_STATE_TOKEN_1)
-                .setSecondQueryToken(MOCK_STATE_TOKEN_2)
-                .setFirstDifferenceStateToken(MOCK_STATE_TOKEN_DIFF_1)
-                .setSecondDifferenceStateToken(MOCK_STATE_TOKEN_DIFF_2)
+                .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
+                .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
+                .setDocumentsOnlyInFirstStateToken(MOCK_STATE_TOKEN_DIFF_1)
+                .setDocumentsOnlyInSecondStateToken(MOCK_STATE_TOKEN_DIFF_2)
                 .build();
 
         comparisonController.compare(comparisonRequest);
@@ -102,11 +104,25 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
     @Test(expected = IllegalArgumentException.class)
     public void compareDifferenceTokenWithoutQueryTokenThrows() throws E {
         final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryToken(MOCK_STATE_TOKEN_1)
-                .setFirstDifferenceStateToken(MOCK_STATE_TOKEN_DIFF_1)
-                .setSecondDifferenceStateToken(MOCK_STATE_TOKEN_DIFF_2)
+                .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
+                .setDocumentsOnlyInFirstStateToken(MOCK_STATE_TOKEN_DIFF_1)
+                .setDocumentsOnlyInSecondStateToken(MOCK_STATE_TOKEN_DIFF_2)
                 .build();
 
         comparisonController.compare(comparisonRequest);
+    }
+
+    @Test
+    public void getResults() throws E {
+        final List<String> stateMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_1);
+        final List<String> stateDontMatchIds = Collections.singletonList(MOCK_STATE_TOKEN_2);
+        final int start = 3;
+        final int maxResults = 6;
+        final String summary = "context";
+        final String sort = "relevance";
+        final boolean highlight = true;
+
+        comparisonController.getResults(stateMatchIds, stateDontMatchIds, start, maxResults, summary, sort, highlight);
+        verify(comparisonService).getResults(eq(stateMatchIds), eq(stateDontMatchIds), eq(start), eq(maxResults), eq(summary), eq(sort), eq(highlight));
     }
 }

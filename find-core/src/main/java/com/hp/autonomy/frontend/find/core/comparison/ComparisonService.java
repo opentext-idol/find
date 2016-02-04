@@ -6,6 +6,9 @@
 package com.hp.autonomy.frontend.find.core.comparison;
 
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.types.requests.Documents;
+
+import java.util.List;
 
 
 public interface ComparisonService<R extends SearchResult, E extends Exception> {
@@ -27,4 +30,12 @@ public interface ComparisonService<R extends SearchResult, E extends Exception> 
                                      final String summary,
                                      final String sort,
                                      final boolean highlight) throws E;
+
+    Documents<R> getResults(final List<String> stateMatchIds,
+                            final List<String> stateDontMatchIds,
+                            final int resultsStart,
+                            final int maxResults,
+                            final String summary,
+                            final String sort,
+                            final boolean highlight) throws E;
 }
