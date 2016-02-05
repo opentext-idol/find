@@ -116,11 +116,13 @@ define([
             this.view = new SavedSearchControlView({
                 savedSearchModel: this.savedSearchModel,
                 queryModel: this.queryModel,
-                datesFilterModel: datesFilterModel,
-                queryTextModel: queryTextModel,
                 savedSearchCollection: this.savedSearchCollection,
-                selectedIndexesCollection: selectedIndexes,
-                selectedParametricValues: selectedParametricValues
+                queryState: {
+                    selectedIndexes: selectedIndexes,
+                    selectedParametricValues: selectedParametricValues,
+                    datesFilterModel: datesFilterModel,
+                    queryTextModel: queryTextModel
+                }
             });
 
             this.view.render();

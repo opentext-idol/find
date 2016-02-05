@@ -51,10 +51,12 @@ define([
 
             this.collection = new FiltersCollection([], {
                 queryModel: this.queryModel,
-                datesFilterModel: this.datesFilterModel,
                 indexesCollection: this.indexesCollection,
-                selectedIndexesCollection: this.selectedIndexesCollection,
-                selectedParametricValues: this.selectedParametricValues
+                queryState: {
+                    datesFilterModel: this.datesFilterModel,
+                    selectedIndexes: this.selectedIndexesCollection,
+                    selectedParametricValues: this.selectedParametricValues
+                }
             });
         });
 

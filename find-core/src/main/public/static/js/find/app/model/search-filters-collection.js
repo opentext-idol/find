@@ -58,10 +58,11 @@ define([
     // this currently can't be done for the selected databases because the databases view isn't backed by a collection.
     return Backbone.Collection.extend({
         initialize: function(models, options) {
-            this.datesFilterModel = options.datesFilterModel;
             this.indexesCollection = options.indexesCollection;
-            this.selectedIndexesCollection = options.selectedIndexesCollection;
-            this.selectedParametricValues = options.selectedParametricValues;
+
+            this.datesFilterModel = options.queryState.datesFilterModel;
+            this.selectedIndexesCollection = options.queryState.selectedIndexes;
+            this.selectedParametricValues = options.queryState.selectedParametricValues;
 
             this.listenTo(this.selectedParametricValues, 'add remove', this.updateParametricSelection);
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
