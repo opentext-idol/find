@@ -160,7 +160,7 @@ define([
 
                 describe('then the user enters and saves a title', function() {
                     var TITLE = 'Star Wars';
-                    var TYPE = 'query';
+                    var TYPE = SavedSearchModel.Type.QUERY;
 
                     beforeEach(function() {
                         this.view.$('.search-title-input-container .search-title-input').val(TITLE).trigger('input');

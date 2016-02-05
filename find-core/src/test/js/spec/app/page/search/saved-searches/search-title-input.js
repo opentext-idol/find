@@ -5,11 +5,12 @@
 
 define([
     'find/app/page/search/saved-searches/search-title-input',
+    'find/app/model/saved-searches/saved-search-model',
     'i18n!find/nls/bundle',
     'backbone',
     'underscore',
     'jquery'
-], function(SearchTitleInput, i18n, Backbone, _, $) {
+], function(SearchTitleInput, SavedSearchModel, i18n, Backbone, _, $) {
 
     describe('Search title input', function() {
         var INITIAL_TITLE = 'Initial Title';
@@ -106,7 +107,7 @@ define([
 
             describe('when the save button is clicked when there is a new title', function() {
                 var NEW_TITLE = 'My Search';
-                var NEW_TYPE = 'query';
+                var NEW_TYPE = SavedSearchModel.Type.QUERY;
 
                 beforeEach(function() {
                     this.view.$('.search-title-input').val('  ' + NEW_TITLE).trigger('input');

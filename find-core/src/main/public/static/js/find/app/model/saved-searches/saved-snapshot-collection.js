@@ -5,10 +5,11 @@ define([
 
     return Backbone.Collection.extend({
         url: '../api/public/saved-snapshot',
+
         model: SavedSearchModel.extend({
-            defaults: {
-                type: 'snapshot'
-            }
+            defaults: _.defaults({
+                type: SavedSearchModel.Type.SNAPSHOT
+            }, SavedSearchModel.prototype.defaults)
         })
     });
 

@@ -5,14 +5,21 @@
 
 define([
     'backbone',
+    'underscore',
     'jquery',
     'text!find/templates/app/page/search/saved-searches/search-title-input.html',
     'find/app/model/saved-searches/saved-search-model',
     'i18n!find/nls/bundle',
     'iCheck'
-], function(Backbone, $, template, SavedSearchModel, i18n) {
+], function(Backbone, _, $, template, SavedSearchModel, i18n) {
 
-    var html = _.template(template)({i18n: i18n});
+    var html = _.template(template)({
+        i18n: i18n,
+        savedSearchTypes: [
+            SavedSearchModel.Type.QUERY,
+            SavedSearchModel.Type.SNAPSHOT
+        ]
+    });
 
     // The initial title for an unsaved search should be blank, not "New Title"
     function resolveCurrentTitle(savedSearchModel) {
@@ -54,12 +61,13 @@ define([
                 error: null,
                 loading: false,
                 title: resolveCurrentTitle(this.savedSearchModel),
-                type: 'query'
+                type: SavedSearchModel.Type.QUERY
             });
 
             this.listenTo(this.model, 'change:error', this.updateError);
             this.listenTo(this.model, 'change:loading', this.updateLoading);
             this.listenTo(this.model, 'change:title', this.updateTitle);
+            this.listenTo(this.model, 'change:type', this.updateType);
         },
 
         render: function() {
@@ -69,9 +77,9 @@ define([
             this.updateError();
             this.updateLoading();
             this.updateTitle();
-            this.$('.i-check').iCheck({
-                radioClass: 'iradio-hp'
-            })
+            this.updateType();
+
+            this.$('.i-check').iCheck({radioClass: 'iradio-hp'});
         },
 
         updateError: function() {
@@ -88,6 +96,11 @@ define([
 
         updateTitle: function() {
             this.$('.search-title-input').val(this.model.get('title'));
+        },
+
+        updateType: function() {
+            var type = this.model.get('type');
+            this.$('[name="saved-search-type"][value="' + type + '"]').iCheck('check');
         },
 
         saveTitle: function() {
@@ -109,10 +122,7 @@ define([
                 });
 
                 this.saveCallback(
-                    {
-                        title: title,
-                        type: type
-                    },
+                    {title: title, type: type},
                     _.bind(function() {
                         this.trigger('remove');
                     }, this),

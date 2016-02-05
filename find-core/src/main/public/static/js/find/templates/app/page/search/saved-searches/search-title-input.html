@@ -4,14 +4,12 @@
             <input class="search-title-input form-control" placeholder="<%- i18n['search.savedSearchControl.nameSearch'] %>" type="text"/>
         </div>
     </form>
-    <label class="radio-inline i-check">
-        <input type="radio" checked value="query" name="optionsRadios">
-        <%- i18n['search.savedSearchControl.query'] %>
-    </label>
-    <label class="radio-inline i-check">
-        <input type="radio" value="snapshot"  name="optionsRadios">
-        <%- i18n['search.savedSearchControl.snapshot'] %>
-    </label>
+    <% _.each(savedSearchTypes, function(type) { %>
+        <label class="radio-inline i-check">
+            <input type="radio" value="<%- type %>" name="saved-search-type">
+            <%- i18n['search.savedSearchControl.searchType.' + type] %>
+        </label>
+    <% }) %>
     <div class="m-t-xs">
         <span class="search-title-error-message col-md-6"></span>
         <span class="col-md-6">

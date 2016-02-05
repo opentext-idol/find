@@ -73,7 +73,7 @@ define([
                         queryText: this.searchModel.get('inputText'),
                         relatedConcepts: this.searchModel.get('relatedConcepts'),
                         title: i18n['search.newSearch'],
-                        type: 'query'
+                        type: SavedSearchModel.Type.QUERY
                     });
 
                     this.savedQueryCollection.add(newSearch);
