@@ -106,6 +106,7 @@ define([
 
             describe('when the save button is clicked when there is a new title', function() {
                 var NEW_TITLE = 'My Search';
+                var NEW_TYPE = 'query';
 
                 beforeEach(function() {
                     this.view.$('.search-title-input').val('  ' + NEW_TITLE).trigger('input');
@@ -118,7 +119,7 @@ define([
 
                 it('calls the save callback with the trimmed title, a success and an error callback', function() {
                     expect(this.saveCallback).toHaveBeenCalled();
-                    expect(this.saveCallback.calls.argsFor(0)).toEqual([NEW_TITLE, jasmine.any(Function), jasmine.any(Function)]);
+                    expect(this.saveCallback.calls.argsFor(0)).toEqual([{title: NEW_TITLE, type: NEW_TYPE}, jasmine.any(Function), jasmine.any(Function)]);
                 });
 
                 it('disables the input', function() {

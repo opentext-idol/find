@@ -39,7 +39,7 @@ define([
             'ifChecked .i-check': function(event) {
                 this.model.set({
                     error: null,
-                    type: event.target.value
+                    type: $(event.target).val()
                 });
             }
         },

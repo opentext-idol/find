@@ -81,6 +81,10 @@ define([
                 relatedConcepts: ['Copenhagen']
             });
 
+            var documentsCollection = new Backbone.Collection({
+                totalResults: 50
+            });
+
             var selectedIndexes = new DatabasesCollection([
                 {name: 'Wikipedia', domain: 'PUBLIC'}
             ]);
@@ -118,6 +122,7 @@ define([
                 queryModel: this.queryModel,
                 datesFilterModel: datesFilterModel,
                 queryTextModel: queryTextModel,
+                documentsCollection: documentsCollection,
                 savedSearchCollection: this.savedSearchCollection,
                 selectedIndexesCollection: selectedIndexes,
                 selectedParametricValues: selectedParametricValues
@@ -153,6 +158,7 @@ define([
 
                 describe('then the user enters and saves a title', function() {
                     var TITLE = 'Star Wars';
+                    var TYPE = 'query';
 
                     beforeEach(function() {
                         this.view.$('.search-title-input-container .search-title-input').val(TITLE).trigger('input');
@@ -162,6 +168,7 @@ define([
                     it('saves the model with the title', function() {
                         expect(this.savedSearchModel.save.calls.count()).toBe(1);
                         expect(this.savedSearchModel.save.calls.argsFor(0)[0].title).toBe(TITLE);
+                        expect(this.savedSearchModel.save.calls.argsFor(0)[0].type).toBe(TYPE);
                     });
                 });
 

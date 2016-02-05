@@ -218,7 +218,7 @@ define([
                         };
 
                         if (titleEditState === TitleEditState.SAVE_AS && savedState !== SavedState.NEW) {
-                            this.savedSearchModel.create(attributes, saveOptions)
+                            this.savedSearchCollection.create(attributes, saveOptions)
                         } else {
                             this.savedSearchModel.save(attributes, saveOptions);
                         }
