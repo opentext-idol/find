@@ -139,8 +139,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
         searchPage.waitForSynonymsLoadingIndicatorToDisappear();
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        Waits.loadOrFadeWait();
+
+        keywordsPage = keywordService.goToKeywords();
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
         new WebDriverWait(getDriver(), 20).until(ExpectedConditions.visibilityOf(keywordsPage.selectLanguageButton()));
         //assertEquals("Blacklist has been created in the wrong language", "French", keywordsPage.getSelectedLanguage());
@@ -176,10 +176,9 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
         new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        Waits.loadOrFadeWait();
-        keywordsPage.filterView(KeywordFilter.SYNONYMS);
 
+        keywordsPage = keywordService.goToKeywords();
+        keywordsPage.filterView(KeywordFilter.SYNONYMS);
         keywordsPage.selectLanguage(Language.ENGLISH);
 
         assertThat("Synonym, group not complete", keywordsPage.getSynonymGroupSynonyms("lodge"), hasItems("lodge", "dodge", "podge"));
@@ -200,7 +199,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         for (final String synonym : synonymListBears) {
             assertThat(synonym + " not included in title", PageUtil.getPageTitle(getDriver()),containsString(synonym));
             assertThat(synonym + " not included in 'You searched for' section", searchPage.youSearchedFor(),hasItem(synonym));
-            verifyThat(synonym + " synonym group complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym),containsItems(synonymListBears));
+            verifyThat(synonym + " synonym group complete in 'Keywords' section", searchPage.getSynonymGroupSynonyms(synonym), containsItems(synonymListBears));
             verifyThat(searchPage.countSynonymLists(), is(1));
             verifyThat(searchPage.countKeywords(), is(synonymListBears.size()));
         }
@@ -224,10 +223,10 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
             assertEquals(3, searchPage.countKeywords());
         }
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        Waits.loadOrFadeWait();
+        keywordsPage = keywordService.goToKeywords();
         keywordsPage.selectLanguage(Language.ENGLISH);
         keywordsPage.filterView(KeywordFilter.SYNONYMS);
+
         assertEquals(1, keywordsPage.countSynonymLists());
         assertEquals(3, keywordsPage.countKeywords());
 
@@ -328,8 +327,8 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         houses.add("residence");
         assertThat("New synonym has not been added to the group", searchPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        Waits.loadOrFadeWait();
+        keywordsPage = keywordService.goToKeywords();
+
         keywordsPage.filterView(KeywordFilter.ALL);
         assertThat("New synonym has not been added to the group", keywordsPage.getSynonymGroupSynonyms("house"), containsItems(houses));
 
@@ -366,8 +365,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         verifyThat("Synonym has been deleted", searchPage.getSynonymGroupSynonyms("house"), not(hasItem("residence")));
         verifyThat("3 synonyms deleted", searchPage.getSynonymGroupSynonyms("house"), hasItem("home"));
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        Waits.loadOrFadeWait();
+        keywordsPage = keywordService.goToKeywords();
         keywordsPage.filterView(KeywordFilter.ALL);
         assertThat("Synonyms have been removed from the group", keywordsPage.getSynonymGroupSynonyms("house"), hasItems("home", "house"));
 
@@ -398,7 +396,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         searchPage.selectLanguage(Language.FRENCH);
         verifyThat("synonyms do not appear on search page for wrong language", searchPage.countSynonymLists(), is(0));
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        keywordsPage = keywordService.goToKeywords();
         keywordsPage.filterView(KeywordFilter.ALL);
 
         keywordsPage.selectLanguage(Language.FRENCH);
@@ -459,8 +457,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
 
         getDriver().navigate().refresh();
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage = getElementFactory().getKeywordsPage();
+        keywordsPage = keywordService.goToKeywords();
         assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
 
         keywordsPage = keywordService.addBlacklistTerms(blacklistTwo);

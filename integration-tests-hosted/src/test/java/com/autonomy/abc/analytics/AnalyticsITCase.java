@@ -54,8 +54,7 @@ public class AnalyticsITCase extends HostedTestBase {
     }
 
     private void goToAnalytics() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-        analytics = getElementFactory().getAnalyticsPage();
+        analytics = getApplication().switchTo(AnalyticsPage.class);
     }
 
     @Test

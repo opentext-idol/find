@@ -7,11 +7,10 @@ import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.FindSearchResult;
@@ -54,9 +53,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
     @Test
     public void testPromotionToFind() throws InterruptedException {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-
-        AnalyticsPage analyticsPage = getElementFactory().getAnalyticsPage();
+        AnalyticsPage analyticsPage = getApplication().switchTo(AnalyticsPage.class);
 
         String searchTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
         String trigger = "Trigger";
@@ -97,9 +94,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         promotionService.deleteAll();
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-        keywordsPage.deleteKeywords();
+        keywordService.deleteAll(KeywordFilter.ALL);
     }
 
 }

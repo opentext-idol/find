@@ -15,7 +15,8 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.util.Errors;
@@ -68,8 +69,8 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-2020")
     public void testPieChartLink(){
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-        getElementFactory().getAnalyticsPage().indexSizeChart().click();
+        AnalyticsPage analyticsPage = getApplication().switchTo(AnalyticsPage.class);
+        analyticsPage.indexSizeChart().click();
 
         verifyThat(PageUtil.getWrapperContent(getDriver()), not(containsText(Errors.Index.INVALID_INDEX)));
     }
@@ -100,8 +101,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     public void testConnectionsIndex(){
         Connector connector = new WebConnector("http://www.bbc.co.uk", "bbc", testIndex).withDuration(60);
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-        getElementFactory().getConnectionsPage().newConnectionButton().click();
+        getApplication().switchTo(ConnectionsPage.class).newConnectionButton().click();
 
         NewConnectionPage newConnectionPage = getElementFactory().getNewConnectionPage();
 

@@ -4,7 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.Pagination;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
@@ -81,7 +81,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
             verifyThat(promotedDocs, hasItem(equalToIgnoringCase(docTitle)));
         }
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getApplication().switchTo(KeywordsPage.class);
         searchPage = searchService.search("edit");
         searchPage.promoteTheseDocumentsButton().click();
         searchPage.addToBucket(3);
@@ -105,7 +105,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         final List<String> finalPromotionsBucketList = editReferencesPage.promotionsBucketList();
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getApplication().switchTo(KeywordsPage.class);
         searchPage = searchService.search("fast");
         searchPage.promoteTheseDocumentsButton().click();
 

@@ -2,7 +2,6 @@ package com.autonomy.abc.connections.wizard;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
@@ -34,9 +33,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-
-        connectionsPage = getElementFactory().getConnectionsPage();
+        connectionsPage = getApplication().switchTo(ConnectionsPage.class);
         connectionsPage.newConnectionButton().click();
 
         newConnectionPage = getElementFactory().getNewConnectionPage();

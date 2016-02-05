@@ -147,8 +147,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         assertThat("search for 1 synonym after creating synonym group", searchTerms, hasSize(1));
         assertThat(searchTerms.get(0), isIn(Arrays.asList("stuff", "horse", "pony", "things")));
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
+        keywordsPage = keywordService.goToKeywords();
         keywordsPage.filterView(KeywordFilter.ALL);
 
         keywordsPage.selectLanguage(Language.FRENCH);
@@ -467,14 +466,10 @@ public class KeywordsWizardITCase extends ABCTestBase {
         String unrelated = "unrelated";
 
         keywordService.addSynonymGroup(existingSynonyms);
-
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        getElementFactory().getKeywordsPage();
-
+        keywordsPage = keywordService.goToKeywords();
         goToSynonymWizardPage();
 
         triggerForm = createKeywordsPage.getTriggerForm();
-
         triggerForm.addTrigger(duplicate);
         verifyExistingGroups(duplicate, 1);
 
@@ -482,10 +477,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.finishWizardButton().click();
 
         getElementFactory().getSearchPage();
-
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        getElementFactory().getKeywordsPage();
-
+        keywordsPage = keywordService.goToKeywords();
         goToSynonymWizardPage();
 
         triggerForm.addTrigger(duplicate);

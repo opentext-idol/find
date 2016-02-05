@@ -9,13 +9,14 @@ import com.autonomy.abc.selenium.connections.Credentials;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -42,8 +43,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
     public void setUp() {
         connectionService = getApplication().connectionService();
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-        connectionsPage = getElementFactory().getConnectionsPage();
+        connectionsPage = connectionService.goToConnections();
     }
 
     @Test
@@ -54,14 +54,12 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
         String url = getDriver().getCurrentUrl();
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-        getElementFactory().getAnalyticsPage();
+        getApplication().switchTo(AnalyticsPage.class);
 
         navigateToConnectionViaURL(url);
 
         //For completeness try from both halves of the application
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        getElementFactory().getKeywordsPage();
+        getApplication().switchTo(KeywordsPage.class);
 
         navigateToConnectionViaURL(url);
     }
@@ -122,9 +120,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
                 indexService.setUpIndex(new Index("index two"));
             } catch (Exception e) { /* couldn't create an index */  }
 
-            getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-
-            connectionsPage = getElementFactory().getConnectionsPage();
+            connectionsPage = connectionService.goToConnections();
             connectionsPage.newConnectionButton().click();
 
             newConnectionPage = getElementFactory().getNewConnectionPage();
