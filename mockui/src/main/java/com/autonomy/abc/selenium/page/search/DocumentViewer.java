@@ -86,6 +86,11 @@ public class DocumentViewer extends AppElement implements AppPage {
         return Integer.parseInt(current[current.length - 3]);
     }
 
+    public int getTotalDocumentsNumber() {
+        String[] current = findElement(By.id("cboxCurrent")).getText().split(" ");
+        return Integer.parseInt(current[current.length - 1]);
+    }
+
     @Override
     public void waitForLoad() {
         Waits.loadOrFadeWait();
