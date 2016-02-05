@@ -5,10 +5,9 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import org.junit.After;
@@ -29,7 +28,7 @@ import static org.hamcrest.core.Is.is;
 
 public class CreateStaticPromotionsITCase extends HostedTestBase {
     private HSOCreateNewPromotionsPage createPromotionsPage;
-    private PromotionService promotionService;
+    private HSOPromotionService promotionService;
     private Wizard wizard;
     private TriggerForm triggerForm;
 
@@ -48,10 +47,10 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        getElementFactory().getPromotionsPage().staticPromotionButton().click();
-        createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         promotionService = getApplication().promotionService();
+
+        promotionService.goToPromotions().staticPromotionButton().click();
+        createPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
     }
 
     @After

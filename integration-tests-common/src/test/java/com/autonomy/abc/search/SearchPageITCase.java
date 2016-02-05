@@ -11,9 +11,9 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
@@ -831,7 +831,7 @@ public class SearchPageITCase extends ABCTestBase {
 		search(searchText);
 
 		// Change to promotions page since the search page will persist the query in the URL
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getApplication().switchTo(PromotionsPage.class);
 
 		getDriver().navigate().refresh();
 		final String newSearchText = getElementFactory().getTopNavBar().getSearchBarText();

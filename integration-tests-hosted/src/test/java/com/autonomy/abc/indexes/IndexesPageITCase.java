@@ -12,12 +12,12 @@ import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.IndexFilter;
@@ -61,9 +61,9 @@ public class IndexesPageITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        indexesPage = getElementFactory().getIndexesPage();
         indexService = getApplication().indexService();
+
+        indexesPage = indexService.goToIndexes();
     }
 
     @Test
@@ -97,9 +97,7 @@ public class IndexesPageITCase extends HostedTestBase {
             getDriver().findElement(By.cssSelector(".modal-footer [type=button]")).click();
         }
 
-        //Navigate to indexes
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage indexesPage = getElementFactory().getIndexesPage();
+        indexesPage = indexService.goToIndexes();
 
         //Make sure default index is still there
         assertThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getDisplayName()));
@@ -109,9 +107,9 @@ public class IndexesPageITCase extends HostedTestBase {
     //Potentially should be in ConnectionsPageITCase
     @KnownBug("CSA-1710")
     public void testAttemptingToDeleteConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-        ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
         ConnectionService connectionService = getApplication().connectionService();
+
+        ConnectionsPage connectionsPage = connectionService.goToConnections();
 
         //Create connector; index will be automatically set to 'bbc'
         WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
@@ -130,9 +128,7 @@ public class IndexesPageITCase extends HostedTestBase {
             LOGGER.warn("Error deleting index");
         }
 
-        //Navigate to Indexes
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage indexesPage = getElementFactory().getIndexesPage();
+        indexesPage = indexService.goToIndexes();
 
         //Ensure the index wasn't deleted
         assertThat(indexesPage.getIndexDisplayNames(), hasItem(index.getName()));
@@ -238,11 +234,9 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     public void testDeletingSearchDefaultIndex(){
         indexService.deleteIndexViaAPICalls(new Index("search_default_index"), getCurrentUser(), config.getApiUrl());
-
         getDriver().navigate().refresh();
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
-        verifyThat(getElementFactory().getPromotionsPage(), containsText("There are no promotions..."));
+        verifyThat(getApplication().switchTo(PromotionsPage.class), containsText("There are no promotions..."));
     }
 
     @Test

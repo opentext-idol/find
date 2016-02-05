@@ -11,7 +11,6 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.Notification;
 import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
@@ -153,9 +152,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     @KnownBug({"CSA-1698", "CSA-1687"})
     public void testUsernameShowsInNotifications() throws Exception {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
-
-        HSODevelopersPage hsoDevelopersPage = getElementFactory().getDevsPage();
+        HSODevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODevelopersPage.class);
         User dev = new User(null, hsoDevelopersPage.getUsernames().get(0));
 
         String devUsername = "Brendon Urie";

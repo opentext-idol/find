@@ -4,7 +4,6 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
@@ -161,8 +160,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 		assertThat("promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage.getPromotionLinkWithTitleContaining("magic").click();
+		promotionService.goToDetails("magic");
 		promotionsDetailPage = elementFactory.getPromotionsDetailPage();
 		promotionsDetailPage.schedulePromotion();
 		Waits.loadOrFadeWait();
@@ -287,8 +285,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 		assertThat("promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage.getPromotionLinkWithTitleContaining("chips").click();
+		promotionService.goToDetails("chips");
 		elementFactory.getPromotionsDetailPage().schedulePromotion();
 		schedulePage = elementFactory.getSchedulePage();
 		Waits.loadOrFadeWait();

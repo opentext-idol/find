@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.indexes.wizard.IndexConfigStepTab;
 import com.autonomy.abc.selenium.page.indexes.wizard.IndexNameWizardStepTab;
 import com.autonomy.abc.selenium.util.Errors;
@@ -34,9 +35,7 @@ public class IndexWizardITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-
-        getElementFactory().getIndexesPage().newIndexButton().click();
+        getApplication().switchTo(IndexesPage.class).newIndexButton().click();
         createNewIndexPage = getElementFactory().getCreateNewIndexPage();
     }
 
