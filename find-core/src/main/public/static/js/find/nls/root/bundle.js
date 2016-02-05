@@ -113,6 +113,8 @@ define([
         'search.savedSearchControl.openEdit.edit': 'Save As',
         'search.savedSearchControl.update': 'Save',
         'search.savedSearchControl.nameSearch': 'Name your search',
+        'search.savedSearchControl.query': 'Query',
+        'search.savedSearchControl.snapshot': 'Snapshot',
         'search.savedSearchControl.cancelSave': 'Cancel',
         'search.savedSearchControl.error': 'Error saving search',
         'search.savedSearchControl.rename': 'Rename',

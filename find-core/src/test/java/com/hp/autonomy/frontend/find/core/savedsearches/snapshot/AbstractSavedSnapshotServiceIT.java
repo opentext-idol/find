@@ -48,7 +48,8 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
 
         // Mimic how the update method is likely to be called - with an entity without a user
         final SavedSnapshot updateInputEntity = new SavedSnapshot.Builder()
-                .setTitle(title)
+                .setStateToken(Collections.singletonList("fgh"))
+                .setTitle("blah")
                 .setId(entity.getId())
                 .setQueryText("cat")
                 .build();
@@ -58,7 +59,7 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
 
         final Set<SavedSnapshot> fetchedEntities = savedSnapshotService.getAll();
         assertEquals(fetchedEntities.size(), 1);
-        assertEquals(fetchedEntities.iterator().next().getTitle(), title);
+        assertEquals(fetchedEntities.iterator().next().getTitle(), "blah");
 
         savedSnapshotService.deleteById(updatedEntity.getId());
         assertEquals(savedSnapshotService.getAll().size(), 0);

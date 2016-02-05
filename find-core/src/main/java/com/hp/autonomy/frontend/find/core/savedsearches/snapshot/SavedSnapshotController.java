@@ -5,6 +5,7 @@ import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldAndValue;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
@@ -49,18 +47,20 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
         return service.create(
                 new SavedSnapshot.Builder(snapshot)
                         .setStateToken(Collections.singletonList(getStateToken(snapshot)))
+                        .setResultCount(snapshot.getResultCount())
                         .build()
         );
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public SavedSnapshot update(
             @PathVariable("id") final long id,
             @RequestBody final SavedSnapshot snapshot
     ) throws E {
         return service.update(
                 new SavedSnapshot.Builder(snapshot)
-                        .setStateToken(Collections.singletonList(getStateToken(snapshot)))
+                        .setStateToken(new ArrayList<>(Arrays.asList(getStateToken(snapshot))))
+                        .setResultCount(snapshot.getResultCount())
                         .setId(id)
                         .build()
         );
@@ -87,7 +87,7 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
         if(matchNodes.size() == 0) return "";
 
         final FieldText fieldtext = matchNodes.get(0);
-        for(int ii = 1; ii <= matchNodes.size();) {
+        for(int ii = 1; ii < matchNodes.size();) {
             fieldtext.AND(matchNodes.get(ii));
         }
 

@@ -134,6 +134,7 @@ define([
             }, this), 500));
 
             this.savedSearchControlView = new SavedSearchControlView({
+                documentsCollection: this.documentsCollection,
                 savedSearchModel: this.savedSearchModel,
                 savedSearchCollection: this.savedSearchCollection,
                 queryModel: this.queryModel,

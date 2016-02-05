@@ -4,8 +4,12 @@ define([
 ], function(Backbone, SavedSearchModel) {
 
     return Backbone.Collection.extend({
-        url: '../api/public/saved-query',
-        model: SavedSearchModel
+        url: '../api/public/saved-snapshot',
+        model: SavedSearchModel.extend({
+            defaults: {
+                type: 'snapshot'
+            }
+        })
     });
 
 });

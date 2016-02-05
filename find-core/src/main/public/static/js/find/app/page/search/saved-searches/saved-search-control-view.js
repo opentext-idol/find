@@ -116,6 +116,7 @@ define([
         initialize: function(options) {
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
+            this.documentsCollection = options.documentsCollection;
 
             this.queryState = {
                 datesFilterModel: options.datesFilterModel,
@@ -205,10 +206,10 @@ define([
             if (titleEditState !== TitleEditState.OFF && this.titleInput === null) {
                 this.titleInput = new SearchTitleInput({
                     savedSearchModel: this.savedSearchModel,
-                    saveCallback: _.bind(function(title, success, error) {
+                    saveCallback: _.bind(function(args, success, error) {
                         var savedState = this.model.get('savedState');
                         var titleEditState = this.model.get('titleEditState');
-                        var attributes = _.extend({title: title}, SavedSearchModel.attributesFromQueryState(this.queryState));
+                        var attributes = _.extend(args, SavedSearchModel.attributesFromQueryState(this.queryState), {resultCount: this.documentsCollection.totalResults});
 
                         var saveOptions = {
                             error: error,
@@ -217,7 +218,7 @@ define([
                         };
 
                         if (titleEditState === TitleEditState.SAVE_AS && savedState !== SavedState.NEW) {
-                            this.savedSearchCollection.create(attributes, saveOptions);
+                            this.savedSearchModel.save(attributes, saveOptions)
                         } else {
                             this.savedSearchModel.save(attributes, saveOptions);
                         }

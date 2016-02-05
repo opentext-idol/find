@@ -10,7 +10,9 @@ define([
     'find/app/model/indexes-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
-    'find/app/model/saved-searches/saved-search-collection',
+    'find/app/model/saved-searches/all-saved-searches-collection',
+    'find/app/model/saved-searches/saved-query-collection',
+    'find/app/model/saved-searches/saved-snapshot-collection',
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/query-text-model',
@@ -19,7 +21,7 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection,
+], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, savedSearchCollection, SavedQueryCollection, SavedSnapshotCollection,
             addChangeListener, SavedSearchModel, QueryTextModel, router, vent, i18n, _, template) {
 
     'use strict';
@@ -36,8 +38,16 @@ define([
         ServiceView: null,
 
         initialize: function() {
-            this.savedSearchCollection = new SavedSearchCollection();
-            this.savedSearchCollection.fetch({remove: false});
+            this.savedQueryCollection = new SavedQueryCollection();
+            this.savedQueryCollection.fetch({remove: false});
+
+            this.savedSnapshotCollection = new SavedSnapshotCollection();
+            this.savedSnapshotCollection.fetch({remove: false});
+
+            this.savedSearchCollection = new savedSearchCollection([], {
+                queryCollection: this.savedQueryCollection,
+                snapshotCollection: this.savedSnapshotCollection
+            });
 
             this.indexesCollection = new IndexesCollection();
             this.indexesCollection.fetch();
@@ -62,11 +72,18 @@ define([
                     var newSearch = new SavedSearchModel({
                         queryText: this.searchModel.get('inputText'),
                         relatedConcepts: this.searchModel.get('relatedConcepts'),
-                        title: i18n['search.newSearch']
+                        title: i18n['search.newSearch'],
+                        type: 'query'
                     });
 
-                    this.savedSearchCollection.add(newSearch);
+                    this.savedQueryCollection.add(newSearch);
                     this.searchModel.set('selectedSearchCid', newSearch.cid);
+                }
+            });
+
+            this.listenTo(this.savedSearchCollection, 'add', function (model) {
+                if (this.searchModel.get('selectedCid') === null) {
+                    this.searchModel.set('selectedCid', model.cid);
                 }
             });
 
@@ -85,7 +102,7 @@ define([
                 delete this.serviceViews[cid];
 
                 if (this.searchModel.get('selectedSearchCid') === cid) {
-                    var lastModel = this.savedSearchCollection.last();
+                    var lastModel = this.savedQueryCollection.last();
 
                     if (lastModel) {
                         this.searchModel.set('selectedSearchCid', lastModel.cid);

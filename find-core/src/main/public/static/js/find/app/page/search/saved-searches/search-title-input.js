@@ -8,7 +8,8 @@ define([
     'jquery',
     'text!find/templates/app/page/search/saved-searches/search-title-input.html',
     'find/app/model/saved-searches/saved-search-model',
-    'i18n!find/nls/bundle'
+    'i18n!find/nls/bundle',
+    'iCheck'
 ], function(Backbone, $, template, SavedSearchModel, i18n) {
 
     var html = _.template(template)({i18n: i18n});
@@ -34,6 +35,12 @@ define([
                     error: null,
                     title: $(event.target).val()
                 });
+            },
+            'ifChecked .i-check': function(event) {
+                this.model.set({
+                    error: null,
+                    type: event.target.value
+                });
             }
         },
 
@@ -46,7 +53,8 @@ define([
             this.model = new Backbone.Model({
                 error: null,
                 loading: false,
-                title: resolveCurrentTitle(this.savedSearchModel)
+                title: resolveCurrentTitle(this.savedSearchModel),
+                type: 'query'
             });
 
             this.listenTo(this.model, 'change:error', this.updateError);
@@ -61,6 +69,9 @@ define([
             this.updateError();
             this.updateLoading();
             this.updateTitle();
+            this.$('.i-check').iCheck({
+                radioClass: 'iradio-hp'
+            })
         },
 
         updateError: function() {
@@ -81,6 +92,7 @@ define([
 
         saveTitle: function() {
             var title = this.model.get('title').trim();
+            var type = this.model.get('type');
 
             if (title === '') {
                 this.model.set({
@@ -97,7 +109,10 @@ define([
                 });
 
                 this.saveCallback(
-                    title,
+                    {
+                        title: title,
+                        type: type
+                    },
                     _.bind(function() {
                         this.trigger('remove');
                     }, this),
