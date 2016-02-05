@@ -50,6 +50,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -973,8 +974,18 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testNoResults(){
         find.search("thissearchwillalmostcertainlyreturnnoresults");
-
         verifyThat(results.resultsDiv(), containsText("No results found"));
+
+        scrollToBottom();
+        int i = 0;
+        Pattern p = Pattern.compile("results found");
+        java.util.regex.Matcher m = p.matcher(results.resultsDiv().getText());
+
+        while(m.find()){
+            i++;
+        }
+
+        verifyThat("Only one message showing at the bottom of search results", i, is(1));
     }
 
     private void scrollToBottom() {
