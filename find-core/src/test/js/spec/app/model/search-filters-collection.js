@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
@@ -34,13 +39,9 @@ define([
                 minDate: INITIAL_MIN_DATE
             });
 
-            this.queryModel.hasAnyChangedAttributes = function() {
-                return true;
-            };
-
             this.datesFilterModel = new Backbone.Model({
-                dateRange: DatesFilterModel.dateRange.custom,
-                minDate: INITIAL_MIN_DATE
+                dateRange: DatesFilterModel.DateRange.CUSTOM,
+                customMinDate: INITIAL_MIN_DATE
             });
 
             this.selectedParametricValues = new SelectedParametricValues([
@@ -61,20 +62,20 @@ define([
         });
 
         it('contains a min date filter model', function() {
-            var model = this.collection.get(FiltersCollection.FilterTypes.minDate);
+            var model = this.collection.get(FiltersCollection.FilterType.MIN_DATE);
             expect(model).toBeDefined();
             expect(model.get('text')).toContain(INITIAL_MIN_DATE.format(DATE_FORMAT));
         });
 
         it('contains a databases filter model', function() {
-            var model = this.collection.get(FiltersCollection.FilterTypes.indexes);
+            var model = this.collection.get(FiltersCollection.FilterType.INDEXES);
             expect(model).toBeDefined();
             expect(model.get('text')).toContain(WIKI_ENG.name);
             expect(model.get('text')).not.toContain(WOOKIEPEDIA.name);
         });
 
         it('contains an AGE parametric field filter model', function() {
-            var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC});
+            var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC});
             expect(model).toBeDefined();
             expect(model.get('field')).toBe('AGE');
             expect(model.get('text')).toContain('4');
@@ -87,8 +88,8 @@ define([
                 this.queryModel.set('maxDate', this.maxDate);
 
                 this.datesFilterModel.set({
-                    dateRange: DatesFilterModel.dateRange.custom,
-                    maxDate: this.maxDate
+                    dateRange: DatesFilterModel.DateRange.CUSTOM,
+                    customMaxDate: this.maxDate
                 });
             });
 
@@ -97,7 +98,7 @@ define([
             });
 
             it('contains a max date filter model with the correct date', function() {
-                var model = this.collection.get(FiltersCollection.FilterTypes.maxDate);
+                var model = this.collection.get(FiltersCollection.FilterType.MAX_DATE);
                 expect(model).toBeDefined();
                 expect(model.get('text')).toContain(i18n['app.until']);
                 expect(model.get('text')).toContain(moment(this.maxDate).format(DATE_FORMAT));
@@ -109,8 +110,8 @@ define([
                 this.minDate = moment(INITIAL_MIN_DATE).subtract(2, 'days');
 
                 this.datesFilterModel.set({
-                    dateRange: DatesFilterModel.dateRange.custom,
-                    minDate: this.minDate
+                    dateRange: DatesFilterModel.DateRange.CUSTOM,
+                    customMinDate: this.minDate
                 });
 
                 this.queryModel.set('minDate', this.minDate);
@@ -121,9 +122,52 @@ define([
             });
 
             it('updates the min date filter model', function() {
-                var model = this.collection.get(FiltersCollection.FilterTypes.minDate);
+                var model = this.collection.get(FiltersCollection.FilterType.MIN_DATE);
                 expect(model.get('text')).toContain(i18n['app.from']);
                 expect(model.get('text')).toContain(moment(this.minDate).format(DATE_FORMAT));
+            });
+        });
+
+        describe('after datesFilterModel has dateRange set to WEEK', function() {
+            beforeEach(function() {
+                this.datesFilterModel.set('dateRange', DatesFilterModel.DateRange.WEEK);
+            });
+
+            it('contains three models', function() {
+                expect(this.collection.length).toBe(3);
+            });
+
+            it('removes the min date model', function() {
+                expect(this.collection.get(FiltersCollection.FilterType.MIN_DATE)).toBeUndefined();
+            });
+
+            it('adds a date range model', function() {
+                var model = this.collection.get(FiltersCollection.FilterType.DATE_RANGE);
+                expect(model.get('text')).toContain(i18n['search.dates.timeInterval.' + DatesFilterModel.DateRange.WEEK]);
+            });
+        });
+
+        describe('after datesFilterModel has dateRange set to null', function() {
+            beforeEach(function() {
+                this.datesFilterModel.set('dateRange', null);
+            });
+
+            it('contains two models', function() {
+                expect(this.collection.length).toBe(2);
+            });
+
+            it('removes the min date model', function() {
+                expect(this.collection.get(FiltersCollection.FilterType.MIN_DATE)).toBeUndefined();
+            });
+        });
+
+        describe('after the min date filter model is removed', function() {
+            beforeEach(function() {
+                this.collection.remove(FiltersCollection.FilterType.MIN_DATE);
+            });
+
+            it('sets the datesFilterModel customMinDate attribute to null', function() {
+                expect(this.datesFilterModel.get('customMinDate')).toBeNull();
             });
         });
 
@@ -137,7 +181,7 @@ define([
             });
 
             it('removes the databases filter model', function() {
-                expect(this.collection.get(FiltersCollection.FilterTypes.indexes)).toBeUndefined();
+                expect(this.collection.get(FiltersCollection.FilterType.INDEXES)).toBeUndefined();
             });
 
             describe('then a database is deselected', function() {
@@ -150,7 +194,7 @@ define([
                 });
 
                 it('adds a databases filter model', function() {
-                    var model = this.collection.get(FiltersCollection.FilterTypes.indexes);
+                    var model = this.collection.get(FiltersCollection.FilterType.INDEXES);
                     expect(model).toBeDefined();
                     expect(model.get('text')).toContain(WOOKIEPEDIA.name);
                     expect(model.get('text')).not.toContain(WIKI_ENG.name);
@@ -175,7 +219,7 @@ define([
 
         describe('after the parametric filter model is removed', function() {
             beforeEach(function() {
-                this.collection.remove(this.collection.where({type: FiltersCollection.FilterTypes.PARAMETRIC}));
+                this.collection.remove(this.collection.where({type: FiltersCollection.FilterType.PARAMETRIC}));
             });
 
             it('removes the associated model from the selected parametric values collection', function() {
@@ -185,7 +229,7 @@ define([
 
         describe('after the indexes filter model is removed', function() {
             beforeEach(function() {
-                this.collection.remove(this.collection.where({type: FiltersCollection.FilterTypes.indexes}));
+                this.collection.remove(this.collection.where({type: FiltersCollection.FilterType.INDEXES}));
             });
 
             it('selects all of the indexes', function() {
@@ -206,7 +250,7 @@ define([
             });
 
             it('contains a NAME parametric filter model', function() {
-                var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC,  field: 'NAME'});
+                var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC,  field: 'NAME'});
                 expect(model).toBeDefined();
                 expect(model.get('text')).toContain('bobby');
                 expect(model.get('text')).toContain('penny');
@@ -222,7 +266,7 @@ define([
                 });
 
                 it('removes the deselected field value from the NAME parametric filter model', function() {
-                    var model = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'});
+                    var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'});
                     expect(model.get('text')).toContain('bobby');
                     expect(model.get('text')).not.toContain('penny');
                 });
@@ -238,7 +282,7 @@ define([
                 });
 
                 it('removes the AGE filter model', function() {
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'})).toBeUndefined();
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'AGE'})).toBeUndefined();
                 });
             });
 
@@ -254,10 +298,10 @@ define([
                 });
 
                 it('replaces all parametric filter models with one representing the new field', function() {
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'})).toBeUndefined();
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'})).toBeUndefined();
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'AGE'})).toBeUndefined();
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'})).toBeUndefined();
 
-                    var vehicleModel = this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'VEHICLE'});
+                    var vehicleModel = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'VEHICLE'});
                     expect(vehicleModel).toBeDefined();
                     expect(vehicleModel.get('text')).toContain('car');
                 });
@@ -265,7 +309,7 @@ define([
 
             describe('then the AGE filter model is removed', function() {
                 beforeEach(function() {
-                    this.collection.remove(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'AGE'}));
+                    this.collection.remove(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'AGE'}));
                 });
 
                 it('contains three models', function() {
@@ -273,7 +317,7 @@ define([
                 });
 
                 it('still contains the NAME parametric filter model', function() {
-                    expect(this.collection.findWhere({type: FiltersCollection.FilterTypes.PARAMETRIC, field: 'NAME'})).toBeDefined();
+                    expect(this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'})).toBeDefined();
                 });
             });
         });

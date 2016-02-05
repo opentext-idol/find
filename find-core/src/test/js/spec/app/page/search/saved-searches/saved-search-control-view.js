@@ -8,11 +8,12 @@ define([
     'jquery',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/model/saved-searches/saved-search-model',
+    'find/app/model/dates-filter-model',
     'find/app/util/confirm-view',
     'databases-view/js/databases-collection',
     'moment',
     'i18n!find/nls/bundle'
-], function(Backbone, $, SavedSearchControlView, SavedSearchModel, MockConfirmView, DatabasesCollection, moment, i18n) {
+], function(Backbone, $, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MockConfirmView, DatabasesCollection, moment, i18n) {
 
     function testDeactivatesTheSaveSearchButton() {
         it('deactivates the "Save Search" button', function() {
@@ -71,14 +72,13 @@ define([
 
     describe('SavedSearchControlView', function() {
         beforeEach(function() {
-            var queryModel = new Backbone.Model({
-                minDate: undefined,
-                maxDate: undefined
+            this.queryModel = new Backbone.Model({
+                queryText: 'cat AND Copenhagen'
             });
 
             var queryTextModel = new Backbone.Model({
                 inputText: 'cat',
-                relatedConcepts: 'Copenhagen'
+                relatedConcepts: ['Copenhagen']
             });
 
             var selectedIndexes = new DatabasesCollection([
@@ -89,8 +89,14 @@ define([
                 {field: 'WIKIPEDIA_CATEGORY', value: 'Concepts in Physics'}
             ]);
 
+            var datesFilterModel = new DatesFilterModel({
+                dateRange: null,
+                customMinDate: null,
+                customMaxDate: null
+            });
+
             this.queryState = {
-                queryModel: queryModel,
+                datesFilterModel: datesFilterModel,
                 queryTextModel: queryTextModel,
                 selectedIndexes: selectedIndexes,
                 selectedParametricValues: selectedParametricValues
@@ -109,7 +115,8 @@ define([
 
             this.view = new SavedSearchControlView({
                 savedSearchModel: this.savedSearchModel,
-                queryModel: queryModel,
+                queryModel: this.queryModel,
+                datesFilterModel: datesFilterModel,
                 queryTextModel: queryTextModel,
                 savedSearchCollection: this.savedSearchCollection,
                 selectedIndexesCollection: selectedIndexes,
@@ -358,7 +365,8 @@ define([
                 var MIN_DATE = 15000;
 
                 beforeEach(function() {
-                    this.queryState.queryModel.set('minDate', moment(MIN_DATE));
+                    this.queryState.queryTextModel.set({inputText: 'archipelago'});
+                    this.queryModel.set('queryText', 'archipelago');
                 });
 
                 it('shows the save button', function() {
@@ -381,8 +389,8 @@ define([
                     it('saves the new query on the saved search model', function() {
                         expect(this.savedSearchModel.save).toHaveBeenCalled();
 
-                        var savedMinDate = this.savedSearchModel.save.calls.argsFor(0)[0].minDate;
-                        expect(savedMinDate.valueOf()).toBe(MIN_DATE);
+                        var savedAttributes = this.savedSearchModel.save.calls.argsFor(0)[0];
+                        expect(savedAttributes.queryText).toBe('archipelago');
                     });
 
                     it('disables the save button', function() {
@@ -437,7 +445,8 @@ define([
                         });
 
                         it('restores the original query state', function() {
-                            expect(this.queryState.queryModel.get('minDate')).toBeUndefined();
+                            expect(this.queryState.queryTextModel.get('inputText')).toBe('cat');
+                            expect(this.queryState.queryTextModel.get('relatedConcepts')).toEqual(['Copenhagen']);
                         });
                     });
                 });

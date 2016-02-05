@@ -101,17 +101,23 @@ define([
             // TODO: Check if the index still exists?
             this.selectedIndexesCollection = new IndexesCollection(initialSelectedIndexes);
 
-            this.queryModel = new QueryModel(_.extend({
-                queryText: this.queryTextModel.makeQueryText(),
-                indexes: buildQueryModelIndexes(this.selectedIndexesCollection),
-                fieldText: this.selectedParametricValues.toFieldTextNode() || null
-            }, this.savedSearchModel.toQueryModelAttributes()));
+            this.datesFilterModel = new DatesFilterModel(this.savedSearchModel.toDatesFilterModelAttributes());
+
+            this.queryModel = new QueryModel(
+                _.extend({
+                    queryText: this.queryTextModel.makeQueryText(),
+                    indexes: buildQueryModelIndexes(this.selectedIndexesCollection),
+                    fieldText: this.selectedParametricValues.toFieldTextNode() || null
+                }, this.datesFilterModel.toQueryModelAttributes())
+            );
 
             this.listenTo(this.queryTextModel, 'change', function() {
                 this.queryModel.set('queryText', this.queryTextModel.makeQueryText());
             });
 
-            this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
+            this.listenTo(this.datesFilterModel, 'change', function() {
+                this.queryModel.set(this.datesFilterModel.toQueryModelAttributes());
+            });
 
             this.filtersCollection = new this.SearchFiltersCollection([], {
                 queryModel: this.queryModel,
@@ -132,6 +138,7 @@ define([
                 savedSearchCollection: this.savedSearchCollection,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryTextModel,
+                datesFilterModel: this.datesFilterModel,
                 selectedIndexesCollection: this.selectedIndexesCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
@@ -179,8 +186,7 @@ define([
 
             // Left Views
             this.filterDisplayView = new FilterDisplayView({
-                collection: this.filtersCollection,
-                datesFilterModel: this.datesFilterModel
+                collection: this.filtersCollection
             });
 
             this.parametricView = new ParametricView({

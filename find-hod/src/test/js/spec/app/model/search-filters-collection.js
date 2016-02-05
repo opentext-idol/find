@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
@@ -25,6 +30,7 @@ define([
     };
 
     var INITIAL_MIN_DATE = moment();
+
     describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function () {
         beforeEach(function () {
             this.indexesCollection = new DatabasesCollection([WOOKIEPEDIA, WIKI_ENG]);
@@ -34,13 +40,9 @@ define([
                 minDate: INITIAL_MIN_DATE
             });
 
-            this.queryModel.hasAnyChangedAttributes = function () {
-                return true;
-            };
-
             this.datesFilterModel = new Backbone.Model({
-                dateRange: DatesFilterModel.dateRange.custom,
-                minDate: INITIAL_MIN_DATE
+                dateRange: DatesFilterModel.DateRange.CUSTOM,
+                customMinDate: INITIAL_MIN_DATE
             });
 
             this.selectedParametricValues = new SelectedParametricValues([
@@ -57,7 +59,7 @@ define([
         });
 
         it('contains a databases filter model', function () {
-            var model = this.collection.get(FiltersCollection.FilterTypes.indexes);
+            var model = this.collection.get(FiltersCollection.FilterType.INDEXES);
             expect(model).toBeDefined();
             expect(model.get('text')).toContain(WIKI_ENG.displayName);
             expect(model.get('text')).not.toContain(WOOKIEPEDIA.displayName);

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'underscore',
@@ -6,11 +11,12 @@ define([
     'js-whatever/js/filtering-collection',
     'find/app/model/parametric-collection',
     'find/app/page/search/filters/parametric/parametric-field-view',
+    'find/app/util/model-any-changed-attribute-listener',
     'fieldtext/js/field-text-parser',
     'parametric-refinement/display-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function(Backbone, _, $, ListView, FilteringCollection, ParametricCollection, FieldView, parser, DisplayCollection, i18n, template) {
+], function(Backbone, _, $, ListView, FilteringCollection, ParametricCollection, FieldView, addChangeListener, parser, DisplayCollection, i18n, template) {
 
     var DEBOUNCE_WAIT_MILLISECONDS = 500;
 
@@ -109,12 +115,7 @@ define([
                 }
             }
 
-            this.listenTo(this.queryModel, 'change', function() {
-                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'])) {
-                    fetch.call(this);
-                }
-            }, this);
-
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'], fetch);
             fetch.call(this);
         },
 
