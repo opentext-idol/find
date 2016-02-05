@@ -45,6 +45,6 @@ class PageMapper<T extends Enum<T> & PageMapper.Page> {
     }
 
     interface SwitchStrategy<T> {
-        void switchTo(T context);
+        void switchUsing(T context);
     }
 }

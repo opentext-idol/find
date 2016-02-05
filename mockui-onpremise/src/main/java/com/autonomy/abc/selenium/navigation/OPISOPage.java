@@ -70,7 +70,7 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
 
 
     @Override
-    public void switchTo(SOElementFactory context) {
-        switchStrategy.switchTo(context);
+    public void switchUsing(SOElementFactory context) {
+        switchStrategy.switchUsing(context);
     }
 }

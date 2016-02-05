@@ -7,7 +7,6 @@ import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
@@ -63,7 +62,7 @@ public abstract class SOElementFactory extends ElementFactoryBase {
     }
 
     protected void handleSwitch(Class<? extends AppPage> pageType) {
-        switchMapper.get(pageType).switchTo(this);
+        switchMapper.get(pageType).switchUsing(this);
     }
 
     static class SideNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
@@ -74,7 +73,7 @@ public abstract class SOElementFactory extends ElementFactoryBase {
         }
 
         @Override
-        public void switchTo(SOElementFactory context) {
+        public void switchUsing(SOElementFactory context) {
             context.getSideNavBar().switchPage(tab);
         }
     }

@@ -88,7 +88,7 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
     }
 
     @Override
-    public void switchTo(SOElementFactory context) {
-        switchStrategy.switchTo(context);
+    public void switchUsing(SOElementFactory context) {
+        switchStrategy.switchUsing(context);
     }
 }
