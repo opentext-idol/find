@@ -6,7 +6,6 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Container;
 import com.autonomy.abc.selenium.page.analytics.ContainerItem;

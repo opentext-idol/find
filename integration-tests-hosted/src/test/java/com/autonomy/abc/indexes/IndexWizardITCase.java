@@ -7,7 +7,6 @@ import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.indexes.wizard.IndexConfigStepTab;
