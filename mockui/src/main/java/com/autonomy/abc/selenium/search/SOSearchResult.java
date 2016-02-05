@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.page.search.SearchBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,39 +12,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SOSearchResult extends SearchResult {
-    private final Index index;
-    private final float weight;
-    private Date date;
+    private WebDriver driver;
 
     public SOSearchResult(WebElement result, WebDriver driver){
         super(result);
         this.driver = driver;
+    }
 
-        title = result.findElement(By.cssSelector("h3 a"));
-        icon = result.findElement(By.cssSelector(".result-icon a"));
+    @Override
+    public WebElement title() {
+        return result.findElement(By.cssSelector("h3 a"));
+    }
 
-        index = new Index(result.findElement(By.className("index")).getText().split(":")[1].trim());
-        weight = Float.parseFloat(result.findElement(By.className("weight")).getText().split(" ")[1]);
-
-        final String dateString = result.findElement(By.cssSelector(".date")).getText();
-
-        if (dateString.isEmpty()) {
-            date = null;
-        } else {
-            try {
-                date = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm").parse(dateString.split(", ")[1]);
-            } catch (ParseException e) {
-                date = null;
-            }
-        }
+    @Override
+    public WebElement getIcon() {
+        return result.findElement(By.cssSelector(".result-icon a"));
     }
 
     public Index getIndex() {
-        return index;
+        return new Index(result.findElement(By.className("index")).getText().split(":")[1].trim());
     }
 
     public float getWeight() {
-        return weight;
+        return Float.parseFloat(result.findElement(By.className("weight")).getText().split(" ")[1]);
     }
 
     public WebElement trashCan() {
@@ -51,6 +42,15 @@ public class SOSearchResult extends SearchResult {
     }
 
     public Date getDate() {
+        Date date = null;
+        final String dateString = result.findElement(By.cssSelector(".date")).getText();
+        if (!dateString.isEmpty()) {
+            try {
+                date = SearchBase.RESULT_DATE_FORMAT.parse(dateString.split(", ")[1]);
+            } catch (ParseException e) {
+                /* NOOP */
+            }
+        }
         return date;
     }
 

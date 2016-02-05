@@ -22,7 +22,7 @@ public abstract class SearchResult {
     }
 
     public String getTitleString(){
-        return title.getText();
+        return title().getText();
     }
 
     public String getDescription() {
