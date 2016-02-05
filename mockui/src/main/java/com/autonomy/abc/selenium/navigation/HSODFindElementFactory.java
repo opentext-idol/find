@@ -21,13 +21,6 @@ public class HSODFindElementFactory extends ElementFactoryBase {
         return loadPage(FindPage.class);
     }
 
-    @Override
-    protected void handleSwitch(NavBarTabId tab) {
-        if (tab != null) {
-            throw new UnsupportedOperationException("no tabs on Find");
-        }
-    }
-
     private enum Page implements PageMapper.Page {
         LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
             @Override

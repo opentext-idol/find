@@ -56,12 +56,7 @@ public abstract class SOElementFactory extends ElementFactoryBase {
         return super.getDriver();
     }
 
-    @Override
-    protected void handleSwitch(NavBarTabId tab) {
-        getSideNavBar().switchPage(tab);
-    }
-
-    protected void handleSwitch(Class<? extends AppPage> pageType) {
+    public void handleSwitch(Class<? extends AppPage> pageType) {
         switchMapper.get(pageType).switchUsing(this);
     }
 

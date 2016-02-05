@@ -33,7 +33,7 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
     }
 
     public <S extends AppPage> S switchTo(Class<S> pageType) {
-        elementFactory().switchTo(pageType);
+        elementFactory().handleSwitch(pageType);
         return elementFactory().loadPage(pageType);
     }
 

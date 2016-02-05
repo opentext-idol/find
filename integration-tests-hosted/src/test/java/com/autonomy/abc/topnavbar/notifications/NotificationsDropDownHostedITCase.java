@@ -241,7 +241,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     private void navigateAndVerifyNotifications(Class<? extends AppPage> page, List<Notification> notifications) {
-        getElementFactory().switchTo(page);
+        getApplication().switchTo(page);
         logger.info("on page " + page);
 
         getElementFactory().getTopNavBar().openNotifications();

@@ -27,11 +27,6 @@ public class DevConsoleElementFactory extends ElementFactoryBase {
         return loadPage(DevConsoleHomePage.class);
     }
 
-    @Override
-    protected void handleSwitch(NavBarTabId tab) {
-        throw new UnsupportedOperationException("no tabs on dev console");
-    }
-
     private enum Page implements PageMapper.Page {
         LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
             @Override

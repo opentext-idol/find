@@ -17,13 +17,6 @@ public abstract class ElementFactoryBase {
         return driver;
     }
 
-    protected abstract void handleSwitch(NavBarTabId tab);
-
-    public <T extends AppPage> T switchTo(Class<T> type) {
-        handleSwitch(mapper.getId(type));
-        return loadPage(type);
-    }
-
     public <T extends AppPage> T loadPage(Class<T> type) {
         return mapper.load(type, getDriver());
     }
