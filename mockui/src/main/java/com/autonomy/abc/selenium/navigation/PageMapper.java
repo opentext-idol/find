@@ -21,6 +21,10 @@ class PageMapper<T extends Enum<T> & PageMapper.Page> {
         }
     }
 
+    T get(Class<?> type) {
+        return typeMap.get(type);
+    }
+
     public NavBarTabId getId(Class<?> type) {
         return typeMap.get(type).getId();
     }

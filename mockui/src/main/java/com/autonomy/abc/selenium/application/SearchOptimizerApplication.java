@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.SafeClassLoader;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -29,6 +30,11 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
 
     public SearchService searchService() {
         return new SearchService(this);
+    }
+
+    public <S extends AppPage> S switchTo(Class<S> pageType) {
+        elementFactory().switchTo(pageType);
+        return elementFactory().loadPage(pageType);
     }
 
     public static SearchOptimizerApplication<?> ofType(ApplicationType type) {

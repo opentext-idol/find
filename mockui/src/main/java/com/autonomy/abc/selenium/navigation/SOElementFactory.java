@@ -7,16 +7,21 @@ import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
+import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
+import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
 public abstract class SOElementFactory extends ElementFactoryBase {
-    protected SOElementFactory(WebDriver driver, PageMapper<?> mapper) {
+    private PageMapper<? extends PageMapper.SwitchStrategy<? super SOElementFactory>> switchMapper;
+
+    protected SOElementFactory(WebDriver driver, PageMapper<? extends PageMapper.SwitchStrategy<? super SOElementFactory>> mapper) {
         super(driver, mapper);
+        switchMapper = mapper;
     }
 
     public abstract TopNavBar getTopNavBar();
@@ -55,6 +60,10 @@ public abstract class SOElementFactory extends ElementFactoryBase {
     @Override
     protected void handleSwitch(NavBarTabId tab) {
         getSideNavBar().switchPage(tab);
+    }
+
+    protected void handleSwitch(Class<? extends AppPage> pageType) {
+        switchMapper.get(pageType).switchTo(this);
     }
 
     static class SideNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
