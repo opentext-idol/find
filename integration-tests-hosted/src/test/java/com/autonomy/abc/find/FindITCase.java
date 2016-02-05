@@ -45,6 +45,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -915,13 +916,23 @@ public class FindITCase extends HostedTestBase {
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
-        ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight)");
-
-        verifyThat(results.findElement(By.className(FindResultsPage.Container.MIDDLE + "-container")).findElement(By.className("fa-spin")), displayed());
-
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-
+        scrollToBottom();
         verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(30), lessThanOrEqualTo(60)));
+
+        scrollToBottom();
+        verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90)));
+
+        List<String> titles = results.getResultTitles();
+        Set<String> titlesSet = new HashSet<>(titles);
+
+        verifyThat("No duplicate titles", titles.size(), is(titlesSet.size()));
+    }
+
+    private void scrollToBottom() {
+        for(int i = 0; i < 5; i++){
+            new Actions(getDriver()).sendKeys(Keys.PAGE_DOWN).perform();
+        }
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
     private enum FileType {
