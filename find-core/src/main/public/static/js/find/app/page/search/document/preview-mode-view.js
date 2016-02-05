@@ -4,9 +4,9 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'find/app/model/document-model',
-    'text!find/templates/app/page/search/preview-mode-view.html',
-    'text!find/templates/app/page/search/preview-mode-metadata.html',
-    'text!find/templates/app/page/search/preview-mode-document.html',
+    'text!find/templates/app/page/search/document/preview-mode-view.html',
+    'text!find/templates/app/page/search/document/preview-mode-metadata.html',
+    'text!find/templates/app/page/search/document/preview-mode-document.html',
     'text!find/templates/app/page/view/media-player.html'
 ], function(Backbone, _, $, i18n, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
     "use strict";

@@ -7,7 +7,7 @@ define([
     'find/app/model/similar-documents-collection',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
-    'find/app/page/search/preview-mode-view',
+    'find/app/page/search/document/preview-mode-view',
     'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
