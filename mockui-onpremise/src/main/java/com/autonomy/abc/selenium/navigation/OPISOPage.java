@@ -18,7 +18,7 @@ import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-enum OPISOPage implements PageMapper.Page {
+enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
     LOGIN(new OPLoginPage.Factory(), OPLoginPage.class),
 
     OVERVIEW(NavBarTabId.OVERVIEW, new OverviewPage.Factory(), OverviewPage.class),
@@ -40,6 +40,7 @@ enum OPISOPage implements PageMapper.Page {
 
     private final Class<?> pageType;
     private final NavBarTabId tabId;
+    private final PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
     private ParametrizedFactory<WebDriver, ?> factory;
 
     <T extends AppPage> OPISOPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
@@ -48,6 +49,7 @@ enum OPISOPage implements PageMapper.Page {
 
     <T extends AppPage> OPISOPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         tabId = tab;
+        switchStrategy = new SOElementFactory.SideNavStrategy(tab);
         pageType = type;
         this.factory = factory;
     }
@@ -64,5 +66,11 @@ enum OPISOPage implements PageMapper.Page {
 
     public Object loadAsObject(WebDriver driver) {
         return this.factory.create(driver);
+    }
+
+
+    @Override
+    public void switchTo(SOElementFactory context) {
+        switchStrategy.switchTo(context);
     }
 }

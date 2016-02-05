@@ -24,7 +24,7 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
-enum HSODPage implements PageMapper.Page {
+enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFactory> {
     LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
         @Override
         public HSOLoginPage create(WebDriver context) {
@@ -85,5 +85,10 @@ enum HSODPage implements PageMapper.Page {
     @Override
     public NavBarTabId getId() {
         return tabId;
+    }
+
+    @Override
+    public void switchTo(SOElementFactory context) {
+        switchStrategy.switchTo(context);
     }
 }
