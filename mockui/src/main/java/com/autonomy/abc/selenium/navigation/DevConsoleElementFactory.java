@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.navigation;
 
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
 import com.autonomy.abc.selenium.page.devconsole.HSODLandingPage;
 import com.autonomy.abc.selenium.page.login.DevConsoleHasLoggedIn;
@@ -48,11 +47,6 @@ public class DevConsoleElementFactory extends ElementFactoryBase {
         @Override
         public Class<?> getPageType() {
             return pageType;
-        }
-
-        @Override
-        public NavBarTabId getId() {
-            return null;
         }
 
         public Object loadAsObject(WebDriver driver) {

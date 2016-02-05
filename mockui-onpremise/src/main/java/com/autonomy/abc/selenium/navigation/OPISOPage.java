@@ -59,11 +59,6 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
         return pageType;
     }
 
-    @Override
-    public NavBarTabId getId() {
-        return tabId;
-    }
-
     public Object loadAsObject(WebDriver driver) {
         return this.factory.create(driver);
     }

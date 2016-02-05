@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.navigation;
 
 import com.autonomy.abc.selenium.find.FindPage;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
@@ -41,11 +40,6 @@ public class HSODFindElementFactory extends ElementFactoryBase {
         @Override
         public Class<?> getPageType() {
             return pageType;
-        }
-
-        @Override
-        public NavBarTabId getId() {
-            return null;
         }
 
         public Object loadAsObject(WebDriver driver) {

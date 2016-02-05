@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.navigation;
 
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
@@ -25,10 +24,6 @@ class PageMapper<T extends Enum<T> & PageMapper.Page> {
         return typeMap.get(type);
     }
 
-    public NavBarTabId getId(Class<?> type) {
-        return typeMap.get(type).getId();
-    }
-
     public <S extends AppPage> S load(Class<S> type, WebDriver driver) {
         if (type.isAssignableFrom(typeMap.get(type).getPageType())) {
             @SuppressWarnings("unchecked")
@@ -40,7 +35,6 @@ class PageMapper<T extends Enum<T> & PageMapper.Page> {
 
     interface Page {
         Class<?> getPageType();
-        NavBarTabId getId();
         Object loadAsObject(WebDriver driver);
     }
 

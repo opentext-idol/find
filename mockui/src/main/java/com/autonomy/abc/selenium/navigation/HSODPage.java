@@ -83,11 +83,6 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
     }
 
     @Override
-    public NavBarTabId getId() {
-        return tabId;
-    }
-
-    @Override
     public void switchUsing(SOElementFactory context) {
         switchStrategy.switchUsing(context);
     }
