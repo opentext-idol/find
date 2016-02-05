@@ -5,7 +5,6 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
@@ -33,8 +32,7 @@ public class KeywordService extends ServiceBase<SOElementFactory> {
     }
 
     public KeywordsPage goToKeywords() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        keywordsPage = getElementFactory().getKeywordsPage();
+        keywordsPage = getApplication().switchTo(KeywordsPage.class);
         return keywordsPage;
     }
 

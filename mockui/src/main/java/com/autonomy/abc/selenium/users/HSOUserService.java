@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.util.Waits;
@@ -21,9 +20,9 @@ public class HSOUserService extends UserService<HSODElementFactory> {
 
     @Override
     public HSOUsersPage goToUsers() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.USERS);
-        setUsersPage(getElementFactory().getUsersPage());
-        return getElementFactory().getUsersPage();
+        usersPage = getApplication().switchTo(HSOUsersPage.class);
+        setUsersPage(usersPage);
+        return usersPage;
     }
 
     @Override

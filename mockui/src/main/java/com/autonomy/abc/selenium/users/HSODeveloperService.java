@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.HSOApplication;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.util.Waits;
@@ -18,8 +17,7 @@ public class HSODeveloperService extends ServiceBase<HSODElementFactory> {
     }
 
     public HSODevelopersPage goToDevs(){
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.DEVELOPERS);
-        devsPage = getElementFactory().getDevsPage();
+        devsPage = getApplication().switchTo(HSODevelopersPage.class);
         return devsPage;
     }
 

@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.indexes;
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
@@ -25,8 +24,7 @@ public class IndexService extends ServiceBase<HSODElementFactory> {
     }
 
     public IndexesPage goToIndexes() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        indexesPage = getElementFactory().getIndexesPage();
+        indexesPage = getApplication().switchTo(IndexesPage.class);
         return indexesPage;
     }
 

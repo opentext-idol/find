@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.promotions;
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
@@ -29,8 +28,7 @@ public class PromotionService<T extends SOElementFactory> extends ServiceBase<T>
     }
 
     public PromotionsPage goToPromotions() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
+        promotionsPage = getApplication().switchTo(PromotionsPage.class);
         return promotionsPage;
     }
 

@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.HSOApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
@@ -30,9 +29,7 @@ public class ConnectionService extends ServiceBase<HSODElementFactory> {
     }
 
     public ConnectionsPage goToConnections() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-        connectionsPage = getElementFactory().getConnectionsPage();
-        return connectionsPage;
+        return getApplication().switchTo(ConnectionsPage.class);
     }
 
     public ConnectionsDetailPage goToDetails(final Connector connector) {
