@@ -2,16 +2,12 @@ define([
     'backbone',
     'underscore'
 ], function(Backbone, _) {
-    function AddModel (model) {
+    function addModel (model) {
         this.add(model);
     }
 
-    function RemoveModel (model) {
+    function removeModel (model) {
         this.remove(model);
-    }
-
-    function ResetCollection () {
-        this.reset();
     }
 
     return Backbone.Collection.extend({
@@ -23,15 +19,11 @@ define([
             this.queryCollection = options.queryCollection;
             this.snapshotCollection = options.snapshotCollection;
 
-            this.listenTo(this.queryCollection, 'add', AddModel);
-            this.listenTo(this.snapshotCollection, 'add', AddModel);
+            this.listenTo(this.queryCollection, 'add', addModel);
+            this.listenTo(this.snapshotCollection, 'add', addModel);
 
-            this.listenTo(this.queryCollection, 'remove', RemoveModel);
-            this.listenTo(this.snapshotCollection, 'remove', RemoveModel);
-
-            this.listenTo(this.queryCollection, 'reset', ResetCollection);
-
-            this.listenTo(this.snapshotCollection, 'reset', ResetCollection);
+            this.listenTo(this.queryCollection, 'remove', removeModel);
+            this.listenTo(this.snapshotCollection, 'remove', removeModel);
         },
 
         modelId: function(attrs) {

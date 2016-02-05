@@ -5,14 +5,9 @@ import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldAndValue;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.*;
@@ -47,7 +42,6 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
         return service.create(
                 new SavedSnapshot.Builder(snapshot)
                         .setStateToken(Collections.singletonList(getStateToken(snapshot)))
-                        .setResultCount(snapshot.getResultCount())
                         .build()
         );
     }
@@ -60,7 +54,6 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
         return service.update(
                 new SavedSnapshot.Builder(snapshot)
                         .setStateToken(new ArrayList<>(Arrays.asList(getStateToken(snapshot))))
-                        .setResultCount(snapshot.getResultCount())
                         .setId(id)
                         .build()
         );
