@@ -10,6 +10,7 @@ import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -19,5 +20,16 @@ public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<
     public void setUp() {
         documentsController = new HodDocumentsController(documentsService, queryRestrictionsBuilder);
         databaseType = ResourceIdentifier.class;
+    }
+
+
+    @Override
+    protected HodSearchResult sampleResult() {
+        return new HodSearchResult.Builder().build();
+    }
+
+    @Test(expected = HodErrorException.class)
+    public void getDocumentContentNotFound() throws HodErrorException {
+        documentsController.getDocumentContent("Some Reference", null);
     }
 }

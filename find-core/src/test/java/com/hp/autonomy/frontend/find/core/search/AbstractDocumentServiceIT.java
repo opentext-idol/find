@@ -6,43 +6,32 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import com.hp.autonomy.types.requests.Documents;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public abstract class AbstractDocumentServiceIT<S extends Serializable, R extends SearchResult, E extends Exception> extends AbstractFindIT {
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    protected DocumentsController<S, R, E> documentsController;
-
-    protected final List<S> indexes;
+@SuppressWarnings("ProhibitedExceptionDeclared")
+public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
     protected final String[] indexesArray;
 
-    protected AbstractDocumentServiceIT(final List<S> indexes) {
-        this.indexes = new ArrayList<>(indexes);
-
-        indexesArray = new String[indexes.size()];
-        int i = 0;
-        for (final S index : indexes) {
-            indexesArray[i++] = index.toString();
-        }
+    protected AbstractDocumentServiceIT(final String[] indexes) {
+        indexesArray = Arrays.copyOf(indexes, indexes.length);
     }
 
     @Test
     public void query() throws Exception {
-         mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", not(empty())));
@@ -50,7 +39,7 @@ public abstract class AbstractDocumentServiceIT<S extends Serializable, R extend
 
     @Test
     public void queryWithPagination() throws Exception {
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "51").param(DocumentsController.MAX_RESULTS_PARAM, "100").param(DocumentsController.AUTOCORRECT_PARAM, "false").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "51").param(DocumentsController.MAX_RESULTS_PARAM, "100").param(DocumentsController.AUTOCORRECT_PARAM, "false").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", not(empty())));
@@ -58,7 +47,7 @@ public abstract class AbstractDocumentServiceIT<S extends Serializable, R extend
 
     @Test
     public void queryForPromotions() throws Exception {
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.PROMOTIONS_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEX_PARAM, indexesArray))
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.PROMOTIONS_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEXES_PARAM, indexesArray))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.documents", empty()));
@@ -66,12 +55,38 @@ public abstract class AbstractDocumentServiceIT<S extends Serializable, R extend
 
     @Test
     public void findSimilar() throws Exception {
-        //TODO currently not making (many) assumptions about content we are querying so we don't know a valid reference in advance...
-        final Documents<R> documents = documentsController.query("*", 1, 50, null, indexes, null, null, null, null, false, false);
-        final String reference = documents.getDocuments().get(0).getReference();
-        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.SIMILAR_DOCUMENTS_PATH).param(DocumentsController.REFERENCE_PARAM, reference).param(DocumentsController.INDEXES_PARAM, indexesArray))
+        final String reference = getValidReference();
+
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.SIMILAR_DOCUMENTS_PATH).param(DocumentsController.REFERENCE_PARAM, reference).param(DocumentsController.INDEXES_PARAM, indexesArray).param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", not(empty())));
+                .andExpect(jsonPath("$.documents", not(empty())));
+    }
+
+    @Test
+    public void getDocumentContent() throws Exception {
+        final String reference = getValidReference();
+
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.GET_DOCUMENT_CONTENT_PATH).param(DocumentsController.REFERENCE_PARAM, reference).param(DocumentsController.DATABASE_PARAM, indexesArray[0]))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", not(nullValue())));
+    }
+
+    private String getValidReference() throws Exception {
+        final String[] reference = new String[1];
+        mockMvc.perform(get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*").param(DocumentsController.RESULTS_START_PARAM, "1").param(DocumentsController.MAX_RESULTS_PARAM, "50").param(DocumentsController.SUMMARY_PARAM, "context").param(DocumentsController.INDEXES_PARAM, indexesArray))
+                .andDo(new ResultHandler() {
+                    @SuppressWarnings("InnerClassTooDeeplyNested")
+                    @Override
+                    public void handle(final MvcResult result) throws Exception {
+                        final Pattern pattern = Pattern.compile(".+\"reference\"\\s+:\\s+\"(?<reference>[^\"]+)\".+");
+                        final Matcher matcher = pattern.matcher(result.getResponse().getContentAsString());
+                        if (matcher.find()) {
+                            reference[0] = matcher.group("reference");
+                        }
+                    }
+                });
+        return reference[0];
     }
 }

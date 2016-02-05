@@ -21,4 +21,9 @@ public class IdolDocumentsController extends DocumentsController<String, SearchR
     public IdolDocumentsController(final DocumentsService<String, SearchResult, AciErrorException> documentsService, final QueryRestrictionsBuilder<String> queryRestrictionsBuilder) {
         super(documentsService, queryRestrictionsBuilder);
     }
+
+    @Override
+    protected <T> T throwException(final String message) throws AciErrorException {
+        throw new AciErrorException(message);
+    }
 }

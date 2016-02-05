@@ -5,10 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
+import com.hp.autonomy.searchcomponents.core.search.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -18,7 +15,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.Serializable;
 import java.util.Collections;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractDocumentsControllerTest<S extends Serializable, R extends SearchResult, E extends Exception> {
@@ -30,6 +29,8 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, R 
 
     protected DocumentsController<S, R, E> documentsController;
     protected Class<S> databaseType;
+
+    protected abstract R sampleResult();
 
     @Test
     public void query() throws E {
@@ -54,5 +55,12 @@ public abstract class AbstractDocumentsControllerTest<S extends Serializable, R 
         final String reference = "SomeReference";
         documentsController.findSimilar(reference, Collections.<S>emptyList());
         verify(documentsService).findSimilar(Matchers.<SuggestRequest<S>>any());
+    }
+
+    @Test
+    public void getDocumentContent() throws E {
+        when(documentsService.getDocumentContent(Matchers.<GetContentRequest<S>>any())).thenReturn(Collections.singletonList(sampleResult()));
+        final String reference = "SomeReference";
+        assertNotNull(documentsController.getDocumentContent(reference, null));
     }
 }

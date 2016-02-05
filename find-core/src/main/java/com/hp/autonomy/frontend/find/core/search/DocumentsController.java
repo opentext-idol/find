@@ -26,12 +26,12 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String QUERY_PATH = "query-text-index/results";
     public static final String PROMOTIONS_PATH = "query-text-index/promotions";
     public static final String SIMILAR_DOCUMENTS_PATH = "similar-documents";
+    public static final String GET_DOCUMENT_CONTENT_PATH = "get-document-content";
 
     public static final String TEXT_PARAM = "text";
     public static final String RESULTS_START_PARAM = "start";
     public static final String MAX_RESULTS_PARAM = "max_results";
     public static final String SUMMARY_PARAM = "summary";
-    public static final String INDEX_PARAM = "index";
     public static final String FIELD_TEXT_PARAM = "field_text";
     public static final String SORT_PARAM = "sort";
     public static final String MIN_DATE_PARAM = "min_date";
@@ -40,6 +40,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String REFERENCE_PARAM = "reference";
     public static final String INDEXES_PARAM = "indexes";
     public static final String AUTOCORRECT_PARAM = "auto_correct";
+    public static final String DATABASE_PARAM = "database";
 
     public static final int FIND_SIMILAR_MAX_RESULTS = 3;
 
@@ -51,6 +52,8 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
         this.queryRestrictionsBuilder = queryRestrictionsBuilder;
     }
 
+    protected abstract <T> T throwException(final String message) throws E;
+
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
     @ResponseBody
@@ -58,7 +61,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                               @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
                               @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
                               @RequestParam(SUMMARY_PARAM) final String summary,
-                              @RequestParam(INDEX_PARAM) final List<S> index,
+                              @RequestParam(INDEXES_PARAM) final List<S> index,
                               @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
                               @RequestParam(value = SORT_PARAM, required = false) final String sort,
                               @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
@@ -76,7 +79,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                                            @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
                                            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
                                            @RequestParam(SUMMARY_PARAM) final String summary,
-                                           @RequestParam(INDEX_PARAM) final List<S> index,
+                                           @RequestParam(INDEXES_PARAM) final List<S> index,
                                            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
                                            @RequestParam(value = SORT_PARAM, required = false) final String sort,
                                            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
@@ -103,5 +106,16 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
         suggestRequest.setSummary("concept");
         suggestRequest.setMaxResults(FIND_SIMILAR_MAX_RESULTS);
         return documentsService.findSimilar(suggestRequest);
+    }
+
+    @RequestMapping(value = GET_DOCUMENT_CONTENT_PATH, method = RequestMethod.GET)
+    @ResponseBody
+    public R getDocumentContent(@RequestParam(REFERENCE_PARAM) final String reference,
+                                @RequestParam(DATABASE_PARAM) final S database) throws E {
+        final GetContentRequestIndex<S> getContentRequestIndex = new GetContentRequestIndex<>(database, Collections.singleton(reference));
+        final GetContentRequest<S> getContentRequest = new GetContentRequest<>(Collections.singleton(getContentRequestIndex));
+        final List<R> results = documentsService.getDocumentContent(getContentRequest);
+
+        return results.isEmpty() ? this.<R>throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);
     }
 }
