@@ -21,29 +21,29 @@ public class SOSearchResult extends SearchResult {
 
     @Override
     public WebElement title() {
-        return result.findElement(By.cssSelector("h3 a"));
+        return findElement(By.cssSelector("h3 a"));
     }
 
     @Override
     public WebElement getIcon() {
-        return result.findElement(By.cssSelector(".result-icon a"));
+        return findElement(By.cssSelector(".result-icon a"));
     }
 
     public Index getIndex() {
-        return new Index(result.findElement(By.className("index")).getText().split(":")[1].trim());
+        return new Index(findElement(By.className("index")).getText().split(":")[1].trim());
     }
 
     public float getWeight() {
-        return Float.parseFloat(result.findElement(By.className("weight")).getText().split(" ")[1]);
+        return Float.parseFloat(findElement(By.className("weight")).getText().split(" ")[1]);
     }
 
     public WebElement trashCan() {
-        return result.findElement(By.className("hp-trash"));
+        return findElement(By.className("hp-trash"));
     }
 
     public Date getDate() {
         Date date = null;
-        final String dateString = result.findElement(By.cssSelector(".date")).getText();
+        final String dateString = findElement(By.cssSelector(".date")).getText();
         if (!dateString.isEmpty()) {
             try {
                 date = SearchBase.RESULT_DATE_FORMAT.parse(dateString.split(", ")[1]);
@@ -55,6 +55,6 @@ public class SOSearchResult extends SearchResult {
     }
 
     public SOCheckbox getCheckbox(){
-        return new SOCheckbox(result.findElement(By.className("checkbox")), driver);
+        return new SOCheckbox(findElement(By.className("checkbox")), driver);
     }
 }

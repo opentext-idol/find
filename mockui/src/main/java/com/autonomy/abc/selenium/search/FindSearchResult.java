@@ -10,19 +10,19 @@ public class FindSearchResult extends SearchResult {
 
     @Override
     public WebElement title() {
-        return result.findElement(By.tagName("h4"));
+        return findElement(By.tagName("h4"));
     }
 
     @Override
     public WebElement getIcon() {
-        return result.findElement(By.cssSelector(".content-type i"));
+        return findElement(By.cssSelector(".content-type i"));
     }
 
     public String getReference() {
-        return result.findElement(By.className("document-reference")).getText();
+        return findElement(By.className("document-reference")).getText();
     }
 
     public WebElement similarDocuments() {
-        return result.findElement(By.className("similar-documents-trigger"));
+        return findElement(By.className("similar-documents-trigger"));
     }
 }

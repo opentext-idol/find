@@ -4,44 +4,40 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public abstract class SearchResult {
-    protected WebDriver driver;
-    protected WebElement result;
+import java.util.List;
 
-    protected WebElement title;
-    protected String description;
-    protected WebElement icon;
+public abstract class SearchResult {
+    private WebElement result;
 
     SearchResult(WebElement result){
         this.result = result;
-        description = result.findElement(By.className("result-summary")).getText();
     }
 
-    public WebElement title() {
-        return title;
-    }
+    public abstract WebElement title();
 
     public String getTitleString(){
         return title().getText();
     }
 
     public String getDescription() {
-        return description;
+        return findElement(By.className("result-summary")).getText();
     }
 
-    public WebElement getIcon() {
-        return icon;
-    }
-
-    public WebElement getElement(){
-        return result;
-    }
+    public abstract WebElement getIcon();
 
     public boolean isPromoted(){
-        return result.findElements(By.className("promoted-label")).size() > 0;
+        return findElements(By.className("promoted-label")).size() > 0;
     }
 
     public WebElement star() {
-        return result.findElement(By.className("fa-star"));
+        return findElement(By.className("fa-star"));
+    }
+
+    protected WebElement findElement(By locator) {
+        return result.findElement(locator);
+    }
+
+    protected List<WebElement> findElements(By locator) {
+        return result.findElements(locator);
     }
 }
