@@ -23,7 +23,7 @@ public class OPISOElementFactory extends SOElementFactory {
     }
 
     @Override
-    public TopNavBar getTopNavBar() {
+    public OPTopNavBar getTopNavBar() {
         return new OPTopNavBar(getDriver());
     }
 
@@ -81,5 +81,18 @@ public class OPISOElementFactory extends SOElementFactory {
 
     public SettingsPage getSettingsPage() {
         return loadPage(SettingsPage.class);
+    }
+
+    static class TopNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
+        private final OPTopNavBar.TabId tab;
+
+        TopNavStrategy(OPTopNavBar.TabId tabId) {
+            tab = tabId;
+        }
+
+        @Override
+        public void switchUsing(SOElementFactory context) {
+            ((OPISOElementFactory) context).getTopNavBar().switchPage(tab);
+        }
     }
 }

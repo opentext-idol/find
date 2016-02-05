@@ -40,4 +40,21 @@ public class OPTopNavBar extends TopNavBar {
         clickCog();
         clickDropdown("Users");
     }
+
+    public void switchPage(TabId tab) {
+        clickCog();
+        findElement(tab.locator).click();
+    }
+
+    public enum TabId {
+        ABOUT("About"),
+        SETTINGS("Settings"),
+        USERS("Users");
+
+        private final By locator;
+
+        TabId(String linkText) {
+            locator = By.linkText(linkText);
+        }
+    }
 }

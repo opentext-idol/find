@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.navigation;
 
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
 import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.autonomy.abc.selenium.page.keywords.OPCreateNewKeywordsPage;
@@ -34,24 +35,27 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
 
     SEARCH(NavBarTabId.SEARCH, new OPSearchPage.Factory(), OPSearchPage.class),
 
-    ABOUT(new AboutPage.Factory(), AboutPage.class),
-    USERS(new OPUsersPage.Factory(), OPUsersPage.class),
-    SETTINGS(new SettingsPage.Factory(), SettingsPage.class);
+    ABOUT(OPTopNavBar.TabId.ABOUT, new AboutPage.Factory(), AboutPage.class),
+    USERS(OPTopNavBar.TabId.USERS, new OPUsersPage.Factory(), OPUsersPage.class),
+    SETTINGS(OPTopNavBar.TabId.SETTINGS, new SettingsPage.Factory(), SettingsPage.class);
 
     private final Class<?> pageType;
-    private final NavBarTabId tabId;
-    private final PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
+    private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
     private ParametrizedFactory<WebDriver, ?> factory;
 
     <T extends AppPage> OPISOPage(ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
-        this(null, factory, type);
+        pageType = type;
+        this.factory = factory;
     }
 
     <T extends AppPage> OPISOPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
-        tabId = tab;
+        this(factory, type);
         switchStrategy = new SOElementFactory.SideNavStrategy(tab);
-        pageType = type;
-        this.factory = factory;
+    }
+
+    <T extends AppPage> OPISOPage(OPTopNavBar.TabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
+        this(factory, type);
+        switchStrategy = new OPISOElementFactory.TopNavStrategy(tab);
     }
 
     @Override
