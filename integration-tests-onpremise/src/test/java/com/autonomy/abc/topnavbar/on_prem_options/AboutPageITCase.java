@@ -3,7 +3,6 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.admin.AboutPage;
 import org.junit.Before;
@@ -39,8 +38,7 @@ public class AboutPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws InterruptedException {
-        ((OPTopNavBar) getElementFactory().getTopNavBar()).goToAboutPage();
-		aboutPage = getElementFactory().getAboutPage();
+		aboutPage = getApplication().switchTo(AboutPage.class);
 	}
 
 	@Test

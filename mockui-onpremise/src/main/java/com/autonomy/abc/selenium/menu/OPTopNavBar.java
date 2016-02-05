@@ -22,25 +22,6 @@ public class OPTopNavBar extends TopNavBar {
         Waits.loadOrFadeWait();
     }
 
-    private void clickDropdown(String page){
-       findElement(By.xpath(".//a[contains(.,'"+page+"')]")).click();
-    }
-
-    public void goToAboutPage(){
-        clickCog();
-        clickDropdown("About");
-    }
-
-    public void goToSettingsPage(){
-        clickCog();
-        clickDropdown("Settings");
-    }
-
-    public void goToUsersPage(){
-        clickCog();
-        clickDropdown("Users");
-    }
-
     public void switchPage(TabId tab) {
         clickCog();
         findElement(tab.locator).click();
