@@ -380,13 +380,11 @@ public class FindITCase extends HostedTestBase {
         find.search("stars");
         find.filterBy(new IndexFilter(Index.DEFAULT));
 
-        List<FindSearchResult> searchResults = results.getResults();
-
-        for(int i = 0; i < 6; i++){
-            String url = searchResults.get(i).getReference();
+        for(FindSearchResult searchResult : results.getResults(5)){
+            String url = searchResult.getReference();
 
             try {
-                searchResults.get(i).title().click();
+                searchResult.title().click();
             } catch (WebDriverException e) {
                 fail("Could not click on title - most likely CSA-1767");
             }
@@ -553,7 +551,7 @@ public class FindITCase extends HostedTestBase {
     public void testViewDocumentsOpenFromFind(){
         find.search("Review");
 
-        for(FindSearchResult result : results.getResults()){
+        for(FindSearchResult result : results.getResults(5)){
             try {
                 ElementUtil.scrollIntoViewAndClick(result.title(), getDriver());
             } catch (WebDriverException e){

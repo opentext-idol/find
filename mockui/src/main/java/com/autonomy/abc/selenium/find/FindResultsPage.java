@@ -131,6 +131,11 @@ public class FindResultsPage extends AppElement {
         return results;
     }
 
+    public List<FindSearchResult> getResults(int maxResults) {
+        List<FindSearchResult> results = getResults();
+        return results.subList(0, Math.min(maxResults, results.size()));
+    }
+
     public List<String> getDisplayedDocumentsDocumentTypes(){
         List<String> documentTypes = new ArrayList<String>();
         for(FindSearchResult result : getResults()){

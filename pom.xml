@@ -113,6 +113,12 @@
                 <build.skip.onprem>true</build.skip.onprem>
             </properties>
         </profile>
+        <profile>
+            <id>allBrowsers</id>
+            <properties>
+                <config.selenium.browsers>["chrome", "firefox", "internet explorer"]</config.selenium.browsers>
+            </properties>
+        </profile>
     </profiles>
 
     <dependencies>
