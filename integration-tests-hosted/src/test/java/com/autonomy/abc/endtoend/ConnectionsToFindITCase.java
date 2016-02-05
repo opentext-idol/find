@@ -107,5 +107,6 @@ public class ConnectionsToFindITCase extends HostedTestBase {
     public void tearDown(){
         promotionService.deleteAll();
         connectionService.deleteAllConnections(true);
+        indexService.deleteAllIndexes();
     }
 }
