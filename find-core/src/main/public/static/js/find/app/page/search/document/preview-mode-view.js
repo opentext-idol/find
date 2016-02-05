@@ -11,22 +11,28 @@ define([
 ], function(Backbone, _, $, i18n, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
     "use strict";
 
+    function scrollFollow() {
+        if (this.$el.offsetParent().offset().top < 0) {
+            this.$el.css('margin-top', Math.abs(this.$el.offsetParent().offset().top) + 15);
+        } else {
+            this.$el.css('margin-top', 0);
+        }
+
+        if(this.$iframe) {
+            this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30);
+        }
+    }
+
     return Backbone.View.extend({
         template: _.template(template),
         metaDataTemplate: _.template(metaDataTemplate),
         documentTemplate: _.template(documentTemplate),
         mediaTemplate: _.template(mediaTemplate),
 
+        $iframe: null,
+
         initialize: function() {
-            this.scrollFollow = _.bind(function() {
-                var $viewServerPage = this.$('.preview-document-frame');
-                if (this.$el.offsetParent().offset().top < 0) {
-                    this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
-                } else {
-                    this.$el.css('margin-top', 0);
-                }
-                $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30);
-            }, this)
+            this.scrollFollow = _.bind(scrollFollow, this);
         },
 
         render: function() {
@@ -38,7 +44,6 @@ define([
         },
 
         renderView: function(args) {
-
             var model = args.model;
 
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
@@ -61,15 +66,15 @@ define([
             } else {
                 $preview.html(this.documentTemplate({i18n: i18n}));
 
-                var $viewServerPage = this.$('.preview-document-frame');
+                this.$iframe = this.$('.preview-document-frame');
 
-                $viewServerPage.on('load', _.bind(function() {
+                this.$iframe.on('load', _.bind(function() {
                     this.$('.view-server-loading-indicator').addClass('hidden');
-                    $viewServerPage.removeClass('hidden');
+                    this.$iframe.removeClass('hidden');
                 }, this));
 
-                $viewServerPage.attr('src', args.src);
-                $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30);
+                this.$iframe.attr('src', args.src);
+                this.$iframe.css('height', $(window).height() - $preview.offset().top - 30);
             }
         },
 
