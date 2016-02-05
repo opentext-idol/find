@@ -3,6 +3,7 @@
     "type": "on premise"
   },
   "selenium": {
+    "browsers": ${config.selenium.browsers},
     "url": "http://10.2.112.233:4444/wd/hub"
   }
 }
