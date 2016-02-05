@@ -3,6 +3,7 @@
     "type": "Hosted"
   },
   "selenium": {
+    "browsers": ${config.selenium.browsers},
     "url": "http://16.46.34.8:4444/wd/hub"
   }
 }
