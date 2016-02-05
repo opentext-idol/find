@@ -29,9 +29,6 @@ define([
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
             moment, i18n, i18n_indexes) {
 
-    var mediaTypes = ['audio', 'video'];
-    var webTypes = ['text/html', 'text/xhtml'];
-
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
 
@@ -194,21 +191,13 @@ define([
             //render of the actual view server stuff
             var src = viewClient.getHref(selectedDocument.get('reference'), selectedDocument.get('index'), selectedDocument.get('domain'));
 
-            var contentType = selectedDocument.get('contentType') || '';
-
-            var media = _.find(mediaTypes, function (mediaType) {
-                return contentType.indexOf(mediaType) === 0;
-            });
-
-            var url = selectedDocument.get('url');
-
             var args = {};
 
-            if (media && url) {
+            if (selectedDocument.isMedia()) {
                 args = {
                     model: selectedDocument,
-                    media: media,
-                    url: url,
+                    media: selectedDocument.getMediaType(),
+                    url: selectedDocument.get('url'),
                     offset: selectedDocument.get('offset')
                 };
             } else {
@@ -361,18 +350,10 @@ define([
                 }, this)
             };
 
-            var contentType = options.model.get('contentType') || '';
-
-            var media = _.find(mediaTypes, function(mediaType) {
-                return contentType.indexOf(mediaType) === 0;
-            });
-
-            var url = options.model.get('url');
-
-            if (media && url) {
+            if (options.model.isMedia()) {
                 args.html = this.mediaPlayerTemplate({
-                    media: media,
-                    url: url,
+                    media: options.model.getMediaType(),
+                    url: options.model.get('url'),
                     offset: options.model.get('offset')
                 });
             } else {
@@ -424,10 +405,8 @@ define([
 
             $previewTrigger.colorbox(colorboxArgs);
 
-            var contentType = model.get('contentType');
-
             // web documents should open the original document in a new tab
-            if (contentType && _.contains(webTypes, contentType.toLowerCase())) {
+            if (model.isWebType()) {
                 $resultHeader.attr({
                     href: reference,
                     target: "_blank"
