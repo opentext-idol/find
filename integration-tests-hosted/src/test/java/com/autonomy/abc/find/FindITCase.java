@@ -381,7 +381,7 @@ public class FindITCase extends HostedTestBase {
         find.search("stars");
         find.filterBy(new IndexFilter(Index.DEFAULT));
 
-        for(FindSearchResult searchResult : results.getResults()){
+        for(FindSearchResult searchResult : results.getResults(5)){
             String url = searchResult.getReference();
 
             try {
@@ -534,7 +534,7 @@ public class FindITCase extends HostedTestBase {
     public void testViewDocumentsOpenFromFind(){
         find.search("Review");
 
-        for(FindSearchResult result : results.getResults()){
+        for(FindSearchResult result : results.getResults(5)){
             try {
                 ElementUtil.scrollIntoViewAndClick(result.title(), getDriver());
             } catch (WebDriverException e){

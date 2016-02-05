@@ -4,24 +4,25 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class FindSearchResult extends SearchResult {
-    private final WebElement similarDocuments;
-    private final String reference;
-
     public FindSearchResult(WebElement result){
         super(result);
+    }
 
-        title = result.findElement(By.tagName("h4"));
-        icon = result.findElement(By.cssSelector(".content-type i"));
+    @Override
+    public WebElement title() {
+        return findElement(By.tagName("h4"));
+    }
 
-        similarDocuments = result.findElement(By.className("similar-documents-trigger"));
-        reference = result.findElement(By.className("document-reference")).getText();
+    @Override
+    public WebElement getIcon() {
+        return findElement(By.cssSelector(".content-type i"));
     }
 
     public String getReference() {
-        return reference;
+        return findElement(By.className("document-reference")).getText();
     }
 
-    public WebElement getSimilarDocuments() {
-        return similarDocuments;
+    public WebElement similarDocuments() {
+        return findElement(By.className("similar-documents-trigger"));
     }
 }
