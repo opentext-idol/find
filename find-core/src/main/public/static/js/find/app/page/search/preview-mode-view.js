@@ -3,13 +3,29 @@ define([
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
+    'find/app/util/view-server-client',
     'find/app/model/document-model',
     'text!find/templates/app/page/search/preview-mode-view.html',
     'text!find/templates/app/page/search/preview-mode-metadata.html',
     'text!find/templates/app/page/search/preview-mode-document.html',
     'text!find/templates/app/page/view/media-player.html'
-], function(Backbone, _, $, i18n, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
+], function(Backbone, _, $, i18n, viewClient, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
     "use strict";
+
+    var mediaTypes = ['audio', 'video'];
+
+    function scrollFollow() {
+        if (this.$el.offsetParent().offset().top < 0) {
+            this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
+        } else {
+            this.$el.css('margin-top', 0);
+        }
+
+        if (!this.media) {
+            var $viewServerPage = this.$('.preview-document-frame');
+            $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30 - this.$('.preview-mode-metadata').height())
+        }
+    }
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -18,66 +34,61 @@ define([
         mediaTemplate: _.template(mediaTemplate),
 
         initialize: function() {
-            this.scrollFollow = _.bind(function() {
-                if (this.$el.offsetParent().offset().top < 0) {
-                    this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
-                } else {
-                    this.$el.css('margin-top', 0);
-                }
-                if (!this.media)
-                {
-                    var $viewServerPage = this.$('.preview-document-frame');
-                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30 - this.$('.preview-mode-metadata').height())
-                }
-            }, this)
+            this.scrollFollow = _.bind(scrollFollow, this);
         },
 
+        // TODO: this should do the stuff in render view
         render: function() {
             this.$el.html(this.template({
                 i18n:i18n
             }));
 
-            $('.main-content').scroll(this.scrollFollow);
-        },
+            this.$('.preview-mode-document-title').text(this.model.get('title'));
 
-        renderView: function(args) {
+            var contentType = this.model.get('contentType') || '';
 
-            var model = args.model;
+            var media = _.find(mediaTypes, function (mediaType) {
+                return contentType.indexOf(mediaType) === 0;
+            });
+
+            var url = this.model.get('url');
 
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
                 i18n:i18n,
-                model: model,
+                model: this.model,
                 arrayFields: DocumentModel.ARRAY_FIELDS,
                 dateFields: DocumentModel.DATE_FIELDS,
                 fields: ['index', 'reference', 'contentType', 'url']
             }));
 
-            this.media = args.media;
-
             var $preview = this.$('.preview-mode-document');
 
-            if (args.media) {
+            if (media && url) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
-                    offset: args.offset,
-                    media: args.media,
-                    url: args.url
+                    model: this.model
                 }));
             } else {
-                $preview.html(this.documentTemplate({i18n: i18n}));
+                $preview.html(this.documentTemplate({
+                    i18n: i18n
+                }));
 
-                var $viewServerPage = this.$('.preview-document-frame');
+                this.$iframe = this.$('.preview-document-frame');
 
-                $viewServerPage.on('load', _.bind(function() {
+                this.$iframe.on('load', _.bind(function() {
                     this.$('.view-server-loading-indicator').addClass('hidden');
-                    $viewServerPage.removeClass('hidden');
-                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30 - this.$('.preview-mode-metadata').height())
+                    this.$iframe.removeClass('hidden');
+                    this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height())
                 }, this));
 
-                $viewServerPage.attr("src", args.src);
-                $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
+                // The src attribute has to be added retrospectively to avoid a race condition
+                this.$iframe.attr("src", viewClient.getHref(this.model.get('reference'), this.model.get('index'), this.model.get('domain')));
+                this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
+            
             this.scrollFollow();
+
+            $('.main-content').scroll(this.scrollFollow);
         },
 
         remove: function() {
