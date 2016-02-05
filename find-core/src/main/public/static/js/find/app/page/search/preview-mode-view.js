@@ -68,7 +68,7 @@ define([
                     $viewServerPage.removeClass('hidden');
                 }, this));
 
-                $viewServerPage.attr("src", args.src);
+                $viewServerPage.attr('src', args.src);
                 $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30);
             }
         },
