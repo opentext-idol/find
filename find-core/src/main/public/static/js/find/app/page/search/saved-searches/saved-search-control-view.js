@@ -105,7 +105,7 @@ define([
                     hiddenEvent: 'hidden.bs.modal',
                     okHandler: _.bind(function() {
                         this.queryState.queryTextModel.set(this.savedSearchModel.toQueryTextModelAttributes());
-                        this.queryState.queryModel.set(this.savedSearchModel.toQueryModelAttributes());
+                        this.queryState.datesFilterModel.set(this.savedSearchModel.toDatesFilterModelAttributes());
                         this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());
                         this.queryState.selectedParametricValues.set(this.savedSearchModel.toSelectedParametricValues());
                     }, this)
@@ -118,8 +118,8 @@ define([
             this.savedSearchModel = options.savedSearchModel;
 
             this.queryState = {
+                datesFilterModel: options.datesFilterModel,
                 queryTextModel: options.queryTextModel,
-                queryModel: options.queryModel,
                 selectedIndexes: options.selectedIndexesCollection,
                 selectedParametricValues: options.selectedParametricValues
             };
@@ -156,7 +156,7 @@ define([
             }, this);
 
             this.listenTo(this.savedSearchModel, 'change', updateSavedState);
-            this.listenTo(this.queryState.queryModel, 'change', updateSavedState);
+            this.listenTo(options.queryModel, 'change', updateSavedState);
 
             // Index and parametric value selection only updates the query model after a debounce but we want to update
             // the save and reset buttons immediately

@@ -41,7 +41,7 @@ define([
 
             this.datesFilterModel = new Backbone.Model({
                 dateRange: DatesFilterModel.DateRange.CUSTOM,
-                minDate: INITIAL_MIN_DATE
+                customMinDate: INITIAL_MIN_DATE
             });
 
             this.selectedParametricValues = new SelectedParametricValues([
@@ -89,7 +89,7 @@ define([
 
                 this.datesFilterModel.set({
                     dateRange: DatesFilterModel.DateRange.CUSTOM,
-                    maxDate: this.maxDate
+                    customMaxDate: this.maxDate
                 });
             });
 
@@ -111,7 +111,7 @@ define([
 
                 this.datesFilterModel.set({
                     dateRange: DatesFilterModel.DateRange.CUSTOM,
-                    minDate: this.minDate
+                    customMinDate: this.minDate
                 });
 
                 this.queryModel.set('minDate', this.minDate);
@@ -125,6 +125,49 @@ define([
                 var model = this.collection.get(FiltersCollection.FilterType.MIN_DATE);
                 expect(model.get('text')).toContain(i18n['app.from']);
                 expect(model.get('text')).toContain(moment(this.minDate).format(DATE_FORMAT));
+            });
+        });
+
+        describe('after datesFilterModel has dateRange set to WEEK', function() {
+            beforeEach(function() {
+                this.datesFilterModel.set('dateRange', DatesFilterModel.DateRange.WEEK);
+            });
+
+            it('contains three models', function() {
+                expect(this.collection.length).toBe(3);
+            });
+
+            it('removes the min date model', function() {
+                expect(this.collection.get(FiltersCollection.FilterType.MIN_DATE)).toBeUndefined();
+            });
+
+            it('adds a date range model', function() {
+                var model = this.collection.get(FiltersCollection.FilterType.DATE_RANGE);
+                expect(model.get('text')).toContain(i18n['search.dates.timeInterval.' + DatesFilterModel.DateRange.WEEK]);
+            });
+        });
+
+        describe('after datesFilterModel has dateRange set to null', function() {
+            beforeEach(function() {
+                this.datesFilterModel.set('dateRange', null);
+            });
+
+            it('contains two models', function() {
+                expect(this.collection.length).toBe(2);
+            });
+
+            it('removes the min date model', function() {
+                expect(this.collection.get(FiltersCollection.FilterType.MIN_DATE)).toBeUndefined();
+            });
+        });
+
+        describe('after the min date filter model is removed', function() {
+            beforeEach(function() {
+                this.collection.remove(FiltersCollection.FilterType.MIN_DATE);
+            });
+
+            it('sets the datesFilterModel customMinDate attribute to null', function() {
+                expect(this.datesFilterModel.get('customMinDate')).toBeNull();
             });
         });
 

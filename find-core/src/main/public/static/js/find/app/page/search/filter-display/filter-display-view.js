@@ -9,6 +9,8 @@ define([
     'bootstrap'
 ], function(Backbone, ListView, ListItemView, SearchFiltersCollection, i18n, template, itemTemplate) {
 
+    var html = _.template(template)({i18n: i18n});
+
     var FilterListItemView = ListItemView.extend({
         render: function() {
             ListItemView.prototype.render.apply(this, arguments);
@@ -36,27 +38,21 @@ define([
         events: {
             'click .filters-remove-icon': function(e) {
                 var id = $(e.currentTarget).closest('[data-id]').attr('data-id');
-                var metaType = $(e.currentTarget).closest('[data-metatype]').attr('data-metatype');
-                var type = $(e.currentTarget).closest('[data-type]').attr('data-type');
-
-                this.removeFilter(id, metaType, type);
+                this.collection.remove(id);
             },
-
             'click .remove-all-filters': function() {
                 // Separate picking attributes from calling removeFilter so we don't modify the collection while iterating
                 _.chain(this.collection.models)
                     .map(function(model) {
-                        return model.pick('id', 'metaType', 'type');
+                        return model.id;
                     })
-                    .each(function(attributes) {
-                        this.removeFilter(attributes.id, attributes.metaType, attributes.type);
+                    .each(function(id) {
+                        this.collection.remove(id);
                     }, this);
             }
         },
 
-        initialize: function(options) {
-            this.datesFilterModel = options.datesFilterModel;
-
+        initialize: function() {
             this.listView = new ListView({
                 collection: this.collection,
                 ItemView: FilterListItemView,
@@ -71,9 +67,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({
-                i18n: i18n
-            }));
+            this.$el.html(html);
 
             this.updateVisibility();
 
@@ -85,23 +79,6 @@ define([
 
         updateVisibility: function() {
             this.$el.toggleClass('hide', this.collection.isEmpty());
-        },
-
-        removeFilter: function(id, metaType, type) {
-            if (metaType && metaType === SearchFiltersCollection.MetaFilterType.DATE) {
-
-                if (type === SearchFiltersCollection.FilterType.DATE_RANGE) {
-                    this.datesFilterModel.setDateRange(null);
-                }
-                if (type === SearchFiltersCollection.FilterType.MIN_DATE) {
-                    this.datesFilterModel.setMinDate(null);
-                }
-                if (type === SearchFiltersCollection.FilterType.MAX_DATE) {
-                    this.datesFilterModel.setMaxDate(null);
-                }
-            } else {
-                this.collection.remove(id);
-            }
         }
     });
 

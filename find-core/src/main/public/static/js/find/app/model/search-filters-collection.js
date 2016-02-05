@@ -20,13 +20,10 @@ define([
         PARAMETRIC: 'PARAMETRIC'
     };
 
-    var MetaFilterType = {
-        DATE: 'DATE'
-    };
-
-    function filterTypeFromDateAttribute(attribute) {
-        return attribute === 'minDate' ? FilterType.MIN_DATE : FilterType.MAX_DATE;
-    }
+    var customDatesFilters = [
+        {attribute: 'customMinDate', type: FilterType.MIN_DATE},
+        {attribute: 'customMaxDate', type: FilterType.MAX_DATE}
+    ];
 
     function getDateFilterText(filterType, dateString) {
         var textPrefixKey = filterType === FilterType.MAX_DATE ? 'app.until' : 'app.from';
@@ -61,7 +58,6 @@ define([
     // this currently can't be done for the selected databases because the databases view isn't backed by a collection.
     return Backbone.Collection.extend({
         initialize: function(models, options) {
-            this.queryModel = options.queryModel;
             this.datesFilterModel = options.datesFilterModel;
             this.indexesCollection = options.indexesCollection;
             this.selectedIndexesCollection = options.selectedIndexesCollection;
@@ -70,22 +66,7 @@ define([
             this.listenTo(this.selectedParametricValues, 'add remove', this.updateParametricSelection);
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
             this.listenTo(this.selectedIndexesCollection, 'reset update', this.updateDatabases);
-
-            addChangeListener(this, this.queryModel, ['maxDate', 'minDate'], function() {
-                var changed = this.queryModel.changedAttributes();
-                var dateFilterTypes = _.intersection(['minDate', 'maxDate'], _.keys(changed));
-                var dateRange = this.datesFilterModel.get('dateRange');
-
-                if (!_.isEmpty(dateFilterTypes)) {
-                    if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
-                        this.intervalDate(dateFilterTypes);
-                    } else if (dateRange) {
-                        this.humanDate();
-                    } else {
-                        this.removeAllDateFilters();
-                    }
-                }
-            });
+            this.listenTo(this.datesFilterModel, 'change', this.updateDateFilters);
 
             this.on('remove', function(model) {
                 var type = model.get('type');
@@ -95,25 +76,39 @@ define([
                     this.selectedParametricValues.remove(this.selectedParametricValues.where({field: field}));
                 } else if (type === FilterType.INDEXES) {
                     this.selectedIndexesCollection.set(this.indexesCollection.toResourceIdentifiers());
+                } else if (type === FilterType.DATE_RANGE) {
+                    if (this.datesFilterModel.get('dateRange') !== DatesFilterModel.DateRange.CUSTOM) {
+                        this.datesFilterModel.set('dateRange', null);
+                    }
+                } else if (type === FilterType.MAX_DATE) {
+                    this.datesFilterModel.set('customMaxDate', null);
+                } else if (type === FilterType.MIN_DATE) {
+                    this.datesFilterModel.set('customMinDate', null);
                 }
             });
 
-            if (this.queryModel.get('minDate')) {
-                models.push({
-                    id: FilterType.MIN_DATE,
-                    type: FilterType.MIN_DATE,
-                    metaType: MetaFilterType.DATE,
-                    text: getDateFilterText(FilterType.MIN_DATE, moment(this.queryModel.get('minDate')).format('LLL'))
-                });
-            }
+            var dateRange = this.datesFilterModel.get('dateRange');
 
-            if (this.queryModel.get('maxDate')) {
-                models.push({
-                    id: FilterType.MAX_DATE,
-                    type: FilterType.MAX_DATE,
-                    metaType: MetaFilterType.DATE,
-                    text: getDateFilterText(FilterType.MAX_DATE, moment(this.queryModel.get('maxDate')).format('LLL'))
-                });
+            if (dateRange) {
+                if (dateRange = DatesFilterModel.DateRange.CUSTOM) {
+                    _.each(customDatesFilters, function(filterData) {
+                        var currentValue = this.datesFilterModel.get(filterData.attribute);
+
+                        if (currentValue) {
+                            models.push({
+                                id: filterData.type,
+                                type: filterData.type,
+                                text: getDateFilterText(filterData.type, currentValue.format('LLL'))
+                            });
+                        }
+                    }, this);
+                } else {
+                    models.push({
+                        id: FilterType.DATE_RANGE,
+                        type: FilterType.DATE_RANGE,
+                        text: i18n['search.dates.timeInterval.' + dateRange]
+                    });
+                }
             }
 
             if (!this.allIndexesSelected()) {
@@ -153,54 +148,6 @@ define([
             }
         },
 
-        removeAllDateFilters: function() {
-            this.remove(this.where({metaType: MetaFilterType.DATE}));
-        },
-
-        humanDate: function() {
-            this.removeAllDateFilters();
-
-            var dateRange = this.datesFilterModel.get('dateRange');
-
-            if (dateRange) {
-                this.add({
-                    id: dateRange,
-                    type: FilterType.DATE_RANGE,
-                    metaType: MetaFilterType.DATE,
-                    text: i18n['search.dates.timeInterval.' + dateRange]
-                });
-            }
-        },
-
-        intervalDate: function(dateAttributes) {
-            this.remove(this.where({type: FilterType.DATE_RANGE}));
-
-            _.each(dateAttributes, function(attribute) {
-                var filterType = filterTypeFromDateAttribute(attribute);
-                var filterModel = this.get(filterType);
-                var date = this.queryModel.get(attribute);
-
-                if (date) {
-                    var displayDate = date.format('LLL');
-                    var filterText = getDateFilterText(filterType, displayDate);
-
-                    if (filterModel) {
-                        filterModel.set('text', filterText);
-                    } else {
-                        // Date filter models have equal id and type attributes since only one model of each type can be present
-                        this.add({
-                            id: filterType,
-                            type: filterType,
-                            metaType: MetaFilterType.DATE,
-                            text: filterText
-                        });
-                    }
-                } else if (filterModel) {
-                    this.remove(filterModel);
-                }
-            }, this);
-        },
-
         // Handles add and remove events from the selected parametric values collection
         updateParametricSelection: function(selectionModel) {
             var field = selectionModel.get('field');
@@ -223,13 +170,67 @@ define([
             }
         },
 
+        updateDateFilters: function() {
+            var dateRange = this.datesFilterModel.get('dateRange');
+
+            if (dateRange) {
+                if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
+                    // Remove any last <period> date filter
+                    this.remove(this.where({id: FilterType.DATE_RANGE}));
+
+                    _.each(customDatesFilters, function(filterData) {
+                        var currentValue = this.datesFilterModel.get(filterData.attribute);
+
+                        if (currentValue) {
+                            var existingModel = this.get(filterData.type);
+                            var filterText = getDateFilterText(filterData.type, currentValue.format('LLL'));
+
+                            if (existingModel) {
+                                existingModel.set('text', filterText);
+                            } else {
+                                this.add({
+                                    id: filterData.type,
+                                    type: filterData.type,
+                                    text: filterText
+                                });
+                            }
+                        } else {
+                            this.remove(this.where({id: filterData.type}));
+                        }
+                    }, this);
+                } else {
+                    // Remove any custom filters
+                    this.remove(this.filter(function(model) {
+                        return _.contains([FilterType.MAX_DATE, FilterType.MIN_DATE], model.id);
+                    }));
+
+                    var existingDateRangeModel = this.get(FilterType.DATE_RANGE);
+                    var filterText = i18n['search.dates.timeInterval.' + dateRange];
+
+                    if (existingDateRangeModel) {
+                        existingDateRangeModel.set('text', filterText);
+                    } else {
+                        this.add({
+                            id: FilterType.DATE_RANGE,
+                            type: FilterType.DATE_RANGE,
+                            text: filterText
+                        });
+                    }
+                }
+            } else {
+                // No date range selected so remove all date filter models
+                this.remove(this.filter(function(model) {
+                    return _.contains([FilterType.DATE_RANGE, FilterType.MAX_DATE, FilterType.MIN_DATE], model.id);
+                }));
+            }
+        },
+
         resetParametricSelection: function() {
             this.remove(this.where({type: FilterType.PARAMETRIC}));
             this.add(extractParametricFilters(this.selectedParametricValues));
         }
     }, {
-        FilterType: FilterType,
-        MetaFilterType: MetaFilterType
+        FilterType: FilterType
     });
 
 });

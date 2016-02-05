@@ -1,78 +1,50 @@
 define([
-    'backbone',
     'find/app/model/dates-filter-model',
     'moment'
-], function(Backbone, DatesFilterModel, moment) {
+], function(DatesFilterModel, moment) {
+
+    var NOW = 1455000000000;
 
     describe('Dates Filter Model', function() {
         beforeEach(function() {
-            this.dateOne = 'dateOne';
+            jasmine.clock().install();
+            jasmine.clock().mockDate(new Date(NOW));
 
-            this.queryModel = new Backbone.Model();
-
-            this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
+            this.model = new DatesFilterModel({
+                dateRange: null,
+                customMinDate: null,
+                customMaxDate: moment(NOW)
+            });
         });
 
-        describe('calling setDateRange with weeks', function() {
-            beforeEach(function() {
-                this.datesFilterModel.setDateRange(DatesFilterModel.DateRange.WEEK);
-            });
+        afterEach(function() {
+            jasmine.clock().uninstall();
+        });
 
-            it('should set maxDate and minDate on the queryModel to an interval spanning a week', function() {
-                var minDate = this.queryModel.get('minDate');
-                var maxDate = this.queryModel.get('maxDate');
-
-                expect(moment(minDate).isBetween(
-                    moment().subtract(1, 'weeks').subtract(1, 'minutes'),
-                    moment().subtract(1, 'weeks').add(1, 'minutes')
-                )).toBe(true);
-
-                expect(moment(maxDate).isBetween(
-                    moment().subtract(1, 'minutes'),
-                    moment().add(1, 'minutes')
-                )).toBe(true);
-            });
-
-            describe('calling setDateRange with custom', function() {
-                beforeEach(function() {
-                    this.datesFilterModel.setDateRange(DatesFilterModel.DateRange.CUSTOM);
-                });
-
-                it('should set maxDate and minDate to falsy values', function() {
-                    expect(this.queryModel.get('minDate')).toBeFalsy();
-                    expect(this.queryModel.get('maxDate')).toBeFalsy();
+        describe('toQueryModelAttributes function', function() {
+            it('returns null for min and max dates if the date range is null', function() {
+                expect(this.model.toQueryModelAttributes()).toEqual({
+                    minDate: null,
+                    maxDate: null
                 });
             });
-        });
 
-        describe('calling setMaxDate', function() {
-            beforeEach(function() {
-                this.datesFilterModel.setMaxDate(this.dateOne);
+            it('returns the custom min and max dates if the date range is custom', function() {
+                this.model.set('dateRange', DatesFilterModel.DateRange.CUSTOM);
+
+                var output = this.model.toQueryModelAttributes();
+                expect(output.minDate).toBeNull();
+                expect(output.maxDate.unix() * 1000).toBe(NOW);
             });
 
-            it('should set the same value on the queryModel', function() {
-                expect(this.queryModel.get('maxDate')).toBe(this.dateOne);
-            });
+            it('returns the last week if the date range is last week', function() {
+                this.model.set('dateRange', DatesFilterModel.DateRange.WEEK);
 
-            it('should set the value of its dateRange attribute to custom', function() {
-                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.DateRange.CUSTOM);
-            });
-        });
-
-        describe('calling setMinDate', function() {
-            beforeEach(function() {
-                this.datesFilterModel.setMaxDate(this.dateOne);
-            });
-
-            it('should set the same value on the queryModel', function() {
-                expect(this.queryModel.get('maxDate')).toBe(this.dateOne);
-            });
-
-            it('should set the value of its dateRange attribute to custom', function() {
-                expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.DateRange.CUSTOM);
+                var output = this.model.toQueryModelAttributes();
+                expect(output.minDate.unix()).toBe(moment(NOW).subtract(1, 'week').unix());
+                expect(output.maxDate.unix() * 1000).toBe(NOW);
             });
         });
-
     });
 
 });
