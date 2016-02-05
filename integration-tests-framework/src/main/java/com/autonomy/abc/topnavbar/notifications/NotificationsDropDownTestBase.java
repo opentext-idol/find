@@ -3,7 +3,6 @@ package com.autonomy.abc.topnavbar.notifications;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import org.junit.Before;
@@ -16,7 +15,6 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
     protected com.autonomy.abc.selenium.menu.NotificationsDropDown notifications;
     protected KeywordsPage keywordsPage;
     protected TopNavBar topNavBar;
-    protected SideNavBar sideNavBar;
 
     public NotificationsDropDownTestBase(TestConfig config) {
         super(config);
@@ -26,7 +24,6 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
     public void setUp() throws InterruptedException {
         Thread.sleep(5000);
         topNavBar = getElementFactory().getTopNavBar();
-        sideNavBar = getElementFactory().getSideNavBar();
         notifications = topNavBar.getNotifications();
     }
 
@@ -43,6 +40,5 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
 
     protected void newBody(){
         topNavBar = getElementFactory().getTopNavBar();
-        sideNavBar = getElementFactory().getSideNavBar();
     }
 }

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.application;
 
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
@@ -40,4 +41,7 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
     public static SearchOptimizerApplication<?> ofType(ApplicationType type) {
         return FACTORY_MAP.get(type).create();
     }
+
+    @Override
+    public abstract SearchOptimizerApplication<T> inWindow(Window window);
 }

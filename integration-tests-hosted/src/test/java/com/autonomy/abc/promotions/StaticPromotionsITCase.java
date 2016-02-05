@@ -6,7 +6,6 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
@@ -38,7 +37,6 @@ public class StaticPromotionsITCase extends HostedTestBase {
     private final String content = "content";
     private final String trigger = "dog";
     private final StaticPromotion promotion = new StaticPromotion(title, content, trigger);
-    private PromotionsDetailTriggerForm triggerForm;
 
     public StaticPromotionsITCase(TestConfig config) {
         super(config);
@@ -51,9 +49,8 @@ public class StaticPromotionsITCase extends HostedTestBase {
     @Before
     public void setUp() {
         promotionService = getApplication().promotionService();
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        promotionService.deleteAll();
+
+        promotionsPage = (HSOPromotionsPage) promotionService.deleteAll();
         searchPage = promotionService.setUpStaticPromotion(promotion);
     }
 
@@ -158,7 +155,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
         final String newTitle = "aaa";
         final String newTrigger = "alternative";
 
-        triggerForm = promotionsDetailPage.getTriggerForm();
+        PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
 
         promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
         triggerForm.addTrigger(newTrigger);

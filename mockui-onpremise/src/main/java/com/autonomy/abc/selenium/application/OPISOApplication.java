@@ -16,7 +16,7 @@ public class OPISOApplication extends SearchOptimizerApplication<OPISOElementFac
     }
 
     @Override
-    public Application<OPISOElementFactory> inWindow(Window window) {
+    public OPISOApplication inWindow(Window window) {
         this.window = window;
         this.factory = new OPISOElementFactory(window.getSession().getDriver());
         return this;

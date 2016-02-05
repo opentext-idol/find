@@ -13,7 +13,7 @@ public class HSOApplication extends SearchOptimizerApplication<HSODElementFactor
     private HSODElementFactory factory;
 
     @Override
-    public Application<HSODElementFactory> inWindow(Window window) {
+    public HSOApplication inWindow(Window window) {
         this.window = window;
         this.factory = new HSODElementFactory(window.getSession().getDriver());
         return this;
