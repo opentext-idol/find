@@ -259,7 +259,7 @@ html, body {
 }
 
 .main-content .container-fluid {
-    height: calc(100% - 50px);
+    height: calc(100% - 70px);
 }
 
 .main-content .container-fluid.reduced {
