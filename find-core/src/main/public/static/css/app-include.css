@@ -260,10 +260,6 @@ html, body {
     background-color: #efefef;
 }
 
-.small-container {
-    width: initial;
-}
-
 .right-side-container {
     font-size: 14px;
     background-color: #efefef;
@@ -275,9 +271,20 @@ html, body {
 }
 
 .right-side-container,
+.left-side-container {
+    width: 20%;
+}
+
+.left-side-container.small-container,
+.right-side-container.small-container {
+    width: 50px;
+}
+
+.right-side-container,
 .left-side-container,
 .middle-container {
-    padding-top: 10px;
+    padding: 10px 15px;
+    display: table-cell;
 }
 
 .right-side-container h4,
@@ -304,9 +311,10 @@ html, body {
     font-weight: bold;
     font-size: 18px;
     overflow: hidden;
-    white-space: pre-line;
+    white-space: nowrap;
     text-overflow: ellipsis;
     word-break: break-all;
+    width: 100%;
 }
 
 .filter-display-container h4 {
@@ -665,6 +673,9 @@ input.find-input {
 
 .service-view-container {
     height: 100%;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
 }
 
 .service-view-container .hp-check {
@@ -983,15 +994,5 @@ input:-moz-placeholder::before {
     .flex-container {
         display: flex;
         min-height: 100%;
-    }
-}
-
-@media (max-width: 980px) {
-    .side-container {
-        width: 100%;
-    }
-
-    .small-container {
-        width: 100%;
     }
 }
