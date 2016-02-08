@@ -18,7 +18,7 @@ public class FindIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
-    List<IndexNodeElement> getIndexNodes() {
+    protected List<IndexNodeElement> getIndexNodes() {
         List<IndexNodeElement> nodes = new ArrayList<>();
         for (WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
             nodes.add(new FindIndexLeafNode(element, driver));
@@ -27,13 +27,13 @@ public class FindIndexCategoryNode extends IndexCategoryNode {
     }
 
     @Override
-    IndexNodeElement find(String name) {
+    protected IndexNodeElement find(String name) {
         WebElement childElement = container.findElement(By.cssSelector(".clickable[data-name='" + name.toLowerCase() + "']"));
         return new FindIndexLeafNode(childElement, driver);
     }
 
     @Override
-    IndexCategoryNode findCategory(String name) {
+    protected IndexCategoryNode findCategory(String name) {
         WebElement childElement = container.findElement(By.cssSelector(".clickable[data-category-id='" + name.toLowerCase() + "']"));
         return new FindIndexCategoryNode(childElement, driver);
     }

@@ -11,7 +11,7 @@ public abstract class SearchResult {
     private WebElement result;
     private WebDriver driver;
 
-    SearchResult(WebElement result, WebDriver driver) {
+    protected SearchResult(WebElement result, WebDriver driver) {
         this.result = result;
         this.driver = driver;
     }

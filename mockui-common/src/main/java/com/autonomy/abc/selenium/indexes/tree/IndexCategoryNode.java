@@ -63,7 +63,7 @@ public class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterabl
         return container.getText();
     }
 
-    List<IndexNodeElement> getIndexNodes() {
+    protected List<IndexNodeElement> getIndexNodes() {
         List<IndexNodeElement> nodes = new ArrayList<>();
         for (WebElement element : container.findElements(By.cssSelector(".checkbox[data-name]"))) {
             nodes.add(new IndexLeafNode(element, driver));
@@ -71,12 +71,12 @@ public class IndexCategoryNode implements IndexNodeElement, Collapsible, Iterabl
         return nodes;
     }
 
-    IndexNodeElement find(String name) {
+    protected IndexNodeElement find(String name) {
         WebElement childElement = container.findElement(By.cssSelector(".checkbox[data-name='" + name.toLowerCase() + "']"));
         return new IndexLeafNode(childElement, driver);
     }
 
-    IndexCategoryNode findCategory(String name) {
+    protected IndexCategoryNode findCategory(String name) {
         WebElement childElement = ElementUtil.ancestor(container.findElement(By.cssSelector(".checkbox[data-category-id='" + name.toLowerCase() + "']")), 1);
         return new IndexCategoryNode(childElement, driver);
     }
