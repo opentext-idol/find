@@ -73,10 +73,9 @@ define([
                     this.queryTextModel.set('relatedConcepts', newConcepts);
                 }
             },
-            'click .toggle-concepts-highlighting' : function(e) {
-                var $target = $(e.target);
-                this.highlightToggle.set('highlightConcepts', $target.is(':checked'));
-
+            'click .highlight-related-concepts' : function(e) {
+                this.highlightToggle.set('highlightConcepts', !this.highlightToggle.get('highlightConcepts'));
+                $(e.target).toggleClass('active', this.highlightToggle.get('highlightConcepts'));
             }
         },
 
