@@ -55,11 +55,6 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return promotionTitles;
 	}
 
-	@Deprecated
-	public String getLanguage() {
-		return findElement(By.cssSelector(".promotion-language")).getText();
-	}
-
 	public WebElement promotionsSearchFilter() {
 		return findElement(By.cssSelector(".search-filter")).findElement(By.xpath(".//input[contains(@placeholder, 'Search for promotions...')]"));
 	}

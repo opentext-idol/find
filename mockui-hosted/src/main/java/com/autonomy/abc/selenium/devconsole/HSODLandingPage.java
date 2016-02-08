@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.devconsole;
+package com.autonomy.abc.selenium.devconsole;
 
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;

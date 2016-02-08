@@ -1,8 +1,7 @@
-package com.autonomy.abc.selenium.navigation;
+package com.autonomy.abc.selenium.devconsole;
 
-import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
-import com.autonomy.abc.selenium.page.devconsole.HSODLandingPage;
-import com.autonomy.abc.selenium.page.login.DevConsoleHasLoggedIn;
+import com.autonomy.abc.selenium.navigation.ElementFactoryBase;
+import com.autonomy.abc.selenium.navigation.PageMapper;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;

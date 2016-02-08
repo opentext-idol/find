@@ -1,7 +1,8 @@
-package com.autonomy.abc.selenium.application;
+package com.autonomy.abc.selenium.devconsole;
 
+import com.autonomy.abc.selenium.application.Application;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.navigation.DevConsoleElementFactory;
 
 public class DevConsole implements Application<DevConsoleElementFactory> {
     private DevConsoleElementFactory factory;

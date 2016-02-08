@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.login;
+package com.autonomy.abc.selenium.devconsole;
 
 import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
 import org.openqa.selenium.By;
@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class DevConsoleHasLoggedIn implements HasLoggedIn {
+class DevConsoleHasLoggedIn implements HasLoggedIn {
     WebDriver driver;
 
     public DevConsoleHasLoggedIn (WebDriver driver) {
