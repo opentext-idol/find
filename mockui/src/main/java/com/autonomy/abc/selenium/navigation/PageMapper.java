@@ -7,9 +7,14 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+// "typesafe heterogenous container" (Effective Java #29)
 class PageMapper<T extends Enum<T> & PageMapper.Page> {
     private final Map<Class<?>, T> typeMap = new HashMap<>();
 
+    // can access the enum value representing a page from
+    // any of its superclasses, so that can e.g. access
+    // PromotionsPage via either PromotionsPage or
+    // HSOPromotionsPage depending on what is needed
     public PageMapper(Class<T> enumerator) {
         for (T page : EnumSet.allOf(enumerator)) {
             Class<?> type = page.getPageType();

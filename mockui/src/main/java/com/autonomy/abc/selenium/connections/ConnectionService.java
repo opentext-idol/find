@@ -29,7 +29,8 @@ public class ConnectionService extends ServiceBase<HSODElementFactory> {
     }
 
     public ConnectionsPage goToConnections() {
-        return getApplication().switchTo(ConnectionsPage.class);
+        connectionsPage = getApplication().switchTo(ConnectionsPage.class);
+        return connectionsPage;
     }
 
     public ConnectionsDetailPage goToDetails(final Connector connector) {

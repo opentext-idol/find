@@ -62,10 +62,6 @@ public class OPISOElementFactory extends SOElementFactory {
         return loadPage(OPSearchPage.class);
     }
 
-    public OverviewPage getOverviewPage() {
-        return loadPage(OverviewPage.class);
-    }
-
     public SchedulePage getSchedulePage() {
         return loadPage(SchedulePage.class);
     }
@@ -73,14 +69,6 @@ public class OPISOElementFactory extends SOElementFactory {
     @Override
     public UsersPage getUsersPage() {
         return loadPage(OPUsersPage.class);
-    }
-
-    public AboutPage getAboutPage() {
-        return loadPage(AboutPage.class);
-    }
-
-    public SettingsPage getSettingsPage() {
-        return loadPage(SettingsPage.class);
     }
 
     static class TopNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
