@@ -26,17 +26,6 @@ public class HSOUserService extends UserService<HSODElementFactory> {
     }
 
     @Override
-    public HSOUser createNewUser(NewUser newUser, Role role) {
-        usersPage = goToUsers();
-        usersPage.createUserButton().click();
-        try {
-            return usersPage.addNewUser(newUser, role);
-        } finally {
-            usersPage.closeModal();
-        }
-    }
-
-    @Override
     public void deleteOtherUsers(){
         usersPage = goToUsers();
         for(WebElement trashCan : usersPage.findElements(By.className("users-deleteUser"))){

@@ -101,7 +101,7 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	}
 
 	public PasswordBox passwordBoxFor(User user) {
-		return new PasswordBox(getTableUserPasswordBox(user), getDriver());
+		return new PasswordBox(getUserRow(user).findElement(By.cssSelector("td:nth-child(2)")), getDriver());
 	}
 
 	public User changeAuth(User user, NewUser replacementAuth) {
@@ -110,11 +110,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 
 	public void selectTableUserType(final User user, final String type) {
 		getUserRow(user).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
-	}
-
-	@Deprecated
-	public WebElement getTableUserPasswordBox(final User user) {
-		return getUserRow(user).findElement(By.cssSelector("td:nth-child(2)"));
 	}
 
 	public abstract WebElement getUserRow(User user);

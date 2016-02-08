@@ -25,15 +25,6 @@ public class OPUserService extends UserService<OPISOElementFactory> {
     }
 
     @Override
-    public User createNewUser(NewUser newUser, Role role) {
-        usersPage = goToUsers();
-        usersPage.createUserButton().click();
-        User user = usersPage.addNewUser(newUser, role);
-        usersPage.closeModal();
-        return user;
-    }
-
-    @Override
     public void deleteUser(User user){
         Waits.loadOrFadeWait();
         usersPage.deleteButton(user).click();

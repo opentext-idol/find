@@ -33,29 +33,6 @@ public abstract class KeywordsPage extends KeywordsBase {
         return findElement(By.xpath(".//div[contains(@class,'keywords-controls')]//a[contains(text(), 'New')]"));
     }
 
-    public void deleteKeywords() {
-        filterView(KeywordFilter.ALL);
-
-        for(final Language language : getLanguageList()){
-            selectLanguage(language);
-
-            List<WebElement> synonymGroups = getDriver().findElements(By.cssSelector(".keywords-list .keywords-sub-list"));
-
-            for(int i = 1; i <= synonymGroups.size(); i++){
-                for(int j = getDriver().findElement(By.cssSelector(".keywords-list li:nth-child(1) ul")).findElements(By.tagName("li")).size(); j > 0; j--) {
-                    WebElement cross = getDriver().findElement(By.cssSelector(".keywords-list li:nth-child(1) ul li:nth-child("+j+") i"));
-
-                    if(!cross.getAttribute("class").contains("fa-spin")) {
-                        cross.click();
-                    }
-
-                }
-
-                waitForRefreshIconToDisappear();
-            }
-        }
-    }
-
     public int countSynonymLists() {
         return keywordsContainer().synonymGroups().size();
     }
