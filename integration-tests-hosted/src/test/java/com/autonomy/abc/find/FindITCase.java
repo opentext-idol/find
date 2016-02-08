@@ -38,6 +38,7 @@ import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hamcrest.Matcher;
@@ -50,7 +51,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -977,15 +977,9 @@ public class FindITCase extends HostedTestBase {
         verifyThat(results.resultsDiv(), containsText("No results found"));
 
         scrollToBottom();
-        int i = 0;
-        Pattern p = Pattern.compile("results found");
-        java.util.regex.Matcher m = p.matcher(results.resultsDiv().getText());
 
-        while(m.find()){
-            i++;
-        }
-
-        verifyThat("Only one message showing at the bottom of search results", i, is(1));
+        int occurrences = StringUtils.countMatches(results.resultsDiv().getText(), "results found");
+        verifyThat("Only one message showing at the bottom of search results", occurrences, is(1));
     }
 
     private void scrollToBottom() {
