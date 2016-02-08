@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // "typesafe heterogenous container" (Effective Java #29)
-class PageMapper<T extends Enum<T> & PageMapper.Page> {
+public class PageMapper<T extends Enum<T> & PageMapper.Page> {
     private final Map<Class<?>, T> typeMap = new HashMap<>();
 
     // can access the enum value representing a page from
@@ -38,12 +38,12 @@ class PageMapper<T extends Enum<T> & PageMapper.Page> {
         return null;
     }
 
-    interface Page {
+    public interface Page {
         Class<?> getPageType();
         Object loadAsObject(WebDriver driver);
     }
 
-    interface SwitchStrategy<T> {
+    public interface SwitchStrategy<T> {
         void switchUsing(T context);
     }
 }
