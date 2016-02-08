@@ -139,10 +139,12 @@ define([
                 queryTextModel: this.queryState.queryTextModel
             };
 
+            this.resultsViewAugmentation = new ResultsViewAugmentation({
+                resultsView: new this.ResultsView(constructorArguments)
+            });
+
             var resultsViews = [{
-                content: new ResultsViewAugmentation({
-                    resultsView: new this.ResultsView(constructorArguments)
-                }),
+                content: this.resultsViewAugmentation,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
@@ -158,6 +160,10 @@ define([
                     icon: 'hp-grid'
                 }
             }];
+
+            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
+                this.rightSideContainerHideToggle(toggle);
+            }, this);
 
             var selectionModel = new Backbone.Model({
                 // ID of the currently selected tab
@@ -266,6 +272,10 @@ define([
             $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
+        },
+
+        rightSideContainerHideToggle: function(toggle) {
+            this.$('.right-side-container').toggle(toggle);
         }
     });
 
