@@ -29,7 +29,7 @@ define([
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
             moment, i18n, i18n_indexes) {
 
-    var mediaTypes = ['audio', 'video'];
+    var mediaTypes = ['audio', 'image', 'video'];
     var webTypes = ['text/html', 'text/xhtml'];
 
     function infiniteScroll() {
