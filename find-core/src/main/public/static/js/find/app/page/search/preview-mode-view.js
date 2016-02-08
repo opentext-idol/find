@@ -33,6 +33,12 @@ define([
         documentTemplate: _.template(documentTemplate),
         mediaTemplate: _.template(mediaTemplate),
 
+        events: {
+            'click .close-preview-mode': function() {
+                this.trigger('close-preview');
+            }
+        },
+
         initialize: function() {
             this.scrollFollow = _.bind(scrollFollow, this);
         },

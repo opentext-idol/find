@@ -11,6 +11,7 @@ define([
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/results/results-view-augmentation',
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
@@ -25,7 +26,7 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
+            ParametricView, FilterDisplayView, DateView, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
             Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
@@ -139,7 +140,9 @@ define([
             };
 
             var resultsViews = [{
-                content: new this.ResultsView(constructorArguments),
+                content: new ResultsViewAugmentation({
+                    resultsView: new this.ResultsView(constructorArguments)
+                }),
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
