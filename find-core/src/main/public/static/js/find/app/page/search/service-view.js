@@ -11,6 +11,7 @@ define([
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/results/results-view-augmentation',
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
@@ -25,7 +26,7 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
+            ParametricView, FilterDisplayView, DateView, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
             Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
@@ -138,8 +139,12 @@ define([
                 queryTextModel: this.queryState.queryTextModel
             };
 
+            this.resultsViewAugmentation = new ResultsViewAugmentation({
+                resultsView: new this.ResultsView(constructorArguments)
+            });
+
             var resultsViews = [{
-                content: new this.ResultsView(constructorArguments),
+                content: this.resultsViewAugmentation,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
@@ -155,6 +160,10 @@ define([
                     icon: 'hp-grid'
                 }
             }];
+
+            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
+                this.rightSideContainerHideToggle(toggle);
+            }, this);
 
             var selectionModel = new Backbone.Model({
                 // ID of the currently selected tab
@@ -263,6 +272,10 @@ define([
             $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
+        },
+
+        rightSideContainerHideToggle: function(toggle) {
+            this.$('.right-side-container').toggle(toggle);
         }
     });
 
