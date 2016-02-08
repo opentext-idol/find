@@ -77,17 +77,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		return getTable().findElements(By.cssSelector("tbody tr")).size();
 	}
 
-	@Deprecated
-	/**
-	 * @deprecated  Use userService.deleteUser(User) instead
-	 */
-	public abstract void deleteUser(final String userName);
-
-	@Deprecated
-	public WebElement deleteButton(final String userName) {
-		return getUserRow(userName).findElement(By.cssSelector(".users-deleteUser"));
-	}
-
 	public WebElement deleteButton(User user){
 		return getUserRow(user).findElement(By.cssSelector(".users-deleteUser"));
 	}
@@ -97,8 +86,8 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	}
 
 	@Deprecated
-	public WebElement getTableUserTypeLink(final String userName) {
-		return getUserRow(userName).findElement(By.cssSelector(".role"));
+	public WebElement getTableUserTypeLink(final User user) {
+		return getUserRow(user).findElement(By.cssSelector(".role"));
 	}
 
 	public List<String> getUsernames() {
@@ -112,7 +101,7 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	public abstract Role getRoleOf(User user);
 
 	public PasswordBox passwordBoxFor(User user) {
-		return new PasswordBox(getTableUserPasswordBox(user.getUsername()), getDriver());
+		return new PasswordBox(getTableUserPasswordBox(user), getDriver());
 	}
 
 	public abstract WebElement roleLinkFor(User user);
@@ -123,18 +112,13 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		return replacementAuth.replaceAuthFor(user, this);
 	}
 
-	public void selectTableUserType(final String userName, final String type) {
-		getUserRow(userName).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
+	public void selectTableUserType(final User user, final String type) {
+		getUserRow(user).findElement(By.cssSelector(".input-admin")).findElement(By.xpath(".//*[text() = '" + type + "']")).click();
 	}
 
 	@Deprecated
-	public WebElement getTableUserPasswordBox(final String userName) {
-		return getUserRow(userName).findElement(By.cssSelector("td:nth-child(2)"));
-	}
-
-	@Deprecated //At some point move this down into OPUsersPage
-	public WebElement getUserRow(final String userName) {
-		return findElement(By.xpath(".//span[contains(text(), '" + userName + "')]/../.."));
+	public WebElement getTableUserPasswordBox(final User user) {
+		return getUserRow(user).findElement(By.cssSelector("td:nth-child(2)"));
 	}
 
 	public abstract WebElement getUserRow(User user);

@@ -4,7 +4,6 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
-import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -77,13 +76,6 @@ public class HSOUsersPage extends HSOUserManagementPage {
 
     private By trashCan(){
         return By.className("users-deleteUser");
-    }
-
-    @Override
-    public void deleteUser(String username){
-        getUserRowByUsername(username).findElement(trashCan()).click();
-        ModalView.getVisibleModalView(getDriver()).okButton().click();
-        new WebDriverWait(getDriver(),20).until(GritterNotice.notificationContaining("Deleted user " + username));
     }
 
     public String getEmailOf(User user) {
