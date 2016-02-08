@@ -10,10 +10,10 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.idol.Hit;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.requests.Documents;
@@ -34,7 +34,7 @@ public class FindIdolDocumentService extends IdolDocumentService {
     }
 
     @Override
-    protected Documents<SearchResult> executeQuery(final AciService aciService, final AciParameters aciParameters, final boolean autoCorrect) {
+    protected Documents<IdolSearchResult> executeQuery(final AciService aciService, final AciParameters aciParameters, final boolean autoCorrect) {
         QueryResponseData responseData;
         try {
             responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
@@ -53,11 +53,11 @@ public class FindIdolDocumentService extends IdolDocumentService {
         final String spellingQuery = responseData.getSpellingquery();
 
         // If IDOL has a spelling suggestion, retry query for auto correct
-        final Documents<SearchResult> documents;
+        final Documents<IdolSearchResult> documents;
         if (autoCorrect && spellingQuery != null) {
             documents = rerunQueryWithAdjustedSpelling(aciService, aciParameters, responseData, spellingQuery);
         } else {
-            final List<SearchResult> results = parseQueryHits(hits);
+            final List<IdolSearchResult> results = parseQueryHits(hits);
             documents = new Documents<>(results, responseData.getTotalhits(), null, null, null);
         }
 

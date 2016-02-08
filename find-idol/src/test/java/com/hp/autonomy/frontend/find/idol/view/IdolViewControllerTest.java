@@ -10,7 +10,6 @@ import com.autonomy.aci.client.services.AciServiceException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
 import com.hp.autonomy.searchcomponents.idol.view.ViewDocumentNotFoundException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewNoReferenceFieldException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewServerErrorException;
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewController, ViewServerService<String, AciErrorException>, String, AciErrorException> {
+public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewController, String, AciErrorException> {
     @Mock
     private ConfigService<IdolFindConfig> configService;
 

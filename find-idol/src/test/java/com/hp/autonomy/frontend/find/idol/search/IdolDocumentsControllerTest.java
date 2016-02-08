@@ -7,13 +7,24 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.Before;
+import org.junit.Test;
 
-public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, SearchResult, AciErrorException> {
+public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<String, IdolSearchResult, AciErrorException> {
     @Before
     public void setUp() {
-        documentsController = new IdolDocumentsController(documentsService, queryRestrictionsBuilder);
+        documentsController = new IdolDocumentsController(documentsService, new IdolQueryRestrictionsBuilder());
         databaseType = String.class;
+    }
+
+    @Override
+    protected IdolSearchResult sampleResult() {
+        return new IdolSearchResult.Builder().build();
+    }
+
+    @Test(expected = AciErrorException.class)
+    public void getDocumentContentNotFound() throws AciErrorException {
+        documentsController.getDocumentContent("Some Reference", null);
     }
 }

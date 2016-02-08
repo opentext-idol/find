@@ -28,7 +28,7 @@ public class IdolRelatedConceptsController extends RelatedConceptsController<QsE
     }
 
     @Override
-    protected IdolRelatedConceptsRequest buildRelatedConceptsRequest(QueryRestrictions<String> queryRestrictions) {
+    protected IdolRelatedConceptsRequest buildRelatedConceptsRequest(final QueryRestrictions<String> queryRestrictions) {
         final IdolRelatedConceptsRequest idolRelatedConceptsRequest = new IdolRelatedConceptsRequest();
         idolRelatedConceptsRequest.setQueryRestrictions(queryRestrictions);
         idolRelatedConceptsRequest.setQuerySummaryLength(QUERY_SUMMARY_LENGTH);

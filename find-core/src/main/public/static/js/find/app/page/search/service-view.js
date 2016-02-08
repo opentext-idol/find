@@ -178,8 +178,7 @@ define([
 
             this.parametricView = new ParametricView({
                 queryModel: this.queryModel,
-                queryState: this.queryState,
-                indexesCollection: this.indexesCollection
+                queryState: this.queryState
             });
 
             // Left Collapsed Views
