@@ -1,0 +1,20 @@
+<p>
+    <span class="uppercase">
+        <%-i18n['search.compare.selectedSearch']%>
+    </span>
+    <%- selectedSearchTitle %>
+</p>
+<p class="m-b-md">
+    <%-i18n['search.compare.selectSearchToCompare']%>
+</p>
+<ul class="saved-searches-list-selector list-unstyled list-inline">
+    <% _.each(searches, function(search) { %>
+        <li>
+            <div class="hpebox saved-search-box" data-search-cid="<%-search.cid%>">
+                <div class="hpebox-content clickable">
+                    <%-search.get('title')%>
+                </div>
+            </div>
+        </li>
+    <% }); %>
+</ul>

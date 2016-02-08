@@ -66,7 +66,7 @@ define([
                 this.model.set('error', null);
 
                 new Confirm({
-                    cancelClass: 'btn-default',
+                    cancelClass: 'btn-white',
                     cancelIcon: '',
                     cancelText: i18n['app.cancel'],
                     okText: i18n['app.delete'],
@@ -94,7 +94,7 @@ define([
                 this.model.set('error', null);
 
                 new Confirm({
-                    cancelClass: 'btn-default',
+                    cancelClass: 'btn-white',
                     cancelIcon: '',
                     cancelText: i18n['app.cancel'],
                     okText: i18n['app.reset'],
