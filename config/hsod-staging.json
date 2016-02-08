@@ -63,70 +63,70 @@
   },
   "users": {
     "default": {
-      "username": "TODO",
-      "role": "Admin",
-      "auth": {
-        "type": "HP Passport",
-        "username": "hodtest",
-        "password": "Z@s=5rYbw6MEx]?X"
-      },
-      "apikey": "c4eb9531-531c-4bd2-8707-c31fcb02625e",
-      "domain" : ""
-    },
-    "index_tests": {
-      "username": "TODO",
-      "role": "Admin",
-      "auth": {
-        "type": "Yahoo",
-        "username": "hodtesting",
-        "password": ":Z4jM8vq5`en89d>"
-      },
-      "apikey" : "a11f62bc-51f3-4e25-9e4a-3aeba5a69f4c",
-      "domain" : ""
-    },
-    "analytics_tests": {
-      "username": "TODO",
+      "username": "Facebook Staging",
       "role": "Admin",
       "auth": {
         "type": "Facebook",
-        "email": "matthew.williamson@hpe.com",
-        "password": "vdPAuTGU"
+        "email": "hodstagingqa+facebook@gmail.com",
+        "password": "eplzwkvxpeks"
       },
-      "apikey" : "",
-      "domain" : ""
+      "apikey" : "cf1da8d7-09ef-4699-a928-5c1b0615bfa0",
+      "domain" : "e6ca7c9c-3f59-40ff-b119-39bb8bbbf79e"
     },
-    "google": {
-      "username": "TODO",
+    "index_tests": {
+      "username": "Google Staging",
       "role": "Admin",
       "auth": {
         "type": "Google",
-        "email": "hodtestqa401@gmail.com",
-        "password": "qoxntlozubjaamyszerfk"
+        "email": "hodstagingqa@gmail.com",
+        "password": "orfzswymvalk"
       },
-      "apikey" : "",
-      "domain" : ""
+      "apikey" : "cf1da8d7-09ef-4699-a928-5c1b0615bfa0",
+      "domain" : "411befee-42bf-4898-808d-1b5aa4cfd58b"
     },
-    "twitter": {
-      "username": "TODO",
+    "analytics_tests": {
+      "username": "Twitter Staging",
       "role": "Admin",
       "auth": {
         "type": "Twitter",
-        "username": "hodtesting",
-        "password": "5cUdPhYM"
+        "username": "staginghod",
+        "password": "pztcbdrfimom"
       },
-      "apikey" : "",
-      "domain" : ""
+      "apikey" : "f09e1969-e3c5-4036-9b1f-3395c6076695",
+      "domain" : "538ec520-068f-4e34-997d-e5f6c9e28e4c"
+    },
+    "google": {
+      "username": "Google Staging",
+      "role": "Admin",
+      "auth": {
+        "type": "Google",
+        "email": "hodstagingqa@gmail.com",
+        "password": "orfzswymvalk"
+      },
+      "apikey" : "cc477766-f875-48dc-b01b-892b275fb409",
+      "domain" : "411befee-42bf-4898-808d-1b5aa4cfd58b"
+    },
+    "twitter": {
+      "username": "Twitter Staging",
+      "role": "Admin",
+      "auth": {
+        "type": "Twitter",
+        "username": "staginghod",
+        "password": "pztcbdrfimom"
+      },
+      "apikey" : "f09e1969-e3c5-4036-9b1f-3395c6076695",
+      "domain" : "538ec520-068f-4e34-997d-e5f6c9e28e4c"
     },
     "facebook": {
-      "username": "TODO",
+      "username": "Facebook Staging",
       "role": "Admin",
       "auth": {
         "type": "Facebook",
-        "email": "matthew.williamson@hpe.com",
-        "password": "vdPAuTGU"
+        "email": "hodstagingqa+facebook@gmail.com",
+        "password": "eplzwkvxpeks"
       },
-      "apikey" : "",
-      "domain" : ""
+      "apikey" : "cf1da8d7-09ef-4699-a928-5c1b0615bfa0",
+      "domain" : "e6ca7c9c-3f59-40ff-b119-39bb8bbbf79e"
     },
     "hp_passport": {
       "username": "TODO",
