@@ -1,6 +1,7 @@
-package com.autonomy.abc.selenium.navigation;
+package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.navigation.ElementFactoryBase;
+import com.autonomy.abc.selenium.navigation.PageMapper;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;

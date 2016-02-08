@@ -1,5 +1,6 @@
-package com.autonomy.abc.selenium.element;
+package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.element.Checkbox;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

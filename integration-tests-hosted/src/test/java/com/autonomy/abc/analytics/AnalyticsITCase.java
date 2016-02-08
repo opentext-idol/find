@@ -3,7 +3,7 @@ package com.autonomy.abc.analytics;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.application.HSODFind;
+import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;

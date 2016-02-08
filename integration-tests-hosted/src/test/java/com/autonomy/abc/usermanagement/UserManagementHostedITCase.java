@@ -4,7 +4,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.navigation.FindHasLoggedIn;
+import com.autonomy.abc.selenium.find.FindHasLoggedIn;
 import com.autonomy.abc.selenium.page.ErrorPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;

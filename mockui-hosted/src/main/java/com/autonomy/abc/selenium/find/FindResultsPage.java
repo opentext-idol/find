@@ -1,7 +1,5 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.element.FindParametricCheckbox;
-import com.autonomy.abc.selenium.search.FindSearchResult;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;

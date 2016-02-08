@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.navigation;
+package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.page.login.SSOFailureException;
 import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;

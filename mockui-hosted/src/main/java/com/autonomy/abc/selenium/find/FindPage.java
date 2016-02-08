@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.find;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.indexes.tree.FindIndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.page.search.SearchBase;

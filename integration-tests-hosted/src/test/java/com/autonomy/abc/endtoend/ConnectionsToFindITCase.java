@@ -3,7 +3,7 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.selenium.application.HSODFind;
+import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Window;

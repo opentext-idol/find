@@ -1,5 +1,7 @@
-package com.autonomy.abc.selenium.indexes.tree;
+package com.autonomy.abc.selenium.find;
 
+import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
