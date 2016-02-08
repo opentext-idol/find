@@ -178,6 +178,8 @@ define([
                             indexesCollection: this.indexesCollection,
                             searchModel: this.searchModel,
                             savedSearchCollection: this.savedSearchCollection,
+                            savedSnapshotCollection: this.savedSnapshotCollection,
+                            savedQueryCollection: this.savedQueryCollection,
                             queryTextModel: queryTextModel,
                             savedSearchModel: savedSearchModel
                         })

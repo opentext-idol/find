@@ -1,0 +1,24 @@
+<p>Query for: <strong><%- data.queryText %></strong></p>
+
+<% if (data.relatedConcepts.length) { %>
+    <p>Also searching for: <%- data.relatedConcepts.join(', ') %></p>
+<% } %>
+
+<p>In indexes: <%- _.pluck(data.indexes, 'name').join(', ') %></p>
+
+<% if (data.minDate) { %>
+    <p>From <%- data.minDate.format(dateFormat) %></p>
+<% } %>
+
+<% if (data.maxDate) { %>
+    <p>Until <%- data.maxDate.format(dateFormat) %></p>
+<% } %>
+
+<% if (data.parametricValues.length) { %>
+    <p>Restricted by:</p>
+    <% _.each(_.groupBy(data.parametricValues, 'field'), function(values, field) { %>
+        <p>
+            <strong><%- field %></strong> <%- _.pluck(values, 'value').join(' ') %>
+        </p>
+    <% }) %>
+<% } %>

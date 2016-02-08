@@ -7,6 +7,7 @@ define([
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
+    'find/app/model/saved-searches/saved-search-model',
     'find/app/model/search-filters-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filter-display/filter-display-view',
@@ -15,6 +16,7 @@ define([
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/spellcheck-view',
+    'find/app/page/search/snapshots/snapshot-filter-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/selected-values-collection',
@@ -23,13 +25,12 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
-            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, i18n, i18nIndexes, template) {
+], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel,
+            SearchFiltersCollection, ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection,
+            RelatedConceptsView, SpellCheckView, SnapshotFilterView, Collapsible, addChangeListener,
+            SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, i18n, i18nIndexes, template) {
 
     'use strict';
-
-    var html = _.template(template)({i18n: i18n});
 
     function selectInitialIndexes(indexesCollection) {
         var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
@@ -56,6 +57,7 @@ define([
 
     return Backbone.View.extend({
         className: 'inline',
+        template: _.template(template),
 
         // May be overridden
         SearchFiltersCollection: SearchFiltersCollection,
@@ -66,17 +68,22 @@ define([
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
+            this.searchModel = options.searchModel;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
+            this.savedSnapshotCollection = options.savedSnapshotCollection;
+            this.savedQueryCollection = options.savedQueryCollection;
 
             this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
+
+            var searchType = this.savedSearchModel.get('type');
 
             var initialSelectedIndexes;
             var savedSelectedIndexes = this.savedSearchModel.toSelectedIndexes();
 
             // TODO: Check if the saved indexes still exists?
-            if (savedSelectedIndexes.length === 0) {
+            if (savedSelectedIndexes.length === 0 && searchType === SavedSearchModel.Type.QUERY) {
                 if (this.indexesCollection.isEmpty()) {
                     initialSelectedIndexes = [];
 
@@ -97,15 +104,12 @@ define([
                 selectedIndexes: new IndexesCollection(initialSelectedIndexes)
             };
 
-            this.queryModel = new QueryModel({}, {queryState: this.queryState});
+            this.queryModel = new QueryModel({
+                autoCorrect: searchType === SavedSearchModel.Type.QUERY
+            }, {queryState: this.queryState});
 
             this.listenTo(this.queryModel, 'change:indexes', function() {
                 this.queryState.selectedParametricValues.reset();
-            });
-
-            this.filtersCollection = new this.SearchFiltersCollection([], {
-                queryState: this.queryState,
-                indexesCollection: this.indexesCollection
             });
 
             addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText'], this.fetchEntities);
@@ -114,6 +118,9 @@ define([
                 documentsCollection: this.documentsCollection,
                 savedSearchModel: this.savedSearchModel,
                 savedSearchCollection: this.savedSearchCollection,
+                savedSnapshotCollection: this.savedSnapshotCollection,
+                savedQueryCollection: this.savedQueryCollection,
+                searchModel: this.searchModel,
                 queryModel: this.queryModel,
                 queryState: this.queryState
             });
@@ -144,73 +151,79 @@ define([
                 }
             }];
 
-            var selectionModel = new Backbone.Model({
+            var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
                 selectedTab: resultsViews[0].id
             });
 
             this.resultsViewSelection = new ResultsViewSelection({
                 views: resultsViews,
-                model: selectionModel
+                model: resultsViewSelectionModel
             });
 
             this.resultsViewContainer = new ResultsViewContainer({
                 views: resultsViews,
-                model: selectionModel
+                model: resultsViewSelectionModel
             });
 
-            // Left Views
-            this.filterDisplayView = new FilterDisplayView({
-                collection: this.filtersCollection
-            });
-
-            this.parametricView = new ParametricView({
-                queryModel: this.queryModel,
-                queryState: this.queryState,
-                indexesCollection: this.indexesCollection
-            });
-
-            // Left Collapsed Views
-            this.indexesView = new this.IndexesView({
-                queryModel: this.queryModel,
-                indexesCollection: this.indexesCollection,
-                selectedDatabasesCollection: this.queryState.selectedIndexes
-            });
-
-            this.dateView = new DateView({
-                queryModel: this.queryModel,
-                datesFilterModel: this.queryState.datesFilterModel
-            });
-
-            //Right Collapsed View
-            this.relatedConceptsView = new RelatedConceptsView({
+            var relatedConceptsView = new RelatedConceptsView({
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryState.queryTextModel
             });
 
-            this.spellCheckView = new SpellCheckView({
-                documentsCollection: this.documentsCollection,
-                queryModel: this.queryModel
-            });
+            this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
 
-            // Collapse wrappers
-            this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
-            this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
-            this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], this.relatedConceptsView);
+            if (searchType === SavedSearchModel.Type.QUERY) {
+                this.spellCheckView = new SpellCheckView({
+                    documentsCollection: this.documentsCollection,
+                    queryModel: this.queryModel
+                });
+
+                this.indexesView = new this.IndexesView({
+                    queryModel: this.queryModel,
+                    indexesCollection: this.indexesCollection,
+                    selectedDatabasesCollection: this.queryState.selectedIndexes
+                });
+
+                this.dateView = new DateView({
+                    queryModel: this.queryModel,
+                    datesFilterModel: this.queryState.datesFilterModel
+                });
+
+                this.parametricView = new ParametricView({
+                    queryModel: this.queryModel,
+                    queryState: this.queryState,
+                    indexesCollection: this.indexesCollection
+                });
+
+                var filtersCollection = new this.SearchFiltersCollection([], {
+                    queryState: this.queryState,
+                    indexesCollection: this.indexesCollection
+                });
+
+                this.filterDisplayView = new FilterDisplayView({collection: filtersCollection});
+
+                this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
+                this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
+            } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
+                this.snapshotFilterView = new SnapshotFilterView({
+                    savedSearchModel: this.savedSearchModel
+                });
+            }
         },
 
         render: function() {
-            this.$el.html(html);
+            var searchType = this.savedSearchModel.get('type');
 
-            this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
+            this.$el.html(this.template({
+                i18n: i18n,
+                searchType: searchType,
+                SearchType: SavedSearchModel.Type
+            }));
+
             this.savedSearchControlView.setElement(this.$('.search-options-container')).render();
-            this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
-            this.parametricView.setElement(this.$('.parametric-container')).render();
-            this.dateViewWrapper.setElement(this.$('.date-container')).render();
-            this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
-
             this.relatedConceptsViewWrapper.render();
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
@@ -219,6 +232,16 @@ define([
             this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
 
             this.$('.container-toggle').on('click', this.containerToggle);
+
+            if (searchType === SavedSearchModel.Type.QUERY) {
+                this.filterDisplayView.setElement(this.$('.filter-display-container')).render();
+                this.indexesViewWrapper.setElement(this.$('.indexes-container')).render();
+                this.parametricView.setElement(this.$('.parametric-container')).render();
+                this.dateViewWrapper.setElement(this.$('.date-container')).render();
+                this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
+            } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
+                this.snapshotFilterView.setElement(this.$('.snapshot-view-container')).render();
+            }
 
             this.fetchEntities();
         },
