@@ -334,14 +334,16 @@ html, body {
     display: inline;
 }
 
+/* Search tabs */
 .search-tabs-container {
     background-color: #EFEFEF;
-    height: 51px;
+    height: 65px;
     border-bottom: 1px solid #E4E4E4;
+    padding-top: 5px;
 }
-
-.search-tabs-container h4 {
-    vertical-align: text-bottom; /* hax? */
+.search-tabs-container .nav-tabs > li > a {
+    height: 60px;
+    line-height: 22px;
 }
 
 .find {

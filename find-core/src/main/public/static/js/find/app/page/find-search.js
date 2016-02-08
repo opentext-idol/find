@@ -140,7 +140,7 @@ define([
             this.$el.html(this.template);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
-            this.tabView.setElement(this.$('.tabbed-search-row')).render();
+            this.tabView.setElement(this.$('.search-tabs-container')).render();
 
             if (this.searchModel.get('selectedSearchCid') === null) {
                 this.reducedState();
@@ -148,7 +148,7 @@ define([
                 this.expandedState();
             }
             _.each(this.serviceViews, function(data) {
-                this.$('.tabbed-search-row').after(data.view.$el);
+                this.$('.search-tabs-row').after(data.view.$el);
                 data.view.render();
             }, this);
 
@@ -185,7 +185,7 @@ define([
                         })
                     };
 
-                    this.$('.tabbed-search-row').after(viewData.view.$el);
+                    this.$('.search-tabs-row').after(viewData.view.$el);
                     viewData.view.render();
                 }
 
@@ -207,7 +207,7 @@ define([
         expandedState: function() {
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
-            this.$('.tabbed-search-row').show();
+            this.$('.search-tabs-row').show();
             this.$('.app-logo').hide();
             this.$('.hp-logo-footer').addClass('hidden');
 
@@ -220,7 +220,7 @@ define([
         reducedState: function() {
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
-            this.$('.tabbed-search-row').hide();
+            this.$('.search-tabs-row').hide();
             this.$('.app-logo').show();
             this.$('.hp-logo-footer').removeClass('hidden');
 

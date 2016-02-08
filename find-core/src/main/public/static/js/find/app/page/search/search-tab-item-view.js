@@ -6,8 +6,9 @@
 define([
     'js-whatever/js/list-item-view',
     'underscore',
+    'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/search-tab-item-view.html'
-], function(ListItemView, _, template) {
+], function(ListItemView, _, i18n, template) {
 
     var templateFunction = _.template(template);
 
@@ -18,6 +19,7 @@ define([
             ListItemView.prototype.initialize.call(this, _.defaults({
                 template: templateFunction,
                 templateOptions: {
+                    i18n: i18n,
                     searchCid: this.model.cid
                 }
             }, options));

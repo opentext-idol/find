@@ -35,7 +35,7 @@ define([
         render: function() {
             this.$el.html(html);
 
-            this.tabListView.setElement(this.$('.saved-search-tabs-list')).render();
+            this.tabListView.setElement(this.$('.search-tabs-list')).render();
             this.updateSelectedTab();
         },
 
