@@ -287,9 +287,8 @@ define([
 
             if (media && url) {
                 args.html = this.mediaPlayerTemplate({
-                    media: media,
-                    url: url,
-                    offset: options.model.get('offset')
+                    i18n: i18n,
+                    model: options.model
                 });
             } else {
                 args.html = this.viewDocumentTemplate({

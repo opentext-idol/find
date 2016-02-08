@@ -53,7 +53,7 @@ define([
 
             var contentType = this.model.get('contentType') || '';
 
-            var media = _.find(mediaTypes, function (mediaType) {
+            this.media = _.find(mediaTypes, function (mediaType) {
                 return contentType.indexOf(mediaType) === 0;
             });
 
@@ -69,7 +69,7 @@ define([
 
             var $preview = this.$('.preview-mode-document');
 
-            if (media && url) {
+            if (this.media && url) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
                     model: this.model
