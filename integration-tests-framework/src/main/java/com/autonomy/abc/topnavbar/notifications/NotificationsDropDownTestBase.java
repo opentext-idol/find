@@ -28,9 +28,13 @@ public class NotificationsDropDownTestBase extends ABCTestBase {
     }
 
     protected void checkForNotificationNoWait(String notificationText) {
-        getElementFactory().getTopNavBar().notificationsDropdown();
+        checkForNotificationNoWait(notificationText, 1);
+    }
+
+    protected void checkForNotificationNoWait(String notificationText, int notificationNumber) {
+        getElementFactory().getTopNavBar().openNotifications();
         notifications = getElementFactory().getTopNavBar().getNotifications();
-        assertThat(notifications.notificationNumber(1).getText(), is(notificationText));
+        assertThat(notifications.notificationNumber(notificationNumber).getText(), is(notificationText));
     }
 
     protected void checkForNotification(String notificationText) {

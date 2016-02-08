@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.FindParametricCheckbox;
 import com.autonomy.abc.selenium.search.FindSearchResult;
+import com.autonomy.abc.selenium.search.SearchResult;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -129,6 +130,15 @@ public class FindResultsPage extends AppElement {
             results.add(new FindSearchResult(result));
         }
         return results;
+    }
+
+    public List<FindSearchResult> getResults(int maxResults) {
+        List<FindSearchResult> results = getResults();
+        return results.subList(0, Math.min(maxResults, results.size()));
+    }
+
+    public SearchResult getResult(int i) {
+        return new FindSearchResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")));
     }
 
     public List<String> getDisplayedDocumentsDocumentTypes(){

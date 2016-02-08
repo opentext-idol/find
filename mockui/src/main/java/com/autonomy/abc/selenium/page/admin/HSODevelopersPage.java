@@ -46,6 +46,11 @@ public class HSODevelopersPage extends HSOUserManagementPage {
         return findElement(By.xpath("//*[contains(@class,'user-name') and contains(.,'" + username + "')]"));
     }
 
+    public void editUsername(User dev, String devUsername) {
+        editUsernameLink(dev).click();
+        editUsernameInput(dev).setAndSubmit(devUsername);
+    }
+
     public static class Factory implements ParametrizedFactory<WebDriver, HSODevelopersPage> {
         public HSODevelopersPage create(WebDriver context) {
             return new HSODevelopersPage(context);

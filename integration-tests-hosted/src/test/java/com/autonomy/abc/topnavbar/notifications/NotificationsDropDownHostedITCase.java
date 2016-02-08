@@ -13,6 +13,7 @@ import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.Notification;
 import com.autonomy.abc.selenium.navigation.HSODElementFactory;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
@@ -37,6 +38,7 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 
+@RelatedTo("CSA-1583")
 public class NotificationsDropDownHostedITCase extends NotificationsDropDownTestBase {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -50,9 +52,14 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         return (HSODElementFactory) super.getElementFactory();
     }
 
+    @Override
+    public HSOApplication getApplication() {
+        return (HSOApplication) super.getApplication();
+    }
+
     @Test
     public void testStaticPromotionNotifications(){
-        HSOPromotionService ps = (HSOPromotionService) getApplication().promotionService();
+        HSOPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -70,7 +77,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testRemovingStaticPromotionNotifications(){
-        HSOPromotionService ps = (HSOPromotionService) getApplication().promotionService();
+        HSOPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -86,15 +93,23 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Test
-    public void testCreateIndexNotifications() {
-        Index index = new Index("danye west");
-        IndexService indexService = ((HSOApplication) getApplication()).indexService();
+    @RelatedTo("CSA-2014")
+    public void testCreateDeleteIndexNotifications() {
+        Index noDisplay = new Index("danye west");
+        verifyIndexNotifications(noDisplay, noDisplay.getName());
+        Index display = new Index("something", "Display Name 123");
+        verifyIndexNotifications(display, display.getDisplayName());
+    }
 
+    private void verifyIndexNotifications(Index index, String expectedName) {
+        IndexService indexService = getApplication().indexService();
         try {
             indexService.setUpIndex(index);
-            checkForNotificationNoWait("Created a new index: " + index.getName());
+            checkForNotificationNoWait("Created a new index: " + expectedName);
         } finally {
             indexService.deleteIndex(index);
+            checkForNotificationNoWait("Index " + expectedName + " successfully deleted");
+            checkForNotificationNoWait("Deleting index " + expectedName, 2);
         }
     }
 
@@ -109,7 +124,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
         WebConnector connector = new WebConnector("http://loscampesinos.com/", connectorName).withDuration(60);
 
-        ConnectionService cs = ((HSOApplication) getApplication()).connectionService();
+        ConnectionService cs = getApplication().connectionService();
         try {
             cs.setUpConnection(connector); //Notifications are dealt with within here, so need to wait for them
 
@@ -136,7 +151,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         String deletingNotification = "Deleting connection " + connectorName;
         String successfulNotification = "Connection " + connectorName + " successfully removed";
 
-        ConnectionService cs = ((HSOApplication) getApplication()).connectionService();
+        ConnectionService cs = getApplication().connectionService();
         cs.setUpConnection(connector);
 
         cs.deleteConnection(connector, true);        //Because of the WebDriverWait within no need to wait for the notifications
@@ -152,57 +167,43 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     @Test
     @KnownBug({"CSA-1698", "CSA-1687"})
     public void testUsernameShowsInNotifications() throws Exception {
-        HSODevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODevelopersPage.class);
-        User dev = new User(null, hsoDevelopersPage.getUsernames().get(0));
-
-        String devUsername = "Brendon Urie";
-
-        hsoDevelopersPage.editUsernameLink(dev).click();
-        hsoDevelopersPage.editUsernameInput(dev).setAndSubmit(devUsername);
-
         KeywordService keywordService = getApplication().keywordService();
         UserService userService = getApplication().userService();
-        Session session = null;
-
+        Session secondSession = null;
         SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
 
-        try {
-            keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
+        HSODevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODevelopersPage.class);
 
-            getElementFactory().getTopNavBar().notificationsDropdown();
-            for (Notification notification : getElementFactory().getTopNavBar().getNotifications().getAllNotifications()) {
-                verifyThat(notification.getUsername(), is(devUsername));
-            }
+        User dev = new User(null, hsoDevelopersPage.getUsernames().get(0));
+        String devUsername = "Brendon Urie";
+        hsoDevelopersPage.editUsername(dev, devUsername);
+
+        try {
+            addKeywordsAndVerifyNotifications(keywordService, devUsername);
 
             User user = userService.createNewUser(config.getNewUser("drake"), Role.ADMIN);
 
             try {
                 user.authenticate(config.getWebDriverFactory(), emailHandler);
-            } catch (TimeoutException e) {
-                /* User has likely already been authenticated recently, attempt to continue */
-            }
+            } catch (TimeoutException e) { /* User has likely already been authenticated recently, attempt to continue */ }
 
-            session = getSessionRegistry().startSession(config.getWebappUrl());
-            HSODElementFactory secondFactory = new HSOApplication().inWindow(session.getActiveWindow()).elementFactory();
+            secondSession = getSessionRegistry().startSession(config.getWebappUrl());
+            HSOApplication secondApplication = new HSOApplication().inWindow(secondSession.getActiveWindow());
+            HSODElementFactory secondFactory = secondApplication.elementFactory();
 
-            loginTo(secondFactory.getLoginPage(), session.getDriver(), user);
-
+            loginTo(secondFactory.getLoginPage(), secondSession.getDriver(), user);
             secondFactory.getPromotionsPage();
 
-            keywordService.addSynonymGroup("Messi", "Campbell");
-
-            verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
-            secondFactory.getTopNavBar().notificationsDropdown();
-            verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(user.getUsername()));
+            secondApplication.keywordService().addSynonymGroup("Messi", "Campbell");
+            secondFactory.getTopNavBar().openNotifications();
+            verifyNotificationCorrectUsername(user.getUsername(), secondFactory);
 
             keywordService.addSynonymGroup("Joel", "Lionel");
-
-            verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
-            verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(devUsername));
+            verifyNotificationCorrectUsername(devUsername, secondFactory);
 
         } finally {
-            if (session != null) {
-                getSessionRegistry().endSession(session);
+            if (secondSession != null) {
+                getSessionRegistry().endSession(secondSession);
             }
 
             userService.deleteOtherUsers();
@@ -210,6 +211,20 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
             emailHandler.markAllEmailAsRead(getDriver());
         }
+    }
+
+    private void addKeywordsAndVerifyNotifications(KeywordService keywordService, String devUsername){
+        keywordService.addSynonymGroup("My", "Good", "Friend", "Jeff");
+
+        getElementFactory().getTopNavBar().openNotifications();
+        for (Notification notification : getElementFactory().getTopNavBar().getNotifications().getAllNotifications()) {
+            verifyThat(notification.getUsername(), is(devUsername));
+        }
+    }
+
+    private void verifyNotificationCorrectUsername(String username, SOElementFactory secondFactory){
+        verifyThat(getElementFactory().getTopNavBar().getNotifications().getNotification(1).getUsername(), is(username));
+        verifyThat(secondFactory.getTopNavBar().getNotifications().getNotification(1).getUsername(), is(username));
     }
 
     @Test

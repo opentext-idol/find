@@ -31,7 +31,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		ParametricFilter.Filterable {
 
 	private static final SimpleDateFormat INPUT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-	private static final SimpleDateFormat RESULT_DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
+	public static final SimpleDateFormat RESULT_DATE_FORMAT = new SimpleDateFormat("dd MMMMMMMMM yyyy HH:mm");
 
 	public SearchBase(final WebElement element, final WebDriver driver) {
 		super(element, driver);

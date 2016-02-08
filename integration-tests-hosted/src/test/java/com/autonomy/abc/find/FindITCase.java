@@ -45,10 +45,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -380,13 +382,11 @@ public class FindITCase extends HostedTestBase {
         findPage.search("stars");
         findPage.filterBy(new IndexFilter(Index.DEFAULT));
 
-        List<FindSearchResult> searchResults = results.getResults();
-
-        for(int i = 0; i < 6; i++){
-            String url = searchResults.get(i).getReference();
+        for(FindSearchResult searchResult : results.getResults(5)){
+            String url = searchResult.getReference();
 
             try {
-                searchResults.get(i).title().click();
+                searchResult.title().click();
             } catch (WebDriverException e) {
                 fail("Could not click on title - most likely CSA-1767");
             }
@@ -553,7 +553,7 @@ public class FindITCase extends HostedTestBase {
     public void testViewDocumentsOpenFromFind(){
         findPage.search("Review");
 
-        for(FindSearchResult result : results.getResults()){
+        for(FindSearchResult result : results.getResults(5)){
             try {
                 ElementUtil.scrollIntoViewAndClick(result.title(), getDriver());
             } catch (WebDriverException e){
@@ -912,18 +912,97 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-2082")
     public void testAutoScroll(){
         findPage.search("my very easy method just speeds up naming ");
 
         verifyThat(results.getResults().size(), lessThanOrEqualTo(30));
 
-        ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight)");
-
-        verifyThat(results.findElement(By.className(FindResultsPage.Container.MIDDLE + "-container")).findElement(By.className("fa-spin")), displayed());
-
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-
+        scrollToBottom();
         verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(30), lessThanOrEqualTo(60)));
+
+        scrollToBottom();
+        verifyThat(results.getResults().size(), allOf(greaterThanOrEqualTo(60), lessThanOrEqualTo(90)));
+
+        List<String> titles = results.getResultTitles();
+        Set<String> titlesSet = new HashSet<>(titles);
+
+        verifyThat("No duplicate titles", titles.size(), is(titlesSet.size()));
+    }
+
+    @Test
+    public void testViewportSearchResultNumbers(){
+        findPage.search("Messi");
+
+        results.getResult(1).title().click();
+        verifyDocViewerTotalDocuments(30);
+
+        scrollToBottom();
+        results.getResult(31).title().click();
+        verifyDocViewerTotalDocuments(60);
+
+        scrollToBottom();
+        results.getResult(61).title().click();
+        verifyDocViewerTotalDocuments(90);
+    }
+
+    @Test
+    @KnownBug("CCUK-3647")
+    public void testLessThan30ResultsDoesntAttemptToLoadMore() {
+        findPage.search("roland garros");
+        findPage.filterBy(new IndexFilter("fifa"));
+
+        results.getResult(1).title().click();
+        verifyDocViewerTotalDocuments(lessThanOrEqualTo(30));
+
+        scrollToBottom();
+        verifyThat(results.resultsDiv(), not(containsText("results found")));
+    }
+
+    @Test
+    public void testBetween30And60Results(){
+        findPage.search("idol");
+        findPage.filterBy(new IndexFilter("sitesearch"));
+
+        scrollToBottom();
+        results.getResult(1).title().click();
+        verifyDocViewerTotalDocuments(lessThanOrEqualTo(60));
+
+        verifyThat(results.resultsDiv(), containsText("No more results found"));
+    }
+
+    @Test
+    public void testNoResults(){
+        findPage.search("thissearchwillalmostcertainlyreturnnoresults");
+        verifyThat(results.resultsDiv(), containsText("No results found"));
+
+        scrollToBottom();
+        int i = 0;
+        Pattern p = Pattern.compile("results found");
+        java.util.regex.Matcher m = p.matcher(results.resultsDiv().getText());
+
+        while(m.find()){
+            i++;
+        }
+
+        verifyThat("Only one message showing at the bottom of search results", i, is(1));
+    }
+
+    private void scrollToBottom() {
+        for(int i = 0; i < 10; i++){
+            new Actions(getDriver()).sendKeys(Keys.PAGE_DOWN).perform();
+        }
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+    }
+
+    private void verifyDocViewerTotalDocuments(int docs){
+        verifyDocViewerTotalDocuments(is(docs));
+    }
+
+    private void verifyDocViewerTotalDocuments(Matcher matcher){
+        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        verifyThat(docViewer.getTotalDocumentsNumber(), matcher);
+        docViewer.close();
     }
 
     private enum FileType {
