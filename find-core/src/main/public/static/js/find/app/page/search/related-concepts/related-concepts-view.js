@@ -103,7 +103,13 @@ define([
                         this.selectViewState(['list']);
                         $highlight.show();
 
-                        var entities = _.first(this.entityCollection.models, 8);
+                        var entities = this.entityCollection.chain()
+                            .filter(function(model) {
+                                return model.get('cluster') >= 0
+                                    && model.get('text') !== this.queryTextModel.get('inputText'); // TODO: we may want to remove this if we reintroduce the hierarchical view
+                            }, this)
+                            .first(8)
+                            .value();
 
                         _.each(entities, function (entity) {
                             this.$list.append(this.listItemTemplate({concept: entity.get('text')}));
