@@ -34,11 +34,13 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
     protected UsersPage usersPage;
     protected UserService<?> userService;
-    protected final SignupEmailHandler emailHandler;
+    protected SignupEmailHandler emailHandler;
 
     public UsersPageTestBase(TestConfig config) {
         super(config);
-        emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+        if(config.getType().equals(ApplicationType.HOSTED)) {
+            emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+        }
     }
 
     @Before

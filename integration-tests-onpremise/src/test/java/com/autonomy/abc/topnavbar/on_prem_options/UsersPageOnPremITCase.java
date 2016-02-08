@@ -11,7 +11,6 @@ import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -133,7 +132,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
     @Test
     //TO BE MOVED BACK TO COMMON IF FUNCTIONALITY IS IMPLEMENTED
     public void testWontDeleteSelf() {
-        assertThat(usersPage.deleteButton(getCurrentUser().getUsername()), disabled());
+        assertThat(usersPage.deleteButton(getCurrentUser()), disabled());
     }
 
     @Test
@@ -153,25 +152,6 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
         executor.executeScript("$.get('/searchoptimizer/api/admin/config/users').error(function() {alert(\"error\");});");
         Waits.loadOrFadeWait();
         assertThat(DriverUtil.isAlertPresent(getDriver()), is(false));
-    }
-
-    @Test
-    public void testAddStupidlyLongUsername() {
-        final String longUsername = StringUtils.repeat("a", 100);
-
-        usersPage.createUserButton().click();
-        assertThat(usersPage, modalIsDisplayed());
-
-        usersPage.createNewUser(longUsername, "b", "User");
-
-        usersPage.closeModal();
-
-        assertThat(usersPage.deleteButton(longUsername), displayed());
-
-        assertThat(usersPage.getTable(), containsText(longUsername));
-        usersPage.deleteUser(longUsername);
-
-        assertThat(usersPage.getTable(), not(containsText(longUsername)));
     }
 
     @Test

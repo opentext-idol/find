@@ -442,9 +442,9 @@ public class KeywordsPageITCase extends ABCTestBase {
 		assertThat(keywordsPage.countSynonymLists(), is(1));
 		assertThat(keywordsPage.countKeywords(), is(2));
 
-		keywordsPage.getSynonymIcon("ying", "yang").click();
-		if (keywordsPage.getSynonymIcon("ying", "yang").getAttribute("class").contains("fa-spin")) {
-			assertThat("Spinner not present on last synonym", keywordsPage.getSynonymIcon("yang", "yang").getAttribute("class"),containsString("fa-spin"));
+		keywordsPage.getSynonymIcon("ying").click();
+		if (keywordsPage.getSynonymIcon("ying").getAttribute("class").contains("fa-spin")) {
+			assertThat("Spinner not present on last synonym", keywordsPage.getSynonymIcon("yang").getAttribute("class"),containsString("fa-spin"));
 		}
 	}
 
@@ -474,8 +474,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		Waits.loadOrFadeWait();
 
 		try {
-			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"), getDriver());
-			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string", "strung"), getDriver());
+			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong"), getDriver());
+			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string"), getDriver());
 		} catch (final WebDriverException w) {
 			throw new AssertionError("Unable to delete a synonym quickly", w);
 		}
@@ -524,7 +524,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.searchFilterTextBox().sendKeys("cc");
-		final List<String> keywords = keywordsPage.getLeadSynonymsList();
+		final List<String> keywords = keywordsPage.getFirstSynonymsList();
 
 		for (int i = 0; i < keywords.size() - 1; i++) {
 			assertThat(keywords.get(i).compareTo(keywords.get(i + 1)) <= 0, is(true));
@@ -582,7 +582,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		// the last 2 synonyms should be removed together
 		for (int i = 0; i < synonyms.size()-1; i++) {
 			String synonym = synonyms.get(i);
-			keywordsPage.getSynonymIcon(synonym, synonym).click();
+			keywordsPage.getSynonymIcon(synonym).click();
 
 			if(i < synonyms.size()-2) {
 				assertThat("one refresh icon", keywordsPage.countRefreshIcons(), is(1));

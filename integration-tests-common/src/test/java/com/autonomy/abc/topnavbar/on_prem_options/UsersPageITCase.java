@@ -5,10 +5,7 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.users.HSONewUser;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -164,17 +161,15 @@ public class UsersPageITCase extends UsersPageTestBase {
 		final String longUsername = StringUtils.repeat("a", 100);
 
 		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			usersPage.createUserButton().click();
-			assertThat(usersPage, modalIsDisplayed());
+			OPNewUser newUser = new OPNewUser(longUsername, "b");
+			User user = userService.createNewUser(newUser, Role.USER);
 
-			usersPage.createNewUser(longUsername, "b", "User");
-
-			usersPage.closeModal();
-
-			assertThat(usersPage.deleteButton(longUsername), displayed());
+			assertThat(usersPage.deleteButton(user), displayed());
 
 			assertThat(usersPage.getTable(), containsText(longUsername));
-			usersPage.deleteUser(longUsername);
+			userService.deleteUser(user);
+
+			assertThat(usersPage, containsText("Done! User " + longUsername + " successfully deleted"));
 		} else {
 			User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN);
 			assertThat(usersPage.getTable(), containsText(longUsername));

@@ -31,33 +31,21 @@ public class OPUsersPage extends UsersPage {
         return newUser.withRole(role);
     }
 
-    public void deleteUser(final String userName) {
-        Waits.loadOrFadeWait();
-        deleteButton(userName).click();
-        Waits.loadOrFadeWait();
-        findElement(By.cssSelector(".popover-content .users-delete-confirm")).click();
-        Waits.loadOrFadeWait();
-    }
-
-    public Role getRoleOf(User user) {
-        return Role.fromString(getTableUserTypeLink(user.getUsername()).getText());
-    }
-
     public WebElement roleLinkFor(User user) {
-        return getTableUserTypeLink(user.getUsername());
+        return getUserRow(user).findElement(By.cssSelector(".role"));
     }
 
     public void submitPendingEditFor(User user) {
-        getUserRow(user.getUsername()).findElement(By.cssSelector(".editable-submit")).click();
+        getUserRow(user).findElement(By.cssSelector(".editable-submit")).click();
     }
 
     @Override
     public WebElement getUserRow(User user) {
-        return getUserRow(user.getUsername());
+        return findElement(By.xpath(".//span[contains(text(), '" + user.getUsername() + "')]/../.."));
     }
 
     public void setRoleValueFor(User user, Role newRole) {
-        selectTableUserType(user.getUsername(), newRole.toString());
+        selectTableUserType(user, newRole.toString());
     }
 
     public void clearPasswords() {

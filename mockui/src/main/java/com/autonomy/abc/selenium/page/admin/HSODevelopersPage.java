@@ -32,11 +32,6 @@ public class HSODevelopersPage extends HSOUserManagementPage {
     }
 
     @Override
-    public void deleteUser(String userName) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void setRoleValueFor(User user, Role newRole) {
         throw new UnsupportedOperationException();
     }

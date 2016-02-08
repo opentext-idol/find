@@ -17,10 +17,6 @@ abstract class HSOUserManagementPage extends UsersPage {
         return Status.fromString(getUserRow(user).findElement(By.className("account-status")).getText());
     }
 
-    public Role getRoleOf(User user) {
-        return Role.fromString(roleLinkFor(user).getText());
-    }
-
     public WebElement roleLinkFor(User user){
         return getUserRow(user).findElement(By.cssSelector(".user-role .user-role-cell"));
     }
