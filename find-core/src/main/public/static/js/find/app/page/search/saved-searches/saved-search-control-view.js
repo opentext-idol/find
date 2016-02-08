@@ -117,13 +117,7 @@ define([
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
             this.documentsCollection = options.documentsCollection;
-
-            this.queryState = {
-                datesFilterModel: options.datesFilterModel,
-                queryTextModel: options.queryTextModel,
-                selectedIndexes: options.selectedIndexesCollection,
-                selectedParametricValues: options.selectedParametricValues
-            };
+            this.queryState = options.queryState;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?

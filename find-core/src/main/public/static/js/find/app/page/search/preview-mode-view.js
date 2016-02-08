@@ -19,13 +19,16 @@ define([
 
         initialize: function() {
             this.scrollFollow = _.bind(function() {
-                var $viewServerPage = this.$('.preview-document-frame');
                 if (this.$el.offsetParent().offset().top < 0) {
                     this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
                 } else {
                     this.$el.css('margin-top', 0);
                 }
-                $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30);
+                if (!this.media)
+                {
+                    var $viewServerPage = this.$('.preview-document-frame');
+                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30 - this.$('.preview-mode-metadata').height())
+                }
             }, this)
         },
 
@@ -49,6 +52,8 @@ define([
                 fields: ['index', 'reference', 'contentType', 'url']
             }));
 
+            this.media = args.media;
+
             var $preview = this.$('.preview-mode-document');
 
             if (args.media) {
@@ -66,11 +71,13 @@ define([
                 $viewServerPage.on('load', _.bind(function() {
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     $viewServerPage.removeClass('hidden');
+                    $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30 - this.$('.preview-mode-metadata').height())
                 }, this));
 
                 $viewServerPage.attr("src", args.src);
-                $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30);
+                $viewServerPage.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
+            this.scrollFollow();
         },
 
         remove: function() {

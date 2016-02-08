@@ -52,16 +52,17 @@ define([
         });
     }
 
-    // This collection backs the search filters display view. It monitors the query model and selected parmaetric values
-    // collection and creates/removes it's own models when they change.
+     // This collection backs the search filters display view. It monitors the query state models and collections and
+    // creates/removes it's own models when they change.
     // When a dates filter model is removed, it updates the appropriate request model attribute with a null value. However,
     // this currently can't be done for the selected databases because the databases view isn't backed by a collection.
     return Backbone.Collection.extend({
         initialize: function(models, options) {
-            this.datesFilterModel = options.datesFilterModel;
             this.indexesCollection = options.indexesCollection;
-            this.selectedIndexesCollection = options.selectedIndexesCollection;
-            this.selectedParametricValues = options.selectedParametricValues;
+
+            this.datesFilterModel = options.queryState.datesFilterModel;
+            this.selectedIndexesCollection = options.queryState.selectedIndexes;
+            this.selectedParametricValues = options.queryState.selectedParametricValues;
 
             this.listenTo(this.selectedParametricValues, 'add remove', this.updateParametricSelection);
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);

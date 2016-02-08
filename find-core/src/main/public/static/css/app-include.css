@@ -259,7 +259,7 @@ html, body {
 }
 
 .main-content .container-fluid {
-    height: calc(100% - 50px);
+    height: calc(100% - 70px);
 }
 
 .main-content .container-fluid.reduced {
@@ -1057,6 +1057,15 @@ input:-moz-placeholder::before {
 .preview-media-player {
     width: 100%;
     margin-top: 10px;
+}
+
+.preview-media-player-audio {
+    color: #01a982;
+    font-size: 30px;
+    position: relative;
+    top: 50%;
+    text-align: center;
+    /*transform: translateY(-50%);*/
 }
 
 .preview-mode-document-title {

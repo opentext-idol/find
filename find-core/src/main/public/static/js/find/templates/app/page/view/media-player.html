@@ -1,7 +1,14 @@
 <div>
+    <% if(media === 'audio') {%>
+        <div class="preview-media-player-audio">
+            <i class="hp-icon hp-sound hp-5x" aria-hidden="true"></i>
+        </div>
+    <% } %>
     <<%= media %> src="<%- url %>#t=<%- offset %>" preload="auto" class="preview-media-player" controls>
-        <p>
-            Your browser does not support HTML5 <%= media %>.  To view this content, please use a different browser.
-        </p>
+        <% if ('image' != media) { %>
+            <p>
+                    Your browser does not support HTML5 <%= media %>.  To view this content, please use a different browser.
+            </p>
+        <% } %>
     </<%= media %>>
 </div>

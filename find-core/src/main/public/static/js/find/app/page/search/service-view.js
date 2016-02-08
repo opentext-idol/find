@@ -46,12 +46,6 @@ define([
         });
     }
 
-    function buildQueryModelIndexes(selectedIndexesCollection) {
-        return selectedIndexesCollection.map(function(model) {
-            return model.get('domain') ? encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name')) : encodeURIComponent(model.get('name'));
-        });
-    }
-
     var collapseView = function(title, view) {
         return new Collapsible({
             view: view,
@@ -72,24 +66,22 @@ define([
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
-            this.queryTextModel = options.queryTextModel;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
 
             this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
 
-            this.selectedParametricValues = new SelectedParametricValuesCollection(this.savedSearchModel.toSelectedParametricValues());
-
             var initialSelectedIndexes;
             var savedSelectedIndexes = this.savedSearchModel.toSelectedIndexes();
 
+            // TODO: Check if the saved indexes still exists?
             if (savedSelectedIndexes.length === 0) {
                 if (this.indexesCollection.isEmpty()) {
                     initialSelectedIndexes = [];
 
                     this.listenToOnce(this.indexesCollection, 'sync', function() {
-                        this.selectedIndexesCollection.set(selectInitialIndexes(this.indexesCollection));
+                        this.queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
                     });
                 } else {
                     initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
@@ -98,50 +90,32 @@ define([
                 initialSelectedIndexes = savedSelectedIndexes;
             }
 
-            // TODO: Check if the index still exists?
-            this.selectedIndexesCollection = new IndexesCollection(initialSelectedIndexes);
+            this.queryState = {
+                queryTextModel: options.queryTextModel,
+                datesFilterModel: new DatesFilterModel(this.savedSearchModel.toDatesFilterModelAttributes()),
+                selectedParametricValues: new SelectedParametricValuesCollection(this.savedSearchModel.toSelectedParametricValues()),
+                selectedIndexes: new IndexesCollection(initialSelectedIndexes)
+            };
 
-            this.datesFilterModel = new DatesFilterModel(this.savedSearchModel.toDatesFilterModelAttributes());
+            this.queryModel = new QueryModel({}, {queryState: this.queryState});
 
-            this.queryModel = new QueryModel(
-                _.extend({
-                    queryText: this.queryTextModel.makeQueryText(),
-                    indexes: buildQueryModelIndexes(this.selectedIndexesCollection),
-                    fieldText: this.selectedParametricValues.toFieldTextNode() || null
-                }, this.datesFilterModel.toQueryModelAttributes())
-            );
-
-            this.listenTo(this.queryTextModel, 'change', function() {
-                this.queryModel.set('queryText', this.queryTextModel.makeQueryText());
-            });
-
-            this.listenTo(this.datesFilterModel, 'change', function() {
-                this.queryModel.set(this.datesFilterModel.toQueryModelAttributes());
+            this.listenTo(this.queryModel, 'change:indexes', function() {
+                this.queryState.selectedParametricValues.reset();
             });
 
             this.filtersCollection = new this.SearchFiltersCollection([], {
-                queryModel: this.queryModel,
-                datesFilterModel: this.datesFilterModel,
-                indexesCollection: this.indexesCollection,
-                selectedIndexesCollection: this.selectedIndexesCollection,
-                selectedParametricValues: this.selectedParametricValues
+                queryState: this.queryState,
+                indexesCollection: this.indexesCollection
             });
 
             addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText'], this.fetchEntities);
-
-            this.listenTo(this.selectedIndexesCollection, 'update reset', _.debounce(_.bind(function() {
-                this.queryModel.set('indexes', buildQueryModelIndexes(this.selectedIndexesCollection));
-            }, this), 500));
 
             this.savedSearchControlView = new SavedSearchControlView({
                 documentsCollection: this.documentsCollection,
                 savedSearchModel: this.savedSearchModel,
                 savedSearchCollection: this.savedSearchCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel,
-                datesFilterModel: this.datesFilterModel,
-                selectedIndexesCollection: this.selectedIndexesCollection,
-                selectedParametricValues: this.selectedParametricValues
+                queryState: this.queryState
             });
 
             var constructorArguments = {
@@ -149,7 +123,7 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                queryTextModel: this.queryState.queryTextModel
             };
 
             var resultsViews = [{
@@ -192,21 +166,20 @@ define([
 
             this.parametricView = new ParametricView({
                 queryModel: this.queryModel,
-                selectedParametricValues: this.selectedParametricValues,
-                indexesCollection: this.indexesCollection,
-                selectedIndexesCollection: this.selectedIndexesCollection
+                queryState: this.queryState,
+                indexesCollection: this.indexesCollection
             });
 
             // Left Collapsed Views
             this.indexesView = new this.IndexesView({
                 queryModel: this.queryModel,
                 indexesCollection: this.indexesCollection,
-                selectedDatabasesCollection: this.selectedIndexesCollection
+                selectedDatabasesCollection: this.queryState.selectedIndexes
             });
 
             this.dateView = new DateView({
                 queryModel: this.queryModel,
-                datesFilterModel: this.datesFilterModel
+                datesFilterModel: this.queryState.datesFilterModel
             });
 
             //Right Collapsed View
@@ -214,7 +187,7 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                queryTextModel: this.queryState.queryTextModel
             });
 
             this.spellCheckView = new SpellCheckView({

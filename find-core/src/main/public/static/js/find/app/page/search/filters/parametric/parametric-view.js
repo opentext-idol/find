@@ -43,9 +43,10 @@ define([
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
-            this.selectedParametricValues = options.selectedParametricValues;
             this.indexesCollection = options.indexesCollection;
-            this.selectedIndexesCollection = options.selectedIndexesCollection;
+
+            this.selectedParametricValues = options.queryState.selectedParametricValues;
+            this.selectedIndexesCollection = options.queryState.selectedIndexes;
 
             this.parametricCollection = new ParametricCollection();
 
@@ -61,15 +62,6 @@ define([
             this.fieldNamesListView = new ListView({
                 collection: this.displayCollection,
                 ItemView: FieldView
-            });
-
-            this.listenTo(this.selectedParametricValues, 'add remove reset', _.debounce(_.bind(function() {
-                var node = this.selectedParametricValues.toFieldTextNode();
-                this.queryModel.set('fieldText', node && node.toString());
-            }, this), DEBOUNCE_WAIT_MILLISECONDS));
-
-            this.listenTo(this.queryModel, 'change:indexes', function() {
-                this.selectedParametricValues.reset();
             });
 
             function fetch() {
