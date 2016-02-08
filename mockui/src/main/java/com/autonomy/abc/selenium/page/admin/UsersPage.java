@@ -111,10 +111,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 
 	public abstract Role getRoleOf(User user);
 
-	public WebElement passwordLinkFor(User user) {
-		return getTableUserPasswordLink(user.getUsername());
-	}
-
 	public PasswordBox passwordBoxFor(User user) {
 		return new PasswordBox(getTableUserPasswordBox(user.getUsername()), getDriver());
 	}
@@ -132,11 +128,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	}
 
 	@Deprecated
-	public WebElement getTableUserPasswordLink(final String userName) {
-		return getUserRow(userName).findElement(By.cssSelector(".pw"));
-	}
-
-	@Deprecated
 	public WebElement getTableUserPasswordBox(final String userName) {
 		return getUserRow(userName).findElement(By.cssSelector("td:nth-child(2)"));
 	}
@@ -147,17 +138,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 	}
 
 	public abstract WebElement getUserRow(User user);
-
-	public WebElement rowFor(final User user) {
-		return getUserRow(user.getUsername());
-	}
-
-	public void changePassword(final String userName, final String newPassword) {
-		getTableUserPasswordLink(userName).click();
-		getTableUserPasswordBox(userName).clear();
-		getTableUserPasswordBox(userName).sendKeys(newPassword);
-		getUserRow(userName).findElement(By.cssSelector(".editable-submit")).click();
-	}
 
 	@Override
 	public void waitForLoad() {

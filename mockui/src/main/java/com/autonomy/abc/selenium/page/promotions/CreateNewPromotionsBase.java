@@ -46,12 +46,7 @@ public abstract class CreateNewPromotionsBase extends AppElement implements AppP
 	}
 
 	public WebElement spotlightType(final Promotion.SpotlightType type){
-		return spotlightType(type.getOption());
-	}
-
-	@Deprecated
-	public WebElement spotlightType(final String type ) {
-		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + type + "']")));
+		return ElementUtil.getParent(findElement(By.cssSelector("[data-option='" + type.getOption() + "']")));
 	}
 
 	// "visited" by the promotion
