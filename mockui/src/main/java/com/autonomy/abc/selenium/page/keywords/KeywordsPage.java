@@ -72,15 +72,12 @@ public abstract class KeywordsPage extends KeywordsBase {
         return keywordGroup.findElements(By.cssSelector("li .remove-keyword"));
     }
 
-    @Deprecated
-    @Override
-    public WebElement leadSynonym(final String synonym) {
-        return synonymInGroup(synonym);
+    public WebElement synonymInGroup(String synonym){
+        return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]//li[@data-term='" + synonym + "']"));
     }
 
-    @Override
-    public WebElement synonymInGroup(String synonym){
-        return findElement(By.xpath(".//div[contains(@class, 'keywords-list')]/ul/li/ul[contains(@class, 'keywords-sub-list')]/li[@data-term='" + synonym + "']"));
+    public WebElement synonymGroup(String synonym){
+        return ElementUtil.ancestor(synonymInGroup(synonym), 2);
     }
 
     public void filterView(final KeywordFilter filter) {
@@ -143,8 +140,7 @@ public abstract class KeywordsPage extends KeywordsBase {
 
     protected abstract LanguageDropdown languageDropdown();
 
-    @Deprecated
-    public List<String> getLeadSynonymsList() {
+    public List<String> getFirstSynonymsList() {
         final List<String> leadSynonyms = new ArrayList<>();
         for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {
             leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());

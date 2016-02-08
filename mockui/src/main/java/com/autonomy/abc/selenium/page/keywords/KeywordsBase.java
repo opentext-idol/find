@@ -29,15 +29,6 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 		return ElementUtil.getTexts(keywordsContainer().blacklistTerms());
 	}
 
-	@Deprecated
-	public abstract WebElement leadSynonym(final String synonym);
-
-	public abstract WebElement synonymInGroup(final String synonym);
-
-	public WebElement synonymGroup(final String synonymGroupLead) {
-		return ElementUtil.ancestor(leadSynonym(synonymGroupLead), 2);
-	}
-
 	public void addSynonymToGroup(final String synonym, final SynonymGroup group) {
 		group.add(synonym);
 	}
@@ -79,11 +70,6 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	public void deleteKeyword(final String keyword) {
 		findElement(By.cssSelector("[data-term='" + keyword + "'] .remove-keyword")).click();
 		waitForRefreshIconToDisappear();
-	}
-
-	@Deprecated
-	public WebElement getSynonymIcon(final String synonym, final String synonymLead) {
-		return getSynonymIcon(synonym);
 	}
 
 	public WebElement getSynonymIcon(final String synonym){
