@@ -85,11 +85,6 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		return findElement(By.cssSelector("#users-current-admins"));
 	}
 
-	@Deprecated
-	public WebElement getTableUserTypeLink(final User user) {
-		return getUserRow(user).findElement(By.cssSelector(".role"));
-	}
-
 	public List<String> getUsernames() {
 		List<String> usernames = new ArrayList<>();
 		for (WebElement element : getTable().findElements(By.cssSelector("tbody .user-username"))) {
@@ -98,15 +93,16 @@ public abstract class UsersPage extends AppElement implements AppPage {
 		return usernames;
 	}
 
-	public abstract Role getRoleOf(User user);
+	public abstract WebElement roleLinkFor(User user);
+	public abstract void setRoleValueFor(User user, Role newRole);
+
+	public Role getRoleOf(User user) {
+		return Role.fromString(roleLinkFor(user).getText());
+	}
 
 	public PasswordBox passwordBoxFor(User user) {
 		return new PasswordBox(getTableUserPasswordBox(user), getDriver());
 	}
-
-	public abstract WebElement roleLinkFor(User user);
-
-	public abstract void setRoleValueFor(User user, Role newRole);
 
 	public User changeAuth(User user, NewUser replacementAuth) {
 		return replacementAuth.replaceAuthFor(user, this);

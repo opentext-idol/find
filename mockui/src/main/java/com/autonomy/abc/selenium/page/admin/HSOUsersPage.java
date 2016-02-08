@@ -74,10 +74,6 @@ public class HSOUsersPage extends HSOUserManagementPage {
         getUserRow(user).findElement(By.xpath(".//a[contains(text(),'"+newRole+"')]")).click();
     }
 
-    private By trashCan(){
-        return By.className("users-deleteUser");
-    }
-
     public String getEmailOf(User user) {
         return getUserRow(user).findElement(By.className("user-email")).getText();
     }

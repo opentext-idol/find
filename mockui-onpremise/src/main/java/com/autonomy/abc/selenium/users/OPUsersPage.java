@@ -31,12 +31,8 @@ public class OPUsersPage extends UsersPage {
         return newUser.withRole(role);
     }
 
-    public Role getRoleOf(User user) {
-        return Role.fromString(getTableUserTypeLink(user).getText());
-    }
-
     public WebElement roleLinkFor(User user) {
-        return getTableUserTypeLink(user);
+        return getUserRow(user).findElement(By.cssSelector(".role"));
     }
 
     public void submitPendingEditFor(User user) {

@@ -17,6 +17,7 @@ public abstract class UserService<T extends SOElementFactory> extends ServiceBas
     public abstract UsersPage goToUsers();
     public abstract User createNewUser(NewUser newUser, Role role);
     public abstract void deleteOtherUsers();
+    public abstract User changeRole(User user, Role newRole);
 
     public UsersPage getUsersPage() {
         return usersPage;
@@ -25,6 +26,4 @@ public abstract class UserService<T extends SOElementFactory> extends ServiceBas
     public void setUsersPage(UsersPage usersPage) {
         this.usersPage = usersPage;
     }
-
-    public abstract User changeRole(User user, Role newRole);
 }
