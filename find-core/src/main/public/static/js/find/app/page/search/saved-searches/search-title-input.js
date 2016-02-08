@@ -13,14 +13,6 @@ define([
     'iCheck'
 ], function(Backbone, _, $, template, SavedSearchModel, i18n) {
 
-    var html = _.template(template)({
-        i18n: i18n,
-        savedSearchTypes: [
-            SavedSearchModel.Type.QUERY,
-            SavedSearchModel.Type.SNAPSHOT
-        ]
-    });
-
     // The initial title for an unsaved search should be blank, not "New Title"
     function resolveCurrentTitle(savedSearchModel) {
         var modelTitle = savedSearchModel.get('title');
@@ -28,12 +20,11 @@ define([
     }
 
     return Backbone.View.extend({
+        className: 'search-title-form',
+        tagName: 'form',
+        template: _.template(template),
+
         events: {
-            'click .save-title-confirm-button': 'saveTitle',
-            'submit .search-title-form': function(event) {
-                event.preventDefault();
-                this.saveTitle();
-            },
             'click .save-title-cancel-button': function() {
                 this.trigger('remove');
             },
@@ -48,20 +39,52 @@ define([
                     error: null,
                     type: $(event.target).val()
                 });
+            },
+            'submit': function(event) {
+                event.preventDefault();
+
+                var title = this.model.get('title').trim();
+                var type = this.model.get('type');
+
+                if (title === '') {
+                    this.model.set({
+                        error: i18n['search.savedSearchControl.titleBlank'],
+                        loading: false
+                    });
+                } else if (title === resolveCurrentTitle(this.savedSearchModel)) {
+                    // The user has tried to set the currently saved title, so we can exit without saving
+                    this.trigger('remove');
+                } else {
+                    this.model.set({
+                        error: null,
+                        loading: true
+                    });
+
+                    this.saveCallback(
+                        {title: title, type: type},
+                        _.bind(function() {
+                            this.trigger('remove');
+                        }, this),
+                        _.bind(function() {
+                            this.model.set('error', i18n['search.savedSearchControl.error']);
+                            this.model.set('loading', false);
+                        }, this)
+                    );
+                }
             }
         },
 
         initialize: function(options) {
             this.savedSearchModel = options.savedSearchModel;
 
-            // Called with the new title, a success callback and an error callback
+            // Called with the new title, search type, and a success callback and an error callback
             this.saveCallback = options.saveCallback;
 
             this.model = new Backbone.Model({
                 error: null,
                 loading: false,
                 title: resolveCurrentTitle(this.savedSearchModel),
-                type: SavedSearchModel.Type.QUERY
+                type: this.savedSearchModel.get('type')
             });
 
             this.listenTo(this.model, 'change:error', this.updateError);
@@ -71,7 +94,15 @@ define([
         },
 
         render: function() {
-            this.$el.html(html);
+            this.$el.html(this.template({
+                i18n: i18n,
+                savedSearchModel: this.savedSearchModel,
+                savedSearchTypes: [
+                    SavedSearchModel.Type.QUERY,
+                    SavedSearchModel.Type.SNAPSHOT
+                ]
+            }));
+
             this.$('.search-title-input').focus();
 
             this.updateError();
@@ -95,43 +126,17 @@ define([
         },
 
         updateTitle: function() {
-            this.$('.search-title-input').val(this.model.get('title'));
+            var title = this.model.get('title');
+            var $titleInput = this.$('.search-title-input');
+
+            if ($titleInput.val() !== title) {
+                this.$('.search-title-input').val(title);
+            }
         },
 
         updateType: function() {
             var type = this.model.get('type');
             this.$('[name="saved-search-type"][value="' + type + '"]').iCheck('check');
-        },
-
-        saveTitle: function() {
-            var title = this.model.get('title').trim();
-            var type = this.model.get('type');
-
-            if (title === '') {
-                this.model.set({
-                    error: i18n['search.savedSearchControl.titleBlank'],
-                    loading: false
-                });
-            } else if (title === resolveCurrentTitle(this.savedSearchModel)) {
-                // The user has tried to set the currently saved title, so we can exit without saving
-                this.trigger('remove');
-            } else {
-                this.model.set({
-                    error: null,
-                    loading: true
-                });
-
-                this.saveCallback(
-                    {title: title, type: type},
-                    _.bind(function() {
-                        this.trigger('remove');
-                    }, this),
-                    _.bind(function() {
-                        this.model.set('error', i18n['search.savedSearchControl.error']);
-                        this.model.set('loading', false);
-                    }, this)
-                );
-            }
         }
     });
 

@@ -118,6 +118,7 @@ define([
         'search.savedSearchControl.cancelSave': 'Cancel',
         'search.savedSearchControl.error': 'Error saving search',
         'search.savedSearchControl.rename': 'Rename',
+        'search.savedSearchControl.openAsSearch': 'Open as Query',
         'search.savedSearchControl.titleBlank': 'Title must not be blank',
         'search.topicMap.clustering': 'Clustering Mode',
         'search.topicMap.occurrences': 'Occurrences of phrase',

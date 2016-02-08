@@ -1099,6 +1099,11 @@ input:-moz-placeholder::before {
     background: #01A982;
 }
 
+.search-title-form {
+    max-width: 250px;
+    padding: 5px 0;
+}
+
 @media (min-width: 980px) {
     .flex-container {
         display: flex;

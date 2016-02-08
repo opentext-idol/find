@@ -1,28 +1,21 @@
-<div class="m-t-xs">
-    <form class="form-inline search-title-form">
-        <div class="form-group">
-            <input class="search-title-input form-control" placeholder="<%- i18n['search.savedSearchControl.nameSearch'] %>" type="text"/>
-        </div>
-    </form>
-    <% _.each(savedSearchTypes, function(type) { %>
-        <label class="radio-inline i-check">
-            <input type="radio" value="<%- type %>" name="saved-search-type">
-            <%- i18n['search.savedSearchControl.searchType.' + type] %>
-        </label>
-    <% }) %>
-    <div class="m-t-xs">
-        <span class="search-title-error-message col-md-6"></span>
-        <span class="col-md-6">
-            <span class="inline-block">
-                <button type="button" class="btn thin-btn button-primary save-title-confirm-button pull-right">
-                    <%- i18n['search.savedSearchControl.save'] %>
-                </button>
-          </span>
-          <span class="inline-block">
-              <button type="button" class="btn thin-btn button-primary save-title-cancel-button pull-right m-r-sm">
-                  <%- i18n['search.savedSearchControl.cancelSave'] %>
-              </button>
-          </span>
-        </span>
+<div class="form-group">
+    <input class="search-title-input form-control" placeholder="<%- i18n['search.savedSearchControl.nameSearch'] %>" type="text"/>
+    <p class="help-block search-title-error-message"></p>
+</div>
+<% if (savedSearchModel.isNew()) { %>
+    <div class="form-group">
+        <% _.each(savedSearchTypes, function(type) { %>
+            <label class="radio-inline i-check">
+                <input type="radio" value="<%- type %>" name="saved-search-type"> <%- i18n['search.savedSearchControl.searchType.' + type] %>
+            </label>
+        <% }) %>
     </div>
+<% } %>
+<div class="form-group">
+    <button type="submit" class="btn thin-btn button-primary save-title-confirm-button">
+        <%- i18n['search.savedSearchControl.save'] %>
+    </button>
+    <button type="button" class="btn thin-btn button-primary save-title-cancel-button m-r-sm">
+        <%- i18n['search.savedSearchControl.cancelSave'] %>
+    </button>
 </div>
