@@ -14,13 +14,15 @@ define([
     'find/app/util/model-any-changed-attribute-listener',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/query-text-model',
+    'find/app/model/document-model',
+    'find/app/page/search/document/document-detail-view',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
 ], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection,
-            addChangeListener, SavedSearchModel, QueryTextModel, router, vent, i18n, _, template) {
+            addChangeListener, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -34,6 +36,7 @@ define([
 
         // Abstract
         ServiceView: null,
+        documentDetailOptions: null,
 
         initialize: function() {
             this.savedSearchCollection = new SavedSearchCollection();
@@ -116,6 +119,16 @@ define([
                     inputText: text || '',
                     relatedConcepts: conceptsArray
                 });
+
+                this.$('.query-service-view-container').removeClass('hide');
+                this.$('.document-detail-service-view-container').addClass('hide');
+            }, this);
+
+            router.on('route:documentDetail', function () {
+                this.$('.query-service-view-container').addClass('hide');
+
+                var options = this.documentDetailOptions.apply(this, arguments);
+                this.documentDetail(options);
             }, this);
         },
 
@@ -181,7 +194,7 @@ define([
 
         generateURL: function() {
             var components = [this.searchModel.get('inputText')].concat(this.searchModel.get('relatedConcepts'));
-            return 'find/search/' + _.map(components, encodeURIComponent).join('/');
+            return 'find/search/query/' + _.map(components, encodeURIComponent).join('/');
         },
 
         // Run fancy animation from large central search bar to main search page
@@ -208,6 +221,26 @@ define([
             // TODO: somebody else needs to own this
             $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
             $('.container-fluid, .find-logo-small').addClass('reduced');
+        },
+
+        documentDetail: function(options) {
+            var model = new DocumentModel();
+
+            model.fetch({
+                data: {
+                    reference: options.reference,
+                    database: options.database
+                }
+            }).done(_.bind(function() {
+                var documentDetailView = new DocumentDetailView({
+                    backUrl: this.generateURL(),
+                    model: model
+                });
+
+                var $container = this.$('.document-detail-service-view-container');
+                $container.removeClass('hide');
+                documentDetailView.setElement($container).render();
+            }, this));
         }
     });
 });

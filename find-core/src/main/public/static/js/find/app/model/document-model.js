@@ -17,6 +17,8 @@ define([
 
     // Model representing a document in an HOD text index
     return Backbone.Model.extend({
+        url: '../api/public/search/get-document-content',
+
         defaults: _.reduce(ARRAY_FIELDS, function(memo, fieldName) {
             memo[fieldName] = [];
             return memo;

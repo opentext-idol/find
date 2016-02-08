@@ -4,12 +4,21 @@
  */
 
 define([
+    'underscore',
     'find/app/page/find-search',
     'find/hod/app/page/search/hod-service-view'
-], function(FindSearch, ServiceView) {
+], function(_, FindSearch, ServiceView) {
     'use strict';
 
     return FindSearch.extend({
-        ServiceView: ServiceView
+        ServiceView: ServiceView,
+
+        documentDetailOptions: function (domain, index, reference) {
+            var database = _.map([domain, index], encodeURIComponent).join(':');
+            return {
+                reference: reference,
+                database: database
+            };
+        }
     });
 });

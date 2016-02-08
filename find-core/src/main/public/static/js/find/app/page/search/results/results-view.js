@@ -7,7 +7,6 @@ define([
     'find/app/model/similar-documents-collection',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
-    'find/app/page/search/document/preview-mode-view',
     'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
@@ -24,7 +23,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'colorbox'
-], function(Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, ResultsNumberView, PreviewModeView, popover,
+], function(Backbone, $, _, DocumentModel, PromotionsCollection, SimilarDocumentsCollection, SortView, ResultsNumberView, popover,
             viewClient, documentMimeTypes, addLinksToSummary, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
             moment, i18n, i18n_indexes) {
@@ -72,6 +71,7 @@ define([
     return Backbone.View.extend({
         //to be overridden
         generateErrorMessage: _.noop,
+        PreviewModeView: null,
 
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
@@ -144,7 +144,7 @@ define([
             }
 
             if (previewMode) {
-                this.previewModeView = new PreviewModeView();
+                this.previewModeView = new this.PreviewModeView();
                 this.$('.side-panel-content').append('<div class="preview-mode-container"></div>');
                 this.previewModeView.setElement(this.$('.preview-mode-container')).render();
             }

@@ -3,12 +3,13 @@ define([
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
+    'find/app/vent',
     'find/app/model/document-model',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/preview-mode-metadata.html',
     'text!find/templates/app/page/search/document/preview-mode-document.html',
     'text!find/templates/app/page/view/media-player.html'
-], function(Backbone, _, $, i18n, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
+], function(Backbone, _, $, i18n, vent, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
     "use strict";
 
     function scrollFollow() {
@@ -29,6 +30,13 @@ define([
         documentTemplate: _.template(documentTemplate),
         mediaTemplate: _.template(mediaTemplate),
 
+        //to be overridden
+        generateDetailRoute: null,
+
+        events: {
+            'click .preview-mode-open-detail-button': 'openDocumentDetail'
+        },
+
         $iframe: null,
 
         initialize: function() {
@@ -44,11 +52,11 @@ define([
         },
 
         renderView: function(args) {
-            var model = args.model;
+            this.model = args.model;
 
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
                 i18n:i18n,
-                model: model,
+                model: this.model,
                 arrayFields: DocumentModel.ARRAY_FIELDS,
                 dateFields: DocumentModel.DATE_FIELDS,
                 fields: ['index', 'reference', 'contentType', 'url']
@@ -82,6 +90,10 @@ define([
             Backbone.View.prototype.remove.call(this);
 
             $('.main-content').off('scroll', this.scrollFollow);
+        },
+
+        openDocumentDetail: function () {
+            vent.navigate(this.generateDetailRoute());
         }
     });
 

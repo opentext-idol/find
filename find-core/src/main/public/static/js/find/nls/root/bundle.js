@@ -70,6 +70,8 @@ define([
         'search.document.date': 'Date',
         'search.document.dateCreated': 'Date Created',
         'search.document.dateModified': 'Date Modified',
+        'search.document.detail.back': 'Back',
+        'search.document.detail.open' : 'Open',
         'search.document.domain': 'Domain',
         'search.document.index': 'Index',
         'search.document.openInNewTab': 'Open in New Tab',
