@@ -24,7 +24,7 @@ public class HodFindMockConfigConfiguration {
     @Primary
     public BaseConfigFileService<?> baseConfigFileService() {
         @SuppressWarnings("unchecked") final BaseConfigFileService<HodFindConfig> baseConfigFileService = mock(BaseConfigFileService.class);
-        final IodConfig iodConfig = new IodConfig.Builder().setApiKey("").setApplication("").setDomain("").setActiveIndexes(Collections.<ResourceIdentifier>emptyList()).setPublicIndexesEnabled(false).build();
+        final IodConfig iodConfig = new IodConfig.Builder().setApiKey("").setApplication("").setDomain("").setActiveIndexes(Collections.<ResourceIdentifier>emptyList()).setPublicIndexesEnabled(true).build();
         when(baseConfigFileService.getConfig()).thenReturn(new HodFindConfig.Builder().setIod(iodConfig).build());
 
         return baseConfigFileService;

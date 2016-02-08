@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewController, ViewServerService<String, AciErrorException>, String, AciErrorException> {
+public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewController, String, AciErrorException> {
     @Mock
     private ConfigService<? extends HavenSearchCapable> configService;
 

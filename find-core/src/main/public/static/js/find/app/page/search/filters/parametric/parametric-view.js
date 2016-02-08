@@ -39,8 +39,6 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
-            this.indexesCollection = options.indexesCollection;
-            this.selectedIndexesCollection = options.selectedIndexesCollection;
 
             this.parametricCollection = new ParametricCollection();
 
@@ -71,26 +69,11 @@ define([
                 this.parametricCollection.reset();
                 this.model.set({processing: true, error: false});
 
-                var fieldNames = this.selectedIndexesCollection.chain()
-                    .map(function(database) {
-                        var findArguments = {name: database.get('name')};
-
-                        if (database.get('domain')) {
-                            findArguments.domain = database.get('domain');
-                        }
-
-                        return this.indexesCollection.findWhere(findArguments).get('fieldNames');
-                    }, this)
-                    .flatten()
-                    .uniq()
-                    .value();
-
-                if(!this.queryModel.get('queryText') || _.isEmpty(fieldNames)) {
+                if(!this.queryModel.get('queryText')) {
                     this.model.set('processing', false);
                 } else {
                     this.parametricCollection.fetch({
                         data: {
-                            fieldNames: fieldNames,
                             databases: this.queryModel.get('indexes'),
                             queryText: this.queryModel.get('queryText'),
                             fieldText: this.queryModel.get('fieldText'),

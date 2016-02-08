@@ -5,18 +5,12 @@
 
 package com.hp.autonomy.frontend.find.hod.view;
 
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.hod.sso.HodAuthentication;
-import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
-import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
-import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationCapable;
-import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
-import com.hp.autonomy.searchcomponents.hod.view.HodViewService;
+import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,39 +32,17 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, HodViewService, ResourceIdentifier, HodErrorException> {
+public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, ResourceIdentifier, HodErrorException> {
     @Mock
-    private HodViewService hodViewService;
-
-    @Mock
-    private ConfigService<? extends QueryManipulationCapable> configService;
-
-    @Mock
-    private AuthenticationInformationRetriever<HodAuthentication> authenticationInformationRetriever;
-
-    @Mock
-    private HodAuthentication hodAuthentication;
-
-    @Mock
-    private HodAuthenticationPrincipal hodAuthenticationPrincipal;
-
-    @Mock
-    private QueryManipulationCapable config;
+    private ViewServerService<ResourceIdentifier, HodErrorException> hodViewService;
 
     @Override
     @Before
     public void setUp() {
         viewServerService = hodViewService;
-        viewController = new HodViewController(viewServerService, configService, authenticationInformationRetriever, controllerUtils);
+        viewController = new HodViewController(viewServerService, controllerUtils);
         response = new MockHttpServletResponse();
         super.setUp();
-
-        when(config.getQueryManipulation()).thenReturn(new QueryManipulationConfig("SomeProfile", "SomeIndex"));
-        when(configService.getConfig()).thenReturn(config);
-
-        when(hodAuthenticationPrincipal.getApplication()).thenReturn(new ResourceIdentifier("SomeDomain", "SomeIndex"));
-        when(hodAuthentication.getPrincipal()).thenReturn(hodAuthenticationPrincipal);
-        when(authenticationInformationRetriever.getAuthentication()).thenReturn(hodAuthentication);
     }
 
     @Override
@@ -82,7 +54,7 @@ public class HodViewControllerTest extends AbstractViewControllerTest<HodViewCon
     public void viewStaticContentPromotion() throws IOException, HodErrorException {
         final String reference = "SomeReference";
         viewController.viewStaticContentPromotion(reference, new MockHttpServletResponse());
-        verify(viewServerService).viewStaticContentPromotion(eq(reference), any(ResourceIdentifier.class), any(OutputStream.class));
+        verify(viewServerService).viewStaticContentPromotion(eq(reference), any(OutputStream.class));
     }
 
     @Test
