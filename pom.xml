@@ -16,7 +16,8 @@
     </parent>
 
     <modules>
-        <module>mockui</module>
+        <module>mockui-common</module>
+        <module>mockui-hosted</module>
         <module>mockui-onpremise</module>
         <module>integration-tests-framework</module>
         <module>integration-tests-common</module>

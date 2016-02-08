@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.havensearch</groupId>
-            <artifactId>mockui</artifactId>
+            <artifactId>mockui-common</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
