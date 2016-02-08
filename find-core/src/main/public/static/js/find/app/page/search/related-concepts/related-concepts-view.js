@@ -72,6 +72,11 @@ define([
                     var newConcepts = _.union(concepts, [queryText]);
                     this.queryTextModel.set('relatedConcepts', newConcepts);
                 }
+            },
+            'click .toggle-concepts-highlighting' : function(e) {
+                var $target = $(e.target);
+                this.highlightToggle.set('highlightConcepts', $target.is(':checked'));
+
             }
         },
 
@@ -80,6 +85,7 @@ define([
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
+            this.highlightToggle = options.highlightToggle;
 
             // Each instance of this view gets its own bound, de-bounced popover handler
             var handlePopover = _.debounce(_.bind(popoverHandler, this), 500);
@@ -90,10 +96,13 @@ define([
                 } else {
                     this.$list.empty();
 
+                    var $highlight = this.$(".highlight-related-concepts");
                     if (this.entityCollection.isEmpty()) {
                         this.selectViewState(['none']);
+                        $highlight.hide();
                     } else {
                         this.selectViewState(['list']);
+                        $highlight.show();
 
                         var entities = _.first(this.entityCollection.models, 8);
 
@@ -108,6 +117,8 @@ define([
 
             /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
+                this.$(".highlight-related-concepts").hide();
+
                 if (this.indexesCollection.isEmpty()) {
                     this.selectViewState(['notLoading']);
                 } else {
@@ -119,6 +130,8 @@ define([
                 this.selectViewState(['error']);
 
                 this.$error.text(i18n['search.error.relatedConcepts']);
+
+                this.$(".highlight-related-concepts").hide();
             });
         },
 

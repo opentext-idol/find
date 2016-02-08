@@ -47,6 +47,8 @@ define([
         SearchFiltersCollection: null,
 
         initialize: function (options) {
+            this.highlightToggle = new Backbone.Model({ highlightConcept : false});
+
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
             this.indexesCollection = options.indexesCollection;
@@ -100,7 +102,8 @@ define([
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
                 queryTextModel: this.queryTextModel,
-                queryStrategy: queryStrategy
+                queryStrategy: queryStrategy,
+                highlightToggle: this.highlightToggle
             });
 
             // Left Views
@@ -133,7 +136,8 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                queryTextModel: this.queryTextModel,
+                highlightToggle: this.highlightToggle
             });
 
             this.sortView = new SortView({

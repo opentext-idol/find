@@ -94,6 +94,9 @@ define([
         initialize: function (options) {
             this.queryStrategy = options.queryStrategy;
 
+            this.highlightToggle = options.highlightToggle;
+            this.listenTo(this.highlightToggle, 'change', this.refreshHighlighting);
+
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
@@ -125,6 +128,19 @@ define([
                     this.$('.main-results-content .results').empty();
                 }
             }
+        },
+
+        refreshHighlighting: function () {
+            this.$('.main-results-content .promotions').empty();
+            this.$('.main-results-content .results').empty();
+
+            this.promotionsCollection.each(function(model) {
+                this.formatResult(model, true);
+            }, this);
+
+            this.documentsCollection.each(function(model) {
+                this.formatResult(model, false);
+            }, this);
         },
 
         clearLoadingSpinner: function () {
@@ -268,7 +284,7 @@ define([
             var escapedSummary = escapedSummaryElements.join('');
 
             // Create an array of the entity titles, longest first
-            if (this.entityCollection) {
+            if (this.entityCollection && this.highlightToggle.get('highlightConcepts')) {
                 var entities = this.entityCollection.map(function (entity) {
                     return {
                         text: entity.get('text'),
