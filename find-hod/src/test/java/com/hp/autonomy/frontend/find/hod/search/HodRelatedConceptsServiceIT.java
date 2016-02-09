@@ -7,21 +7,8 @@ package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsServiceIT;
-import com.hp.autonomy.frontend.find.web.test.HodTestConfiguration;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import org.junit.BeforeClass;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-
-import java.io.IOException;
 
 @SpringApplicationConfiguration(classes = HodFindApplication.class)
 public class HodRelatedConceptsServiceIT extends AbstractRelatedConceptsServiceIT {
-    @BeforeClass
-    public static void startup() throws IOException {
-        HodTestConfiguration.writeConfigFile(TEST_DIR);
-    }
-
-    public HodRelatedConceptsServiceIT() {
-        super(new String[]{ResourceIdentifier.NEWS_ENG.toString()});
-    }
 }

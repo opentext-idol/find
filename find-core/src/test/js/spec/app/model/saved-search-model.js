@@ -7,8 +7,9 @@ define([
     'backbone',
     'databases-view/js/databases-collection',
     'find/app/model/saved-searches/saved-search-model',
+    'find/app/model/dates-filter-model',
     'moment'
-], function(Backbone, DatabasesCollection, SavedSearchModel, moment) {
+], function(Backbone, DatabasesCollection, SavedSearchModel, DatesFilterModel, moment) {
 
     var INPUT_TEXT = 'johnny';
     var RELATED_CONCEPTS = ['depp'];
@@ -41,9 +42,10 @@ define([
                 relatedConcepts: RELATED_CONCEPTS
             });
 
-            this.queryModel = new Backbone.Model({
-                maxDate: moment(MAX_DATE),
-                minDate: moment(MIN_DATE)
+            this.datesFilterModel = new DatesFilterModel({
+                dateRange: DatesFilterModel.DateRange.CUSTOM,
+                customMaxDate: moment(MAX_DATE),
+                customMinDate: moment(MIN_DATE)
             });
 
             this.selectedIndexes = new DatabasesCollection(BASE_INDEXES);
@@ -57,7 +59,7 @@ define([
 
             this.queryState = {
                 queryTextModel: this.queryTextModel,
-                queryModel: this.queryModel,
+                datesFilterModel: this.datesFilterModel,
                 selectedIndexes: this.selectedIndexes,
                 selectedParametricValues: this.selectedParametricValues
             };
@@ -81,25 +83,25 @@ define([
             });
 
             it('returns false when one of the min dates is null', function() {
-                this.queryModel.set('minDate', null);
+                this.datesFilterModel.set('customMinDate', null);
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
 
             it('returns false when the min dates are different', function() {
-                this.queryModel.set('minDate', moment(123));
+                this.datesFilterModel.set('customMinDate', moment(123));
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
 
             it('returns false when one of the max dates is null', function() {
-                this.queryModel.set('maxDate', null);
+                this.datesFilterModel.set('customMaxDate', null);
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
 
             it('returns false when the max dates are different', function() {
-                this.queryModel.set('maxDate', moment(123));
+                this.datesFilterModel.set('customMaxDate', moment(123));
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
@@ -130,12 +132,12 @@ define([
                 this.attributes = SavedSearchModel.attributesFromQueryState(this.queryState);
             });
 
-            it('returns the input text and related concepts from the query model', function() {
+            it('returns the input text and related concepts from the query text model', function() {
                 expect(this.attributes.queryText).toBe(INPUT_TEXT);
                 expect(this.attributes.relatedConcepts).toBe(RELATED_CONCEPTS);
             });
 
-            it('returns the min and max dates from the query model', function() {
+            it('returns the min and max dates from the dates filter model model', function() {
                 expect(this.attributes.minDate.isSame(moment(MIN_DATE))).toBe(true);
                 expect(this.attributes.maxDate.isSame(moment(MAX_DATE))).toBe(true);
             });

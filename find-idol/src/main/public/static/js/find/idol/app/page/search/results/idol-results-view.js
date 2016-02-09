@@ -5,9 +5,8 @@
 
 define([
     'find/app/page/search/results/results-view',
-    'find/idol/app/page/search/document/idol-preview-mode-view',
     'i18n!find/nls/errors'
-], function (ResultsView, PreviewModeView, i18n) {
+], function (ResultsView, i18n) {
     'use strict';
 
     return ResultsView.extend({
@@ -23,8 +22,6 @@ define([
             }
 
             return message;
-        },
-
-        PreviewModeView: PreviewModeView
+        }
     });
 });

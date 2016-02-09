@@ -4,12 +4,13 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'find/app/vent',
+    'find/app/util/view-server-client',
     'find/app/model/document-model',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/preview-mode-metadata.html',
     'text!find/templates/app/page/search/document/preview-mode-document.html',
     'text!find/templates/app/page/view/media-player.html'
-], function(Backbone, _, $, i18n, vent, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
+], function(Backbone, _, $, i18n, vent, viewClient, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
     "use strict";
 
     function scrollFollow() {
@@ -20,7 +21,7 @@ define([
         }
 
         if(this.$iframe) {
-            this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30);
+            this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
         }
     }
 
@@ -34,7 +35,10 @@ define([
         generateDetailRoute: null,
 
         events: {
-            'click .preview-mode-open-detail-button': 'openDocumentDetail'
+            'click .preview-mode-open-detail-button': 'openDocumentDetail',
+            'click .close-preview-mode': function() {
+                this.trigger('close-preview');
+            }
         },
 
         $iframe: null,
@@ -48,11 +52,7 @@ define([
                 i18n:i18n
             }));
 
-            $('.main-content').scroll(this.scrollFollow);
-        },
-
-        renderView: function(args) {
-            this.model = args.model;
+            this.$('.preview-mode-document-title').text(this.model.get('title'));
 
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
                 i18n:i18n,
@@ -64,26 +64,33 @@ define([
 
             var $preview = this.$('.preview-mode-document');
 
-            if (args.media) {
+            if (this.model.isMedia()) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
-                    offset: args.offset,
-                    media: args.media,
-                    url: args.url
+                    model: this.model
                 }));
             } else {
-                $preview.html(this.documentTemplate({i18n: i18n}));
+                $preview.html(this.documentTemplate({
+                    i18n: i18n
+                }));
 
                 this.$iframe = this.$('.preview-document-frame');
 
                 this.$iframe.on('load', _.bind(function() {
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     this.$iframe.removeClass('hidden');
+                    this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height())
                 }, this));
 
-                this.$iframe.attr('src', args.src);
-                this.$iframe.css('height', $(window).height() - $preview.offset().top - 30);
+                // The src attribute has to be added retrospectively to avoid a race condition
+                var src = viewClient.getHref(this.model.get('reference'), this.model.get('index'), this.model.get('domain'));
+                this.$iframe.attr('src', src);
+                this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
+
+            this.scrollFollow();
+
+            $('.main-content').scroll(this.scrollFollow);
         },
 
         remove: function() {

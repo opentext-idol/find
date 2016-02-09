@@ -2,13 +2,14 @@ define([
     'backbone',
     'moment',
     'underscore',
-    'find/app/util/array-equality'
-], function(Backbone, moment, _, arraysEqual) {
+    'find/app/util/array-equality',
+    'find/app/model/dates-filter-model'
+], function(Backbone, moment, _, arraysEqual, DatesFilterModel) {
 
     /**
      * Models representing the state of a search.
      * @typedef {Object} QueryState
-     * @property {Backbone.Model} queryModel Contains the date restrictions
+     * @property {DatesFilterModel} datesFilterModel Contains the date restrictions
      * @property {Backbone.Model} queryTextModel Contains the input text and related concepts
      * @property {Backbone.Collection} selectedIndexes
      * @property {Backbone.Collection} selectedParametricValues
@@ -34,8 +35,6 @@ define([
         'dateCreated',
         'dateModified'
     ];
-
-    var QUERY_MODEL_ATTRIBUTES = ['minDate', 'maxDate'];
 
     function pickFieldAndValue(model) {
         return model.pick('field', 'value');
@@ -93,17 +92,25 @@ define([
          */
         equalsQueryState: function(queryState) {
             var selectedIndexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
+            var datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
 
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
-                    && optionalMomentsEqual(this.get('minDate'), queryState.queryModel.get('minDate'))
-                    && optionalMomentsEqual(this.get('maxDate'), queryState.queryModel.get('maxDate'))
+                    && optionalMomentsEqual(this.get('minDate'), datesAttributes.minDate)
+                    && optionalMomentsEqual(this.get('maxDate'), datesAttributes.maxDate)
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'))
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
         },
 
-        toQueryModelAttributes: function() {
-            return this.pick(QUERY_MODEL_ATTRIBUTES);
+        toDatesFilterModelAttributes: function() {
+            var minDate = this.get('minDate');
+            var maxDate = this.get('maxDate');
+
+            return {
+                dateRange: minDate || maxDate ? DatesFilterModel.DateRange.CUSTOM : null,
+                customMinDate: minDate,
+                customMaxDate: maxDate
+            };
         },
 
         toQueryTextModelAttributes: function() {
@@ -135,7 +142,7 @@ define([
                 relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
                 indexes: indexes,
                 parametricValues: parametricValues
-            }, queryState.queryModel.pick(QUERY_MODEL_ATTRIBUTES));
+            }, queryState.datesFilterModel.toQueryModelAttributes());
         }
     });
 

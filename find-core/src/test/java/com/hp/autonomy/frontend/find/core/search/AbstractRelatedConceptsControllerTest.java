@@ -24,11 +24,7 @@ public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySumma
     @Mock
     protected RelatedConceptsService<Q, S, E> relatedConceptsService;
 
-    @Mock
-    protected QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
-
     protected RelatedConceptsController<Q, S, E> relatedConceptsController;
-    protected Class<S> databaseType;
 
     @Test
     public void query() throws E {

@@ -66,7 +66,7 @@ define([
                 this.model.set('error', null);
 
                 new Confirm({
-                    cancelClass: 'btn-default',
+                    cancelClass: 'btn-white',
                     cancelIcon: '',
                     cancelText: i18n['app.cancel'],
                     okText: i18n['app.delete'],
@@ -94,7 +94,7 @@ define([
                 this.model.set('error', null);
 
                 new Confirm({
-                    cancelClass: 'btn-default',
+                    cancelClass: 'btn-white',
                     cancelIcon: '',
                     cancelText: i18n['app.cancel'],
                     okText: i18n['app.reset'],
@@ -105,7 +105,7 @@ define([
                     hiddenEvent: 'hidden.bs.modal',
                     okHandler: _.bind(function() {
                         this.queryState.queryTextModel.set(this.savedSearchModel.toQueryTextModelAttributes());
-                        this.queryState.queryModel.set(this.savedSearchModel.toQueryModelAttributes());
+                        this.queryState.datesFilterModel.set(this.savedSearchModel.toDatesFilterModelAttributes());
                         this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());
                         this.queryState.selectedParametricValues.set(this.savedSearchModel.toSelectedParametricValues());
                     }, this)
@@ -116,13 +116,7 @@ define([
         initialize: function(options) {
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
-
-            this.queryState = {
-                queryTextModel: options.queryTextModel,
-                queryModel: options.queryModel,
-                selectedIndexes: options.selectedIndexesCollection,
-                selectedParametricValues: options.selectedParametricValues
-            };
+            this.queryState = options.queryState;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?
@@ -156,7 +150,7 @@ define([
             }, this);
 
             this.listenTo(this.savedSearchModel, 'change', updateSavedState);
-            this.listenTo(this.queryState.queryModel, 'change', updateSavedState);
+            this.listenTo(options.queryModel, 'change', updateSavedState);
 
             // Index and parametric value selection only updates the query model after a debounce but we want to update
             // the save and reset buttons immediately

@@ -7,10 +7,10 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.comparison.ComparisonControllerTest;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IdolComparisonControllerTest extends ComparisonControllerTest<String, SearchResult, AciErrorException> {
+public class IdolComparisonControllerTest extends ComparisonControllerTest<String, IdolSearchResult, AciErrorException> {
 }

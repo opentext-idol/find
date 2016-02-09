@@ -259,7 +259,7 @@ html, body {
 }
 
 .main-content .container-fluid {
-    height: calc(100% - 50px);
+    height: calc(100% - 70px);
 }
 
 .main-content .container-fluid.reduced {
@@ -468,6 +468,20 @@ input.find-input {
 
 .content-type i {
     font-size: 23px;
+}
+
+.saved-search-box .hpebox-content {
+    width: 100px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid #e7eaec;
+}
+
+.selected-saved-search .hpebox-content {
+    background-color: #00b388;
+    color: #fff;
 }
 
 .result-container-control {
@@ -1057,6 +1071,15 @@ input:-moz-placeholder::before {
 .preview-media-player {
     width: 100%;
     margin-top: 10px;
+}
+
+.preview-media-player-audio {
+    color: #01a982;
+    font-size: 30px;
+    position: relative;
+    top: 50%;
+    text-align: center;
+    /*transform: translateY(-50%);*/
 }
 
 .preview-mode-document-title {

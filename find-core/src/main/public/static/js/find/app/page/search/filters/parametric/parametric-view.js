@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'underscore',
@@ -6,13 +11,12 @@ define([
     'js-whatever/js/filtering-collection',
     'find/app/model/parametric-collection',
     'find/app/page/search/filters/parametric/parametric-field-view',
+    'find/app/util/model-any-changed-attribute-listener',
     'fieldtext/js/field-text-parser',
     'parametric-refinement/display-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function(Backbone, _, $, ListView, FilteringCollection, ParametricCollection, FieldView, parser, DisplayCollection, i18n, template) {
-
-    var DEBOUNCE_WAIT_MILLISECONDS = 500;
+], function(Backbone, _, $, ListView, FilteringCollection, ParametricCollection, FieldView, addChangeListener, parser, DisplayCollection, i18n, template) {
 
     return Backbone.View.extend({
         template: _.template(template)({i18n: i18n}),
@@ -37,9 +41,8 @@ define([
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
-            this.selectedParametricValues = options.selectedParametricValues;
-            this.indexesCollection = options.indexesCollection;
-            this.selectedIndexesCollection = options.selectedIndexesCollection;
+
+            this.selectedParametricValues = options.queryState.selectedParametricValues;
 
             this.parametricCollection = new ParametricCollection();
 
@@ -57,39 +60,15 @@ define([
                 ItemView: FieldView
             });
 
-            this.listenTo(this.selectedParametricValues, 'add remove reset', _.debounce(_.bind(function() {
-                var node = this.selectedParametricValues.toFieldTextNode();
-                this.queryModel.set('fieldText', node && node.toString());
-            }, this), DEBOUNCE_WAIT_MILLISECONDS));
-
-            this.listenTo(this.queryModel, 'change:indexes', function() {
-                this.selectedParametricValues.reset();
-            });
-
             function fetch() {
                 this.parametricCollection.reset();
                 this.model.set({processing: true, error: false});
 
-                var fieldNames = this.selectedIndexesCollection.chain()
-                    .map(function(database) {
-                        var findArguments = {name: database.get('name')};
-
-                        if (database.get('domain')) {
-                            findArguments.domain = database.get('domain');
-                        }
-
-                        return this.indexesCollection.findWhere(findArguments).get('fieldNames');
-                    }, this)
-                    .flatten()
-                    .uniq()
-                    .value();
-
-                if(!this.queryModel.get('queryText') || _.isEmpty(fieldNames)) {
+                if(!this.queryModel.get('queryText')) {
                     this.model.set('processing', false);
                 } else {
                     this.parametricCollection.fetch({
                         data: {
-                            fieldNames: fieldNames,
                             databases: this.queryModel.get('indexes'),
                             queryText: this.queryModel.get('queryText'),
                             fieldText: this.queryModel.get('fieldText'),
@@ -109,12 +88,7 @@ define([
                 }
             }
 
-            this.listenTo(this.queryModel, 'change', function() {
-                if (this.queryModel.hasAnyChangedAttributes(['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'])) {
-                    fetch.call(this);
-                }
-            }, this);
-
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'], fetch);
             fetch.call(this);
         },
 

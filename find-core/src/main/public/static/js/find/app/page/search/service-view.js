@@ -20,12 +20,13 @@ define([
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/topic-map-view',
+    'find/app/page/search/compare-modal',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
-            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, i18n, i18nIndexes, template) {
+            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -46,12 +47,6 @@ define([
         });
     }
 
-    function buildQueryModelIndexes(selectedIndexesCollection) {
-        return selectedIndexesCollection.map(function(model) {
-            return model.get('domain') ? encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name')) : encodeURIComponent(model.get('name'));
-        });
-    }
-
     var collapseView = function(title, view) {
         return new Collapsible({
             view: view,
@@ -68,28 +63,39 @@ define([
 
         // Abstract
         ResultsView: null,
+        ResultsViewAugmentation: null,
         IndexesView: null,
+
+        events: {
+            'click .compare-modal-button': function() {
+                new CompareModal({
+                    savedSearchCollection: this.savedSearchCollection,
+                    selectedSearch: this.savedSearchModel,
+                    callback: _.bind(function(selectedCid) {
+                        //TODO: call a compareSavedSearches() function here
+                    }, this)
+                });
+            }
+        },
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
-            this.queryTextModel = options.queryTextModel;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
 
             this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
 
-            this.selectedParametricValues = new SelectedParametricValuesCollection(this.savedSearchModel.toSelectedParametricValues());
-
             var initialSelectedIndexes;
             var savedSelectedIndexes = this.savedSearchModel.toSelectedIndexes();
 
+            // TODO: Check if the saved indexes still exists?
             if (savedSelectedIndexes.length === 0) {
                 if (this.indexesCollection.isEmpty()) {
                     initialSelectedIndexes = [];
 
                     this.listenToOnce(this.indexesCollection, 'sync', function() {
-                        this.selectedIndexesCollection.set(selectInitialIndexes(this.indexesCollection));
+                        this.queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
                     });
                 } else {
                     initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
@@ -98,42 +104,31 @@ define([
                 initialSelectedIndexes = savedSelectedIndexes;
             }
 
-            // TODO: Check if the index still exists?
-            this.selectedIndexesCollection = new IndexesCollection(initialSelectedIndexes);
+            this.queryState = {
+                queryTextModel: options.queryTextModel,
+                datesFilterModel: new DatesFilterModel(this.savedSearchModel.toDatesFilterModelAttributes()),
+                selectedParametricValues: new SelectedParametricValuesCollection(this.savedSearchModel.toSelectedParametricValues()),
+                selectedIndexes: new IndexesCollection(initialSelectedIndexes)
+            };
 
-            this.queryModel = new QueryModel(_.extend({
-                queryText: this.queryTextModel.makeQueryText(),
-                indexes: buildQueryModelIndexes(this.selectedIndexesCollection),
-                fieldText: this.selectedParametricValues.toFieldTextNode() || null
-            }, this.savedSearchModel.toQueryModelAttributes()));
+            this.queryModel = new QueryModel({}, {queryState: this.queryState});
 
-            this.listenTo(this.queryTextModel, 'change', function() {
-                this.queryModel.set('queryText', this.queryTextModel.makeQueryText());
+            this.listenTo(this.queryModel, 'change:indexes', function() {
+                this.queryState.selectedParametricValues.reset();
             });
 
-            this.datesFilterModel = new DatesFilterModel({}, {queryModel: this.queryModel});
-
             this.filtersCollection = new this.SearchFiltersCollection([], {
-                queryModel: this.queryModel,
-                datesFilterModel: this.datesFilterModel,
-                indexesCollection: this.indexesCollection,
-                selectedIndexesCollection: this.selectedIndexesCollection,
-                selectedParametricValues: this.selectedParametricValues
+                queryState: this.queryState,
+                indexesCollection: this.indexesCollection
             });
 
             addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText'], this.fetchEntities);
-
-            this.listenTo(this.selectedIndexesCollection, 'update reset', _.debounce(_.bind(function() {
-                this.queryModel.set('indexes', buildQueryModelIndexes(this.selectedIndexesCollection));
-            }, this), 500));
 
             this.savedSearchControlView = new SavedSearchControlView({
                 savedSearchModel: this.savedSearchModel,
                 savedSearchCollection: this.savedSearchCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel,
-                selectedIndexesCollection: this.selectedIndexesCollection,
-                selectedParametricValues: this.selectedParametricValues
+                queryState: this.queryState
             });
 
             var constructorArguments = {
@@ -141,11 +136,15 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                queryTextModel: this.queryState.queryTextModel
             };
 
+            this.resultsViewAugmentation = new this.ResultsViewAugmentation({
+                resultsView: new this.ResultsView(constructorArguments)
+            });
+
             var resultsViews = [{
-                content: new this.ResultsView(constructorArguments),
+                content: this.resultsViewAugmentation,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
@@ -161,6 +160,10 @@ define([
                     icon: 'hp-grid'
                 }
             }];
+
+            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
+                this.rightSideContainerHideToggle(toggle);
+            }, this);
 
             var selectionModel = new Backbone.Model({
                 // ID of the currently selected tab
@@ -179,27 +182,24 @@ define([
 
             // Left Views
             this.filterDisplayView = new FilterDisplayView({
-                collection: this.filtersCollection,
-                datesFilterModel: this.datesFilterModel
+                collection: this.filtersCollection
             });
 
             this.parametricView = new ParametricView({
                 queryModel: this.queryModel,
-                selectedParametricValues: this.selectedParametricValues,
-                indexesCollection: this.indexesCollection,
-                selectedIndexesCollection: this.selectedIndexesCollection
+                queryState: this.queryState
             });
 
             // Left Collapsed Views
             this.indexesView = new this.IndexesView({
                 queryModel: this.queryModel,
                 indexesCollection: this.indexesCollection,
-                selectedDatabasesCollection: this.selectedIndexesCollection
+                selectedDatabasesCollection: this.queryState.selectedIndexes
             });
 
             this.dateView = new DateView({
                 queryModel: this.queryModel,
-                datesFilterModel: this.datesFilterModel
+                datesFilterModel: this.queryState.datesFilterModel
             });
 
             //Right Collapsed View
@@ -207,7 +207,7 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryTextModel
+                queryTextModel: this.queryState.queryTextModel
             });
 
             this.spellCheckView = new SpellCheckView({
@@ -219,6 +219,8 @@ define([
             this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
             this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], this.relatedConceptsView);
+
+            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
         },
 
         render: function() {
@@ -240,7 +242,12 @@ define([
 
             this.$('.container-toggle').on('click', this.containerToggle);
 
+            this.updateCompareModalButton();
             this.fetchEntities();
+        },
+
+        updateCompareModalButton: function() {
+            this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
         fetchEntities: function() {
@@ -265,6 +272,10 @@ define([
             $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
+        },
+
+        rightSideContainerHideToggle: function(toggle) {
+            this.$('.right-side-container').toggle(toggle);
         }
     });
 

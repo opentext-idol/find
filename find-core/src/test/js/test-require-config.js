@@ -16,6 +16,7 @@ require.config({
     map: {
         '*': {
             'find/app/configuration': 'mock/configuration',
+            'find/app/router': 'mock/router',
             'find/lib/backbone/backbone-extensions': 'backbone',
             'find/app/util/confirm-view': 'mock/util/confirm-view'
         },

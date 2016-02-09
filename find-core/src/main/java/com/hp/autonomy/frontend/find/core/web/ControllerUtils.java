@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,8 @@ public interface ControllerUtils {
     String SPRING_CSRF_ATTRIBUTE = "_csrf";
 
     String convertToJson(final Object object) throws JsonProcessingException;
+
+    String getMessage(String code, Object[] args) throws NoSuchMessageException;
 
     @SuppressWarnings("MethodWithTooManyParameters")
     ModelAndView buildErrorModelAndView(

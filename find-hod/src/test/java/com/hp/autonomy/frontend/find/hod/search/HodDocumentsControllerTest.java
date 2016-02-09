@@ -18,10 +18,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<ResourceIdentifier, HodSearchResult, HodErrorException> {
     @Before
     public void setUp() {
-        documentsController = new HodDocumentsController(documentsService, queryRestrictionsBuilder);
+        documentsController = new HodDocumentsController(documentsService, new HodQueryRestrictionsBuilder());
         databaseType = ResourceIdentifier.class;
     }
-
 
     @Override
     protected HodSearchResult sampleResult() {

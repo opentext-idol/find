@@ -71,7 +71,6 @@ define([
     return Backbone.View.extend({
         //to be overridden
         generateErrorMessage: _.noop,
-        PreviewModeView: null,
 
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
@@ -98,20 +97,18 @@ define([
 
                 if ($target.hasClass('selected-document')) {
                     //disable preview mode
-                    this.togglePreviewMode(false);
+                    this.trigger('close-preview');
 
                     //resetting selected-document class
                     this.$('.main-results-container').removeClass('selected-document');
                 } else {
                     //enable/choose another preview view
-                    this.togglePreviewMode(true);
+                    this.trigger('preview', this.documentsCollection.findWhere({reference: $target.data('reference')}));
 
-                    this.populatePreview($target);
+                    //resetting selected-document class and adding it to the target
+                    this.$('.main-results-container').removeClass('selected-document');
+                    $target.addClass('selected-document');
                 }
-            },
-            'click .close-preview-mode': function() {
-                this.togglePreviewMode(false);
-                this.$('.main-results-container').removeClass('selected-document');
             }
         },
 
@@ -135,79 +132,6 @@ define([
             });
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
-        },
-
-        createDestroyPreview: function (previewMode) {
-
-            if (this.previewModeView) {
-                this.previewModeView.remove();
-            }
-
-            if (previewMode) {
-                this.previewModeView = new this.PreviewModeView();
-                this.$('.side-panel-content').append('<div class="preview-mode-container"></div>');
-                this.previewModeView.setElement(this.$('.preview-mode-container')).render();
-            }
-
-        },
-
-        togglePreviewMode: function(previewMode) {
-
-            this.createDestroyPreview(previewMode);
-
-            $('.right-side-container').toggle(!previewMode);
-            $('.preview-mode-wrapper').toggleClass('hide', !previewMode);
-
-            //making main results container smaller or bigger
-            this.$('.main-results-content').toggleClass('col-md-6', previewMode);
-            this.$('.main-results-content').toggleClass('col-md-12', !previewMode);
-
-            //aligning middle and right container
-            this.$('.results-view-container .tab-pane').toggleClass('row', previewMode);
-
-            //aligning loading container in the middle
-            $('.results-view-type-list .loading-spinner').toggleClass('preview-mode-loading', previewMode);
-
-            if(!previewMode) {
-                var hiddenPreviewModeWrapper = this.$('.preview-mode-wrapper.hide');
-
-                //hiding and clearing the preview document's divs for future re-population
-                hiddenPreviewModeWrapper.find('.preview-mode-document-title').empty();
-                hiddenPreviewModeWrapper.find('.preview-mode-metadata').empty();
-                hiddenPreviewModeWrapper.find('.preview-mode-document').empty();
-            }
-
-        },
-
-        populatePreview: function ($target) {
-            var selectedDocument = this.documentsCollection.find(function(model){return model.get('reference') === $target.data('reference')});
-
-            this.$('.main-results-container').removeClass('selected-document');
-            $target.addClass('selected-document');
-
-            this.$('.preview-mode-contents').removeClass('hide');
-            this.$('.preview-mode-document-title').text(selectedDocument.get('title'));
-
-            //render of the actual view server stuff
-            var src = viewClient.getHref(selectedDocument.get('reference'), selectedDocument.get('index'), selectedDocument.get('domain'));
-
-            var args = {};
-
-            if (selectedDocument.isMedia()) {
-                args = {
-                    model: selectedDocument,
-                    media: selectedDocument.getMediaType(),
-                    url: selectedDocument.get('url'),
-                    offset: selectedDocument.get('offset')
-                };
-            } else {
-                args = {
-                    src: src,
-                    model: selectedDocument
-                };
-            }
-
-            this.previewModeView.renderView(args);
         },
 
         refreshResults: function() {
@@ -352,9 +276,8 @@ define([
 
             if (options.model.isMedia()) {
                 args.html = this.mediaPlayerTemplate({
-                    media: options.model.getMediaType(),
-                    url: options.model.get('url'),
-                    offset: options.model.get('offset')
+                    i18n: i18n,
+                    model: options.model
                 });
             } else {
                 args.html = this.viewDocumentTemplate({
@@ -523,6 +446,10 @@ define([
             if (this.documentsCollection.size() > 0 && this.queryModel.get('queryText') && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
                 this.infiniteScroll();
             }
+        },
+
+        removeHighlighting: function() {
+            this.$('.main-results-container').removeClass('selected-document');
         }
     });
 });

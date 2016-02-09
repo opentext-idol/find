@@ -11,7 +11,4 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolDocumentServiceIT extends AbstractDocumentServiceIT {
-    public IdolDocumentServiceIT() {
-        super(new String[]{"Wookiepedia"});
-    }
 }
