@@ -6,15 +6,16 @@
 define([
     'underscore',
     'find/app/page/find-search',
-    'find/hod/app/page/search/hod-service-view'
-], function(_, FindSearch, ServiceView) {
+    'find/hod/app/page/search/hod-service-view',
+    'find/app/util/database-name-resolver'
+], function(_, FindSearch, ServiceView, databaseNameResolver) {
     'use strict';
 
     return FindSearch.extend({
         ServiceView: ServiceView,
 
         documentDetailOptions: function (domain, index, reference) {
-            var database = _.map([domain, index], encodeURIComponent).join(':');
+            var database = databaseNameResolver.constructDatabaseString(domain, index);
             return {
                 reference: reference,
                 database: database
