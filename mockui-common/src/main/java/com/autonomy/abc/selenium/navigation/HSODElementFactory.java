@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.navigation;
 
 import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
+import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
@@ -102,5 +103,11 @@ public class HSODElementFactory extends SOElementFactory {
 
     public HSODevelopersPage getDevsPage() {
         return loadPage(HSODevelopersPage.class);
+    }
+
+    protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {
+        protected SideNavStrategy(NavBarTabId tabId) {
+            super(tabId);
+        }
     }
 }

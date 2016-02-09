@@ -60,10 +60,10 @@ public abstract class SOElementFactory extends ElementFactoryBase {
         switchMapper.get(pageType).switchUsing(this);
     }
 
-    static class SideNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
+    protected static class SideNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
         private final NavBarTabId tab;
 
-        SideNavStrategy(NavBarTabId tabId) {
+        protected SideNavStrategy(NavBarTabId tabId) {
             tab = tabId;
         }
 

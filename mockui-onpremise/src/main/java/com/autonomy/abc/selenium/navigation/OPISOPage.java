@@ -50,7 +50,7 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
 
     <T extends AppPage> OPISOPage(NavBarTabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         this(factory, type);
-        switchStrategy = new SOElementFactory.SideNavStrategy(tab);
+        switchStrategy = new OPISOElementFactory.SideNavStrategy(tab);
     }
 
     <T extends AppPage> OPISOPage(OPTopNavBar.TabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
