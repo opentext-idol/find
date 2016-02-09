@@ -1,6 +1,8 @@
-package com.autonomy.abc.selenium.navigation;
+package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.navigation.PageMapper;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;

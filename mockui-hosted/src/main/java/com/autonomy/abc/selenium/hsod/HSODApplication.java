@@ -5,7 +5,6 @@ import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.users.HSODDeveloperService;
 import com.autonomy.abc.selenium.users.HSODUserService;

@@ -12,7 +12,7 @@ import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.Notification;
-import com.autonomy.abc.selenium.navigation.HSODElementFactory;
+import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;

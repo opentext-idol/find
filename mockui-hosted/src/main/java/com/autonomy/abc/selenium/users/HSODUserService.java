@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.navigation.HSODElementFactory;
+import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
