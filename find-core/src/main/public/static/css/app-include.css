@@ -755,6 +755,29 @@ input:-moz-placeholder::before {
     color: #425563;
 }
 
+.find-input-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 30px;
+}
+
+.find-input-button,
+.find-input-button:hover {
+    box-shadow: none;
+    border: 0;
+    border-left: 1px solid #ccc;
+}
+
+.reverse-animated-container .find-input-button {
+    height: 45px;
+}
+
+.reverse-animated-container .find-input-button,
+.reverse-animated-container .find-input-button:hover {
+    border: 2px solid #ccc;
+}
+
 .find-navbar {
     background-color: #425563;
     color: #fff;
