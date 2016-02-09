@@ -32,6 +32,13 @@ define([
 
     'use strict';
 
+    // Invoke the method on each item in the list if it exists
+    function safeInvoke(method, list) {
+        return _.map(list, function(item) {
+            return item && item[method]();
+        });
+    }
+
     function selectInitialIndexes(indexesCollection) {
         var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
         var selectedIndexes;
@@ -133,8 +140,11 @@ define([
                 queryTextModel: this.queryState.queryTextModel
             };
 
+            this.resultsView = new this.ResultsView(constructorArguments);
+            this.topicMapView = new TopicMapView(constructorArguments);
+
             var resultsViews = [{
-                content: new this.ResultsView(constructorArguments),
+                content: this.resultsView,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
@@ -142,7 +152,7 @@ define([
                     icon: 'hp-list'
                 }
             }, {
-                content: new TopicMapView(constructorArguments),
+                content: this.topicMapView,
                 id: 'topic-map',
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
@@ -198,12 +208,12 @@ define([
                     indexesCollection: this.indexesCollection
                 });
 
-                var filtersCollection = new this.SearchFiltersCollection([], {
+                this.filtersCollection = new this.SearchFiltersCollection([], {
                     queryState: this.queryState,
                     indexesCollection: this.indexesCollection
                 });
 
-                this.filterDisplayView = new FilterDisplayView({collection: filtersCollection});
+                this.filterDisplayView = new FilterDisplayView({collection: this.filtersCollection});
 
                 this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
                 this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
@@ -268,6 +278,30 @@ define([
             $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
+        },
+
+        remove: function() {
+            safeInvoke('stopListening', [
+                this.queryModel,
+                this.filtersCollection
+            ]);
+
+            safeInvoke('remove', [
+                this.savedSearchControlView,
+                this.resultsView,
+                this.topicMapView,
+                this.resultsViewContainer,
+                this.resultsViewSelection,
+                this.relatedConceptsViewWrapper,
+                this.spellCheckView,
+                this.parametricView,
+                this.filterDisplayView,
+                this.snapshotFilterView,
+                this.indexesViewWrapper,
+                this.dateViewWrapper
+            ]);
+
+            Backbone.View.prototype.remove.call(this);
         }
     });
 
