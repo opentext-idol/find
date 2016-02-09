@@ -70,6 +70,8 @@ define([
             var $preview = this.$('.preview-mode-document');
 
             if (this.media && url) {
+                this.model.set('media', this.media);
+
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
                     model: this.model
