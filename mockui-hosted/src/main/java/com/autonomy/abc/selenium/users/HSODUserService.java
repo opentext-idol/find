@@ -36,6 +36,7 @@ public class HSODUserService extends UserService<HSODElementFactory> {
         }
     }
 
+    @Override
     public void deleteUser(User user){
         usersPage = goToUsers();
         usersPage.getUserRow(user).findElement(By.className("users-deleteUser")).click();
@@ -44,6 +45,7 @@ public class HSODUserService extends UserService<HSODElementFactory> {
         new WebDriverWait(getDriver(),10).until(GritterNotice.notificationContaining("Deleted user"));
     }
 
+    @Override
     public HSOUser changeRole(User user, Role newRole) {
         usersPage = goToUsers();
 

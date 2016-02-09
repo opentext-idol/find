@@ -73,6 +73,7 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
         this(null, factory, type);
     }
 
+    @Override
     public Object loadAsObject(WebDriver driver) {
         return this.factory.create(driver);
     }

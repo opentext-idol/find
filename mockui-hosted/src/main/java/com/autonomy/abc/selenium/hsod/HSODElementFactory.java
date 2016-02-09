@@ -28,7 +28,7 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.WebDriver;
 
 public class HSODElementFactory extends SOElementFactory {
-    public HSODElementFactory(final WebDriver driver) {
+    HSODElementFactory(final WebDriver driver) {
         super(driver, new PageMapper<>(HSODPage.class));
     }
 
@@ -67,6 +67,7 @@ public class HSODElementFactory extends SOElementFactory {
         return loadPage(HSOCreateNewPromotionsPage.class);
     }
 
+    @Override
     public HSOUsersPage getUsersPage(){
         return loadPage(HSOUsersPage.class);
     }
