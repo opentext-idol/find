@@ -23,7 +23,7 @@ import java.util.List;
 public class PromotionService<T extends SOElementFactory> extends ServiceBase<T> {
     private PromotionsPage promotionsPage;
 
-    public PromotionService(SearchOptimizerApplication<T> application) {
+    public PromotionService(SearchOptimizerApplication<? extends T> application) {
         super(application);
     }
 

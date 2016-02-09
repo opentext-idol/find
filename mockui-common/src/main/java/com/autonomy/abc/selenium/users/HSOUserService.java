@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.application.HSOApplication;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
@@ -14,7 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HSOUserService extends UserService<HSODElementFactory> {
     private HSOUsersPage usersPage;
 
-    public HSOUserService(HSOApplication application) {
+    public HSOUserService(SearchOptimizerApplication<? extends HSODElementFactory> application) {
         super(application);
     }
 
