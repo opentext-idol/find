@@ -288,6 +288,8 @@ define([
             var url = options.model.get('url');
 
             if (media && url) {
+                options.model.set('media', media);
+
                 args.html = this.mediaPlayerTemplate({
                     i18n: i18n,
                     model: options.model
