@@ -12,20 +12,20 @@
 # pidfile: /var/lock/${NAME}.pid
 
 ## Installation defaults
-NAME="Find"
-MY_USER="${NAME}"
-MY_GROUP="${NAME}"
-BASE_DIR="/opt/${NAME}"
-HOME_DIR="${BASE_DIR}/home"
-PORT=8080
-EXECUTABLE="${BASE_DIR}/${NAME}.war"
+NAME="find"
+FIND_USER="${NAME}"
+FIND_GROUP="${NAME}"
+FIND_INSTALL_DIR="/opt/${NAME}"
+FIND_HOME_DIR="${FIND_INSTALL_DIR}/home"
+FIND_PORT=8080
+EXECUTABLE="${FIND_INSTALL_DIR}/${NAME}.war"
 JAVA_BIN="/usr/bin/java"
 
 ## Don't change these
 PRODUCT_NAME="HPE Find"
 LOCKFILE="/var/lock/${NAME}.pid"
-STARTUP_LOG="${BASE_DIR}/console.log"
-ARGS=("-Dhp.find.home=${HOME_DIR}" "-Dserver.port=${PORT}" "-jar" "${EXECUTABLE}")
+STARTUP_LOG="${FIND_INSTALL_DIR}/console.log"
+ARGS=("-Dhp.find.home=${FIND_HOME_DIR}" "-Dserver.FIND_PORT=${FIND_PORT}" "-jar" "${EXECUTABLE}")
 SLEEP_TIME=2
 ##
 
@@ -44,7 +44,7 @@ waitForPid() {
 	return 0
 }
 
-# Starts the server as ${MY_USER}
+# Starts the server as ${FIND_USER}
 startServer() {
 	echo "Attempting to start ${PRODUCT_NAME}"
 
@@ -52,21 +52,31 @@ startServer() {
 		start-stop-daemon --start \
 		--exec "${JAVA_BIN}" \
 		-m --pidfile "${LOCKFILE}" \
-		--user "${MY_USER}" --group "${MY_GROUP}" --chuid "${MY_USER}" \
-		--chdir "${BASE_DIR}" \
+		--user "${FIND_USER}" --group "${FIND_GROUP}" --chuid "${FIND_USER}" \
+		--chdir "${FIND_INSTALL_DIR}" \
 		--startas "${JAVA_BIN}" \
 		-- "${ARGS[@]}" > "${STARTUP_LOG}" 2>&1
 	else
 		if [ -e "${LOCKFILE}" ]; then
-			echo >&2 "ERROR: ${LOCKFILE} exists for PID $( cat "${LOCKFILE}" ), subsystem locked"
-			return 1
+			local PID
+			PID=$(cat ${LOCKFILE})
+			if [ -e /proc/${PID} ]; then
+				echo "${NAME} is already running - process id ${PID}"
+				return 1;
+			fi
+
+			rm -f "${LOCKFILE}"
 		fi
-		(
-			# Execute in a sub-shell...
-			echo "${$}" >"${LOCKFILE}"
-			exec daemon --user "${MY_USER}" "${JAVA_BIN}" "${ARGS[@]}"
-		) > "${STARTUP_LOG}" 2>&1
-		return ${?}
+
+		touch ${LOCKFILE} || return 1
+		chgrp ${FIND_GROUP} ${LOCKFILE} || return 1
+		chmod g+w ${LOCKFILE} || return 1
+
+		local cmd
+		cmd="nohup ${JAVA_BIN} ${ARGS[@]} >>${STARTUP_LOG} 2>&1 & echo \$! >${LOCKFILE}"
+		su -m "${FIND_USER}" -s "${SHELL}" -c "${cmd}" || return 1
+		printStatus
+		return 0;
 	fi
 }
 
@@ -76,8 +86,9 @@ startServer() {
 getStatus() {
 	# Check if pid file exists
 	if [ -f ${LOCKFILE} ]; then
-		 # Check if process from pid is still running
-		 return "$( ps --no-headers -p < "${LOCKFILE}" >/dev/null )"
+		# Check if process from pid is still running
+		ps --no-headers -p $( cat "${LOCKFILE}" ) >/dev/null 2>&1
+		return ${?}
 	fi
 
 	return 1
@@ -111,10 +122,10 @@ restartServer() {
 	PID=$(cat ${LOCKFILE})
 	
 	echo "Stopping ${NAME}"
-	stopComponent
+	stopServer
 
 	echo "Starting ${NAME}"
-	startComponent
+	startServer
 	return 0
 }
 
