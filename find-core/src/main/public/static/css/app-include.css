@@ -717,7 +717,7 @@ input.find-input {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    max-height: 41px;
+    max-height: 43px;
 }
 
 .related-concepts-list {
