@@ -1,7 +1,7 @@
 package com.autonomy.abc.config;
 
 import com.autonomy.abc.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.application.HSOApplication;
+import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.navigation.HSODElementFactory;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public abstract class HostedTestBase extends ABCTestBase {
     }
 
     @Override
-    public HSOApplication getApplication() {
-        return (HSOApplication) super.getApplication();
+    public HSODApplication getApplication() {
+        return (HSODApplication) super.getApplication();
     }
 }

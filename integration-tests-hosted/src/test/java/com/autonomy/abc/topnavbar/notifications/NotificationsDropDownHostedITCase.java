@@ -3,7 +3,7 @@ package com.autonomy.abc.topnavbar.notifications;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.selenium.application.HSOApplication;
+import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Session;
@@ -53,8 +53,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Override
-    public HSOApplication getApplication() {
-        return (HSOApplication) super.getApplication();
+    public HSODApplication getApplication() {
+        return (HSODApplication) super.getApplication();
     }
 
     @Test
@@ -188,7 +188,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             } catch (TimeoutException e) { /* User has likely already been authenticated recently, attempt to continue */ }
 
             secondSession = getSessionRegistry().startSession(config.getWebappUrl());
-            HSOApplication secondApplication = new HSOApplication().inWindow(secondSession.getActiveWindow());
+            HSODApplication secondApplication = new HSODApplication().inWindow(secondSession.getActiveWindow());
             HSODElementFactory secondFactory = secondApplication.elementFactory();
 
             loginTo(secondFactory.getLoginPage(), secondSession.getDriver(), user);

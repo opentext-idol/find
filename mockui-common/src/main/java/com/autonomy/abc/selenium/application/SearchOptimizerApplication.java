@@ -17,7 +17,7 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
     private final static Map<ApplicationType, Factory<? extends SearchOptimizerApplication>> FACTORY_MAP = new EnumMap<>(ApplicationType.class);
 
     static {
-        FACTORY_MAP.put(ApplicationType.HOSTED, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.application.HSOApplication"));
+        FACTORY_MAP.put(ApplicationType.HOSTED, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.hsod.HSODApplication"));
         FACTORY_MAP.put(ApplicationType.ON_PREM, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.application.OPISOApplication"));
     }
 

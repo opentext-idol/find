@@ -1,5 +1,7 @@
-package com.autonomy.abc.selenium.application;
+package com.autonomy.abc.selenium.hsod;
 
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.indexes.IndexService;
@@ -8,12 +10,12 @@ import com.autonomy.abc.selenium.promotions.HSOPromotionService;
 import com.autonomy.abc.selenium.users.HSODeveloperService;
 import com.autonomy.abc.selenium.users.HSOUserService;
 
-public class HSOApplication extends SearchOptimizerApplication<HSODElementFactory> {
+public class HSODApplication extends SearchOptimizerApplication<HSODElementFactory> {
     private Window window;
     private HSODElementFactory factory;
 
     @Override
-    public HSOApplication inWindow(Window window) {
+    public HSODApplication inWindow(Window window) {
         this.window = window;
         this.factory = new HSODElementFactory(window.getSession().getDriver());
         return this;
