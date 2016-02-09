@@ -62,6 +62,8 @@ define([
                 indexesCollection: this.indexesCollection
             });
 
+            router.on('route:emptySearch', this.reducedState, this);
+
             router.on('route:search', function(text, concepts) {
                 this.queryTextModel.set({
                     inputText: text || '',
@@ -73,6 +75,7 @@ define([
             }, this);
 
             router.on('route:suggest', function () {
+                this.expandedState();
                 var suggestOptions = this.suggestOptions.apply(this, arguments);
                 this.suggest(suggestOptions);
             }, this);
@@ -117,6 +120,7 @@ define([
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
             this.$('.query-service-view-container').hide();
+            this.$('.suggest-service-view-container').addClass('hide');
             this.$('.app-logo').show();
             this.$('.hp-logo-footer').removeClass('hidden');
 
@@ -148,10 +152,11 @@ define([
                         document: model
                     }, suggestOptions.suggestParams));
 
+                    var queryPathSuffix = self.generateURL();
                     var suggestServiceView = new self.SuggestServiceView({
                         queryModel: queryModel,
                         indexesCollection: self.indexesCollection,
-                        backUrl: 'find/search/query/' + self.generateURL()
+                        backUrl: queryPathSuffix ? 'find/search/query/' + queryPathSuffix : 'find/search/query'
                     });
 
                     self.$('.query-service-view-container').addClass('hide');
