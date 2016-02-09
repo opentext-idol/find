@@ -906,11 +906,12 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1763")
-    public void testPublicIndexesNotSelectedByDefault(){
+    @KnownBug({"CSA-1726", "CSA-1763"})
+    public void testPublicIndexesVisibleNotSelectedByDefault(){
         findPage.search("Marina and the Diamonds");
 
-        verifyThat(findPage.getSelectedPublicIndexes().size(), is(0));
+        verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
+        verifyThat(findPage.getSelectedPublicIndexes(), empty());
     }
 
     @Test
