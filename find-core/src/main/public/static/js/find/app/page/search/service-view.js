@@ -12,6 +12,7 @@ define([
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/results/results-view-augmentation',
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
@@ -22,13 +23,14 @@ define([
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/topic-map-view',
+    'find/app/page/search/compare-modal',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel,
-            SearchFiltersCollection, ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection,
+            SearchFiltersCollection, ParametricView, FilterDisplayView, DateView, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection,
             RelatedConceptsView, SpellCheckView, SnapshotDataView, Collapsible, addChangeListener,
-            SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, i18n, i18nIndexes, template) {
+            SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -63,7 +65,7 @@ define([
     };
 
     return Backbone.View.extend({
-        className: 'inline',
+        className: 'full-height',
         template: _.template(template),
 
         // May be overridden
@@ -72,6 +74,18 @@ define([
         // Abstract
         ResultsView: null,
         IndexesView: null,
+
+        events: {
+            'click .compare-modal-button': function() {
+                new CompareModal({
+                    savedSearchCollection: this.savedSearchCollection,
+                    selectedSearch: this.savedSearchModel,
+                    callback: _.bind(function(selectedCid) {
+                        //TODO: call a compareSavedSearches() function here
+                    }, this)
+                });
+            }
+        },
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
@@ -142,9 +156,13 @@ define([
 
             this.resultsView = new this.ResultsView(constructorArguments);
             this.topicMapView = new TopicMapView(constructorArguments);
-
+            
+            this.resultsViewAugmentation = new ResultsViewAugmentation({
+                resultsView: this.resultsView
+            });
+            
             var resultsViews = [{
-                content: this.resultsView,
+                content: this.resultsViewAugmentation,
                 id: 'list',
                 uniqueId: _.uniqueId('results-view-item-'),
                 selector: {
@@ -160,6 +178,10 @@ define([
                     icon: 'hp-grid'
                 }
             }];
+            
+            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
+                this.rightSideContainerHideToggle(toggle);
+            }, this);
 
             var resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
@@ -184,7 +206,7 @@ define([
             });
 
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
-
+            
             if (searchType === SavedSearchModel.Type.QUERY) {
                 this.spellCheckView = new SpellCheckView({
                     documentsCollection: this.documentsCollection,
@@ -222,6 +244,8 @@ define([
                     savedSearchModel: this.savedSearchModel
                 });
             }
+
+            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
         },
 
         render: function() {
@@ -253,7 +277,12 @@ define([
                 this.snapshotDataView.setElement(this.$('.snapshot-view-container')).render();
             }
 
+            this.updateCompareModalButton();
             this.fetchEntities();
+        },
+
+        updateCompareModalButton: function() {
+            this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
         },
 
         fetchEntities: function() {
@@ -278,6 +307,10 @@ define([
             $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
+        },
+
+        rightSideContainerHideToggle: function(toggle) {
+            this.$('.right-side-container').toggle(toggle);
         },
 
         remove: function() {

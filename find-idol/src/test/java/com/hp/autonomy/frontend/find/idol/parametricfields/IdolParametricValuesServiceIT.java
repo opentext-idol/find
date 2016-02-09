@@ -11,7 +11,4 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolParametricValuesServiceIT extends AbstractParametricValuesServiceIT {
-    public IdolParametricValuesServiceIT() {
-        super(new String[]{"WOOKIEPEDIA"}, new String[]{"CATEGORY"});
-    }
 }

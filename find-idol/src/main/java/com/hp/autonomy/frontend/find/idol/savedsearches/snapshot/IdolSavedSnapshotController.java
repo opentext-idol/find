@@ -6,29 +6,28 @@ import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshotController;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshotService;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping(SavedSnapshotController.PATH)
-public class IdolSavedSnapshotController extends SavedSnapshotController<String, SearchResult, AciErrorException> {
+public class IdolSavedSnapshotController extends SavedSnapshotController<String, IdolSearchResult, AciErrorException> {
 
     @Autowired
-    public IdolSavedSnapshotController(SavedSnapshotService service, DocumentsService<String, SearchResult, AciErrorException> documentsService) {
+    public IdolSavedSnapshotController(final SavedSnapshotService service, final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService) {
         super(service, documentsService);
     }
 
-    private List<String> getDatabases(Set<EmbeddableIndex> indexes) {
-        List<String> databases = new ArrayList<>();
+    private List<String> getDatabases(final Iterable<EmbeddableIndex> indexes) {
+        final List<String> databases = new ArrayList<>();
 
-        for(EmbeddableIndex index: indexes) {
+        for (final EmbeddableIndex index : indexes) {
             databases.add(index.getName());
         }
 
@@ -37,9 +36,9 @@ public class IdolSavedSnapshotController extends SavedSnapshotController<String,
 
     @Override
     protected String getStateToken(final SavedSnapshot snapshot) throws AciErrorException {
-        IdolQueryRestrictions.Builder queryRestrictionsBuilder = new IdolQueryRestrictions.Builder()
-                .setDatabases(this.getDatabases(snapshot.getIndexes()))
-                .setQueryText(this.getQueryText(snapshot)).setFieldText(this.getFieldText(snapshot.getParametricValues()))
+        final IdolQueryRestrictions.Builder queryRestrictionsBuilder = new IdolQueryRestrictions.Builder()
+                .setDatabases(getDatabases(snapshot.getIndexes()))
+                .setQueryText(getQueryText(snapshot)).setFieldText(getFieldText(snapshot.getParametricValues()))
                 .setMaxDate(snapshot.getMaxDate())
                 .setMinDate(snapshot.getMinDate());
 

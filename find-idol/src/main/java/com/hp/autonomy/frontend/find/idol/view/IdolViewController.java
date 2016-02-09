@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @RequestMapping(IdolViewController.VIEW_PATH)
 @Slf4j
-public class IdolViewController extends ViewController<ViewServerService<String, AciErrorException>, String, AciErrorException> {
+public class IdolViewController extends ViewController<String, AciErrorException> {
     public static final String VIEW_PATH = "/api/public/view";
     public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
     public static final String REFERENCE_PARAM = "reference";

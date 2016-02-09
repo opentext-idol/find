@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 import com.hp.autonomy.frontend.configuration.ValidationResult;
-import com.hp.autonomy.frontend.find.hod.indexes.HodIndexesService;
+import com.hp.autonomy.frontend.find.hod.databases.FindHodDatabasesService;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
@@ -22,6 +22,7 @@ import com.hp.autonomy.hod.client.token.TokenProxy;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
+@Slf4j
 @JsonDeserialize(builder = IodConfig.Builder.class)
 public class IodConfig implements ConfigurationComponent {
 
@@ -56,7 +58,7 @@ public class IodConfig implements ConfigurationComponent {
         return true;
     }
 
-    public ValidationResult<?> validate(final HodIndexesService indexesService, final AuthenticationService authenticationService) {
+    public ValidationResult<?> validate(final FindHodDatabasesService findHodDatabasesService, final AuthenticationService authenticationService, final List<ResourceIdentifier> activeIndexes) {
         try {
             if (StringUtils.isBlank(apiKey)) {
                 return new ValidationResult<>(false, "API Key is blank");
@@ -77,11 +79,11 @@ public class IodConfig implements ConfigurationComponent {
                     TokenType.Simple.INSTANCE
             );
 
-            final Resources indexes = indexesService.listIndexes(tokenProxy);
-            final List<ResourceIdentifier> activeIndexes = indexesService.listActiveIndexes();
+            final Resources indexes = findHodDatabasesService.getAllIndexes(tokenProxy);
 
             return new ValidationResult<>(true, new IndexResponse(indexes, activeIndexes));
         } catch (final HodErrorException e) {
+            log.error("Error retrieving indexes", e);
             return new ValidationResult<>(false, "Unable to list indexes");
         }
     }

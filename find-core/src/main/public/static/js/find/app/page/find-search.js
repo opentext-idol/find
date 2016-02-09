@@ -148,7 +148,7 @@ define([
                 this.expandedState();
             }
             _.each(this.serviceViews, function(data) {
-                this.$('.search-tabs-row').after(data.view.$el);
+                this.$('.top-options-container').after(data.view.$el);
                 data.view.render();
             }, this);
 
@@ -185,7 +185,7 @@ define([
                         })
                     };
 
-                    this.$('.search-tabs-row').after(viewData.view.$el);
+                    this.$('.top-options-container').after(viewData.view.$el);
                     viewData.view.render();
                 }
 

@@ -11,7 +11,4 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 
 @SpringApplicationConfiguration(classes = IdolFindApplication.class)
 public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsServiceIT {
-    public IdolRelatedConceptsServiceIT() {
-        super(new String[]{"Wookiepedia"});
-    }
 }

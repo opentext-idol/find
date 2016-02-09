@@ -27,9 +27,9 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractViewControllerTest<C extends ViewController<V, S, E>, V extends ViewServerService<S, E>, S extends Serializable, E extends Exception> {
+public abstract class AbstractViewControllerTest<C extends ViewController<S, E>, S extends Serializable, E extends Exception> {
     @Mock
-    protected V viewServerService;
+    protected ViewServerService<S, E> viewServerService;
 
     @Mock
     protected ControllerUtils controllerUtils;

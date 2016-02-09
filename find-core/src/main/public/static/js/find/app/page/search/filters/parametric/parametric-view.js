@@ -18,8 +18,6 @@ define([
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
 ], function(Backbone, _, $, ListView, FilteringCollection, ParametricCollection, FieldView, addChangeListener, parser, DisplayCollection, i18n, template) {
 
-    var DEBOUNCE_WAIT_MILLISECONDS = 500;
-
     return Backbone.View.extend({
         template: _.template(template)({i18n: i18n}),
 
@@ -43,10 +41,8 @@ define([
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
-            this.indexesCollection = options.indexesCollection;
 
             this.selectedParametricValues = options.queryState.selectedParametricValues;
-            this.selectedIndexesCollection = options.queryState.selectedIndexes;
 
             this.parametricCollection = new ParametricCollection();
 
@@ -68,26 +64,11 @@ define([
                 this.parametricCollection.reset();
                 this.model.set({processing: true, error: false});
 
-                var fieldNames = this.selectedIndexesCollection.chain()
-                    .map(function(database) {
-                        var findArguments = {name: database.get('name')};
-
-                        if (database.get('domain')) {
-                            findArguments.domain = database.get('domain');
-                        }
-
-                        return this.indexesCollection.findWhere(findArguments).get('fieldNames');
-                    }, this)
-                    .flatten()
-                    .uniq()
-                    .value();
-
-                if(!this.queryModel.get('queryText') || _.isEmpty(fieldNames)) {
+                if(!this.queryModel.get('queryText')) {
                     this.model.set('processing', false);
                 } else {
                     this.parametricCollection.fetch({
                         data: {
-                            fieldNames: fieldNames,
                             databases: this.queryModel.get('indexes'),
                             queryText: this.queryModel.get('queryText'),
                             fieldText: this.queryModel.get('fieldText'),
