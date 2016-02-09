@@ -1,6 +1,5 @@
-package com.autonomy.abc.selenium.page.connections;
+package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;

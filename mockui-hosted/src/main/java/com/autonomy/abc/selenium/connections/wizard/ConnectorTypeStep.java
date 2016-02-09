@@ -1,8 +1,7 @@
-package com.autonomy.abc.selenium.connections;
+package com.autonomy.abc.selenium.connections.wizard;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.connections.NewConnectionPage;
 
 public class ConnectorTypeStep implements WizardStep {
     private final static String TITLE = "Select Connector Type";

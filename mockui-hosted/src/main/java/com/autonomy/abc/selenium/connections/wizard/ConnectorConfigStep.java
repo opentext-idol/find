@@ -1,8 +1,8 @@
-package com.autonomy.abc.selenium.connections;
+package com.autonomy.abc.selenium.connections.wizard;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
+import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.WebElement;
 

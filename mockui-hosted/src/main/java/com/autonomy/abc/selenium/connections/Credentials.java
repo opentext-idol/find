@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
+import com.autonomy.abc.selenium.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.util.Waits;
 
 public class Credentials {

@@ -3,8 +3,10 @@ package com.autonomy.abc.selenium.connections;
 import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
+import com.autonomy.abc.selenium.connections.wizard.ConnectorConfigStep;
+import com.autonomy.abc.selenium.connections.wizard.ConnectorIndexStep;
+import com.autonomy.abc.selenium.connections.wizard.ConnectorTypeStep;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.util.Waits;
 
 import java.util.Arrays;

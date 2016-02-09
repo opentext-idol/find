@@ -1,9 +1,8 @@
-package com.autonomy.abc.selenium.connections;
+package com.autonomy.abc.selenium.connections.wizard;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
+import com.autonomy.abc.selenium.connections.NewConnectionPage;
 
 public class ConnectorIndexStep implements WizardStep {
     private final static String TITLE = "Index";

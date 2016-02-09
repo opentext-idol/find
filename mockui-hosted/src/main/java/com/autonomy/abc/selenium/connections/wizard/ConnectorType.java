@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.connections.wizard;
+package com.autonomy.abc.selenium.connections.wizard;
 
 import org.openqa.selenium.By;
 

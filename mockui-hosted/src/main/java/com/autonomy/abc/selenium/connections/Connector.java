@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 
 public abstract class Connector {
     protected String name;

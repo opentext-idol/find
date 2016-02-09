@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.connections.wizard;
+package com.autonomy.abc.selenium.connections.wizard;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;

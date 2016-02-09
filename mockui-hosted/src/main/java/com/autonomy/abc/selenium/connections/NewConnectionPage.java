@@ -1,9 +1,9 @@
-package com.autonomy.abc.selenium.page.connections;
+package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.page.SAASPageBase;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorConfigStepTab;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorIndexStepTab;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.connections.wizard.ConnectorConfigStepTab;
+import com.autonomy.abc.selenium.connections.wizard.ConnectorIndexStepTab;
+import com.autonomy.abc.selenium.connections.wizard.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;

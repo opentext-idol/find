@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.connections;
+package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
