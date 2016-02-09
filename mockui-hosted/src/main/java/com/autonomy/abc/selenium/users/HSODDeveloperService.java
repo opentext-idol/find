@@ -9,10 +9,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSODeveloperService extends ServiceBase<HSODElementFactory> {
+public class HSODDeveloperService extends ServiceBase<HSODElementFactory> {
     private HSODevelopersPage devsPage;
 
-    public HSODeveloperService(SearchOptimizerApplication<? extends HSODElementFactory> application){
+    public HSODDeveloperService(SearchOptimizerApplication<? extends HSODElementFactory> application){
         super(application);
     }
 

@@ -6,9 +6,8 @@ import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 
-public class HSOPromotionService extends PromotionService<HSODElementFactory> {
-
-    public HSOPromotionService(SearchOptimizerApplication<? extends HSODElementFactory> application) {
+public class HSODPromotionService extends PromotionService<HSODElementFactory> {
+    public HSODPromotionService(SearchOptimizerApplication<? extends HSODElementFactory> application) {
         super(application);
     }
 

@@ -41,7 +41,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class UserManagementHostedITCase extends UsersPageTestBase {
 
-    private HSOUserService userService;
+    private HSODUserService userService;
     private HSOUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
     private final Factory<NewUser> newUserFactory;
@@ -53,7 +53,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Before
     public void hostedSetUp(){
-        userService = (HSOUserService) super.userService;
+        userService = (HSODUserService) super.userService;
         usersPage = (HSOUsersPage) super.usersPage;
     }
 

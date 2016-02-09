@@ -21,7 +21,7 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -59,7 +59,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testStaticPromotionNotifications(){
-        HSOPromotionService ps = getApplication().promotionService();
+        HSODPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -77,7 +77,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testRemovingStaticPromotionNotifications(){
-        HSOPromotionService ps = getApplication().promotionService();
+        HSODPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";

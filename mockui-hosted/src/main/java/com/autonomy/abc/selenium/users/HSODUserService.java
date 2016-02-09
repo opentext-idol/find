@@ -11,10 +11,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSOUserService extends UserService<HSODElementFactory> {
+public class HSODUserService extends UserService<HSODElementFactory> {
     private HSOUsersPage usersPage;
 
-    public HSOUserService(SearchOptimizerApplication<? extends HSODElementFactory> application) {
+    public HSODUserService(SearchOptimizerApplication<? extends HSODElementFactory> application) {
         super(application);
     }
 

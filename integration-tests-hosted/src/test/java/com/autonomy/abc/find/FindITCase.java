@@ -322,7 +322,7 @@ public class FindITCase extends HostedTestBase {
         promotionService.deleteAll();
 
         try {
-            ((HSOPromotionService) promotionService).setUpStaticPromotion(promotion);
+            ((HSODPromotionService) promotionService).setUpStaticPromotion(promotion);
 
             findWindow.activate();
             findPage.search(trigger);

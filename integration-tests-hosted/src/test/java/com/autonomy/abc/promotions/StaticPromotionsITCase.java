@@ -10,7 +10,7 @@ import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Before;
@@ -32,7 +32,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
     private HSOPromotionsPage promotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
     private SearchPage searchPage;
-    private HSOPromotionService promotionService;
+    private HSODPromotionService promotionService;
     private final String title = "title";
     private final String content = "content";
     private final String trigger = "dog";
