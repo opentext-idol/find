@@ -5,8 +5,9 @@
 
 define([
     'i18n!find/nls/bundle',
+    'i18n!find/nls/indexes',
     'underscore'
-], function(i18n, _) {
+], function(i18n, indexesI18n, _) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -51,7 +52,7 @@ define([
                 },
                 relatedConcepts(attributes.relatedConcepts),
                 {
-                    title: i18n['search.snapshot.restrictions.indexes'],
+                    title: indexesI18n['search.indexes'],
                     content: indexesContent
                 },
                 dateRestriction(i18n['search.snapshot.restrictions.minDate'], attributes.minDate),

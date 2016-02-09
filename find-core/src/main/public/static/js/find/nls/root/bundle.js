@@ -124,7 +124,6 @@ define([
         'search.snapshot.detail.dateCreated': 'Date Created',
         'search.snapshot.detail.resultCount': 'Result Count',
         'search.snapshot.detailTitle': 'Snapshot',
-        'search.snapshot.restrictions.indexes': 'Indexes',
         'search.snapshot.restrictions.maxDate': 'Until Date',
         'search.snapshot.restrictions.minDate': 'From Date',
         'search.snapshot.restrictions.queryText': 'Query Text',

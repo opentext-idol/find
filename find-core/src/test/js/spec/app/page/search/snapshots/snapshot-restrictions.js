@@ -6,9 +6,10 @@
 define([
     'find/app/page/search/snapshots/snapshot-restrictions',
     'i18n!find/nls/bundle',
+    'i18n!find/nls/indexes',
     'underscore',
     'moment'
-], function(snapshotRestrictions, i18n, _, moment) {
+], function(snapshotRestrictions, i18n, indexesI18n, _, moment) {
 
     function runProcessAttributes(input) {
         // Only pick the target attributes to reflect how processAttributes is called in the DataPanelView
@@ -27,7 +28,7 @@ define([
             expect(output.length).toBe(2);
             expect(output[0].title).toBe(i18n['search.snapshot.restrictions.queryText']);
             expect(output[0].content).toBe('cat');
-            expect(output[1].title).toBe(i18n['search.snapshot.restrictions.indexes']);
+            expect(output[1].title).toBe(indexesI18n['search.indexes']);
             expect(output[1].content).toContain('Wikipedia');
             expect(output[1].content).toContain('Admissions');
         });
