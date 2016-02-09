@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class FindSearchResult extends SearchResult {
-    public FindSearchResult(WebElement result, WebDriver driver){
+    FindSearchResult(WebElement result, WebDriver driver){
         super(result, driver);
     }
 

@@ -6,8 +6,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class FindIndexCheckbox extends Checkbox {
-    public FindIndexCheckbox(WebElement element, WebDriver driver) {
+class FindIndexCheckbox extends Checkbox {
+    FindIndexCheckbox(WebElement element, WebDriver driver) {
         super(element, driver);
         box = findElement(By.className("check-cell"));
     }

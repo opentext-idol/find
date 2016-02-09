@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 public class FindParametricCheckbox extends Checkbox {
     private final By checkbox = By.cssSelector("td:not(.check-cell)");
 
-    public FindParametricCheckbox(WebElement element, WebDriver driver) {
+    FindParametricCheckbox(WebElement element, WebDriver driver) {
         super(element, driver);
         box = findElement(By.className("check-cell"));
     }
