@@ -7,6 +7,8 @@ define([
     'js-whatever/js/base-page',
     'backbone',
     'find/app/model/search-page-model',
+    'find/app/model/dates-filter-model',
+    'parametric-refinement/selected-values-collection',
     'find/app/model/indexes-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
@@ -19,7 +21,7 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection,
+], function(BasePage, Backbone, SearchPageModel, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection,
             addChangeListener, SavedSearchModel, QueryTextModel, router, vent, i18n, _, template) {
 
     'use strict';
@@ -27,6 +29,21 @@ define([
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
     var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
     var QUERY_TEXT_MODEL_ATTRIBUTES = ['inputText', 'relatedConcepts'];
+
+    function selectInitialIndexes(indexesCollection) {
+        var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
+        var selectedIndexes;
+
+        if (privateIndexes.length > 0) {
+            selectedIndexes = privateIndexes;
+        } else {
+            selectedIndexes = indexesCollection.models;
+        }
+
+        return _.map(selectedIndexes, function(indexModel) {
+            return indexModel.pick('domain', 'name');
+        });
+    }
 
     return BasePage.extend({
         className: 'search-page',
@@ -45,6 +62,10 @@ define([
             // Model representing high level search page state
             this.searchModel = new SearchPageModel();
 
+            // Model mapping saved search cids to query state
+            this.queryStates = new Backbone.Model();
+
+            // Map of saved search cid to ServiceView
             this.serviceViews = {};
 
             this.listenTo(this.searchModel, 'change:selectedSearchCid', this.selectContentView);
@@ -82,6 +103,7 @@ define([
             this.listenTo(this.savedSearchCollection, 'remove', function(savedSearch) {
                 var cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
+                this.queryStates.unset(cid);
                 delete this.serviceViews[cid];
 
                 if (this.searchModel.get('selectedSearchCid') === cid) {
@@ -104,7 +126,8 @@ define([
 
             this.tabView = new TabbedSearchView({
                 savedSearchCollection: this.savedSearchCollection,
-                searchModel: this.searchModel
+                searchModel: this.searchModel,
+                queryStates: this.queryStates
             });
 
             // Bind routing to search model
@@ -155,13 +178,41 @@ define([
                 } else {
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
 
+                    var queryState = {
+                        queryTextModel: queryTextModel,
+                        datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
+                        selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
+                    };
+
+                    var initialSelectedIndexes;
+                    var savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
+
+                    // TODO: Check if the saved indexes still exists?
+                    if (savedSelectedIndexes.length === 0) {
+                        if (this.indexesCollection.isEmpty()) {
+                            initialSelectedIndexes = [];
+
+                            this.listenToOnce(this.indexesCollection, 'sync', function() {
+                                queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
+                            });
+                        } else {
+                            initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
+                        }
+                    } else {
+                        initialSelectedIndexes = savedSelectedIndexes;
+                    }
+
+                    queryState.selectedIndexes = new IndexesCollection(initialSelectedIndexes);
+
+                    this.queryStates.set(cid, queryState);
+
                     this.serviceViews[cid] = viewData = {
                         queryTextModel: queryTextModel,
                         view: new this.ServiceView({
                             indexesCollection: this.indexesCollection,
                             searchModel: this.searchModel,
                             savedSearchCollection: this.savedSearchCollection,
-                            queryTextModel: queryTextModel,
+                            queryState: queryState,
                             savedSearchModel: savedSearchModel
                         })
                     };

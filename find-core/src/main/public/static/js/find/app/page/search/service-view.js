@@ -33,21 +33,6 @@ define([
 
     var html = _.template(template)({i18n: i18n});
 
-    function selectInitialIndexes(indexesCollection) {
-        var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
-        var selectedIndexes;
-
-        if (privateIndexes.length > 0) {
-            selectedIndexes = privateIndexes;
-        } else {
-            selectedIndexes = indexesCollection.models;
-        }
-
-        return _.map(selectedIndexes, function(indexModel) {
-            return indexModel.pick('domain', 'name');
-        });
-    }
-
     var collapseView = function(title, view) {
         return new Collapsible({
             view: view,
@@ -82,34 +67,10 @@ define([
             this.indexesCollection = options.indexesCollection;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
+            this.queryState = options.queryState;
 
             this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
-
-            var initialSelectedIndexes;
-            var savedSelectedIndexes = this.savedSearchModel.toSelectedIndexes();
-
-            // TODO: Check if the saved indexes still exists?
-            if (savedSelectedIndexes.length === 0) {
-                if (this.indexesCollection.isEmpty()) {
-                    initialSelectedIndexes = [];
-
-                    this.listenToOnce(this.indexesCollection, 'sync', function() {
-                        this.queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
-                    });
-                } else {
-                    initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
-                }
-            } else {
-                initialSelectedIndexes = savedSelectedIndexes;
-            }
-
-            this.queryState = {
-                queryTextModel: options.queryTextModel,
-                datesFilterModel: new DatesFilterModel(this.savedSearchModel.toDatesFilterModelAttributes()),
-                selectedParametricValues: new SelectedParametricValuesCollection(this.savedSearchModel.toSelectedParametricValues()),
-                selectedIndexes: new IndexesCollection(initialSelectedIndexes)
-            };
 
             this.queryModel = new QueryModel({}, {queryState: this.queryState});
 
