@@ -126,6 +126,7 @@ define([
 
             router.on('route:documentDetail', function () {
                 this.$('.query-service-view-container').addClass('hide');
+                this.$('.document-detail-service-view-container').removeClass('hide');
 
                 var options = this.documentDetailOptions.apply(this, arguments);
                 this.documentDetail(options);
@@ -144,7 +145,7 @@ define([
                 this.expandedState();
             }
             _.each(this.serviceViews, function(data) {
-                this.$('.tabbed-search-row').after(data.view.$el);
+                this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
             }, this);
 
@@ -179,7 +180,7 @@ define([
                         })
                     };
 
-                    this.$('.tabbed-search-row').after(viewData.view.$el);
+                    this.$('.query-service-view-container').append(viewData.view.$el);
                     viewData.view.render();
                 }
 
@@ -237,9 +238,7 @@ define([
                     model: model
                 });
 
-                var $container = this.$('.document-detail-service-view-container');
-                $container.removeClass('hide');
-                documentDetailView.setElement($container).render();
+                documentDetailView.setElement(this.$('.document-detail-service-view-container')).render();
             }, this));
         }
     });

@@ -56,7 +56,7 @@ define([
     };
 
     return Backbone.View.extend({
-        className: 'inline',
+        className: 'full-height',
 
         // May be overridden
         SearchFiltersCollection: SearchFiltersCollection,

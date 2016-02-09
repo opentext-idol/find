@@ -15,6 +15,12 @@ define([
     var MEDIA_TYPES = ['audio', 'video'];
     var WEB_TYPES = ['text/html', 'text/xhtml'];
 
+    function getMediaType(contentType) {
+        return contentType && _.find(MEDIA_TYPES, function (mediaType) {
+            return contentType.indexOf(mediaType) === 0;
+        });
+    }
+
     // Model representing a document in an HOD text index
     return Backbone.Model.extend({
         url: '../api/public/search/get-document-content',
@@ -46,19 +52,13 @@ define([
                 }
             });
 
+            response.media = getMediaType(response.contentType);
+
             return response;
         },
 
         isMedia: function() {
-            return !!(this.getMediaType() && this.get('url'));
-        },
-
-        getMediaType: function() {
-            var contentType = this.get('contentType');
-
-            return contentType && _.find(MEDIA_TYPES, function (mediaType) {
-                return contentType.indexOf(mediaType) === 0;
-            });
+            return Boolean(this.get('media') && this.get('url'));
         },
 
         isWebType: function() {
