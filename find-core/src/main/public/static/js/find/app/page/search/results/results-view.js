@@ -87,6 +87,8 @@ define([
 
         events: {
             'click .entity-text': function(e) {
+                e.stopPropagation();
+
                 var $target = $(e.target);
                 var queryText = $target.attr('data-title');
 
