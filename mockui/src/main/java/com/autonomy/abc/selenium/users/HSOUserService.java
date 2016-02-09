@@ -59,7 +59,7 @@ public class HSOUserService extends UserService<HSODElementFactory> {
         return (HSOUser) user;
     }
 
-    public void resetAuthentication(HSOUser user) {
+    public void resetAuthentication(User user) {
         usersPage = goToUsers();
         usersPage.resetAuthenticationButton(user).click();
         Waits.loadOrFadeWait();

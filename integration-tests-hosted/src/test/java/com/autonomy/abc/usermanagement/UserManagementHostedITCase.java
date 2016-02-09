@@ -143,7 +143,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     public void testResettingAuthentication(){
         NewUser newUser = newUserFactory.create();
 
-        final HSOUser user = userService.createNewUser(newUser,Role.USER);
+        final User user = userService.createNewUser(newUser,Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
