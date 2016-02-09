@@ -8,6 +8,7 @@ define([
     'backbone',
     'find/app/model/search-page-model',
     'find/app/model/indexes-collection',
+    'find/app/model/documents-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
     'find/app/model/saved-searches/saved-search-collection',
@@ -16,13 +17,14 @@ define([
     'find/app/model/query-text-model',
     'find/app/model/document-model',
     'find/app/page/search/document/document-detail-view',
+    'find/app/util/database-name-resolver',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedSearchCollection,
-            addChangeListener, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView, router, vent, i18n, _, template) {
+], function(BasePage, Backbone, SearchPageModel, IndexesCollection, DocumentsCollection, InputView, TabbedSearchView, SavedSearchCollection,
+            addChangeListener, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView, databaseNameResolver, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -129,7 +131,7 @@ define([
                 this.$('.document-detail-service-view-container').removeClass('hide');
 
                 var options = this.documentDetailOptions.apply(this, arguments);
-                this.documentDetail(options);
+                this.populateDocumentModelForDetailView(options);
             }, this);
         },
 
@@ -168,11 +170,14 @@ define([
                     viewData = this.serviceViews[cid];
                 } else {
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
+                    var documentsCollection = new DocumentsCollection();
 
                     this.serviceViews[cid] = viewData = {
                         queryTextModel: queryTextModel,
+                        documentsCollection: documentsCollection,
                         view: new this.ServiceView({
                             indexesCollection: this.indexesCollection,
+                            documentsCollection: documentsCollection,
                             searchModel: this.searchModel,
                             savedSearchCollection: this.savedSearchCollection,
                             queryTextModel: queryTextModel,
@@ -224,22 +229,42 @@ define([
             $('.container-fluid, .find-logo-small').addClass('reduced');
         },
 
-        documentDetail: function(options) {
-            var model = new DocumentModel();
-
-            model.fetch({
-                data: {
-                    reference: options.reference,
-                    database: options.database
-                }
-            }).done(_.bind(function() {
-                var documentDetailView = new DocumentDetailView({
-                    backUrl: this.generateURL(),
-                    model: model
+        // If we already have the document model in one of our collections, then don't bother fetching it
+        populateDocumentModelForDetailView: function(options) {
+            var model;
+            _.find(this.serviceViews, function(serviceView) {
+                var document = serviceView.documentsCollection.find(function(collectionModel) {
+                    return collectionModel.get('reference') === options.reference &&
+                        databaseNameResolver.resolveDatabaseNameForDocumentModel(collectionModel) === options.database;
                 });
 
-                documentDetailView.setElement(this.$('.document-detail-service-view-container')).render();
-            }, this));
+                if(document) {
+                    // stop looping once we find the model
+                    model = document;
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            if (model) {
+                this.renderDocumentDetail(model)
+            } else {
+                (new DocumentModel()).fetch({
+                    data: {
+                        reference: options.reference,
+                        database: options.database
+                    }
+                }).done(_.bind(this.renderDocumentDetail, this));
+            }
+        },
+
+        renderDocumentDetail: function(model) {
+            var documentDetailView = new DocumentDetailView({
+                backUrl: this.generateURL(),
+                model: model
+            });
+            documentDetailView.setElement(this.$('.document-detail-service-view-container')).render();
         }
     });
 });

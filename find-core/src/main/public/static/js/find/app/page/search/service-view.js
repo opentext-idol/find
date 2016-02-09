@@ -3,7 +3,6 @@ define([
     'jquery',
     'underscore',
     'find/app/model/dates-filter-model',
-    'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
@@ -24,7 +23,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
+], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
             ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
             Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, CompareModal, i18n, i18nIndexes, template) {
 
@@ -82,8 +81,8 @@ define([
             this.indexesCollection = options.indexesCollection;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
+            this.documentsCollection = options.documentsCollection;
 
-            this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
 
             var initialSelectedIndexes;
