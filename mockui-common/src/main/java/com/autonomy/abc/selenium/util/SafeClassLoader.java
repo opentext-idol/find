@@ -13,7 +13,7 @@ public class SafeClassLoader<T> implements Factory<T> {
         try {
             return tClass.cast(Class.forName(className).newInstance());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            throw new IllegalStateException("Could not create " + tClass + " instance", e);
+            throw new IllegalStateException("Could not create instance of " + tClass + ". \nCheck that " + className + " is on the classpath and accessible\n" + e.toString(), e);
         }
     }
 }
