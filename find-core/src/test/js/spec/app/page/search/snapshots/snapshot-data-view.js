@@ -7,7 +7,7 @@ define([
     'backbone',
     'underscore',
     'moment',
-    'find/app/page/search/snapshots/snapshot-filter-view'
+    'find/app/page/search/snapshots/snapshot-data-view'
 ], function(Backbone, _, moment, SnapshotFilterView) {
 
     var MAX_DATE = 1454668000000;
@@ -21,7 +21,7 @@ define([
         {field: 'FILE_TYPE', value: 'html'}
     ];
 
-    describe('Snapshot filter view', function() {
+    describe('Snapshot data view', function() {
         beforeEach(function() {
             this.savedSearchModel = new Backbone.Model({
                 title: 'Quantum Cat',

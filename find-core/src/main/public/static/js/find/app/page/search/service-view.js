@@ -16,7 +16,7 @@ define([
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/page/search/spellcheck-view',
-    'find/app/page/search/snapshots/snapshot-filter-view',
+    'find/app/page/search/snapshots/snapshot-data-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
     'parametric-refinement/selected-values-collection',
@@ -27,7 +27,7 @@ define([
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel,
             SearchFiltersCollection, ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection,
-            RelatedConceptsView, SpellCheckView, SnapshotFilterView, Collapsible, addChangeListener,
+            RelatedConceptsView, SpellCheckView, SnapshotDataView, Collapsible, addChangeListener,
             SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, i18n, i18nIndexes, template) {
 
     'use strict';
@@ -218,7 +218,7 @@ define([
                 this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
                 this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
             } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
-                this.snapshotFilterView = new SnapshotFilterView({
+                this.snapshotDataView = new SnapshotDataView({
                     savedSearchModel: this.savedSearchModel
                 });
             }
@@ -250,7 +250,7 @@ define([
                 this.dateViewWrapper.setElement(this.$('.date-container')).render();
                 this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
             } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
-                this.snapshotFilterView.setElement(this.$('.snapshot-view-container')).render();
+                this.snapshotDataView.setElement(this.$('.snapshot-view-container')).render();
             }
 
             this.fetchEntities();
@@ -296,7 +296,7 @@ define([
                 this.spellCheckView,
                 this.parametricView,
                 this.filterDisplayView,
-                this.snapshotFilterView,
+                this.snapshotDataView,
                 this.indexesViewWrapper,
                 this.dateViewWrapper
             ]);

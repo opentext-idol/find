@@ -7,7 +7,7 @@ define([
     'backbone',
     'underscore',
     'find/app/util/model-any-changed-attribute-listener',
-    'text!find/templates/app/page/search/snapshots/snapshot-filter-view.html'
+    'text!find/templates/app/page/search/snapshots/snapshot-data-view.html'
 ], function(Backbone, _, addChangeListener, template) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
