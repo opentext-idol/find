@@ -84,6 +84,8 @@ define([
             this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
 
+            var searchType = this.savedSearchModel.get('type');
+
             this.queryModel = new QueryModel({
                 autoCorrect: searchType === SavedSearchModel.Type.QUERY
             }, {queryState: this.queryState});

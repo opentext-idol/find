@@ -202,7 +202,7 @@ define([
                     };
 
                     var initialSelectedIndexes;
-                    var savedSelectedIndexes = this.savedSearchModel.toSelectedIndexes();
+                    var savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
 
                     // TODO: Check if the saved indexes still exists?
                     if (savedSelectedIndexes.length === 0 && searchType === SavedSearchModel.Type.QUERY) {
@@ -210,7 +210,7 @@ define([
                             initialSelectedIndexes = [];
 
                             this.listenToOnce(this.indexesCollection, 'sync', function() {
-                                this.queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
+                                queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
                             });
                         } else {
                             initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
