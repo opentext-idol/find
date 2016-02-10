@@ -75,22 +75,22 @@ define([
             expect(output[2].content).toContain('2016/02/09');
         });
 
-        it('groups and returns parametric values present in the attributes', function() {
+        it('groups, prettifies and returns parametric values present in the attributes', function() {
             var output = runProcessAttributes({
                 indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
                 queryText: 'cat',
                 relatedConcepts: [],
                 parametricValues: [
                     {field: 'animal', value: 'cat'},
-                    {field: 'colour', value: 'ginger'},
-                    {field: 'colour', value: 'black'}
+                    {field: 'PRIMARY_COLOUR', value: 'ginger'},
+                    {field: 'PRIMARY_COLOUR', value: 'black'}
                 ]
             });
 
             expect(output.length).toBe(4);
-            expect(output[2].title).toBe('animal');
+            expect(output[2].title).toBe('Animal');
             expect(output[2].content).toContain('cat');
-            expect(output[3].title).toBe('colour');
+            expect(output[3].title).toBe('Primary Colour');
             expect(output[3].content).toContain('ginger');
             expect(output[3].content).toContain('black');
         });

@@ -6,8 +6,9 @@
 define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
+    'parametric-refinement/prettify-field-name',
     'underscore'
-], function(i18n, indexesI18n, _) {
+], function(i18n, indexesI18n, prettifyFieldName, _) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -40,7 +41,7 @@ define([
 
             var parametricRestrictions = _.map(_.groupBy(attributes.parametricValues, 'field'), function(items, field) {
                 return {
-                    title: field,
+                    title: prettifyFieldName(field),
                     content: _.pluck(items, 'value').join(', ')
                 };
             });
