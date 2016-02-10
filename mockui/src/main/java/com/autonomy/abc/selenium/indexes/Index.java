@@ -51,7 +51,11 @@ public class Index {
     }
 
     public String getCreateNotification() {
-        return "Created a new index: " + name;
+        return "Created a new index: " + getDisplayName();
+    }
+
+    public String getDeleteNotification() {
+        return "Index " + getDisplayName() + " successfully deleted";
     }
 
     @Override
