@@ -358,6 +358,11 @@ html, body {
     line-height: 22px;
 }
 
+.tab-title i {
+    font-size: 7px;
+    vertical-align: super;
+}
+
 .find {
     text-align: center;
     /* We need to be on top of the static navbar */

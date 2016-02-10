@@ -26,7 +26,10 @@ define([
 
             this.tabListView = new ListView({
                 collection: this.savedSearchCollection,
-                ItemView: TabItemView
+                ItemView: TabItemView,
+                itemOptions: {
+                    queryStates: options.queryStates
+                }
             });
 
             this.listenTo(this.searchModel, 'change:selectedSearchCid', this.updateSelectedTab);
