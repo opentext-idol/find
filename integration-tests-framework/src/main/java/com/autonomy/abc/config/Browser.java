@@ -3,6 +3,7 @@ package com.autonomy.abc.config;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
@@ -38,7 +39,9 @@ public enum Browser {
     IE("internet explorer") {
         @Override
         DesiredCapabilities getCapabilities() {
-            return DesiredCapabilities.internetExplorer();
+            final DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
+            capabilities.setCapability(InternetExplorerDriver.IE_ENSURE_CLEAN_SESSION, true);
+            return capabilities;
         }
     };
 
