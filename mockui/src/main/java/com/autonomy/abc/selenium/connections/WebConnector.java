@@ -2,9 +2,13 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
+import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.util.Waits;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class WebConnector extends Connector {
     private String url;
@@ -68,23 +72,39 @@ public class WebConnector extends Connector {
         return url;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     public Wizard makeWizard(NewConnectionPage newConnectionPage) {
-        return new WebConnectorWizard(newConnectionPage);
+        return new WebConnectorWizard(newConnectionPage, getCreationWizardSteps(newConnectionPage));
+    }
+
+    public Wizard makeEditWizard(NewConnectionPage newConnectionPage) {
+        return new WebConnectorWizard(newConnectionPage, getEditWizardSteps(newConnectionPage));
+    }
+
+    private List<WizardStep> getCreationWizardSteps(NewConnectionPage newConnectionPage) {
+        return Arrays.asList(
+            new ConnectorTypeStep(newConnectionPage, url, name),
+            new ConnectorConfigStep(newConnectionPage, this),
+            new ConnectorIndexStep(newConnectionPage,index,name),
+            new BlankWizardStep("Complete")
+        );
+    }
+
+    private List<WizardStep> getEditWizardSteps(NewConnectionPage newConnectionPage) {
+        return getCreationWizardSteps(newConnectionPage).subList(0, 3);
     }
 
     private class WebConnectorWizard extends Wizard {
         private NewConnectionPage page;
 
-        public WebConnectorWizard(NewConnectionPage newConnectionPage) {
-            super();
+        public WebConnectorWizard(NewConnectionPage newConnectionPage, List<WizardStep> steps) {
+            super(steps);
             page = newConnectionPage;
-            add(new ConnectorTypeStep(page, url, name));
-            add(new ConnectorConfigStep(page, WebConnector.this));
-            add(new ConnectorIndexStep(page,index,name));
-            add(new BlankWizardStep("Complete"));
         }
-
 
         @Override
         public void next() {

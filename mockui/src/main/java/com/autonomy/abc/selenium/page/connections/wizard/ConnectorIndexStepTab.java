@@ -69,7 +69,8 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     }
 
     public Index getChosenIndexInModal() {
-        return new Index(getIndexSearchBox().findElement(By.tagName("span")).getText());
+        String displayName = getIndexSearchBox().findElement(By.tagName("span")).getText();
+        return new Index(null, displayName);
     }
 
     private boolean isDropdownOpen() {
@@ -104,7 +105,8 @@ public class ConnectorIndexStepTab extends SAASPageBase {
 
     //TODO change so that it gets display and normal name (if possible)
     public Index getChosenIndexOnPage() {
-        return new Index(findElement(By.cssSelector(".selectedIndexNameContainer .ng-binding")).getText());
+        String displayName = findElement(By.cssSelector(".selectedIndexNameContainer .ng-binding")).getText();
+        return new Index(null, displayName);
     }
 
     public void selectIndex(Index index) {
@@ -129,7 +131,7 @@ public class ConnectorIndexStepTab extends SAASPageBase {
         }
 
         public IndexNotFoundException(Index index){
-            this(index.getName());
+            super(index + " not found");
         }
     }
 }
