@@ -10,10 +10,10 @@ define([
     'find/app/model/indexes-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
-    'find/app/model/saved-searches/all-saved-searches-collection',
     'find/app/model/saved-searches/saved-query-collection',
     'find/app/model/saved-searches/saved-snapshot-collection',
     'find/app/util/model-any-changed-attribute-listener',
+    'find/app/util/merge-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/query-text-model',
     'find/app/router',
@@ -21,8 +21,8 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, savedSearchCollection, SavedQueryCollection, SavedSnapshotCollection,
-            addChangeListener, SavedSearchModel, QueryTextModel, router, vent, i18n, _, template) {
+], function(BasePage, Backbone, SearchPageModel, IndexesCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
+            addChangeListener, MergeCollection, SavedSearchModel, QueryTextModel, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -44,9 +44,8 @@ define([
             this.savedSnapshotCollection = new SavedSnapshotCollection();
             this.savedSnapshotCollection.fetch({remove: false});
 
-            this.savedSearchCollection = new savedSearchCollection([], {
-                queryCollection: this.savedQueryCollection,
-                snapshotCollection: this.savedSnapshotCollection
+            this.savedSearchCollection = new MergeCollection([], {
+                collections: [this.savedQueryCollection, this.savedSnapshotCollection]
             });
 
             this.indexesCollection = new IndexesCollection();
