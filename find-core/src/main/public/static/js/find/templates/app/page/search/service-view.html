@@ -13,12 +13,12 @@
         </div>
     </div>
     <div class="middle-container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="filter-display-container"></div>
-            </div>
-        </div>
         <% if (searchType === SearchType.QUERY) { %>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="filter-display-container"></div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="spellcheck-container m-b-sm hidden"></div>
@@ -30,12 +30,21 @@
                 <button class="btn button-primary compare-modal-button"><%-i18n['search.compare']%></button>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="results-view-selection"></div>
-                <div class="results-view-container"></div>
+        <% if (searchType === SearchType.QUERY) { %>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="results-view-selection"></div>
+                    <div class="results-view-container"></div>
+                </div>
             </div>
-        </div>
+        <% } else { %>
+            <!-- TODO: Replace with a state token backed results view -->
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="text-center"><strong>State Token</strong> <span class="state-token-placeholder"></span></p>
+                </div>
+            </div>
+        <% } %>
     </div>
     <div class="right-side-container side-container">
         <div class="right-container-icon">

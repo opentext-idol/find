@@ -235,7 +235,9 @@ define([
                 this.dateViewWrapper.setElement(this.$('.date-container')).render();
                 this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
             } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
+                // TODO: Replace with a state token results view
                 this.snapshotDataView.setElement(this.$('.snapshot-view-container')).render();
+                this.$('.state-token-placeholder').text(this.savedSearchModel.get('stateTokens')[0] || 'None');
             }
 
             this.updateCompareModalButton();
