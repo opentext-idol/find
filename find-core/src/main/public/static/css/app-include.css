@@ -361,6 +361,13 @@ html, body {
     vertical-align: super;
 }
 
+.tab-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
 .start-new-search i {
     vertical-align: bottom;
 }
