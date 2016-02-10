@@ -764,7 +764,7 @@ input.find-input {
 }
 
 
-.service-view-container {
+.service-view-container, .service-view-sub-container {
     height: 100%;
     width: 100%;
     display: table;

@@ -17,6 +17,8 @@ define([
         template: _.template(template),
         mediaTemplate: _.template(mediaTemplate),
 
+        className: 'row flex-container',
+
         events: {
             'click .service-view-back-button': function() {
                 vent.navigate(this.backUrl);

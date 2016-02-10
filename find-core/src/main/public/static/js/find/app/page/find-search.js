@@ -112,8 +112,12 @@ define([
                 searchModel: this.searchModel
             });
 
+            router.on('route:emptySearch', this.reducedState, this);
+
             // Bind routing to search model
             router.on('route:search', function(text, concepts) {
+                this.removeDocumentDetailView();
+
                 // The concepts string starts with a leading /
                 var conceptsArray = concepts ? _.tail(concepts.split('/')) : [];
 
@@ -122,12 +126,13 @@ define([
                     relatedConcepts: conceptsArray
                 });
 
+                this.$('.service-view-container').addClass('hide');
                 this.$('.query-service-view-container').removeClass('hide');
-                this.$('.document-detail-service-view-container').addClass('hide');
             }, this);
 
             router.on('route:documentDetail', function () {
-                this.$('.query-service-view-container').addClass('hide');
+                this.expandedState();
+                this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
 
                 var options = this.documentDetailOptions.apply(this, arguments);
@@ -200,19 +205,24 @@ define([
 
         generateURL: function() {
             var components = [this.searchModel.get('inputText')].concat(this.searchModel.get('relatedConcepts'));
-            return 'find/search/query/' + _.map(components, encodeURIComponent).join('/');
+
+            if(_.compact(components).length) {
+                return 'find/search/query/' + _.map(components, encodeURIComponent).join('/');
+            } else {
+                return 'find/search/query'
+            }
         },
 
         // Run fancy animation from large central search bar to main search page
         expandedState: function() {
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
-            this.$('.tabbed-search-row').show();
-            this.$('.app-logo').hide();
-            this.$('.hp-logo-footer').addClass('hidden');
+            this.$('.query-service-view-container').removeClass('hide');
+            this.$('.app-logo').addClass('hide');
+            this.$('.hp-logo-footer').addClass('hide');
 
             // TODO: somebody else needs to own this
-            $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').show();
+            $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').removeClass('hide');
             $('.container-fluid, .find-logo-small').removeClass('reduced');
         },
 
@@ -220,12 +230,14 @@ define([
         reducedState: function() {
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
-            this.$('.tabbed-search-row').hide();
-            this.$('.app-logo').show();
-            this.$('.hp-logo-footer').removeClass('hidden');
+            this.$('.service-view-container').addClass('hide');
+            this.$('.app-logo').removeClass('hide');
+            this.$('.hp-logo-footer').removeClass('hide');
+
+            this.removeDocumentDetailView();
 
             // TODO: somebody else needs to own this
-            $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
+            $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').addClass('hide');
             $('.container-fluid, .find-logo-small').addClass('reduced');
         },
 
@@ -260,11 +272,21 @@ define([
         },
 
         renderDocumentDetail: function(model) {
-            var documentDetailView = new DocumentDetailView({
+            this.documentDetailView = new DocumentDetailView({
                 backUrl: this.generateURL(),
                 model: model
             });
-            documentDetailView.setElement(this.$('.document-detail-service-view-container')).render();
+
+            this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
+            this.documentDetailView.render();
+        },
+
+        removeDocumentDetailView: function() {
+            if (this.documentDetailView) {
+                this.documentDetailView.remove();
+                this.stopListening(this.documentDetailView);
+                this.documentDetailView = null;
+            }
         }
     });
 });
