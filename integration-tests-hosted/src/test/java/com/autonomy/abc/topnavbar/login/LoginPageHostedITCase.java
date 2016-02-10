@@ -2,6 +2,7 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.DevConsole;
 import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.find.FindPage;
@@ -19,6 +20,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.containsString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 /*
@@ -82,6 +84,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         }
     }
 
+    // these tests check that logging in/out of one app also logs in/out of another
     @Test
     public void testLogInSearchOptimizerToFind(){
         User user = config.getDefaultUser();
@@ -116,6 +119,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-1854")
     public void testLogOutFindToSearchOptimizer(){
         getElementFactory().getLoginPage();
 
@@ -126,9 +130,11 @@ public class LoginPageHostedITCase extends HostedTestBase {
         findPage.logOut();
 
         findFactory.getLoginPage();
+        verifyThat(getDriver().getCurrentUrl(), containsString("find"));
 
         getDriver().navigate().to(config.getWebappUrl());
         getElementFactory().getLoginPage();
+        verifyThat(getDriver().getCurrentUrl(), containsString("search"));
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
