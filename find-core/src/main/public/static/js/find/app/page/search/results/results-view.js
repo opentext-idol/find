@@ -118,7 +118,7 @@ define([
         },
 
         initialize: function(options) {
-            _.bindAll(this, 'handlePopover');
+            _.bindAll(this, 'checkScroll', 'handlePopover');
 
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
@@ -233,7 +233,8 @@ define([
                 }
             });
 
-            $('.main-content').scroll(_.bind(this.checkScroll, this));
+            // Do not bind here since the same function must be passed to the off method
+            $('.main-content').scroll(this.checkScroll);
 
             /*colorbox fancy button override*/
             $('#colorbox').append(_.template(colorboxControlsTemplate));
@@ -460,6 +461,7 @@ define([
 
         checkScroll: function() {
             var triggerPoint = 500;
+
             if (this.documentsCollection.size() > 0 && this.queryModel.get('queryText') && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
                 this.infiniteScroll();
             }
@@ -467,6 +469,14 @@ define([
 
         removeHighlighting: function() {
             this.$('.main-results-container').removeClass('selected-document');
+        },
+
+        remove: function() {
+            $('.main-content').off('scroll', this.checkScroll);
+            this.sortView.remove();
+            this.resultsNumberView.remove();
+            Backbone.View.prototype.remove.call(this);
         }
     });
+
 });
