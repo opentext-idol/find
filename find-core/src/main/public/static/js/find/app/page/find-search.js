@@ -80,14 +80,7 @@ define([
 
                 // Create a tab if the user has run a search but has no open tabs
                 if (this.searchModel.get('selectedSearchCid') === null && this.searchModel.get('inputText')) {
-                    var newSearch = new SavedSearchModel({
-                        queryText: this.searchModel.get('inputText'),
-                        relatedConcepts: this.searchModel.get('relatedConcepts'),
-                        title: i18n['search.newSearch']
-                    });
-
-                    this.savedSearchCollection.add(newSearch);
-                    this.searchModel.set('selectedSearchCid', newSearch.cid);
+                    this.createNewTab();
                 }
             });
 
@@ -130,6 +123,8 @@ define([
                 queryStates: this.queryStates
             });
 
+            this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
+
             // Bind routing to search model
             router.on('route:search', function(text, concepts) {
                 // The concepts string starts with a leading /
@@ -159,6 +154,17 @@ define([
             }, this);
 
             this.selectContentView();
+        },
+
+        createNewTab: function() {
+            var newSearch = new SavedSearchModel({
+                queryText: this.searchModel.get('inputText'),
+                relatedConcepts: this.searchModel.get('relatedConcepts'),
+                title: i18n['search.newSearch']
+            });
+
+            this.savedSearchCollection.add(newSearch);
+            this.searchModel.set('selectedSearchCid', newSearch.cid);
         },
 
         selectContentView: function() {

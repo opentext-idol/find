@@ -12,11 +12,15 @@ define([
     'use strict';
 
     var html = _.template(template)({i18n: i18n});
+    var startNewSearchHtml = _.template('<li class="start-new-search"><a><i class="hp-icon hp-add"></i></a></li>');
 
     return Backbone.View.extend({
         events: {
             'shown.bs.tab [data-search-cid]': function(event) {
                 this.searchModel.set('selectedSearchCid', $(event.target).attr('data-search-cid'));
+            },
+            'click .start-new-search': function() {
+                this.trigger('startNewSearch');
             }
         },
 
@@ -27,6 +31,7 @@ define([
             this.tabListView = new ListView({
                 collection: this.savedSearchCollection,
                 ItemView: TabItemView,
+                headerHtml: startNewSearchHtml,
                 itemOptions: {
                     queryStates: options.queryStates
                 }

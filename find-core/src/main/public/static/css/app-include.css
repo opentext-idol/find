@@ -361,6 +361,10 @@ html, body {
     vertical-align: super;
 }
 
+.start-new-search i {
+    vertical-align: bottom;
+}
+
 .find {
     text-align: center;
     /* We need to be on top of the static navbar */
