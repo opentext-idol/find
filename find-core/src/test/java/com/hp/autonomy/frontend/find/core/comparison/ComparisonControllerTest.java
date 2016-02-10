@@ -23,8 +23,6 @@ import static org.mockito.Mockito.when;
 public abstract class ComparisonControllerTest<S extends Serializable, R extends SearchResult, E extends Exception> {
     protected static final String MOCK_STATE_TOKEN_1 = "abc";
     private static final String MOCK_STATE_TOKEN_2 = "def";
-    private static final String MOCK_STATE_TOKEN_DIFF_1 = "ghe";
-    private static final String MOCK_STATE_TOKEN_DIFF_2 = "ijk";
 
     @Mock
     protected ComparisonService<R, E> comparisonService;
@@ -51,8 +49,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
                 .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
 
-        comparisonController.compare(comparisonRequest);
-        verify(comparisonService).compareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_2), anyInt(), anyInt(), anyString(), anyString(), anyBoolean());
+        comparisonController.getCompareStateTokens(comparisonRequest);
+        verify(comparisonService).getCompareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_2));
     }
 
     @Test
@@ -62,8 +60,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        comparisonController.compare(comparisonRequest);
-        verify(comparisonService).compareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_1), anyInt(), anyInt(), anyString(), anyString(), anyBoolean());
+        comparisonController.getCompareStateTokens(comparisonRequest);
+        verify(comparisonService).getCompareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_1));
     }
 
     @Test
@@ -73,8 +71,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
                 .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
 
-        comparisonController.compare(comparisonRequest);
-        verify(comparisonService).compareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_2), anyInt(), anyInt(), anyString(), anyString(), anyBoolean());
+        comparisonController.getCompareStateTokens(comparisonRequest);
+        verify(comparisonService).getCompareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_2));
     }
 
     @Test
@@ -84,32 +82,8 @@ public abstract class ComparisonControllerTest<S extends Serializable, R extends
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        comparisonController.compare(comparisonRequest);
-        verify(comparisonService).compareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_1), anyInt(), anyInt(), anyString(), anyString(), anyBoolean());
-    }
-
-    @Test
-    public void compareDiffStateTokens() throws E {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
-                .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
-                .setDocumentsOnlyInFirstStateToken(MOCK_STATE_TOKEN_DIFF_1)
-                .setDocumentsOnlyInSecondStateToken(MOCK_STATE_TOKEN_DIFF_2)
-                .build();
-
-        comparisonController.compare(comparisonRequest);
-        verify(comparisonService).compareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_2), eq(MOCK_STATE_TOKEN_DIFF_1), eq(MOCK_STATE_TOKEN_DIFF_2), anyInt(), anyInt(), anyString(), anyString(), anyBoolean());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void compareDifferenceTokenWithoutQueryTokenThrows() throws E {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryStateToken(MOCK_STATE_TOKEN_1)
-                .setDocumentsOnlyInFirstStateToken(MOCK_STATE_TOKEN_DIFF_1)
-                .setDocumentsOnlyInSecondStateToken(MOCK_STATE_TOKEN_DIFF_2)
-                .build();
-
-        comparisonController.compare(comparisonRequest);
+        comparisonController.getCompareStateTokens(comparisonRequest);
+        verify(comparisonService).getCompareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_1));
     }
 
     @Test

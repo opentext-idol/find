@@ -6,19 +6,12 @@
 package com.hp.autonomy.frontend.find.core.comparison;
 
 
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import com.hp.autonomy.types.requests.Documents;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Comparison<R extends SearchResult> {
-
-    private Documents<R> documentsInBoth;
-    private Documents<R> documentsOnlyInFirst;
-    private Documents<R> documentsOnlyInSecond;
-
+public class ComparisonStateTokens {
     private String firstQueryStateToken;
     private String secondQueryStateToken;
     private String documentsOnlyInFirstStateToken;
