@@ -356,9 +356,13 @@ html, body {
     vertical-align: text-bottom; /* hax? */
 }
 
-.tab-title i {
+.saved-search-tabs-list .tab-title i {
     font-size: 7px;
     vertical-align: super;
+}
+
+.start-new-search i {
+    vertical-align: bottom;
 }
 
 .find {

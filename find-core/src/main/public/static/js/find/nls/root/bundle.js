@@ -126,7 +126,7 @@ define([
         'search.topicMap.documents': 'Documents with phrase',
         'search.topicMap.relevance': 'Relevance',
         'search.topicMap.topics': 'Number of topics',
-        'search.savedSearches': 'Saved searches',
+        'search.savedSearches': 'Searches',
         'search.savedSearches.confirm.deleteMessage': 'Are you sure you want to remove {0} saved search?',
         'search.savedSearches.confirm.deleteMessage.title': 'Delete saved search',
         'search.savedSearches.confirm.resetMessage': 'Are you sure you want to reset {0} saved search?',
