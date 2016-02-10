@@ -37,6 +37,7 @@ public class IdolSavedSnapshotController extends SavedSnapshotController<String,
     @Override
     protected String getStateToken(final SavedSnapshot snapshot) throws AciErrorException {
         final IdolQueryRestrictions.Builder queryRestrictionsBuilder = new IdolQueryRestrictions.Builder()
+                .setAnyLanguage(true)
                 .setDatabases(getDatabases(snapshot.getIndexes()))
                 .setQueryText(getQueryText(snapshot)).setFieldText(getFieldText(snapshot.getParametricValues()))
                 .setMaxDate(snapshot.getMaxDate())
