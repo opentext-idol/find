@@ -35,7 +35,11 @@ define([
         },
 
         modelId: function(attributes) {
-            return attributes[this.typeAttribute] + ':' + attributes[this.idAttribute];
+            var id = attributes[this.idAttribute];
+
+            // Exclude null or undefined from valid ids, not 0 or the empty string
+            //noinspection EqualityComparisonWithCoercionJS
+            return id == null ? null : attributes[this.typeAttribute] + ':' + id;
         }
     });
 

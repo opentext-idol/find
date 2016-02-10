@@ -62,5 +62,13 @@ define([
         it('preserves the collection reference on the models', function() {
             expect(this.mergeCollection.findWhere({animal: Animal.CAT}).collection).toBe(this.catCollection);
         });
+
+        it('handles adding two new models to the tracked collection', function() {
+            // New models have no id
+            this.catCollection.add({name: 'Willow', animal: Animal.CAT});
+            this.catCollection.add({name: 'George', animal: Animal.CAT});
+
+            expect(this.mergeCollection.length).toBe(5);
+        });
     });
 });
