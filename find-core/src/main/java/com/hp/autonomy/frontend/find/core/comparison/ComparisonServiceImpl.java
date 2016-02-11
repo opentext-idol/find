@@ -30,7 +30,7 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
     }
 
     private Documents<R> getEmptyResults() {
-        return new Documents<>(Collections.<R>emptyList(), 0, "", null, null);
+        return new Documents<>(Collections.<R>emptyList(), 0, "", null, null, null);
     }
 
     private String generateDifferenceStateToken(final String firstQueryStateToken, final String secondQueryStateToken) throws E {
