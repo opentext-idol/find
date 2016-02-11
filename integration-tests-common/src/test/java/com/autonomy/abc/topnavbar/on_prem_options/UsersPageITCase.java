@@ -5,12 +5,14 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.users.*;
+import com.autonomy.abc.selenium.users.HSONewUser;
+import com.autonomy.abc.selenium.users.NewUser;
+import com.autonomy.abc.selenium.users.Role;
+import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -154,29 +156,6 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(role));
-	}
-
-	@Test
-	public void testAddStupidlyLongUsername() {
-		final String longUsername = StringUtils.repeat("a", 100);
-
-		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			OPNewUser newUser = new OPNewUser(longUsername, "b");
-			User user = userService.createNewUser(newUser, Role.USER);
-
-			assertThat(usersPage.deleteButton(user), displayed());
-
-			assertThat(usersPage.getTable(), containsText(longUsername));
-			userService.deleteUser(user);
-
-			assertThat(usersPage, containsText("Done! User " + longUsername + " successfully deleted"));
-		} else {
-			User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN);
-			assertThat(usersPage.getTable(), containsText(longUsername));
-			userService.deleteUser(user);
-		}
-
-		assertThat(usersPage.getTable(), not(containsText(longUsername)));
 	}
 
 	@Test

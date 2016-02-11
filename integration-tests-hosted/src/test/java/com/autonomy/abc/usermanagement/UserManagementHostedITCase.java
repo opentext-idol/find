@@ -282,12 +282,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     @Test
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
-
-        User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN);
-        assertThat(usersPage.getTable(), containsText(longUsername));
-        userService.deleteUser(user);
-
-        assertThat(usersPage.getTable(), not(containsText(longUsername)));
+        verifyCreateDeleteInTable(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"));
     }
 
     @Test
