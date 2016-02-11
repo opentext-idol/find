@@ -100,10 +100,15 @@ define([
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
 
-            this.model = new Backbone.Model({
-                viewState: this.indexesCollection.isEmpty() ? ViewState.NOT_LOADING : ViewState.PROCESSING
-            });
+            var initialViewState;
 
+            if (this.indexesCollection.isEmpty()) {
+                initialViewState = ViewState.NOT_LOADING;
+            } else {
+                initialViewState = this.entityCollection.isEmpty() ? ViewState.PROCESSING : ViewState.LIST;
+            }
+
+            this.model = new Backbone.Model({viewState: initialViewState});
             this.listenTo(this.model, 'change:viewState', updateForViewState);
 
             // Each instance of this view gets its own bound, de-bounced popover handler
@@ -131,13 +136,8 @@ define([
                 }
             });
 
-            /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
-                if (this.indexesCollection.isEmpty()) {
-                    this.model.set('viewState', ViewState.NOT_LOADING);
-                } else {
-                    this.model.set('viewState', ViewState.PROCESSING);
-                }
+                this.model.set('viewState', this.indexesCollection.isEmpty() ? ViewState.NOT_LOADING : ViewState.PROCESSING);
             });
 
             this.listenTo(this.entityCollection, 'error', function() {
