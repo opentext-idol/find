@@ -4,14 +4,11 @@ define([
     'underscore',
     'find/app/model/promotions-collection',
     'find/app/model/similar-documents-collection',
-    'find/app/util/popover',
     'find/app/util/view-server-client',
     'find/app/util/document-mime-types',
     'find/app/util/viewing-colourbox',
     'find/app/vent',
     'js-whatever/js/escape-regex',
-    'text!find/templates/app/page/search/results-popover.html',
-    'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/search/results/results-container.html',
     'text!find/templates/app/page/loading-spinner.html',
@@ -20,8 +17,8 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'colorbox'
-], function (Backbone, $, _, PromotionsCollection, SimilarDocumentsCollection, popover,
-             viewClient, documentMimeTypes, viewingColourbox, vent, escapeRegex, popoverTemplate, popoverMessageTemplate, template, resultsTemplate,
+], function (Backbone, $, _, PromotionsCollection, SimilarDocumentsCollection,
+             viewClient, documentMimeTypes, viewingColourbox, vent, escapeRegex, template, resultsTemplate,
              loadingSpinnerTemplate, entityTemplate, moment, i18n, i18n_indexes) {
     "use strict";
 
@@ -73,10 +70,8 @@ define([
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         resultsTemplate: _.template(resultsTemplate),
-        popoverMessageTemplate: _.template(popoverMessageTemplate),
         messageTemplate: _.template('<div class="result-message span10"><%-message%> </div>'),
         errorTemplate: _.template('<li class="error-message span10"><span><%-feature%>: </span><%-error%></li>'),
-        popoverTemplate: _.template(popoverTemplate),
         entityTemplate: _.template(entityTemplate),
 
         events: {
@@ -376,11 +371,17 @@ define([
                 sort: this.queryModel.get('sort')
             }, this.queryStrategy.requestParams(this.queryModel, infiniteScroll));
 
+            var self = this;
             this.documentsCollection.fetch({
                 data: requestData,
                 reset: false,
                 remove: !infiniteScroll
-            }, this);
+            }).done(function () {
+                var invalidDatabases = self.documentsCollection.invalidDatabases;
+                if (invalidDatabases) {
+                    self.queryModel.set('invalidDatabases', invalidDatabases);
+                }
+            });
 
             if (this.queryStrategy.displayPromotions() && !infiniteScroll) {
                 this.promotionsFinished = false;

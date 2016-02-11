@@ -30,7 +30,7 @@ public class FindIdolDocumentServiceTest extends IdolDocumentServiceTest {
     public void setUp() {
         when(havenSearchConfig.getQueryManipulation()).thenReturn(new QueryManipulation.Builder().build());
         when(configService.getConfig()).thenReturn(havenSearchConfig);
-        idolDocumentService = new FindIdolDocumentService(configService, parameterHandler, contentAciService, qmsAciService, aciResponseProcessorFactory);
+        idolDocumentService = new FindIdolDocumentService(configService, parameterHandler, contentAciService, qmsAciService, aciResponseProcessorFactory, databasesService);
     }
 
     @Test

@@ -12,6 +12,7 @@ define([
         'search.error.noIndexes': 'The list of databases has not yet been retrieved',
         'search.indexes': 'Databases',
         'search.indexes.all': 'All',
-        'search.indexes.empty': 'No Available Databases'
+        'search.indexes.empty': 'No Available Databases',
+        'search.indexes.invalidIndex': 'This database no longer exists'
     });
 });
