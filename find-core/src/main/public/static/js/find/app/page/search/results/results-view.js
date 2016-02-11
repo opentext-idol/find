@@ -259,24 +259,26 @@ define([
         },
 
         addLinksToSummary: function (summary) {
-            // Find highlighted query terms
-            var queryTextRegex = /<HavenSearch-QueryText-Placeholder>(.*?)<\/HavenSearch-QueryText-Placeholder>/g;
-            var queryText = [];
-            var resultsArray;
-            //noinspection AssignmentResultUsedJS
-            while ((resultsArray = queryTextRegex.exec(summary)) !== null) {
-                queryText.push(resultsArray[1]);
-            }
+            if (summary) {
+                // Find highlighted query terms
+                var queryTextRegex = /<HavenSearch-QueryText-Placeholder>(.*?)<\/HavenSearch-QueryText-Placeholder>/g;
+                var queryText = [];
+                var resultsArray;
+                //noinspection AssignmentResultUsedJS
+                while ((resultsArray = queryTextRegex.exec(summary)) !== null) {
+                    queryText.push(resultsArray[1]);
+                }
 
-            // Protect us from XSS (but leave injected highlight tags alone)
-            var otherText = summary.split(/<HavenSearch-QueryText-Placeholder>.*?<\/HavenSearch-QueryText-Placeholder>/);
-            var escapedSummaryElements = [];
-            escapedSummaryElements.push(_.escape(otherText[0]));
-            for (var i = 0; i < queryText.length; i++) {
-                escapedSummaryElements.push('<span class="search-text">' + _.escape(queryText[i]) + '</span>');
-                escapedSummaryElements.push(_.escape(otherText[i + 1]));
+                // Protect us from XSS (but leave injected highlight tags alone)
+                var otherText = summary.split(/<HavenSearch-QueryText-Placeholder>.*?<\/HavenSearch-QueryText-Placeholder>/);
+                var escapedSummaryElements = [];
+                escapedSummaryElements.push(_.escape(otherText[0]));
+                for (var i = 0; i < queryText.length; i++) {
+                    escapedSummaryElements.push('<span class="search-text">' + _.escape(queryText[i]) + '</span>');
+                    escapedSummaryElements.push(_.escape(otherText[i + 1]));
+                }
+                var escapedSummary = escapedSummaryElements.join('');
             }
-            var escapedSummary = escapedSummaryElements.join('');
 
             // Create an array of the entity titles, longest first
             if (this.entityCollection && this.highlightToggle.get('highlightConcepts')) {
