@@ -241,7 +241,7 @@ define([
 
             var self = this;
             $newResult.find('.similar-documents-trigger').click(function (event) {
-                var resultNode = $(event.currentTarget.closest('[data-reference]'));
+                var resultNode = $(event.currentTarget).closest('[data-reference]');
                 vent.navigate(self.generateSuggestRoute(resultNode))
             });
         },
