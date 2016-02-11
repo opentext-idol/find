@@ -7,15 +7,21 @@ define([
     'find/app/util/popover',
     'find/app/util/view-state-selector',
     'text!find/templates/app/page/search/related-concepts/related-concepts-view.html',
-    'text!find/templates/app/page/search/related-concepts/related-concept-list-item.html',
+    'text!find/templates/app/page/search/related-concepts/related-concept-cluster.html',
     'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results-popover.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, $, _, i18n, DocumentsCollection, popover, viewStateSelector, relatedConceptsView, relatedConceptListItemTemplate,
+], function(Backbone, $, _, i18n, DocumentsCollection, popover, viewStateSelector, viewTemplate, clusterTemplate,
             popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
 
-    var html = _.template(relatedConceptsView)({i18n: i18n});
-    var loadingSpinnerHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
+    var html = _.template(viewTemplate)({
+        i18n: i18n,
+        loadingSpinnerHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false})
+    });
+
+    var clusterTemplateFunction = _.template(clusterTemplate);
+    var popoverTemplateFunction = _.template(popoverTemplate);
+    var popoverMessageTemplateFunction = _.template(popoverMessageTemplate);
 
     /**
      * @readonly
@@ -50,15 +56,15 @@ define([
                 highlight: false
             },
             error: _.bind(function() {
-                $content.html(this.popoverMessageTemplate({message: i18n['search.relatedConcepts.topResults.error']}));
+                $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.error']}));
             }, this),
             success: _.bind(function() {
                 if (topResultsCollection.isEmpty()) {
-                    $content.html(this.popoverMessageTemplate({message: i18n['search.relatedConcepts.topResults.none']}));
+                    $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.none']}));
                 } else {
                     $content.html('<ul class="list-unstyled"></ul>');
                     _.each(topResultsCollection.models, function(model) {
-                        var listItem = $(this.popoverTemplate({
+                        var listItem = $(popoverTemplateFunction({
                             title: model.get('title'),
                             summary: model.get('summary').trim().substring(0, 100) + '...'
                         }));
@@ -71,18 +77,13 @@ define([
     }
 
     return Backbone.View.extend({
-        className: 'suggestions-content',
-
-        listItemTemplate: _.template(relatedConceptListItemTemplate),
-        popoverTemplate: _.template(popoverTemplate),
-        popoverMessageTemplate: _.template(popoverMessageTemplate),
-
+        className: 'p-l-sm suggestions-content',
         viewStateSelector: _.noop,
 
         events: {
-            'click .entity-text' : function(e) {
-                var $target = $(e.target);
-                var queryText = $target.attr('data-title');
+            'click [data-entity-text]' : function(e) {
+                var $target = $(e.currentTarget);
+                var queryText = $target.attr('data-entity-text');
 
                 if (this.queryTextModel.get('inputText') === '') {
                     this.queryTextModel.set('inputText', queryText);
@@ -118,18 +119,30 @@ define([
                 if (this.indexesCollection.isEmpty()) {
                     this.model.set('viewState', ViewState.NOT_LOADING);
                 } else {
-                    this.$list.empty();
-
                     if (this.entityCollection.isEmpty()) {
                         this.model.set('viewState', ViewState.NONE);
                     } else {
                         this.model.set('viewState', ViewState.LIST);
 
-                        var entities = _.first(this.entityCollection.models, 8);
+                        var html = _.chain(this.entityCollection.models)
+                            .reject(function(model) {
+                                // A negative cluster indicates that the associated documentes did not fall into a cluster
+                                return model.get('cluster') < 0;
+                            })
+                            .groupBy(function(model) {
+                                return model.get('cluster');
+                            })
+                            .map(function(models) {
+                                return clusterTemplateFunction({
+                                    entities: _.map(models, function(model) {
+                                        return model.get('text');
+                                    })
+                                });
+                            })
+                            .value()
+                            .join('');
 
-                        _.each(entities, function (entity) {
-                            this.$list.append(this.listItemTemplate({concept: entity.get('text')}));
-                        }, this);
+                        this.$list.html(html);
 
                         popover(this.$list.find('.entity-text'), 'hover', handlePopover);
                     }
@@ -153,8 +166,7 @@ define([
             this.$none = this.$('.related-concepts-none');
             this.$notLoading = this.$('.related-concepts-not-loading');
 
-            this.$processing = this.$('.related-concepts-processing')
-                .append(loadingSpinnerHtml);
+            this.$processing = this.$('.related-concepts-processing');
 
             var viewStateElements = {};
             viewStateElements[ViewState.ERROR] = this.$error;

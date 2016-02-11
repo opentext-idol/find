@@ -129,8 +129,10 @@ define([
                 beforeEach(function() {
                     this.entityCollection.reset([
                         {cluster: 0, text: 'fruit'},
+                        {cluster: -1, text: 'bromine'},
                         {cluster: 0, text: 'juice'},
-                        {cluster: 1, text: 'red'}
+                        {cluster: 1, text: 'red'},
+                        {cluster: 0, text: 'squeeze'}
                     ]);
                 });
 
@@ -154,17 +156,41 @@ define([
                     expect(this.view.$('.related-concepts-none')).toHaveClass('hide');
                 });
 
-                it('renders one li for each related concept', function() {
-                    var $lis = this.view.$('.related-concepts-list li');
-                    expect($lis).toHaveLength(3);
-                    expect($lis.eq(0)).toHaveText('fruit');
-                    expect($lis.eq(1)).toHaveText('juice');
-                    expect($lis.eq(2)).toHaveText('red');
+                it('does not render items with a negative cluster', function() {
+                    expect(this.view.$('.related-concepts-list')).not.toContainText('bromine');
                 });
 
-                describe('when a related concept is clicked', function() {
+                it('renders each item in a non-negative cluster with other members of the cluster, taking the first member as the heading', function() {
+                    var $clusterLis = this.view.$('.related-concepts-list > li');
+                    expect($clusterLis).toHaveLength(2);
+
+                    var $fruitCluster = $clusterLis.eq(0);
+                    expect($fruitCluster.find('h4')).toHaveText('fruit');
+                    expect($fruitCluster.find('li')).toHaveLength(2);
+                    expect($fruitCluster.find('li:nth-child(1)')).toHaveText('juice');
+                    expect($fruitCluster.find('li:nth-child(2)')).toHaveText('squeeze');
+
+                    var $colourCluster = $clusterLis.eq(1);
+                    expect($colourCluster.find('h4')).toHaveText('red');
+                    expect($colourCluster.find('li')).toHaveLength(0);
+                });
+
+                describe('when a cluster heading is clicked', function() {
                     beforeEach(function() {
-                        this.view.$('.related-concepts-list li:nth-child(2) .entity-text').click();
+                        this.view.$('.related-concepts-list > li:nth-child(1) h4 .entity-text').click();
+                    });
+
+                    it('appends the clicked concept to the query text model related concepts', function() {
+                        expect(this.queryTextModel.get('relatedConcepts')).toEqual([
+                            'blood',
+                            'fruit'
+                        ]);
+                    });
+                });
+
+                describe('when a cluster child is clicked', function() {
+                    beforeEach(function() {
+                        this.view.$('.related-concepts-list > li:nth-child(1) li:nth-child(1) .entity-text').click();
                     });
 
                     it('appends the clicked concept to the query text model related concepts', function() {
