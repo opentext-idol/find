@@ -177,7 +177,8 @@ define([
 
                 describe('when a cluster heading is clicked', function() {
                     beforeEach(function() {
-                        this.view.$('.related-concepts-list > li:nth-child(1) h4 .entity-text').click();
+                        // Click a child of the heading to check that click events propagate correctly (a previous bug)
+                        this.view.$('.related-concepts-list > li:nth-child(1) h4 > a *').click();
                     });
 
                     it('appends the clicked concept to the query text model related concepts', function() {
