@@ -3,22 +3,19 @@ package com.autonomy.abc.topnavbar.on_prem_options;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Editable;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.users.NewUser;
+import com.autonomy.abc.selenium.users.OPNewUser;
 import com.autonomy.abc.selenium.users.OPUsersPage;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.util.DriverUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.UnhandledAlertException;
-
-import java.net.MalformedURLException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -30,22 +27,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class UsersPageOnPremITCase extends UsersPageTestBase {
-
-    private final NewUser aNewUser = config.getNewUser("james");
-    private final NewUser newUser2 = config.getNewUser("john");
-    private UsersPage usersPage;
-    private UserService userService;
-
+public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     public UsersPageOnPremITCase(TestConfig config) {
         super(config);
-    }
-
-    @Before
-    public void setUp() throws MalformedURLException, InterruptedException {
-        userService = getApplication().userService();
-        usersPage = userService.goToUsers();
-        userService.deleteOtherUsers();
     }
 
     @Test
@@ -157,5 +141,11 @@ public class UsersPageOnPremITCase extends UsersPageTestBase {
     @Test
     public void testLogOutAndLogInWithNewUser() {
         signUpAndLoginAs(aNewUser);
+    }
+
+    @Test
+    public void testAddStupidlyLongUsername() {
+        final String longUsername = StringUtils.repeat("a", 100);
+        verifyCreateDeleteInTable(new OPNewUser(longUsername, "b"));
     }
 }
