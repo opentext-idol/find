@@ -1,24 +1,21 @@
+/*
+ * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'underscore',
     'jquery',
-    'find/app/page/search/filters/indexes/indexes-view',
-    'databases-view/js/databases-collection'
+    'find/idol/app/page/search/filters/indexes/idol-indexes-view',
+    'databases-view/js/databases-collection',
+    'jasmine-jquery'
 ], function(Backbone, _, $, IndexesView, DatabasesCollection) {
 
     describe('Indexes View', function() {
-        var DOMAIN = 'TEST';
-
-        var indexId =  function(name) {
-            return DOMAIN + ':' + name;
-        };
-
         var INDEXES = _.map(['a','b','c'], function(name) {
-            return {name: name, domain: DOMAIN, id: indexId(name)};
+            return {name: name, id: name};
         });
-
-        // Convert index collection model attributes to a resource identifier object
-        var toResourceIdentifier = _.partial(_.pick, _, 'domain', 'name');
 
         beforeEach(function() {
             this.indexesCollection = new DatabasesCollection();
@@ -69,7 +66,8 @@ define([
                 });
 
                 it('updates the selected indexes collection', function() {
-                    expect(this.selectedIndexesCollection.toResourceIdentifiers()).toEqual([toResourceIdentifier(INDEXES[0])]);
+                    expect(this.selectedIndexesCollection).toHaveLength(1);
+                    expect(this.selectedIndexesCollection.first().get('name')).toEqual(INDEXES[0].name);
                 });
 
                 it('should check the clicked index', function() {
