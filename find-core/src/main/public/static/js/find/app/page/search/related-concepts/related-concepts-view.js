@@ -151,9 +151,9 @@ define([
             this.$list = this.$('.related-concepts-list');
             this.$error = this.$('.related-concepts-error');
             this.$none = this.$('.related-concepts-none');
-            this.$notLoading = this.$('.not-loading');
+            this.$notLoading = this.$('.related-concepts-not-loading');
 
-            this.$processing = this.$('.processing')
+            this.$processing = this.$('.related-concepts-processing')
                 .append(loadingSpinnerHtml);
 
             var viewStateElements = {};
