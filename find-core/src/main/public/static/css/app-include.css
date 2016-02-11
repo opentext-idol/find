@@ -636,11 +636,6 @@ input.find-input {
 }
 /* end of fancy animation */
 
-.suggestions-content {
-    height: 320px;
-    overflow-y: auto;
-}
-
 .main-content h5,
 .error-body h1,
 .error-body h3 {
