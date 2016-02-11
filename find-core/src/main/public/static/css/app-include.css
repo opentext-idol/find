@@ -468,6 +468,11 @@ input.find-input {
     padding: 0 10px;
 }
 
+.document-thumbnail {
+    width: 97px;
+    height: 55px;
+}
+
 .preview-mode .main-results-container {
     cursor: pointer;
 }
