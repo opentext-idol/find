@@ -5,6 +5,9 @@
     <div class="preview-mode-contents">
         <h4 class="preview-mode-document-title"></h4>
         <div class="preview-mode-document"></div>
+        <% if (mmapBaseUrl && mmapUrl) { %>
+            <a class="btn button-primary m-t-sm" href="<%-mmapBaseUrl + mmapUrl%>" target="_blank"><%-i18n['search.preview.mmap']%></a>
+        <% } %>
         <div class="preview-mode-metadata"></div>
     </div>
 </div>

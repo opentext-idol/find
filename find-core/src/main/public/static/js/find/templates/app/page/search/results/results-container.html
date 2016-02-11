@@ -7,15 +7,18 @@
 
     <div class="results-contents">
         <% if (promotion) { %>
-        <span class="pull-right m-t-xs text-muted promoted-label">
-            <i class="hp-icon hp-fw hp-star"></i> Promoted
-        </span>
+            <span class="pull-right m-t-xs text-muted promoted-label">
+                <i class="hp-icon hp-fw hp-star"></i> Promoted
+            </span>
         <% } %>
         <h4 class="pull-left m-b-nil m-t-xs result-header"><%- title %></h4>
         <span class="document-date pull-left m-t-xs m-l-xs">
             <%- date %>
         </span>
         <span class="document-reference"><%-reference %></span>
+        <% if(thumbnail) { %>
+            <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=thumbnail%>"/>
+        <% } %>
         <p class="result-summary">
             <%= summary %>
         </p>

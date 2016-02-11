@@ -13,23 +13,7 @@ import java.util.List;
 
 public interface ComparisonService<R extends SearchResult, E extends Exception> {
 
-    Comparison<R> compareStateTokens(final String firstStateToken,
-                                     final String secondStateToken,
-                                     final int resultsStart,
-                                     final int maxResults,
-                                     final String summary,
-                                     final String sort,
-                                     final boolean highlight) throws E;
-
-    Comparison<R> compareStateTokens(final String firstStateToken,
-                                     final String secondStateToken,
-                                     final String docsInFirstStateToken,
-                                     final String docsInSecondStateToken,
-                                     final int resultsStart,
-                                     final int maxResults,
-                                     final String summary,
-                                     final String sort,
-                                     final boolean highlight) throws E;
+    ComparisonStateTokens getCompareStateTokens(final String firstStateToken, final String secondStateToken) throws E;
 
     Documents<R> getResults(final List<String> stateMatchIds,
                             final List<String> stateDontMatchIds,

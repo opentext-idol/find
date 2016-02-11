@@ -329,7 +329,8 @@ define([
                 summary: summary,
                 promotion: isPromotion,
                 date: model.has('date') ? model.get('date').fromNow() : null,
-                contentType: getContentTypeClass(model)
+                contentType: getContentTypeClass(model),
+                thumbnail: model.get('thumbnail')
             }));
 
             if (isPromotion) {

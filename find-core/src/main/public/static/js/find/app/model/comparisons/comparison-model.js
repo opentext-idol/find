@@ -14,19 +14,19 @@ define([
 
         parse: function(response) {
             return {
-                documentsInBoth: new ComparisonDocumentsCollection(response.documentsInBoth, {
-                    stateMatchIds: [response.firstQueryStateToken, response.secondQueryStateToken],
-                    stateDontMatchIds: [response.documentsOnlyInFirstStateToken, response.documentsOnlyInSecondStateToken]
+                documentsInBoth: new ComparisonDocumentsCollection([], {
+                    stateMatchIds: _.compact([response.firstQueryStateToken, response.secondQueryStateToken]),
+                    stateDontMatchIds: _.compact([response.documentsOnlyInFirstStateToken, response.documentsOnlyInSecondStateToken])
                 }),
 
-                documentsOnlyInFirst: new ComparisonDocumentsCollection(response.documentsOnlyInFirst, {
-                    stateMatchIds: [response.firstQueryStateToken],
-                    stateDontMatchIds: [response.secondQueryStateToken]
+                documentsOnlyInFirst: new ComparisonDocumentsCollection([], {
+                    stateMatchIds: _.compact([response.firstQueryStateToken]),
+                    stateDontMatchIds: _.compact([response.secondQueryStateToken])
                 }),
 
-                documentsOnlyInSecond: new ComparisonDocumentsCollection(response.documentsOnlyInSecond, {
-                    stateMatchIds: [response.secondQueryStateToken],
-                    stateDontMatchIds: [response.firstQueryStateToken]
+                documentsOnlyInSecond: new ComparisonDocumentsCollection([], {
+                    stateMatchIds: _.compact([response.secondQueryStateToken]),
+                    stateDontMatchIds: _.compact([response.firstQueryStateToken])
                 })
             };
         }

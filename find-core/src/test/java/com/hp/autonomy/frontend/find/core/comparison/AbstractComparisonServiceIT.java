@@ -19,17 +19,12 @@ import org.springframework.http.MediaType;
 import java.io.Serializable;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public abstract class AbstractComparisonServiceIT<S extends Serializable, R extends SearchResult, E extends Exception> extends AbstractFindIT {
-    @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired
-    private ComparisonService<R, E> comparisonService;
-
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     protected DocumentsService<S, R, E> documentsService;
@@ -38,8 +33,6 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
 
     protected String twoDocStateToken;
     protected String sixDocStateToken;
-    protected String firstDiffStateToken;
-    protected String secondDiffStateToken;
 
     protected abstract QueryRestrictions<S> buildQueryRestrictions();
 
@@ -49,11 +42,6 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
 
         twoDocStateToken = documentsService.getStateToken(queryRestrictions, 2);
         sixDocStateToken = documentsService.getStateToken(queryRestrictions, 6);
-
-        // Comparison service is the easiest way to generate the diff state tokens without having to re-implement comparison logic
-        final Comparison<R> comparison = comparisonService.compareStateTokens(twoDocStateToken, sixDocStateToken, 1, Integer.MAX_VALUE, "context", null, false);
-        firstDiffStateToken = comparison.getDocumentsOnlyInFirstStateToken();
-        secondDiffStateToken = comparison.getDocumentsOnlyInSecondStateToken();
     }
 
     @Test
@@ -68,28 +56,8 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                    .andExpect(jsonPath("$.documentsInBoth.documents", hasSize(2)))
-                    .andExpect(jsonPath("$.documentsOnlyInFirst.documents", empty()))
-                    .andExpect(jsonPath("$.documentsOnlyInSecond.documents", hasSize(4)));
-    }
-
-    @Test
-    public void compareDiffStateTokens() throws Exception {
-        final ComparisonRequest<S> comparisonRequest = new ComparisonRequest.Builder<S>()
-                .setFirstQueryStateToken(twoDocStateToken)
-                .setSecondQueryStateToken(sixDocStateToken)
-                .setDocumentsOnlyInFirstStateToken(firstDiffStateToken)
-                .setDocumentsOnlyInSecondStateToken(secondDiffStateToken)
-                .build();
-
-        mockMvc.perform(post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
-                .content(mapper.writeValueAsString(comparisonRequest))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.documentsInBoth.documents", hasSize(2)))
-                .andExpect(jsonPath("$.documentsOnlyInFirst.documents", empty()))
-                .andExpect(jsonPath("$.documentsOnlyInSecond.documents", hasSize(4)));
+                    .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
+                    .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", not(isEmptyOrNullString())));
     }
 
     @Test
@@ -104,9 +72,8 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.documentsInBoth.documents", hasSize(6)))
-                .andExpect(jsonPath("$.documentsOnlyInFirst.documents", not(empty())))
-                .andExpect(jsonPath("$.documentsOnlyInSecond.documents", empty()));
+                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", not(isEmptyOrNullString())))
+                .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", isEmptyOrNullString()));
     }
 
     @Test
@@ -121,9 +88,8 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.documentsInBoth.documents", hasSize(2)))
-                .andExpect(jsonPath("$.documentsOnlyInFirst.documents", empty()))
-                .andExpect(jsonPath("$.documentsOnlyInSecond.documents", not(empty())));
+                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
+                .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", not(isEmptyOrNullString())));
     }
 
     @Test
@@ -138,9 +104,8 @@ public abstract class AbstractComparisonServiceIT<S extends Serializable, R exte
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.documentsInBoth.documents", not(empty())))
-                .andExpect(jsonPath("$.documentsOnlyInFirst.documents", empty()))
-                .andExpect(jsonPath("$.documentsOnlyInSecond.documents", empty()));
+                .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", isEmptyOrNullString()))
+                .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", isEmptyOrNullString()));
     }
 
     @Test

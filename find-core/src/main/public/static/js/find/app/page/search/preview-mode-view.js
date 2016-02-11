@@ -5,11 +5,12 @@ define([
     'i18n!find/nls/bundle',
     'find/app/util/view-server-client',
     'find/app/model/document-model',
+    'find/app/configuration',
     'text!find/templates/app/page/search/preview-mode-view.html',
     'text!find/templates/app/page/search/preview-mode-metadata.html',
     'text!find/templates/app/page/search/preview-mode-document.html',
     'text!find/templates/app/page/view/media-player.html'
-], function(Backbone, _, $, i18n, viewClient, DocumentModel, template, metaDataTemplate, documentTemplate, mediaTemplate) {
+], function(Backbone, _, $, i18n, viewClient, DocumentModel, configuration, template, metaDataTemplate, documentTemplate, mediaTemplate) {
     "use strict";
 
     var mediaTypes = ['audio', 'video'];
@@ -46,7 +47,9 @@ define([
         // TODO: this should do the stuff in render view
         render: function() {
             this.$el.html(this.template({
-                i18n:i18n
+                i18n:i18n,
+                mmapBaseUrl: configuration().mmapBaseUrl,
+                mmapUrl: this.model.get('mmapUrl')
             }));
 
             this.$('.preview-mode-document-title').text(this.model.get('title'));

@@ -26,26 +26,12 @@ public class ComparisonRequest<S extends Serializable> implements Serializable {
     private final QueryRestrictions<S> secondRestrictions;
     private final String firstQueryStateToken;
     private final String secondQueryStateToken;
-    private final String documentsOnlyInFirstStateToken;
-    private final String documentsOnlyInSecondStateToken;
-    private final int resultsStart;
-    private final int maxResults;
-    private final String summary;
-    private final String sort;
-    private final boolean highlight;
 
     private ComparisonRequest(final Builder<S> builder) {
         firstRestrictions = builder.firstRestrictions;
         secondRestrictions = builder.secondRestrictions;
         firstQueryStateToken = builder.firstQueryStateToken;
         secondQueryStateToken = builder.secondQueryStateToken;
-        documentsOnlyInFirstStateToken = builder.documentsOnlyInFirstStateToken;
-        documentsOnlyInSecondStateToken = builder.documentsOnlyInSecondStateToken;
-        resultsStart = builder.resultsStart;
-        maxResults = builder.maxResults;
-        summary = builder.summary;
-        sort = builder.sort;
-        highlight = builder.highlight;
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
@@ -56,13 +42,6 @@ public class ComparisonRequest<S extends Serializable> implements Serializable {
         private QueryRestrictions<S> secondRestrictions;
         private String firstQueryStateToken;
         private String secondQueryStateToken;
-        private String documentsOnlyInFirstStateToken;
-        private String documentsOnlyInSecondStateToken;
-        private int resultsStart = 1;
-        private int maxResults;
-        private String summary;
-        private String sort;
-        private boolean highlight = false;
 
         public ComparisonRequest<S> build() {
             return new ComparisonRequest<>(this);

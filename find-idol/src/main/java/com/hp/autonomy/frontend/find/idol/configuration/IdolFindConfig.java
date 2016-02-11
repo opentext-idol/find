@@ -37,6 +37,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final QueryManipulation queryManipulation;
     @JsonProperty("view")
     private final ViewConfig viewConfig;
+    private final MMAP mmap;
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig other) {
@@ -49,6 +50,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setLogin(login == null ? other.login : login.merge(other.login))
                 .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
                 .setView(viewConfig == null ? other.viewConfig : viewConfig.merge(other.viewConfig))
+                .setMmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .build();
     }
 
@@ -108,16 +110,18 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private ServerConfig content;
         private QueryManipulation queryManipulation;
         private ViewConfig view;
+        private MMAP mmap;
 
         public Builder(final IdolFindConfig config) {
             login = config.login;
             content = config.content;
             queryManipulation = config.queryManipulation;
             view = config.viewConfig;
+            mmap = config.mmap;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, queryManipulation, view);
+            return new IdolFindConfig(login, content, queryManipulation, view, mmap);
         }
     }
 

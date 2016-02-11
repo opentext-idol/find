@@ -357,10 +357,15 @@ html, body {
     height: 60px;
     line-height: 22px;
 }
-
 .search-tab-title i {
     font-size: 7px;
     vertical-align: super;
+}
+.search-tab-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 150px;
 }
 
 .start-new-search i {
@@ -461,6 +466,11 @@ input.find-input {
     border-bottom: 1px solid #F2F2F2;
     width: 100%;
     padding: 0 10px;
+}
+
+.document-thumbnail {
+    width: 97px;
+    height: 55px;
 }
 
 .preview-mode .main-results-container {
@@ -625,11 +635,6 @@ input.find-input {
     outline: 0;
 }
 /* end of fancy animation */
-
-.suggestions-content {
-    height: 320px;
-    overflow-y: auto;
-}
 
 .main-content h5,
 .error-body h1,
@@ -1160,11 +1165,6 @@ input:-moz-placeholder::before {
 
 .slider-handle {
     background: #01A982;
-}
-
-.search-title-form {
-    max-width: 250px;
-    padding: 5px 0;
 }
 
 @media (min-width: 980px) {

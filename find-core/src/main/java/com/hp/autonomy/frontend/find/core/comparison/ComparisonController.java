@@ -41,22 +41,12 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
     }
 
     @RequestMapping(value = BASE_PATH + '/' + COMPARE_PATH, method = RequestMethod.POST)
-    public Comparison<R> compare(@RequestBody final ComparisonRequest<S> body) throws E {
-        if(body.getDocumentsOnlyInFirstStateToken() != null && body.getDocumentsOnlyInSecondStateToken() != null) {
+    public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<S> body) throws E {
+        // If either query state token is null then try and fetch one using the query restrictions
+        final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS);
+        final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS);
 
-            // If we have both difference state tokens, then we should have been passed the query state tokens also
-            if(body.getFirstQueryStateToken() == null || body.getSecondQueryStateToken() == null) {
-                throw new IllegalArgumentException("Query state tokens cannot be null if defining difference state tokens.");
-            }
-
-            return comparisonService.compareStateTokens(body.getFirstQueryStateToken(), body.getSecondQueryStateToken(), body.getDocumentsOnlyInFirstStateToken(), body.getDocumentsOnlyInSecondStateToken(), body.getResultsStart(), body.getMaxResults(), body.getSummary(), body.getSort(), body.isHighlight());
-        } else {
-            // If either query state token is null then try and fetch one using the query restrictions
-            final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS);
-            final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS);
-
-            return comparisonService.compareStateTokens(firstStateToken, secondStateToken, body.getResultsStart(), body.getMaxResults(), body.getSummary(), body.getSort(), body.isHighlight());
-        }
+        return comparisonService.getCompareStateTokens(firstStateToken, secondStateToken);
     }
 
     @RequestMapping(value = BASE_PATH + '/' + RESULTS_PATH, method = RequestMethod.GET)
