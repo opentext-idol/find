@@ -33,5 +33,9 @@
     "port": 9080,
     "productType": ["VIEW", "IDOLPROXY", "DAH"],
     "referenceField": "DREREFERENCE"
+  },
+  "mmap": {
+    "enabled": false,
+    "baseUrl": ""
   }
 }

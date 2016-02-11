@@ -24,8 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
-public class FindController {
+public abstract class FindController {
 
     public static final String PUBLIC_PATH = "/public/";
     public static final String LOGIN_PATH = "/login";
@@ -43,6 +42,8 @@ public class FindController {
 
     @Autowired
     private ControllerUtils controllerUtils;
+
+    protected abstract Map<String, Object> getPublicConfig();
 
     @RequestMapping("/")
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
@@ -62,6 +63,7 @@ public class FindController {
         config.put(MvcConstants.USERNAME.value(), username);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
+        config.putAll(getPublicConfig());
 
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
