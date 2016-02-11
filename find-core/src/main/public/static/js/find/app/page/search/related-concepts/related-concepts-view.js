@@ -14,6 +14,25 @@ define([
 ], function(Backbone, $, _, i18n, DocumentsCollection, popover, viewStateSelector, relatedConceptsView, relatedConceptListItemTemplate,
             popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
 
+    var html = _.template(relatedConceptsView)({i18n: i18n});
+    var loadingSpinnerHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
+
+    /**
+     * @readonly
+     * @enum {String}
+     */
+    var ViewState = {
+        LIST: 'LIST',
+        PROCESSING: 'PROCESSING',
+        ERROR: 'ERROR',
+        NONE: 'NONE',
+        NOT_LOADING: 'NOT_LOADING'
+    };
+
+    function updateForViewState() {
+        this.selectViewState([this.model.get('viewState')]);
+    }
+
     function popoverHandler($content, $target) {
         var queryText = $target.text();
 
@@ -54,11 +73,11 @@ define([
     return Backbone.View.extend({
         className: 'suggestions-content',
 
-        template: _.template(relatedConceptsView),
         listItemTemplate: _.template(relatedConceptListItemTemplate),
         popoverTemplate: _.template(popoverTemplate),
         popoverMessageTemplate: _.template(popoverMessageTemplate),
-        loadingSpinnerTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
+
+        viewStateSelector: _.noop,
 
         events: {
             'click .entity-text' : function(e) {
@@ -81,19 +100,25 @@ define([
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
 
+            this.model = new Backbone.Model({
+                viewState: this.indexesCollection.isEmpty() ? ViewState.NOT_LOADING : ViewState.PROCESSING
+            });
+
+            this.listenTo(this.model, 'change:viewState', updateForViewState);
+
             // Each instance of this view gets its own bound, de-bounced popover handler
             var handlePopover = _.debounce(_.bind(popoverHandler, this), 500);
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 if (this.indexesCollection.isEmpty()) {
-                    this.selectViewState(['notLoading']);
+                    this.model.set('viewState', ViewState.NOT_LOADING);
                 } else {
                     this.$list.empty();
 
                     if (this.entityCollection.isEmpty()) {
-                        this.selectViewState(['none']);
+                        this.model.set('viewState', ViewState.NONE);
                     } else {
-                        this.selectViewState(['list']);
+                        this.model.set('viewState', ViewState.LIST);
 
                         var entities = _.first(this.entityCollection.models, 8);
 
@@ -109,45 +134,37 @@ define([
             /*suggested links*/
             this.listenTo(this.entityCollection, 'request', function() {
                 if (this.indexesCollection.isEmpty()) {
-                    this.selectViewState(['notLoading']);
+                    this.model.set('viewState', ViewState.NOT_LOADING);
                 } else {
-                    this.selectViewState(['processing']);
+                    this.model.set('viewState', ViewState.PROCESSING);
                 }
             });
 
             this.listenTo(this.entityCollection, 'error', function() {
-                this.selectViewState(['error']);
-
-                this.$error.text(i18n['search.error.relatedConcepts']);
+                this.model.set('viewState', ViewState.ERROR);
             });
         },
 
         render: function() {
-            this.$el.html(this.template({i18n:i18n}));
+            this.$el.html(html);
 
             this.$list = this.$('.related-concepts-list');
             this.$error = this.$('.related-concepts-error');
-
             this.$none = this.$('.related-concepts-none');
-
             this.$notLoading = this.$('.not-loading');
 
-            this.$processing = this.$('.processing');
-            this.$processing.append(this.loadingSpinnerTemplate);
+            this.$processing = this.$('.processing')
+                .append(loadingSpinnerHtml);
 
-            this.selectViewState = viewStateSelector({
-                list: this.$list,
-                processing: this.$processing,
-                error: this.$error,
-                none: this.$none,
-                notLoading: this.$notLoading
-            });
+            var viewStateElements = {};
+            viewStateElements[ViewState.ERROR] = this.$error;
+            viewStateElements[ViewState.PROCESSING] = this.$processing;
+            viewStateElements[ViewState.NONE] = this.$none;
+            viewStateElements[ViewState.NOT_LOADING] = this.$notLoading;
+            viewStateElements[ViewState.LIST] = this.$list;
 
-            if (this.indexesCollection.isEmpty()) {
-                this.selectViewState(['notLoading']);
-            } else {
-                this.selectViewState(['processing']);
-            }
+            this.selectViewState = viewStateSelector(viewStateElements);
+            updateForViewState.call(this);
         }
     });
 
