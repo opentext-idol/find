@@ -7,6 +7,7 @@ define([
     'jquery',
     'backbone',
     'js-whatever/js/base-page',
+    'find/app/model/document-model',
     'find/app/model/indexes-collection',
     'find/app/model/query-model',
     'find/app/model/query-text-model',
@@ -15,11 +16,15 @@ define([
     'find/app/vent',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function ($, Backbone, BasePage, IndexesCollection, QueryModel, QueryTextModel, InputView, router, vent, _, template) {
+], function ($, Backbone, BasePage, DocumentModel, IndexesCollection, QueryModel, QueryTextModel, InputView, router, vent, _, template) {
     "use strict";
 
     var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
     var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
+
+    var DocumentContentModel = DocumentModel.extend({
+        url: '../api/public/search/get-document-content'
+    });
 
     return BasePage.extend({
         className: 'search-page',
@@ -130,9 +135,7 @@ define([
         suggest: function (suggestOptions) {
             var self = this;
 
-            var model = new (Backbone.Model.extend({
-                url: '../api/public/search/get-document-content'
-            }))();
+            var model = new DocumentContentModel();
 
             model
                 .fetch({
