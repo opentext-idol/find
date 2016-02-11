@@ -10,31 +10,30 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesRequest;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
-import com.hp.autonomy.types.idol.Hit;
+import com.hp.autonomy.types.idol.Database;
 import com.hp.autonomy.types.idol.QueryResponseData;
-import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.qms.actions.query.params.QmsQueryParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class FindIdolDocumentService extends IdolDocumentService {
     static final String MISSING_RULE_ERROR = "missing rule";
     static final String INVALID_RULE_ERROR = "invalid rule";
 
+    @SuppressWarnings("ConstructorWithTooManyParameters")
     @Autowired
-    public FindIdolDocumentService(final ConfigService<? extends HavenSearchCapable> configService, final HavenSearchAciParameterHandler parameterHandler, final AciService contentAciService, final AciService qmsAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
-        super(configService, parameterHandler, contentAciService, qmsAciService, aciResponseProcessorFactory);
+    public FindIdolDocumentService(final ConfigService<? extends HavenSearchCapable> configService, final HavenSearchAciParameterHandler parameterHandler, final AciService contentAciService, final AciService qmsAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory, final DatabasesService<Database, IdolDatabasesRequest, AciErrorException> databasesService) {
+        super(configService, parameterHandler, contentAciService, qmsAciService, aciResponseProcessorFactory, databasesService);
     }
 
     @Override
-    protected Documents<IdolSearchResult> executeQuery(final AciService aciService, final AciParameters aciParameters, final boolean autoCorrect) {
+    protected QueryResponseData executeQuery(final AciService aciService, final AciParameters aciParameters) {
         QueryResponseData responseData;
         try {
             responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
@@ -43,24 +42,11 @@ public class FindIdolDocumentService extends IdolDocumentService {
             if (MISSING_RULE_ERROR.equals(errorString) || INVALID_RULE_ERROR.equals(errorString)) {
                 aciParameters.remove(QmsQueryParams.Blacklist.name());
                 responseData = aciService.executeAction(aciParameters, queryResponseProcessor);
-            }
-            else {
+            } else {
                 throw e;
             }
         }
 
-        final List<Hit> hits = responseData.getHit();
-        final String spellingQuery = responseData.getSpellingquery();
-
-        // If IDOL has a spelling suggestion, retry query for auto correct
-        final Documents<IdolSearchResult> documents;
-        if (autoCorrect && spellingQuery != null) {
-            documents = rerunQueryWithAdjustedSpelling(aciService, aciParameters, responseData, spellingQuery);
-        } else {
-            final List<IdolSearchResult> results = parseQueryHits(hits);
-            documents = new Documents<>(results, responseData.getTotalhits(), null, null, null);
-        }
-
-        return documents;
+        return responseData;
     }
 }

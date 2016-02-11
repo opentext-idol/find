@@ -9,6 +9,7 @@ define([
     'text!find/templates/app/page/search/filters/indexes/index-list.html',
     'text!find/templates/app/page/search/filters/indexes/index-item.html'
 ], function(Backbone, _, $, DatabasesView, i18n, findI18n, template, listTemplate, itemTemplate) {
+    "use strict";
 
     var CHECKED_CLASS = 'hp-icon hp-fw hp-check';
     var INDETERMINATE_CLASS = 'hp-icon hp-fw hp-minus';
@@ -20,7 +21,10 @@ define([
 
     return DatabasesView.extend({
         // will be overridden
-        getIndexCategories: $.noop,
+        getIndexCategories: null,
+        setInitialSelection: null,
+        findDatabaseNode: null,
+        selectDatabaseFromNode: null,
 
         template: _.template(template),
         categoryTemplate: _.template(listTemplate),
@@ -31,12 +35,11 @@ define([
             'click li[data-id]': function(e) {
                 e.stopPropagation();
 
-                var $target = $(e.currentTarget).find('.database-input');
-                var index = $target.attr('data-name');
-                var domain = $target.attr('data-domain');
-                var checked = $target.find('i').hasClass('hp-check');
-
-                this.selectDatabase(index, domain, !checked);
+                if (!$(e.currentTarget).hasClass('disabled-index')) {
+                    var $target = $(e.currentTarget).find('.database-input');
+                    var checked = $target.find('i').hasClass('hp-check');
+                    this.selectDatabaseFromNode($target, !checked);
+                }
             },
             'click .category-input': function(e) {
                 e.stopPropagation();
@@ -83,23 +86,25 @@ define([
                 childCategories: childCategories
             });
 
-            var setInitialSelection = _.bind(function() {
-                var privateIndexes = options.indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
+            this.queryModel = options.queryModel;
+            this.listenTo(this.queryModel, 'change:invalidDatabases', function () {
+                _.forEach(this.queryModel.get('invalidDatabases'), function (invalidDatabase) {
+                    var $listItem = this.findDatabaseNode(invalidDatabase);
+                    $listItem.addClass('disabled-index');
+                    $listItem.tooltip({
+                        placement: 'bottom',
+                        title: i18n['search.indexes.invalidIndex']
+                    });
+                    var $target = $listItem.find('.database-input');
+                    $target.removeClass('clickable');
+                    this.selectDatabaseFromNode($target, false);
+                    this.disable($target);
+                }, this);
+            });
 
-                if(privateIndexes.length > 0) {
-                    _.each(privateIndexes, function(index) {
-                        this.selectDatabase(index.get('name'), index.get('domain'), true);
-                    }, this);
-                }
-                else {
-                    _.each(options.indexesCollection.where({domain: 'PUBLIC_INDEXES'}), function(index) {
-                        this.selectDatabase(index.get('name'), index.get('domain'), true);
-                    }, this);
-                }
-            }, this);
-
-            if(options.indexesCollection.isEmpty()) {
-                options.indexesCollection.once('update', setInitialSelection);
+            var setInitialSelection = _.bind(this.setInitialSelection, this);
+            if(this.collection.isEmpty()) {
+                this.collection.once('update', setInitialSelection);
             }
             else {
                 setInitialSelection();

@@ -11,7 +11,7 @@ module.exports = (grunt) ->
   ]
 
   specs = 'src/test/js/spec/**/*.js'
-  serverPort = 8000
+  serverPort = 8001
 
   testWatchFiles = [
     'target/classes/static/**/*.js'

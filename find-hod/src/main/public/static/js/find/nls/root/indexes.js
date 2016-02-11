@@ -14,6 +14,7 @@ define([
         'search.indexes.all': 'All',
         'search.indexes.publicIndexes': 'Public Indexes',
         'search.indexes.privateIndexes': 'Private Indexes',
-        'search.indexes.empty': 'No Available Indexes'
+        'search.indexes.empty': 'No Available Indexes',
+        'search.indexes.invalidIndex': 'This index no longer exists'
     });
 });
