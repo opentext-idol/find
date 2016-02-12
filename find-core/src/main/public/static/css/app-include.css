@@ -1103,7 +1103,7 @@ input:-moz-placeholder::before {
 
 .preview-document-frame {
     width: 100%;
-    height: 50vh;
+    height: 100%;
     display: block;
     border: 0;
     padding-top: 10px;
@@ -1127,6 +1127,15 @@ input:-moz-placeholder::before {
 .preview-mode-document-title {
     word-break: break-all;
     white-space: normal !important;
+}
+
+.document-detail-view-container {
+    height: 60vh;
+}
+
+.document-detail-flex-container {
+    display: flex;
+    min-height: 100%;
 }
 
 #cboxLoadedContent .table > tbody > tr > th,

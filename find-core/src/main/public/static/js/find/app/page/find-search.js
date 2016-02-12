@@ -266,8 +266,9 @@ define([
                     data: {
                         reference: options.reference,
                         database: options.database
-                    }
-                }).done(_.bind(this.renderDocumentDetail, this));
+                    },
+                    success: _.bind(this.renderDocumentDetail, this)
+                });
             }
         },
 

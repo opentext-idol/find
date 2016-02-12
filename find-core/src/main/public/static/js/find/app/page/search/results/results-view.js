@@ -304,7 +304,7 @@ define([
             if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
                 href = viewClient.getStaticContentPromotionHref(reference);
             } else {
-                href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
+                href = viewClient.getHref(reference, model);
             }
 
             var $newResult = $(this.resultsTemplate({
@@ -378,7 +378,7 @@ define([
                             if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
                                 href = viewClient.getStaticContentPromotionHref(reference);
                             } else {
-                                href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
+                                href = viewClient.getHref(reference, model);
                             }
                             $(listItem).find('a').colorbox(this.colorboxArguments({model: model, href: href}));
                             $content.find('ul').append(listItem);

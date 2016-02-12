@@ -83,7 +83,7 @@ define([
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
-                var src = viewClient.getHref(this.model.get('reference'), this.model.get('index'), this.model.get('domain'));
+                var src = viewClient.getHref(this.model.get('reference'), this.model);
                 this.$iframe.attr('src', src);
                 this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
