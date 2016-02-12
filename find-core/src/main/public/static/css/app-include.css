@@ -443,6 +443,10 @@ input.find-input {
     border: 3px solid #c0c0c0;
 }
 
+.promoted-document h4 {
+    width: 80%;
+}
+
 .suggestions-content li {
     list-style: none;
 }
