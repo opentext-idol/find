@@ -19,10 +19,7 @@ import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.FindSearchResult;
-import com.autonomy.abc.selenium.search.IndexFilter;
-import com.autonomy.abc.selenium.search.ParametricFilter;
-import com.autonomy.abc.selenium.search.StringDateFilter;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Locator;
@@ -385,13 +382,13 @@ public class FindITCase extends HostedTestBase {
         for(FindSearchResult searchResult : results.getResults(5)){
             String url = searchResult.getReference();
 
+            DocumentViewer docViewer = null;
+
             try {
-                searchResult.title().click();
+                docViewer = searchResult.openDocumentPreview();
             } catch (WebDriverException e) {
                 fail("Could not click on title - most likely CSA-1767");
             }
-
-            DocumentViewer docViewer = DocumentViewer.make(getDriver());
 
             assertThat(docViewer.getDomain(), is(getCurrentUser().getDomain()));
             assertThat(docViewer.getIndex(), is(Index.DEFAULT));
@@ -411,8 +408,7 @@ public class FindITCase extends HostedTestBase {
         List<FindSearchResult> searchResults = results.getResults();
 
         for(int i = 0; i < 6; i++){
-            searchResults.get(i).title().click();
-            DocumentViewer documentViewer = DocumentViewer.make(getDriver());
+            DocumentViewer documentViewer = searchResults.get(i).openDocumentPreview();
             verifyThat(documentViewer.getAuthor(), equalToIgnoringCase(author));
             documentViewer.close();
         }
@@ -422,12 +418,10 @@ public class FindITCase extends HostedTestBase {
     public void testFilterByIndex(){
         findPage.search("Sam");
 
-        WebElement title = results.searchResult(1).title();
+        SearchResult searchResult = results.searchResult(1);
+        String titleString = searchResult.getTitleString();
 
-        String titleString = title.getText();
-        title.click();
-
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        DocumentViewer docViewer = searchResult.openDocumentPreview();
         Index index = docViewer.getIndex();
 
         docViewer.close();
@@ -444,8 +438,7 @@ public class FindITCase extends HostedTestBase {
         // TODO: what if this index has no results?
         String indexTitle = findPage.getPrivateIndexNames().get(2);
         findPage.filterBy(new IndexFilter(indexTitle));
-        results.searchResult(1).title().click();
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
         do{
             assertThat(docViewer.getIndex().getDisplayName(), is(indexTitle));
             docViewer.next();
@@ -571,8 +564,7 @@ public class FindITCase extends HostedTestBase {
         findPage.search("Review");
 
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        results.searchResult(1).title().click();
-        DocumentViewer docViewer = DocumentViewer.make(getDriver());
+        DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
         do{
             verifyDocumentViewer(docViewer);
             docViewer.next();
@@ -934,15 +926,15 @@ public class FindITCase extends HostedTestBase {
     public void testViewportSearchResultNumbers(){
         findPage.search("Messi");
 
-        results.getResult(1).title().click();
+        results.getResult(1).openDocumentPreview();
         verifyDocViewerTotalDocuments(30);
 
         scrollToBottom();
-        results.getResult(31).title().click();
+        results.getResult(31).openDocumentPreview();
         verifyDocViewerTotalDocuments(60);
 
         scrollToBottom();
-        results.getResult(61).title().click();
+        results.getResult(61).openDocumentPreview();
         verifyDocViewerTotalDocuments(90);
     }
 
@@ -952,7 +944,7 @@ public class FindITCase extends HostedTestBase {
         findPage.search("roland garros");
         findPage.filterBy(new IndexFilter("fifa"));
 
-        results.getResult(1).title().click();
+        results.getResult(1).openDocumentPreview();
         verifyDocViewerTotalDocuments(lessThanOrEqualTo(30));
 
         scrollToBottom();
@@ -965,7 +957,7 @@ public class FindITCase extends HostedTestBase {
         findPage.filterBy(new IndexFilter("sitesearch"));
 
         scrollToBottom();
-        results.getResult(1).title().click();
+        results.getResult(1).openDocumentPreview();
         verifyDocViewerTotalDocuments(lessThanOrEqualTo(60));
 
         verifyThat(results.resultsDiv(), containsText("No more results found"));
