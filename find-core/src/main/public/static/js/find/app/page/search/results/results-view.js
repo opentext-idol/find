@@ -139,7 +139,7 @@ define([
         },
 
         clearLoadingSpinner: function () {
-            if (this.resultsFinished && this.promotionsFinished) {
+            if (this.resultsFinished && (this.promotionsFinished || !this.queryStrategy.displayPromotions())) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
