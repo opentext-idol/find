@@ -111,7 +111,7 @@ define([
             /*fancy animation*/
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
-            this.$('.query-service-view-container').show();
+            this.$('.query-service-view-container').removeClass('hide');
             this.$('.app-logo').hide();
             this.$('.hp-logo-footer').addClass('hidden');
 
@@ -124,7 +124,7 @@ define([
             /*fancy reverse animation*/
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
-            this.$('.query-service-view-container').hide();
+            this.$('.query-service-view-container').addClass('hide');
             this.$('.suggest-service-view-container').addClass('hide');
             this.$('.app-logo').show();
             this.$('.hp-logo-footer').removeClass('hidden');
