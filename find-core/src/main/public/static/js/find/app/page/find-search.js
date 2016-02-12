@@ -132,8 +132,6 @@ define([
             // TODO: somebody else needs to own this
             $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
             $('.container-fluid, .find-logo-small').addClass('reduced');
-
-            vent.navigate('find/search/query', {trigger: false});
         },
 
         suggest: function (suggestOptions) {

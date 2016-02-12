@@ -25,12 +25,16 @@ define([
             this.trigger('route:find', 'search');
         },
 
+        suggest: function() {
+            this.trigger('route:find', 'search');
+        },
+
         emptySearch: function() {
             this.trigger('route:find', 'search');
         },
 
         defaultRoute: function() {
-            this.navigate('find/search', {trigger: true, replace: true})
+            this.navigate('find/search/query', {trigger: true, replace: true})
         }
     });
 });
