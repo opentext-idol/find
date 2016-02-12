@@ -9,8 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Common logic within controller classes
  */
@@ -21,13 +19,5 @@ public interface ControllerUtils {
 
     String getMessage(String code, Object[] args) throws NoSuchMessageException;
 
-    @SuppressWarnings("MethodWithTooManyParameters")
-    ModelAndView buildErrorModelAndView(
-            HttpServletRequest request,
-            String mainMessageCode,
-            String subMessageCode,
-            Object[] subMessageArguments,
-            Integer statusCode,
-            boolean contactSupport
-    );
+    ModelAndView buildErrorModelAndView(final ErrorModelAndViewInfo errorInfo);
 }

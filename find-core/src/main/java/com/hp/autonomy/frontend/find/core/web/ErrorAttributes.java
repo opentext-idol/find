@@ -5,23 +5,22 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-public enum ViewNames
-{
-    ERROR("error"),
-    LOGIN("login"),
-    PUBLIC("public"),
-    SSO("sso"),
-    SSO_LOGOUT("sso-logout");
+public enum ErrorAttributes {
+    MAIN_MESSAGE("mainMessage"),
+    SUB_MESSAGE("subMessage"),
+    BASE_URL("baseUrl"),
+    STATUS_CODE("statusCode"),
+    CONTACT_SUPPORT("contactSupport"),
+    BUTTON_HREF("buttonHref"),
+    BUTTON_MESSAGE("buttonMessage");
 
     private final String value;
 
-    ViewNames(final String value)
-    {
+    ErrorAttributes(final String value) {
         this.value = value;
     }
 
-    public String value()
-    {
+    public String value() {
         return value;
     }
 }

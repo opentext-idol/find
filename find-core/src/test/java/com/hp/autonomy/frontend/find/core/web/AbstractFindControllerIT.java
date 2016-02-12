@@ -7,10 +7,8 @@ package com.hp.autonomy.frontend.find.core.web;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
-import org.springframework.http.MediaType;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AbstractFindControllerIT extends AbstractFindIT {

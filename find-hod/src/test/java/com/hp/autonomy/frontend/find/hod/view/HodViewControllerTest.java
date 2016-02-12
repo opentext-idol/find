@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.view;
 
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
+import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodError;
@@ -20,8 +21,6 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -61,25 +60,25 @@ public class HodViewControllerTest extends AbstractViewControllerTest<HodViewCon
     public void handleKnownHodErrorException() {
         when(controllerUtils.getMessage(anyString(), any(Object[].class))).thenReturn("Some known error message");
         assertNotNull(viewController.handleHodErrorException(new HodErrorException(new HodError.Builder().build(), 400), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        verify(controllerUtils).buildErrorModelAndView(any(HttpServletRequest.class), eq(HodViewController.HOD_ERROR_MESSAGE_CODE_MAIN), eq(HodViewController.HOD_ERROR_MESSAGE_CODE_SUB), any(Object[].class), any(Integer.class), eq(true));
+        verify(controllerUtils).buildErrorModelAndView(any(ErrorModelAndViewInfo.class));
     }
 
     @Test
     public void handleUnknownHodErrorException() {
         when(controllerUtils.getMessage(anyString(), any(Object[].class))).thenThrow(new NoSuchMessageException("")).thenReturn(null);
         assertNotNull(viewController.handleHodErrorException(new HodErrorException(new HodError.Builder().build(), 400), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        verify(controllerUtils).buildErrorModelAndView(any(HttpServletRequest.class), eq(HodViewController.HOD_ERROR_MESSAGE_CODE_MAIN), eq(HodViewController.HOD_ERROR_MESSAGE_CODE_SUB_NULL), any(Object[].class), any(Integer.class), eq(true));
+        verify(controllerUtils).buildErrorModelAndView(any(ErrorModelAndViewInfo.class));
     }
 
     @Test
     public void hodAuthenticationFailedException() {
         assertNotNull(viewController.hodAuthenticationFailedException(mock(HodAuthenticationFailedException.class), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        verify(controllerUtils).buildErrorModelAndView(any(HttpServletRequest.class), eq(HodViewController.HOD_ERROR_MESSAGE_CODE_MAIN), eq(HodViewController.HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED), any(Object[].class), eq(HttpServletResponse.SC_FORBIDDEN), eq(false));
+        verify(controllerUtils).buildErrorModelAndView(any(ErrorModelAndViewInfo.class));
     }
 
     @Test
     public void handleGeneralException() {
         assertNotNull(viewController.handleGeneralException(new Exception(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        verify(controllerUtils).buildErrorModelAndView(any(HttpServletRequest.class), eq(HodViewController.HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN), eq(HodViewController.HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB), any(Object[].class), eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), eq(true));
+        verify(controllerUtils).buildErrorModelAndView(any(ErrorModelAndViewInfo.class));
     }
 }

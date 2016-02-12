@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.hod.view;
 
 import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
+import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -81,7 +82,14 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
 
         response.setStatus(errorCode);
 
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_MAIN, subMessageCode, subMessageArgs, errorCode, true);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode(HOD_ERROR_MESSAGE_CODE_MAIN)
+                .setSubMessageCode(subMessageCode)
+                .setSubMessageArguments(subMessageArgs)
+                .setStatusCode(errorCode)
+                .setContactSupport(true)
+                .build());
     }
 
     @ExceptionHandler
@@ -95,7 +103,12 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
 
         log.error("HodAuthenticationFailedException thrown while viewing document", e);
 
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_MAIN, HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED, null, HttpServletResponse.SC_FORBIDDEN, false);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode(HOD_ERROR_MESSAGE_CODE_MAIN)
+                .setSubMessageCode(HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED)
+                .setStatusCode(HttpServletResponse.SC_FORBIDDEN)
+                .build());
     }
 
     @ExceptionHandler
@@ -111,6 +124,13 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
         log.error("Unhandled exception with uuid {}", uuid);
         log.error("Stack trace", e);
 
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN, HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB, new Object[]{uuid}, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, true);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode(HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN)
+                .setSubMessageCode(HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB)
+                .setSubMessageArguments(new Object[]{uuid})
+                .setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+                .setContactSupport(true)
+                .build());
     }
 }
