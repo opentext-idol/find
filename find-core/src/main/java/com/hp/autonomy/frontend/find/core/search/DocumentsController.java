@@ -32,13 +32,13 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String RESULTS_START_PARAM = "start";
     public static final String MAX_RESULTS_PARAM = "max_results";
     public static final String SUMMARY_PARAM = "summary";
-    public static final String INDEXES_PARAM = "indexes";
     public static final String FIELD_TEXT_PARAM = "field_text";
     public static final String SORT_PARAM = "sort";
     public static final String MIN_DATE_PARAM = "min_date";
     public static final String MAX_DATE_PARAM = "max_date";
     public static final String HIGHLIGHT_PARAM = "highlight";
     public static final String REFERENCE_PARAM = "reference";
+    public static final String INDEXES_PARAM = "indexes";
     public static final String AUTO_CORRECT_PARAM = "auto_correct";
     public static final String DATABASE_PARAM = "database";
 

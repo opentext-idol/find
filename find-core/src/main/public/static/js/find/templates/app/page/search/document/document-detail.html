@@ -1,0 +1,50 @@
+<div class="col-md-2 left-side-container side-container small-container">
+</div>
+<div class="col-md-8 middle-container">
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" class="detail-view-back-button btn button-primary m-b-nil m-t-xs">
+                <%- i18n['search.document.detail.back'] %>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h1><%- title %></h1>
+            <% if(href) { %>
+                <button type="button" class="detail-view-open-button btn button-secondary m-b-nil m-t-xs">
+                    <%- i18n['search.document.detail.openOriginal'] %>
+                </button>
+            <% } %>
+        </div>
+    </div>
+    <div class="row m-t-lg">
+        <div class="col-md-7">
+            <div class="document-detail-view-container p-l-lg p-r-lg"></div>
+        </div>
+        <div class="col-md-5">
+            <div class="document-detail-tabs-container p-l-lg p-r-lg">
+                <div class="panel blank-panel">
+                    <div class="panel-heading">
+                        <ul class="document-detail-tabs nav nav-tabs" role="tablist">
+                            <% _.each(tabs, function(tab) { %>
+                                <% var active = tab.index === 0 ? 'active' : ''; %>
+                                <li class="<%= active %>">
+                                    <a role="tab" aria-controls="document-detail-tab-<%= tab.index %>" data-toggle="tab" data-target="#document-detail-tab-<%= tab.index %>" class="tab-title" >
+                                        <span><%= tab.title %></span>
+                                    </a>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div class="document-detail-tabs-content tab-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-2 right-side-container side-container small-container">
+</div>
+

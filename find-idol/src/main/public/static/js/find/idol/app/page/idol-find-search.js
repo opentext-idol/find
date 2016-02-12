@@ -10,6 +10,13 @@ define([
     'use strict';
 
     return FindSearch.extend({
-        ServiceView: ServiceView
+        ServiceView: ServiceView,
+
+        documentDetailOptions: function (database, reference) {
+            return {
+                reference: reference,
+                database: database
+            };
+        }
     });
 });

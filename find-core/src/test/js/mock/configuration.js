@@ -4,5 +4,5 @@
  */
 
 define([], function () {
-   return jasmine.createSpy('configuration');
+    return jasmine.createSpy('configuration');
 });

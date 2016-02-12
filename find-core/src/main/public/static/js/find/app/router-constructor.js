@@ -6,11 +6,12 @@
 define([
     'backbone'
 ], function(Backbone) {
+    return Backbone.Router.extend({
 
-    var Router = Backbone.Router.extend({
         routes: {
-            'find/search(/:text(/*refinements))': 'search',
-            'find/:page': 'find'
+            'find/search/query/:text(/*refinements)': 'search',
+            'find/:page': 'find',
+            'find/search/query': 'emptySearch'
         },
 
         navigate: function() {
@@ -21,9 +22,14 @@ define([
 
         search: function() {
             this.trigger('route:find', 'search');
+        },
+
+        documentDetail: function() {
+            this.trigger('route:find', 'search');
+        },
+
+        emptySearch: function() {
+            this.trigger('route:find', 'search');
         }
     });
-
-    return new Router();
-
 });

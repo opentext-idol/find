@@ -10,6 +10,7 @@ define([
     'find/app/model/dates-filter-model',
     'parametric-refinement/selected-values-collection',
     'find/app/model/indexes-collection',
+    'find/app/model/documents-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
     'find/app/model/saved-searches/saved-query-collection',
@@ -18,13 +19,17 @@ define([
     'find/app/util/merge-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/query-text-model',
+    'find/app/model/document-model',
+    'find/app/page/search/document/document-detail-view',
+    'find/app/util/database-name-resolver',
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
-            addChangeListener, MergeCollection, SavedSearchModel, QueryTextModel, router, vent, i18n, _, template) {
+], function(BasePage, Backbone, SearchPageModel, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
+            addChangeListener, MergeCollection, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
+            databaseNameResolver, router, vent, i18n, _, template) {
 
     'use strict';
 
@@ -53,6 +58,7 @@ define([
 
         // Abstract
         ServiceView: null,
+        documentDetailOptions: null,
 
         initialize: function() {
             this.savedQueryCollection = new SavedQueryCollection();
@@ -140,8 +146,12 @@ define([
 
             this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
 
+            router.on('route:emptySearch', this.reducedState, this);
+
             // Bind routing to search model
             router.on('route:search', function(text, concepts) {
+                this.removeDocumentDetailView();
+
                 // The concepts string starts with a leading /
                 var conceptsArray = concepts ? _.tail(concepts.split('/')) : [];
 
@@ -149,6 +159,18 @@ define([
                     inputText: text || '',
                     relatedConcepts: conceptsArray
                 });
+
+                this.$('.service-view-container').addClass('hide');
+                this.$('.query-service-view-container').removeClass('hide');
+            }, this);
+
+            router.on('route:documentDetail', function () {
+                this.expandedState();
+                this.$('.service-view-container').addClass('hide');
+                this.$('.document-detail-service-view-container').removeClass('hide');
+
+                var options = this.documentDetailOptions.apply(this, arguments);
+                this.populateDocumentModelForDetailView(options);
             }, this);
         },
 
@@ -164,7 +186,7 @@ define([
                 this.expandedState();
             }
             _.each(this.serviceViews, function(data) {
-                this.$('.top-options-container').after(data.view.$el);
+                this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
             }, this);
 
@@ -200,6 +222,7 @@ define([
                 } else {
                     var searchType = savedSearchModel.get('type');
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
+                    var documentsCollection = new DocumentsCollection();
 
                     var queryState = {
                         queryTextModel: queryTextModel,
@@ -231,8 +254,10 @@ define([
 
                     this.serviceViews[cid] = viewData = {
                         queryTextModel: queryTextModel,
+                        documentsCollection: documentsCollection,
                         view: new this.ServiceView({
                             indexesCollection: this.indexesCollection,
+                            documentsCollection: documentsCollection,
                             searchModel: this.searchModel,
                             savedSearchCollection: this.savedSearchCollection,
                             savedSnapshotCollection: this.savedSnapshotCollection,
@@ -242,7 +267,7 @@ define([
                         })
                     };
 
-                    this.$('.top-options-container').after(viewData.view.$el);
+                    this.$('.query-service-view-container').append(viewData.view.$el);
                     viewData.view.render();
                 }
 
@@ -257,19 +282,24 @@ define([
 
         generateURL: function() {
             var components = [this.searchModel.get('inputText')].concat(this.searchModel.get('relatedConcepts'));
-            return 'find/search/' + _.map(components, encodeURIComponent).join('/');
+
+            if(_.compact(components).length) {
+                return 'find/search/query/' + _.map(components, encodeURIComponent).join('/');
+            } else {
+                return 'find/search/query';
+            }
         },
 
         // Run fancy animation from large central search bar to main search page
         expandedState: function() {
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
-            this.$('.search-tabs-row').show();
-            this.$('.app-logo').hide();
-            this.$('.hp-logo-footer').addClass('hidden');
+            this.$('.query-service-view-container').removeClass('hide');
+            this.$('.app-logo').addClass('hide');
+            this.$('.hp-logo-footer').addClass('hide');
 
             // TODO: somebody else needs to own this
-            $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').show();
+            $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').removeClass('hide');
             $('.container-fluid, .find-logo-small').removeClass('reduced');
         },
 
@@ -277,13 +307,64 @@ define([
         reducedState: function() {
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
-            this.$('.search-tabs-row').hide();
-            this.$('.app-logo').show();
-            this.$('.hp-logo-footer').removeClass('hidden');
+            this.$('.service-view-container').addClass('hide');
+            this.$('.app-logo').removeClass('hide');
+            this.$('.hp-logo-footer').removeClass('hide');
+
+            this.removeDocumentDetailView();
 
             // TODO: somebody else needs to own this
-            $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').hide();
+            $('.find-banner-container').addClass('reduced navbar navbar-static-top').find('>').addClass('hide');
             $('.container-fluid, .find-logo-small').addClass('reduced');
+        },
+
+        // If we already have the document model in one of our collections, then don't bother fetching it
+        populateDocumentModelForDetailView: function(options) {
+            var model;
+            _.find(this.serviceViews, function(serviceView) {
+                var document = serviceView.documentsCollection.find(function(collectionModel) {
+                    return collectionModel.get('reference') === options.reference &&
+                        databaseNameResolver.resolveDatabaseNameForDocumentModel(collectionModel) === options.database;
+                });
+
+                if(document) {
+                    // stop looping once we find the model
+                    model = document;
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            if (model) {
+                this.renderDocumentDetail(model)
+            } else {
+                (new DocumentModel()).fetch({
+                    data: {
+                        reference: options.reference,
+                        database: options.database
+                    },
+                    success: _.bind(this.renderDocumentDetail, this)
+                });
+            }
+        },
+
+        renderDocumentDetail: function(model) {
+            this.documentDetailView = new DocumentDetailView({
+                backUrl: this.generateURL(),
+                model: model
+            });
+
+            this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
+            this.documentDetailView.render();
+        },
+
+        removeDocumentDetailView: function() {
+            if (this.documentDetailView) {
+                this.documentDetailView.remove();
+                this.stopListening(this.documentDetailView);
+                this.documentDetailView = null;
+            }
         }
     });
 });

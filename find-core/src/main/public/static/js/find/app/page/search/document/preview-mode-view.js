@@ -3,28 +3,26 @@ define([
     'underscore',
     'jquery',
     'i18n!find/nls/bundle',
+    'find/app/vent',
     'find/app/util/view-server-client',
     'find/app/model/document-model',
     'find/app/configuration',
-    'text!find/templates/app/page/search/preview-mode-view.html',
-    'text!find/templates/app/page/search/preview-mode-metadata.html',
-    'text!find/templates/app/page/search/preview-mode-document.html',
+    'text!find/templates/app/page/search/document/preview-mode-view.html',
+    'text!find/templates/app/page/search/document/preview-mode-metadata.html',
+    'text!find/templates/app/page/search/document/preview-mode-document.html',
     'text!find/templates/app/page/view/media-player.html'
-], function(Backbone, _, $, i18n, viewClient, DocumentModel, configuration, template, metaDataTemplate, documentTemplate, mediaTemplate) {
-    "use strict";
-
-    var mediaTypes = ['audio', 'video'];
+], function(Backbone, _, $, i18n, vent, viewClient, DocumentModel, configuration, template, metaDataTemplate, documentTemplate, mediaTemplate) {
+    'use strict';
 
     function scrollFollow() {
         if (this.$el.offsetParent().offset().top < 0) {
-            this.$el.css('margin-top', Math.abs(+this.$el.offsetParent().offset().top) + 15);
+            this.$el.css('margin-top', Math.abs(this.$el.offsetParent().offset().top) + 15);
         } else {
             this.$el.css('margin-top', 0);
         }
 
-        if (!this.media) {
-            var $viewServerPage = this.$('.preview-document-frame');
-            $viewServerPage.css('height', $(window).height() - $viewServerPage.offset().top - 30 - this.$('.preview-mode-metadata').height())
+        if(this.$iframe) {
+            this.$iframe.css('height', $(window).height() - this.$iframe.offset().top - 30 - this.$('.preview-mode-metadata').height());
         }
     }
 
@@ -34,17 +32,22 @@ define([
         documentTemplate: _.template(documentTemplate),
         mediaTemplate: _.template(mediaTemplate),
 
+        //to be overridden
+        generateDetailRoute: null,
+
         events: {
+            'click .preview-mode-open-detail-button': 'openDocumentDetail',
             'click .close-preview-mode': function() {
                 this.trigger('close-preview');
             }
         },
 
+        $iframe: null,
+
         initialize: function() {
             this.scrollFollow = _.bind(scrollFollow, this);
         },
 
-        // TODO: this should do the stuff in render view
         render: function() {
             this.$el.html(this.template({
                 i18n:i18n,
@@ -53,14 +56,6 @@ define([
             }));
 
             this.$('.preview-mode-document-title').text(this.model.get('title'));
-
-            var contentType = this.model.get('contentType') || '';
-
-            this.media = _.find(mediaTypes, function (mediaType) {
-                return contentType.indexOf(mediaType) === 0;
-            });
-
-            var url = this.model.get('url');
 
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
                 i18n:i18n,
@@ -72,9 +67,7 @@ define([
 
             var $preview = this.$('.preview-mode-document');
 
-            if (this.media && url) {
-                this.model.set('media', this.media);
-
+            if (this.model.isMedia()) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
                     model: this.model
@@ -93,10 +86,11 @@ define([
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
-                this.$iframe.attr("src", viewClient.getHref(this.model.get('reference'), this.model.get('index'), this.model.get('domain')));
+                var src = viewClient.getHref(this.model.get('reference'), this.model);
+                this.$iframe.attr('src', src);
                 this.$iframe.css('height', $(window).height() - $preview.offset().top - 30 - this.$('.preview-mode-metadata').height());
             }
-            
+
             this.scrollFollow();
 
             $('.main-content').scroll(this.scrollFollow);
@@ -106,6 +100,10 @@ define([
             Backbone.View.prototype.remove.call(this);
 
             $('.main-content').off('scroll', this.scrollFollow);
+        },
+
+        openDocumentDetail: function () {
+            vent.navigate(this.generateDetailRoute());
         }
     });
 

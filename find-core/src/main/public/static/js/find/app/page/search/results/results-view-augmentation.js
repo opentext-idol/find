@@ -2,13 +2,13 @@ define([
     'backbone',
     'jquery',
     'underscore',
-    'find/app/page/search/preview-mode-view',
     'text!find/templates/app/page/search/results/results-view-augmentation.html'
-], function(Backbone, $, _, PreviewModeView, template) {
+], function(Backbone, $, _, template) {
 
     return Backbone.View.extend({
 
-        previewModeView: null,
+        // to be overridden
+        PreviewModeView: null,
 
         template: _.template(template),
 
@@ -18,7 +18,7 @@ define([
             this.listenTo(this.resultsView, 'preview', function(model) {
                 this.removePreviewModeView();
 
-                this.previewModeView = new PreviewModeView({
+                this.previewModeView = new this.PreviewModeView({
                     model: model
                 });
 

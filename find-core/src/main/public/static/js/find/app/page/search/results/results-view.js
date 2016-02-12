@@ -28,9 +28,6 @@ define([
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
             moment, i18n, i18n_indexes) {
 
-    var mediaTypes = ['audio', 'image', 'video'];
-    var webTypes = ['text/html', 'text/xhtml'];
-
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
 
@@ -280,17 +277,7 @@ define([
                 }, this)
             };
 
-            var contentType = options.model.get('contentType') || '';
-
-            var media = _.find(mediaTypes, function(mediaType) {
-                return contentType.indexOf(mediaType) === 0;
-            });
-
-            var url = options.model.get('url');
-
-            if (media && url) {
-                options.model.set('media', media);
-
+            if (options.model.isMedia()) {
                 args.html = this.mediaPlayerTemplate({
                     i18n: i18n,
                     model: options.model
@@ -318,7 +305,7 @@ define([
             if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
                 href = viewClient.getStaticContentPromotionHref(reference);
             } else {
-                href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
+                href = viewClient.getHref(reference, model);
             }
 
             var $newResult = $(this.resultsTemplate({
@@ -345,10 +332,8 @@ define([
 
             $previewTrigger.colorbox(colorboxArgs);
 
-            var contentType = model.get('contentType');
-
             // web documents should open the original document in a new tab
-            if (contentType && _.contains(webTypes, contentType.toLowerCase())) {
+            if (model.isWebType()) {
                 $resultHeader.attr({
                     href: reference,
                     target: "_blank"
@@ -395,7 +380,7 @@ define([
                             if (model.get('promotionType') === 'STATIC_CONTENT_PROMOTION') {
                                 href = viewClient.getStaticContentPromotionHref(reference);
                             } else {
-                                href = viewClient.getHref(reference, model.get('index'), model.get('domain'));
+                                href = viewClient.getHref(reference, model);
                             }
                             $(listItem).find('a').colorbox(this.colorboxArguments({model: model, href: href}));
                             $content.find('ul').append(listItem);
