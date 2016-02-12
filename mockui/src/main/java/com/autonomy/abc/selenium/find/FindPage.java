@@ -57,6 +57,7 @@ public class FindPage extends AppElement implements AppPage,
     public void search(String searchTerm){
         input.clear();
         input.setAndSubmit(searchTerm);
+        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
@@ -158,6 +159,10 @@ public class FindPage extends AppElement implements AppPage,
 
         cog.click();
         getDriver().findElement(By.className("navigation-logout")).click();
+    }
+
+    public List<String> getAlsoSearchingForTerms() {
+        return ElementUtil.getTexts(findElements(By.className("selected-related-concept")));
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

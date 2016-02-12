@@ -20,11 +20,9 @@ import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.*;
-import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Waits;
-import com.google.common.collect.Lists;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
@@ -43,9 +41,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -219,13 +217,14 @@ public class FindITCase extends HostedTestBase {
 
     @Test
     public void testRelatedConceptsNavigateOnClick(){
-        findPage.search("Red");
+        String search = "Red";
+        findPage.search(search);
         WebElement topRelatedConcept = results.relatedConcepts().get(0);
         String concept = topRelatedConcept.getText();
 
         topRelatedConcept.click();
-        assertThat(getDriver().getCurrentUrl(), containsString(concept));
-        assertThat(findPage.getSearchBoxTerm(), containsString(concept));
+        assertThat(findPage.getAlsoSearchingForTerms(), hasItem(concept));
+        assertThat(findPage.getSearchBoxTerm(), is(search));
     }
 
     @Test
@@ -282,6 +281,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-2098")
     public void testSpotlightPromotions(){
         String search = "Proper";
         String trigger = "Prim";
@@ -309,6 +309,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CSA-2098")
     public void testStaticPromotions(){
         String title = "TITLE";
         String content = "CONTENT";
@@ -337,6 +338,7 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug({"CSA-2058 - titles on Search Optimizer are blank this ruins the test trying to check Find against them","CSA-2067 - 'Rugby', for some reason, is hated by Find"})
     public void testDynamicPromotions(){
         int resultsToPromote = 13;
         String search = "kittens";
@@ -390,9 +392,8 @@ public class FindITCase extends HostedTestBase {
                 fail("Could not click on title - most likely CSA-1767");
             }
 
-            assertThat(docViewer.getDomain(), is(getCurrentUser().getDomain()));
-            assertThat(docViewer.getIndex(), is(Index.DEFAULT));
-            assertThat(docViewer.getReference(), is(url));
+            verifyThat(docViewer.getIndex(), is(Index.DEFAULT));
+            verifyThat(docViewer.getReference(), is(url));
             docViewer.close();
         }
     }
@@ -436,7 +437,8 @@ public class FindITCase extends HostedTestBase {
         findPage.search("Happy");
 
         // TODO: what if this index has no results?
-        String indexTitle = findPage.getPrivateIndexNames().get(2);
+        //This breaks if using default index
+        String indexTitle = findPage.getPrivateIndexNames().get(1);
         findPage.filterBy(new IndexFilter(indexTitle));
         DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
         do{
@@ -548,14 +550,12 @@ public class FindITCase extends HostedTestBase {
 
         for(FindSearchResult result : results.getResults(5)){
             try {
-                ElementUtil.scrollIntoViewAndClick(result.title(), getDriver());
+                DocumentViewer docViewer = result.openDocumentPreview();
+                verifyDocumentViewer(docViewer);
+                docViewer.close();
             } catch (WebDriverException e){
                 fail("Could not click on title - most likely CSA-1767");
             }
-
-            DocumentViewer docViewer = DocumentViewer.make(getDriver());
-            verifyDocumentViewer(docViewer);
-            docViewer.close();
         }
     }
 
@@ -565,10 +565,10 @@ public class FindITCase extends HostedTestBase {
 
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
         DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-        do{
+        for(int i = 0; i < 5; i++) {
             verifyDocumentViewer(docViewer);
             docViewer.next();
-        } while (docViewer.getCurrentDocumentNumber() != 1);
+        }
     }
 
     private void verifyDocumentViewer(DocumentViewer docViewer) {
@@ -772,7 +772,7 @@ public class FindITCase extends HostedTestBase {
         for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
             findPage.search(hiddenBooleansProximity);
             Waits.loadOrFadeWait();
-            assertThat(findPage.getText(), not(containsString(Errors.Search.GENERAL)));
+            assertThat(findPage.getText(), not(containsString("An error has occurred")));
         }
     }
 
@@ -792,7 +792,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     @KnownBug({"IOD-8454","CCUK-3634"})
     public void testSearchQuotationMarks() {
-        List<String> testSearchTerms = Arrays.asList("\"","","\"word","\" word","\" wo\"rd\""); //"\"\"" seems okay and " "
+        List<String> testSearchTerms = Arrays.asList("\"", "", "\"word", "\" word", "\" wo\"rd\""); //"\"\"" seems okay and " "
         for (String searchTerm : testSearchTerms){
             findPage.search(searchTerm);
             Waits.loadOrFadeWait();
@@ -843,7 +843,7 @@ public class FindITCase extends HostedTestBase {
             String relatedConcept = relatedConceptLink.getText();
             for (WebElement relatedConceptElement : getDriver().findElements(By.xpath("//*[contains(@class,'middle-container')]//*[not(self::h4) and contains(text(),'" + relatedConcept + "')]"))) {
                 if (relatedConceptElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
-                    verifyThat(relatedConceptElement.getText(), containsString(relatedConcept));
+                    verifyThat(relatedConceptElement, containsTextIgnoringCase(relatedConcept));
                 }
                 verifyThat(relatedConceptElement, hasTagName("a"));
                 verifyThat(relatedConceptElement, hasClass("clickable"));
@@ -855,19 +855,29 @@ public class FindITCase extends HostedTestBase {
     public void testSimilarDocumentsShowUp(){
         findPage.search("Doe");
 
-        for (WebElement similarResultLink : Lists.reverse(results.similarResultLinks())) {
-            similarResultLink.click();
+        for (FindSearchResult searchResult : results.getResults()) {
+            String title = searchResult.getTitleString();
 
-            WebElement popover = results.popover();
+            searchResult.similarDocuments().click();
 
-            new WebDriverWait(getDriver(),10).until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(popover, "Loading")));
+            Waits.loadOrFadeWait();
 
-            assertThat(popover.findElement(By.tagName("p")).getText(), not("An error occurred fetching similar documents"));
+            WebElement similarDocumentsPage = getDriver().findElement(By.className("suggest-service-view-container"));
+            WebElement similarDocsPageTitle = similarDocumentsPage.findElement(By.cssSelector(".m-b-nil.bold"));
+            WebElement similarDocsResult = null;
+            WebElement backButton = similarDocumentsPage.findElement(By.className("service-view-back-button"));
 
-            for(WebElement similarResult : popover.findElements(By.tagName("li"))){
-                assertThat(similarResult.findElement(By.tagName("a")).getText(), not(isEmptyString()));
-                assertThat(similarResult.findElement(By.tagName("p")).getText(), not(isEmptyString()));
+            try {
+                similarDocsResult = similarDocumentsPage.findElement(By.className("main-results-container"));
+            } catch (NoSuchElementException e) {
+                LoggerFactory.getLogger(FindITCase.class).error("No results for similar documents");
             }
+
+            verifyThat(getDriver().getCurrentUrl(), containsString("suggest"));
+            verifyThat(similarDocsPageTitle, containsTextIgnoringCase("Similar results to document with title \"" + title + "\""));
+            verifyThat(similarDocsResult, notNullValue());
+
+            backButton.click();
         }
     }
 
@@ -966,6 +976,7 @@ public class FindITCase extends HostedTestBase {
     @Test
     public void testNoResults(){
         findPage.search("thissearchwillalmostcertainlyreturnnoresults");
+
         verifyThat(results.resultsDiv(), containsText("No results found"));
 
         scrollToBottom();

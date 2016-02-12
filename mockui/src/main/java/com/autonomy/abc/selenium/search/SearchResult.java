@@ -33,7 +33,7 @@ public abstract class SearchResult {
     }
 
     public WebElement star() {
-        return findElement(By.className("fa-star"));
+        return findElement(By.className("hp-favorite"));
     }
 
     protected WebElement findElement(By locator) {
