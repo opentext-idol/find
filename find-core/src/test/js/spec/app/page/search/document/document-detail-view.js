@@ -9,11 +9,15 @@ define([
     'find/app/page/search/document/document-detail-view',
     'find/app/page/search/document/tab-content-view',
     'find/app/model/document-model',
+    'find/app/configuration',
     'find/app/router'
-], function(Backbone, $, DocumentDetailView, TabContentView, DocumentModel, router) {
+], function(Backbone, $, DocumentDetailView, TabContentView, DocumentModel, configuration, router) {
 
     var BACK_URL = 'find/search/goback';
     var DOCUMENT_MODEL_REF = 'reference';
+
+    var URL_LIKE_REFERENCE = 'http://www.example.com';
+    var ANY_OLD_URL = 'www.example.com';
 
     var MOCK_TABS = [{
         TabContentConstructor: TabContentView.extend({ TabSubContentConstructor: Backbone.View }),
@@ -33,6 +37,10 @@ define([
     }
 
     describe('DocumentDetailView', function() {
+        beforeEach(function() {
+            configuration.and.returnValue({mmapBaseUrl: ANY_OLD_URL});
+        });
+
         describe('when the back button is clicked', function() {
             beforeEach(function() {
                 this.view = new DocumentDetailView({
@@ -142,7 +150,7 @@ define([
                 this.view = new DocumentDetailView({
                     model: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
-                        url: 'www.example.com'
+                        url: ANY_OLD_URL
                     })
                 });
                 this.view.render();
@@ -153,47 +161,40 @@ define([
             });
         });
 
-        describe('when the open original button is clicked', function() {
-            describe('when the document has a url', function() {
+            describe('when the view renders and the document has a url', function() {
                 beforeEach(function() {
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF,
-                            url: 'www.example.com'
+                            url: ANY_OLD_URL
                         })
                     });
-
-                    spyOn(window, 'open');
-
                     this.view.render();
-                    this.view.$('.detail-view-open-button').click();
                 });
 
-                it('should call window.open', function () {
-                    expect(window.open).toHaveBeenCalled();
+                it('should render an open original button with the correct href', function () {
+                    expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
+                    expect(this.view.$('.document-detail-open-original-link')).toHaveAttr('href', ANY_OLD_URL);
                 });
             });
 
-            describe('when the document has no url but a reference that could be a url', function() {
+            describe('when the view renders and the document has no url but a reference that could be a url', function() {
                 beforeEach(function() {
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
-                            reference: 'http://www.example.com'
+                            reference: URL_LIKE_REFERENCE
                         })
                     });
-
-                    spyOn(window, 'open');
-
                     this.view.render();
-                    this.view.$('.detail-view-open-button').click();
                 });
 
-                it('should call window.open', function () {
-                    expect(window.open).toHaveBeenCalled();
+                it('should render an open original button with the correct href', function () {
+                    expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
+                    expect(this.view.$('.document-detail-open-original-link')).toHaveAttr('href', URL_LIKE_REFERENCE);
                 });
             });
 
-            describe('when the document has no url or url-like reference', function() {
+            describe('when the view renders but the document has no url or url-like reference', function() {
                 beforeEach(function() {
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
@@ -201,13 +202,38 @@ define([
                         })
                     });
                     this.view.render();
-                    this.view.$('.detail-view-open-button').click();
                 });
 
                 it('should not render the open original button', function () {
-                    expect(this.view.$('.detail-view-open-button')).toHaveLength(0);
+                    expect(this.view.$('.document-detail-open-original-link')).toHaveLength(0);
+                });
+
+                it('should not render the mmap link', function () {
+                    expect(this.view.$('.document-detail-mmap-link')).toHaveLength(0);
                 });
             });
-        });
+
+            describe('when the view renders and the document has mmap references', function() {
+                var mmapUrl = '/video/a-video';
+
+                beforeEach(function() {
+                    this.view = new DocumentDetailView({
+                        model: new DocumentModel({
+                            reference: DOCUMENT_MODEL_REF,
+                            mmapUrl: mmapUrl
+                        })
+                    });
+                    this.view.render();
+                });
+
+                it('should not render the open original button', function () {
+                    expect(this.view.$('.document-detail-open-original-link')).toHaveLength(0);
+                });
+
+                it('should render the open mmap button', function () {
+                    expect(this.view.$('.document-detail-mmap-link')).toHaveLength(1);
+                    expect(this.view.$('.document-detail-mmap-link')).toHaveAttr('href', ANY_OLD_URL + mmapUrl);
+                });
+            });
     });
 });
