@@ -36,7 +36,7 @@ public class FindResultsPage extends AppElement {
     public void unhover() {
         /* click somewhere not important to remove hover -
         * clicking the search term box seems safe... */
-        getDriver().findElement(By.cssSelector("input[name='find-input']")).click();
+        getDriver().findElement(By.cssSelector("input.find-input")).click();
         new WebDriverWait(getDriver(),2).until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("popover"))));
     }
 

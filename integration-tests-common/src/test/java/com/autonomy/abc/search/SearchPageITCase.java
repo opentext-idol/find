@@ -1127,6 +1127,7 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	@KnownBug("CSA-2061")
 	public void testHeadingCount(){
 		searchService.search(new SearchQuery("dog").withFilter(IndexFilter.ALL));
 

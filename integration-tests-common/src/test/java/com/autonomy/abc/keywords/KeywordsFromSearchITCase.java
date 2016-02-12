@@ -443,7 +443,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     }
 
     @Test
-    @KnownBug({"CSA-1719", "CSA-1792"})
+    @KnownBug({"CSA-1719", "CSA-1792", "CSA-2064"})
     public void testBlacklistTermsBehaveAsExpected() throws InterruptedException {
         String blacklistOne = "cheese";
         String blacklistTwo = "mouse";
@@ -452,7 +452,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));
 
         search(blacklistOne, Language.ENGLISH);
-        assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
+        checkNoResults();
 
         getDriver().navigate().refresh();
 
@@ -464,10 +464,15 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistTwo));
 
         search(blacklistTwo, Language.ENGLISH);
-        assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
+        checkNoResults();
 
         search(blacklistOne, Language.ENGLISH);
-        assertThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
+        checkNoResults();
+    }
+
+    private void checkNoResults() {
+        verifyThat(searchPage.getText(), containsString(Errors.Search.NO_RESULTS));
+        verifyThat(searchPage.getHeadingResultsCount(), is(0));
     }
 
     @Test

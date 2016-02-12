@@ -5,10 +5,7 @@ import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -51,10 +48,15 @@ public class HSODLandingPage extends AppElement implements AppPage {
 
     public void clickLogInButton() {
         try {
-            getDriver().findElement(By.id("loginLogout")).click();
+            loginButton().click();
         } catch (NoSuchElementException | ElementNotVisibleException e) {
             LOGGER.error("Already logged in");
         }
+    }
+
+    // TODO: move to DevConsoleTopNavBar
+    public WebElement loginButton(){
+        return findElement(By.id("loginLogout"));
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, HSODLandingPage> {

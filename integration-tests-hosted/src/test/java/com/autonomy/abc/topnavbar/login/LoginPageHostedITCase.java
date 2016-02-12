@@ -2,12 +2,15 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.DevConsole;
 import com.autonomy.abc.selenium.application.HSODFind;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.navigation.DevConsoleElementFactory;
 import com.autonomy.abc.selenium.navigation.HSODFindElementFactory;
 import com.autonomy.abc.selenium.page.devconsole.DevConsoleHomePage;
+import com.autonomy.abc.selenium.page.devconsole.HSODLandingPage;
 import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
@@ -19,6 +22,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.containsString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 /*
@@ -82,6 +87,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         }
     }
 
+    // these tests check that logging in/out of one app also logs in/out of another
     @Test
     public void testLogInSearchOptimizerToFind(){
         User user = config.getDefaultUser();
@@ -111,11 +117,30 @@ public class LoginPageHostedITCase extends HostedTestBase {
         getDriver().navigate().to(config.getFindUrl());
         findFactory.getLoginPage();
 
-
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
 
     @Test
+    @RelatedTo("CSA-1674")
+    public void testLogOutSearchOptimizerRedirect() {
+        loginAs(config.getDefaultUser());
+        logout();
+
+        HSODLandingPage page = null;
+        try {
+            page = devFactory.getHSODPage();
+        } catch (Exception e) {
+            /* noop */
+        }
+
+        verifyThat(page, not(nullValue()));
+        if (page != null) {
+            verifyThat(page.loginButton(), displayed());
+        }
+    }
+
+    @Test
+    @KnownBug("CSA-1854")
     public void testLogOutFindToSearchOptimizer(){
         getElementFactory().getLoginPage();
 
@@ -126,9 +151,11 @@ public class LoginPageHostedITCase extends HostedTestBase {
         findPage.logOut();
 
         findFactory.getLoginPage();
+        verifyThat(getDriver().getCurrentUrl(), containsString("find"));
 
         getDriver().navigate().to(config.getWebappUrl());
         getElementFactory().getLoginPage();
+        verifyThat(getDriver().getCurrentUrl(), containsString("search"));
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }

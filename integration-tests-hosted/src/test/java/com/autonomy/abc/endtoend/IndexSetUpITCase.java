@@ -73,7 +73,6 @@ public class IndexSetUpITCase extends HostedTestBase {
         IndexesDetailPage detailPage = indexService.goToDetails(index);
         LOGGER.info("Adding site " + site + " to index");
         detailPage.addSiteToIndex(site);
-        detailPage.waitForSiteToIndex(site);
     }
 
     private String promoteDocumentInIndex(String trigger) {

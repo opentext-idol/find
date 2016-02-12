@@ -73,6 +73,7 @@ public class FindITCase extends HostedTestBase {
     private KeywordService keywordService;
     private Window searchWindow;
     private Window findWindow;
+    private HSODFind findApp;
 
     public FindITCase(TestConfig config) {
         super(config);
@@ -85,7 +86,8 @@ public class FindITCase extends HostedTestBase {
 
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());
-        findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+        findApp = new HSODFind(findWindow);
+        findPage = findApp.elementFactory().getFindPage();
         results = findPage.getResultsPage();
     }
 
@@ -232,12 +234,13 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3498")
+    @KnownBug({"CCUK-3498", "CSA-2066"})
     public void testRelatedConceptsHover(){
         findPage.search("Find");
         WebElement popover = results.hoverOverRelatedConcept(0);
         verifyThat(popover, hasTextThat(not(isEmptyOrNullString())));
         verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
+        verifyThat(popover.getText(), not(containsString(Errors.Search.RELATED_CONCEPTS)));
         results.unhover();
     }
 
@@ -904,11 +907,12 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1763")
-    public void testPublicIndexesNotSelectedByDefault(){
+    @KnownBug({"CSA-1726", "CSA-1763"})
+    public void testPublicIndexesVisibleNotSelectedByDefault(){
         findPage.search("Marina and the Diamonds");
 
-        verifyThat(findPage.getSelectedPublicIndexes().size(), is(0));
+        verifyThat("public indexes are visible", findPage.indexesTree().publicIndexes(), not(emptyIterable()));
+        verifyThat(findPage.getSelectedPublicIndexes(), empty());
     }
 
     @Test
@@ -997,6 +1001,20 @@ public class FindITCase extends HostedTestBase {
         DocumentViewer docViewer = DocumentViewer.make(getDriver());
         verifyThat(docViewer.getTotalDocumentsNumber(), matcher);
         docViewer.close();
+    }
+
+    @Test
+    @KnownBug("CCUK-3624")
+    public void testRefreshEmptyQuery() throws InterruptedException {
+        findPage.search("something");
+        findPage.search("");
+        Thread.sleep(5000);
+
+        getDriver().navigate().refresh();
+        findPage = findApp.elementFactory().getFindPage();
+
+        verifyThat(findPage.getSearchBoxTerm(), is(""));
+        verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());
     }
 
     private enum FileType {
