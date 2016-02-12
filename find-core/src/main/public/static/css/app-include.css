@@ -285,6 +285,7 @@ html, body {
 .middle-container {
     padding: 10px 15px;
     display: table-cell;
+    vertical-align: top;
 }
 
 .right-side-container h4,
