@@ -40,11 +40,11 @@ public abstract class Connector {
         return connectionStatistics;
     }
 
-    public void setStatistics(ConnectionStatistics connectionStatistics) {
+    void setStatistics(ConnectionStatistics connectionStatistics) {
         this.connectionStatistics = connectionStatistics;
     }
 
-    public void setIndex(Index index) {
+    void setIndex(Index index) {
         this.index = index;
     }
 }

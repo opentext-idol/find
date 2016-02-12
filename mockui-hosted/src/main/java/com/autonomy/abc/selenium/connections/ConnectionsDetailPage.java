@@ -25,7 +25,7 @@ public class ConnectionsDetailPage extends SAASPageBase {
         return menuButton("Back");
     }
 
-    public WebElement deleteButton() {
+    WebElement deleteButton() {
         return menuButton("Delete");
     }
 
@@ -34,15 +34,15 @@ public class ConnectionsDetailPage extends SAASPageBase {
     }
 
     // TODO: this should be a "Checkbox" element
-    public WebElement alsoDeleteIndexCheckbox() {
+    WebElement alsoDeleteIndexCheckbox() {
         return deleteModal().findElement(By.className("iCheck-helper"));
     }
 
-    public WebElement deleteConfirmButton() {
+    WebElement deleteConfirmButton() {
         return deleteModal().findElement(By.cssSelector("button[type=submit]"));
     }
 
-    public List<Integer> lastRun() {
+    List<Integer> lastRun() {
         List<WebElement> lastRunElements = findElements(By.className("highlightDocCountNumber"));
         List<Integer> lastRun = new ArrayList<>();
 

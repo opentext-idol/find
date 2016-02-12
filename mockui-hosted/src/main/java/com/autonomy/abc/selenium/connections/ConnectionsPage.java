@@ -43,11 +43,11 @@ public class ConnectionsPage extends SAASPageBase {
         return findElements(By.cssSelector(".list-group .data-container"));
     }
 
-    public WebElement connectionWithTitleContaining(String name) {
+    WebElement connectionWithTitleContaining(String name) {
         return findElement(By.xpath(".//*[contains(@class, 'listItemTitle')][contains(text(), '" + name + "')]"));
     }
 
-    public WebElement displayedConnectionWithTitleContaining(String name){
+    WebElement displayedConnectionWithTitleContaining(String name){
         for (WebElement connection : findElements(By.xpath(".//*[contains(@class, 'listItemTitle')][contains(text(), '" + name + "')]"))){
             if (connection.isDisplayed()){
                 return connection;

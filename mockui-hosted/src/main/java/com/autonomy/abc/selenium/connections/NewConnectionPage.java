@@ -37,28 +37,16 @@ public class NewConnectionPage extends SAASPageBase {
         return menuButton("Next");
     }
 
-    public WebElement finishButton() {
+    WebElement finishButton() {
         return menuButton("Finish");
     }
 
-    public WebElement cancelButton() {
+    WebElement cancelButton() {
         return menuButton("Cancel");
     }
 
     public AppElement connectorTypeStepTab() {
         return new AppElement(findElement(By.id("stepAnchor1")), getDriver());
-    }
-
-    public AppElement connectorSchedualeStepTab() {
-        return new AppElement(findElement(By.id("stepAnchor2")), getDriver());
-    }
-
-    public AppElement connectorIndexStepTab() {
-        return new AppElement(findElement(By.id("stepAnchor3")), getDriver());
-    }
-
-    public AppElement connectorSummaryStepTab() {
-        return new AppElement(findElement(By.id("stepAnchor4")), getDriver());
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, NewConnectionPage> {

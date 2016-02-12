@@ -7,7 +7,7 @@ public class ConnectionStatistics {
     List<Integer> detected = new ArrayList<>();
     List<Integer> ingested = new ArrayList<>();
 
-    public ConnectionStatistics(List<Integer> statistics){
+    ConnectionStatistics(List<Integer> statistics){
         detected.add(statistics.get(0));
         detected.add(statistics.get(1));
         detected.add(statistics.get(2));
