@@ -781,7 +781,7 @@ input.find-input {
 }
 
 
-.service-view-container {
+.service-view-container, .service-view-sub-container {
     height: 100%;
     width: 100%;
     display: table;
@@ -790,6 +790,10 @@ input.find-input {
 
 .service-view-container .hp-check {
     color: #00b388;
+}
+
+.top-options-container {
+    min-height: 0;
 }
 
 @media only screen and (max-width: 1210px) {
@@ -1116,7 +1120,7 @@ input:-moz-placeholder::before {
 
 .preview-document-frame {
     width: 100%;
-    height: 50vh;
+    height: 100%;
     display: block;
     border: 0;
     padding-top: 10px;
@@ -1140,6 +1144,15 @@ input:-moz-placeholder::before {
 .preview-mode-document-title {
     word-break: break-all;
     white-space: normal !important;
+}
+
+.document-detail-view-container {
+    height: 60vh;
+}
+
+.document-detail-flex-container {
+    display: flex;
+    min-height: 100%;
 }
 
 #cboxLoadedContent .table > tbody > tr > th,

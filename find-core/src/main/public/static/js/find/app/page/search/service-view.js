@@ -3,7 +3,6 @@ define([
     'jquery',
     'underscore',
     'find/app/model/dates-filter-model',
-    'find/app/model/documents-collection',
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
@@ -11,7 +10,6 @@ define([
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
-    'find/app/page/search/results/results-view-augmentation',
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
@@ -25,8 +23,8 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, DocumentsCollection, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
+], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
+            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
             Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
@@ -49,6 +47,7 @@ define([
 
         // Abstract
         ResultsView: null,
+        ResultsViewAugmentation: null,
         IndexesView: null,
 
         events: {
@@ -68,8 +67,8 @@ define([
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
             this.queryState = options.queryState;
+            this.documentsCollection = options.documentsCollection;
 
-            this.documentsCollection = new DocumentsCollection();
             this.entityCollection = new EntityCollection();
 
             this.queryModel = new QueryModel({}, {queryState: this.queryState});
@@ -100,7 +99,7 @@ define([
                 queryTextModel: this.queryState.queryTextModel
             };
 
-            this.resultsViewAugmentation = new ResultsViewAugmentation({
+            this.resultsViewAugmentation = new this.ResultsViewAugmentation({
                 resultsView: new this.ResultsView(constructorArguments)
             });
 

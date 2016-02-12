@@ -5,11 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
+import com.hp.autonomy.searchcomponents.core.search.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;

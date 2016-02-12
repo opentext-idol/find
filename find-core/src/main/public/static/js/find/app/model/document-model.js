@@ -12,8 +12,19 @@ define([
     var ARRAY_FIELDS = ['authors', 'categories'];
     var DATE_FIELDS = ['date', 'dateCreated', 'dateModified'];
 
+    var MEDIA_TYPES = ['audio', 'video'];
+    var WEB_TYPES = ['text/html', 'text/xhtml'];
+
+    function getMediaType(contentType) {
+        return contentType && _.find(MEDIA_TYPES, function (mediaType) {
+            return contentType.indexOf(mediaType) === 0;
+        });
+    }
+
     // Model representing a document in an HOD text index
     return Backbone.Model.extend({
+        url: '../api/public/search/get-document-content',
+
         defaults: _.reduce(ARRAY_FIELDS, function(memo, fieldName) {
             memo[fieldName] = [];
             return memo;
@@ -41,7 +52,19 @@ define([
                 }
             });
 
+            response.media = getMediaType(response.contentType);
+
             return response;
+        },
+
+        isMedia: function() {
+            return Boolean(this.get('media') && this.get('url'));
+        },
+
+        isWebType: function() {
+            var contentType = this.get('contentType');
+
+            return contentType && _.contains(WEB_TYPES, contentType.toLowerCase());
         }
     }, {
         ARRAY_FIELDS: ARRAY_FIELDS,
