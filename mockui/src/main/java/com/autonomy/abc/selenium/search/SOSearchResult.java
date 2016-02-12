@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.Index;
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -12,11 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SOSearchResult extends SearchResult {
-    private WebDriver driver;
-
     public SOSearchResult(WebElement result, WebDriver driver){
-        super(result);
-        this.driver = driver;
+        super(result, driver);
     }
 
     @Override
@@ -55,6 +53,12 @@ public class SOSearchResult extends SearchResult {
     }
 
     public SOCheckbox getCheckbox(){
-        return new SOCheckbox(findElement(By.className("checkbox")), driver);
+        return new SOCheckbox(findElement(By.className("checkbox")), getDriver());
+    }
+
+    @Override
+    public DocumentViewer openDocumentPreview() {
+        title().click();
+        return DocumentViewer.make(getDriver());
     }
 }
