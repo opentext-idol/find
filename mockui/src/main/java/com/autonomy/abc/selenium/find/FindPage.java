@@ -161,6 +161,12 @@ public class FindPage extends AppElement implements AppPage,
         getDriver().findElement(By.className("navigation-logout")).click();
     }
 
+    // this can be used to check whether on the landing page,
+    // as opposed to main reuslts page
+    public WebElement footerLogo() {
+        return findElement(By.className("hp-logo-footer"));
+    }
+
     public List<String> getAlsoSearchingForTerms() {
         return ElementUtil.getTexts(findElements(By.className("selected-related-concept")));
     }

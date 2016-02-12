@@ -48,7 +48,7 @@ public class IndexService extends ServiceBase<HSODElementFactory> {
         goToIndexes();
 
         indexesPage.deleteIndex(index.getDisplayName());
-        waitForIndexDeletion(index.getName());
+        waitForIndexDeletion(index);
 
         return indexesPage;
     }
@@ -60,7 +60,7 @@ public class IndexService extends ServiceBase<HSODElementFactory> {
             if(!index.equals(Index.DEFAULT.getDisplayName())) {
                 try {
                     indexesPage.deleteIndex(index);
-                    waitForIndexDeletion(index);
+                    waitForIndexDeletion(new Index(null, index));
                 } catch (WebDriverException e) {
                     LoggerFactory.getLogger(IndexService.class).error("Could not delete index '" + index + "' because of a " + e.getClass().getSimpleName());
                 }
@@ -70,8 +70,8 @@ public class IndexService extends ServiceBase<HSODElementFactory> {
         return indexesPage;
     }
 
-    private void waitForIndexDeletion(String indexName){
-        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("Index " + indexName + " successfully deleted"));
+    private void waitForIndexDeletion(Index index) {
+        new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining(index.getDeleteNotification()));
     }
 
     public void deleteIndexViaAPICalls(Index index, User user, String apiUrl) {

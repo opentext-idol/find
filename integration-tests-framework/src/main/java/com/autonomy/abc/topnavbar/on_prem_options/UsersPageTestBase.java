@@ -27,6 +27,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected final NewUser aNewUser = config.getNewUser("james");
@@ -130,5 +131,16 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
             verifyThat(usersPage.getEmailOf(user), is(hsoUser.getEmail()));
             verifyThat(usersPage.getStatusOf(user), is(expectedStatus));
         }
+    }
+
+    protected void verifyCreateDeleteInTable(NewUser newUser) {
+        User user = userService.createNewUser(newUser, Role.USER);
+        String username = user.getUsername();
+
+        verifyThat(usersPage.deleteButton(user), displayed());
+        verifyThat(usersPage.getTable(), containsText(username));
+
+        deleteAndVerify(user);
+        verifyThat(usersPage.getTable(), not(containsText(username)));
     }
 }
