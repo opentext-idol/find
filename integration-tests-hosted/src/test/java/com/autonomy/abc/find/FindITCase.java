@@ -234,12 +234,13 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CCUK-3498")
+    @KnownBug({"CCUK-3498", "CSA-2066"})
     public void testRelatedConceptsHover(){
         findPage.search("Find");
         WebElement popover = results.hoverOverRelatedConcept(0);
         verifyThat(popover, hasTextThat(not(isEmptyOrNullString())));
         verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
+        verifyThat(popover.getText(), not(containsString(Errors.Search.RELATED_CONCEPTS)));
         results.unhover();
     }
 

@@ -22,6 +22,7 @@ public class Errors {
         public static final String QUOTES = "Unclosed phrase";
         public static final String NO_TEXT = "No valid query text supplied";
         public static final String BLACKLIST = "All query text has been blocked by white or blacklists";
+        public static final String RELATED_CONCEPTS = "An error occurred fetching top results";
     }
 
     public static class Keywords {
