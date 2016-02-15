@@ -7,8 +7,9 @@ define([
     'js-whatever/js/list-item-view',
     'underscore',
     'i18n!find/nls/bundle',
+    'find/app/model/saved-searches/saved-search-model',
     'text!find/templates/app/page/search/search-tab-item-view.html'
-], function(ListItemView, _, i18n, template) {
+], function(ListItemView, _, i18n, SavedSearchModel, template) {
 
     'use strict';
 
@@ -26,7 +27,8 @@ define([
                 template: templateFunction,
                 templateOptions: {
                     i18n: i18n,
-                    searchCid: cid
+                    searchCid: cid,
+                    isSnapshot: this.model.get('type') === SavedSearchModel.Type.SNAPSHOT
                 }
             }, options));
 
@@ -49,7 +51,7 @@ define([
         updateSavedness: function() {
             var changed = this.queryState ? !this.model.equalsQueryState(this.queryState) : false;
             this.$('.tab-title').toggleClass('bold', this.model.isNew() || changed);
-            this.$('.tab-title i').toggleClass('hide', !this.model.isNew() && !changed);
+            this.$('.tab-title .fa-circle').toggleClass('hide', !this.model.isNew() && !changed);
         },
 
         updateQueryStateListeners: function() {

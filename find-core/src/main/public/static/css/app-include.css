@@ -125,6 +125,13 @@ html, body {
 .bold {
     font-family: Metric-Bold;
 }
+.label-secondary {
+    background-color: #8d9092;
+}
+
+.active .label-secondary {
+    background-color: #614767;
+}
 
 .uppercase {
     text-transform: uppercase;
@@ -349,19 +356,26 @@ html, body {
 
 /* Search tabs */
 .search-tabs-container {
-    background-color: #EFEFEF;
+    background-color: #fff;
     height: 65px;
     border-bottom: 1px solid #E4E4E4;
     padding-top: 5px;
 }
+
 .search-tabs-container .nav-tabs > li > a {
     height: 60px;
     line-height: 22px;
 }
+
+.search-tabs-container .nav-tabs > li.active > a {
+    background-color: #e2e2e2;
+}
+
 .search-tab-title i {
     font-size: 7px;
     vertical-align: super;
 }
+
 .search-tab-title {
     overflow: hidden;
     white-space: nowrap;
@@ -369,8 +383,27 @@ html, body {
     max-width: 150px;
 }
 
+.active .search-tab-title {
+    color: #614767;
+}
+
 .start-new-search i {
     vertical-align: bottom;
+}
+
+.search-tabs-container .nav-tabs > li.start-new-search > a {
+    background-color: transparent;
+    background-image: none;
+    color: #60798d;
+    border: 2px solid;
+    border-radius: 50px;
+    padding: 5px;
+    line-height: 10px;
+    height: 30px;
+}
+
+.search-type {
+    font-size: 10px;
 }
 
 .find {
@@ -794,6 +827,10 @@ input.find-input {
 
 .top-options-container {
     min-height: 0;
+}
+
+.search-options-container {
+    background-color: #e2e2e2;
 }
 
 @media only screen and (max-width: 1210px) {

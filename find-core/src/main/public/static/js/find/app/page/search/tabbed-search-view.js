@@ -12,7 +12,7 @@ define([
     'use strict';
 
     var html = _.template(template)({i18n: i18n});
-    var startNewSearchHtml = _.template('<li class="start-new-search"><a><i class="hp-icon hp-add"></i></a></li>');
+    var startNewSearchHtml = _.template('<li class="start-new-search m-t-md m-l-sm m-r-sm"><a><i class="hp-icon hp-add"></i></a></li>');
 
     return Backbone.View.extend({
         events: {
