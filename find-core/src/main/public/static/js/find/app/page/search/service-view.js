@@ -56,7 +56,7 @@ define([
         SearchFiltersCollection: SearchFiltersCollection,
 
         // Abstract
-        ResultsView: null,
+        ResultsViewAugmentation: null,
         IndexesView: null,
 
         events: {
@@ -106,58 +106,6 @@ define([
                 queryState: this.queryState
             });
 
-            var constructorArguments = {
-                documentsCollection: this.documentsCollection,
-                entityCollection: this.entityCollection,
-                indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel,
-                queryTextModel: this.queryState.queryTextModel
-            };
-
-            this.resultsView = new this.ResultsView(constructorArguments);
-            this.topicMapView = new TopicMapView(constructorArguments);
-            
-            this.resultsViewAugmentation = new ResultsViewAugmentation({
-                resultsView: this.resultsView
-            });
-
-            var resultsViews = [{
-                content: this.resultsViewAugmentation,
-                id: 'list',
-                uniqueId: _.uniqueId('results-view-item-'),
-                selector: {
-                    displayNameKey: 'list',
-                    icon: 'hp-list'
-                }
-            }, {
-                content: this.topicMapView,
-                id: 'topic-map',
-                uniqueId: _.uniqueId('results-view-item-'),
-                selector: {
-                    displayNameKey: 'topic-map',
-                    icon: 'hp-grid'
-                }
-            }];
-
-            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
-                this.rightSideContainerHideToggle(toggle);
-            }, this);
-
-            var resultsViewSelectionModel = new Backbone.Model({
-                // ID of the currently selected tab
-                selectedTab: resultsViews[0].id
-            });
-
-            this.resultsViewSelection = new ResultsViewSelection({
-                views: resultsViews,
-                model: resultsViewSelectionModel
-            });
-
-            this.resultsViewContainer = new ResultsViewContainer({
-                views: resultsViews,
-                model: resultsViewSelectionModel
-            });
-
             var relatedConceptsView = new RelatedConceptsView({
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
@@ -168,6 +116,54 @@ define([
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
             
             if (searchType === SavedSearchModel.Type.QUERY) {
+                var resultsViewConstructorArguments = {
+                    documentsCollection: this.documentsCollection,
+                    entityCollection: this.entityCollection,
+                    indexesCollection: this.indexesCollection,
+                    queryModel: this.queryModel,
+                    queryTextModel: this.queryState.queryTextModel
+                };
+
+                this.resultsViewAugmentation = new this.ResultsViewAugmentation(resultsViewConstructorArguments);
+                this.topicMapView = new TopicMapView(resultsViewConstructorArguments);
+
+                var resultsViews = [{
+                    content: this.resultsViewAugmentation,
+                    id: 'list',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    selector: {
+                        displayNameKey: 'list',
+                        icon: 'hp-list'
+                    }
+                }, {
+                    content: new TopicMapView(resultsViewConstructorArguments),
+                    id: 'topic-map',
+                    uniqueId: _.uniqueId('results-view-item-'),
+                    selector: {
+                        displayNameKey: 'topic-map',
+                        icon: 'hp-grid'
+                    }
+                }];
+
+                this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
+                    this.rightSideContainerHideToggle(toggle);
+                }, this);
+
+                var resultsViewSelectionModel = new Backbone.Model({
+                    // ID of the currently selected tab
+                    selectedTab: resultsViews[0].id
+                });
+
+                this.resultsViewSelection = new ResultsViewSelection({
+                    views: resultsViews,
+                    model: resultsViewSelectionModel
+                });
+
+                this.resultsViewContainer = new ResultsViewContainer({
+                    views: resultsViews,
+                    model: resultsViewSelectionModel
+                });
+
                 this.spellCheckView = new SpellCheckView({
                     documentsCollection: this.documentsCollection,
                     queryModel: this.queryModel
@@ -222,9 +218,6 @@ define([
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
 
-            this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
-            this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
-
             this.$('.container-toggle').on('click', this.containerToggle);
 
             if (searchType === SavedSearchModel.Type.QUERY) {
@@ -233,6 +226,8 @@ define([
                 this.parametricView.setElement(this.$('.parametric-container')).render();
                 this.dateViewWrapper.setElement(this.$('.date-container')).render();
                 this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
+                this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
+                this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
             } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
                 // TODO: Replace with a state token results view
                 this.snapshotDataView.setElement(this.$('.snapshot-view-container')).render();
@@ -283,7 +278,7 @@ define([
 
             safeInvoke('remove', [
                 this.savedSearchControlView,
-                this.resultsView,
+                this.resultsViewAugmentation,
                 this.topicMapView,
                 this.resultsViewContainer,
                 this.resultsViewSelection,

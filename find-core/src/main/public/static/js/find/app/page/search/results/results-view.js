@@ -352,7 +352,7 @@ define([
             //prevent preview mode opening when clicking similar documents
             $similarDocumentsTrigger.on('click', function(e) {
                 e.stopPropagation();
-            })
+            });
         },
 
         handlePopover: function($content, $target) {
