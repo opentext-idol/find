@@ -6,13 +6,12 @@
 define([
     'backbone'
 ], function(Backbone) {
-    return Backbone.Router.extend({
 
+    return Backbone.Router.extend({
         routes: {
             'find/search/query': 'emptySearch',
             'find/search/query/:text(/*refinements)': 'search',
-            'find/:page': 'find',
-            '(*path)': 'defaultRoute'
+            'find/:page': 'find'
         },
 
         navigate: function() {
@@ -31,10 +30,7 @@ define([
 
         emptySearch: function() {
             this.trigger('route:find', 'search');
-        },
-
-        defaultRoute: function() {
-            this.navigate('find/search/query', {trigger: true, replace: true})
         }
     });
+
 });
