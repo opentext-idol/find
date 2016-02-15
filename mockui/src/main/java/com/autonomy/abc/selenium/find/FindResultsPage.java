@@ -137,7 +137,7 @@ public class FindResultsPage extends AppElement {
         return results.subList(0, Math.min(maxResults, results.size()));
     }
 
-    public SearchResult getResult(int i) {
+    public FindSearchResult getResult(int i) {
         return new FindSearchResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
     }
 

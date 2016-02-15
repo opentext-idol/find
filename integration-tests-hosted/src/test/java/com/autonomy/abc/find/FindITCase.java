@@ -43,6 +43,8 @@ import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -402,12 +404,17 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
+    @KnownBug("CCUK-3641")
     public void testAuthor(){
         String author = "FIFA.COM";
 
         findPage.search("football");
         findPage.filterBy(new IndexFilter("Fifa"));
         findPage.filterBy(new ParametricFilter("Author", author));
+
+        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+
+        assertThat(results.resultsDiv(), not(containsText("An error occurred")));
 
         List<FindSearchResult> searchResults = results.getResults();
 
@@ -444,10 +451,10 @@ public class FindITCase extends HostedTestBase {
         String indexTitle = findPage.getPrivateIndexNames().get(1);
         findPage.filterBy(new IndexFilter(indexTitle));
         DocumentViewer docViewer = results.searchResult(1).openDocumentPreview();
-        do{
+        for(int i = 0; i < 5; i++){
             assertThat(docViewer.getIndex().getDisplayName(), is(indexTitle));
             docViewer.next();
-        } while (docViewer.getCurrentDocumentNumber() != 1);
+        }
     }
 
     @Test
@@ -775,7 +782,7 @@ public class FindITCase extends HostedTestBase {
         for (final String hiddenBooleansProximity : hiddenBooleansProximities) {
             findPage.search(hiddenBooleansProximity);
             Waits.loadOrFadeWait();
-            assertThat(findPage.getText(), not(containsString("An error has occurred")));
+            verifyThat(hiddenBooleansProximity + " searched for successfully", findPage.getText(), not(containsString("An error has occurred")));
         }
     }
 
@@ -806,8 +813,16 @@ public class FindITCase extends HostedTestBase {
     //DUPLICATE
     @Test
     public void testWhitespaceSearch() {
+        try {
+            findPage.search(" ");
+        } catch (TimeoutException e) { /* Expected behaviour */ }
+
+        assertThat(findPage.footerLogo(), displayed());
+
+        findPage.search("Kevin Costner");
         findPage.search(" ");
-        assertThat(results, containsText(Errors.Search.STOPWORDS));
+
+        assertThat(findPage.parametricContainer().getText(), not(isEmptyOrNullString()));
     }
 
     @Test
@@ -855,15 +870,15 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    public void testSimilarDocumentsShowUp(){
+    public void testSimilarDocumentsShowUp() throws InterruptedException {
         findPage.search("Doe");
 
-        for (FindSearchResult searchResult : results.getResults()) {
+        for (int i = 1; i <= 5; i++) {
+            FindSearchResult searchResult = results.getResult(i);
             String title = searchResult.getTitleString();
-
             searchResult.similarDocuments().click();
 
-            Waits.loadOrFadeWait();
+            results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
 
             WebElement similarDocumentsPage = getDriver().findElement(By.className("suggest-service-view-container"));
             WebElement similarDocsPageTitle = similarDocumentsPage.findElement(By.cssSelector(".m-b-nil.bold"));
@@ -973,6 +988,8 @@ public class FindITCase extends HostedTestBase {
         scrollToBottom();
         results.getResult(1).openDocumentPreview();
         verifyDocViewerTotalDocuments(lessThanOrEqualTo(60));
+
+        Waits.loadOrFadeWait();
 
         verifyThat(results.resultsDiv(), containsText("No more results found"));
     }
