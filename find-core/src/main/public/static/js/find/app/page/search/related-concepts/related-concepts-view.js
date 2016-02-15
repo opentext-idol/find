@@ -92,6 +92,23 @@ define([
                     var newConcepts = _.union(concepts, [queryText]);
                     this.queryTextModel.set('relatedConcepts', newConcepts);
                 }
+            },
+            'click [data-entity-cluster]': function(e) {
+                var $target = $(e.currentTarget);
+                var queryCluster = Number($target.attr('data-entity-cluster'));
+
+                var currentlyClickedClusterConcepts = _.chain(this.entityCollection.models)
+                    .filter(function(model) { //get all the models in the cluster
+                        return model.get('cluster') === queryCluster;
+                    }, this)
+                    .map(function(model) { //get the text out of those models
+                        return model.get('text');
+                    })
+                    .value();
+
+                var concepts = this.queryTextModel.get('relatedConcepts');
+                var newConcepts = _.union(concepts, currentlyClickedClusterConcepts);
+                this.queryTextModel.set('relatedConcepts', newConcepts);
             }
         },
 
@@ -132,11 +149,12 @@ define([
                             .groupBy(function(model) {
                                 return model.get('cluster');
                             })
-                            .map(function(models) {
+                            .map(function(models, cluster) {
                                 return clusterTemplateFunction({
                                     entities: _.map(models, function(model) {
                                         return model.get('text');
-                                    })
+                                    }),
+                                    cluster: cluster
                                 });
                             })
                             .value()
