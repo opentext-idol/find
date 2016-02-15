@@ -56,7 +56,7 @@ define([
                 }, this.savedSearchModel.attributes));
 
                 this.savedQueryCollection.add(newSearch);
-                this.searchModel.set('selectedSearchCid', newSearch.cid);
+                this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
             },
             'click .save-search-button': function() {
                 this.model.set({error: null, loading: true});
@@ -129,7 +129,7 @@ define([
             this.savedSearchModel = options.savedSearchModel;
             this.documentsCollection = options.documentsCollection;
             this.queryState = options.queryState;
-            this.searchModel = options.searchModel;
+            this.selectedTabModel = options.selectedTabModel;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?

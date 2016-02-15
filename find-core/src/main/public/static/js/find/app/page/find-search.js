@@ -6,7 +6,6 @@
 define([
     'js-whatever/js/base-page',
     'backbone',
-    'find/app/model/search-page-model',
     'find/app/model/dates-filter-model',
     'parametric-refinement/selected-values-collection',
     'find/app/model/indexes-collection',
@@ -27,7 +26,7 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
+], function(BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
             addChangeListener, MergeCollection, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
             databaseNameResolver, router, vent, i18n, _, template) {
 
@@ -56,6 +55,9 @@ define([
         className: 'search-page',
         template: _.template(template),
 
+        // Callback to bind the search bar to the active tab; will be removed and added as the user changes tabs
+        searchChangeCallback: null,
+
         // Abstract
         ServiceView: null,
         documentDetailOptions: null,
@@ -74,8 +76,12 @@ define([
             this.indexesCollection = new IndexesCollection();
             this.indexesCollection.fetch();
 
-            // Model representing high level search page state
-            this.searchModel = new SearchPageModel();
+            this.selectedTabModel = new Backbone.Model({
+                selectedSearchCid: null
+            });
+
+            // Model representing search bar text and related concepts
+            this.searchModel = new QueryTextModel();
 
             // Model mapping saved search cids to query state
             this.queryStates = new Backbone.Model();
@@ -83,7 +89,7 @@ define([
             // Map of saved search cid to ServiceView
             this.serviceViews = {};
 
-            this.listenTo(this.searchModel, 'change:selectedSearchCid', this.selectContentView);
+            this.listenTo(this.selectedTabModel, 'change', this.selectContentView);
 
             this.listenTo(this.searchModel, 'change', function() {
                 // Bind search model to routing
@@ -94,29 +100,14 @@ define([
                 }
 
                 // Create a tab if the user has run a search but has no open tabs
-                if (this.searchModel.get('selectedSearchCid') === null && this.searchModel.get('inputText')) {
-                    this.createNewTab();
+                if (this.selectedTabModel.get('selectedSearchCid') === null && this.searchModel.get('inputText')) {
+                    this.createNewTab(this.searchModel.get('inputText'));
                 }
             });
 
             this.listenTo(this.savedSearchCollection, 'add', function (model) {
-                if (this.searchModel.get('selectedCid') === null) {
-                    this.searchModel.set('selectedCid', model.cid);
-                }
-            });
-
-            addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                var selectedSearchCid = this.searchModel.get('selectedSearchCid');
-
-                if (selectedSearchCid) {
-                    var savedSearch = this.savedSearchCollection.get(selectedSearchCid);
-
-                    if (savedSearch.get('type') === SavedSearchModel.Type.QUERY) {
-                        var queryTextModel = this.serviceViews[selectedSearchCid].queryTextModel;
-                        queryTextModel.set(this.searchModel.pick('inputText', 'relatedConcepts'));
-                    } else {
-                        this.createNewTab();
-                    }
+                if (this.selectedTabModel.get('selectedCid') === null) {
+                    this.selectedTabModel.set('selectedCid', model.cid);
                 }
             });
 
@@ -126,18 +117,14 @@ define([
                 this.queryStates.unset(cid);
                 delete this.serviceViews[cid];
 
-                if (this.searchModel.get('selectedSearchCid') === cid) {
+                if (this.selectedTabModel.get('selectedSearchCid') === cid) {
                     var lastModel = this.savedQueryCollection.last();
 
                     if (lastModel) {
-                        this.searchModel.set('selectedSearchCid', lastModel.cid);
+                        this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
                     } else {
                         // If the user closes their last tab, run a search for *
-                        this.searchModel.set({
-                            selectedSearchCid: null,
-                            inputText: '*',
-                            relatedConcepts: []
-                        });
+                        this.createNewTab();
                     }
                 }
             });
@@ -146,7 +133,7 @@ define([
 
             this.tabView = new TabbedSearchView({
                 savedSearchCollection: this.savedSearchCollection,
-                searchModel: this.searchModel,
+                model: this.selectedTabModel,
                 queryStates: this.queryStates
             });
 
@@ -186,11 +173,12 @@ define([
             this.inputView.setElement(this.$('.input-view-container')).render();
             this.tabView.setElement(this.$('.search-tabs-container')).render();
 
-            if (this.searchModel.get('selectedSearchCid') === null) {
+            if (this.selectedTabModel.get('selectedSearchCid') === null) {
                 this.reducedState();
             } else {
                 this.expandedState();
             }
+
             _.each(this.serviceViews, function(data) {
                 this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
@@ -199,25 +187,30 @@ define([
             this.selectContentView();
         },
 
-        createNewTab: function() {
+        createNewTab: function(queryText) {
             var newSearch = new SavedSearchModel({
-                queryText: this.searchModel.get('inputText'),
-                relatedConcepts: this.searchModel.get('relatedConcepts'),
+                queryText: queryText || '*',
+                relatedConcepts: [],
                 title: i18n['search.newSearch'],
                 type: SavedSearchModel.Type.QUERY
             });
 
             this.savedQueryCollection.add(newSearch);
-            this.searchModel.set('selectedSearchCid', newSearch.cid);
+            this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
         },
 
         selectContentView: function() {
-            var cid = this.searchModel.get('selectedSearchCid');
+            var cid = this.selectedTabModel.get('selectedSearchCid');
 
             _.each(this.serviceViews, function(data) {
                 data.view.$el.addClass('hide');
                 this.stopListening(data.queryTextModel);
             }, this);
+
+            if (this.searchChangeCallback) {
+                this.stopListening(this.searchModel, 'change', this.searchChangeCallback);
+                this.searchChangeCallback = null;
+            }
 
             if (cid) {
                 var viewData;
@@ -264,7 +257,7 @@ define([
                         view: new this.ServiceView({
                             indexesCollection: this.indexesCollection,
                             documentsCollection: documentsCollection,
-                            searchModel: this.searchModel,
+                            selectedTabModel: this.selectedTabModel,
                             savedSearchCollection: this.savedSearchCollection,
                             savedSnapshotCollection: this.savedSnapshotCollection,
                             savedQueryCollection: this.savedQueryCollection,
@@ -277,13 +270,28 @@ define([
                     viewData.view.render();
                 }
 
-                // Don't update the search bar if the search type is query
                 if (searchType === SavedSearchModel.Type.QUERY) {
+                    // Bind the tab content to the search bar
                     addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
                         this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
                     });
 
                     this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+
+                    // Bind the search bar to the tab content
+                    this.searchChangeCallback = addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+                        viewData.queryTextModel.set(this.searchModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                    });
+                } else {
+                    // Don't bind the search bar to the tab content for snapshots; clear the search bar instead
+                    this.searchModel.set({
+                        inputText: '',
+                        relatedConcepts: []
+                    });
+
+                    this.searchChangeCallback = addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+                        this.createNewTab(this.searchModel.get('inputText'));
+                    });
                 }
 
                 viewData.view.$el.removeClass('hide');

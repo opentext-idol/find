@@ -5,8 +5,7 @@ define([
     'find/app/page/search/search-tab-item-view',
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/tabbed-search-view.html',
-    'bootstrap'
+    'text!find/templates/app/page/search/tabbed-search-view.html'
 ], function(Backbone, _, $, TabItemView, ListView, i18n, template) {
 
     'use strict';
@@ -16,8 +15,8 @@ define([
 
     return Backbone.View.extend({
         events: {
-            'shown.bs.tab [data-search-cid]': function(event) {
-                this.searchModel.set('selectedSearchCid', $(event.target).attr('data-search-cid'));
+            'click .search-tab': function(event) {
+                this.model.set('selectedSearchCid', $(event.currentTarget).find('[data-search-cid]').attr('data-search-cid'));
             },
             'click .start-new-search': function() {
                 this.trigger('startNewSearch');
@@ -25,7 +24,6 @@ define([
         },
 
         initialize: function(options) {
-            this.searchModel = options.searchModel;
             this.savedSearchCollection = options.savedSearchCollection;
 
             this.tabListView = new ListView({
@@ -37,7 +35,7 @@ define([
                 }
             });
 
-            this.listenTo(this.searchModel, 'change:selectedSearchCid', this.updateSelectedTab);
+            this.listenTo(this.model, 'change:selectedSearchCid', this.updateSelectedTab);
         },
 
         render: function() {
@@ -48,8 +46,12 @@ define([
         },
 
         updateSelectedTab: function() {
-            var cid = this.searchModel.get('selectedSearchCid');
-            this.$('[data-search-cid="' + cid + '"]').tab('show');
+            var cid = this.model.get('selectedSearchCid');
+            this.$('.search-tab').removeClass('active');
+
+            if (cid) {
+                this.$('[data-search-cid="' + cid + '"]').closest('.search-tab').addClass('active');
+            }
         }
     });
 

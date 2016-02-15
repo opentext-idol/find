@@ -73,7 +73,7 @@ define([
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
-            this.searchModel = options.searchModel;
+            this.selectedTabModel = options.selectedTabModel;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
             this.savedSnapshotCollection = options.savedSnapshotCollection;
@@ -101,7 +101,7 @@ define([
                 savedSearchCollection: this.savedSearchCollection,
                 savedSnapshotCollection: this.savedSnapshotCollection,
                 savedQueryCollection: this.savedQueryCollection,
-                searchModel: this.searchModel,
+                selectedTabModel: this.selectedTabModel,
                 queryModel: this.queryModel,
                 queryState: this.queryState
             });

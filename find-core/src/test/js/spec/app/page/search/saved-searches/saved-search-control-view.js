@@ -114,7 +114,7 @@ define([
             spyOn(this.savedSearchModel, 'destroy');
             spyOn(this.savedSearchModel, 'save').and.returnValue($.Deferred());
 
-            this.searchModel = new Backbone.Model({
+            this.selectedTabModel = new Backbone.Model({
                 selectedSearchCid: this.savedSearchModel.cid
             });
 
@@ -130,7 +130,7 @@ define([
                 savedSearchCollection: this.savedSearchCollection,
                 savedSnapshotCollection: this.savedSnapshotCollection,
                 queryState: this.queryState,
-                searchModel: this.searchModel
+                selectedTabModel: this.selectedTabModel
             };
         });
 
@@ -252,7 +252,7 @@ define([
                 });
 
                 it('switches to the new query tab', function() {
-                    expect(this.searchModel.get('selectedSearchCid')).toBe(this.savedQueryCollection.at(0).cid);
+                    expect(this.selectedTabModel.get('selectedSearchCid')).toBe(this.savedQueryCollection.at(0).cid);
                 });
             });
 

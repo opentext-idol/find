@@ -16,6 +16,7 @@ define([
     var templateFunction = _.template(template);
 
     return ListItemView.extend({
+        className: 'search-tab',
         tagName: 'li',
         queryState: null,
 
@@ -50,8 +51,8 @@ define([
 
         updateSavedness: function() {
             var changed = this.queryState ? !this.model.equalsQueryState(this.queryState) : false;
-            this.$('.tab-title').toggleClass('bold', this.model.isNew() || changed);
-            this.$('.tab-title .fa-circle').toggleClass('hide', !this.model.isNew() && !changed);
+            this.$('.search-tab-anchor').toggleClass('bold', this.model.isNew() || changed);
+            this.$('.search-tab-anchor .fa-circle').toggleClass('hide', !this.model.isNew() && !changed);
         },
 
         updateQueryStateListeners: function() {
