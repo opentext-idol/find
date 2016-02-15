@@ -48,6 +48,8 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String AUTO_CORRECT_PARAM = "auto_correct";
     public static final String DATABASE_PARAM = "database";
 
+    private static final int MAX_SUMMARY_CHARACTERS = 250;
+
     protected final DocumentsService<S, R, E> documentsService;
     protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
@@ -97,7 +99,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     @SuppressWarnings("MethodWithTooManyParameters")
     protected SearchRequest<S> parseRequestParamsToObject(final String text, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final boolean autoCorrect) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate);
-        return new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, sort, highlight, autoCorrect, null);
+        return new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, MAX_SUMMARY_CHARACTERS, sort, highlight, autoCorrect, null);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -114,7 +116,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                                     @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
                                     @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(null, fieldText, databases != null ? databases : Collections.<S>emptyList(), minDate, maxDate);
-        final SuggestRequest<S> suggestRequest = new SuggestRequest<>(reference, queryRestrictions, resultsStart, maxResults, summary, sort, highlight);
+        final SuggestRequest<S> suggestRequest = new SuggestRequest<>(reference, queryRestrictions, resultsStart, maxResults, summary, MAX_SUMMARY_CHARACTERS, sort, highlight);
         return documentsService.findSimilar(suggestRequest);
     }
 
