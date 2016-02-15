@@ -7,6 +7,10 @@ define([
     'backbone'
 ], function(Backbone) {
 
+    function wrapQuotes(concept) {
+        return '"' + concept + '"';
+    }
+
     return Backbone.Model.extend({
         defaults: {
             inputText: '',
@@ -24,7 +28,7 @@ define([
                 return inputText;
             }
 
-            return '(' + inputText + ') AND ' + this.get('relatedConcepts').join(' AND ');
+            return '(' + inputText + ') ' + _.map(this.get('relatedConcepts'), wrapQuotes).join(' ');
         }
     });
 
