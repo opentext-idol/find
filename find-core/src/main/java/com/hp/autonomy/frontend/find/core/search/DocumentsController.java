@@ -48,7 +48,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String AUTO_CORRECT_PARAM = "auto_correct";
     public static final String DATABASE_PARAM = "database";
 
-    public static final int MAX_SUMMARY_CHARACTERS = 250;
+    private static final int MAX_SUMMARY_CHARACTERS = 250;
 
     public static final int FIND_SIMILAR_MAX_RESULTS = 3;
 
