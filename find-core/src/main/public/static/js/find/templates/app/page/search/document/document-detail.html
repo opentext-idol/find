@@ -11,10 +11,15 @@
     <div class="row">
         <div class="col-md-12">
             <h1><%- title %></h1>
-            <% if(href) { %>
-                <button type="button" class="detail-view-open-button btn button-secondary m-b-nil m-t-xs">
+            <% if (mmapBaseUrl && mmapUrl) { %>
+                <a class="document-detail-mmap-link btn btn-white m-b-nil m-t-xs" href="<%-mmapBaseUrl + mmapUrl%>" target="_blank">
+                    <i class="fa fa-external-link"></i>
+                    <%-i18n['search.preview.mmap']%>
+                </a>
+            <% } else if(href) { %>
+                <a class="document-detail-open-original-link btn button-secondary m-b-nil m-t-xs" href="<%= href %>" target="_blank">
                     <%- i18n['search.document.detail.openOriginal'] %>
-                </button>
+                </a>
             <% } %>
         </div>
     </div>

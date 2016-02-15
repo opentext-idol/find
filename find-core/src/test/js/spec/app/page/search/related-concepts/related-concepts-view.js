@@ -184,7 +184,9 @@ define([
                     it('appends the clicked concept to the query text model related concepts', function() {
                         expect(this.queryTextModel.get('relatedConcepts')).toEqual([
                             'blood',
-                            'fruit'
+                            'fruit',
+                            'juice',
+                            'squeeze'
                         ]);
                     });
                 });

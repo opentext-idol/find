@@ -11,10 +11,11 @@ define([
     'find/app/util/view-server-client',
     'js-whatever/js/list-view',
     'find/app/page/search/document/document-detail-tabs',
+    'find/app/configuration',
     'text!find/templates/app/page/search/document/document-detail.html',
     'text!find/templates/app/page/search/document/preview-mode-document.html',
     'text!find/templates/app/page/view/media-player.html'
-], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, template, documentTemplate, mediaTemplate) {
+], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, template, documentTemplate, mediaTemplate) {
     'use strict';
 
     var isUrlRegex = /^https?:\/\//;
@@ -53,7 +54,9 @@ define([
                 i18n: i18n,
                 title: this.model.get('title'),
                 href: this.documentHref,
-                tabs: this.tabs
+                tabs: this.tabs,
+                mmapBaseUrl: configuration().mmapBaseUrl,
+                mmapUrl: this.model.get('mmapUrl')
             }));
 
             this.renderDocument();
