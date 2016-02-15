@@ -64,7 +64,7 @@ define([
                 this.parametricCollection.reset();
                 this.model.set({processing: true, error: false});
 
-                if(!this.queryModel.get('queryText')) {
+                if(!this.queryModel.get('queryText') || this.queryModel.get('indexes').length === 0) {
                     this.model.set('processing', false);
                 } else {
                     this.parametricCollection.fetch({
