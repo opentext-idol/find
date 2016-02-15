@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.comparison;
 
+import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -40,12 +41,12 @@ public class ComparisonServiceImpl<S extends Serializable, R extends SearchResul
 
     @Override
     public Documents<R> getResults(final List<String> stateMatchIds, final List<String> stateDontMatchIds, final int resultsStart, final int maxResults, final String summary, final String sort, final boolean highlight) throws E {
-        if(stateMatchIds.size() == 0) {
+        if(stateMatchIds.isEmpty()) {
             return getEmptyResults();
         }
 
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build("*", "", Collections.<S>emptyList(), null, null, stateMatchIds, stateDontMatchIds);
-        final SearchRequest<S> searchRequest = new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, sort, highlight, false, SearchRequest.QueryType.RAW);
+        final SearchRequest<S> searchRequest = new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, DocumentsController.MAX_SUMMARY_CHARACTERS, sort, highlight, false, SearchRequest.QueryType.RAW);
         return documentsService.queryTextIndex(searchRequest);
     }
 

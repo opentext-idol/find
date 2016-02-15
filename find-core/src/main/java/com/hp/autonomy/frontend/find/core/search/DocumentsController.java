@@ -5,7 +5,13 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.*;
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndex;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.types.requests.Documents;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,15 +38,17 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     public static final String RESULTS_START_PARAM = "start";
     public static final String MAX_RESULTS_PARAM = "max_results";
     public static final String SUMMARY_PARAM = "summary";
+    public static final String INDEXES_PARAM = "indexes";
     public static final String FIELD_TEXT_PARAM = "field_text";
     public static final String SORT_PARAM = "sort";
     public static final String MIN_DATE_PARAM = "min_date";
     public static final String MAX_DATE_PARAM = "max_date";
     public static final String HIGHLIGHT_PARAM = "highlight";
     public static final String REFERENCE_PARAM = "reference";
-    public static final String INDEXES_PARAM = "indexes";
     public static final String AUTO_CORRECT_PARAM = "auto_correct";
     public static final String DATABASE_PARAM = "database";
+
+    public static final int MAX_SUMMARY_CHARACTERS = 250;
 
     public static final int FIND_SIMILAR_MAX_RESULTS = 3;
 
@@ -58,7 +66,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
     @ResponseBody
     public Documents<R> query(@RequestParam(TEXT_PARAM) final String text,
-                              @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
+                              @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
                               @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
                               @RequestParam(SUMMARY_PARAM) final String summary,
                               @RequestParam(INDEXES_PARAM) final List<S> index,
@@ -66,8 +74,8 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                               @RequestParam(value = SORT_PARAM, required = false) final String sort,
                               @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                               @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
-                              @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight,
-                              @RequestParam(value = AUTO_CORRECT_PARAM, required = false, defaultValue = "true") final boolean autoCorrect) throws E {
+                              @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
+                              @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect) throws E {
         final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, resultsStart, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, autoCorrect);
         return documentsService.queryTextIndex(searchRequest);
     }
@@ -76,7 +84,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     @RequestMapping(value = PROMOTIONS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public Documents<R> queryForPromotions(@RequestParam(TEXT_PARAM) final String text,
-                                           @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
+                                           @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
                                            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
                                            @RequestParam(SUMMARY_PARAM) final String summary,
                                            @RequestParam(INDEXES_PARAM) final List<S> index,
@@ -84,8 +92,8 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
                                            @RequestParam(value = SORT_PARAM, required = false) final String sort,
                                            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
-                                           @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight,
-                                           @RequestParam(value = AUTO_CORRECT_PARAM, required = false, defaultValue = "true") final boolean autoCorrect) throws E {
+                                           @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
+                                           @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect) throws E {
         final SearchRequest<S> searchRequest = parseRequestParamsToObject(text, resultsStart, maxResults, summary, index, fieldText, sort, minDate, maxDate, highlight, autoCorrect);
         return documentsService.queryTextIndexForPromotions(searchRequest);
     }
@@ -93,7 +101,7 @@ public abstract class DocumentsController<S extends Serializable, R extends Sear
     @SuppressWarnings("MethodWithTooManyParameters")
     protected SearchRequest<S> parseRequestParamsToObject(final String text, final int resultsStart, final int maxResults, final String summary, final List<S> databases, final String fieldText, final String sort, final DateTime minDate, final DateTime maxDate, final boolean highlight, final boolean autoCorrect) {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(text, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
-        return new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, sort, highlight, autoCorrect, null);
+        return new SearchRequest<>(queryRestrictions, resultsStart, maxResults, summary, MAX_SUMMARY_CHARACTERS, sort, highlight, autoCorrect, null);
     }
 
     @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)
