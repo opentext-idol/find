@@ -109,8 +109,14 @@ define([
                 var selectedSearchCid = this.searchModel.get('selectedSearchCid');
 
                 if (selectedSearchCid) {
-                    var queryTextModel = this.serviceViews[selectedSearchCid].queryTextModel;
-                    queryTextModel.set(this.searchModel.pick('inputText', 'relatedConcepts'));
+                    var savedSearch = this.savedSearchCollection.get(selectedSearchCid);
+
+                    if (savedSearch.get('type') === SavedSearchModel.Type.QUERY) {
+                        var queryTextModel = this.serviceViews[selectedSearchCid].queryTextModel;
+                        queryTextModel.set(this.searchModel.pick('inputText', 'relatedConcepts'));
+                    } else {
+                        this.createNewTab();
+                    }
                 }
             });
 
@@ -216,11 +222,11 @@ define([
             if (cid) {
                 var viewData;
                 var savedSearchModel = this.savedSearchCollection.get(cid);
+                var searchType = savedSearchModel.get('type');
 
                 if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
-                    var searchType = savedSearchModel.get('type');
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
                     var documentsCollection = new DocumentsCollection();
 
@@ -233,7 +239,7 @@ define([
                     var initialSelectedIndexes;
                     var savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
 
-                    // TODO: Check if the saved indexes still exists?
+                    // TODO: Check if the saved indexes still exist?
                     if (savedSelectedIndexes.length === 0 && searchType === SavedSearchModel.Type.QUERY) {
                         if (this.indexesCollection.isEmpty()) {
                             initialSelectedIndexes = [];
@@ -271,11 +277,15 @@ define([
                     viewData.view.render();
                 }
 
-                addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
-                    this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
-                });
+                // Don't update the search bar if the search type is query
+                if (searchType === SavedSearchModel.Type.QUERY) {
+                    addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+                        this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                    });
 
-                this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                    this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
+                }
+
                 viewData.view.$el.removeClass('hide');
             }
         },
