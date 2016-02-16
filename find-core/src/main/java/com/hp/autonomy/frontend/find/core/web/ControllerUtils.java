@@ -28,6 +28,7 @@ public interface ControllerUtils {
             String subMessageCode,
             Object[] subMessageArguments,
             Integer statusCode,
-            boolean contactSupport
+            boolean contactSupport,
+            Exception exception
     );
 }

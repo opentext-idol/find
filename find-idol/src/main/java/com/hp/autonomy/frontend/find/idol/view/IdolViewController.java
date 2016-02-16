@@ -60,7 +60,7 @@ public class IdolViewController extends ViewController<String, AciErrorException
 
         log.info(Markers.AUDIT, "TRIED TO VIEW NON EXISTENT DOCUMENT WITH REFERENCE {}", reference);
 
-        return controllerUtils.buildErrorModelAndView(request, "error.documentNotFound", "error.referenceDoesNotExist", new Object[]{reference}, HttpStatus.NOT_FOUND.value(), true);
+        return controllerUtils.buildErrorModelAndView(request, "error.documentNotFound", "error.referenceDoesNotExist", new Object[]{reference}, HttpStatus.NOT_FOUND.value(), true, e);
     }
 
     @ExceptionHandler
@@ -77,7 +77,7 @@ public class IdolViewController extends ViewController<String, AciErrorException
 
         log.info(Markers.AUDIT, "TRIED TO VIEW DOCUMENT WITH REFERENCE {} BUT THE REFERENCE FIELD {} WAS MISSING", reference, referenceField);
 
-        return controllerUtils.buildErrorModelAndView(request, "error.documentNoReferenceField", "error.documentNoReferenceFieldExtended", new Object[]{reference, referenceField}, HttpStatus.BAD_REQUEST.value(), true);
+        return controllerUtils.buildErrorModelAndView(request, "error.documentNoReferenceField", "error.documentNoReferenceFieldExtended", new Object[]{reference, referenceField}, HttpStatus.BAD_REQUEST.value(), true, e);
     }
 
     @ExceptionHandler(ReferenceFieldBlankException.class)
@@ -90,7 +90,7 @@ public class IdolViewController extends ViewController<String, AciErrorException
 
         log.info(Markers.AUDIT, "TRIED TO VIEW A DOCUMENT USING A BLANK REFERENCE FIELD");
 
-        return controllerUtils.buildErrorModelAndView(request, "error.referenceFieldBlankMain", "error.referenceFieldBlankSub", null, HttpStatus.BAD_REQUEST.value(), true);
+        return controllerUtils.buildErrorModelAndView(request, "error.referenceFieldBlankMain", "error.referenceFieldBlankSub", null, HttpStatus.BAD_REQUEST.value(), true, null);
     }
 
     @ExceptionHandler
@@ -106,6 +106,6 @@ public class IdolViewController extends ViewController<String, AciErrorException
 
         log.info(Markers.AUDIT, "TRIED TO VIEW DOCUMENT WITH REFERENCE {} BUT VIEW SERVER RETURNED AN ERROR PAGE", reference);
 
-        return controllerUtils.buildErrorModelAndView(request, "error.viewServerErrorMain", "error.viewServerErrorSub", new Object[]{reference}, HttpStatus.INTERNAL_SERVER_ERROR.value(), true);
+        return controllerUtils.buildErrorModelAndView(request, "error.viewServerErrorMain", "error.viewServerErrorSub", new Object[]{reference}, HttpStatus.INTERNAL_SERVER_ERROR.value(), true, e);
     }
 }

@@ -18,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.UUID;
 
 @Controller
 @Slf4j
@@ -32,7 +31,7 @@ public class CustomErrorController {
 
     @RequestMapping(DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH)
     public ModelAndView authenticationErrorPage(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        return controllerUtils.buildErrorModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null, response.getStatus(), false);
+        return controllerUtils.buildErrorModelAndView(request, "error.authenticationErrorMain", "error.authenticationErrorSub", null, response.getStatus(), false, null);
     }
 
     @RequestMapping(DispatcherServletConfiguration.CLIENT_AUTHENTICATION_ERROR_PATH)
@@ -40,31 +39,18 @@ public class CustomErrorController {
             @RequestParam("statusCode") final int statusCode,
             final HttpServletRequest request
     ) throws ServletException, IOException {
-        return controllerUtils.buildErrorModelAndView(request, "error.clientAuthenticationErrorMain", "error.clientAuthenticationErrorSub", null, statusCode, false);
+        return controllerUtils.buildErrorModelAndView(request, "error.clientAuthenticationErrorMain", "error.clientAuthenticationErrorSub", null, statusCode, false, null);
     }
 
     @RequestMapping(DispatcherServletConfiguration.SERVER_ERROR_PATH)
     public ModelAndView serverErrorPage(final HttpServletRequest request, final HttpServletResponse response) {
         final Exception exception = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
-        final String subMessageCode;
-        final Object[] subMessageArguments;
 
-        if (exception != null) {
-            final UUID uuid = UUID.randomUUID();
-            log.error("Exception with UUID {}", uuid);
-            log.error("Stack trace", exception);
-            subMessageCode = "error.internalServerErrorSub";
-            subMessageArguments = new Object[]{uuid};
-        } else {
-            subMessageCode = "error.internalServerErrorSub.noUuid";
-            subMessageArguments = null;
-        }
-
-        return controllerUtils.buildErrorModelAndView(request, "error.internalServerErrorMain", subMessageCode, subMessageArguments, response.getStatus(), true);
+        return controllerUtils.buildErrorModelAndView(request, "error.internalServerErrorMain", "error.internalServerErrorSub", null, response.getStatus(), true, exception);
     }
 
     @RequestMapping(DispatcherServletConfiguration.NOT_FOUND_ERROR_PATH)
     public ModelAndView notFoundError(final HttpServletRequest request, final HttpServletResponse response) {
-        return controllerUtils.buildErrorModelAndView(request, "error.notFoundMain", "error.notFoundSub", null, response.getStatus(), true);
+        return controllerUtils.buildErrorModelAndView(request, "error.notFoundMain", "error.notFoundSub", null, response.getStatus(), true, null);
     }
 }

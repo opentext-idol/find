@@ -40,7 +40,7 @@ public abstract class AbstractViewControllerTest<C extends ViewController<S, E>,
     @Before
     public void setUp() {
         response = new MockHttpServletResponse();
-        when(controllerUtils.buildErrorModelAndView(any(HttpServletRequest.class), anyString(), anyString(), any(Object[].class), any(Integer.class), anyBoolean())).thenReturn(mock(ModelAndView.class));
+        when(controllerUtils.buildErrorModelAndView(any(HttpServletRequest.class), anyString(), anyString(), any(Object[].class), any(Integer.class), anyBoolean(), any(Exception.class))).thenReturn(mock(ModelAndView.class));
     }
 
     protected abstract S getSampleDatabase();

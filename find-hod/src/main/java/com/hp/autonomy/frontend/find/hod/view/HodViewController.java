@@ -24,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/api/public/view")
@@ -55,7 +54,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
     ) {
         response.reset();
 
-        log.error("IodErrorException thrown while viewing document", e);
+        log.error("HodErrorException thrown while viewing document", e);
 
         final String errorKey = HOD_ERROR_MESSAGE_CODE_PREFIX + e.getErrorCode();
         String hodErrorMessage;
@@ -81,7 +80,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
 
         response.setStatus(errorCode);
 
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_MAIN, subMessageCode, subMessageArgs, errorCode, true);
+        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_MAIN, subMessageCode, subMessageArgs, errorCode, true, e);
     }
 
     @ExceptionHandler
@@ -95,7 +94,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
 
         log.error("HodAuthenticationFailedException thrown while viewing document", e);
 
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_MAIN, HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED, null, HttpServletResponse.SC_FORBIDDEN, false);
+        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_MAIN, HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED, null, HttpServletResponse.SC_FORBIDDEN, false, null);
     }
 
     @ExceptionHandler
@@ -107,10 +106,6 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
     ) {
         response.reset();
 
-        final UUID uuid = UUID.randomUUID();
-        log.error("Unhandled exception with uuid {}", uuid);
-        log.error("Stack trace", e);
-
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN, HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB, new Object[]{uuid}, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, true);
+        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN, HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, true, e);
     }
 }

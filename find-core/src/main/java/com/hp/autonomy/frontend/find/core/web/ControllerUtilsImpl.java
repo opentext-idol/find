@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,9 +19,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Component
+@Slf4j
 public class ControllerUtilsImpl implements ControllerUtils {
     private static final Pattern JSON_ESCAPE_PATTERN = Pattern.compile("</", Pattern.LITERAL);
 
@@ -54,7 +57,8 @@ public class ControllerUtilsImpl implements ControllerUtils {
             final String subMessageCode,
             final Object[] subMessageArguments,
             final Integer statusCode,
-            final boolean contactSupport
+            final boolean contactSupport,
+            final Exception exception
     ) {
         final ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addObject("mainMessage", getMessage(mainMessageCode, null));
@@ -62,7 +66,14 @@ public class ControllerUtilsImpl implements ControllerUtils {
         modelAndView.addObject("baseUrl", getBaseUrl(request));
         modelAndView.addObject("statusCode", statusCode);
         if (contactSupport) {
-            modelAndView.addObject("contactSupport", getMessage("error.contactSupport", null));
+            if(exception != null) {
+                final UUID uuid = UUID.randomUUID();
+                log.error("Unhandled exception with uuid {}", uuid);
+                log.error("Stack trace", exception);
+                modelAndView.addObject("contactSupport", getMessage("error.contactSupportUUID", new Object[]{uuid}));
+            } else {
+                modelAndView.addObject("contactSupport", getMessage("error.contactSupportNoUUID", null));
+            }
         }
         modelAndView.addObject(MvcConstants.GIT_COMMIT.value(), commit);
 
