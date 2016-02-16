@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.analytics;
 
+import com.autonomy.abc.selenium.analytics.DashboardBase;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -14,7 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.Arrays;
 import java.util.List;
 
-public class AnalyticsPage extends AppElement implements AppPage {
+public class AnalyticsPage extends AppElement implements DashboardBase {
 
     private AnalyticsPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
