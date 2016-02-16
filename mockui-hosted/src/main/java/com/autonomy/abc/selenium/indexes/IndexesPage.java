@@ -1,6 +1,5 @@
-package com.autonomy.abc.selenium.page.indexes;
+package com.autonomy.abc.selenium.indexes;
 
-import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;

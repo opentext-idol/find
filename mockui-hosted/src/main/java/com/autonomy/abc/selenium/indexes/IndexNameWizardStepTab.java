@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.indexes.wizard;
+package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.page.SAASPageBase;

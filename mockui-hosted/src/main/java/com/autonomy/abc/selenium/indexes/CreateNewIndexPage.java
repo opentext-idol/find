@@ -1,9 +1,6 @@
-package com.autonomy.abc.selenium.page.indexes;
+package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.page.SAASPageBase;
-import com.autonomy.abc.selenium.page.indexes.wizard.IndexConfigStepTab;
-import com.autonomy.abc.selenium.page.indexes.wizard.IndexNameWizardStepTab;
-import com.autonomy.abc.selenium.page.indexes.wizard.IndexSummaryStepTab;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
