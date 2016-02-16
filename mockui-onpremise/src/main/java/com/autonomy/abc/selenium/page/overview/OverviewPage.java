@@ -11,7 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class OverviewPage extends AppElement implements DashboardBase {
+public class OverviewPage extends DashboardBase {
 
     private OverviewPage(final WebDriver driver) {
         super(driver.findElement(By.cssSelector(".wrapper-content")), driver);

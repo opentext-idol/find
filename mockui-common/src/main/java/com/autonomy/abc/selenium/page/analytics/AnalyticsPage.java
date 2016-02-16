@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.Arrays;
 import java.util.List;
 
-public class AnalyticsPage extends AppElement implements DashboardBase {
+public class AnalyticsPage extends DashboardBase {
 
     private AnalyticsPage(WebDriver driver) {
         super(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("wrapper-content"))), driver);
