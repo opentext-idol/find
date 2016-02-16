@@ -234,14 +234,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
-	public void viewFrameClick(final boolean clickLogo, final int resultIndex) {
-		if (clickLogo) {
-			docLogo(resultIndex).click();
-		} else {
-			getSearchResult(resultIndex).title().click();
-		}
-	}
-
 	public WebElement docLogo(final int searchResultNumber) {
 		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
 	}
@@ -277,17 +269,14 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return keywordsContainer().keywords().size();
 	}
 
-	// TODO: use keywordsContainer
 	public int countSynonymLists() {
-		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
+		return keywordsContainer().synonymGroups().size();
 	}
 
-	// TODO: use keywordsContainer
-	@Deprecated
-	public List<String> getLeadSynonymsList() {
+	public List<String> getFirstSynonymInGroup() {
 		final List<String> leadSynonyms = new ArrayList<>();
-		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {
-			leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());
+		for(SynonymGroup group : keywordsContainer().synonymGroups()){
+			leadSynonyms.add(group.getSynonyms().get(0));
 		}
 		return leadSynonyms;
 	}

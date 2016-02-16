@@ -270,10 +270,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	/* waits */
-	public WebElement waitForDocLogo() {
-		return new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fa-file-o")));
-	}
-
 	public void waitForSearchLoadIndicatorToDisappear() {
 		waitForSearchLoadIndicatorToDisappear(30);
 	}
