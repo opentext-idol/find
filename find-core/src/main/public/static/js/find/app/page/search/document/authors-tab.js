@@ -7,7 +7,7 @@ define([
     'backbone',
     'underscore',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/document/authors-tab.html',
+    'text!find/templates/app/page/search/document/authors-tab.html'
 ], function(Backbone, _, i18n, template) {
     'use strict';
 
