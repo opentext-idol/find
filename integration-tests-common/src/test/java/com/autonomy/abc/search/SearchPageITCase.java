@@ -443,16 +443,16 @@ public class SearchPageITCase extends ABCTestBase {
 		search("army");
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
-		for (final boolean clickLogo : Arrays.asList(true, false)) {
-			for (int page = 1; page <= 2; page++) {
-				for (int result = 1; result <= 6; result++) {
-					Waits.loadOrFadeWait();
-					searchPage.viewFrameClick(clickLogo, result);
-					checkViewResult();
-				}
-
-				searchPage.switchResultsPage(Pagination.NEXT);
+		for (int page = 1; page <= 2; page++) {
+			for (int result = 1; result <= 6; result++) {
+				Waits.loadOrFadeWait();
+				searchPage.docLogo(result).click();
+				checkViewResult();
+				searchPage.getSearchResult(1).title().click();
+				checkViewResult();
 			}
+
+			searchPage.switchResultsPage(Pagination.NEXT);
 		}
 	}
 

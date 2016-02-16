@@ -135,13 +135,12 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         searchPage.selectLanguage(Language.FRENCH);
 
-        searchPage.waitForSearchLoadIndicatorToDisappear();
-
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
             new IndexFilter("news_eng").apply(searchPage);
         }
 
-        searchPage.waitForDocLogo();
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+
         final List<String> searchTerms = searchPage.youSearchedFor();
         assertThat("search for 1 synonym after creating synonym group", searchTerms, hasSize(1));
         assertThat(searchTerms.get(0), isIn(Arrays.asList("stuff", "horse", "pony", "things")));
