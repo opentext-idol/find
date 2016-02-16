@@ -5,21 +5,22 @@
 
 define([
     'backbone',
+    'jquery',
     'find/app/util/test-browser',
     'find/app/vent'
-], function(Backbone, testBrowser, vent) {
-    return Backbone.View.extend({
+], function(Backbone, $, testBrowser, vent) {
 
+    return Backbone.View.extend({
         el: '.page',
 
         initialize: function() {
-            jQuery.ajaxSetup({ cache: false });
+            $.ajaxSetup({ cache: false });
 
             this.render();
 
-            Backbone.history.start();
+            var matchedRoute = Backbone.history.start();
 
-            if (!window.location.hash || window.location.hash === "#undefined" || window.location.hash === "undefined") {
+            if (!matchedRoute) {
                 vent.navigate(this.defaultRoute);
             }
 
@@ -38,4 +39,5 @@ define([
             return {};
         }
     });
+
 });

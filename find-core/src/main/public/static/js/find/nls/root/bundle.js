@@ -77,6 +77,7 @@ define([
         'search.document.detail.back': 'Back',
         'search.document.detail.open': 'Open',
         'search.document.detail.openOriginal': 'Open Original',
+        'search.document.detail.tabs.authors': 'Authors',
         'search.document.detail.tabs.metadata': 'Metadata',
         'search.document.domain': 'Domain',
         'search.document.index': 'Index',

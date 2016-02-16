@@ -12,7 +12,8 @@
         <div class="col-md-12">
             <h1><%- title %></h1>
             <% if (mmapBaseUrl && mmapUrl) { %>
-                <a class="document-detail-mmap-link btn button-secondary m-b-nil m-t-xs" href="<%-mmapBaseUrl + mmapUrl%>" target="_blank">
+                <a class="document-detail-mmap-link btn btn-white m-b-nil m-t-xs" href="<%-mmapBaseUrl + mmapUrl%>" target="_blank">
+                    <i class="fa fa-external-link"></i>
                     <%-i18n['search.preview.mmap']%>
                 </a>
             <% } else if(href) { %>

@@ -126,6 +126,10 @@ html, body {
     font-family: Metric-Bold;
 }
 
+.italic {
+    font-style: italic;
+}
+
 .uppercase {
     text-transform: uppercase;
 }
