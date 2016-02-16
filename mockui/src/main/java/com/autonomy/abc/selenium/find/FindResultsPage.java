@@ -90,6 +90,10 @@ public class FindResultsPage extends AppElement {
         return findElement(By.className("popover"));
     }
 
+    public int getResultsCount() {
+        return getResultTitles().size();
+    }
+
     public enum DateEnum {
         WEEK,
         MONTH,

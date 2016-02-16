@@ -820,8 +820,11 @@ public class FindITCase extends HostedTestBase {
         assertThat(findPage.footerLogo(), displayed());
 
         findPage.search("Kevin Costner");
+        List<String> resultTitles = results.getResultTitles();
+
         findPage.search(" ");
 
+        assertThat(results.getResultTitles(), is(resultTitles));
         assertThat(findPage.parametricContainer().getText(), not(isEmptyOrNullString()));
     }
 
