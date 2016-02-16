@@ -1,6 +1,5 @@
-package com.autonomy.abc.selenium.page.promotions;
+package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 

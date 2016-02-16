@@ -1,10 +1,7 @@
-package com.autonomy.abc.selenium.page.promotions;
+package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
-import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 

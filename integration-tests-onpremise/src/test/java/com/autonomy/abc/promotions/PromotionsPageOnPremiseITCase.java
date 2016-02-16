@@ -4,7 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
