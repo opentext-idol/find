@@ -1,7 +1,7 @@
 package com.autonomy.abc.matchers;
 
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;

@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.promotions;
+package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.util.ElementUtil;

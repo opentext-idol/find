@@ -18,7 +18,7 @@ import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
 import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.HSOSearchPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;

@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
 import com.autonomy.abc.selenium.util.Waits;
 
 public abstract class Promotion {

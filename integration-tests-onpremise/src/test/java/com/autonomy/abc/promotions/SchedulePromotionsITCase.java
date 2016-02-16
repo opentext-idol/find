@@ -7,7 +7,7 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.SchedulePage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;

@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
 
 
 public class StaticPromotion extends Promotion {

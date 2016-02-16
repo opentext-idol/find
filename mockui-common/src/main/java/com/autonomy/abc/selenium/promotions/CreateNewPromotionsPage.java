@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.promotions;
+package com.autonomy.abc.selenium.promotions;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
