@@ -14,8 +14,6 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
 public class DevConsoleITCase extends HostedTestBase {
-    private DevConsoleElementFactory devFactory;
-
     private HSODLandingPage devConsole;
 
     // TODO: this test should get all urls from config
@@ -27,7 +25,7 @@ public class DevConsoleITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        devFactory = new DevConsole(getMainSession().getActiveWindow()).elementFactory();
+        DevConsoleElementFactory devFactory = new DevConsole(getMainSession().getActiveWindow()).elementFactory();
 
         devFactory.getHSODPage().clickLogInButton();
 

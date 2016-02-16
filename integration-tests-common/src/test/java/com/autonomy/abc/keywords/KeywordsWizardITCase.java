@@ -47,7 +47,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsWizardITCase.class); 
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage createKeywordsPage;
-    private SearchPage searchPage;
     private KeywordService keywordService;
     private TriggerForm triggerForm;
 
@@ -130,7 +129,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
         Waits.loadOrFadeWait();
-        searchPage = getElementFactory().getSearchPage();
+        SearchPage searchPage = getElementFactory().getSearchPage();
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
         searchPage.selectLanguage(Language.FRENCH);

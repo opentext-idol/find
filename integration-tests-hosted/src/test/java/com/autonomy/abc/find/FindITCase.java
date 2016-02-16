@@ -387,17 +387,14 @@ public class FindITCase extends HostedTestBase {
         for(FindSearchResult searchResult : results.getResults(5)){
             String url = searchResult.getReference();
 
-            DocumentViewer docViewer = null;
-
             try {
-                docViewer = searchResult.openDocumentPreview();
+                DocumentViewer docViewer = searchResult.openDocumentPreview();
+                verifyThat(docViewer.getIndex(), is(Index.DEFAULT));
+                verifyThat(docViewer.getReference(), is(url));
+                docViewer.close();
             } catch (WebDriverException e) {
                 fail("Could not click on title - most likely CSA-1767");
             }
-
-            verifyThat(docViewer.getIndex(), is(Index.DEFAULT));
-            verifyThat(docViewer.getReference(), is(url));
-            docViewer.close();
         }
     }
 

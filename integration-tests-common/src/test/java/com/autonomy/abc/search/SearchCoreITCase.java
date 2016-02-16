@@ -14,7 +14,6 @@ import static org.hamcrest.Matchers.not;
 
 @Category(CoreFeature.class)
 public class SearchCoreITCase extends ABCTestBase {
-    private SearchPage searchPage;
 
     public SearchCoreITCase(TestConfig config) {
         super(config);
@@ -23,7 +22,7 @@ public class SearchCoreITCase extends ABCTestBase {
     @Test
     @KnownBug("CSA-2058")
     public void testSearchResultsNotEmpty() {
-        searchPage = getApplication().searchService().search("luke");
+        SearchPage searchPage = getApplication().searchService().search("luke");
         for (String title : searchPage.getSearchResultTitles(SearchPage.RESULTS_PER_PAGE)) {
             assertThat(title, not(isEmptyOrNullString()));
         }

@@ -46,7 +46,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsPageITCase extends ABCTestBase {
 	private KeywordsPage keywordsPage;
-	private CreateNewKeywordsPage createKeywordsPage;
 	private SearchPage searchPage;
 	private NotificationsDropDown notifications;
 	private KeywordService keywordService;
@@ -497,7 +496,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {
 			getDriver().get(blacklistUrl + forbidden);
 			Waits.loadOrFadeWait();
-			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+			CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
 
 			getDriver().get(synonymsUrl + forbidden);

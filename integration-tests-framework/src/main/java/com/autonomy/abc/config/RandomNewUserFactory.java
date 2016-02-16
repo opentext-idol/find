@@ -11,7 +11,6 @@ public class RandomNewUserFactory implements Factory<NewUser> {
     // TODO: remove hardcoded strings
     private final String emailPrefix = "hodtestqa401";
     private final String emailSuffix = "@gmail.com";
-    private final String password = "qoxntlozubjaamyszerfk";
 
     RandomNewUserFactory(TestConfig config) {
     }
@@ -31,6 +30,7 @@ public class RandomNewUserFactory implements Factory<NewUser> {
     }
 
     private GoogleAuth getAuthProvider() {
+        String password = "qoxntlozubjaamyszerfk";
         return new GoogleAuth(emailPrefix + emailSuffix, password);
     }
 }

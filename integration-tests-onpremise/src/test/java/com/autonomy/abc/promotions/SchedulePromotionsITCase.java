@@ -43,7 +43,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	public SchedulePromotionsITCase(final TestConfig config) {
 		super(config);
 	}
-	private OPPromotionsPage promotionsPage;
+
 	private SearchPage searchPage;
 	private SchedulePage schedulePage;
 	private DatePicker datePicker;
@@ -55,7 +55,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	public void setUp() throws MalformedURLException, InterruptedException {
         promotionService = getApplication().promotionService();
 
-		promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
+		OPPromotionsPage promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
 		elementFactory = (OPISOElementFactory) getElementFactory();
 	}
 

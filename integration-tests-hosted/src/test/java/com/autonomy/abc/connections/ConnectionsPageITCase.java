@@ -147,8 +147,10 @@ public class ConnectionsPageITCase extends HostedTestBase {
             assertThat(firstIndex, not(lastIndex));
         } finally {
             try {
-                connectorIndexStepTab.closeDropdown();
-                connectorIndexStepTab.closeModal();
+                if(connectorIndexStepTab != null) {
+                    connectorIndexStepTab.closeDropdown();
+                    connectorIndexStepTab.closeModal();
+                }
             } catch (Exception e) { /* No visible modal */ }
 
             indexService.deleteAllIndexes();

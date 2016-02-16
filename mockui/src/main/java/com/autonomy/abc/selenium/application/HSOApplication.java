@@ -9,12 +9,11 @@ import com.autonomy.abc.selenium.users.HSODeveloperService;
 import com.autonomy.abc.selenium.users.HSOUserService;
 
 public class HSOApplication extends SearchOptimizerApplication<HSODElementFactory> {
-    private Window window;
     private HSODElementFactory factory;
 
     @Override
     public HSOApplication inWindow(Window window) {
-        this.window = window;
+        Window window1 = window;
         this.factory = new HSODElementFactory(window.getSession().getDriver());
         return this;
     }
