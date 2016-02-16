@@ -1,13 +1,14 @@
-package com.autonomy.abc.selenium.page.keywords;
+package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
+import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
-public class HSOCreateNewKeywordsPage extends CreateNewKeywordsPage {
+public class HSODSearchPage extends SearchPage {
 
-    private HSOCreateNewKeywordsPage(WebDriver driver) {
+    private HSODSearchPage(final WebDriver driver) {
         super(driver);
     }
 
@@ -15,11 +16,12 @@ public class HSOCreateNewKeywordsPage extends CreateNewKeywordsPage {
     protected LanguageDropdown languageDropdown() {
         return new WarningLanguageDropdown();
     }
-    
-    public static class Factory implements ParametrizedFactory<WebDriver, HSOCreateNewKeywordsPage> {
+
+    public static class Factory implements ParametrizedFactory<WebDriver, HSODSearchPage> {
         @Override
-        public HSOCreateNewKeywordsPage create(WebDriver context) {
-            return new HSOCreateNewKeywordsPage(context);
+        public HSODSearchPage create(WebDriver context) {
+            return new HSODSearchPage(context);
         }
     }
+
 }

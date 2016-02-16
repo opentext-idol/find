@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.menu.HSO;
+package com.autonomy.abc.selenium.hsod;
 
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
@@ -8,9 +8,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSOTopNavBar extends TopNavBar {
+class HSODTopNavBar extends TopNavBar {
 
-    public HSOTopNavBar(WebDriver driver) {
+    HSODTopNavBar(WebDriver driver) {
         super(driver);
     }
 

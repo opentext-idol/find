@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.hsod;
 
-import com.autonomy.abc.selenium.menu.HSO.HSOTopNavBar;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.navigation.PageMapper;
@@ -11,17 +10,17 @@ import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
+import com.autonomy.abc.selenium.gettingStarted.GettingStartedPage;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HSODCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HSODKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
-import com.autonomy.abc.selenium.page.search.HSOSearchPage;
+import com.autonomy.abc.selenium.search.HSODSearchPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
@@ -34,7 +33,7 @@ public class HSODElementFactory extends SOElementFactory {
 
     @Override
     public TopNavBar getTopNavBar() {
-        return new HSOTopNavBar(getDriver());
+        return new HSODTopNavBar(getDriver());
     }
 
     @Override
@@ -49,17 +48,17 @@ public class HSODElementFactory extends SOElementFactory {
 
     @Override
     public KeywordsPage getKeywordsPage() {
-        return loadPage(HSOKeywordsPage.class);
+        return loadPage(HSODKeywordsPage.class);
     }
 
     @Override
     public CreateNewKeywordsPage getCreateNewKeywordsPage() {
-        return loadPage(HSOCreateNewKeywordsPage.class);
+        return loadPage(HSODCreateNewKeywordsPage.class);
     }
 
     @Override
     public SearchPage getSearchPage() {
-        return loadPage(HSOSearchPage.class);
+        return loadPage(HSODSearchPage.class);
     }
 
     @Override

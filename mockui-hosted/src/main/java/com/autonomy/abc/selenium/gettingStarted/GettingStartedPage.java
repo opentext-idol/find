@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.gettingStarted;
+package com.autonomy.abc.selenium.gettingStarted;
 
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
