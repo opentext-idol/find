@@ -4,7 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;

@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
-import com.autonomy.abc.selenium.page.login.OPAccount;
+import com.autonomy.abc.selenium.users.OPAccount;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.OPNewUser;
 import com.autonomy.abc.selenium.users.Role;

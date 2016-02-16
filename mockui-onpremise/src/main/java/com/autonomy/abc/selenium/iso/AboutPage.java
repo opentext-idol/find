@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.admin;
+package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;

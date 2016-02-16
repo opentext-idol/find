@@ -1,13 +1,14 @@
-package com.autonomy.abc.selenium.menu;
+package com.autonomy.abc.selenium.iso;
 
+import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class OPTopNavBar extends TopNavBar {
-    public OPTopNavBar(WebDriver driver) {
+class OPISOTopNavBar extends TopNavBar {
+    OPISOTopNavBar(WebDriver driver) {
         super(driver);
     }
 
@@ -22,12 +23,12 @@ public class OPTopNavBar extends TopNavBar {
         Waits.loadOrFadeWait();
     }
 
-    public void switchPage(TabId tab) {
+    void switchPage(TabId tab) {
         clickCog();
         findElement(tab.locator).click();
     }
 
-    public enum TabId {
+    enum TabId {
         ABOUT("About"),
         SETTINGS("Settings"),
         USERS("Users");

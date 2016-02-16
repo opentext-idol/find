@@ -1,7 +1,5 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.page.login.OPAccount;
-
 public class OPNewUser implements NewUser {
     private final String username;
     private final String password;

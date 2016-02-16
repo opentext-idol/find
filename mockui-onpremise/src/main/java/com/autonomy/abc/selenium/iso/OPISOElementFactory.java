@@ -1,11 +1,13 @@
-package com.autonomy.abc.selenium.navigation;
+package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.menu.OPTopNavBar;
+import com.autonomy.abc.selenium.menu.TopNavBar;
+import com.autonomy.abc.selenium.navigation.PageMapper;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.OPKeywordsPage;
-import com.autonomy.abc.selenium.page.login.OPLoginPage;
+import com.autonomy.abc.selenium.users.OPLoginPage;
 import com.autonomy.abc.selenium.promotions.OPCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsPage;
@@ -20,8 +22,8 @@ public class OPISOElementFactory extends SOElementFactory {
     }
 
     @Override
-    public OPTopNavBar getTopNavBar() {
-        return new OPTopNavBar(getDriver());
+    public TopNavBar getTopNavBar() {
+        return new OPISOTopNavBar(getDriver());
     }
 
     @Override
@@ -75,15 +77,15 @@ public class OPISOElementFactory extends SOElementFactory {
     }
 
     static class TopNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
-        private final OPTopNavBar.TabId tab;
+        private final OPISOTopNavBar.TabId tab;
 
-        TopNavStrategy(OPTopNavBar.TabId tabId) {
+        TopNavStrategy(OPISOTopNavBar.TabId tabId) {
             tab = tabId;
         }
 
         @Override
         public void switchUsing(SOElementFactory context) {
-            ((OPISOElementFactory) context).getTopNavBar().switchPage(tab);
+            ((OPISOTopNavBar) context.getTopNavBar()).switchPage(tab);
         }
     }
 }

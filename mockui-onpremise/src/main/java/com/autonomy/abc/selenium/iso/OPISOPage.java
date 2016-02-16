@@ -1,12 +1,11 @@
-package com.autonomy.abc.selenium.navigation;
+package com.autonomy.abc.selenium.iso;
 
 import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.menu.OPTopNavBar;
-import com.autonomy.abc.selenium.page.admin.AboutPage;
-import com.autonomy.abc.selenium.page.admin.SettingsPage;
+import com.autonomy.abc.selenium.navigation.PageMapper;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.OPKeywordsPage;
-import com.autonomy.abc.selenium.page.login.OPLoginPage;
+import com.autonomy.abc.selenium.users.OPLoginPage;
 import com.autonomy.abc.selenium.analytics.OverviewPage;
 import com.autonomy.abc.selenium.promotions.OPCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
@@ -35,9 +34,9 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
 
     SEARCH(NavBarTabId.SEARCH, new OPSearchPage.Factory(), OPSearchPage.class),
 
-    ABOUT(OPTopNavBar.TabId.ABOUT, new AboutPage.Factory(), AboutPage.class),
-    USERS(OPTopNavBar.TabId.USERS, new OPUsersPage.Factory(), OPUsersPage.class),
-    SETTINGS(OPTopNavBar.TabId.SETTINGS, new SettingsPage.Factory(), SettingsPage.class);
+    ABOUT(OPISOTopNavBar.TabId.ABOUT, new AboutPage.Factory(), AboutPage.class),
+    USERS(OPISOTopNavBar.TabId.USERS, new OPUsersPage.Factory(), OPUsersPage.class),
+    SETTINGS(OPISOTopNavBar.TabId.SETTINGS, new SettingsPage.Factory(), SettingsPage.class);
 
     private final Class<?> pageType;
     private PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;
@@ -53,7 +52,7 @@ enum OPISOPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFa
         switchStrategy = new OPISOElementFactory.SideNavStrategy(tab);
     }
 
-    <T extends AppPage> OPISOPage(OPTopNavBar.TabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
+    <T extends AppPage> OPISOPage(OPISOTopNavBar.TabId tab, ParametrizedFactory<WebDriver, T> factory, Class<? super T> type) {
         this(factory, type);
         switchStrategy = new OPISOElementFactory.TopNavStrategy(tab);
     }
