@@ -38,7 +38,7 @@ public class IndexService extends ServiceBase<HSODElementFactory> {
     public IndexesPage setUpIndex(Index index) {
         goToIndexes();
         indexesPage.newIndexButton().click();
-        index.makeWizard(getElementFactory().getCreateNewIndexPage()).apply();
+        new IndexWizard(index, getElementFactory().getCreateNewIndexPage()).apply();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));
         indexesPage = getElementFactory().getIndexesPage();
         return indexesPage;
