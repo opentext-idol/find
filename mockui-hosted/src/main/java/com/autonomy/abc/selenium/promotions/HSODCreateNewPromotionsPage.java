@@ -34,7 +34,7 @@ public class HSODCreateNewPromotionsPage extends CreateNewPromotionsPage {
         return findElement(By.cssSelector("input.dial"));
     }
 
-    public void setDialValue(int value) {
+    void setDialValue(int value) {
         // .clear() does not work properly due to validation
         dial().sendKeys("\b\b" + Integer.toString(value));
     }

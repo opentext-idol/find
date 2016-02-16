@@ -2,11 +2,11 @@ package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 
-public class ResultsNumberStep implements WizardStep {
+class ResultsNumberStep implements WizardStep {
     private HSODCreateNewPromotionsPage page;
     private int count;
 
-    public ResultsNumberStep(HSODCreateNewPromotionsPage page, int count) {
+    ResultsNumberStep(HSODCreateNewPromotionsPage page, int count) {
         this.page = page;
         this.count = count;
     }
