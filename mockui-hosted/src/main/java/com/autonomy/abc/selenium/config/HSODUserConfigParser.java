@@ -11,7 +11,7 @@ import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 
 import java.util.Map;
 
-public class HSOUserConfigParser extends UserConfigParser {
+public class HSODUserConfigParser extends UserConfigParser {
     @Override
     public User parseUser(JsonNode userNode) {
         AuthProvider provider = authProvider(userNode.path("auth"));
@@ -35,7 +35,7 @@ public class HSOUserConfigParser extends UserConfigParser {
     private AuthProvider authProvider(JsonNode authNode){
         Map<String, Object> authMap = new ObjectMapper().convertValue(authNode, new TypeReference<Map<String, Object>>() {
         });
-        return HSOAuthFactory.fromMap(authMap);
+        return HSODAuthFactory.fromMap(authMap);
     }
 
 }

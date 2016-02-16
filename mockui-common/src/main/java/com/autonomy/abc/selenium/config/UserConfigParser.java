@@ -15,7 +15,7 @@ public abstract class UserConfigParser {
     public static UserConfigParser ofType(ApplicationType type) {
         switch (type) {
             case HOSTED:
-                return new SafeClassLoader<>(UserConfigParser.class, "com.autonomy.abc.selenium.config.HSOUserConfigParser").create();
+                return new SafeClassLoader<>(UserConfigParser.class, "com.autonomy.abc.selenium.config.HSODUserConfigParser").create();
             case ON_PREM:
                 return new SafeClassLoader<>(UserConfigParser.class, "com.autonomy.abc.selenium.config.OPUserConfigParser").create();
             default:
