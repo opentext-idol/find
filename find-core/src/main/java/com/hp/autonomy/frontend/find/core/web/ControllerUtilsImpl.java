@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +19,14 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Component
+@Slf4j
 public class ControllerUtilsImpl implements ControllerUtils {
-    static final String MESSAGE_CODE_CONTACT_SUPPORT = "error.contactSupport";
+    static final String MESSAGE_CODE_CONTACT_SUPPORT_UUID = "error.contactSupportUUID";
+    static final String MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID = "error.contactSupportNoUUID";
     static final String MESSAGE_CODE_ERROR_BUTTON = "error.button";
 
     private static final Pattern JSON_ESCAPE_PATTERN = Pattern.compile("</", Pattern.LITERAL);
@@ -57,7 +61,14 @@ public class ControllerUtilsImpl implements ControllerUtils {
         modelAndView.addObject(ErrorAttributes.BASE_URL.value(), getBaseUrl(errorInfo.getRequest()));
         modelAndView.addObject(ErrorAttributes.STATUS_CODE.value(), errorInfo.getStatusCode());
         if (errorInfo.isContactSupport()) {
-            modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), getMessage(MESSAGE_CODE_CONTACT_SUPPORT, null));
+            if(errorInfo.getException() != null) {
+                final UUID uuid = UUID.randomUUID();
+                log.error("Unhandled exception with uuid {}", uuid);
+                log.error("Stack trace", errorInfo.getException());
+                modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), getMessage(MESSAGE_CODE_CONTACT_SUPPORT_UUID, new Object[]{uuid}));
+            } else {
+                modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), getMessage(MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID, null));
+            }
         }
         if (errorInfo.getButtonHref() != null) {
             modelAndView.addObject(ErrorAttributes.BUTTON_HREF.value(), errorInfo.getButtonHref());

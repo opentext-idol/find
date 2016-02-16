@@ -15,7 +15,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
-import java.util.UUID;
 
 @Slf4j
 public abstract class CustomErrorController {
@@ -24,7 +23,6 @@ public abstract class CustomErrorController {
     static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_MAIN = "error.clientAuthenticationErrorMain";
     static final String MESSAGE_CODE_CLIENT_AUTHENTICATION_ERROR_SUB = "error.clientAuthenticationErrorSub";
     static final String MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB = "error.internalServerErrorSub";
-    static final String MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB_NO_UUID = "error.internalServerErrorSub.noUuid";
     static final String MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN = "error.internalServerErrorMain";
     static final String MESSAGE_CODE_NOT_FOUND_MAIN = "error.notFoundMain";
     static final String MESSAGE_CODE_NOT_FOUND_SUB = "error.notFoundSub";
@@ -68,28 +66,15 @@ public abstract class CustomErrorController {
     @RequestMapping(DispatcherServletConfiguration.SERVER_ERROR_PATH)
     public ModelAndView serverErrorPage(final HttpServletRequest request, final HttpServletResponse response) {
         final Exception exception = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
-        final String subMessageCode;
-        final Object[] subMessageArguments;
-
-        if (exception != null) {
-            final UUID uuid = UUID.randomUUID();
-            log.error("Exception with UUID {}", uuid);
-            log.error("Stack trace", exception);
-            subMessageCode = MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB;
-            subMessageArguments = new Object[]{uuid};
-        } else {
-            subMessageCode = MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB_NO_UUID;
-            subMessageArguments = null;
-        }
 
         return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
                 .setRequest(request)
                 .setMainMessageCode(MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN)
-                .setSubMessageCode(subMessageCode)
-                .setSubMessageArguments(subMessageArguments)
+                .setSubMessageCode(MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB)
                 .setStatusCode(response.getStatus())
                 .setContactSupport(true)
                 .setButtonHref(getErrorUrl(request))
+                .setException(exception)
                 .build());
     }
 

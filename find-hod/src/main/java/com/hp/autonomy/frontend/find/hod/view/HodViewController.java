@@ -25,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
 
 @Controller
 @RequestMapping(ViewController.VIEW_PATH)
@@ -56,7 +55,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
     ) {
         response.reset();
 
-        log.error("IodErrorException thrown while viewing document", e);
+        log.error("HodErrorException thrown while viewing document", e);
 
         final String errorKey = HOD_ERROR_MESSAGE_CODE_PREFIX + e.getErrorCode();
         String hodErrorMessage;
@@ -89,6 +88,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
                 .setSubMessageArguments(subMessageArgs)
                 .setStatusCode(errorCode)
                 .setContactSupport(true)
+                .setException(e)
                 .build());
     }
 
@@ -120,17 +120,13 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
     ) {
         response.reset();
 
-        final UUID uuid = UUID.randomUUID();
-        log.error("Unhandled exception with uuid {}", uuid);
-        log.error("Stack trace", e);
-
         return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
                 .setRequest(request)
                 .setMainMessageCode(HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN)
                 .setSubMessageCode(HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB)
-                .setSubMessageArguments(new Object[]{uuid})
                 .setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
                 .setContactSupport(true)
+                .setException(e)
                 .build());
     }
 }
