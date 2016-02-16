@@ -16,7 +16,7 @@ import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.connections.wizard.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;

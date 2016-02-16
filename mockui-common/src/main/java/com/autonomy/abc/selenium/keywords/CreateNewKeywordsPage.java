@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.keywords;
+package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;

@@ -18,7 +18,7 @@ import com.autonomy.abc.selenium.users.HSODDevelopersPage;
 import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;

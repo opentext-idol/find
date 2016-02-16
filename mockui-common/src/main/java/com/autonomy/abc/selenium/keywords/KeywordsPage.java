@@ -1,7 +1,6 @@
-package com.autonomy.abc.selenium.page.keywords;
+package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.util.ElementUtil;

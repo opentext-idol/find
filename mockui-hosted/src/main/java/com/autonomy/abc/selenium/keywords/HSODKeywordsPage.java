@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.WarningLanguageDropdown;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 

@@ -12,7 +12,7 @@ import com.autonomy.abc.selenium.promotions.OPCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsPage;
 import com.autonomy.abc.selenium.promotions.SchedulePage;
-import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
+import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.OPSearchPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;

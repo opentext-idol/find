@@ -5,7 +5,7 @@ import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
-import com.autonomy.abc.selenium.page.search.SearchBase;
+import com.autonomy.abc.selenium.search.SearchBase;
 import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;

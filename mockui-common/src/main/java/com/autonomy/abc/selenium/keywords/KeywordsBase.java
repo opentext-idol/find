@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.keywords;
+package com.autonomy.abc.selenium.keywords;
 
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;

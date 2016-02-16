@@ -1,13 +1,12 @@
-package com.autonomy.abc.selenium.page.search;
+package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
-import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
-import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
-import com.autonomy.abc.selenium.search.SOSearchResult;
+import com.autonomy.abc.selenium.keywords.KeywordsContainer;
+import com.autonomy.abc.selenium.keywords.SynonymGroup;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;

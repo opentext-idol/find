@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.search;
+package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.element.*;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;

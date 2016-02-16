@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.indexes.OPDatabaseTree;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.language.OPLanguageDropdown;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
