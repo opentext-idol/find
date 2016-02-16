@@ -47,7 +47,7 @@ public class FindResultsPage extends AppElement {
     public List<FindSearchResult> promotions() {
         List<FindSearchResult> results = new ArrayList<>();
         for(WebElement result : promotionsDiv().findElements(By.className("promoted-document"))) {
-            results.add(new FindSearchResult(result));
+            results.add(new FindSearchResult(result, getDriver()));
         }
         return results;
     }
@@ -127,7 +127,7 @@ public class FindResultsPage extends AppElement {
     public List<FindSearchResult> getResults(){
         List<FindSearchResult> results = new ArrayList<>();
         for(WebElement result : findElements(By.cssSelector("[data-rel='results']"))){
-            results.add(new FindSearchResult(result));
+            results.add(new FindSearchResult(result, getDriver()));
         }
         return results;
     }
@@ -137,8 +137,8 @@ public class FindResultsPage extends AppElement {
         return results.subList(0, Math.min(maxResults, results.size()));
     }
 
-    public SearchResult getResult(int i) {
-        return new FindSearchResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")));
+    public FindSearchResult getResult(int i) {
+        return new FindSearchResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ")")), getDriver());
     }
 
     public List<String> getDisplayedDocumentsDocumentTypes(){
@@ -198,6 +198,6 @@ public class FindResultsPage extends AppElement {
     }
 
     public FindSearchResult searchResult(int searchResultNumber) {
-        return new FindSearchResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")")));
+        return new FindSearchResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ")")), getDriver());
     }
 }

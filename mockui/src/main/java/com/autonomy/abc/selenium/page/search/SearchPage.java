@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.language.LanguageDropdown;
 import com.autonomy.abc.selenium.page.keywords.KeywordsContainer;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
+import com.autonomy.abc.selenium.search.SOSearchResult;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -338,5 +339,13 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 			}
 		}
 		return promotedDocTitles;
+	}
+
+	public List<SOSearchResult> getSearchResults() {
+		List<SOSearchResult> results = new ArrayList<>();
+		for(WebElement result : findElements(By.cssSelector(".search-results li"))){
+			results.add(new SOSearchResult(result, getDriver()));
+		}
+		return results;
 	}
 }

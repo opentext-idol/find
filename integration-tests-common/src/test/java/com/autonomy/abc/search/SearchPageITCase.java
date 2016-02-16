@@ -1133,4 +1133,14 @@ public class SearchPageITCase extends ABCTestBase {
 
 		verifyThat(searchPage.getHeadingResultsCount(), lessThanOrEqualTo(2501));
 	}
+
+	@Test
+	@KnownBug("CSA-2060")
+	public void testResultIndex(){
+		searchService.search(new SearchQuery("Jamaica"));
+
+		for(SOSearchResult searchResult : searchPage.getSearchResults()){
+			verifyThat(searchResult.getIndex().getDisplayName(), not(containsString("Object")));
+		}
+	}
 }

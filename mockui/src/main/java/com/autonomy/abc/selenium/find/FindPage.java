@@ -57,6 +57,7 @@ public class FindPage extends AppElement implements AppPage,
     public void search(String searchTerm){
         input.clear();
         input.setAndSubmit(searchTerm);
+        new WebDriverWait(getDriver(), 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
     }
 
@@ -164,6 +165,10 @@ public class FindPage extends AppElement implements AppPage,
     // as opposed to main reuslts page
     public WebElement footerLogo() {
         return findElement(By.className("hp-logo-footer"));
+    }
+
+    public List<String> getAlsoSearchingForTerms() {
+        return ElementUtil.getTexts(findElements(By.className("selected-related-concept")));
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {

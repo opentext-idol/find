@@ -1,11 +1,13 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class FindSearchResult extends SearchResult {
-    public FindSearchResult(WebElement result){
-        super(result);
+    public FindSearchResult(WebElement result, WebDriver driver){
+        super(result, driver);
     }
 
     @Override
@@ -24,5 +26,14 @@ public class FindSearchResult extends SearchResult {
 
     public WebElement similarDocuments() {
         return findElement(By.className("similar-documents-trigger"));
+    }
+
+    private WebElement previewButton(){
+        return findElement(By.className("preview-documents-trigger"));
+    }
+
+    public DocumentViewer openDocumentPreview(){
+        previewButton().click();
+        return DocumentViewer.make(getDriver());
     }
 }
