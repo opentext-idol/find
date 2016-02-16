@@ -1,8 +1,8 @@
-package com.autonomy.abc.selenium.connections.wizard;
+package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -18,7 +18,7 @@ public class ConnectorIndexStepTab extends ICMAPageBase {
         super(driver);
     }
 
-    public static ConnectorIndexStepTab make(WebDriver driver) {
+    static ConnectorIndexStepTab make(WebDriver driver) {
         new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.name("indexStepForm")));
         return new ConnectorIndexStepTab(driver);
     }
@@ -43,15 +43,15 @@ public class ConnectorIndexStepTab extends ICMAPageBase {
         return findElement(By.xpath("//button[text()='Select index']"));
     }
 
-    public WebElement getIndexSearchBox(){
+    private WebElement getIndexSearchBox(){
         return getDriver().findElement(By.className("chosen-single"));
     }
 
-    public List<WebElement> getExistingIndexes() {
+    private List<WebElement> getExistingIndexes() {
         return getDriver().findElements(By.cssSelector(".chosen-results li"));
     }
 
-    public WebElement modalOKButton() {
+    private WebElement modalOKButton() {
         return getDriver().findElement(By.cssSelector(".modal-footer [type='submit']"));
     }
 
@@ -122,11 +122,7 @@ public class ConnectorIndexStepTab extends ICMAPageBase {
         throw new IndexNotFoundException(index);
     }
 
-    private class IndexNotFoundException extends RuntimeException {
-        public  IndexNotFoundException(String index){
-            super("Index: '"+index+"' not found");
-        }
-
+    private static class IndexNotFoundException extends RuntimeException {
         public IndexNotFoundException(Index index){
             super(index + " not found");
         }

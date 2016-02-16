@@ -1,10 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
-import com.autonomy.abc.selenium.users.OPAccount;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.OPNewUser;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class OPUserConfigParser extends UserConfigParser {

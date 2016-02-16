@@ -1,18 +1,16 @@
-package com.autonomy.abc.selenium.connections.wizard;
+package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.connections.WebConnector;
-import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.WebElement;
 
-public class ConnectorConfigStep implements WizardStep {
+class ConnectorConfigStep implements WizardStep {
     private static final String TITLE = "Connector Configuration";
 
     private final NewConnectionPage newConnectionPage;
     private final WebConnector connector;
 
-    public ConnectorConfigStep(NewConnectionPage newConnectionPage, WebConnector connector) {
+    ConnectorConfigStep(NewConnectionPage newConnectionPage, WebConnector connector) {
         this.newConnectionPage = newConnectionPage;
         this.connector = connector;
     }

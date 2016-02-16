@@ -2,12 +2,12 @@ package com.autonomy.abc.overview;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.analytics.OverviewPage;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.analytics.OverviewPage;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.PageUtil;

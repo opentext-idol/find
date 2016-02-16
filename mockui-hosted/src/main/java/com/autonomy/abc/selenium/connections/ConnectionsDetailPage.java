@@ -29,7 +29,7 @@ public class ConnectionsDetailPage extends ICMAPageBase {
         return menuButton("Delete");
     }
 
-    public WebElement deleteModal() {
+    WebElement deleteModal() {
         return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.className("modal-dialog")));
     }
 

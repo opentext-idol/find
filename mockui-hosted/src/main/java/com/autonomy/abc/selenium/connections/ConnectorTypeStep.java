@@ -1,15 +1,14 @@
-package com.autonomy.abc.selenium.connections.wizard;
+package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.connections.NewConnectionPage;
 
-public class ConnectorTypeStep implements WizardStep {
+class ConnectorTypeStep implements WizardStep {
     private final static String TITLE = "Select Connector Type";
     private String url;
     private String name;
 
     private ConnectorTypeStepTab connectorTypeStepTab;
-    public ConnectorTypeStep(NewConnectionPage newConnectionPage, String url, String name) {
+    ConnectorTypeStep(NewConnectionPage newConnectionPage, String url, String name) {
         this.url = url;
         this.name = name;
         this.connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();

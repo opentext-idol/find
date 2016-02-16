@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.connections.wizard;
+package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.icma.ICMAPageBase;
