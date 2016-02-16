@@ -7,6 +7,7 @@ import com.autonomy.abc.selenium.users.OPUserService;
 
 
 public class OPISOApplication extends SearchOptimizerApplication<OPISOElementFactory> {
+    private Window window;
     private OPISOElementFactory factory;
 
     @Override
@@ -16,7 +17,7 @@ public class OPISOApplication extends SearchOptimizerApplication<OPISOElementFac
 
     @Override
     public OPISOApplication inWindow(Window window) {
-        Window window1 = window;
+        this.window = window;
         this.factory = new OPISOElementFactory(window.getSession().getDriver());
         return this;
     }
