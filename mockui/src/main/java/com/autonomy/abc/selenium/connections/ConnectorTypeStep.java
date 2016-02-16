@@ -9,12 +9,10 @@ public class ConnectorTypeStep implements WizardStep {
     private String url;
     private String name;
 
-    private NewConnectionPage page;
     private ConnectorTypeStepTab connectorTypeStepTab;
     public ConnectorTypeStep(NewConnectionPage newConnectionPage, String url, String name) {
         this.url = url;
         this.name = name;
-        this.page = newConnectionPage;
         this.connectorTypeStepTab = newConnectionPage.getConnectorTypeStep();
     }
 

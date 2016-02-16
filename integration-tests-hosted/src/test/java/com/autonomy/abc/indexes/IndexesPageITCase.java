@@ -157,7 +157,7 @@ public class IndexesPageITCase extends HostedTestBase {
             connectionService.deleteConnection(connector, true);
 
             //Navigate to the promotion - this will time out if it can't get to the Promotions Detail Page
-            PromotionsDetailPage pdp = promotionService.goToDetails(ptpPromotion);
+            promotionService.goToDetails(ptpPromotion);
 
             //Get the promoted documents, there should still be one
             //TODO this is a workaround as getting promoted documents 'properly' errors if they are 'Unknown Document's

@@ -358,7 +358,7 @@ public class SearchPageITCase extends ABCTestBase {
             assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
             assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString("Terminating boolean operator"));
 
-            search(testSearchTerms.get(searchTerm++));
+            search(testSearchTerms.get(searchTerm));
             assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
             assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(bracketMismatch));
         } else {
@@ -690,10 +690,9 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testFromDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResult(1).getTitleString();
-		final Date validDate = date;
 		final Date invalidDate = DateUtils.addMinutes(date, 1);
 
-		searchPage.filterBy(new DatePickerFilter().from(validDate));
+		searchPage.filterBy(new DatePickerFilter().from(date));
 		for (final String label : searchPage.filterLabelList()) {
 			assertThat("no 'Until' filter applied", label,not(containsString("Until: ")));
 		}
@@ -703,7 +702,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.filterBy(new DatePickerFilter().from(invalidDate));
 		verifyInvalidDate(firstResult);
 
-		searchPage.filterBy(new DatePickerFilter().from(validDate));
+		searchPage.filterBy(new DatePickerFilter().from(date));
 		verifyValidDate(firstResult);
 	}
 
@@ -715,7 +714,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 		// plus 1 minute to be inclusive
 		final Date validDate = DateUtils.addMinutes(date, 1);
-		final Date invalidDate = date;
 
 		searchPage.filterBy(new DatePickerFilter().until(validDate));
 		for (final String label : searchPage.filterLabelList()) {
@@ -724,14 +722,14 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("applied 'Until' filter", searchPage.untilDateInput().getValue(), not(isEmptyOrNullString()));
 		verifyValidDate(firstResult);
 
-		searchPage.filterBy(new DatePickerFilter().until(invalidDate));
+		searchPage.filterBy(new DatePickerFilter().until(date));
         verifyInvalidDate(firstResult);
 
 		searchPage.filterBy(new DatePickerFilter().until(validDate));
 		verifyValidDate(firstResult);
 	}
 
-	private Date beginDateFilterTest() throws ParseException {
+	private Date beginDateFilterTest() {
 		// not all indexes have times configured
 		search(new SearchQuery("Dog").withFilter(new IndexFilter("news_eng")));
 		Date date = searchPage.getSearchResult(1).getDate();

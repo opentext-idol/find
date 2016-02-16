@@ -17,7 +17,7 @@ public class ParametricFilter implements SearchFilter {
     }
 
     public ParametricFilter(Map<String, String> map){
-        map = new HashMap<>(map);
+        this.map = new HashMap<>(map);
     }
 
     @Override

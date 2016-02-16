@@ -70,7 +70,7 @@ public final class ElementUtil {
             if (element.getAttribute(attribute) != null) {
                 result = true;
             }
-        } catch (final Exception e) {}
+        } catch (final Exception e) { /* NOOP */ }
 
         return result;
     }
@@ -98,11 +98,6 @@ public final class ElementUtil {
     public static void scrollIntoViewAndClick(final WebElement element, WebDriver driver) {
         scrollIntoView(element, driver);
         element.click();
-    }
-
-    public static void javascriptClick(final WebElement element, WebDriver driver) {
-        final JavascriptExecutor executor = (JavascriptExecutor) driver;
-        executor.executeScript("arguments[0].click();", element);
     }
 
     public static List<String> webElementListToStringList(final List<WebElement> list) {

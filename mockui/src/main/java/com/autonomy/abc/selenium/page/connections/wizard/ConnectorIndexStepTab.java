@@ -74,11 +74,8 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     }
 
     private boolean isDropdownOpen() {
-        if(getIndexSearchBox().findElement(By.xpath(".//..")).getAttribute("class").contains("chosen-with-drop")){
-            return true;
-        }
+        return getIndexSearchBox().findElement(By.xpath(".//..")).getAttribute("class").contains("chosen-with-drop");
 
-        return false;
     }
 
     public void closeDropdown(){
@@ -126,7 +123,7 @@ public class ConnectorIndexStepTab extends SAASPageBase {
     }
 
     private class IndexNotFoundException extends RuntimeException {
-        public IndexNotFoundException(String index){
+        public  IndexNotFoundException(String index){
             super("Index: '"+index+"' not found");
         }
 

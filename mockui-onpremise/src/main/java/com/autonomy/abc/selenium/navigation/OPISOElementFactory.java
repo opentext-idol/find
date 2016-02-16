@@ -1,14 +1,10 @@
 package com.autonomy.abc.selenium.navigation;
 
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
-import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.admin.AboutPage;
-import com.autonomy.abc.selenium.page.admin.SettingsPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.OPKeywordsPage;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
-import com.autonomy.abc.selenium.page.overview.OverviewPage;
 import com.autonomy.abc.selenium.page.promotions.OPCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;

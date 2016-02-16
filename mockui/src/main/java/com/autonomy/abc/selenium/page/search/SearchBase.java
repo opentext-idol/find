@@ -46,8 +46,7 @@ public abstract class SearchBase extends AppElement implements AppPage,
 
 	public Checkbox searchCheckboxForTitle(final String docTitle) {
 		WebElement element = findElement(By.cssSelector(".search-page-contents"));
-		element = element.findElement(new Locator().withTagName("a").containingCaseInsensitive(docTitle));
-		element = element.findElement(By.xpath("./../../.."));
+		element = ElementUtil.ancestor(element.findElement(new Locator().withTagName("a").containingCaseInsensitive(docTitle)), 3);
 		return new SOCheckbox(element, getDriver());
 	}
 

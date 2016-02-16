@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.page.admin;
 
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.Status;
 import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.By;
@@ -28,6 +27,4 @@ abstract class HSOUserManagementPage extends UsersPage {
     public FormInput editUsernameInput(User user) {
         return new FormInput(getUserRow(user).findElement(By.name("new-value")), getDriver());
     }
-
-    protected abstract WebElement getUserRowByUsername(String username);
 }
