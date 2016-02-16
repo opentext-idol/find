@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.framework.categories.SlowTest;
+import com.autonomy.abc.selenium.analytics.DashboardBase;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FormInput;
@@ -14,12 +15,11 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordWizardType;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
-import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
-import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -256,10 +256,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordsPage.deleteBlacklistedTerm("orange");
 		notificationContents.add("Removed \"orange\" from the blacklist");
 
-		if (config.getType().equals(ApplicationType.HOSTED)) {
-			// TODO: belongs in a hosted notifications test
-			getApplication().switchTo(AnalyticsPage.class);
-		}
+		getApplication().switchTo(DashboardBase.class);
 		verifyNotifications(notificationContents);
 	}
 
@@ -641,13 +638,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		keywordService.addBlacklistTerms("e");
 
-		// TODO: this is a shared test, does not belong
-		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-			getApplication().switchTo(AnalyticsPage.class);
-		} else {
-			getApplication().switchTo(PromotionsPage.class);
-		}
-
+		getApplication().switchTo(DashboardBase.class);
 		getElementFactory().getTopNavBar().notificationsDropdown();
 		notifications = getElementFactory().getTopNavBar().getNotifications();
 		verifyThat(notifications.notificationNumber(1).getText(), is("Added \"e\" to the blacklist"));
