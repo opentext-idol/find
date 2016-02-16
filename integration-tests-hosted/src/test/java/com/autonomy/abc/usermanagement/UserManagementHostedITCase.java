@@ -44,11 +44,9 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     private HSODUserService userService;
     private HSOUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
-    private final Factory<NewUser> newUserFactory;
 
     public UserManagementHostedITCase(TestConfig config) {
         super(config);
-        newUserFactory = config.getNewUserFactory();
     }
 
     @Before
@@ -141,7 +139,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testResettingAuthentication(){
-        NewUser newUser = newUserFactory.create();
+        NewUser newUser = config.generateNewUser();
 
         final User user = userService.createNewUser(newUser,Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
@@ -167,7 +165,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testNoneUserConfirmation() {
-        NewUser somebody = newUserFactory.create();
+        NewUser somebody = config.generateNewUser();
         User user = userService.createNewUser(somebody, Role.ADMIN);
         userService.changeRole(user, Role.NONE);
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
@@ -226,7 +224,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testAddingAndAuthenticatingUser(){
-        final User user = userService.createNewUser(newUserFactory.create(), Role.USER);
+        final User user = userService.createNewUser(config.generateNewUser(), Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
@@ -266,7 +264,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     @Test
     @KnownBug("HOD-532")
     public void testLogOutAndLogInWithNewUser() {
-        final User user = userService.createNewUser(newUserFactory.create(), Role.ADMIN);
+        final User user = userService.createNewUser(config.generateNewUser(), Role.ADMIN);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         logout();
@@ -293,7 +291,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     @Test
     @KnownBug("HOD-532")
     public void testUserConfirmedWithoutRefreshing(){
-        final User user = userService.createNewUser(config.getNewUserFactory().create(), Role.USER);
+        final User user = userService.createNewUser(config.generateNewUser(), Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {

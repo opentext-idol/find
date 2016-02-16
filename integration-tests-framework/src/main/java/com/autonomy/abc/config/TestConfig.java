@@ -53,7 +53,7 @@ public class TestConfig {
 	}
 
 	public String getDevConsoleUrl(){
-		return jsonConfig.getApiUrl().toString().replace("api","www");
+		return jsonConfig.getApiUrl().toString().replace("api", "www");
 	}
 
 	public User getDefaultUser() {
@@ -100,8 +100,8 @@ public class TestConfig {
 		return new WebDriverFactory(this);
 	}
 
-	public Factory<NewUser> getNewUserFactory() {
-		return new RandomNewUserFactory(this);
+	public NewUser generateNewUser() {
+		return jsonConfig.generateRandomNewUser();
 	}
 
 	// used when running whole suite via mvn

@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
+import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.users.HSONewUser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
@@ -12,6 +13,11 @@ import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import java.util.Map;
 
 public class HSODUserConfigParser extends UserConfigParser {
+    // TODO: move to config
+    private final String emailPrefix = "hodtestqa401";
+    private final String emailSuffix = "@gmail.com";
+    private final String password = "qoxntlozubjaamyszerfk";
+
     @Override
     public User parseUser(JsonNode userNode) {
         AuthProvider provider = authProvider(userNode.path("auth"));
@@ -38,4 +44,16 @@ public class HSODUserConfigParser extends UserConfigParser {
         return HSODAuthFactory.fromMap(authMap);
     }
 
+    @Override
+    public NewUser generateNewUser(String identifier) {
+        return new HSONewUser(identifier, gmailString(identifier), getAuthProvider());
+    }
+
+    private String gmailString(String extra) {
+        return emailPrefix + "+" + extra + emailSuffix;
+    }
+
+    private GoogleAuth getAuthProvider() {
+        return new GoogleAuth(emailPrefix + emailSuffix, password);
+    }
 }

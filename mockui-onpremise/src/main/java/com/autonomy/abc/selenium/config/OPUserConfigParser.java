@@ -22,4 +22,9 @@ public class OPUserConfigParser extends UserConfigParser {
         String password = newUserNode.path("password").asText();
         return new OPNewUser(username, password);
     }
+
+    @Override
+    public NewUser generateNewUser(String identifier) {
+        return new OPNewUser(identifier, "pw");
+    }
 }

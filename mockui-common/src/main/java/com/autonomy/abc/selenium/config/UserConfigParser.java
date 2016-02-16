@@ -12,6 +12,8 @@ public abstract class UserConfigParser {
 
     public abstract NewUser parseNewUser(JsonNode newUserNode);
 
+    public abstract NewUser generateNewUser(String identifier);
+
     public static UserConfigParser ofType(ApplicationType type) {
         switch (type) {
             case HOSTED:
