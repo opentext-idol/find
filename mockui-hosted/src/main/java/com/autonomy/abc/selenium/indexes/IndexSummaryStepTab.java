@@ -8,11 +8,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IndexSummaryStepTab extends SAASPageBase {
-    public IndexSummaryStepTab(WebDriver driver) {
+    private IndexSummaryStepTab(WebDriver driver) {
         super(driver);
     }
 
-    public static IndexSummaryStepTab make(WebDriver driver){
+    static IndexSummaryStepTab make(WebDriver driver){
         new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id("indexWizardSummaryStepDescription")));
         return new IndexSummaryStepTab(driver);
     }

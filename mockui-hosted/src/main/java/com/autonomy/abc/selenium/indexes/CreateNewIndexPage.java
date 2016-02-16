@@ -14,28 +14,8 @@ public class CreateNewIndexPage extends SAASPageBase {
     }
 
     /* navigation */
-    public WebElement chooseIndexNameHeader() {
-        return chooseTab(1);
-    }
-
-    public WebElement indexConfigurationHeader() {
-        return chooseTab(2);
-    }
-
-    public WebElement summaryHeader() {
-        return chooseTab(3);
-    }
-
-    private WebElement chooseTab(int tab) {
-        return findElement(By.cssSelector("[role='tablist'] li:nth-child(" + tab + ")"));
-    }
-
     public WebElement continueWizardButton() {
         return menuButton("Next");
-    }
-
-    public WebElement prevButton() {
-        return menuButton("Previous");
     }
 
     public WebElement finishWizardButton() {

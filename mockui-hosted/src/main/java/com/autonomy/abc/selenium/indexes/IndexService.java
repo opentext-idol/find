@@ -33,10 +33,14 @@ public class IndexService extends ServiceBase<HSODElementFactory> {
         return getElementFactory().getIndexesDetailPage();
     }
 
-    public IndexesPage setUpIndex(Index index) {
+    public CreateNewIndexPage goToIndexWizard() {
         goToIndexes();
         indexesPage.newIndexButton().click();
-        new IndexWizard(index, getElementFactory().getCreateNewIndexPage()).apply();
+        return getElementFactory().getCreateNewIndexPage();
+    }
+
+    public IndexesPage setUpIndex(Index index) {
+        new IndexWizard(index, goToIndexWizard()).apply();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));
         indexesPage = getElementFactory().getIndexesPage();
         return indexesPage;

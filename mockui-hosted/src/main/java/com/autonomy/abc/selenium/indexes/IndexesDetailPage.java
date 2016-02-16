@@ -4,6 +4,7 @@ import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.page.SAASPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
+import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -34,11 +35,17 @@ public class IndexesDetailPage extends SAASPageBase {
         return findElement(By.xpath("//div[contains(@class,'affix-element')]//a[text()[contains(.,'" + buttonText + "')]]"));
     }
 
-    public WebElement deleteButton(){
+    public void deleteIndex() {
+        deleteButton().click();
+        Waits.loadOrFadeWait();
+        confirmDeleteButton().click();
+    }
+
+    private WebElement deleteButton(){
         return button("Delete");
     }
 
-    public WebElement confirmDeleteButton() {
+    private WebElement confirmDeleteButton() {
         return getDriver().findElement(By.cssSelector("#confirmDeleteBtns [type='submit']")); //Outside of page
     }
 

@@ -35,8 +35,7 @@ public class IndexWizardITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        getApplication().switchTo(IndexesPage.class).newIndexButton().click();
-        createNewIndexPage = getElementFactory().getCreateNewIndexPage();
+        createNewIndexPage = getApplication().indexService().goToIndexWizard();
     }
 
     @Test

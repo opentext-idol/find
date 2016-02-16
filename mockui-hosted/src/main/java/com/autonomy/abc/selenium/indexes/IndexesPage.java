@@ -31,11 +31,11 @@ public class IndexesPage extends AppElement implements AppPage {
         waitForLoad(getDriver());
     }
 
-    public WebElement newIndexButton(){
+    WebElement newIndexButton(){
         return getDriver().findElement(By.id("new-index-btn"));
     }
 
-    public WebElement findIndex(String displayName) {
+    WebElement findIndex(String displayName) {
             return findElement(By.xpath(".//*[contains(text(),'" + displayName + "')]"));
     }
 
@@ -43,7 +43,7 @@ public class IndexesPage extends AppElement implements AppPage {
         return ElementUtil.ancestor(findIndex(displayName), 9);
     }
 
-    public void deleteIndex(String displayName){
+    void deleteIndex(String displayName){
         indexRow(displayName).findElement(By.tagName("button")).click();
         Waits.loadOrFadeWait();
         modalClick();
@@ -54,7 +54,7 @@ public class IndexesPage extends AppElement implements AppPage {
         getDriver().findElement(By.cssSelector(".modal-footer [type=submit]")).click();
     }
 
-    public List<WebElement> indexes() {
+    List<WebElement> indexes() {
         return findElements(By.xpath("//*[contains(@ng-repeat,'index')]"));
     }
 
