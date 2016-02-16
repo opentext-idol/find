@@ -12,12 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-
 @Service
 public class SavedQueryServiceImpl implements SavedQueryService {
-
-    private SavedQueryRepository savedQueryRepository;
-    private AuditorAware<UserEntity> userEntityAuditorAware;
+    private final SavedQueryRepository savedQueryRepository;
+    private final AuditorAware<UserEntity> userEntityAuditorAware;
 
     @Autowired
     public SavedQueryServiceImpl(final SavedQueryRepository savedQueryRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {

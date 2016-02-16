@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-
 @Service
 public class SavedSnapshotServiceImpl implements SavedSnapshotService {
-
-    private SavedSnapshotRepository savedSnapshotRepository;
-    private AuditorAware<UserEntity> userEntityAuditorAware;
+    private final SavedSnapshotRepository savedSnapshotRepository;
+    private final AuditorAware<UserEntity> userEntityAuditorAware;
 
     @Autowired
     public SavedSnapshotServiceImpl(final SavedSnapshotRepository savedSnapshotRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {
