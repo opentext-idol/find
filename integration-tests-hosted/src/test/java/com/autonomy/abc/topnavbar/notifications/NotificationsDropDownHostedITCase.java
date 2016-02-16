@@ -14,7 +14,7 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.Notification;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
-import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
+import com.autonomy.abc.selenium.users.HSODDevelopersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
@@ -172,7 +172,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         Session secondSession = null;
         SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
 
-        HSODevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODevelopersPage.class);
+        HSODDevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODDevelopersPage.class);
 
         User dev = new User(null, hsoDevelopersPage.getUsernames().get(0));
         String devUsername = "Brendon Urie";

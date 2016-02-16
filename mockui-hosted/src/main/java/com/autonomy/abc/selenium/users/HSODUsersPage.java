@@ -1,8 +1,7 @@
-package com.autonomy.abc.selenium.page.admin;
+package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -11,21 +10,21 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HSOUsersPage extends HSOUserManagementPage {
-    private HSOUsersPage(WebDriver driver) {
+public class HSODUsersPage extends HSODUserManagementPage {
+    private HSODUsersPage(WebDriver driver) {
         super(driver);
         waitForLoad();
     }
 
     @Override
-    public HSOUser addNewUser(NewUser newUser, Role role) {
-        if (newUser instanceof HSONewUser) {
-            return addHSONewUser((HSONewUser) newUser, role);
+    public HSODUser addNewUser(NewUser newUser, Role role) {
+        if (newUser instanceof HSODNewUser) {
+            return addHSONewUser((HSODNewUser) newUser, role);
         }
         throw new IllegalStateException("Cannot create new user " + newUser);
     }
 
-    private HSOUser addHSONewUser(HSONewUser newUser, Role role) {
+    private HSODUser addHSONewUser(HSODNewUser newUser, Role role) {
         addUsername(newUser.getUsername());
         addEmail(newUser.getEmail());
         selectRole(role);
@@ -51,7 +50,7 @@ public class HSOUsersPage extends HSOUserManagementPage {
     }
 
     public WebElement getUserRow(User user){
-        return findElement(By.xpath("//*[contains(@class,'user-email') and text()='" + ((HSOUser) user).getEmail() + "']/.."));
+        return findElement(By.xpath("//*[contains(@class,'user-email') and text()='" + ((HSODUser) user).getEmail() + "']/.."));
     }
 
     public FormInput getUsernameInput(){
@@ -86,9 +85,9 @@ public class HSOUsersPage extends HSOUserManagementPage {
         getEmailInput().clear();
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, HSOUsersPage> {
-        public HSOUsersPage create(WebDriver context) {
-            return new HSOUsersPage(context);
+    public static class Factory implements ParametrizedFactory<WebDriver, HSODUsersPage> {
+        public HSODUsersPage create(WebDriver context) {
+            return new HSODUsersPage(context);
         }
     }
 }

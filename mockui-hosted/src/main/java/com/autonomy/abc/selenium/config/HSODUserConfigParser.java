@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.config;
 
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
-import com.autonomy.abc.selenium.users.HSONewUser;
+import com.autonomy.abc.selenium.users.HSODNewUser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
@@ -35,7 +35,7 @@ public class HSODUserConfigParser extends UserConfigParser {
         String username = newUserNode.path("username").asText();
         String email = newUserNode.path("email").asText();
 
-        return new HSONewUser(username, email, provider);
+        return new HSODNewUser(username, email, provider);
     }
 
     private AuthProvider authProvider(JsonNode authNode){
@@ -46,7 +46,7 @@ public class HSODUserConfigParser extends UserConfigParser {
 
     @Override
     public NewUser generateNewUser(String identifier) {
-        return new HSONewUser(identifier, gmailString(identifier), getAuthProvider());
+        return new HSODNewUser(identifier, gmailString(identifier), getAuthProvider());
     }
 
     private String gmailString(String extra) {

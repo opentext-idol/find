@@ -5,8 +5,8 @@ import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
 import com.autonomy.abc.selenium.navigation.PageMapper;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
-import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
+import com.autonomy.abc.selenium.users.HSODDevelopersPage;
+import com.autonomy.abc.selenium.users.HSODUsersPage;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
@@ -68,8 +68,8 @@ public class HSODElementFactory extends SOElementFactory {
     }
 
     @Override
-    public HSOUsersPage getUsersPage(){
-        return loadPage(HSOUsersPage.class);
+    public HSODUsersPage getUsersPage(){
+        return loadPage(HSODUsersPage.class);
     }
 
     public ConnectionsPage getConnectionsPage() {
@@ -104,8 +104,8 @@ public class HSODElementFactory extends SOElementFactory {
         return loadPage(GettingStartedPage.class);
     }
 
-    public HSODevelopersPage getDevsPage() {
-        return loadPage(HSODevelopersPage.class);
+    public HSODDevelopersPage getDevsPage() {
+        return loadPage(HSODDevelopersPage.class);
     }
 
     protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {

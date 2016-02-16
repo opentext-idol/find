@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.openqa.selenium.By;
@@ -12,15 +11,15 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSODUserService extends UserService<HSODElementFactory> {
-    private HSOUsersPage usersPage;
+    private HSODUsersPage usersPage;
 
     public HSODUserService(SearchOptimizerApplication<? extends HSODElementFactory> application) {
         super(application);
     }
 
     @Override
-    public HSOUsersPage goToUsers() {
-        usersPage = getApplication().switchTo(HSOUsersPage.class);
+    public HSODUsersPage goToUsers() {
+        usersPage = getApplication().switchTo(HSODUsersPage.class);
         setUsersPage(usersPage);
         return usersPage;
     }
@@ -46,7 +45,7 @@ public class HSODUserService extends UserService<HSODElementFactory> {
     }
 
     @Override
-    public HSOUser changeRole(User user, Role newRole) {
+    public HSODUser changeRole(User user, Role newRole) {
         usersPage = goToUsers();
 
         WebElement roleLink = usersPage.roleLinkFor(user);
@@ -54,14 +53,14 @@ public class HSODUserService extends UserService<HSODElementFactory> {
         if (user.getRole().equals(newRole)) {
             roleLink.click();
             roleLink.click();
-            return (HSOUser) user;
+            return (HSODUser) user;
         }
 
         roleLink.click();
         usersPage.setRoleValueFor(user, newRole);
         new WebDriverWait(getDriver(),5).until(ExpectedConditions.textToBePresentInElement(roleLink, newRole.toString()));
         user.setRole(newRole);
-        return (HSOUser) user;
+        return (HSODUser) user;
     }
 
     public void resetAuthentication(User user) {
@@ -79,7 +78,7 @@ public class HSODUserService extends UserService<HSODElementFactory> {
         usersPage.editUsernameInput(user).setAndSubmit(newUsername);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
         Waits.loadOrFadeWait();
-        ((HSOUser) user).setUsername(newUsername);
+        ((HSODUser) user).setUsername(newUsername);
         return user;
     }
 }

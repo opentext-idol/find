@@ -1,14 +1,13 @@
-package com.autonomy.abc.selenium.page.admin;
+package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.users.Status;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.page.admin.UsersPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-abstract class HSOUserManagementPage extends UsersPage {
-    protected HSOUserManagementPage(WebDriver driver) {
+abstract class HSODUserManagementPage extends UsersPage {
+    protected HSODUserManagementPage(WebDriver driver) {
         super(driver);
     }
 

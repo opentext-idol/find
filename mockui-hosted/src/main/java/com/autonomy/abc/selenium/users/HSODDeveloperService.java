@@ -3,21 +3,20 @@ package com.autonomy.abc.selenium.users;
 import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
-import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HSODDeveloperService extends ServiceBase<HSODElementFactory> {
-    private HSODevelopersPage devsPage;
+    private HSODDevelopersPage devsPage;
 
     public HSODDeveloperService(SearchOptimizerApplication<? extends HSODElementFactory> application){
         super(application);
     }
 
-    public HSODevelopersPage goToDevs(){
-        devsPage = getApplication().switchTo(HSODevelopersPage.class);
+    public HSODDevelopersPage goToDevs(){
+        devsPage = getApplication().switchTo(HSODDevelopersPage.class);
         return devsPage;
     }
 
@@ -28,7 +27,7 @@ public class HSODDeveloperService extends ServiceBase<HSODElementFactory> {
         devsPage.editUsernameInput(user).setAndSubmit(newUsername);
         new WebDriverWait(getDriver(),10).until(ExpectedConditions.visibilityOf(pencil));
         Waits.loadOrFadeWait();
-        ((HSOUser) user).setUsername(newUsername);
+        ((HSODUser) user).setUsername(newUsername);
         return user;
     }
 }

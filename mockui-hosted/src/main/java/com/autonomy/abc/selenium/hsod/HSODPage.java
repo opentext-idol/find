@@ -3,8 +3,8 @@ package com.autonomy.abc.selenium.hsod;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.navigation.PageMapper;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
-import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
+import com.autonomy.abc.selenium.users.HSODDevelopersPage;
+import com.autonomy.abc.selenium.users.HSODUsersPage;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
@@ -56,8 +56,8 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
 
     GETTING_STARTED(NavBarTabId.GETTING_STARTED, new GettingStartedPage.Factory(), GettingStartedPage.class),
 
-    DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODevelopersPage.Factory(), HSODevelopersPage.class),
-    USERS(NavBarTabId.USERS, new HSOUsersPage.Factory(), HSOUsersPage.class);
+    DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODDevelopersPage.Factory(), HSODDevelopersPage.class),
+    USERS(NavBarTabId.USERS, new HSODUsersPage.Factory(), HSODUsersPage.class);
 
     private final Class<?> pageType;
     private final PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;

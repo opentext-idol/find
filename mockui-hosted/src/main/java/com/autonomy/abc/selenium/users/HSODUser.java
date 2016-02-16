@@ -8,14 +8,14 @@ import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 
-public class HSOUser extends User {
+public class HSODUser extends User {
     private String email;
 
-    public HSOUser(String username, String email, Role role) {
+    public HSODUser(String username, String email, Role role) {
         this(username, email, role, null);
     }
 
-    public HSOUser(String username, String email, Role role, AuthProvider authProvider){
+    public HSODUser(String username, String email, Role role, AuthProvider authProvider){
         super(authProvider, username, role);
         this.email = email;
     }
