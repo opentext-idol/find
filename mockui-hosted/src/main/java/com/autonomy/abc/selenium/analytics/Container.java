@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.analytics;
+package com.autonomy.abc.selenium.analytics;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;

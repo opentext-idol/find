@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.analytics;
+package com.autonomy.abc.selenium.analytics;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -11,7 +11,7 @@ public class ContainerItem {
     private int searches;
     private WebElement element;
 
-    public ContainerItem(WebElement element){
+    ContainerItem(WebElement element){
         this.element = element;
         this.term = element.findElement(By.tagName("a")).getText();
         this.searches = Integer.parseInt(element.findElement(By.tagName("span")).getText());
