@@ -102,7 +102,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public List<String> getLanguageList() {
-		languageButton().click();
+		languageDropdown().open();
 		final List<String> languageList = new ArrayList<>();
 
 		for (final WebElement language : findElements(By.cssSelector(".search-page-controls [role='menuitem']"))) {
@@ -122,13 +122,13 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public void promotionsBucketClose() {
-		promotionsBucket().findElement(By.cssSelector(".close-link")).click();
+		promotionsBucket().findElement(By.className("close-link")).click();
 		Waits.loadOrFadeWait();
 	}
 
 	/* promoted results */
 	public WebElement promotionsSummary() {
-		return findElement(By.cssSelector(".promotions-summary"));
+		return findElement(By.className("promotions-summary"));
 	}
 
 	public int getPromotionSummarySize() {
@@ -179,7 +179,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public boolean isPromotionsBoxVisible() {
-		return !findElement(By.cssSelector(".promotions")).getAttribute("class").contains("hidden");
+		return !findElement(By.className("promotions")).getAttribute("class").contains("hidden");
 	}
 
 	public void showMorePromotions() {
@@ -193,11 +193,11 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 	}
 
 	public WebElement showMorePromotionsButton() {
-		return findElement(By.cssSelector(".show-more"));
+		return findElement(By.className("show-more"));
 	}
 
 	public WebElement showLessPromotionsButton() {
-		return findElement(By.cssSelector(".show-less"));
+		return findElement(By.className("show-less"));
 	}
 
 	public void switchPromotionPage(Pagination pagination) {
@@ -234,14 +234,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
-	public void viewFrameClick(final boolean clickLogo, final int resultIndex) {
-		if (clickLogo) {
-			docLogo(resultIndex).click();
-		} else {
-			getSearchResult(resultIndex).title().click();
-		}
-	}
-
 	public WebElement docLogo(final int searchResultNumber) {
 		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
 	}
@@ -252,7 +244,7 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 
 	/* keywords */
 	public List<String> youSearchedFor() {
-		WebElement searchTermsList = findElement(By.cssSelector(".search-terms-list"));
+		WebElement searchTermsList = findElement(By.className("search-terms-list"));
 		ElementUtil.scrollIntoView(searchTermsList, getDriver());
 		return ElementUtil.getTexts(searchTermsList.findElements(By.tagName("span")));
 	}
@@ -277,17 +269,14 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return keywordsContainer().keywords().size();
 	}
 
-	// TODO: use keywordsContainer
 	public int countSynonymLists() {
-		return (findElement(By.className("search-synonyms-keywords"))).findElements(By.className("add-synonym")).size();
+		return keywordsContainer().synonymGroups().size();
 	}
 
-	// TODO: use keywordsContainer
-	@Deprecated
-	public List<String> getLeadSynonymsList() {
+	public List<String> getFirstSynonymInGroup() {
 		final List<String> leadSynonyms = new ArrayList<>();
-		for (final WebElement synonymGroup : findElements(By.cssSelector(".keywords-list > ul > li"))) {
-			leadSynonyms.add(synonymGroup.findElement(By.cssSelector("li:first-child span span")).getText());
+		for(SynonymGroup group : keywordsContainer().synonymGroups()){
+			leadSynonyms.add(group.getSynonyms().get(0));
 		}
 		return leadSynonyms;
 	}

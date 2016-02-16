@@ -21,7 +21,7 @@ public class HSODevelopersPage extends HSOUserManagementPage {
 
     @Override
     public WebElement getUserRow(User user) {
-        return getUserRowByUsername(user.getUsername());
+        return findElement(By.xpath("//*[contains(@class,'user-name') and contains(.,'" + user.getUsername() + "')]"));
     }
 
     public User getUser(int index) {
@@ -34,11 +34,6 @@ public class HSODevelopersPage extends HSOUserManagementPage {
     @Override
     public void setRoleValueFor(User user, Role newRole) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected WebElement getUserRowByUsername(String username) {
-        return findElement(By.xpath("//*[contains(@class,'user-name') and contains(.,'" + username + "')]"));
     }
 
     public void editUsername(User dev, String devUsername) {

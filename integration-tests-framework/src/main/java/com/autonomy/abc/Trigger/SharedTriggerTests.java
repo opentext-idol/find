@@ -16,7 +16,6 @@ import static org.hamcrest.core.Is.is;
 public class SharedTriggerTests {
     private int numberOfTriggers;
     private boolean noQuotesFlag = false;
-    private final String initialTrigger = "dog";
     private final TriggerForm triggerForm;
 
     private final String[] duplicateTriggers = {
@@ -109,6 +108,7 @@ public class SharedTriggerTests {
 
     /* Helper methods */
     private void initialiseTriggers() {
+        String initialTrigger = "dog";
         if(!triggerForm.getTriggersAsStrings().contains(initialTrigger)){
             triggerForm.addTrigger(initialTrigger);
             numberOfTriggers++;

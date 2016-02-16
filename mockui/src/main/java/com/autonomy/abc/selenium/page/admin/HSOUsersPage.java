@@ -86,11 +86,6 @@ public class HSOUsersPage extends HSOUserManagementPage {
         getEmailInput().clear();
     }
 
-    @Override
-    protected WebElement getUserRowByUsername(String username){
-        return findElement(By.xpath("//*[contains(@class,'user-name') and text()='" + username + "']/.."));
-    }
-
     public static class Factory implements ParametrizedFactory<WebDriver, HSOUsersPage> {
         public HSOUsersPage create(WebDriver context) {
             return new HSOUsersPage(context);

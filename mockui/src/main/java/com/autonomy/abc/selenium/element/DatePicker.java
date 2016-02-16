@@ -82,20 +82,6 @@ public class DatePicker extends AppElement {
 		Waits.loadOrFadeWait();
 	}
 
-	public void setHourUsingIncrementDecrement(final int hour) {
-		final int difference = hour - Integer.parseInt(timePickerHour().getText());
-		if (difference > 0) {
-			for (int i = 1; i <= difference; i++) {
-				incrementHours();
-			}
-		} else {
-			for (int i = - 1; i >= difference; i--) {
-				decrementHours();
-			}
-		}
-		Waits.loadOrFadeWait();
-	}
-
 	public void resetDateToToday() {
 		findElement(By.cssSelector(".picker-switch [data-action='today']")).click();
 	}

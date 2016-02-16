@@ -65,10 +65,6 @@ public class DocumentViewer extends AppElement implements AppPage {
         }
     }
 
-    public String getDomain() {
-        return getField("Domain");
-    }
-
     public Index getIndex() {
         return new Index(getField("Index"));
     }

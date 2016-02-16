@@ -20,10 +20,6 @@ public class OverviewPage extends AppElement implements AppPage {
 		return Integer.parseInt(getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[3]")).getText());
 	}
 
-	public int searchTermRow(final String searchTerm) {
-		return Integer.parseInt(getWidget(Widget.TOP_SEARCH_TERMS).findElement(By.cssSelector(ACTIVE_TABLE_SELECTOR)).findElement(By.xpath(".//a[text()='" + searchTerm + "']/../../td[1]")).getText());
-	}
-
 	public final static String ACTIVE_TABLE_SELECTOR = ":not([style='display: none;']) > table";
 
 	public int getTotalSearches(final Widget widget) {

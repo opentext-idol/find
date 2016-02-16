@@ -120,19 +120,6 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
         getDriver().get(getConfig().getWebappUrl());
     }
 
-    protected void verifyUserShowsUpInTable(User user, Status expectedStatus){
-        verifyThat(usersPage.getUsernames(), CoreMatchers.hasItem(user.getUsername()));
-        verifyThat(usersPage.getRoleOf(user), is(Role.USER));
-
-        if(getConfig().getType().equals(ApplicationType.HOSTED)){
-            HSOUsersPage usersPage = (HSOUsersPage) this.usersPage;
-            HSOUser hsoUser = (HSOUser) user;
-
-            verifyThat(usersPage.getEmailOf(user), is(hsoUser.getEmail()));
-            verifyThat(usersPage.getStatusOf(user), is(expectedStatus));
-        }
-    }
-
     protected void verifyCreateDeleteInTable(NewUser newUser) {
         User user = userService.createNewUser(newUser, Role.USER);
         String username = user.getUsername();

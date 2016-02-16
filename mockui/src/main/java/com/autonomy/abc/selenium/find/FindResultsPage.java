@@ -2,7 +2,6 @@ package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.FindParametricCheckbox;
 import com.autonomy.abc.selenium.search.FindSearchResult;
-import com.autonomy.abc.selenium.search.SearchResult;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
@@ -80,10 +79,6 @@ public class FindResultsPage extends AppElement {
         }
 
         return titles;
-    }
-
-    public List<WebElement> similarResultLinks() {
-        return findElements(By.className("similar-documents-trigger"));
     }
 
     public WebElement popover() {

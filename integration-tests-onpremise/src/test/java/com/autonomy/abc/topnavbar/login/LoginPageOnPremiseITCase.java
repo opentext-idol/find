@@ -37,7 +37,6 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	}
 
 	private OPLoginPage loginPage;
-	private UsersPage usersPage;
 
 	@Override
 	public OPISOElementFactory getElementFactory() {
@@ -48,7 +47,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws InterruptedException {
         UserService userService = getApplication().userService();
-        usersPage = userService.goToUsers();
+		UsersPage usersPage = userService.goToUsers();
 		userService.deleteOtherUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());

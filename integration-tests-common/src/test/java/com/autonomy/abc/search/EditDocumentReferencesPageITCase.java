@@ -36,7 +36,6 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         super(config);
     }
 
-    private SearchPage searchPage;
     private PromotionsDetailPage promotionsDetailPage;
     private EditDocumentReferencesPage editReferencesPage;
     private PromotionService<?> promotionService;
@@ -82,7 +81,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         }
 
         getApplication().switchTo(KeywordsPage.class);
-        searchPage = searchService.search("edit");
+        SearchPage searchPage = searchService.search("edit");
         searchPage.promoteTheseDocumentsButton().click();
         searchPage.addToBucket(3);
 

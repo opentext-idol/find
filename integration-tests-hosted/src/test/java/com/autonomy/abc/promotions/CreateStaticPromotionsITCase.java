@@ -30,7 +30,6 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
     private HSOCreateNewPromotionsPage createPromotionsPage;
     private HSOPromotionService promotionService;
     private Wizard wizard;
-    private TriggerForm triggerForm;
 
     public CreateStaticPromotionsITCase(TestConfig config) {
         super(config);
@@ -102,7 +101,7 @@ public class CreateStaticPromotionsITCase extends HostedTestBase {
     public void testAddRemoveTriggers() {
         goToTriggerStep();
 
-        triggerForm = createPromotionsPage.getTriggerForm();
+        TriggerForm triggerForm = createPromotionsPage.getTriggerForm();
 
         assertThat(createPromotionsPage.getCurrentStepTitle(), is(SearchTriggerStep.TITLE));
         verifyThat(triggerForm.getTriggers(), empty());
