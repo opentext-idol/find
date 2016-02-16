@@ -3,14 +3,14 @@ package com.autonomy.abc.selenium.navigation;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.users.UsersPage;
-import com.autonomy.abc.selenium.page.keywords.OPCreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.OPKeywordsPage;
+import com.autonomy.abc.selenium.keywords.OPCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.OPKeywordsPage;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
 import com.autonomy.abc.selenium.promotions.OPCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionsPage;
 import com.autonomy.abc.selenium.promotions.SchedulePage;
-import com.autonomy.abc.selenium.page.search.OPSearchPage;
+import com.autonomy.abc.selenium.search.OPSearchPage;
 import com.autonomy.abc.selenium.users.OPUsersPage;
 import org.openqa.selenium.WebDriver;
 

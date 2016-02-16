@@ -1,10 +1,7 @@
-package com.autonomy.abc.selenium.page.overview;
+package com.autonomy.abc.selenium.analytics;
 
 
-import com.autonomy.abc.selenium.analytics.DashboardBase;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
