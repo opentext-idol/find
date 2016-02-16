@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
-import com.autonomy.abc.selenium.page.login.GoogleAuth;
+import com.autonomy.abc.selenium.external.GoogleAuth;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import com.hp.autonomy.frontend.selenium.sso.*;
 

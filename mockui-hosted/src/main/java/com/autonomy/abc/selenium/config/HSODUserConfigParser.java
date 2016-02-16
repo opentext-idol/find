@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
-import com.autonomy.abc.selenium.page.login.GoogleAuth;
+import com.autonomy.abc.selenium.external.GoogleAuth;
 import com.autonomy.abc.selenium.users.HSODNewUser;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;

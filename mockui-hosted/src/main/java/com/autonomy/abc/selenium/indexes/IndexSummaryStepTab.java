@@ -1,13 +1,13 @@
 package com.autonomy.abc.selenium.indexes;
 
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class IndexSummaryStepTab extends SAASPageBase {
+public class IndexSummaryStepTab extends ICMAPageBase {
     private IndexSummaryStepTab(WebDriver driver) {
         super(driver);
     }

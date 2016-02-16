@@ -10,7 +10,7 @@ import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.gettingStarted.GettingStartedPage;
+import com.autonomy.abc.selenium.icma.GettingStartedPage;
 import com.autonomy.abc.selenium.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.indexes.IndexesPage;

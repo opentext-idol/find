@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.util;
+package com.autonomy.abc.selenium.error;
 
 public class Errors {
     public static class Term {

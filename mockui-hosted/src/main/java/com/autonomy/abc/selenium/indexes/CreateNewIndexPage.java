@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.indexes;
 
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class CreateNewIndexPage extends SAASPageBase {
+public class CreateNewIndexPage extends ICMAPageBase {
     private CreateNewIndexPage(WebDriver driver) {
         super(driver);
     }

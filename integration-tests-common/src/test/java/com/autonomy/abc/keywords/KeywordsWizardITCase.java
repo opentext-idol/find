@@ -15,7 +15,7 @@ import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;

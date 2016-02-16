@@ -1,7 +1,7 @@
 package com.autonomy.abc.Trigger;
 
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.error.Errors;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 

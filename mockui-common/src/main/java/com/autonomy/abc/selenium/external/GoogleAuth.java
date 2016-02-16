@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.login;
+package com.autonomy.abc.selenium.external;
 
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 import org.openqa.selenium.By;

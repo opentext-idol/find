@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page;
+package com.autonomy.abc.selenium.error;
 
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.By;

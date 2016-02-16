@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.connections;
 
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
@@ -13,7 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class ConnectionsPage extends SAASPageBase {
+public class ConnectionsPage extends ICMAPageBase {
     private WebElement toolbar;
 
     private ConnectionsPage(final WebDriver driver) {

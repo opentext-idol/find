@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.indexes;
 
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
@@ -14,7 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndexesDetailPage extends SAASPageBase {
+public class IndexesDetailPage extends ICMAPageBase {
     private IndexesDetailPage(WebDriver driver) {
         super(driver);
     }

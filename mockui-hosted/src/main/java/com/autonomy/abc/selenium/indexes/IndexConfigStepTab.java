@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.indexes;
 import com.autonomy.abc.selenium.element.ChevronContainer;
 import com.autonomy.abc.selenium.element.Collapsible;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -14,7 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class IndexConfigStepTab extends SAASPageBase {
+public class IndexConfigStepTab extends ICMAPageBase {
     public IndexConfigStepTab(WebDriver driver) {
         super(driver);
     }

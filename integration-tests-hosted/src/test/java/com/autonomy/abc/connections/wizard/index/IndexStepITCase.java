@@ -8,7 +8,7 @@ import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.connections.wizard.ConnectorTypeStepTab;
-import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;

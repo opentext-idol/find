@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page;
+package com.autonomy.abc.selenium.icma;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -10,10 +10,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public abstract class SAASPageBase implements AppPage {
+public abstract class ICMAPageBase implements AppPage {
     private AppElement page;
 
-    public SAASPageBase(WebDriver driver) {
+    public ICMAPageBase(WebDriver driver) {
         page = new AppElement(new WebDriverWait(driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[ui-view]"))), driver);
     }
 

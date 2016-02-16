@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.connections.wizard;
 
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 /**
  * Created by avidan on 10-11-15.
  */
-public class ConnectorTypeStepTab extends SAASPageBase{
+public class ConnectorTypeStepTab extends ICMAPageBase {
     private ConnectorTypeStepTab(WebDriver driver) {
         super(driver);
     }

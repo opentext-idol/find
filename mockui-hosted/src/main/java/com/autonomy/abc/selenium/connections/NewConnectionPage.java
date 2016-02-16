@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.connections.wizard.ConnectorConfigStepTab;
 import com.autonomy.abc.selenium.connections.wizard.ConnectorIndexStepTab;
 import com.autonomy.abc.selenium.connections.wizard.ConnectorTypeStepTab;
@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class NewConnectionPage extends SAASPageBase {
+public class NewConnectionPage extends ICMAPageBase {
     private NewConnectionPage(WebDriver driver) {
         super(driver);
     }

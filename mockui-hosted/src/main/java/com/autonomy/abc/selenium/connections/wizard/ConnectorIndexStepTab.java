@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.connections.wizard;
 
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class ConnectorIndexStepTab extends SAASPageBase {
+public class ConnectorIndexStepTab extends ICMAPageBase {
 
     private ConnectorIndexStepTab(WebDriver driver){
         super(driver);

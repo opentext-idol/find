@@ -1,6 +1,6 @@
-package com.autonomy.abc.selenium.users;
+package com.autonomy.abc.selenium.external;
 
-import com.autonomy.abc.selenium.page.login.GoogleAuth;
+import com.autonomy.abc.selenium.users.SignupEmailHandler;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;

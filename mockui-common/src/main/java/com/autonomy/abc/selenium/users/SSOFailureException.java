@@ -1,3 +1,3 @@
-package com.autonomy.abc.selenium.page.login;
+package com.autonomy.abc.selenium.users;
 
 public class SSOFailureException extends RuntimeException {}

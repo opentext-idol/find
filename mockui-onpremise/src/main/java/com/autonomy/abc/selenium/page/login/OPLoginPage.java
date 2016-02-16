@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.page.login;
 
+import com.autonomy.abc.selenium.users.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.openqa.selenium.By;

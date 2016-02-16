@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.search;
+package com.autonomy.abc.selenium.element;
 
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.util.Waits;
