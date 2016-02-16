@@ -15,7 +15,7 @@ import com.autonomy.abc.selenium.menu.Notification;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.users.HSODDevelopersPage;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;

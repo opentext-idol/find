@@ -2,7 +2,7 @@ package com.autonomy.abc.selenium.navigation;
 
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.page.keywords.OPCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.OPKeywordsPage;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;

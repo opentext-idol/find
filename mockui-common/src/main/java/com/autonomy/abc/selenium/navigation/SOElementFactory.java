@@ -3,7 +3,7 @@ package com.autonomy.abc.selenium.navigation;
 import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.CreateNewPromotionsPage;

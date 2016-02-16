@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;

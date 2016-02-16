@@ -1,4 +1,4 @@
-package com.autonomy.abc.selenium.page.admin;
+package com.autonomy.abc.selenium.users;
 
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;

@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.hp.autonomy.frontend.selenium.login.AuthProvider;
 
 public class HSODNewUser implements NewUser {

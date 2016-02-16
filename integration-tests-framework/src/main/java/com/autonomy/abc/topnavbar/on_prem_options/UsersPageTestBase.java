@@ -4,7 +4,7 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;

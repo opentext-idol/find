@@ -3,7 +3,7 @@ package com.autonomy.abc.topnavbar.login;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
+import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.page.login.OPAccount;
 import com.autonomy.abc.selenium.page.login.OPLoginPage;
 import com.autonomy.abc.selenium.users.UserService;
