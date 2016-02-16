@@ -1,9 +1,9 @@
-package com.autonomy.abc.selenium.page.promotions;
+package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.OptionWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -12,8 +12,8 @@ import org.openqa.selenium.WebElement;
 import java.util.Arrays;
 import java.util.List;
 
-public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
-    private HSOCreateNewPromotionsPage(WebDriver driver) {
+public class HSODCreateNewPromotionsPage extends CreateNewPromotionsPage {
+    private HSODCreateNewPromotionsPage(WebDriver driver) {
         super(driver);
     }
 
@@ -56,10 +56,10 @@ public class HSOCreateNewPromotionsPage extends CreateNewPromotionsPage {
         return dataInput("staticContent");
     }
 
-    public static class Factory implements ParametrizedFactory<WebDriver, HSOCreateNewPromotionsPage> {
+    public static class Factory implements ParametrizedFactory<WebDriver, HSODCreateNewPromotionsPage> {
         @Override
-        public HSOCreateNewPromotionsPage create(WebDriver context) {
-            return new HSOCreateNewPromotionsPage(context);
+        public HSODCreateNewPromotionsPage create(WebDriver context) {
+            return new HSODCreateNewPromotionsPage(context);
         }
     }
 }

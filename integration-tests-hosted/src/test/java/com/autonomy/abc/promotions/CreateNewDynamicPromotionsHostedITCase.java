@@ -3,7 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -48,7 +48,7 @@ public class CreateNewDynamicPromotionsHostedITCase extends HostedTestBase {
         final String firstDocTitle = searchPage.getSearchResult(1).getTitleString();
         searchPage.promoteThisQueryButton().click();
 
-        HSOCreateNewPromotionsPage dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+        HSODCreateNewPromotionsPage dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
         Waits.loadOrFadeWait();
 
         assertThat(getDriver().getCurrentUrl(), containsString("promotions/create-dynamic/"));

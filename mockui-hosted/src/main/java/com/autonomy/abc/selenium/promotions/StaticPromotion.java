@@ -4,7 +4,6 @@ package com.autonomy.abc.selenium.promotions;
 import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsBase;
-import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 
 
 public class StaticPromotion extends Promotion {
@@ -24,11 +23,11 @@ public class StaticPromotion extends Promotion {
 
     @Override
     public Wizard makeWizard(CreateNewPromotionsBase newPromotionsBase) {
-        return new StaticPromotionWizard((HSOCreateNewPromotionsPage) newPromotionsBase);
+        return new StaticPromotionWizard((HSODCreateNewPromotionsPage) newPromotionsBase);
     }
 
     private class StaticPromotionWizard extends PromotionWizard {
-        public StaticPromotionWizard(HSOCreateNewPromotionsPage page) {
+        public StaticPromotionWizard(HSODCreateNewPromotionsPage page) {
             super(page);
             add(new NewDocumentDetailsStep(page, title, content));
             add(new BlankWizardStep("Language"));

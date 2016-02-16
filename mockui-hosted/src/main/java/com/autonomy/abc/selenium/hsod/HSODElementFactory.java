@@ -19,8 +19,8 @@ import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
 import com.autonomy.abc.selenium.page.search.HSOSearchPage;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
@@ -38,8 +38,8 @@ public class HSODElementFactory extends SOElementFactory {
     }
 
     @Override
-    public HSOPromotionsPage getPromotionsPage() {
-        return loadPage(HSOPromotionsPage.class);
+    public HSODPromotionsPage getPromotionsPage() {
+        return loadPage(HSODPromotionsPage.class);
     }
 
     @Override
@@ -63,8 +63,8 @@ public class HSODElementFactory extends SOElementFactory {
     }
 
     @Override
-    public HSOCreateNewPromotionsPage getCreateNewPromotionsPage() {
-        return loadPage(HSOCreateNewPromotionsPage.class);
+    public HSODCreateNewPromotionsPage getCreateNewPromotionsPage() {
+        return loadPage(HSODCreateNewPromotionsPage.class);
     }
 
     @Override

@@ -1,16 +1,15 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
 
 public class NewDocumentDetailsStep implements WizardStep {
     private static final String TITLE = "Document details";
     private String docTitle;
     private String docContent;
 
-    private HSOCreateNewPromotionsPage page;
+    private HSODCreateNewPromotionsPage page;
 
-    public NewDocumentDetailsStep(HSOCreateNewPromotionsPage createNewPromotionsPage, String title, String content) {
+    public NewDocumentDetailsStep(HSODCreateNewPromotionsPage createNewPromotionsPage, String title, String content) {
         docTitle = title;
         docContent = content;
         page = createNewPromotionsPage;
