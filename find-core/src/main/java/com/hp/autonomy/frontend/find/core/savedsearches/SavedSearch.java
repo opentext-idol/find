@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Entity
-@Table(name = "searches")
+@Table(name = SavedSearch.Table.NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "search_type")
 @EntityListeners(AuditingEntityListener.class)
@@ -56,59 +56,59 @@ public abstract class SavedSearch {
     public static final String JADIRA_TYPE_NAME = "jadira";
 
     @Id
-    @Column(name = "search_id")
+    @Column(name = Table.Column.ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = Table.Column.USER_ID)
     @JsonIgnore
     private UserEntity user;
 
     private String title;
 
-    @Column(name = "query_text")
+    @Column(name = Table.Column.QUERY_TEXT)
     private String queryText;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "search_indexes", joinColumns = {
-            @JoinColumn(name = "search_id")
+    @CollectionTable(name = IndexesTable.NAME, joinColumns = {
+            @JoinColumn(name = IndexesTable.Column.SEARCH_ID)
     })
     private Set<EmbeddableIndex> indexes;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "search_parametric_values", joinColumns = {
-            @JoinColumn(name = "search_id")
+    @CollectionTable(name = ParametricValuesTable.NAME, joinColumns = {
+            @JoinColumn(name = ParametricValuesTable.Column.SEARCH_ID)
     })
     private Set<FieldAndValue> parametricValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "search_related_concepts", joinColumns = {
-            @JoinColumn(name = "search_id")
+    @CollectionTable(name = RelatedConceptsTable.NAME, joinColumns = {
+            @JoinColumn(name = RelatedConceptsTable.Column.SEARCH_ID)
     })
-    @Column(name = "concept")
+    @Column(name = RelatedConceptsTable.Column.CONCEPT)
     private Set<String> relatedConcepts;
 
-    @Column(name = "start_date")
+    @Column(name = Table.Column.START_DATE)
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime minDate;
 
-    @Column(name = "end_date")
+    @Column(name = Table.Column.END_DATE)
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime maxDate;
 
     @CreatedDate
-    @Column(name = "created_date")
+    @Column(name = Table.Column.CREATED_DATE)
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateCreated;
 
     @LastModifiedDate
-    @Column(name = "modified_date")
+    @Column(name = Table.Column.MODIFIED_DATE)
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateModified;
 
-    @Column(name = "active")
+    @Column(name = Table.Column.ACTIVE)
     @JsonIgnore
     private Boolean active;
 
@@ -134,8 +134,8 @@ public abstract class SavedSearch {
             final Collection<String> quotedConcepts = new LinkedList<>();
 
             for (final String phrase : relatedConcepts) {
-                quotedConcepts.add(wrapQuotes(phrase));
-            }
+                    quotedConcepts.add(wrapQuotes(phrase));
+                }
 
             return '(' + queryText + ") " + StringUtils.join(quotedConcepts, ' ');
         }
@@ -262,6 +262,55 @@ public abstract class SavedSearch {
         public Builder<T> setActive(final Boolean active) {
             this.active = active;
             return this;
+        }
+    }
+
+    public interface Table {
+        String NAME = "searches";
+
+        interface Column {
+            String ID = "search_id";
+            String USER_ID = "user_id";
+            String QUERY_TEXT = "query_text";
+            String START_DATE = "start_date";
+            String END_DATE = "end_date";
+            String CREATED_DATE = "created_date";
+            String MODIFIED_DATE = "modified_date";
+            String ACTIVE = "active";
+            String TOTAL_RESULTS = "total_results";
+        }
+    }
+
+    public interface IndexesTable {
+        String NAME = "search_indexes";
+
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    public interface ParametricValuesTable {
+        String NAME = "search_parametric_values";
+
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    public interface StoredStateTable {
+        String NAME = "search_stored_state";
+
+        interface Column {
+            String STATE_TOKEN = "state_token";
+        }
+    }
+
+    public interface RelatedConceptsTable {
+        String NAME = "search_related_concepts";
+
+        interface Column {
+            String SEARCH_ID = "search_id";
+            String CONCEPT = "concept";
         }
     }
 }

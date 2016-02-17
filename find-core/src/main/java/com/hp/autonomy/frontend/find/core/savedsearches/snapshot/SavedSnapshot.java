@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.CollectionTable;
@@ -24,15 +27,14 @@ import java.util.List;
 @JsonDeserialize(builder = SavedSnapshot.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SavedSnapshot extends SavedSearch {
-
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "search_stored_state", joinColumns = {
+    @CollectionTable(name = StoredStateTable.NAME, joinColumns = {
             @JoinColumn(name = "search_id")
     })
-    @Column(name = "state_token")
+    @Column(name = StoredStateTable.Column.STATE_TOKEN)
     private List<String> stateTokens;
 
-    @Column(name = "total_results")
+    @Column(name = Table.Column.TOTAL_RESULTS)
     private Long resultCount;
 
     private SavedSnapshot(final Builder builder) {

@@ -26,25 +26,33 @@ import java.util.UUID;
  * {@link SavedSearch}, but then we would lose the centralisation of {@link SavedQuery} and other search types.
  */
 @Entity
-@Table(name = "users")
+@Table(name = UserEntity.Table.NAME)
 @Data
 @EqualsAndHashCode(exclude = {"searches", "userId"})
 @NoArgsConstructor
 public class UserEntity {
-
     @Id
-    @Column(name = "user_id")
+    @Column(name = Table.Column.USER_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-    private String domain;
 
-    @Column(name = "user_store")
+    @Column(name = Table.Column.USER_STORE)
     private String userStore;
 
+    private String domain;
     private UUID uuid;
     private Long uid;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<SavedSearch> searches;
+
+    public interface Table {
+        String NAME = "users";
+
+        interface Column {
+            String USER_ID = "user_id";
+            String USER_STORE = "user_store";
+        }
+    }
 }
