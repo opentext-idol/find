@@ -94,7 +94,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
         try {
             usersPage.addNewUser(invalidUser, Role.ADMIN);
-        } catch (TimeoutException | HSONewUser.UserNotCreatedException e){
+        } catch (TimeoutException | UserNotCreatedException e){
             /* Expected behaviour */
         }
 

@@ -28,16 +28,6 @@ public class HSONewUser implements NewUser {
         return null;
     }
 
-    public static class UserNotCreatedException extends RuntimeException {
-        public UserNotCreatedException(HSONewUser user){
-            this(user.username);
-        }
-
-        public UserNotCreatedException(String username){
-            super("User '" + username + "' was not created");
-        }
-    }
-
     public String getUsername() {
         return username;
     }

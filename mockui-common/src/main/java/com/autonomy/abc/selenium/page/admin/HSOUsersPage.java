@@ -44,7 +44,7 @@ public class HSOUsersPage extends HSOUserManagementPage {
                         }
                     });
         } catch (TimeoutException e) {
-            throw new HSONewUser.UserNotCreatedException(newUser);
+            throw new UserNotCreatedException(newUser);
         }
 
         return newUser.withRole(role);
