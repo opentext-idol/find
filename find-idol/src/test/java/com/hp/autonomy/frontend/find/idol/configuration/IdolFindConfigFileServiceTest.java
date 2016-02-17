@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigFileConfiguration;
-import com.hp.autonomy.frontend.view.idol.configuration.ViewConfig;
+import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import org.apache.commons.io.FileUtils;
 import org.jasypt.util.text.TextEncryptor;
 import org.junit.After;

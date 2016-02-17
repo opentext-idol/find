@@ -5,29 +5,28 @@
 
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
-import com.hp.autonomy.core.parametricvalues.ParametricValuesService;
-import com.hp.autonomy.frontend.find.core.web.CacheNames;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
+import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricValuesService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.hod.parametricvalues.HodParametricRequest;
-import com.hp.autonomy.hod.parametricvalues.HodParametricValuesService;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricRequest;
+import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricValuesService;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-public class CacheableParametricValuesService implements ParametricValuesService<HodParametricRequest, ResourceIdentifier, HodErrorException> {
-
-    private final HodParametricValuesService parametricValuesService;
-
-    public CacheableParametricValuesService(final HodParametricValuesService parametricValuesService) {
-        this.parametricValuesService = parametricValuesService;
+@Service("parametricValuesService")
+public class CacheableParametricValuesService extends HodParametricValuesService {
+    @Autowired
+    public CacheableParametricValuesService(final GetParametricValuesService getParametricValuesService) {
+        super(getParametricValuesService);
     }
 
     @Override
-    @Cacheable(CacheNames.PARAMETRIC_VALUES)
+    @Cacheable(FindCacheNames.PARAMETRIC_VALUES)
     public Set<QueryTagInfo> getAllParametricValues(final HodParametricRequest parametricRequest) throws HodErrorException {
-        return parametricValuesService.getAllParametricValues(parametricRequest);
+        return super.getAllParametricValues(parametricRequest);
     }
-
 }

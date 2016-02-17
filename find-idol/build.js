@@ -14,7 +14,7 @@
             name: "main",
             include: [
                 'require-config',
-                'find/app/app'
+                'find/app/admin-app'
             ]
         }, {
             name: "login",
@@ -27,7 +27,7 @@
             name: "config",
             include: [
                 'require-config',
-                'find/config/app'
+                'find/config/config-app'
             ]
         }, {
             name: "public",

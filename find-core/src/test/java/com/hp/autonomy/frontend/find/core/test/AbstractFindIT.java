@@ -28,14 +28,13 @@ import java.io.IOException;
 @ContextConfiguration(classes = {DispatcherServletConfiguration.class, AppConfiguration.class})
 @WebIntegrationTest({"application.buildNumber=test", "server.port=0", "hp.find.persistentState = INMEMORY", "hp.find.home = ./target/test", "find.https.proxyHost = web-proxy.sdc.hpecorp.net", "find.https.proxyPort: 8080", "find.iod.api = https://api.havenondemand.com", "find.hod.sso = https://dev.havenondemand.com/sso.html"})
 public abstract class AbstractFindIT {
-    private static final String TEST_DIR = "./target/test";
+    protected static final String TEST_DIR = "./target/test";
 
     @BeforeClass
     public static void init() throws IOException {
         System.setProperty("hp.find.home", TEST_DIR);
         final File directory = new File(TEST_DIR);
         FileUtils.forceMkdir(directory);
-        FileUtils.copyFileToDirectory(new File("./src/test/resources/config.json"), directory);
     }
 
     @AfterClass

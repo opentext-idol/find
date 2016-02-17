@@ -9,7 +9,8 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
-import com.hp.autonomy.frontend.view.idol.configuration.ViewConfig;
+import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
+import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -84,6 +85,12 @@ public class IdolFindConfigTest {
         when(community.toAciServerDetails()).thenReturn(mock(AciServerDetails.class));
         when(communityAuthentication.getCommunity()).thenReturn(community);
         assertNotNull(idolFindConfig.getCommunityDetails());
+    }
+
+    @Test
+    public void getContentAciServerDetails() {
+        when(serverConfig.toAciServerDetails()).thenReturn(mock(AciServerDetails.class));
+        assertNotNull(idolFindConfig.getContentAciServerDetails());
     }
 
     @Test

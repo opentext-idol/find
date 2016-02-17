@@ -5,33 +5,35 @@
 
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
-import com.hp.autonomy.frontend.find.core.web.CacheNames;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.textindex.query.fields.RetrieveIndexFieldsService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxy;
-import com.hp.autonomy.hod.fields.IndexFieldsService;
+import com.hp.autonomy.searchcomponents.hod.fields.IndexFieldsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-public class CacheableIndexFieldsService implements IndexFieldsService {
-
-    private final IndexFieldsService indexFieldsService;
-
-    public CacheableIndexFieldsService(final IndexFieldsService indexFieldsService) {
-        this.indexFieldsService = indexFieldsService;
+@Service("indexFieldsService")
+public class CacheableIndexFieldsService extends IndexFieldsServiceImpl {
+    @Autowired
+    public CacheableIndexFieldsService(final RetrieveIndexFieldsService retrieveIndexFieldsService) {
+        super(retrieveIndexFieldsService);
     }
 
     @Override
-    @Cacheable(CacheNames.PARAMETRIC_FIELDS)
+    @Cacheable(FindCacheNames.PARAMETRIC_FIELDS)
     public Set<String> getParametricFields(final ResourceIdentifier index) throws HodErrorException {
-        return indexFieldsService.getParametricFields(index);
+        return super.getParametricFields(index);
     }
 
     @Override
-    @Cacheable(CacheNames.PARAMETRIC_FIELDS)
+    @Cacheable(FindCacheNames.PARAMETRIC_FIELDS)
     public Set<String> getParametricFields(final TokenProxy<?, TokenType.Simple> tokenProxy, final ResourceIdentifier resourceIdentifier) throws HodErrorException {
-        return indexFieldsService.getParametricFields(tokenProxy, resourceIdentifier);
+        return super.getParametricFields(tokenProxy, resourceIdentifier);
     }
 }

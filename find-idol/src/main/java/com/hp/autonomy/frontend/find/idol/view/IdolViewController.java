@@ -5,64 +5,41 @@
 
 package com.hp.autonomy.frontend.find.idol.view;
 
+import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.logging.Markers;
-import com.hp.autonomy.frontend.view.ViewContentSecurityPolicy;
-import com.hp.autonomy.frontend.view.idol.ReferenceFieldBlankException;
-import com.hp.autonomy.frontend.view.idol.ViewDocumentNotFoundException;
-import com.hp.autonomy.frontend.view.idol.ViewNoReferenceFieldException;
-import com.hp.autonomy.frontend.view.idol.ViewServerErrorException;
-import com.hp.autonomy.frontend.view.idol.ViewServerService;
-import com.hp.autonomy.idolutils.processors.CopyResponseProcessor;
+import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import com.hp.autonomy.searchcomponents.idol.view.ReferenceFieldBlankException;
+import com.hp.autonomy.searchcomponents.idol.view.ViewDocumentNotFoundException;
+import com.hp.autonomy.searchcomponents.idol.view.ViewNoReferenceFieldException;
+import com.hp.autonomy.searchcomponents.idol.view.ViewServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
 
 @Controller
 @RequestMapping(IdolViewController.VIEW_PATH)
 @Slf4j
-public class IdolViewController {
-    public static final String VIEW_PATH = "/api/public/view";
-    public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
-    public static final String REFERENCE_PARAM = "reference";
-    public static final String INDEX_PARAM = "index";
-
+public class IdolViewController extends ViewController<ViewServerService<String, AciErrorException>, String, AciErrorException> {
     private final ConfigService<IdolFindConfig> configService;
-    private final ViewServerService viewServerService;
     private final ControllerUtils controllerUtils;
 
     @Autowired
-    public IdolViewController(final ConfigService<IdolFindConfig> configService, final ViewServerService viewServerService, final ControllerUtils controllerUtils) {
+    public IdolViewController(final ViewServerService<String, AciErrorException> viewServerService, final ConfigService<IdolFindConfig> configService, final ControllerUtils controllerUtils) {
+        super(viewServerService);
         this.configService = configService;
-        this.viewServerService = viewServerService;
         this.controllerUtils = controllerUtils;
-    }
-
-    @RequestMapping(value = VIEW_DOCUMENT_PATH, method = RequestMethod.GET)
-    public void viewDocument(
-            @RequestParam(REFERENCE_PARAM) final String reference,
-            @RequestParam(INDEX_PARAM) final String index,
-            final HttpServletResponse response
-    ) throws IOException {
-        response.setContentType(MediaType.TEXT_HTML_VALUE);
-        ViewContentSecurityPolicy.addContentSecurityPolicy(response);
-        viewServerService.viewDocument(reference, Collections.singletonList(index), new CopyResponseProcessor(response.getOutputStream()));
     }
 
     @ExceptionHandler
@@ -116,7 +93,7 @@ public class IdolViewController {
     public ModelAndView handleViewServerErrorException(
             final ViewServerErrorException e,
             final HttpServletRequest request,
-            final HttpServletResponse response
+            final ServletResponse response
     ) {
         response.reset();
 

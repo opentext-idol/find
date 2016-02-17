@@ -1,0 +1,31 @@
+/*
+ * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+define([
+    'backbone'
+], function(Backbone) {
+    return Backbone.Router.extend({
+
+        routes: {
+            'find/search/query(/:text/*refinements)': 'search',
+            'find/:page': 'find',
+            '(*path)': 'defaultRoute'
+        },
+
+        navigate: function() {
+            $('.modal').not('.undismissable-modal').modal('hide');
+
+            return Backbone.Router.prototype.navigate.apply(this, arguments);
+        },
+
+        search: function() {
+            this.trigger('route:find', 'search');
+        },
+
+        defaultRoute: function() {
+            this.navigate('find/search', {trigger: true, replace: true})
+        }
+    });
+});

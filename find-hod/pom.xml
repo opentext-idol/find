@@ -46,10 +46,9 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>node</executable>
+                            <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${project.basedir}/node_modules/grunt-cli/bin/grunt</argument>
                                 <argument>test</argument>
                             </arguments>
                             <skip>${skipTests}</skip>
@@ -121,24 +120,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>java-hod-client</artifactId>
-            <version>0.15.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>hod-sso-spring-security</artifactId>
-            <version>0.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend</groupId>
-            <artifactId>parametric-databases-hod</artifactId>
-            <version>0.4.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.hp.autonomy.hod.redis</groupId>
             <artifactId>redis-hod-token-repository</artifactId>
             <version>0.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.hp.autonomy.hod</groupId>
+                    <artifactId>java-hod-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.hod</groupId>
@@ -146,9 +136,9 @@
             <version>0.2.0</version>
         </dependency>
         <dependency>
-            <groupId>com.hp.autonomy.frontend.view</groupId>
-            <artifactId>view-proxy-components-hod</artifactId>
-            <version>0.5.1</version>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>haven-search-components-hod</artifactId>
+            <version>${haven.search.components.version}</version>
         </dependency>
 
         <dependency>
@@ -158,12 +148,23 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>haven-search-components-core</artifactId>
+            <version>${haven.search.components.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>haven-search-components-hod</artifactId>
+            <version>${haven.search.components.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
-        <profile>
-            <id>dev</id>
-        </profile>
         <profile>
             <id>production</id>
             <build>
@@ -214,10 +215,9 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>node</executable>
+                                    <executable>${basedir}/node_modules/.bin/blessc${npm.binExtension}</executable>
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
-                                        <argument>${basedir}/node_modules/bless/bin/blessc</argument>
                                         <argument>-f</argument>
                                         <argument>target/classes/static/css/app.css</argument>
                                     </arguments>

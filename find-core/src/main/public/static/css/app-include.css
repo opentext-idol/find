@@ -5,7 +5,6 @@
 
 html, body {
     min-width: 0;
-    min-height: 0;
     overflow: hidden;
 }
 
@@ -33,12 +32,13 @@ html, body {
 .date > input {
     padding: 8px 42px 8px 8px;
     padding-left: 30px;
+    font-size: 13px;
 }
 .date > .date-select {
     position: absolute;
     top: 0;
     left: 0;
-    padding: 10px 8px;
+    padding: 8px;
     background: transparent;
     text-decoration: none;
     cursor: pointer;
@@ -113,7 +113,7 @@ html, body {
 }
 
 .bold {
-    font-weight: 600 !important;
+    font-family: Metric-Bold;
 }
 
 .uppercase {
@@ -130,21 +130,45 @@ html, body {
     word-break: break-all;
 }
 
-.bootstrap-datetimepicker-widget td.day.active {
-    color: #ffffff;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    background-color: #2f92e7;
-    *background-color: #2f76e7;
-    background-image: -moz-linear-gradient(top, #2fa4e7, #2f76e7);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#2fa4e7), to(#2f76e7));
-    background-image: -webkit-linear-gradient(top, #2fa4e7, #2f76e7);
-    background-image: -o-linear-gradient(top, #2fa4e7, #2f76e7);
-    background-image: linear-gradient(to bottom, #2fa4e7, #2f76e7);
-    background-repeat: repeat-x;
-    border-color: #2f76e7 #2f76e7 #1553b5;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff2fa4e7', endColorstr='#ff2f76e7', GradientType=0);
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+.bootstrap-datetimepicker-widget {
+    font-size: 13px;
+}
+
+.bootstrap-datetimepicker-widget.dropdown-menu {
+    width:auto;
+}
+
+.bootstrap-datetimepicker-widget .timepicker td {
+    border:none;
+}
+
+.bootstrap-datetimepicker-widget .timepicker .btn {
+    box-shadow: none;
+}
+
+.bootstrap-datetimepicker-widget a[data-action] {
+    padding: 0;
+    color:#676a6c;
+}
+
+.bootstrap-datetimepicker-widget table td span {
+    width: 30px;
+    height: 0;
+    line-height: 0;
+}
+
+.datepicker-days td {
+    padding:0 !important;
+}
+
+.bootstrap-datetimepicker-widget table td {
+    height: 0;
+    line-height: 10px;
+    width: 0;
+}
+
+.bootstrap-datetimepicker-widget .separator {
+    padding:0;
 }
 
 .input-append.date .add-on i {
@@ -156,7 +180,6 @@ html, body {
 }
 
 .initial-loading-indicator-container {
-    position: relative;
     height: 100%;
 }
 
@@ -165,7 +188,6 @@ html, body {
     border-radius: 5px;
     height: 32px;
     left: 50%;
-    line-height: 32px;
     margin: -16px 0 0 -100px;
     padding: 5px;
     position: absolute;
@@ -200,6 +222,13 @@ html, body {
 
 .centre {
     text-align: center;
+}
+
+
+/*sizes determined by HPE Elements .middle-box*/
+.middle-box-wrapper {
+    height: 400px;
+    width: 300px;
 }
 
 /* find 2.0 */
@@ -253,9 +282,6 @@ html, body {
 
 .right-side-container h4,
 .left-side-container h4 {
-    font-weight: 900;
-    font-size: 13px;
-    color:#555;
     text-transform: uppercase;
 }
 
@@ -282,6 +308,12 @@ html, body {
     text-overflow: ellipsis;
 }
 
+.filter-display-container h4 {
+    color: inherit;
+    font-size: inherit;
+    display: inline;
+}
+
 .find {
     text-align: center;
     /* We need to be on top of the static navbar */
@@ -302,15 +334,19 @@ html, body {
 
 .find-logo-small {
     background: url('../img/Find_Logo_sml.png') no-repeat;
-    background-size: 210px 28px;
-    width: 210px;
-    height: 28px;
+    background-size: 100px 20px;
+    width: 100px;
+    height: 20px;
+}
+
+.find-logo-small.reduced {
+    display: none;
 }
 
 .find-logo-large {
     background-image: url('../img/Find_Logo_lge.png');
-    width: 500px;
-    height: 70px;
+    width: 240px;
+    height: 45px;
     display: inline-block;
     vertical-align: middle;
 }
@@ -364,16 +400,10 @@ input.find-input {
     text-decoration: none;
 }
 
-.current-search-sort {
-    font-size: 13px;
-    color: #425563;
-}
-
 .main-results-container {
     border-bottom: 1px solid #F2F2F2;
     width: 100%;
     padding: 0 10px;
-    min-height: 140px;
 }
 
 .document-reference {
@@ -392,7 +422,7 @@ input.find-input {
 
 .result-container-control {
     color: #00b388;
-    font-size: 13px;
+    font-size: 14px;
     text-decoration: none;
 }
 
@@ -413,6 +443,10 @@ input.find-input {
     border: 3px solid #c0c0c0;
 }
 
+.promoted-document h4 {
+    width: 80%;
+}
+
 .suggestions-content li {
     list-style: none;
 }
@@ -423,7 +457,27 @@ input.find-input {
 }
 
 .find-form {
+    text-align: left;
     position: relative;
+}
+
+/* Search form type ahead */
+.find-form .twitter-typeahead {
+    width: 100%;
+    margin-bottom: 5px;
+}
+.find-form .tt-menu {
+    background: white;
+    border: 2px solid #CCC;
+    width: 100%;
+    padding: 8px 0;
+    margin-top: 3px;
+}
+.find-form .tt-suggestion {
+    padding: 0 8px;
+}
+.find-form .tt-suggestion.tt-cursor {
+    background: #E7E7E7;
 }
 
 /* username */
@@ -434,10 +488,19 @@ input.find-input {
     text-overflow: ellipsis;
 }
 
+.navbar-username {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 150px;
+    right: 70px !important;
+    top: 11px !important;
+}
+
 /* fancy animation */
 .animated-container {
     position: absolute;
-    top: -40px;
+    top: -60px;
     transition: all 1s ease;
 }
 
@@ -505,8 +568,6 @@ input.find-input {
 }
 
 .suggestion-head-text {
-    font-size: 12px;
-    font-weight: 600;
     color: #00b388;
 }
 
@@ -523,6 +584,7 @@ input.find-input {
 .loading-spinner {
     text-align: center;
     font-size: 18px;
+    margin-bottom: 10px;
 }
 
 .loading-spinner, .loading-spinner i {
@@ -568,7 +630,7 @@ input.find-input {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    max-height: 40px;
+    max-height: 41px;
 }
 
 .related-concepts-list {
@@ -584,28 +646,31 @@ input.find-input {
     font-weight: 700;
 }
 
-.find-form .popover label {
-    display: block;
-    margin-bottom: 5px;
-    padding-left: 20px;
-    vertical-align: baseline;
-}
-
-.find-form .popover label input[type="radio"], .find-form .popover label input[type="checkbox"] {
-    margin-left: -20px;
-    margin-right: 0;
-    vertical-align: baseline;
-}
-
 .search-text {
-    font-weight: bold
+    font-family: Metric-Bold;
+}
+
+.also-searching-for,
+.also-searching-for:hover {
+    color:#fff;
+    padding: 3px;
+    font-weight: lighter;
+}
+
+.selected-related-concept {
+    padding: 2px;
+    font-size: 100%;
+    font-weight: normal;
+    color: #fff;
+    border: solid 1px #00b388;
+    border-radius: 0;
 }
 
 .service-view-container {
     height: 100%;
 }
 
-.service-view-container .fa-check {
+.service-view-container .hp-check {
     color: #00b388;
 }
 
@@ -614,10 +679,6 @@ input.find-input {
         height:25px;
         font-size: 24px;
     }
-
-    form.form-search:before {
-        top:9px;
-    }
 }
 
 .drop-list {
@@ -625,6 +686,14 @@ input.find-input {
     right: 20px;
     z-index: 1000;
     font-size: 18px;
+}
+
+.drop-list .dropdown-toggle {
+    padding: 5px 7px 5px 13px;
+}
+
+.dropdown-menu li > a {
+    color: #676a6c;
 }
 
 .find-navbar .dropdown-toggle {
@@ -684,12 +753,13 @@ input:-moz-placeholder::before {
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
     margin-bottom: 0;
-    height: 50px;
+    height: 70px;
 }
 
-.find-navbar.reduced {
+.find-banner-container.reduced {
     background: #49B59B url('../img/Find_banner.png');
     height: 125px;
+    z-index: 1;
 }
 
 .popover h1, .popover h2, .popover h3, .popover h4, .popover h5, .popover h6 , .popover a{
@@ -815,6 +885,7 @@ input:-moz-placeholder::before {
 
 .entity-label {
     background-color: #6b7984;
+    padding: 0 8px;
 }
 /* Rotating chevrons on collapsible panels *******************/
 .collapsed .rotating-chevron,
@@ -838,8 +909,17 @@ input:-moz-placeholder::before {
 
 /* Indexes View */
 .database-name,
-.category-name {
+.category-name,
+.toggle-more-text {
     padding: 0 8px; /* Same as table padding so it lines up */
+}
+
+.toggle-more {
+    border-bottom: none !important;
+}
+
+.databases-list .toggle-more i {
+    transform-origin: 20px;
 }
 
 .category-name,

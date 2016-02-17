@@ -77,10 +77,9 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>node</executable>
+                            <executable>${basedir}/node_modules/.bin/bower${npm.binExtension}</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${basedir}/node_modules/bower/bin/bower</argument>
                                 <argument>install</argument>
                             </arguments>
                         </configuration>
@@ -92,10 +91,9 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>node</executable>
+                            <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${project.basedir}/node_modules/grunt-cli/bin/grunt</argument>
                                 <argument>test</argument>
                             </arguments>
                             <skip>${skipTests}</skip>
@@ -133,13 +131,8 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
-            <artifactId>parametric-databases-core</artifactId>
-            <version>0.4.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.view</groupId>
-            <artifactId>view-proxy-components-core</artifactId>
-            <version>0.5.1</version>
+            <artifactId>haven-search-components-core</artifactId>
+            <version>${haven.search.components.version}</version>
         </dependency>
 
         <dependency>
@@ -215,9 +208,6 @@
     </dependencies>
 
     <profiles>
-        <profile>
-            <id>dev</id>
-        </profile>
         <profile>
             <id>production</id>
         </profile>

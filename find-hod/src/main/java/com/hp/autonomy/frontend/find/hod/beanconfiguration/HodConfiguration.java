@@ -8,66 +8,40 @@ package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
-import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableIndexFieldsService;
-import com.hp.autonomy.frontend.find.hod.parametricfields.CacheableParametricValuesService;
-import com.hp.autonomy.frontend.find.hod.search.HodFindDocument;
-import com.hp.autonomy.frontend.view.hod.HodViewService;
-import com.hp.autonomy.frontend.view.hod.HodViewServiceImpl;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
-import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentService;
-import com.hp.autonomy.hod.client.api.analysis.viewdocument.ViewDocumentServiceImpl;
+import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteService;
+import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationServiceImpl;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
-import com.hp.autonomy.hod.client.api.resource.ResourcesService;
-import com.hp.autonomy.hod.client.api.resource.ResourcesServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
-import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.fields.RetrieveIndexFieldsService;
-import com.hp.autonomy.hod.client.api.textindex.query.fields.RetrieveIndexFieldsServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricValuesService;
-import com.hp.autonomy.hod.client.api.textindex.query.parametric.GetParametricValuesServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.search.Document;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsService;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindRelatedConceptsServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarServiceImpl;
-import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
-import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexServiceImpl;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersServiceImpl;
 import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
-import com.hp.autonomy.hod.databases.DatabasesService;
-import com.hp.autonomy.hod.databases.DatabasesServiceImpl;
-import com.hp.autonomy.hod.databases.ResourceMapper;
-import com.hp.autonomy.hod.databases.ResourceMapperImpl;
-import com.hp.autonomy.hod.fields.IndexFieldsService;
-import com.hp.autonomy.hod.fields.IndexFieldsServiceImpl;
-import com.hp.autonomy.hod.parametricvalues.HodParametricValuesService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
 import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
+import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheResolver;
+import org.springframework.cache.interceptor.SimpleCacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -78,6 +52,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 public class HodConfiguration extends CachingConfigurerSupport {
     public static final String SSO_PAGE_PROPERTY = "${find.hod.sso:https://www.idolondemand.com/sso.html}";
     public static final String HOD_API_URL_PROPERTY = "${find.iod.api:https://api.havenondemand.com}";
+    public static final String SIMPLE_CACHE_RESOLVER_NAME = "simpleCacheResolver";
 
     @Autowired
     private Environment environment;
@@ -87,9 +62,6 @@ public class HodConfiguration extends CachingConfigurerSupport {
 
     @Autowired
     private CacheManager cacheManager;
-
-    @Autowired
-    private ConfigFileService<HodFindConfig> configService;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
@@ -103,7 +75,7 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public SingleUserAuthenticationValidator singleUserAuthenticationValidator() {
+    public SingleUserAuthenticationValidator singleUserAuthenticationValidator(final ConfigService<? extends AuthenticationConfig<?>> configService) {
         final SingleUserAuthenticationValidator singleUserAuthenticationValidator = new SingleUserAuthenticationValidator();
         singleUserAuthenticationValidator.setConfigService(configService);
 
@@ -117,6 +89,14 @@ public class HodConfiguration extends CachingConfigurerSupport {
         hodApplicationCacheResolver.setCacheManager(cacheManager);
 
         return hodApplicationCacheResolver;
+    }
+
+    // Resolver for caches which are not application-specific
+    @Bean(name = SIMPLE_CACHE_RESOLVER_NAME)
+    public CacheResolver simpleCacheResolver() {
+        final SimpleCacheResolver resolver = new SimpleCacheResolver();
+        resolver.setCacheManager(cacheManager);
+        return resolver;
     }
 
     @Bean
@@ -144,115 +124,39 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public HodServiceConfig<EntityType.Combined, TokenType.Simple> initialHodServiceConfig() {
-        return hodServiceConfigBuilder()
-                .build();
-    }
-
-    @Bean
-    public AuthenticationService authenticationService() {
-        return new AuthenticationServiceImpl(initialHodServiceConfig());
-    }
-
-    @Bean
     public TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService() {
         return new SpringSecurityTokenProxyService();
     }
 
     @Bean
-    public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig() {
+    public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig(final TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService) {
         return hodServiceConfigBuilder()
-                .setTokenProxyService(tokenProxyService())
+                .setTokenProxyService(tokenProxyService)
                 .build();
     }
 
     @Bean
-    public ResourcesService resourcesService() {
-        return new ResourcesServiceImpl(hodServiceConfig());
+    public AuthenticationService authenticationService() {
+        return new AuthenticationServiceImpl(hodServiceConfigBuilder().build());
     }
 
     @Bean
-    public QueryTextIndexService<Document> documentQueryTextIndexService() {
-        return QueryTextIndexServiceImpl.documentsService(hodServiceConfig());
+    public HodAuthenticationRequestService hodAuthenticationRequestService(final ConfigService<? extends HodSsoConfig> configService, final AuthenticationService authenticationService, final UnboundTokenService<TokenType.HmacSha1> unboundTokenService) {
+        return new HodAuthenticationRequestServiceImpl(configService, authenticationService, unboundTokenService);
     }
 
     @Bean
-    public QueryTextIndexService<HodFindDocument> queryTextIndexService() {
-        return new QueryTextIndexServiceImpl<>(hodServiceConfig(), HodFindDocument.class);
+    public UnboundTokenService<TokenType.HmacSha1> unboundTokenService(final ConfigService<? extends HodSsoConfig> configService, final AuthenticationService authenticationService) throws HodErrorException {
+        return new UnboundTokenServiceImpl(authenticationService, configService);
     }
 
     @Bean
-    public FindRelatedConceptsService relatedConceptsService() {
-        return new FindRelatedConceptsServiceImpl(hodServiceConfig());
+    public UserStoreUsersService userStoreUsersService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
+        return new UserStoreUsersServiceImpl(hodServiceConfig);
     }
 
     @Bean
-    public RetrieveIndexFieldsService retrieveIndexFieldsService() {
-        return new RetrieveIndexFieldsServiceImpl(hodServiceConfig());
+    public AutocompleteService autocompleteService(final HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig) {
+        return new AutocompleteServiceImpl(hodServiceConfig);
     }
-
-    @Bean
-    public IndexFieldsService indexFieldsService() {
-        return new CacheableIndexFieldsService(new IndexFieldsServiceImpl(retrieveIndexFieldsService()));
-    }
-
-    @Bean
-    public DatabasesService databasesService() {
-        return new DatabasesServiceImpl(resourcesService(), resourceMapper());
-    }
-
-    @Bean
-    public ResourceMapper resourceMapper() {
-        return new ResourceMapperImpl(indexFieldsService());
-    }
-
-    @Bean
-    public GetParametricValuesService getParametricValuesService() {
-        return new GetParametricValuesServiceImpl(hodServiceConfig());
-    }
-
-    @Bean
-    public CacheableParametricValuesService parametricValuesService() {
-        return new CacheableParametricValuesService(new HodParametricValuesService(getParametricValuesService()));
-    }
-
-    @Bean
-    public GetContentService<Document> getContentService() {
-        return GetContentServiceImpl.documentsService(hodServiceConfig());
-    }
-
-    @Bean
-    public ViewDocumentService viewDocumentService() {
-        return new ViewDocumentServiceImpl(hodServiceConfig());
-    }
-
-    @Bean
-    public HodAuthenticationRequestService hodAuthenticationRequestService() {
-        return new HodAuthenticationRequestServiceImpl(configService, authenticationService(), unboundTokenService());
-    }
-
-    @Bean
-    public UnboundTokenService<TokenType.HmacSha1> unboundTokenService() {
-        try {
-            return new UnboundTokenServiceImpl(authenticationService(), configService);
-        } catch (final HodErrorException e) {
-            throw new BeanInitializationException("Exception creating UnboundTokenService", e);
-        }
-    }
-
-    @Bean
-    public HodViewService hodViewService() {
-        return new HodViewServiceImpl(viewDocumentService(), getContentService(), documentQueryTextIndexService());
-    }
-
-    @Bean
-    public FindSimilarService<HodFindDocument> findSimilarService() {
-        return new FindSimilarServiceImpl<>(hodServiceConfig(), HodFindDocument.class);
-    }
-
-    @Bean
-    public UserStoreUsersService userStoreUsersService() {
-        return new UserStoreUsersServiceImpl(hodServiceConfig());
-    }
-
 }

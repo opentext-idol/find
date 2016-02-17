@@ -16,12 +16,14 @@ require.config({
     map: {
         '*': {
             'find/app/configuration': 'mock/configuration',
+            'find/app/router': 'mock/router',
+            'find/app/util/database-name-resolver': 'mock/database-name-resolver',
             'find/lib/backbone/backbone-extensions': 'backbone'
         },
-        'find/app/page/service-view': {
+        'find/app/page/search/service-view': {
             'find/app/model/indexes-collection': 'mock/model/indexes-collection'
         },
-        'find/app/page/related-concepts/related-concepts-view': {
+        'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
         }
     }

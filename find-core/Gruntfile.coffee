@@ -46,48 +46,12 @@ module.exports = (grunt) ->
           'test/**/*.js'
         ]
         tasks: ['test']
-      copyResources:
-        files: [
-          'src/main/public/static/**/*'
-        ]
-        spawn: false
-        tasks: ['sync:devResourcesIdol', 'sync:devResourcesHod', 'sync:devResourcesCore']
-    sync:
-      devResourcesCore:
-        files: [
-          {
-            cwd: 'src/main/public/static/'
-            src: '**/*'
-            dest: 'target/classes/static'
-          }
-        ]
-        verbose: true
-      devResourcesIdol:
-        files: [
-          {
-            cwd: 'src/main/public/static/'
-            src: '**/*'
-            dest: '../find-idol/target/classes/static'
-          }
-        ]
-        verbose: true
-      devResourcesHod:
-        files: [
-          {
-            cwd: 'src/main/public/static/'
-            src: '**/*'
-            dest: '../find-hod/target/classes/static'
-          }
-        ]
-        verbose: true
 
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
-  grunt.loadNpmTasks 'grunt-sync'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['connect:server', 'jasmine:test']
   grunt.registerTask 'browser-test', ['connect:server:keepalive']
   grunt.registerTask 'watch-test', ['watch:test']
-  grunt.registerTask 'copy-resources', ['watch:copyResources']

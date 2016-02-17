@@ -4,25 +4,30 @@
  */
 
 define([
-    'find/public/pages',
+    'find/app/find-pages',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'i18n!find/nls/bundle'
-], function(Pages, FindSearch, AboutPage, i18n) {
+], function(FindPages, FindSearch, AboutPage, i18n) {
+
     'use strict';
 
-    return Pages.extend({
+    return FindPages.extend({
         initializePages: function() {
-            Pages.prototype.initializePages.call(this);
-
-            this.pages = this.pages.concat([
+            this.pages = [
                 {
+                    constructor: FindSearch,
+                    icon: 'hp-icon hp-fw hp-search',
+                    pageName: 'search',
+                    title: i18n['app.search']
+                }, {
                     constructor: AboutPage,
-                    icon: 'fa fa-cog',
+                    icon: 'hp-icon hp-fw hp-info',
                     pageName: 'about',
                     title: i18n['app.about']
                 }
-            ]);
+            ];
         }
     });
+
 });

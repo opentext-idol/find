@@ -1,20 +1,20 @@
 define([
-    'jquery'
-], function($) {
+    'jquery',
+    'find/app/util/database-name-resolver'
+], function($, databaseNameResolver) {
 
     return {
         /**
          * Get the view document URL for a document in a text index.
          * @param {String} reference
-         * @param {String} index
-         * @param {String} domain
+         * @param {String} model
          * @return {String}
          */
-        getHref: function(reference, index, domain) {
+        getHref: function(reference, model) {
+            var database = databaseNameResolver.resolveDatabaseNameForDocumentModel(model);
             return '../api/public/view/viewDocument?' + $.param({
-                    domain: domain,
-                    index: index,
-                    reference: reference
+                    reference: reference,
+                    database: database
                 });
         },
 

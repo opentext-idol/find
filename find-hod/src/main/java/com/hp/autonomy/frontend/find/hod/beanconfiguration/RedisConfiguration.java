@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.HostAndPort;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.RedisCondition;
-import com.hp.autonomy.frontend.find.core.web.CacheNames;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,7 +72,7 @@ public class RedisConfiguration {
         cacheManager.setCachePrefix(new DefaultRedisCachePrefix(":cache:" + commit + ':'));
 
         cacheManager.setDefaultExpiration(30 * 60);
-        cacheManager.setExpires(CacheNames.CACHE_EXPIRES);
+        cacheManager.setExpires(FindCacheNames.CACHE_EXPIRES);
 
         return cacheManager;
     }

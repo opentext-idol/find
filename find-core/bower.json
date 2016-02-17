@@ -5,6 +5,7 @@
     "Alex Scown <alex.scown@hpe.com>",
     "Alyona Ivanova <alyona.ivanova@hpe.com>",
     "Daniel Grayling <daniel.grayling@hpe.com>",
+    "Matthew Gordon <matthew.gordon2@hpe.com>",
     "Will Byrne <will.byrne@hpe.com>",
     "Ivo Miller <ivo.miller@hpe.com>"
   ],
@@ -22,11 +23,12 @@
   "dependencies": {
     "backbone": "~1.2.3",
     "colorbox": "colorbox#~1.5.10",
+    "corejs-typeahead": "#3d2a7eb",
     "fontawesome": "components-font-awesome#~4.5.0",
     "jquery": "components/jquery#~1.10.2",
     "json": "json2#*",
     "underscore": "~1.8.3",
-    "hp-autonomy-js-whatever": "~2.3.0",
+    "hp-autonomy-js-whatever": "~2.4.0",
     "hp-autonomy-login-page": "~1.0.2",
     "hp-autonomy-settings-page": "~0.1.0",
     "hp-autonomy-bootstrap-2": "~2.3.2",
@@ -47,9 +49,9 @@
   },
   "resolutions": {
     "underscore": "~1.8.3",
-    "hp-autonomy-js-whatever": "~2.3.0",
+    "hp-autonomy-js-whatever": "~2.4.0",
     "jquery": "~1.10.2",
-    "backbone": "~1.2.1",
+    "backbone": "~1.2.3",
     "jasmine": ">=2"
   }
 }

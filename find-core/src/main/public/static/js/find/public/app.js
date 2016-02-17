@@ -5,18 +5,17 @@
 
 define([
     'find/app/base-app',
-    'find/public/pages',
     'find/public/navigation',
     'find/app/configuration',
     'find/app/util/logout',
     'text!find/templates/app/app.html'
-], function(BaseApp, Pages, Navigation, configuration, logout, template) {
+], function(BaseApp, Navigation, configuration, logout, template) {
 
     return BaseApp.extend({
 
         template: _.template(template),
 
-        defaultRoute: 'find/search',
+        defaultRoute: 'find/search/query',
 
         Navigation: Navigation,
 
@@ -37,9 +36,7 @@ define([
         },
 
         // will be overridden
-        constructPages: function () {
-            return new Pages();
-        },
+        constructPages: $.noop(),
 
         render: function() {
             BaseApp.prototype.render.apply(this, arguments);

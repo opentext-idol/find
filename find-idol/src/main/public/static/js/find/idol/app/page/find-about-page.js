@@ -17,6 +17,7 @@ define([
 
             AboutPage.prototype.initialize.call(this, {
                 libraries: libList,
+                icon: ' ',
                 strings: {
                     copyright: i18n['about.copyright'],
                     foss: i18n['about.foss'],

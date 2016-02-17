@@ -4,17 +4,24 @@
  */
 
 define([
-    'find/public/pages',
-    'find/hod/app/page/hod-find-search'
-], function(Pages, FindSearch) {
+    'find/app/find-pages',
+    'find/hod/app/page/hod-find-search',
+    'find/app/page/default/default-page'
+], function(FindPages, FindSearch, DefaultPage) {
     'use strict';
 
-    return Pages.extend({
+    return FindPages.extend({
+
         initializePages: function() {
             this.pages = [
                 {
                     constructor: FindSearch
                     , pageName: 'search'
+                },
+                {
+                    constructor: DefaultPage
+                    , defaultPage: true
+                    , pageName: 'default'
                 }
             ];
         }

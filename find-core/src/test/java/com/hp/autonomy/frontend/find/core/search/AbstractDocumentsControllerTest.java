@@ -5,55 +5,64 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import org.junit.Before;
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
 
-import static org.mockito.Matchers.anySetOf;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractDocumentsControllerTest<S extends Serializable, D extends FindDocument, E extends Exception> {
+public abstract class AbstractDocumentsControllerTest<S extends Serializable, R extends SearchResult, E extends Exception> {
     @Mock
-    protected DocumentsService<S, D, E> documentsService;
+    protected DocumentsService<S, R, E> documentsService;
 
-    protected final DocumentsController<S, D, E> documentsController;
-    protected final Class<S> databaseType;
+    protected DocumentsController<S, R, E> documentsController;
+    protected Class<S> databaseType;
 
-    protected AbstractDocumentsControllerTest(final DocumentsController<S, D, E> documentsController, final Class<S> databaseType) {
-        this.documentsController = documentsController;
-        this.databaseType = databaseType;
-    }
-
-    @Before
-    public void setUp() {
-        ReflectionTestUtils.setField(documentsController, "documentsService", documentsService, DocumentsService.class);
-    }
+    protected abstract R sampleResult();
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
-        verify(documentsService).queryTextIndex(Matchers.<FindQueryParams<S>>any());
+        documentsController.query("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.queryForPromotions("Some query text", 30, null, Collections.<S>emptyList(), null, null, null, null, true);
-        verify(documentsService).queryTextIndexForPromotions(Matchers.<FindQueryParams<S>>any());
+        documentsController.queryForPromotions("Some query text", 1, 30, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        verify(documentsService).queryTextIndexForPromotions(Matchers.<SearchRequest<S>>any());
+    }
+
+    @Test
+    public void queryPaginationTest() throws E {
+        documentsController.query("Some query text", 30, 60, null, Collections.<S>emptyList(), null, null, null, null, true, false);
+        verify(documentsService).queryTextIndex(Matchers.<SearchRequest<S>>any());
     }
 
     @Test
     public void findSimilar() throws E {
         final String reference = "SomeReference";
-        documentsController.findSimilar(reference, Collections.<S>emptySet());
-        verify(documentsService).findSimilar(anySetOf(databaseType), eq(reference));
+        documentsController.findSimilar(reference, 1, 30, "context", Collections.<S>emptyList(), "", "relevance", null, DateTime.now(), true);
+        verify(documentsService).findSimilar(Matchers.<SuggestRequest<S>>any());
+    }
+
+    @Test
+    public void getDocumentContent() throws E {
+        when(documentsService.getDocumentContent(Matchers.<GetContentRequest<S>>any())).thenReturn(Collections.singletonList(sampleResult()));
+        final String reference = "SomeReference";
+        assertNotNull(documentsController.getDocumentContent(reference, null));
     }
 }

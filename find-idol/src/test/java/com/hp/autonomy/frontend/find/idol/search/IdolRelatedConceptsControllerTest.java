@@ -8,9 +8,11 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsControllerTest;
 import com.hp.autonomy.types.idol.QsElement;
+import org.junit.Before;
 
 public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<QsElement, String, AciErrorException> {
-    public IdolRelatedConceptsControllerTest() {
-        super(new IdolRelatedConceptsController(), String.class);
+    @Before
+    public void setUp() {
+        relatedConceptsController = new IdolRelatedConceptsController(relatedConceptsService, new IdolQueryRestrictionsBuilder());
     }
 }

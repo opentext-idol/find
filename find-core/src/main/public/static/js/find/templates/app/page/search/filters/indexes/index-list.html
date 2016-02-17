@@ -1,0 +1,9 @@
+<% var categoryId = _.uniqueId('database-category-'); %>
+<ul class="<%-data.node.className%>">
+    <li class="category-input clickable" data-category-id="<%-data.node.name%>">
+            <span class="category-name-icon col-md-1 text-right check-cell"><i class="database-icon"></i></span>
+            <span class="category-name"><%-data.node.displayName%></span>
+            <span class="category-name-icon pull-right" data-target=".collapsible-category-<%- categoryId %>"><i class="hp-icon hp-fw hp-chevron-down rotating-chevron" data-target=".collapsible-category-<%- categoryId %>"></i></span>
+        <div class="child-categories collapsible-category-<%- categoryId %>"></div>
+    </li>
+</ul>

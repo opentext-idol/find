@@ -6,25 +6,21 @@
 package com.hp.autonomy.frontend.find.core.indexes;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.types.IdolDatabase;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
+import org.springframework.http.MediaType;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public abstract class AbstractIndexesServiceIT<D extends IdolDatabase, E extends Exception> extends AbstractFindIT {
-    @Autowired
-    protected ListIndexesController<D, E> listIndexesController;
-
+public abstract class AbstractIndexesServiceIT extends AbstractFindIT {
     @Test
-    public void noExcludedIndexes() throws E {
-        final List<D> databases = listIndexesController.listActiveIndexes();
-        assertThat(databases, is(not(empty())));
+    public void noExcludedIndexes() throws Exception {
+        mockMvc.perform(
+                get(ListIndexesController.LIST_INDEXES_PATH))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", not(empty())));
     }
 }

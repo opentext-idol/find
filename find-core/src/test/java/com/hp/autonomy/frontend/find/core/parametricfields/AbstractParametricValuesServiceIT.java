@@ -5,32 +5,30 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
-import com.hp.autonomy.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-
-import java.io.Serializable;
-import java.util.Arrays;
 
 import static org.hamcrest.Matchers.empty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
-public abstract class AbstractParametricValuesServiceIT<R extends ParametricRequest<S>, S extends Serializable> extends AbstractFindIT {
-    protected final String[] indexes;
-    protected final String[] fieldNames;
-
-    protected AbstractParametricValuesServiceIT(final String[] indexes, final String[] fieldNames) {
-        this.indexes = Arrays.copyOf(indexes, indexes.length);
-        this.fieldNames = Arrays.copyOf(fieldNames, fieldNames.length);
-    }
+public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
 
     @Test
     public void getParametricValues() throws Exception {
-        mockMvc.perform(get(ParametricValuesController.PARAMETRIC_VALUES_PATH).param("databases", indexes).param("fieldNames", fieldNames).param("queryText", "*").param("fieldText", ""))
+        mockMvc.perform(
+                get(ParametricValuesController.PARAMETRIC_VALUES_PATH)
+                        .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
+                        .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getParametricFields())
+                        .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
+                        .param(ParametricValuesController.FIELD_TEXT_PARAM, ""))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", CoreMatchers.not(empty())));
