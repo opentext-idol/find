@@ -679,6 +679,16 @@ input.find-input {
     height: 600px;
 }
 
+.sunburst {
+    width: 800px;
+    height: 600px;
+}
+
+.chosen-container {
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
 /* Loading spinner */
 .loading-spinner {
     text-align: center;

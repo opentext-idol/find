@@ -27,7 +27,7 @@ public class AbstractParametricValuesControllerTest<R extends ParametricRequest<
 
     @Test
     public void getParametricValues() throws E {
-        parametricValuesController.getParametricValues(Collections.singleton("SomeField"), "Some query text", null, Collections.<S>emptyList(), null, null);
+        parametricValuesController.getParametricValues(Collections.singletonList("SomeField"), "Some query text", null, Collections.<S>emptyList(), null, null);
         verify(parametricValuesService).getAllParametricValues(Matchers.<R>any());
     }
 }
