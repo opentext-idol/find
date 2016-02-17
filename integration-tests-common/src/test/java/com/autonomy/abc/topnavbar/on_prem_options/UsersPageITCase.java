@@ -4,12 +4,11 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.users.HSONewUser;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.Role;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.users.UserNotCreatedException;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -17,7 +16,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
@@ -76,12 +74,12 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		try {
 			usersPage.addNewUser(aNewUser, Role.USER);
-		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
+		} catch (TimeoutException | UserNotCreatedException e) { /* Expected */}
 		verifyDuplicateError(newUserModal);
 
 		try {
 			usersPage.addNewUser(config.getNewUser("testAddDuplicateUser_james"), Role.USER);
-		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
+		} catch (TimeoutException | UserNotCreatedException e) { /* Expected */}
 
 		verifyDuplicateError(newUserModal);
 
@@ -143,16 +141,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 	private void selectSameRole(User user){
 		Role role = user.getRole();
-
-		if(getConfig().getType().equals(ApplicationType.ON_PREM)){
-			userService.changeRole(user, role);
-		} else {
-			HSOUsersPage usersPage = (HSOUsersPage) this.usersPage;
-			WebElement roleLink = usersPage.roleLinkFor(user);
-
-			roleLink.click();
-			roleLink.click();
-		}
+		userService.changeRole(user, role);
 
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(role));
@@ -286,7 +275,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		try {
 			userService.createNewUser(aNewUser, Role.ADMIN);
-		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) {
+		} catch (TimeoutException | UserNotCreatedException e) {
 			/* Expected */
 		}
 

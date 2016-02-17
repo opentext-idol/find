@@ -9,8 +9,8 @@ import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesPage;
+import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -116,9 +116,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
 
     @Test
     public void testDeleteIndex(){
-        indexesDetailPage.deleteButton().click();
-        Waits.loadOrFadeWait();
-        indexesDetailPage.confirmDeleteButton().click();
+        indexesDetailPage.deleteIndex();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining("Index " + indexOne.getDisplayName() + " successfully deleted"));
         indexesPage = getElementFactory().getIndexesPage();
         verifyThat(indexesPage.getIndexDisplayNames(), not(hasItem(indexOne.getDisplayName())));

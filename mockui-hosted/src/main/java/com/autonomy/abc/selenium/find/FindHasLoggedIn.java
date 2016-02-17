@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.page.login.SSOFailureException;
+import com.autonomy.abc.selenium.users.SSOFailureException;
 import com.hp.autonomy.frontend.selenium.login.HasLoggedIn;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

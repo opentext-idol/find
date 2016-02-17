@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
-import com.autonomy.abc.selenium.page.search.DocumentViewer;
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.search.SearchResult;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

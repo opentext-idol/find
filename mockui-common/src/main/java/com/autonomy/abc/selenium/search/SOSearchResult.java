@@ -1,9 +1,8 @@
 package com.autonomy.abc.selenium.search;
 
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.SOCheckbox;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.page.search.DocumentViewer;
-import com.autonomy.abc.selenium.page.search.SearchBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

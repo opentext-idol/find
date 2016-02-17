@@ -3,8 +3,8 @@ package com.autonomy.abc.topnavbar.notifications;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import org.junit.Before;
 import org.openqa.selenium.support.ui.WebDriverWait;
 

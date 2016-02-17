@@ -19,6 +19,7 @@ public class JsonConfig {
     private final SeleniumConfig selenium;
     private final Map<String, User> users;
     private final Map<String, NewUser> newUsers;
+    private UserConfigParser parser;
 
     private JsonConfig(JsonNode node) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
@@ -27,7 +28,7 @@ public class JsonConfig {
         this.users = new HashMap<>();
         this.newUsers = new HashMap<>();
         if (node.has("users") || node.has("newusers")) {
-            UserConfigParser parser = UserConfigParser.ofType(getAppType());
+            parser = UserConfigParser.ofType(getAppType());
 
             Iterator<Map.Entry<String, JsonNode>> iterator = node.path("users").fields();
             while (iterator.hasNext()) {
@@ -96,6 +97,10 @@ public class JsonConfig {
 
     public NewUser getNewUser(String name) {
         return this.newUsers.get(name);
+    }
+
+    public NewUser generateRandomNewUser() {
+        return parser.generateNewUser(UUID.randomUUID().toString().replaceAll("-", ""));
     }
 
     public ApplicationType getAppType() {

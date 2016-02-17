@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.element.Checkbox;
-import com.autonomy.abc.selenium.find.FindIndexCheckbox;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.openqa.selenium.By;

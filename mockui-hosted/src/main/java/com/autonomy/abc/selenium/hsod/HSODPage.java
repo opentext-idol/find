@@ -1,26 +1,26 @@
 package com.autonomy.abc.selenium.hsod;
 
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.navigation.PageMapper;
-import com.autonomy.abc.selenium.navigation.SOElementFactory;
-import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
 import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
-import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
-import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
+import com.autonomy.abc.selenium.icma.GettingStartedPage;
+import com.autonomy.abc.selenium.indexes.CreateNewIndexPage;
+import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.indexes.IndexesPage;
+import com.autonomy.abc.selenium.keywords.HSODCreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.HSODKeywordsPage;
+import com.autonomy.abc.selenium.menu.NavBarTabId;
+import com.autonomy.abc.selenium.navigation.PageMapper;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
-import com.autonomy.abc.selenium.page.search.HSOSearchPage;
+import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
+import com.autonomy.abc.selenium.search.HSODSearchPage;
+import com.autonomy.abc.selenium.users.AbcHasLoggedIn;
+import com.autonomy.abc.selenium.users.HSODDevelopersPage;
+import com.autonomy.abc.selenium.users.HSODUsersPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -36,7 +36,7 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
 
     ANALYTICS(NavBarTabId.ANALYTICS, new AnalyticsPage.Factory(), AnalyticsPage.class),
 
-    SEARCH(NavBarTabId.SEARCH, new HSOSearchPage.Factory(), HSOSearchPage.class),
+    SEARCH(NavBarTabId.SEARCH, new HSODSearchPage.Factory(), HSODSearchPage.class),
 
     CONNECTIONS(NavBarTabId.CONNECTIONS, new ConnectionsPage.Factory(), ConnectionsPage.class),
     CONNECTION_WIZARD(new NewConnectionPage.Factory(), NewConnectionPage.class),
@@ -51,13 +51,13 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
     PROMOTION_DETAILS(new PromotionsDetailPage.Factory(), PromotionsDetailPage.class),
     EDIT_REFERENCES(new EditDocumentReferencesPage.Factory(), EditDocumentReferencesPage.class),
 
-    KEYWORDS(NavBarTabId.KEYWORDS, new HSOKeywordsPage.Factory(), HSOKeywordsPage.class),
-    KEYWORD_WIZARD(new HSOCreateNewKeywordsPage.Factory(), HSOCreateNewKeywordsPage.class),
+    KEYWORDS(NavBarTabId.KEYWORDS, new HSODKeywordsPage.Factory(), HSODKeywordsPage.class),
+    KEYWORD_WIZARD(new HSODCreateNewKeywordsPage.Factory(), HSODCreateNewKeywordsPage.class),
 
     GETTING_STARTED(NavBarTabId.GETTING_STARTED, new GettingStartedPage.Factory(), GettingStartedPage.class),
 
-    DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODevelopersPage.Factory(), HSODevelopersPage.class),
-    USERS(NavBarTabId.USERS, new HSOUsersPage.Factory(), HSOUsersPage.class);
+    DEVELOPERS(NavBarTabId.DEVELOPERS, new HSODDevelopersPage.Factory(), HSODDevelopersPage.class),
+    USERS(NavBarTabId.USERS, new HSODUsersPage.Factory(), HSODUsersPage.class);
 
     private final Class<?> pageType;
     private final PageMapper.SwitchStrategy<SOElementFactory> switchStrategy;

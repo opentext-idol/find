@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.search;
 
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

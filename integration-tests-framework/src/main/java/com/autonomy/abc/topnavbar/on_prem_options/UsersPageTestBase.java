@@ -4,13 +4,11 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.page.login.GoogleAuth;
+import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
+import com.autonomy.abc.selenium.external.GoogleAuth;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.TimeoutException;
@@ -26,7 +24,6 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.core.Is.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {

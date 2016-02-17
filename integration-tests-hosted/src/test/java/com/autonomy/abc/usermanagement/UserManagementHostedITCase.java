@@ -4,15 +4,12 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.error.ErrorPage;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.find.HSODFindElementFactory;
-import com.autonomy.abc.selenium.page.ErrorPage;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Errors;
-import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.Waits;
 import com.autonomy.abc.topnavbar.on_prem_options.UsersPageTestBase;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
@@ -42,31 +39,29 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 public class UserManagementHostedITCase extends UsersPageTestBase {
 
     private HSODUserService userService;
-    private HSOUsersPage usersPage;
+    private HSODUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
-    private final Factory<NewUser> newUserFactory;
 
     public UserManagementHostedITCase(TestConfig config) {
         super(config);
-        newUserFactory = config.getNewUserFactory();
     }
 
     @Before
     public void hostedSetUp(){
         userService = (HSODUserService) super.userService;
-        usersPage = (HSOUsersPage) super.usersPage;
+        usersPage = (HSODUsersPage) super.usersPage;
     }
 
     @Test
     @KnownBug({"CSA-1775", "CSA-1800"})
     public void testCannotAddInvalidEmail(){
-        HSONewUser newUser = new HSONewUser("jeremy","jeremy");
+        HSODNewUser newUser = new HSODNewUser("jeremy","jeremy");
 
         verifyAddingInvalidUser(newUser);
         verifyThat(usersPage.getUsernames(), not(hasItem(newUser.getUsername())));
 
         //Sometimes it requires us to add a valid user before invalid users show up
-        userService.createNewUser(new HSONewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
+        userService.createNewUser(new HSODNewUser("Valid", gmailString("NonInvalidEmail")), Role.ADMIN);
 
         Waits.loadOrFadeWait();
 
@@ -78,25 +73,25 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     public void testDuplicateUsername() {
         User user = userService.createNewUser(aNewUser, Role.ADMIN);
         assertThat(usersPage.getUsernames(), hasSize(1));
-        verifyAddingValidUser(new HSONewUser(user.getUsername(), gmailString("isValid")));
+        verifyAddingValidUser(new HSODNewUser(user.getUsername(), gmailString("isValid")));
     }
 
     @Test
     @KnownBug({"CSA-1776", "CSA-1800"})
     public void testAddingValidDuplicateAfterInvalid() {
         final String username = "bob";
-        verifyAddingInvalidUser(new HSONewUser(username, "INVALID_EMAIL"));
-        verifyAddingValidUser(new HSONewUser(username, gmailString("isValid")));
-        verifyAddingValidUser(new HSONewUser(username, gmailString("alsoValid")));
+        verifyAddingInvalidUser(new HSODNewUser(username, "INVALID_EMAIL"));
+        verifyAddingValidUser(new HSODNewUser(username, gmailString("isValid")));
+        verifyAddingValidUser(new HSODNewUser(username, gmailString("alsoValid")));
     }
 
-    private void verifyAddingInvalidUser(HSONewUser invalidUser) {
+    private void verifyAddingInvalidUser(HSODNewUser invalidUser) {
         int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
         try {
             usersPage.addNewUser(invalidUser, Role.ADMIN);
-        } catch (TimeoutException | HSONewUser.UserNotCreatedException e){
+        } catch (TimeoutException | UserNotCreatedException e){
             /* Expected behaviour */
         }
 
@@ -111,11 +106,11 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         verifyThat("number of users has not increased after refresh", usersPage.getUsernames(), hasSize(existingUsers));
     }
 
-    private HSOUser verifyAddingValidUser(HSONewUser validUser) {
+    private HSODUser verifyAddingValidUser(HSODNewUser validUser) {
         int existingUsers = usersPage.getUsernames().size();
         usersPage.createUserButton().click();
 
-        HSOUser user = usersPage.addNewUser(validUser, Role.ADMIN);
+        HSODUser user = usersPage.addNewUser(validUser, Role.ADMIN);
 
         verifyModalElements();
         verifyThat(ModalView.getVisibleModalView(getDriver()).getText(), not(containsString(Errors.User.CREATING)));
@@ -141,7 +136,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testResettingAuthentication(){
-        NewUser newUser = newUserFactory.create();
+        NewUser newUser = config.generateNewUser();
 
         final User user = userService.createNewUser(newUser,Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
@@ -167,7 +162,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testNoneUserConfirmation() {
-        NewUser somebody = newUserFactory.create();
+        NewUser somebody = config.generateNewUser();
         User user = userService.createNewUser(somebody, Role.ADMIN);
         userService.changeRole(user, Role.NONE);
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
@@ -208,7 +203,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testEditingUsername(){
-        User user = userService.createNewUser(new HSONewUser("editUsername", gmailString("editUsername")), Role.ADMIN);
+        User user = userService.createNewUser(new HSODNewUser("editUsername", gmailString("editUsername")), Role.ADMIN);
 
         verifyThat(usersPage.getUsernames(), hasItem(user.getUsername()));
 
@@ -226,7 +221,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testAddingAndAuthenticatingUser(){
-        final User user = userService.createNewUser(newUserFactory.create(), Role.USER);
+        final User user = userService.createNewUser(config.generateNewUser(), Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
@@ -266,7 +261,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     @Test
     @KnownBug("HOD-532")
     public void testLogOutAndLogInWithNewUser() {
-        final User user = userService.createNewUser(newUserFactory.create(), Role.ADMIN);
+        final User user = userService.createNewUser(config.generateNewUser(), Role.ADMIN);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         logout();
@@ -287,13 +282,13 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     @Test
     public void testAddStupidlyLongUsername() {
         final String longUsername = StringUtils.repeat("a", 100);
-        verifyCreateDeleteInTable(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"));
+        verifyCreateDeleteInTable(new HSODNewUser(longUsername, "hodtestqa401+longusername@gmail.com"));
     }
 
     @Test
     @KnownBug("HOD-532")
     public void testUserConfirmedWithoutRefreshing(){
-        final User user = userService.createNewUser(config.getNewUserFactory().create(), Role.USER);
+        final User user = userService.createNewUser(config.generateNewUser(), Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
@@ -318,7 +313,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         @Override
         public Boolean apply(WebDriver driver) {
             driver.navigate().refresh();
-            usersPage = (HSOUsersPage) getElementFactory().getUsersPage();
+            usersPage = (HSODUsersPage) getElementFactory().getUsersPage();
             Waits.loadOrFadeWait();
             return usersPage.getStatusOf(user).equals(Status.CONFIRMED);
         }

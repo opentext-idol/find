@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.devconsole;
 
-import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;

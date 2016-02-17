@@ -1,7 +1,7 @@
 package com.autonomy.abc.selenium.users;
 
-import com.autonomy.abc.selenium.application.OPISOApplication;
-import com.autonomy.abc.selenium.navigation.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.OPISOApplication;
+import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;

@@ -4,7 +4,7 @@ import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;

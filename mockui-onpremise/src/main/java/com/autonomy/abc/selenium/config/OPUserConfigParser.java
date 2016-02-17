@@ -1,10 +1,6 @@
 package com.autonomy.abc.selenium.config;
 
-import com.autonomy.abc.selenium.page.login.OPAccount;
-import com.autonomy.abc.selenium.users.NewUser;
-import com.autonomy.abc.selenium.users.OPNewUser;
-import com.autonomy.abc.selenium.users.Role;
-import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.*;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class OPUserConfigParser extends UserConfigParser {
@@ -21,5 +17,10 @@ public class OPUserConfigParser extends UserConfigParser {
         String username = newUserNode.path("username").asText();
         String password = newUserNode.path("password").asText();
         return new OPNewUser(username, password);
+    }
+
+    @Override
+    public NewUser generateNewUser(String identifier) {
+        return new OPNewUser(identifier, "pw");
     }
 }

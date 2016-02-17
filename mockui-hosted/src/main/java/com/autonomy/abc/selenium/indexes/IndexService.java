@@ -4,8 +4,6 @@ import com.autonomy.abc.selenium.actions.ServiceBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.hsod.HSODElementFactory;
-import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.users.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -35,10 +33,14 @@ public class IndexService extends ServiceBase<HSODElementFactory> {
         return getElementFactory().getIndexesDetailPage();
     }
 
-    public IndexesPage setUpIndex(Index index) {
+    public CreateNewIndexPage goToIndexWizard() {
         goToIndexes();
         indexesPage.newIndexButton().click();
-        index.makeWizard(getElementFactory().getCreateNewIndexPage()).apply();
+        return getElementFactory().getCreateNewIndexPage();
+    }
+
+    public IndexesPage setUpIndex(Index index) {
+        new IndexWizard(index, goToIndexWizard()).apply();
         new WebDriverWait(getDriver(), 30).until(GritterNotice.notificationContaining(index.getCreateNotification()));
         indexesPage = getElementFactory().getIndexesPage();
         return indexesPage;

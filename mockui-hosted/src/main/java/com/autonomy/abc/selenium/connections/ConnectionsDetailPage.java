@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.connections;
 
-import com.autonomy.abc.selenium.page.SAASPageBase;
+import com.autonomy.abc.selenium.icma.ICMAPageBase;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionsDetailPage extends SAASPageBase {
+public class ConnectionsDetailPage extends ICMAPageBase {
     private ConnectionsDetailPage(WebDriver driver) {
         super(driver);
     }
@@ -29,7 +29,7 @@ public class ConnectionsDetailPage extends SAASPageBase {
         return menuButton("Delete");
     }
 
-    public WebElement deleteModal() {
+    WebElement deleteModal() {
         return new WebDriverWait(getDriver(), 10).until(ExpectedConditions.visibilityOfElementLocated(By.className("modal-dialog")));
     }
 

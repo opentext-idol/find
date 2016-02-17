@@ -3,7 +3,6 @@ package com.autonomy.abc.config;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
-import com.autonomy.abc.selenium.util.Factory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.Platform;
@@ -53,7 +52,7 @@ public class TestConfig {
 	}
 
 	public String getDevConsoleUrl(){
-		return jsonConfig.getApiUrl().toString().replace("api","www");
+		return jsonConfig.getApiUrl().toString().replace("api", "www");
 	}
 
 	public User getDefaultUser() {
@@ -100,8 +99,8 @@ public class TestConfig {
 		return new WebDriverFactory(this);
 	}
 
-	public Factory<NewUser> getNewUserFactory() {
-		return new RandomNewUserFactory(this);
+	public NewUser generateNewUser() {
+		return jsonConfig.generateRandomNewUser();
 	}
 
 	// used when running whole suite via mvn

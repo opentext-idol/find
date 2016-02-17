@@ -3,9 +3,6 @@ package com.autonomy.abc.selenium.connections;
 import com.autonomy.abc.selenium.actions.wizard.BlankWizardStep;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.connections.wizard.ConnectorConfigStep;
-import com.autonomy.abc.selenium.connections.wizard.ConnectorIndexStep;
-import com.autonomy.abc.selenium.connections.wizard.ConnectorTypeStep;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.util.Waits;
 
@@ -89,10 +86,10 @@ public class WebConnector extends Connector {
 
     private List<WizardStep> getCreationWizardSteps(NewConnectionPage newConnectionPage) {
         return Arrays.asList(
-            new ConnectorTypeStep(newConnectionPage, url, name),
-            new ConnectorConfigStep(newConnectionPage, this),
-            new ConnectorIndexStep(newConnectionPage,index,name),
-            new BlankWizardStep("Complete")
+                new ConnectorTypeStep(newConnectionPage, url, name),
+                new ConnectorConfigStep(newConnectionPage, this),
+                new ConnectorIndexStep(newConnectionPage, index, name),
+                new BlankWizardStep("Complete")
         );
     }
 
