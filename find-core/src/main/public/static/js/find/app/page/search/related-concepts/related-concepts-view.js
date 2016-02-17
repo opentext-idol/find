@@ -5,14 +5,15 @@ define([
     'i18n!find/nls/bundle',
     'find/app/model/documents-collection',
     'find/app/util/popover',
+    'find/app/util/search-data-util',
     'find/app/util/view-state-selector',
     'text!find/templates/app/page/search/related-concepts/related-concepts-view.html',
     'text!find/templates/app/page/search/related-concepts/related-concept-cluster.html',
     'text!find/templates/app/page/search/popover-message.html',
     'text!find/templates/app/page/search/results-popover.html',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, $, _, i18n, DocumentsCollection, popover, viewStateSelector, viewTemplate, clusterTemplate,
-            popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
+], function (Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, viewTemplate, clusterTemplate,
+             popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
 
     var html = _.template(viewTemplate)({
         i18n: i18n,
@@ -40,7 +41,11 @@ define([
     }
 
     function popoverHandler($content, $target) {
-        var queryText = $target.text();
+
+        var entityCluster = $target.data().entityCluster;
+        var relatedConcepts = entityCluster > -1 ? this.getClusteredConcepts(entityCluster) : [$target.data().entityText];
+
+        var queryText = searchDataUtil.makeQueryText(this.queryTextModel.get('inputText'), _.union(relatedConcepts, this.queryTextModel.get('relatedConcepts')));
 
         var topResultsCollection = new DocumentsCollection([], {
             indexesCollection: this.indexesCollection
@@ -49,21 +54,24 @@ define([
         topResultsCollection.fetch({
             reset: true,
             data: {
+                field_text: this.queryModel.get('fieldText'),
+                min_date: this.queryModel.getIsoDate('minDate'),
+                max_date: this.queryModel.getIsoDate('maxDate'),
                 text: queryText,
                 max_results: 3,
                 summary: 'context',
                 indexes: this.queryModel.get('indexes'),
                 highlight: false
             },
-            error: _.bind(function() {
+            error: _.bind(function () {
                 $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.error']}));
             }, this),
-            success: _.bind(function() {
+            success: _.bind(function () {
                 if (topResultsCollection.isEmpty()) {
                     $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.none']}));
                 } else {
                     $content.html('<ul class="list-unstyled"></ul>');
-                    _.each(topResultsCollection.models, function(model) {
+                    _.each(topResultsCollection.models, function (model) {
                         var listItem = $(popoverTemplateFunction({
                             title: model.get('title'),
                             summary: model.get('summary').trim().substring(0, 100) + '...'
@@ -81,7 +89,7 @@ define([
         viewStateSelector: _.noop,
 
         events: {
-            'click [data-entity-text]' : function(e) {
+            'click [data-entity-text]': function (e) {
                 var $target = $(e.currentTarget);
                 var queryText = $target.attr('data-entity-text');
 
@@ -93,26 +101,30 @@ define([
                     this.queryTextModel.set('relatedConcepts', newConcepts);
                 }
             },
-            'click [data-entity-cluster]': function(e) {
+            'click [data-entity-cluster]': function (e) {
                 var $target = $(e.currentTarget);
                 var queryCluster = Number($target.attr('data-entity-cluster'));
 
-                var currentlyClickedClusterConcepts = _.chain(this.entityCollection.models)
-                    .filter(function(model) { //get all the models in the cluster
-                        return model.get('cluster') === queryCluster;
-                    }, this)
-                    .map(function(model) { //get the text out of those models
-                        return model.get('text');
-                    })
-                    .value();
-
-                var concepts = this.queryTextModel.get('relatedConcepts');
-                var newConcepts = _.union(concepts, currentlyClickedClusterConcepts);
+                var newConcepts = this.getClusteredConcepts(queryCluster);
                 this.queryTextModel.set('relatedConcepts', newConcepts);
             }
         },
 
-        initialize: function(options) {
+        getClusteredConcepts: function (queryCluster) {
+            var currentlyClickedClusterConcepts = _.chain(this.entityCollection.models)
+                .filter(function (model) { //get all the models in the cluster
+                    return model.get('cluster') === queryCluster;
+                }, this)
+                .map(function (model) { //get the text out of those models
+                    return model.get('text');
+                })
+                .value();
+
+            var concepts = this.queryTextModel.get('relatedConcepts');
+            return _.union(concepts, currentlyClickedClusterConcepts);
+        },
+
+        initialize: function (options) {
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
@@ -132,7 +144,7 @@ define([
             // Each instance of this view gets its own bound, de-bounced popover handler
             var handlePopover = _.debounce(_.bind(popoverHandler, this), 500);
 
-            this.listenTo(this.entityCollection, 'reset', function() {
+            this.listenTo(this.entityCollection, 'reset', function () {
                 if (this.indexesCollection.isEmpty()) {
                     this.model.set('viewState', ViewState.NOT_LOADING);
                 } else {
@@ -142,16 +154,16 @@ define([
                         this.model.set('viewState', ViewState.LIST);
 
                         var html = _.chain(this.entityCollection.models)
-                            .reject(function(model) {
+                            .reject(function (model) {
                                 // A negative cluster indicates that the associated documentes did not fall into a cluster
                                 return model.get('cluster') < 0;
                             })
-                            .groupBy(function(model) {
+                            .groupBy(function (model) {
                                 return model.get('cluster');
                             })
-                            .map(function(models, cluster) {
+                            .map(function (models, cluster) {
                                 return clusterTemplateFunction({
-                                    entities: _.map(models, function(model) {
+                                    entities: _.map(models, function (model) {
                                         return model.get('text');
                                     }),
                                     cluster: cluster
@@ -167,16 +179,16 @@ define([
                 }
             });
 
-            this.listenTo(this.entityCollection, 'request', function() {
+            this.listenTo(this.entityCollection, 'request', function () {
                 this.model.set('viewState', this.indexesCollection.isEmpty() ? ViewState.NOT_LOADING : ViewState.PROCESSING);
             });
 
-            this.listenTo(this.entityCollection, 'error', function() {
+            this.listenTo(this.entityCollection, 'error', function () {
                 this.model.set('viewState', ViewState.ERROR);
             });
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(html);
 
             this.$list = this.$('.related-concepts-list');
@@ -196,6 +208,6 @@ define([
             this.selectViewState = viewStateSelector(viewStateElements);
             updateForViewState.call(this);
         }
-    });
+    }) ;
 
 });
