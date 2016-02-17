@@ -42,6 +42,7 @@ define([
         initialize: function(options) {
             this.model = options.model;
             this.backUrl = options.backUrl;
+            this.indexesCollection = options.indexesCollection;
 
             this.tabs = this.filterTabs(tabs);
 
@@ -105,7 +106,8 @@ define([
             _.each(this.tabs, function(tab) {
                 var tabContentView = new (tab.TabContentConstructor)({
                     tab: tab,
-                    model: this.model
+                    model: this.model,
+                    indexesCollection: this.indexesCollection
                 });
 
                 $tabContentContainer.append(tabContentView.$el);

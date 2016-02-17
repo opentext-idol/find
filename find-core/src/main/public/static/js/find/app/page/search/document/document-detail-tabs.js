@@ -8,7 +8,8 @@ define([
     'i18n!find/nls/bundle',
     'find/app/page/search/document/tab-content-view',
     'find/app/page/search/document/authors-tab',
-], function(Backbone, i18n, TabContentView, AuthorsTab) {
+    'find/app/page/search/document/similar-documents-tab'
+], function(Backbone, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab) {
     'use strict';
 
     var MetaDataTabContent = Backbone.View.extend({
@@ -35,6 +36,16 @@ define([
 
             shown: function (documentModel) {
                 return documentModel.get('authors').length > 0;
+            }
+        },
+
+        {
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: SimilarDocumentsTab}),
+
+            title: i18n['search.document.detail.tabs.similarDocuments'],
+
+            shown: function (documentModel) {
+                return true;
             }
         }
     ];
