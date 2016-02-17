@@ -15,7 +15,11 @@ define([
             popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
 
     function popoverHandler($content, $target) {
-        var queryText = $target.text();
+
+        var entityCluster = $target.data().entityCluster;
+        var relatedConcepts = entityCluster > -1 ? this.getClusteredConcepts(entityCluster) : [$target.data().entityText];
+
+        var queryText = searchDataUtil.makeQueryText(this.queryTextModel.get('inputText'), _.union(relatedConcepts, this.queryTextModel.get('relatedConcepts')));
 
         var topResultsCollection = new DocumentsCollection([], {
             indexesCollection: this.indexesCollection
@@ -24,6 +28,9 @@ define([
         topResultsCollection.fetch({
             reset: true,
             data: {
+                field_text: this.queryModel.get('fieldText'),
+                min_date: this.queryModel.getIsoDate('minDate'),
+                max_date: this.queryModel.getIsoDate('maxDate'),
                 text: queryText,
                 max_results: 3,
                 summary: 'context',
