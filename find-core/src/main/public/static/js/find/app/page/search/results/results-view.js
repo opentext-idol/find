@@ -28,6 +28,11 @@ define([
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
             moment, i18n, i18n_indexes) {
 
+    var Mode = {
+        STATE_TOKEN: 'STATE_TOKEN',
+        QUERY: 'QUERY'
+    };
+    
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
 
@@ -121,6 +126,8 @@ define([
 
             this.loadData = this.stateTokenMode() ? this.stateTokenLoadData : this.normalLoadData;
             this.refreshResults = this.stateTokenMode() ? this.stateTokenRefreshResults : this.normalRefreshResults;
+            this.checkScroll = this.stateTokenMode() ? this.stateTokenCheckScroll : this.normalCheckScroll;
+            this.clearLoadingSpinner = this.stateTokenMode ? this.stateTokenClearLoadingSpinner : this.normalClearLoadingSpinner;
 
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
@@ -176,8 +183,14 @@ define([
             this.$('.main-results-content .results').empty();
         },
 
-        clearLoadingSpinner: function() {
+        normalClearLoadingSpinner: function() {
             if (this.resultsFinished && this.promotionsFinished) {
+                this.$loadingSpinner.addClass('hide');
+            }
+        },
+
+        stateTokenClearLoadingSpinner: function() {
+            if (this.resultsFinished) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -256,7 +269,6 @@ define([
                 }
             });
 
-            this.checkScroll = this.stateTokenMode() ? this.stateTokenCheckScroll : this.normalCheckScroll;
             $('.main-content').scroll(_.bind(this.checkScroll, this));
 
             /*colorbox fancy button override*/
@@ -508,7 +520,10 @@ define([
         },
 
         stateTokenMode: function() {
-            this.mode === 'stateToken';
+            return this.mode === Mode.STATE_TOKEN;
         }
+    }, {
+        Mode: Mode
     });
+
 });
