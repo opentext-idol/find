@@ -3,24 +3,36 @@
     "method": "autonomy",
     "community": {
       "protocol": "HTTP",
-      "host": "find-backend",
+      "host": "iso-backend",
       "port": 9030,
-      "productType": ["UASERVER", "DAH", "IDOLPROXY"]
+      "productType": [
+        "UASERVER",
+        "DAH",
+        "IDOLPROXY"
+      ]
     },
     "name": "CommunityAuthentication"
   },
   "content": {
     "protocol": "HTTP",
-    "host": "find-idol",
+    "host": "iso-idol",
     "port": 9000,
-    "productType": ["AXE", "DAH", "IDOLPROXY"]
+    "productType": [
+      "AXE",
+      "DAH",
+      "IDOLPROXY"
+    ]
   },
   "queryManipulation": {
     "server": {
       "protocol": "HTTP",
-      "host": "find-idol",
+      "host": "iso-idol",
       "port": 16000,
-      "productType": ["QMS", "DAH", "IDOLPROXY"]
+      "productType": [
+        "QMS",
+        "DAH",
+        "IDOLPROXY"
+      ]
     },
     "typeAheadMode": "Index",
     "expandQuery": true,
@@ -29,9 +41,41 @@
   },
   "view": {
     "protocol": "HTTP",
-    "host": "find-idol",
+    "host": "iso-idol",
     "port": 9080,
-    "productType": ["VIEW", "IDOLPROXY", "DAH"],
+    "productType": [
+      "VIEW",
+      "IDOLPROXY",
+      "DAH"
+    ],
     "referenceField": "DREREFERENCE"
+  },
+  "fieldsInfo": {
+    "fieldAssociations": {
+      "mediaContentType": "content_type",
+      "mediaUrl": "url",
+      "mediaOffset": "offset",
+      "mmapUrl": "HPSW_APP_NOINDEX_MMAPPROXY",
+      "thumbnail": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+    },
+    "customFields": [
+      {
+        "name": "content_type",
+        "displayName": "Content Type"
+      },
+      {
+        "name": "url",
+        "displayName": "Url"
+      },
+      {
+        "name": "offset"
+      },
+      {
+        "name": "HPSW_APP_NOINDEX_MMAPPROXY"
+      },
+      {
+        "name": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+      }
+    ]
   }
 }

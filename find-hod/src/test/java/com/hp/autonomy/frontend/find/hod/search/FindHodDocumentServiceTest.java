@@ -66,7 +66,7 @@ public class FindHodDocumentServiceTest extends HodDocumentServiceTest {
     @Before
     public void setUp() {
         super.setUp();
-        documentsService = new FindHodDocumentService(findSimilarService, findConfigService, queryTextIndexService, getContentService, authenticationInformationRetriever, databasesService, cacheManager);
+        documentsService = new FindHodDocumentService(findSimilarService, findConfigService, queryTextIndexService, getContentService, authenticationInformationRetriever, databasesService, documentFieldsService, cacheManager);
 
         when(findConfig.getQueryManipulation()).thenReturn(new QueryManipulationConfig("SomeProfile", "SomeIndex"));
         when(findConfig.getIod()).thenReturn(new IodConfig.Builder().setPublicIndexesEnabled(true).build());

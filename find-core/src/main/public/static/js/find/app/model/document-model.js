@@ -8,29 +8,31 @@ define([
     'underscore',
     'moment'
 ], function(Backbone, _, moment) {
-
-    var ARRAY_FIELDS = ['authors', 'categories'];
-    var DATE_FIELDS = ['date', 'dateCreated', 'dateModified'];
+    "use strict";
 
     // Model representing a document in an HOD text index
     return Backbone.Model.extend({
-        defaults: _.reduce(ARRAY_FIELDS, function(memo, fieldName) {
-            memo[fieldName] = [];
-            return memo;
-        }, {}),
-
         parse: function(response) {
-            _.each(DATE_FIELDS, function(fieldName) {
-                if (response[fieldName]) {
-                    response[fieldName] = moment(response[fieldName]);
+            if (response.date) {
+                response.date = moment(response.date);
+            }
+
+            response.fields = _.map(response.fieldMap, function (value) {
+                if (value.type === 'DATE') {
+                    value.values = _.map(value.values, function(value) {
+                        return moment(value).format('LLLL');
+                    })
                 }
+
+                return value;
             });
+
+            response.fieldMap = null;
+
+            _.sortBy(response.fields, 'displayName');
 
             return response;
         }
-    }, {
-        ARRAY_FIELDS: ARRAY_FIELDS,
-        DATE_FIELDS: DATE_FIELDS
     });
 
 });

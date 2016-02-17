@@ -1,8 +1,3 @@
-<%
-    var index = model.get('index');
-    var domain = model.get('domain');
-%>
-
 <div class="container-fluid full-height">
     <div class="row full-height">
         <div class="col-md-8 col-xs-12 full-height">
@@ -12,7 +7,7 @@
             <a class="btn btn-info view-server-button m-b-sm" target="_blank" href="<%-src%>"><%-i18n['search.document.openInNewTab']%></a>
             <table class="table m-t-xl view-server-document-info">
                 <tbody>
-                    <% _.each(fields, function(field) { %>
+                    <% _.each(['index', 'reference'], function(field) { %>
                         <% if(model.has(field)) { %>
                             <tr>
                                 <th><%-i18n['search.document.' + field]%></th>
@@ -21,29 +16,18 @@
                         <% } %>
                     <% }); %>
 
-                    <% _.each(arrayFields, function(field) { %>
-                        <% if (model.get(field).length) { %>
-                            <tr>
-                                <th><%-i18n['search.document.' + field]%></th>
-                                <td class="break-all">
-                                    <ul class="list-unstyled">
-                                        <% _.each(model.get(field), function(value) { %>
-                                            <li><%-value%></li>
-                                        <% }); %>
-                                    </ul>
-                                </td>
-                            </tr>
-                        <% } %>
+                    <% _.each(model.get('fields'), function(field) { %>
+                        <tr>
+                            <th><%-field.displayName%></th>
+                            <td class="break-all">
+                                <ul class="list-unstyled">
+                                    <% _.each(field.values, function(value) { %>
+                                        <li><%-value%></li>
+                                    <% }); %>
+                                </ul>
+                            </td>
+                        </tr>
                     <% }); %>
-
-                    <% _.each(dateFields, function(field) { %>
-                        <% if(model.has(field)) { %>
-                            <tr>
-                                <th><%-i18n['search.document.' + field]%></th>
-                                <td><%-model.get(field).format('LLLL')%></td>
-                            </tr>
-                        <% } %>
-                    <% });%>
                 </tbody>
             </table>
         </div>

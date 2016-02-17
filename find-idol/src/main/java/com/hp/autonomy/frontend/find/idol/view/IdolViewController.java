@@ -12,7 +12,7 @@ import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.logging.Markers;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
-import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.view.ReferenceFieldBlankException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewDocumentNotFoundException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewNoReferenceFieldException;
@@ -33,11 +33,11 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(IdolViewController.VIEW_PATH)
 @Slf4j
 public class IdolViewController extends ViewController<String, AciErrorException> {
-    private final ConfigService<? extends HavenSearchCapable> configService;
+    private final ConfigService<? extends IdolSearchCapable> configService;
     private final ControllerUtils controllerUtils;
 
     @Autowired
-    public IdolViewController(final ViewServerService<String, AciErrorException> viewServerService, final ConfigService<? extends HavenSearchCapable> configService, final ControllerUtils controllerUtils) {
+    public IdolViewController(final ViewServerService<String, AciErrorException> viewServerService, final ConfigService<? extends IdolSearchCapable> configService, final ControllerUtils controllerUtils) {
         super(viewServerService);
         this.configService = configService;
         this.controllerUtils = controllerUtils;

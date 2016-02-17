@@ -31,5 +31,43 @@
         },
         "database": 0,
         "sentinels": []
+    },
+    "fieldsInfo": {
+        "fieldAssociations": {
+            "mediaContentType": "content_type",
+            "mediaUrl": "url",
+            "mediaOffset": "offset"
+        },
+        "customFields": [{
+            "name": "content_type",
+            "displayName": "Content Type"
+        }, {
+            "name": "url",
+            "displayName": "Url"
+        }, {
+            "name": "offset"
+        }, {
+            "name": "author",
+            "displayName": "Authors"
+        }, {
+            "name": "category",
+            "displayName": "Categories"
+        }, {
+            "name": "date_created",
+            "displayName": "Creation Date",
+            "type": "Date"
+        }, {
+            "name": "created_date",
+            "displayName": "Creation Date",
+            "type": "Date"
+        }, {
+            "name": "date_modified",
+            "displayName": "Last Modified Date",
+            "type": "Date"
+        }, {
+            "name": "modified_date",
+            "displayName": "Last Modified Date",
+            "type": "Date"
+        }]
     }
 }
