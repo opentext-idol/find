@@ -17,7 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AbstractDatabasesControllerTest<D extends IdolDatabase, R extends DatabasesRequest, E extends Exception> {
+public abstract class AbstractDatabasesControllerTest<D extends IdolDatabase, R extends DatabasesRequest, E extends Exception> {
     @Mock
     protected DatabasesService<D, R, E> databasesService;
 
