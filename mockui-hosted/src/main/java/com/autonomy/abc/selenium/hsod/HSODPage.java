@@ -5,10 +5,10 @@ import com.autonomy.abc.selenium.navigation.PageMapper;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
-import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
+import com.autonomy.abc.selenium.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
 import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
 import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
@@ -16,9 +16,9 @@ import com.autonomy.abc.selenium.page.indexes.IndexesPage;
 import com.autonomy.abc.selenium.page.keywords.HSOCreateNewKeywordsPage;
 import com.autonomy.abc.selenium.page.keywords.HSOKeywordsPage;
 import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
-import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.page.search.HSOSearchPage;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
@@ -46,8 +46,8 @@ enum HSODPage implements PageMapper.Page, PageMapper.SwitchStrategy<SOElementFac
     INDEX_WIZARD(new CreateNewIndexPage.Factory(), CreateNewIndexPage.class),
     INDEX_DETAILS(new IndexesDetailPage.Factory(), IndexesDetailPage.class),
 
-    PROMOTIONS(NavBarTabId.PROMOTIONS, new HSOPromotionsPage.Factory(), HSOPromotionsPage.class),
-    PROMOTION_WIZARD(new HSOCreateNewPromotionsPage.Factory(), HSOCreateNewPromotionsPage.class),
+    PROMOTIONS(NavBarTabId.PROMOTIONS, new HSODPromotionsPage.Factory(), HSODPromotionsPage.class),
+    PROMOTION_WIZARD(new HSODCreateNewPromotionsPage.Factory(), HSODCreateNewPromotionsPage.class),
     PROMOTION_DETAILS(new PromotionsDetailPage.Factory(), PromotionsDetailPage.class),
     EDIT_REFERENCES(new EditDocumentReferencesPage.Factory(), EditDocumentReferencesPage.class),
 

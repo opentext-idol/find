@@ -1,7 +1,6 @@
 package com.autonomy.abc.selenium.promotions;
 
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
 
 public class PinPositionStep implements WizardStep<Integer> {
     private CreateNewPromotionsPage page;

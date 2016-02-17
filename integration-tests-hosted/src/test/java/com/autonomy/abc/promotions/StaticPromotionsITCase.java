@@ -6,8 +6,8 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.page.search.DocumentViewer;
 import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
@@ -29,7 +29,7 @@ import static org.hamcrest.core.Is.is;
 
 public class StaticPromotionsITCase extends HostedTestBase {
 
-    private HSOPromotionsPage promotionsPage;
+    private HSODPromotionsPage promotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
     private SearchPage searchPage;
     private HSODPromotionService promotionService;
@@ -50,7 +50,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
     public void setUp() {
         promotionService = getApplication().promotionService();
 
-        promotionsPage = (HSOPromotionsPage) promotionService.deleteAll();
+        promotionsPage = (HSODPromotionsPage) promotionService.deleteAll();
         searchPage = promotionService.setUpStaticPromotion(promotion);
     }
 

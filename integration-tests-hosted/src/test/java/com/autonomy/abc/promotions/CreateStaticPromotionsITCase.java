@@ -5,8 +5,8 @@ import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.page.promotions.HSOCreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.HSODCreateNewPromotionsPage;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.SearchTriggerStep;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
 public class CreateStaticPromotionsITCase extends HostedTestBase {
-    private HSOCreateNewPromotionsPage createPromotionsPage;
+    private HSODCreateNewPromotionsPage createPromotionsPage;
     private HSODPromotionService promotionService;
     private Wizard wizard;
 

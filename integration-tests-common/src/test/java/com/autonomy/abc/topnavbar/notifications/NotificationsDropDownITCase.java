@@ -2,7 +2,7 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.analytics.DashboardBase;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -12,7 +12,6 @@ import com.autonomy.abc.selenium.keywords.KeywordWizardType;
 import com.autonomy.abc.selenium.language.Language;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
@@ -136,14 +135,12 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			assertThat(notifications.countNotifications(), is(2));
 			assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
-			if (getConfig().getType().equals(ApplicationType.HOSTED)) {
-				getApplication().switchTo(AnalyticsPage.class);
-				newBody();
-				topNavBar.notificationsDropdown();
-				notifications = topNavBar.getNotifications();
-				assertThat(notifications.countNotifications(), is(2));
-				assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
-			}
+			getApplication().switchTo(DashboardBase.class);
+			newBody();
+			topNavBar.notificationsDropdown();
+			notifications = topNavBar.getNotifications();
+			assertThat(notifications.countNotifications(), is(2));
+			assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
 			secondWindow.activate();
 
