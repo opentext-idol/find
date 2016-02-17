@@ -49,11 +49,14 @@ public class HSODUserService extends UserService<HSODElementFactory> {
     public HSOUser changeRole(User user, Role newRole) {
         usersPage = goToUsers();
 
-        if(user.getRole().equals(newRole)){
+        WebElement roleLink = usersPage.roleLinkFor(user);
+
+        if (user.getRole().equals(newRole)) {
+            roleLink.click();
+            roleLink.click();
             return (HSOUser) user;
         }
 
-        WebElement roleLink = usersPage.roleLinkFor(user);
         roleLink.click();
         usersPage.setRoleValueFor(user, newRole);
         new WebDriverWait(getDriver(),5).until(ExpectedConditions.textToBePresentInElement(roleLink, newRole.toString()));
