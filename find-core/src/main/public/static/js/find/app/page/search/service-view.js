@@ -86,7 +86,7 @@ define([
                 indexesCollection: this.indexesCollection
             });
 
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText'], this.fetchEntities);
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'], this.fetchEntities);
 
             this.savedSearchControlView = new SavedSearchControlView({
                 savedSearchModel: this.savedSearchModel,
