@@ -29,7 +29,6 @@ define([
 
             this.documentsCollection = new DocumentsCollection();
 
-
             this.resultsView = new this.ResultsView({
                 documentsCollection: this.documentsCollection,
                 indexesCollection: this.indexesCollection,
