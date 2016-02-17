@@ -25,6 +25,7 @@ define([
                 var attributes = {
                     field: $field.attr('data-field'),
                     fieldDisplayName: $field.attr('data-field-display-name'),
+                    numeric: $field.attr('data-numeric-type') === 'true',
                     value: $target.attr('data-value')
                 };
 

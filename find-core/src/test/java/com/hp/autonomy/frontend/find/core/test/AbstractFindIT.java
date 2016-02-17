@@ -5,8 +5,6 @@
 
 package com.hp.autonomy.frontend.find.core.test;
 
-import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.DispatcherServletConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,7 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,7 +22,6 @@ import java.io.IOException;
 
 @SuppressWarnings("UtilityClass")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {DispatcherServletConfiguration.class, AppConfiguration.class})
 @WebIntegrationTest({"application.buildNumber=test", "server.port=0", "hp.find.persistentState = INMEMORY", "hp.find.home = ./target/test", "find.https.proxyHost = web-proxy.sdc.hpecorp.net", "find.https.proxyPort: 8080", "find.iod.api = https://api.havenondemand.com", "find.hod.sso = https://dev.havenondemand.com/sso.html"})
 public abstract class AbstractFindIT {
     protected static final String TEST_DIR = "./target/test";
