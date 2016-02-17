@@ -3,14 +3,14 @@ package com.autonomy.abc.analytics;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.application.HSODFind;
+import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.page.analytics.Container;
 import com.autonomy.abc.selenium.page.analytics.ContainerItem;
 import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchService;
@@ -154,7 +154,7 @@ public class AnalyticsITCase extends HostedTestBase {
     public void testExistingPromotion() {
         final StaticPromotion promotion = new StaticPromotion("title", "body", "trigger");
 
-        HSOPromotionService promotionService = getApplication().promotionService();
+        HSODPromotionService promotionService = getApplication().promotionService();
 
         try {
             promotionService.goToPromotions().getPromotionLinkWithTitleContaining(promotion.getTrigger());
@@ -186,7 +186,7 @@ public class AnalyticsITCase extends HostedTestBase {
     public void testDeletedPromotion() {
         final StaticPromotion promotion = new StaticPromotion("title", "body", "deleted");
 
-        HSOPromotionService promotionService = getApplication().promotionService();
+        HSODPromotionService promotionService = getApplication().promotionService();
         promotionService.setUpStaticPromotion(promotion);
         try {
             goToAnalytics();

@@ -3,7 +3,7 @@ package com.autonomy.abc.topnavbar.notifications;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.selenium.application.HSOApplication;
+import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Session;
@@ -12,7 +12,7 @@ import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.menu.Notification;
-import com.autonomy.abc.selenium.navigation.HSODElementFactory;
+import com.autonomy.abc.selenium.hsod.HSODElementFactory;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
@@ -21,7 +21,7 @@ import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.page.login.GoogleAuth;
 import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.users.*;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -53,13 +53,13 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
     }
 
     @Override
-    public HSOApplication getApplication() {
-        return (HSOApplication) super.getApplication();
+    public HSODApplication getApplication() {
+        return (HSODApplication) super.getApplication();
     }
 
     @Test
     public void testStaticPromotionNotifications(){
-        HSOPromotionService ps = getApplication().promotionService();
+        HSODPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -77,7 +77,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
 
     @Test
     public void testRemovingStaticPromotionNotifications(){
-        HSOPromotionService ps = getApplication().promotionService();
+        HSODPromotionService ps = getApplication().promotionService();
 
         String docTitle = "TITLE";
         String docContent = "CONTENT";
@@ -188,7 +188,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
             } catch (TimeoutException e) { /* User has likely already been authenticated recently, attempt to continue */ }
 
             secondSession = getSessionRegistry().startSession(config.getWebappUrl());
-            HSOApplication secondApplication = new HSOApplication().inWindow(secondSession.getActiveWindow());
+            HSODApplication secondApplication = new HSODApplication().inWindow(secondSession.getActiveWindow());
             HSODElementFactory secondFactory = secondApplication.elementFactory();
 
             loginTo(secondFactory.getLoginPage(), secondSession.getDriver(), user);

@@ -45,7 +45,7 @@
     <dependencies>
         <dependency>
             <groupId>com.hp.autonomy.frontend.havensearch</groupId>
-            <artifactId>mockui</artifactId>
+            <artifactId>mockui-hosted</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

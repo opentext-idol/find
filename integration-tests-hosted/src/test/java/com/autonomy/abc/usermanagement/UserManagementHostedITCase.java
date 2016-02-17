@@ -4,7 +4,8 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.navigation.FindHasLoggedIn;
+import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.find.HSODFindElementFactory;
 import com.autonomy.abc.selenium.page.ErrorPage;
 import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
 import com.autonomy.abc.selenium.page.login.AbcHasLoggedIn;
@@ -37,11 +38,10 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.fail;
 
 public class UserManagementHostedITCase extends UsersPageTestBase {
 
-    private HSOUserService userService;
+    private HSODUserService userService;
     private HSOUsersPage usersPage;
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManagementHostedITCase.class);
     private final Factory<NewUser> newUserFactory;
@@ -53,7 +53,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Before
     public void hostedSetUp(){
-        userService = (HSOUserService) super.userService;
+        userService = (HSODUserService) super.userService;
         usersPage = (HSOUsersPage) super.usersPage;
     }
 
@@ -270,13 +270,18 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         logout();
-
         getDriver().get(config.getFindUrl());
-        loginAs(user);
 
-        if(!new FindHasLoggedIn(getDriver()).hasLoggedIn()){
-            fail("Haven't been logged in to find");
+        HSODFindElementFactory findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
+
+        boolean success = true;
+        try {
+            loginTo(findFactory.getLoginPage(), getDriver(), user);
+        } catch (Exception e) {
+            success = false;
         }
+        verifyThat("logged in", success);
+        verifyThat("taken to Find", getDriver().getTitle(), containsString("Find"));
     }
 
     @Test

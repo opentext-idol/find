@@ -2,9 +2,9 @@ package com.autonomy.abc.external;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.DevConsole;
-import com.autonomy.abc.selenium.navigation.DevConsoleElementFactory;
-import com.autonomy.abc.selenium.page.devconsole.HSODLandingPage;
+import com.autonomy.abc.selenium.devconsole.DevConsole;
+import com.autonomy.abc.selenium.devconsole.DevConsoleElementFactory;
+import com.autonomy.abc.selenium.devconsole.HSODLandingPage;
 import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
 import org.junit.Ignore;

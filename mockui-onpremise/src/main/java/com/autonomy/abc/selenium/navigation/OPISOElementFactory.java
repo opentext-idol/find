@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.navigation;
 
+import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.OPTopNavBar;
 import com.autonomy.abc.selenium.page.admin.UsersPage;
 import com.autonomy.abc.selenium.page.keywords.OPCreateNewKeywordsPage;
@@ -65,6 +66,12 @@ public class OPISOElementFactory extends SOElementFactory {
     @Override
     public UsersPage getUsersPage() {
         return loadPage(OPUsersPage.class);
+    }
+
+    protected static class SideNavStrategy extends SOElementFactory.SideNavStrategy {
+        protected SideNavStrategy(NavBarTabId tabId) {
+            super(tabId);
+        }
     }
 
     static class TopNavStrategy implements PageMapper.SwitchStrategy<SOElementFactory> {
