@@ -17,6 +17,7 @@ define([
             relatedConcepts: []
         },
 
+        // WARNING: This logic is duplicated in the server-side SavedSearch class
         makeQueryText: function(){
             var inputText = this.get('inputText');
 

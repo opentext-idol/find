@@ -18,7 +18,6 @@ import java.util.List;
 @Controller
 @RequestMapping(SavedSnapshotController.PATH)
 public class IdolSavedSnapshotController extends SavedSnapshotController<String, IdolSearchResult, AciErrorException> {
-
     @Autowired
     public IdolSavedSnapshotController(final SavedSnapshotService service, final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService) {
         super(service, documentsService);
@@ -39,7 +38,8 @@ public class IdolSavedSnapshotController extends SavedSnapshotController<String,
         final IdolQueryRestrictions.Builder queryRestrictionsBuilder = new IdolQueryRestrictions.Builder()
                 .setAnyLanguage(true)
                 .setDatabases(getDatabases(snapshot.getIndexes()))
-                .setQueryText(getQueryText(snapshot)).setFieldText(getFieldText(snapshot.getParametricValues()))
+                .setQueryText(snapshot.toQueryText())
+                .setFieldText(snapshot.toFieldText())
                 .setMaxDate(snapshot.getMaxDate())
                 .setMinDate(snapshot.getMinDate());
 
