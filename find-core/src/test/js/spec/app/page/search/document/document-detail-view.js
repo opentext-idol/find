@@ -45,7 +45,8 @@ define([
             beforeEach(function() {
                 this.view = new DocumentDetailView({
                     model: new DocumentModel(),
-                    backUrl: BACK_URL
+                    backUrl: BACK_URL,
+                    indexesCollection: new Backbone.Collection()
                 });
 
                 spyOn(router, 'navigate');
@@ -66,7 +67,8 @@ define([
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
 
                     this.view.tabs = this.view.filterTabs(getMockTabs(1));
@@ -88,7 +90,8 @@ define([
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
 
                     this.view.tabs = this.view.filterTabs(getMockTabs(2));
@@ -112,7 +115,8 @@ define([
                 this.view = new DocumentDetailView({
                     model: new DocumentModel({
                         reference: 'some other reference'
-                    })
+                    }),
+                    indexesCollection: new Backbone.Collection()
                 });
 
                 this.view.tabs = this.view.filterTabs(getMockTabs(1));
@@ -135,7 +139,8 @@ define([
                         reference: DOCUMENT_MODEL_REF,
                         media: 'audio',
                         url: 'www.example.com'
-                    })
+                    }),
+                    indexesCollection: new Backbone.Collection()
                 });
                 this.view.render();
             });
@@ -151,7 +156,8 @@ define([
                     model: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         url: ANY_OLD_URL
-                    })
+                    }),
+                    indexesCollection: new Backbone.Collection()
                 });
                 this.view.render();
             });
@@ -167,7 +173,8 @@ define([
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF,
                             url: ANY_OLD_URL
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
                     this.view.render();
                 });
@@ -183,7 +190,8 @@ define([
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: URL_LIKE_REFERENCE
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
                     this.view.render();
                 });
@@ -199,7 +207,8 @@ define([
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
                     this.view.render();
                 });
@@ -221,7 +230,8 @@ define([
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF,
                             mmapUrl: mmapUrl
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
                     this.view.render();
                 });

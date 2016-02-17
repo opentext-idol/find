@@ -19,7 +19,7 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AbstractParametricValuesControllerTest<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
+public abstract class AbstractParametricValuesControllerTest<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
     @Mock
     protected ParametricValuesService<R, S, E> parametricValuesService;
 
