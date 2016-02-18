@@ -50,20 +50,24 @@ public class TestConfig {
 		return jsonConfig.getAppUrl(application.getName().toLowerCase()).toString();
 	}
 
+	@Deprecated
 	public String getWebappUrl() {
-		return jsonConfig.getWebappUrl().toString();
+		return jsonConfig.getAppUrl("search").toString();
 	}
 
+	@Deprecated
 	public String getFindUrl() {
-		return jsonConfig.getFindUrl().toString();
+		return jsonConfig.getAppUrl("find").toString();
 	}
 
+	// TODO: HodApiApplication
 	public String getApiUrl() {
-		return jsonConfig.getApiUrl().toString();
+		return jsonConfig.getAppUrl("api").toString();
 	}
 
+	@Deprecated
 	public String getDevConsoleUrl(){
-		return jsonConfig.getApiUrl().toString().replace("api", "www");
+		return jsonConfig.getAppUrl("devconsole").toString();
 	}
 
 	public User getDefaultUser() {
