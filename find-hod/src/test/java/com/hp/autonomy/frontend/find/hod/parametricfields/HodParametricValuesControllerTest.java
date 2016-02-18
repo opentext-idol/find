@@ -24,6 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -51,9 +52,12 @@ public class HodParametricValuesControllerTest extends AbstractParametricValuesC
         when(fieldsService.getFields(any(HodFieldsRequest.class), anyListOf(String.class))).thenReturn(response);
 
         final QueryTagInfo parametricResponse = mock(QueryTagInfo.class);
-        when(parametricValuesService.getAllParametricValues(argThat(new HasPropertyWithValue<HodParametricRequest>("fieldNames", hasItems("field1"))))).thenReturn(Collections.singleton(parametricResponse));
+        when(parametricResponse.getName()).thenReturn("field1");
+
         final QueryTagInfo numericResponse = mock(QueryTagInfo.class);
-        when(parametricValuesService.getAllParametricValues(argThat(new HasPropertyWithValue<HodParametricRequest>("fieldNames", hasItems("field2"))))).thenReturn(Collections.singleton(numericResponse));
+        when(numericResponse.getName()).thenReturn("field2");
+
+        when(parametricValuesService.getAllParametricValues(argThat(new HasPropertyWithValue<HodParametricRequest>("fieldNames", hasItems("field1", "field2"))))).thenReturn(new HashSet<>(Arrays.asList(parametricResponse, numericResponse)));
 
         final ParametricValues parametricValues = parametricValuesController.getParametricValues("Some query text", null, Collections.<ResourceIdentifier>emptyList(), null, null);
         assertThat(parametricValues.getParametricValues(), hasSize(1));
