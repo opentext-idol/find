@@ -56,10 +56,7 @@ define([
 
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
                 i18n:i18n,
-                model: this.model,
-                arrayFields: DocumentModel.ARRAY_FIELDS,
-                dateFields: DocumentModel.DATE_FIELDS,
-                fields: ['index', 'reference', 'contentType', 'url']
+                model: this.model
             }));
 
             var $preview = this.$('.preview-mode-document');

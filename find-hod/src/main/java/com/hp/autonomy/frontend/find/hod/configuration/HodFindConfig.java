@@ -15,7 +15,8 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.PasswordsConfig;
 import com.hp.autonomy.frontend.configuration.RedisConfig;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
-import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationCapable;
+import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
+import com.hp.autonomy.searchcomponents.hod.configuration.HodSearchCapable;
 import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfig;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,14 +29,14 @@ import java.util.Set;
 @JsonDeserialize(builder = HodFindConfig.Builder.class)
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, QueryManipulationCapable, PasswordsConfig<HodFindConfig>, HodSsoConfig {
-
+public class HodFindConfig extends AbstractConfig<HodFindConfig> implements AuthenticationConfig<HodFindConfig>, HodSearchCapable, PasswordsConfig<HodFindConfig>, HodSsoConfig {
     private final Authentication<?> login;
     private final HsodConfig hsod;
     private final IodConfig iod;
     private final QueryManipulationConfig queryManipulation;
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
+    private final FieldsInfo fieldsInfo;
 
     private HodFindConfig(final Builder builder) {
         login = builder.login;
@@ -43,6 +44,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         iod = builder.iod;
         allowedOrigins = builder.allowedOrigins;
         redis = builder.redis;
+        fieldsInfo = builder.fieldsInfo;
         queryManipulation = builder.queryManipulation;
     }
 
@@ -56,6 +58,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
                     .setRedis(redis == null ? config.redis : redis.merge(config.redis))
                     .setQueryManipulation(queryManipulation == null ? config.queryManipulation : queryManipulation.merge(config.queryManipulation))
                     .setHsod(hsod == null ? config.hsod : hsod.merge(config.hsod))
+                    .setFieldsInfo(fieldsInfo == null ? config.fieldsInfo : fieldsInfo.merge(config.fieldsInfo))
                     .build();
         } else {
             return this;
@@ -141,6 +144,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
         private Set<String> allowedOrigins;
         private RedisConfig redis;
         private QueryManipulationConfig queryManipulation;
+        private FieldsInfo fieldsInfo;
 
         public Builder() {
         }
@@ -152,6 +156,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements Auth
             allowedOrigins = config.allowedOrigins;
             redis = config.redis;
             queryManipulation = config.queryManipulation;
+            fieldsInfo = config.fieldsInfo;
         }
 
         public HodFindConfig build() {

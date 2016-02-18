@@ -326,10 +326,7 @@ define([
                 args.html = this.viewDocumentTemplate({
                     src: options.href,
                     i18n: i18n,
-                    model: options.model,
-                    arrayFields: DocumentModel.ARRAY_FIELDS,
-                    dateFields: DocumentModel.DATE_FIELDS,
-                    fields: ['index', 'reference', 'contentType', 'url']
+                    model: options.model
                 });
             }
 
