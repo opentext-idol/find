@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Set;
+import java.util.List;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
@@ -26,7 +26,7 @@ public class IdolParametricValuesController extends ParametricValuesController<I
     }
 
     @Override
-    protected IdolParametricRequest buildParametricRequest(final Set<String> fieldNames, final QueryRestrictions<String> queryRestrictions) {
+    protected IdolParametricRequest buildParametricRequest(final List<String> fieldNames, final QueryRestrictions<String> queryRestrictions) {
         return new IdolParametricRequest.Builder()
                 .setFieldNames(fieldNames)
                 .setQueryRestrictions(queryRestrictions)
