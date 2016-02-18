@@ -22,6 +22,7 @@ public class ErrorModelAndViewInfo {
     private final Integer statusCode;
     private final boolean contactSupport;
     private final URI buttonHref;
+    private final Exception exception;
 
     @Accessors(chain = true)
     @NoArgsConstructor
@@ -34,9 +35,10 @@ public class ErrorModelAndViewInfo {
         private Integer statusCode;
         private boolean contactSupport;
         private URI buttonHref;
+        private Exception exception;
 
         public ErrorModelAndViewInfo build() {
-            return new ErrorModelAndViewInfo(request, mainMessageCode, subMessageCode, subMessageArguments, statusCode, contactSupport, buttonHref);
+            return new ErrorModelAndViewInfo(request, mainMessageCode, subMessageCode, subMessageArguments, statusCode, contactSupport, buttonHref, exception);
         }
     }
 }

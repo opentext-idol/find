@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AbstractErrorControllerTest {
+public abstract class AbstractErrorControllerTest {
     @Mock
     protected ControllerUtils controllerUtils;
 
@@ -73,7 +73,7 @@ public class AbstractErrorControllerTest {
     public void serverErrorPageWithoutUUID() {
         assertNotNull(errorController.serverErrorPage(request, response));
         verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("mainMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_MAIN))));
-        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("subMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB_NO_UUID))));
+        verify(controllerUtils).buildErrorModelAndView(argThat(new HasPropertyWithValue<ErrorModelAndViewInfo>("subMessageCode", is(CustomErrorController.MESSAGE_CODE_INTERNAL_SERVER_ERROR_SUB))));
     }
 
     @Test

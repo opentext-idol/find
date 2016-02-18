@@ -14,8 +14,27 @@ define([
 ], function(Backbone, $, _, i18n, DocumentsCollection, popover, viewStateSelector, relatedConceptsView, relatedConceptListItemTemplate,
             popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
 
+
+    //TODO Remove after BIFHI merge
+    function wrapQuotes(concept) {
+        return '"' + concept + '"';
+    }
+
+    function makeQueryText(inputText, relatedConcepts) {
+        if (!inputText){
+            return '';
+        }
+
+        if (_.isEmpty(relatedConcepts)){
+            return inputText;
+        }
+
+        return '(' + inputText + ') ' + _.map(relatedConcepts, wrapQuotes).join(' ');
+    }
+
     function popoverHandler($content, $target) {
-        var queryText = $target.text();
+
+        var queryText = makeQueryText(this.queryTextModel.get('inputText'), _.union([$target.text()], this.queryTextModel.get('relatedConcepts')));
 
         var topResultsCollection = new DocumentsCollection([], {
             indexesCollection: this.indexesCollection
@@ -24,6 +43,9 @@ define([
         topResultsCollection.fetch({
             reset: true,
             data: {
+                field_text: this.queryModel.get('fieldText'),
+                min_date: this.queryModel.getIsoDate('minDate'),
+                max_date: this.queryModel.getIsoDate('maxDate'),
                 text: queryText,
                 max_results: 3,
                 summary: 'context',

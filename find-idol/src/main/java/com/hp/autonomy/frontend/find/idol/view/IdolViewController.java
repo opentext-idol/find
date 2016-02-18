@@ -63,6 +63,7 @@ public class IdolViewController extends ViewController<String, AciErrorException
                 .setSubMessageArguments(new Object[]{reference})
                 .setStatusCode(HttpStatus.NOT_FOUND.value())
                 .setContactSupport(true)
+                .setException(e)
                 .build());
     }
 
@@ -87,6 +88,7 @@ public class IdolViewController extends ViewController<String, AciErrorException
                 .setSubMessageArguments(new Object[]{reference, referenceField})
                 .setStatusCode(HttpStatus.BAD_REQUEST.value())
                 .setContactSupport(true)
+                .setException(e)
                 .build());
     }
 
@@ -129,6 +131,7 @@ public class IdolViewController extends ViewController<String, AciErrorException
                 .setSubMessageArguments(new Object[]{reference})
                 .setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .setContactSupport(true)
+                .setException(e)
                 .build());
     }
 }
