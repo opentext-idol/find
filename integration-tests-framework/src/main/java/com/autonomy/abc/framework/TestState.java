@@ -1,6 +1,6 @@
 package com.autonomy.abc.framework;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SeleniumTest;
 import com.autonomy.abc.framework.statements.StatementHandler;
 import org.junit.runner.Description;
 
@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public class TestState {
-    private ABCTestBase test;
+    private SeleniumTest<?, ?> test;
     private Description method;
     private int statementCount;
     private List<Throwable> assertionErrors;
@@ -27,7 +27,7 @@ public class TestState {
         timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     }
 
-    public void setTest(ABCTestBase newTest) {
+    public void setTest(SeleniumTest<?, ?> newTest) {
         test = newTest;
     }
 

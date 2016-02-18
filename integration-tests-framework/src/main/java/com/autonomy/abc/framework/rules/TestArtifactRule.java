@@ -1,6 +1,6 @@
 package com.autonomy.abc.framework.rules;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SeleniumTest;
 import com.autonomy.abc.framework.ArtifactSaveVisitor;
 import com.autonomy.abc.framework.TestState;
 import com.autonomy.abc.selenium.control.Session;
@@ -10,11 +10,11 @@ import org.junit.runners.model.MultipleFailureException;
 
 public class TestArtifactRule extends TestWatcher implements ArtifactSaveVisitor.ArtifactSaver {
     private final ArtifactSaveVisitor saveVisitor = new ArtifactSaveVisitor();
-    private final ABCTestBase testBase;
+    private final SeleniumTest<?, ?> testBase;
     private final String timestamp;
     private Description currentDescription;
 
-    public TestArtifactRule(ABCTestBase testBase) {
+    public TestArtifactRule(SeleniumTest<?, ?> testBase) {
         this.testBase = testBase;
         timestamp = TestState.get().getTimestamp();
     }

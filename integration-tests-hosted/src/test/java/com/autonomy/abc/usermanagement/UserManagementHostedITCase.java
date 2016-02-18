@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class UserManagementHostedITCase extends UsersPageTestBase {
+public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
 
     private HSODUserService userService;
     private HSODUsersPage usersPage;
