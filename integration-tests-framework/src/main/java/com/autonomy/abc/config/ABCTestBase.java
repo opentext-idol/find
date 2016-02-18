@@ -18,14 +18,12 @@ import static org.junit.Assert.fail;
 public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplication<?>, SOElementFactory> {
 	protected final TestConfig config;
 
-	private final SearchOptimizerApplication<?> application;
 	private User initialUser;
 	private User currentUser;
 
 	public ABCTestBase(final TestConfig config) {
-		super(config);
+		super(config, SearchOptimizerApplication.ofType(config.getType()));
 		this.config = config;
-		this.application = SearchOptimizerApplication.ofType(config.getType());
 		this.initialUser = config.getDefaultUser();
 	}
 
@@ -52,10 +50,6 @@ public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplicatio
 
 	protected final void setInitialUser(User user) {
 		initialUser = user;
-	}
-
-	public SearchOptimizerApplication<?> getApplication() {
-		return application;
 	}
 
 	protected final void loginAs(User user) {

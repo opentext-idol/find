@@ -38,13 +38,15 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
     private final TestState testState = TestState.get();
     private final TestConfig config;
     private final SessionRegistry sessions;
+    private final A application;
 
     private Session mainSession;
     private String initialUrl;
 
-    protected SeleniumTest(TestConfig config) {
+    protected SeleniumTest(TestConfig config, A appUnderTest) {
         this.config = config;
         this.sessions = new SessionRegistry(config.getWebDriverFactory(), config.getWindowFactory());
+        this.application = appUnderTest;
         this.initialUrl = getAppUrl();
     }
 
@@ -113,7 +115,9 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
         return config;
     }
 
-    protected abstract A getApplication();
+    protected A getApplication() {
+        return application;
+    }
 
     protected F getElementFactory() {
         return getApplication().elementFactory();
