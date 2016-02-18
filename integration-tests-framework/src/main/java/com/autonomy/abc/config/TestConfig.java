@@ -60,11 +60,6 @@ public class TestConfig {
 		return jsonConfig.getAppUrl("api").toString();
 	}
 
-	@Deprecated
-	public String getDevConsoleUrl(){
-		return jsonConfig.getAppUrl("devconsole").toString();
-	}
-
 	public User getDefaultUser() {
 		return getUser("default");
 	}

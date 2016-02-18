@@ -31,6 +31,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
  */
 public class LoginPageHostedITCase extends HostedTestBase {
     private HSODFindElementFactory findFactory;
+    private DevConsole devConsole;
     private DevConsoleElementFactory devFactory;
 
     public LoginPageHostedITCase(TestConfig config) {
@@ -41,7 +42,8 @@ public class LoginPageHostedITCase extends HostedTestBase {
     @Before
     public void setUp() {
         findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
-        devFactory = new DevConsole(getMainSession().getActiveWindow()).elementFactory();
+        devConsole = new DevConsole(getMainSession().getActiveWindow());
+        devFactory = devConsole.elementFactory();
     }
 
     @Test   @Ignore("No account")
@@ -165,7 +167,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLoginSSOtoDevConsole(){
         loginAs(config.getDefaultUser());
 
-        getDriver().navigate().to(config.getDevConsoleUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
         DevConsoleHomePage devConsole = devFactory.getHomePage();
 
         verifyThat(devConsole.loginButton(), not(displayed()));
@@ -173,7 +175,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     @Test
     public void testLoginDevConsoletoSSO() {
-        getDriver().navigate().to(config.getDevConsoleUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
 
         DevConsoleHomePage homePage = devFactory.getHomePage();
         homePage.loginButton().click();
@@ -190,13 +192,13 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
         logout();
 
-        getDriver().navigate().to(config.getDevConsoleUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
         verifyThat(devFactory.getHomePage().loginButton(), displayed());
     }
 
     @Test
     public void testLogoutDevConsoletoSSO() {
-        getDriver().navigate().to(config.getDevConsoleUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
 
         devFactory.getHomePage().loginButton().click();
         loginTo(devFactory.getLoginPage(), getDriver(), config.getDefaultUser());
