@@ -53,7 +53,7 @@ public abstract class ABCTestBase {
 		this.config = config;
 		this.application = SearchOptimizerApplication.ofType(config.getType());
 		this.initialUser = config.getDefaultUser();
-		this.initialUrl = config.getWebappUrl();
+		this.initialUrl = getAppUrl();
 		this.sessionRegistry = new SessionRegistry(config.getWebDriverFactory(), config.getWindowFactory());
 	}
 
@@ -146,6 +146,10 @@ public abstract class ABCTestBase {
 
 	public SOElementFactory getElementFactory() {
 		return application.elementFactory();
+	}
+
+	public String getAppUrl() {
+		return getConfig().getAppUrl(getApplication());
 	}
 
 	protected final void loginAs(User user) {

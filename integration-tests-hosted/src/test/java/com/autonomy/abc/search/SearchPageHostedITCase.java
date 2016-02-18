@@ -80,7 +80,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Test
 	public void testEditFieldText() {
-		assumeThat(config.getWebappUrl(), not("http://search.havenapps.io/searchoptimizer/p"));
+		assumeThat(getAppUrl(), not("http://search.havenapps.io/searchoptimizer/p"));
 
 		searchService.search(new SearchQuery("*")
 				.withFilter(IndexFilter.PUBLIC)

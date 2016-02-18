@@ -85,7 +85,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
         logout();
 
-        getDriver().get(getConfig().getWebappUrl());
+        getDriver().get(getAppUrl());
 
         try {
             loginAs(user);
@@ -114,7 +114,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     protected void logoutAndNavigateToWebApp(){
         logout();
-        getDriver().get(getConfig().getWebappUrl());
+        getDriver().get(getAppUrl());
     }
 
     protected void verifyCreateDeleteInTable(NewUser newUser) {

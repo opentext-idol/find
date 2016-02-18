@@ -51,11 +51,6 @@ public class TestConfig {
 	}
 
 	@Deprecated
-	public String getWebappUrl() {
-		return jsonConfig.getAppUrl("search").toString();
-	}
-
-	@Deprecated
 	public String getFindUrl() {
 		return jsonConfig.getAppUrl("find").toString();
 	}

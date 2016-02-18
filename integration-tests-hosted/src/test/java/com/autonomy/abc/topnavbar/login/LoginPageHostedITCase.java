@@ -104,7 +104,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         getDriver().navigate().to(config.getFindUrl());
         loginTo(findFactory.getLoginPage(), getDriver(), config.getDefaultUser());
 
-        getDriver().navigate().to(config.getWebappUrl());
+        getDriver().navigate().to(getAppUrl());
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
     }
 
@@ -153,7 +153,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         findFactory.getLoginPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("find"));
 
-        getDriver().navigate().to(config.getWebappUrl());
+        getDriver().navigate().to(getAppUrl());
         getElementFactory().getLoginPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("search"));
 
@@ -180,7 +180,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
         loginTo(devFactory.getLoginPage(), getDriver(), config.getDefaultUser());
 
-        getDriver().navigate().to(config.getWebappUrl());
+        getDriver().navigate().to(getAppUrl());
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
     }
 
@@ -203,7 +203,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
         logOutDevConsole();
 
-        getDriver().navigate().to(config.getWebappUrl());
+        getDriver().navigate().to(getAppUrl());
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
 

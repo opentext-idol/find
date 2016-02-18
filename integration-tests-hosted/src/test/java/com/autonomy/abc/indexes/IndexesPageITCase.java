@@ -213,7 +213,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1735")
     public void testNavigatingToNonExistingIndexByURL(){
-        getDriver().get(config.getWebappUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
+        getDriver().get(getAppUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
         verifyThat(PageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
     }
 

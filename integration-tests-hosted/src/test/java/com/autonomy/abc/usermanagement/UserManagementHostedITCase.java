@@ -174,7 +174,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         // TODO: use a single driver once 401 page has logout button
         WebDriver secondDriver = config.getWebDriverFactory().create();
         try {
-            secondDriver.get(config.getWebappUrl());
+            secondDriver.get(getAppUrl());
             LoginPage loginPage = new HSOLoginPage(secondDriver, new AbcHasLoggedIn(secondDriver));
 
             try {
@@ -185,7 +185,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
             verify401(secondDriver);
 
-            secondDriver.navigate().to(config.getWebappUrl().split("/searchoptimizer")[0]);
+            secondDriver.navigate().to(getAppUrl().split("/searchoptimizer")[0]);
             verify401(secondDriver);
 
             secondDriver.navigate().to(config.getFindUrl());
