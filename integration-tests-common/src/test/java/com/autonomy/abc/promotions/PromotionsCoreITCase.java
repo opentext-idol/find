@@ -3,8 +3,8 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
@@ -29,8 +29,8 @@ public class PromotionsCoreITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        promotionService = getApplication().promotionService();
+        searchService = getApplication().searchService();
     }
 
     @After

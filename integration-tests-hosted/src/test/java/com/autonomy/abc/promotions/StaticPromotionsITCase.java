@@ -3,16 +3,15 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.promotions.HSOPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.DocumentViewer;
-import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.promotions.HSODPromotionService;
+import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,15 +29,14 @@ import static org.hamcrest.core.Is.is;
 
 public class StaticPromotionsITCase extends HostedTestBase {
 
-    private HSOPromotionsPage promotionsPage;
+    private HSODPromotionsPage promotionsPage;
     private PromotionsDetailPage promotionsDetailPage;
     private SearchPage searchPage;
-    private HSOPromotionService promotionService;
+    private HSODPromotionService promotionService;
     private final String title = "title";
     private final String content = "content";
     private final String trigger = "dog";
     private final StaticPromotion promotion = new StaticPromotion(title, content, trigger);
-    private PromotionsDetailTriggerForm triggerForm;
 
     public StaticPromotionsITCase(TestConfig config) {
         super(config);
@@ -50,10 +48,9 @@ public class StaticPromotionsITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-        promotionsPage = getElementFactory().getPromotionsPage();
-        promotionService.deleteAll();
+        promotionService = getApplication().promotionService();
+
+        promotionsPage = (HSODPromotionsPage) promotionService.deleteAll();
         searchPage = promotionService.setUpStaticPromotion(promotion);
     }
 
@@ -158,7 +155,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
         final String newTitle = "aaa";
         final String newTrigger = "alternative";
 
-        triggerForm = promotionsDetailPage.getTriggerForm();
+        PromotionsDetailTriggerForm triggerForm = promotionsDetailPage.getTriggerForm();
 
         promotionsDetailPage.promotionTitle().setValueAndWait(newTitle);
         triggerForm.addTrigger(newTrigger);

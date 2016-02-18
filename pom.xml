@@ -16,7 +16,8 @@
     </parent>
 
     <modules>
-        <module>mockui</module>
+        <module>mockui-common</module>
+        <module>mockui-hosted</module>
         <module>mockui-onpremise</module>
         <module>integration-tests-framework</module>
         <module>integration-tests-common</module>
@@ -88,6 +89,12 @@
             </properties>
         </profile>
         <profile>
+            <id>staging</id>
+            <properties>
+                <build.config.base>hsod-staging.json</build.config.base>
+            </properties>
+        </profile>
+        <profile>
             <id>core</id>
             <build>
                 <plugins>
@@ -96,6 +103,20 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <groups>com.autonomy.abc.framework.categories.CoreFeature</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>skipSlow</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <excludedGroups>com.autonomy.abc.framework.categories.SlowTest</excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>

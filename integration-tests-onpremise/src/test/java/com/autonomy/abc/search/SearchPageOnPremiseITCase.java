@@ -2,14 +2,12 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.page.search.SearchBase;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.*;
-import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +31,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
     @Before
     public void setUp(){
-        searchService = getApplication().createSearchService(getElementFactory());
+        searchService = getApplication().searchService();
         searchPage = searchService.search("text");
 
     }
@@ -111,7 +109,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
     //TODO
     @Test
     public void testFieldTextRestrictionOnPromotions(){
-        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        PromotionService promotionService = getApplication().promotionService();
         promotionService.deleteAll();
 
         promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.SPONSORED, "boat"), "darth", 2);
@@ -135,7 +133,7 @@ public class SearchPageOnPremiseITCase extends ABCTestBase{
 
     @Test
     public void testFieldTextRestrictionOnPinToPositionPromotions(){
-        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        PromotionService<?> promotionService = getApplication().promotionService();
         promotionService.deleteAll();
         List<String> promotedDocs = promotionService.setUpPromotion(new SpotlightPromotion("duck"), new SearchQuery("horse").withFilter(new LanguageFilter(Language.ENGLISH)), 2);
 

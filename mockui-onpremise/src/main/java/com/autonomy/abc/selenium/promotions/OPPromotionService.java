@@ -1,22 +1,11 @@
 package com.autonomy.abc.selenium.promotions;
 
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
-import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.OPElementFactory;
-import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
+import com.autonomy.abc.selenium.iso.OPISOApplication;
+import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 
-public class OPPromotionService extends PromotionService {
-    private OPElementFactory elementFactory;
-
-    public OPPromotionService(SearchOptimizerApplication application, ElementFactory elementFactory) {
-        super(application, elementFactory);
-        this.elementFactory = (OPElementFactory) elementFactory;
-    }
-
-    @Override
-    protected OPElementFactory getElementFactory() {
-        return elementFactory;
+public class OPPromotionService extends PromotionService<OPISOElementFactory> {
+    public OPPromotionService(OPISOApplication application) {
+        super(application);
     }
 
     // TODO: is there a better way to do this? generics?

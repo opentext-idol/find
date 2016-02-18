@@ -3,18 +3,11 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.DatePicker;
+import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.OPElementFactory;
-import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.OPPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.promotions.SchedulePage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.promotions.Promotion;
-import com.autonomy.abc.selenium.promotions.PromotionService;
-import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.LanguageFilter;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -44,20 +37,20 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 	public SchedulePromotionsITCase(final TestConfig config) {
 		super(config);
 	}
-	private OPPromotionsPage promotionsPage;
+
 	private SearchPage searchPage;
 	private SchedulePage schedulePage;
 	private DatePicker datePicker;
 	private final Pattern pattern = Pattern.compile("\\s+");
     private PromotionService promotionService;
-	private OPElementFactory elementFactory;
+	private OPISOElementFactory elementFactory;
 
 	@Before
 	public void setUp() throws MalformedURLException, InterruptedException {
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService = getApplication().promotionService();
 
-		promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
-		elementFactory = (OPElementFactory) getElementFactory();
+		OPPromotionsPage promotionsPage = (OPPromotionsPage) promotionService.deleteAll();
+		elementFactory = (OPISOElementFactory) getElementFactory();
 	}
 
 	@Test
@@ -161,8 +154,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 		assertThat("promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage.getPromotionLinkWithTitleContaining("magic").click();
+		promotionService.goToDetails("magic");
 		promotionsDetailPage = elementFactory.getPromotionsDetailPage();
 		promotionsDetailPage.schedulePromotion();
 		Waits.loadOrFadeWait();
@@ -287,8 +279,7 @@ public class SchedulePromotionsITCase extends ABCTestBase {
 		searchPage = getElementFactory().getSearchPage();
 		assertThat("promotions aren't scheduled to be shown now", searchPage.isPromotionsBoxVisible(), is(false));
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		promotionsPage.getPromotionLinkWithTitleContaining("chips").click();
+		promotionService.goToDetails("chips");
 		elementFactory.getPromotionsDetailPage().schedulePromotion();
 		schedulePage = elementFactory.getSchedulePage();
 		Waits.loadOrFadeWait();

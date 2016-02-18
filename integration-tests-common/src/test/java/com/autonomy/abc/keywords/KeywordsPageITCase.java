@@ -5,21 +5,16 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.framework.categories.SlowTest;
+import com.autonomy.abc.selenium.analytics.DashboardBase;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
-import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.keywords.KeywordWizardType;
+import com.autonomy.abc.selenium.keywords.*;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.SynonymGroup;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.promotions.PromotionsPage;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -31,8 +26,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.*;
@@ -48,7 +41,6 @@ import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class KeywordsPageITCase extends ABCTestBase {
 	private KeywordsPage keywordsPage;
-	private CreateNewKeywordsPage createKeywordsPage;
 	private SearchPage searchPage;
 	private NotificationsDropDown notifications;
 	private KeywordService keywordService;
@@ -59,7 +51,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		keywordService = getApplication().createKeywordService(getElementFactory());
+		keywordService = getApplication().keywordService();
 		keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
     }
 
@@ -209,7 +201,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testPhrasesCanBeAddedAsSynonymsOnKeywordsPage() throws InterruptedException {
 		searchPage = keywordService.addSynonymGroup(Language.ENGLISH, "one two three");
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage = keywordService.goToKeywords();
 		new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.selectLanguage(Language.ENGLISH);
@@ -237,7 +229,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		keywordService.addBlacklistTerms("orange");
 		notificationContents.add("Added \"orange\" to the blacklist");
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getApplication().switchTo(PromotionsPage.class);
 		verifyNotifications(notificationContents);
 
 		keywordService.addSynonymGroup("piano keyboard pianoforte");
@@ -245,25 +237,21 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		verifyNotifications(notificationContents);
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage = keywordService.goToKeywords();
 		Waits.loadOrFadeWait();
 		keywordsPage.deleteSynonym("keyboard");
 		notificationContents.add("Removed \"keyboard\" from a synonym group");
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getApplication().switchTo(PromotionsPage.class);
 		verifyNotifications(notificationContents);
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage = keywordService.goToKeywords();
 		keywordsPage.filterView(KeywordFilter.BLACKLIST);
 		keywordsPage.selectLanguage(Language.ENGLISH);
 		keywordsPage.deleteBlacklistedTerm("orange");
 		notificationContents.add("Removed \"orange\" from the blacklist");
 
-		if (config.getType().equals(ApplicationType.HOSTED)) {
-			// TODO: belongs in a hosted notifications test
-			getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-		}
+		getApplication().switchTo(DashboardBase.class);
 		verifyNotifications(notificationContents);
 	}
 
@@ -290,7 +278,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testHTMLEscapedInNotifications() throws InterruptedException {
 		keywordService.addBlacklistTerms("<h1>Hi</h1>");
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getApplication().switchTo(PromotionsPage.class);
 
 		Waits.waitForGritterToClear();
 
@@ -445,9 +433,9 @@ public class KeywordsPageITCase extends ABCTestBase {
 		assertThat(keywordsPage.countSynonymLists(), is(1));
 		assertThat(keywordsPage.countKeywords(), is(2));
 
-		keywordsPage.getSynonymIcon("ying", "yang").click();
-		if (keywordsPage.getSynonymIcon("ying", "yang").getAttribute("class").contains("fa-spin")) {
-			assertThat("Spinner not present on last synonym", keywordsPage.getSynonymIcon("yang", "yang").getAttribute("class"),containsString("fa-spin"));
+		keywordsPage.getSynonymIcon("ying").click();
+		if (keywordsPage.getSynonymIcon("ying").getAttribute("class").contains("fa-spin")) {
+			assertThat("Spinner not present on last synonym", keywordsPage.getSynonymIcon("yang").getAttribute("class"),containsString("fa-spin"));
 		}
 	}
 
@@ -477,8 +465,8 @@ public class KeywordsPageITCase extends ABCTestBase {
 		Waits.loadOrFadeWait();
 
 		try {
-			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong", "strung"), getDriver());
-			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string", "strung"), getDriver());
+			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("strong"), getDriver());
+			ElementUtil.scrollIntoViewAndClick(keywordsPage.getSynonymIcon("string"), getDriver());
 		} catch (final WebDriverException w) {
 			throw new AssertionError("Unable to delete a synonym quickly", w);
 		}
@@ -500,7 +488,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {
 			getDriver().get(blacklistUrl + forbidden);
 			Waits.loadOrFadeWait();
-			createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
+			CreateNewKeywordsPage createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
 			assertThat(forbidden + " is a forbidden keyword and should not be included in the prospective blacklist list", createKeywordsPage.getTriggerForm().getTriggersAsStrings(),not(hasItem(forbidden)));
 
 			getDriver().get(synonymsUrl + forbidden);
@@ -514,20 +502,20 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testSynonymsDisplayedInAlphabeticalOrder() throws InterruptedException {
 		for (final String synonyms : Arrays.asList("aa ba ca da", "ab bb cb db", "dc cc bc ac", "ca ba da aa")) {
 			searchPage = keywordService.addSynonymGroup(Language.ENGLISH, synonyms);
-			final List<String> keywords = searchPage.getLeadSynonymsList();
+			final List<String> keywords = searchPage.getFirstSynonymInGroup();
 
 			for (int i = 0; i < keywords.size() - 1; i++) {
 				assertThat(keywords.get(i).compareTo(keywords.get(i + 1)) <= 0, is(true));
 			}
 			Waits.loadOrFadeWait();
-			getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+			keywordsPage = keywordService.goToKeywords();
 		}
 
 		Waits.loadOrFadeWait();
 		keywordsPage = getElementFactory().getKeywordsPage();
 		keywordsPage.filterView(KeywordFilter.SYNONYMS);
 		keywordsPage.searchFilterTextBox().sendKeys("cc");
-		final List<String> keywords = keywordsPage.getLeadSynonymsList();
+		final List<String> keywords = keywordsPage.getFirstSynonymsList();
 
 		for (int i = 0; i < keywords.size() - 1; i++) {
 			assertThat(keywords.get(i).compareTo(keywords.get(i + 1)) <= 0, is(true));
@@ -585,7 +573,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		// the last 2 synonyms should be removed together
 		for (int i = 0; i < synonyms.size()-1; i++) {
 			String synonym = synonyms.get(i);
-			keywordsPage.getSynonymIcon(synonym, synonym).click();
+			keywordsPage.getSynonymIcon(synonym).click();
 
 			if(i < synonyms.size()-2) {
 				assertThat("one refresh icon", keywordsPage.countRefreshIcons(), is(1));
@@ -632,7 +620,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testClickingOnNotifications() throws InterruptedException {
 		keywordService.addSynonymGroup("a b c d");
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getApplication().switchTo(PromotionsPage.class);
 		getElementFactory().getPromotionsPage();
 		getElementFactory().getTopNavBar().notificationsDropdown();
 		notifications = getElementFactory().getTopNavBar().getNotifications();
@@ -640,20 +628,12 @@ public class KeywordsPageITCase extends ABCTestBase {
 
 		verifyClickNotification();
 		if(!getDriver().getCurrentUrl().contains("keywords")){
-			getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+			keywordsPage = keywordService.goToKeywords();
 		}
 
 		keywordService.addBlacklistTerms("e");
 
-		// TODO: this is a shared test, does not belong
-		if(getConfig().getType().equals(ApplicationType.HOSTED)) {
-			getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-
-			((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-		} else {
-			getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
-		}
-
+		getApplication().switchTo(DashboardBase.class);
 		getElementFactory().getTopNavBar().notificationsDropdown();
 		notifications = getElementFactory().getTopNavBar().getNotifications();
 		verifyThat(notifications.notificationNumber(1).getText(), is("Added \"e\" to the blacklist"));
@@ -696,7 +676,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 	public void testNavigatingAwayBeforeKeywordAdded() throws InterruptedException {
 		keywordService.addKeywords(KeywordWizardType.BLACKLIST, Language.ENGLISH, Collections.singletonList("Jeff"));
 
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getApplication().switchTo(PromotionsPage.class);
 
 		new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining("blacklist"));
 

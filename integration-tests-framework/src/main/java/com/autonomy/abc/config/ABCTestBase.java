@@ -10,8 +10,8 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.SessionRegistry;
-import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.login.SSOFailureException;
+import com.autonomy.abc.selenium.navigation.SOElementFactory;
+import com.autonomy.abc.selenium.users.SSOFailureException;
 import com.autonomy.abc.selenium.users.User;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import org.junit.After;
@@ -45,7 +45,6 @@ public abstract class ABCTestBase {
 	private final SessionRegistry sessionRegistry;
 	private WebDriver driver;
 	private Session mainSession;
-	private ElementFactory elementFactory;
 	private User initialUser;
 	private String initialUrl;
 	private User currentUser;
@@ -79,6 +78,7 @@ public abstract class ABCTestBase {
 
 		mainSession = sessionRegistry.startSession();
 		driver = mainSession.getDriver();
+		application.inWindow(mainSession.getActiveWindow());
 
 		testState.addStatementHandler(new StatementLoggingHandler(this));
 		testState.addStatementHandler(new StatementArtifactHandler(this));
@@ -87,8 +87,6 @@ public abstract class ABCTestBase {
 	private void goToInitialPage() {
 		getDriver().get(initialUrl);
 		getDriver().manage().window().maximize();
-
-		elementFactory = getApplication().createElementFactory(driver);
 	}
 
 	protected void postLogin() throws Exception {
@@ -147,8 +145,8 @@ public abstract class ABCTestBase {
 		return application;
 	}
 
-	public ElementFactory getElementFactory() {
-		return elementFactory;
+	public SOElementFactory getElementFactory() {
+		return application.elementFactory();
 	}
 
 	protected final void loginAs(User user) {

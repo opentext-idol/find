@@ -3,14 +3,14 @@ package com.autonomy.abc.search;
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.DocumentViewer;
-import com.autonomy.abc.selenium.page.search.EditDocumentReferencesPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -18,8 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -38,16 +36,15 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
         super(config);
     }
 
-    private SearchPage searchPage;
     private PromotionsDetailPage promotionsDetailPage;
     private EditDocumentReferencesPage editReferencesPage;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
     private SearchService searchService;
 
     @Before
     public void setUp() throws MalformedURLException {
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        promotionService = getApplication().promotionService();
+        searchService = getApplication().searchService();
 
         promotionService.deleteAll();
     }
@@ -83,8 +80,8 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
             verifyThat(promotedDocs, hasItem(equalToIgnoringCase(docTitle)));
         }
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        searchPage = searchService.search("edit");
+        getApplication().switchTo(KeywordsPage.class);
+        SearchPage searchPage = searchService.search("edit");
         searchPage.promoteTheseDocumentsButton().click();
         searchPage.addToBucket(3);
 
@@ -107,7 +104,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         final List<String> finalPromotionsBucketList = editReferencesPage.promotionsBucketList();
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
+        getApplication().switchTo(KeywordsPage.class);
         searchPage = searchService.search("fast");
         searchPage.promoteTheseDocumentsButton().click();
 

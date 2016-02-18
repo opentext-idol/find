@@ -2,19 +2,10 @@ package com.autonomy.abc.promotions;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.OPSearchPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.promotions.DynamicPromotion;
-import com.autonomy.abc.selenium.promotions.Promotion;
-import com.autonomy.abc.selenium.promotions.PromotionService;
-import com.autonomy.abc.selenium.search.LanguageFilter;
-import com.autonomy.abc.selenium.search.SearchQuery;
-import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -27,6 +18,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.ElementMatchers.disabled;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -41,11 +34,12 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 	private CreateNewPromotionsPage dynamicPromotionsPage;
 	private PromotionService promotionService;
     private SearchService searchService;
+	private TriggerForm triggerForm;
 
 	@Before
 	public void setUp() throws InterruptedException {
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        promotionService = getApplication().promotionService();
+        searchService = getApplication().searchService();
 
         searchPage = searchService.search("fox");
     }
@@ -176,5 +170,59 @@ public class CreateNewDynamicPromotionsOnPremiseITCase extends ABCTestBase {
 
 		PromotionsDetailPage promotionsDetailPage = promotionService.goToDetails("phrase");
 		assertThat("Promotion has been created in the wrong language", promotionsDetailPage.getLanguage(), is(Language.URDU.toString()));
+	}
+
+	@Test
+	public void testDynamicPromotionCreation() {
+		searchPage = searchService.search(new SearchQuery("lapin").withFilter(new LanguageFilter(Language.FRENCH)));
+
+		final String firstDocTitle = searchPage.getSearchResult(1).getTitleString();
+		searchPage.promoteThisQueryButton().click();
+		dynamicPromotionsPage = getElementFactory().getCreateNewPromotionsPage();
+		Waits.loadOrFadeWait();
+
+		assertThat("Wrong URL", getDriver().getCurrentUrl().contains("promotions/create-dynamic/"));
+		assertThat(dynamicPromotionsPage.spotlightType(Promotion.SpotlightType.HOTWIRE), displayed());
+		assertThat(dynamicPromotionsPage.getCurrentStepTitle(), containsString("Spotlight type"));
+		assertThat(dynamicPromotionsPage.continueButton(), disabled());
+
+		dynamicPromotionsPage.spotlightType(Promotion.SpotlightType.TOP_PROMOTIONS).click();
+		dynamicPromotionsPage.continueButton().click();
+		Waits.loadOrFadeWait();
+		triggerForm = dynamicPromotionsPage.getTriggerForm();
+
+		assertThat(triggerForm.addButton(), displayed());
+		assertThat(dynamicPromotionsPage.getCurrentStepTitle(), containsString("Trigger words"));
+		assertThat(dynamicPromotionsPage.finishButton(), disabled());
+		assertThat(triggerForm.addButton(), disabled());
+		assertThat(triggerForm.getNumberOfTriggers(), is(0));
+
+		checkAddTrigger("rabbit");
+		checkAddTrigger("bunny");
+		checkAddTrigger("hare");
+
+		// Hare is not a word for bunny
+		triggerForm.removeTrigger("hare");
+		assertThat(triggerForm.getNumberOfTriggers(), is(2));
+		assertThat(triggerForm.getTriggersAsStrings(), hasItems("bunny", "rabbit"));
+		assertThat(triggerForm.getTriggersAsStrings(), not(hasItem("hare")));
+
+		dynamicPromotionsPage.finishButton().click();
+		Waits.loadOrFadeWait();
+		searchPage.waitForPromotionsLoadIndicatorToDisappear();
+
+		assertThat(searchPage.getHeadingSearchTerm(), is("bunny rabbit"));
+		assertThat(searchPage.getPromotedDocumentTitles(false).get(0), is(firstDocTitle));
+	}
+
+	private void checkAddTrigger(String trigger) {
+		List<String> beforeTriggers = triggerForm.getTriggersAsStrings();
+
+		triggerForm.addTrigger(trigger);
+		List<String> afterTriggers = triggerForm.getTriggersAsStrings();
+
+		assertThat(afterTriggers, hasSize(beforeTriggers.size() + 1));
+		assertThat(afterTriggers, hasItem(trigger));
+		assertThat(afterTriggers, containsItems(beforeTriggers));
 	}
 }

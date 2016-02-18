@@ -6,12 +6,8 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.indexes.CreateNewIndexPage;
-import com.autonomy.abc.selenium.page.indexes.wizard.IndexConfigStepTab;
-import com.autonomy.abc.selenium.page.indexes.wizard.IndexNameWizardStepTab;
-import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.indexes.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,10 +30,7 @@ public class IndexWizardITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-
-        getElementFactory().getIndexesPage().newIndexButton().click();
-        createNewIndexPage = getElementFactory().getCreateNewIndexPage();
+        createNewIndexPage = getApplication().indexService().goToIndexWizard();
     }
 
     @Test
@@ -45,7 +38,7 @@ public class IndexWizardITCase extends HostedTestBase {
     public void testIndexDisplayNameValidatorsPass(){
         Index index = new Index("name", "displayName 7894");
 
-        index.makeWizard(createNewIndexPage).getCurrentStep().apply();
+        new IndexWizard(index, createNewIndexPage).getCurrentStep().apply();
         FormInput displayNameInput = createNewIndexPage.getIndexNameWizardStepTab().displayNameInput();
 
         verifyThat(displayNameInput.formGroup(), not(hasClass("has-error")));
@@ -57,7 +50,7 @@ public class IndexWizardITCase extends HostedTestBase {
     public void testIndexDisplayNameValidatorsFail(){
         Index index = new Index("name", "displayName #$%");
 
-        index.makeWizard(createNewIndexPage).getCurrentStep().apply();
+        new IndexWizard(index, createNewIndexPage).getCurrentStep().apply();
         FormInput displayNameInput = createNewIndexPage.getIndexNameWizardStepTab().displayNameInput();
 
         verifyThat(displayNameInput.formGroup(), hasClass("has-error"));
@@ -69,7 +62,7 @@ public class IndexWizardITCase extends HostedTestBase {
     public void testIndexDisplayNameOnSummary(){
         Index index = new Index("name", "displayName 7894");
 
-        Wizard wizard = index.makeWizard(createNewIndexPage);
+        Wizard wizard = new IndexWizard(index, createNewIndexPage);
         IndexNameWizardStepTab indexNameWizardStepTab = createNewIndexPage.getIndexNameWizardStepTab();
 
         wizard.getCurrentStep().apply();
@@ -87,7 +80,7 @@ public class IndexWizardITCase extends HostedTestBase {
     @KnownBug("CSA-2042")
     public void testIndexNameFieldMaxCharacterLength(){
         Index index = new Index("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
-        index.makeWizard(createNewIndexPage).getCurrentStep().apply();
+        new IndexWizard(index, createNewIndexPage).getCurrentStep().apply();
         FormInput indexNameInput = createNewIndexPage.getIndexNameWizardStepTab().indexNameInput();
 
         verifyThat(indexNameInput.formGroup(), hasClass("has-error"));
@@ -98,7 +91,7 @@ public class IndexWizardITCase extends HostedTestBase {
     @KnownBug("CSA-2042")
     public void testDisplayNameFieldMaxCharacterLength(){
         Index index = new Index("validname","abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
-        index.makeWizard(createNewIndexPage).getCurrentStep().apply();
+        new IndexWizard(index, createNewIndexPage).getCurrentStep().apply();
         FormInput displayNameInput = createNewIndexPage.getIndexNameWizardStepTab().displayNameInput();
 
         verifyThat(displayNameInput.formGroup(), hasClass("has-error"));
@@ -110,7 +103,7 @@ public class IndexWizardITCase extends HostedTestBase {
     public void testUppercaseFieldNames() {
         Index index = new Index("name");
 
-        Wizard wizard = index.makeWizard(createNewIndexPage);
+        Wizard wizard = new IndexWizard(index, createNewIndexPage);
 
         wizard.getCurrentStep().apply();
         wizard.next();

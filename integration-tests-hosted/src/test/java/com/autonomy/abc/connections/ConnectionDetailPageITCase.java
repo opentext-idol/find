@@ -3,12 +3,10 @@ package com.autonomy.abc.connections;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.connections.ConnectionService;
-import com.autonomy.abc.selenium.connections.Connector;
-import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.actions.wizard.Wizard;
+import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
@@ -36,7 +35,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        connectionService = getApplication().createConnectionService(getElementFactory());
+        connectionService = getApplication().connectionService();
     }
 
     @Test
@@ -69,7 +68,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug({"CSA-1470","CSA-2053"})
+    @KnownBug({"CSA-1470", "CSA-2036", "CSA-2053"})
     public void testCancellingConnectorScheduling(){
         connector = new WebConnector("http://www.google.co.uk","google").withDuration(60);
 
@@ -80,9 +79,39 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1469")
+    @KnownBug("CSA-2036")
+    public void testChangeWebConnectorURL() {
+        Index index = new Index("not_displayed", "connector display name");
+        getApplication().indexService().setUpIndex(index);
+
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk", "bbc", index).withDepth(0).withDuration(60);
+        connectionService.setUpConnection(connector);
+
+        connectionsDetailPage = connectionService.goToDetails(connector);
+        connectionsDetailPage.editButton().click();
+
+        final String updateUrl = "http://www.itv.com";
+        connector.setUrl(updateUrl);
+        NewConnectionPage editConnectionPage = getElementFactory().getNewConnectionPage();
+        Wizard editWizard = connector.makeEditWizard(editConnectionPage);
+
+        editWizard.getCurrentStep().apply();
+        verifyThat(editConnectionPage.getConnectorTypeStep().connectorUrl().getValue(), is(updateUrl));
+        editWizard.next();
+
+        editWizard.next();
+
+        verifyThat(editConnectionPage.getIndexStep().getChosenIndexOnPage().getDisplayName(), is(index.getDisplayName()));
+        editWizard.next();
+
+        connectionsDetailPage = connectionService.goToDetails(connector);
+        verifyThat(connectionsDetailPage.webConnectorURL(), hasTextThat(is(updateUrl)));
+    }
+
+    @Test
+    @KnownBug({"CSA-1469", "CSA-2036"})
     public void testEditConnectorWithNoIndex(){
-        IndexService indexService = getApplication().createIndexService(getElementFactory());
+        IndexService indexService = getApplication().indexService();
         Index indexOne = new Index("one");
         Index indexTwo = new Index("two");
 
@@ -116,6 +145,6 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
     @After
     public void tearDown(){
         connectionService.deleteAllConnections(true);
-        getApplication().createIndexService(getElementFactory()).deleteAllIndexes();
+        getApplication().indexService().deleteAllIndexes();
     }
 }

@@ -2,8 +2,8 @@ package com.autonomy.abc.usermanagement;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.page.admin.HSODevelopersPage;
-import com.autonomy.abc.selenium.users.HSODeveloperService;
+import com.autonomy.abc.selenium.users.HSODDeveloperService;
+import com.autonomy.abc.selenium.users.HSODDevelopersPage;
 import com.autonomy.abc.selenium.users.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +12,8 @@ import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class DevelopersITCase extends HostedTestBase {
-    private HSODeveloperService developerService;
-    private HSODevelopersPage developersPage;
+    private HSODDeveloperService developerService;
+    private HSODDevelopersPage developersPage;
 
     public DevelopersITCase(TestConfig config) {
         super(config);
@@ -21,7 +21,7 @@ public class DevelopersITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        developerService = getApplication().createDeveloperService(getElementFactory());
+        developerService = getApplication().developerService();
         developersPage = developerService.goToDevs();
     }
 

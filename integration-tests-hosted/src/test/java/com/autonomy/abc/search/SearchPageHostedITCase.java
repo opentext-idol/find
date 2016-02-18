@@ -2,12 +2,10 @@ package com.autonomy.abc.search;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.page.search.DocumentViewer;
-import com.autonomy.abc.selenium.page.search.SearchBase;
 import com.autonomy.abc.selenium.application.ApplicationType;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.search.*;
-import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -44,7 +42,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		searchService = getApplication().createSearchService(getElementFactory());
+		searchService = getApplication().searchService();
 		searchPage = searchService.search("example");
 	}
 
@@ -100,7 +98,7 @@ public class SearchPageHostedITCase extends HostedTestBase {
 		searchPage.getSearchResult(1).title().click();
 		DocumentViewer documentViewer = DocumentViewer.make(getDriver());
 		for(int i = 0; i < SearchPage.RESULTS_PER_PAGE; i++){
-			verifyThat(documentViewer.getIndex(), containsString(index));
+			verifyThat(documentViewer.getIndex().getDisplayName(), containsString(index));
 			documentViewer.next();
 		}
 		documentViewer.close();

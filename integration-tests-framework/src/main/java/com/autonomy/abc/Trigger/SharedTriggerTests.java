@@ -1,7 +1,7 @@
 package com.autonomy.abc.Trigger;
 
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.error.Errors;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
@@ -16,7 +16,6 @@ import static org.hamcrest.core.Is.is;
 public class SharedTriggerTests {
     private int numberOfTriggers;
     private boolean noQuotesFlag = false;
-    private final String initialTrigger = "dog";
     private final TriggerForm triggerForm;
 
     private final String[] duplicateTriggers = {
@@ -109,6 +108,7 @@ public class SharedTriggerTests {
 
     /* Helper methods */
     private void initialiseTriggers() {
+        String initialTrigger = "dog";
         if(!triggerForm.getTriggersAsStrings().contains(initialTrigger)){
             triggerForm.addTrigger(initialTrigger);
             numberOfTriggers++;

@@ -3,15 +3,15 @@ package com.autonomy.abc.analytics;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.selenium.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.analytics.Container;
+import com.autonomy.abc.selenium.analytics.ContainerItem;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.Find;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.analytics.Container;
-import com.autonomy.abc.selenium.page.analytics.ContainerItem;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.promotions.HSOPromotionService;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -46,14 +47,13 @@ public class AnalyticsITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        searchService = getApplication().createSearchService(getElementFactory());
+        searchService = getApplication().searchService();
 
         goToAnalytics();
     }
 
     private void goToAnalytics() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-        analytics = getElementFactory().getAnalyticsPage();
+        analytics = getApplication().switchTo(AnalyticsPage.class);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class AnalyticsITCase extends HostedTestBase {
 
     private <T> void verifySorted(List<T> toCheck, Comparator<T> sorter) {
         List<T> sorted = new ArrayList<>(toCheck);
-        sorted.sort(sorter);
+        Collections.sort(sorted, sorter);
         verifyThat("sorted " + sorter, toCheck, is(sorted));
     }
 
@@ -136,22 +136,25 @@ public class AnalyticsITCase extends HostedTestBase {
         Window searchWindow = getMainSession().getActiveWindow();
         Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
-        findWindow.activate();
-        Find find = getElementFactory().getFindPage();
-        for (int unused = 0; unused < repeats; unused++) {
-            find.search(term);
-            find.search("");
-            Waits.loadOrFadeWait();
+        try {
+            findWindow.activate();
+            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+            for (int unused = 0; unused < repeats; unused++) {
+                findPage.search(term);
+                findPage.search("");
+                Waits.loadOrFadeWait();
+            }
+        } finally {
+            findWindow.close();
+            searchWindow.activate();
         }
-        findWindow.close();
-        searchWindow.activate();
     }
 
     @Test
     public void testExistingPromotion() {
         final StaticPromotion promotion = new StaticPromotion("title", "body", "trigger");
 
-        HSOPromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        HSODPromotionService promotionService = getApplication().promotionService();
 
         try {
             promotionService.goToPromotions().getPromotionLinkWithTitleContaining(promotion.getTrigger());
@@ -183,7 +186,7 @@ public class AnalyticsITCase extends HostedTestBase {
     public void testDeletedPromotion() {
         final StaticPromotion promotion = new StaticPromotion("title", "body", "deleted");
 
-        HSOPromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        HSODPromotionService promotionService = getApplication().promotionService();
         promotionService.setUpStaticPromotion(promotion);
         try {
             goToAnalytics();

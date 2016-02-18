@@ -2,8 +2,8 @@ package com.autonomy.abc.connections.wizard.type;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.connections.wizard.ConnectorTypeStepBase;
+import com.autonomy.abc.selenium.connections.ConnectorType;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import org.junit.Before;
 import org.junit.Test;

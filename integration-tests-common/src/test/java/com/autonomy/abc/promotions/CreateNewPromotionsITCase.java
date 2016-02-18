@@ -9,10 +9,8 @@ import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
-import com.autonomy.abc.selenium.page.promotions.CreateNewPromotionsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -26,7 +24,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -76,8 +73,8 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        searchService = getApplication().createSearchService(getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchService = getApplication().searchService();
+        promotionService = getApplication().promotionService();
         promotedDocTitle = goToWizard("fox", 1).get(0);
     }
 

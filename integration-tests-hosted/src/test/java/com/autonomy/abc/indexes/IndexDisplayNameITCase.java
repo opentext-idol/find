@@ -5,19 +5,21 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.actions.wizard.WizardStep;
+import com.autonomy.abc.selenium.analytics.AnalyticsPage;
+import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.Connector;
+import com.autonomy.abc.selenium.connections.NewConnectionPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
+import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +45,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        indexService = getApplication().createIndexService(getElementFactory());
+        indexService = getApplication().indexService();
         testIndex = new Index("thisisabittooyobbish5me","D1spl4y Nam3 AbC 123");
         indexesPage = indexService.setUpIndex(testIndex);
     }
@@ -67,8 +69,8 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-2020")
     public void testPieChartLink(){
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-        getElementFactory().getAnalyticsPage().indexSizeChart().click();
+        AnalyticsPage analyticsPage = getApplication().switchTo(AnalyticsPage.class);
+        analyticsPage.indexSizeChart().click();
 
         verifyThat(PageUtil.getWrapperContent(getDriver()), not(containsText(Errors.Index.INVALID_INDEX)));
     }
@@ -79,10 +81,10 @@ public class IndexDisplayNameITCase extends HostedTestBase {
         Window findWindow = getMainSession().openWindow(config.getFindUrl());
 
         try {
-            Find find = getElementFactory().getFindPage();
-            find.search("This woman's work");
+            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+            findPage.search("This woman's work");
 
-            verifyIndexOrDefault(find.indexesTree().privateIndexes());
+            verifyIndexOrDefault(findPage.indexesTree().privateIndexes());
         } finally {
             findWindow.close();
             searchWindow.activate();
@@ -99,8 +101,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     public void testConnectionsIndex(){
         Connector connector = new WebConnector("http://www.bbc.co.uk", "bbc", testIndex).withDuration(60);
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-        getElementFactory().getConnectionsPage().newConnectionButton().click();
+        getApplication().switchTo(ConnectionsPage.class).newConnectionButton().click();
 
         NewConnectionPage newConnectionPage = getElementFactory().getNewConnectionPage();
 
@@ -122,7 +123,7 @@ public class IndexDisplayNameITCase extends HostedTestBase {
 
             verifyThat(getElementFactory().getConnectionsPage().getIndexOf(connector), is(testIndex.getDisplayName()));
         } finally {
-            getApplication().createConnectionService(getElementFactory()).deleteAllConnections(true);
+            getApplication().connectionService().deleteAllConnections(true);
         }
     }
 }

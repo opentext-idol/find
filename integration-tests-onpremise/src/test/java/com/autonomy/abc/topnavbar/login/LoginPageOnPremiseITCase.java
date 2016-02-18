@@ -2,11 +2,11 @@ package com.autonomy.abc.topnavbar.login;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.page.OPElementFactory;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.page.login.OPAccount;
-import com.autonomy.abc.selenium.page.login.OPLoginPage;
+import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.users.OPAccount;
+import com.autonomy.abc.selenium.users.OPLoginPage;
 import com.autonomy.abc.selenium.users.UserService;
+import com.autonomy.abc.selenium.users.UsersPage;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,18 +37,17 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 	}
 
 	private OPLoginPage loginPage;
-	private UsersPage usersPage;
 
 	@Override
-	public OPElementFactory getElementFactory() {
-		return (OPElementFactory) super.getElementFactory();
+	public OPISOElementFactory getElementFactory() {
+		return (OPISOElementFactory) super.getElementFactory();
 	}
 
 
 	@Before
 	public void setUp() throws InterruptedException {
-        UserService userService = getApplication().createUserService(getElementFactory());
-        usersPage = userService.goToUsers();
+        UserService userService = getApplication().userService();
+		UsersPage usersPage = userService.goToUsers();
 		userService.deleteOtherUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());

@@ -5,7 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.categories.CoreFeature;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
 import org.junit.Before;
@@ -27,8 +27,8 @@ public class KeywordsCoreITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        keywordService = getApplication().createKeywordService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        keywordService = getApplication().keywordService();
+        searchService = getApplication().searchService();
     }
 
     @After

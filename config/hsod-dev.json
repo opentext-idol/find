@@ -1,9 +1,9 @@
 {
   "app": {
     "type": "Hosted",
-    "url": "http://search.dev.idolondemand.com/searchoptimizer/p",
-    "find": "http://find.dev.idolondemand.com",
-    "api" : "https://api.int.havenondemand.com"
+    "url": "http://search.int.havenapps.io/searchoptimizer/p",
+    "find": "http://find.int.havenapps.io",
+    "api" : "https://api.havenondemand.com"
   },
   "selenium": {
     "browsers": ["chrome"],
@@ -63,59 +63,59 @@
   },
   "users": {
     "default": {
-      "username": "TODO",
+      "username": "Google Int",
       "role": "Admin",
       "auth": {
-        "type": "HP Passport",
-        "username": "hodtest",
-        "password": "Z@s=5rYbw6MEx]?X"
+        "type": "Google",
+        "email": "hodtestdev123@gmail.com",
+        "password": "ppwwkmhyjbjo"
       },
-      "apikey": "ac4d0af1-fa82-46f5-99ab-a525756c3c71",
-      "domain" : ""
+      "apikey" : "b03fea01-1efe-415c-a903-05e3167ddc99",
+      "domain" : "7f267cef-b683-477c-b8df-21a050aadc99"
     },
     "index_tests": {
-      "username": "TODO",
+      "username": "Twitter Int",
       "role": "Admin",
       "auth": {
-        "type": "Yahoo",
-        "username": "hodtesting",
-        "password": ":Z4jM8vq5`en89d>"
+        "type": "Twitter",
+        "username": "hodtestdev123",
+        "password": "lkqsyjaxswzv"
       },
-      "apikey" : "4f57f065-2723-4bd4-8559-a5d93066d3e3",
-      "domain" : ""
+      "apikey" : "3d1018a9-489b-4a17-b081-1817f2130b6a",
+      "domain" : "e9d889f4-18f3-4c1f-b4af-ac46267980a3"
     },
     "analytics_tests": {
       "username": "TODO",
       "role": "Admin",
       "auth": {
-        "type": "Facebook",
-        "email": "matthew.williamson@hpe.com",
-        "password": "vdPAuTGU"
+        "type": "Yahoo",
+        "username": "hodtestdev123",
+        "password": "bryemtfuuydf"
       },
-      "apikey" : "",
-      "domain" : ""
+      "apikey" : "ef1a975c-7cc2-4520-b474-461556ec74e6",
+      "domain" : "85a19286-9fd5-4394-9fa1-48ba387e45ef"
     },
     "google": {
-      "username": "TODO",
+      "username": "Google Int",
       "role": "Admin",
       "auth": {
         "type": "Google",
-        "email": "hodtestqa401@gmail.com",
-        "password": "qoxntlozubjaamyszerfk"
+        "email": "hodtestdev123@gmail.com",
+        "password": "ppwwkmhyjbjo"
       },
-      "apikey" : "",
-      "domain" : ""
+      "apikey" : "b03fea01-1efe-415c-a903-05e3167ddc99",
+      "domain" : "7f267cef-b683-477c-b8df-21a050aadc99"
     },
     "twitter": {
-      "username": "TODO",
+      "username": "Twitter Int",
       "role": "Admin",
       "auth": {
         "type": "Twitter",
-        "username": "hodtesting",
-        "password": "5cUdPhYM"
+        "username": "hodtestdev123",
+        "password": "lkqsyjaxswzv"
       },
-      "apikey" : "",
-      "domain" : ""
+      "apikey" : "3d1018a9-489b-4a17-b081-1817f2130b6a",
+      "domain" : "e9d889f4-18f3-4c1f-b4af-ac46267980a3"
     },
     "facebook": {
       "username": "TODO",
@@ -136,7 +136,7 @@
         "username": "hodtest",
         "password": "Z@s=5rYbw6MEx]?X"
       },
-      "apikey": "ac4d0af1-fa82-46f5-99ab-a525756c3c71",
+      "apikey": "c4eb9531-531c-4bd2-8707-c31fcb02625e",
       "domain" : ""
     },
     "yahoo": {
@@ -144,11 +144,11 @@
       "role": "Admin",
       "auth": {
         "type": "Yahoo",
-        "username": "hodtesting",
-        "password": ":Z4jM8vq5`en89d>"
+        "username": "hodtestdev123",
+        "password": "bryemtfuuydf"
       },
-      "apikey" : "4f57f065-2723-4bd4-8559-a5d93066d3e3",
-      "domain" : ""
+      "apikey" : "ef1a975c-7cc2-4520-b474-461556ec74e6",
+      "domain" : "85a19286-9fd5-4394-9fa1-48ba387e45ef"
     }
   }
 }

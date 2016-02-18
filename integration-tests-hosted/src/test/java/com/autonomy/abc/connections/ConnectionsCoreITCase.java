@@ -14,7 +14,7 @@ import org.junit.experimental.categories.Category;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.matchers.CommonMatchers.hasItemThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Category(CoreFeature.class)
@@ -28,7 +28,7 @@ public class ConnectionsCoreITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        connectionService = getApplication().createConnectionService(getElementFactory());
+        connectionService = getApplication().connectionService();
     }
 
     @After

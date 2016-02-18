@@ -1,11 +1,10 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.menu.OPTopNavBar;
-import com.autonomy.abc.selenium.page.OPElementFactory;
-import com.autonomy.abc.selenium.page.admin.AboutPage;
+import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.iso.AboutPage;
+import com.autonomy.abc.selenium.iso.OPISOElementFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -33,14 +32,13 @@ public class AboutPageITCase extends ABCTestBase {
 	}
 
 	@Override
-	public OPElementFactory getElementFactory() {
-		return (OPElementFactory) super.getElementFactory();
+	public OPISOElementFactory getElementFactory() {
+		return (OPISOElementFactory) super.getElementFactory();
 	}
 
 	@Before
 	public void setUp() throws InterruptedException {
-        ((OPTopNavBar) getElementFactory().getTopNavBar()).goToAboutPage();
-		aboutPage = getElementFactory().getAboutPage();
+		aboutPage = getApplication().switchTo(AboutPage.class);
 	}
 
 	@Test

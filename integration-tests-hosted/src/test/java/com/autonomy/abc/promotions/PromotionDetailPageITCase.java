@@ -6,10 +6,9 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.LanguageFilter;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
@@ -19,9 +18,7 @@ import org.junit.Test;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class PromotionDetailPageITCase extends ABCTestBase {
 
@@ -36,8 +33,8 @@ public class PromotionDetailPageITCase extends ABCTestBase {
 
     @Before
     public void setUp(){
-        searchService = getApplication().createSearchService(getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchService = getApplication().searchService();
+        promotionService = getApplication().promotionService();
     }
 
     @Test

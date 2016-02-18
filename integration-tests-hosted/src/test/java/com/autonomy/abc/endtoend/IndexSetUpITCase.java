@@ -5,12 +5,12 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import org.junit.After;
 import org.junit.Before;
@@ -44,8 +44,8 @@ public class IndexSetUpITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        indexService = new IndexService(getApplication(), getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        indexService = getApplication().indexService();
+        promotionService = getApplication().promotionService();
 
         LOGGER.info("Will create index " + index);
         indexService.setUpIndex(index);
@@ -73,7 +73,6 @@ public class IndexSetUpITCase extends HostedTestBase {
         IndexesDetailPage detailPage = indexService.goToDetails(index);
         LOGGER.info("Adding site " + site + " to index");
         detailPage.addSiteToIndex(site);
-        detailPage.waitForSiteToIndex(site);
     }
 
     private String promoteDocumentInIndex(String trigger) {

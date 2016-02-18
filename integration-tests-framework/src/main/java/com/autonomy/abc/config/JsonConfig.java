@@ -1,6 +1,5 @@
 package com.autonomy.abc.config;
 
-import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.UserConfigParser;
 import com.autonomy.abc.selenium.users.NewUser;
@@ -20,27 +19,28 @@ public class JsonConfig {
     private final SeleniumConfig selenium;
     private final Map<String, User> users;
     private final Map<String, NewUser> newUsers;
+    private UserConfigParser parser;
 
     private JsonConfig(JsonNode node) throws MalformedURLException {
         this.app = new AppConfig(node.path("app"));
         this.selenium = new SeleniumConfig(node.path("selenium"));
 
-        // user config is app-specific, must initialise after app
-        // (this means that currently the app type must be specified in both configs) TODO: expose override constructor/factory
-        SearchOptimizerApplication application = SearchOptimizerApplication.ofType(getAppType());
-        UserConfigParser userConfigParser = application.getUserConfigParser();
         this.users = new HashMap<>();
-        Iterator<Map.Entry<String, JsonNode>> iterator = node.path("users").fields();
-        while (iterator.hasNext()) {
-            Map.Entry<String, JsonNode> userEntry = iterator.next();
-            users.put(userEntry.getKey(), userConfigParser.parseUser(userEntry.getValue()));
-        }
-
         this.newUsers = new HashMap<>();
-        iterator = node.path("newusers").fields();
-        while (iterator.hasNext()) {
-            Map.Entry<String, JsonNode> newUserEntry = iterator.next();
-            newUsers.put(newUserEntry.getKey(), userConfigParser.parseNewUser(newUserEntry.getValue()));
+        if (node.has("users") || node.has("newusers")) {
+            parser = UserConfigParser.ofType(getAppType());
+
+            Iterator<Map.Entry<String, JsonNode>> iterator = node.path("users").fields();
+            while (iterator.hasNext()) {
+                Map.Entry<String, JsonNode> userEntry = iterator.next();
+                users.put(userEntry.getKey(), parser.parseUser(userEntry.getValue()));
+            }
+
+            iterator = node.path("newusers").fields();
+            while (iterator.hasNext()) {
+                Map.Entry<String, JsonNode> newUserEntry = iterator.next();
+                newUsers.put(newUserEntry.getKey(), parser.parseNewUser(newUserEntry.getValue()));
+            }
         }
     }
 
@@ -97,6 +97,10 @@ public class JsonConfig {
 
     public NewUser getNewUser(String name) {
         return this.newUsers.get(name);
+    }
+
+    public NewUser generateRandomNewUser() {
+        return parser.generateNewUser(UUID.randomUUID().toString().replaceAll("-", ""));
     }
 
     public ApplicationType getAppType() {

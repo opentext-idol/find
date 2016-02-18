@@ -3,17 +3,16 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.GritterNotice;
+import com.autonomy.abc.selenium.icma.GettingStartedPage;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.gettingStarted.GettingStartedPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsPage;
-import com.autonomy.abc.selenium.page.search.DocumentViewer;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
@@ -35,15 +34,14 @@ public class QuickSetUpITCase extends HostedTestBase {
     }
 
     private GettingStartedPage gettingStarted;
-    private PromotionService promotionService;
+    private PromotionService<?> promotionService;
 
     @Before
     public void setUp(){
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        promotionService = getApplication().promotionService();
         promotionService.deleteAll();
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.GETTING_STARTED);
-        gettingStarted = getElementFactory().getGettingStartedPage();
+        gettingStarted = getApplication().switchTo(GettingStartedPage.class);
     }
 
     @Test
@@ -51,7 +49,7 @@ public class QuickSetUpITCase extends HostedTestBase {
         String site = "http://www.cnet.com";
         gettingStarted.addSiteToIndex(site);
 
-        SearchService searchService = getApplication().createSearchService(getElementFactory());
+        SearchService searchService = getApplication().searchService();
         //Can't search for forward slash, so take those out
         SearchQuery searchQuery = new SearchQuery(site.split("//")[1]).withFilter(new IndexFilter(Index.DEFAULT));
 

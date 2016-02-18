@@ -4,13 +4,11 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.page.admin.UsersPage;
-import com.autonomy.abc.selenium.page.login.GoogleAuth;
+import com.autonomy.abc.selenium.external.GmailSignupEmailHandler;
+import com.autonomy.abc.selenium.external.GoogleAuth;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.TimeoutException;
@@ -26,24 +24,26 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.core.Is.is;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class UsersPageTestBase extends ABCTestBase {
+public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected final NewUser aNewUser = config.getNewUser("james");
     protected final NewUser newUser2 = config.getNewUser("john");
     protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
     protected UsersPage usersPage;
-    protected UserService userService;
-    protected final SignupEmailHandler emailHandler;
+    protected UserService<?> userService;
+    protected SignupEmailHandler emailHandler;
 
     public UsersPageTestBase(TestConfig config) {
         super(config);
-        emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+        if(config.getType().equals(ApplicationType.HOSTED)) {
+            emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+        }
     }
 
     @Before
     public void setUp() throws MalformedURLException, InterruptedException {
-        userService = getApplication().createUserService(getElementFactory());
+        userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
     }
@@ -63,7 +63,7 @@ public class UsersPageTestBase extends ABCTestBase {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
         final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
-        User user = aNewUser.signUpAs(Role.USER, usersPage);
+        User user = usersPage.addNewUser(aNewUser, Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         verifyUserAdded(newUserModal, user);
@@ -71,11 +71,11 @@ public class UsersPageTestBase extends ABCTestBase {
         return user;
     }
 
-    protected void signUpAndLoginAs(NewUser newUser) {
+    protected void signUpAndLoginAs(T newUser) {
         usersPage.createUserButton().click();
         assertThat(usersPage, modalIsDisplayed());
 
-        User user = newUser.signUpAs(Role.USER, usersPage);
+        User user = usersPage.addNewUser(newUser, Role.USER);
         user.authenticate(config.getWebDriverFactory(), emailHandler);
         usersPage.closeModal();
 
@@ -117,16 +117,14 @@ public class UsersPageTestBase extends ABCTestBase {
         getDriver().get(getConfig().getWebappUrl());
     }
 
-    protected void verifyUserShowsUpInTable(User user, Status expectedStatus){
-        verifyThat(usersPage.getUsernames(), CoreMatchers.hasItem(user.getUsername()));
-        verifyThat(usersPage.getRoleOf(user), is(Role.USER));
+    protected void verifyCreateDeleteInTable(NewUser newUser) {
+        User user = userService.createNewUser(newUser, Role.USER);
+        String username = user.getUsername();
 
-        if(getConfig().getType().equals(ApplicationType.HOSTED)){
-            HSOUsersPage usersPage = (HSOUsersPage) this.usersPage;
-            HSOUser hsoUser = (HSOUser) user;
+        verifyThat(usersPage.deleteButton(user), displayed());
+        verifyThat(usersPage.getTable(), containsText(username));
 
-            verifyThat(usersPage.getEmailOf(user), is(hsoUser.getEmail()));
-            verifyThat(usersPage.getStatusOf(user), is(expectedStatus));
-        }
+        deleteAndVerify(user);
+        verifyThat(usersPage.getTable(), not(containsText(username)));
     }
 }

@@ -2,27 +2,23 @@ package com.autonomy.abc.topnavbar.notifications;
 
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.analytics.DashboardBase;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.keywords.KeywordWizardType;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.NotificationsDropDown;
-import com.autonomy.abc.selenium.menu.SideNavBar;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.ElementFactory;
-import com.autonomy.abc.selenium.page.HSOElementFactory;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.DynamicPromotion;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
@@ -49,8 +45,8 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 
 	@Before
 	public void serviceSetUp() {
-		keywordService = getApplication().createKeywordService(getElementFactory());
-		promotionService = getApplication().createPromotionService(getElementFactory());
+		keywordService = getApplication().keywordService();
+		promotionService = getApplication().promotionService();
 	}
 
 	@Test
@@ -60,17 +56,15 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		notifications = topNavBar.getNotifications();
 		assertThat("There should be 1 notification in the drop down", notifications.countNotifications(), is(1));
 
-		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.deleteSynonym("john", "john");
+		keywordsPage = keywordService.goToKeywords();
+		keywordsPage.deleteSynonym("john");
 
 		topNavBar.notificationsDropdown();
 		notifications = topNavBar.getNotifications();
 		assertThat("There should be 2 notifications in the drop down", notifications.countNotifications(), is(2));
 
-		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
-		keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.deleteSynonym("juan", "juan");
+		keywordsPage = keywordService.goToKeywords();
+		keywordsPage.deleteSynonym("juan");
 
 		topNavBar.notificationsDropdown();
 		notifications = topNavBar.getNotifications();
@@ -99,22 +93,20 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 	@Test
 	@KnownBug("CSA-1542")
 	public void testNotificationsOverTwoWindows() throws InterruptedException {
-		sideNavBar.switchPage(NavBarTabId.KEYWORDS);
+		keywordsPage = keywordService.goToKeywords();
 
 		topNavBar.notificationsDropdown();
 		notifications = topNavBar.getNotifications();
 		assertThat(notifications.countNotifications(), is(0));
 
-		keywordsPage = getElementFactory().getKeywordsPage();
 		final Window mainWindow = getMainSession().getActiveWindow();
 		final Window secondWindow = getMainSession().openWindow(config.getWebappUrl());
 
 		secondWindow.activate();
-		ElementFactory elementFactoryTwo = getApplication().createElementFactory(getDriver());
-		TopNavBar topNavBarWindowTwo = elementFactoryTwo.getTopNavBar();
-		SideNavBar sideNavBarWindowTwo = elementFactoryTwo.getSideNavBar();
+		SearchOptimizerApplication<?> appTwo = SearchOptimizerApplication.ofType(config.getType()).inWindow(secondWindow);
+		TopNavBar topNavBarWindowTwo = appTwo.elementFactory().getTopNavBar();
 
-		sideNavBarWindowTwo.switchPage(NavBarTabId.KEYWORDS);
+		appTwo.keywordService().goToKeywords();
 		topNavBarWindowTwo.notificationsDropdown();
 		NotificationsDropDown notificationsDropDownWindowTwo = topNavBarWindowTwo.getNotifications();
 		assertThat(notificationsDropDownWindowTwo.countNotifications(), is(0));
@@ -143,15 +135,12 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			assertThat(notifications.countNotifications(), is(2));
 			assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
-			if (getConfig().getType().equals(ApplicationType.HOSTED)) {
-				sideNavBar.switchPage(NavBarTabId.ANALYTICS);
-				newBody();
-				((HSOElementFactory) getElementFactory()).getAnalyticsPage();
-				topNavBar.notificationsDropdown();
-				notifications = topNavBar.getNotifications();
-				assertThat(notifications.countNotifications(), is(2));
-				assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
-			}
+			getApplication().switchTo(DashboardBase.class);
+			newBody();
+			topNavBar.notificationsDropdown();
+			notifications = topNavBar.getNotifications();
+			assertThat(notifications.countNotifications(), is(2));
+			assertThat(notifications.getAllNotificationMessages(), contains(notificationMessages.toArray()));
 
 			secondWindow.activate();
 
@@ -178,7 +167,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 				keywordService.addSynonymGroup(i + " " + (i + 1));
 				keywordService.goToKeywords();
 
-				elementFactoryTwo.getTopNavBar().notificationsDropdown();
+				appTwo.elementFactory().getTopNavBar().notificationsDropdown();
 				verifyThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
 				notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
@@ -206,7 +195,6 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		try {
 			checkForNotification(synonymNotificationText);
 		} finally {
-			getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
 			keywordService.deleteAll(KeywordFilter.ALL);
 		}
 	}

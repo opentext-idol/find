@@ -3,16 +3,16 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.element.PromotionsDetailTriggerForm;
 import com.autonomy.abc.selenium.element.Removable;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.Matcher;
@@ -42,6 +42,7 @@ public class AnalyticsE2EITCase extends HostedTestBase {
 
     private PromotionService promotionService;
     private SearchService searchService;
+    private KeywordService keywordService;
     private final static Matcher<? super WebElement> NO_RESULTS = containsText("No results found");
     private final static Logger LOGGER = LoggerFactory.getLogger(AnalyticsE2EITCase.class);
 
@@ -55,10 +56,11 @@ public class AnalyticsE2EITCase extends HostedTestBase {
         List<String> triggers = Arrays.asList("trigger1", "trigger2", "trigger3");
         List<Integer> searchOrder = Arrays.asList(0, 1, 0, 1, 0, 2);
 
-        searchService = getApplication().createSearchService(getElementFactory());
-        promotionService = getApplication().createPromotionService(getElementFactory());
+        searchService = getApplication().searchService();
+        promotionService = getApplication().promotionService();
+        keywordService = getApplication().keywordService();
 
-        deleteAllKeywords();
+        keywordService.deleteAll(KeywordFilter.ALL);
         for (int i=0; i < searchTerms.size(); i++) {
             setUpPromotion(searchTerms.get(i), triggers.get(i));
         }
@@ -119,17 +121,12 @@ public class AnalyticsE2EITCase extends HostedTestBase {
 
     @After
     public void tearDownKeywords() {
-        deleteAllKeywords();
+        keywordService.deleteAll(KeywordFilter.ALL);
     }
 
     @After
     public void tearDownPromotions() {
         promotionService.deleteAll();
-    }
-
-    private void deleteAllKeywords() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        getElementFactory().getKeywordsPage().deleteKeywords();
     }
 
     private void setUpPromotion(String searchTerm, String trigger) {
@@ -143,12 +140,11 @@ public class AnalyticsE2EITCase extends HostedTestBase {
     }
 
     private void goToAnalytics() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-        analyticsPage = getElementFactory().getAnalyticsPage();
+        analyticsPage = getApplication().switchTo(AnalyticsPage.class);
     }
 
     private void addSynonymGroup(String... synonyms) {
-        new KeywordService(getApplication(), getElementFactory()).addSynonymGroup(synonyms);
+        keywordService.addSynonymGroup(synonyms);
         LOGGER.info("added synonym group: " + Arrays.asList(synonyms));
     }
 

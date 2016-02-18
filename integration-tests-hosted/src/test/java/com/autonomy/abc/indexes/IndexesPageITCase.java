@@ -3,25 +3,22 @@ package com.autonomy.abc.indexes;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
-import com.autonomy.abc.selenium.connections.ConnectionService;
-import com.autonomy.abc.selenium.connections.Connector;
-import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesDetailPage;
-import com.autonomy.abc.selenium.page.indexes.IndexesPage;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
+import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
+import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
+import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
-import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -61,9 +58,9 @@ public class IndexesPageITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        indexesPage = getElementFactory().getIndexesPage();
-        indexService = getApplication().createIndexService(getElementFactory());
+        indexService = getApplication().indexService();
+
+        indexesPage = indexService.goToIndexes();
     }
 
     @Test
@@ -82,8 +79,8 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1720")
     public void testDefaultIndexIsNotDeletedWhenDeletingTheSoleConnectorAssociatedWithIt(){
-        ConnectionService cs = getApplication().createConnectionService(getElementFactory());
-        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc", Index.DEFAULT).withDepth(2);
+        ConnectionService cs = getApplication().connectionService();
+        WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc", Index.DEFAULT).withDuration(150);
 
         //Create connection
         cs.setUpConnection(connector);
@@ -97,9 +94,7 @@ public class IndexesPageITCase extends HostedTestBase {
             getDriver().findElement(By.cssSelector(".modal-footer [type=button]")).click();
         }
 
-        //Navigate to indexes
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage indexesPage = getElementFactory().getIndexesPage();
+        indexesPage = indexService.goToIndexes();
 
         //Make sure default index is still there
         assertThat(indexesPage.getIndexDisplayNames(), hasItem(Index.DEFAULT.getDisplayName()));
@@ -109,9 +104,9 @@ public class IndexesPageITCase extends HostedTestBase {
     //Potentially should be in ConnectionsPageITCase
     @KnownBug("CSA-1710")
     public void testAttemptingToDeleteConnectionWhileItIsProcessingDoesNotDeleteAssociatedIndex(){
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-        ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
-        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
+        ConnectionService connectionService = getApplication().connectionService();
+
+        ConnectionsPage connectionsPage = connectionService.goToConnections();
 
         //Create connector; index will be automatically set to 'bbc'
         WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
@@ -130,9 +125,7 @@ public class IndexesPageITCase extends HostedTestBase {
             LOGGER.warn("Error deleting index");
         }
 
-        //Navigate to Indexes
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.INDEXES);
-        IndexesPage indexesPage = getElementFactory().getIndexesPage();
+        indexesPage = indexService.goToIndexes();
 
         //Ensure the index wasn't deleted
         assertThat(indexesPage.getIndexDisplayNames(), hasItem(index.getName()));
@@ -142,13 +135,13 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1626")
     public void testDeletingIndexDoesNotInvalidatePromotions(){
         //Create connection - attached to the same index (we need it to have data for a promotion)
-        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
+        ConnectionService connectionService = getApplication().connectionService();
         WebConnector connector = new WebConnector("http://www.bbc.co.uk","bbc").withDepth(2);
 
         connectionService.setUpConnection(connector);
 
         //Create a promotion (using the index created)
-        PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+        PromotionService promotionService = getApplication().promotionService();
         PinToPositionPromotion ptpPromotion = new PinToPositionPromotion(1,"trigger");
         SearchQuery search = new SearchQuery("bbc").withFilter(new IndexFilter(connector.getIndex()));
 
@@ -160,7 +153,7 @@ public class IndexesPageITCase extends HostedTestBase {
             connectionService.deleteConnection(connector, true);
 
             //Navigate to the promotion - this will time out if it can't get to the Promotions Detail Page
-            PromotionsDetailPage pdp = promotionService.goToDetails(ptpPromotion);
+            promotionService.goToDetails(ptpPromotion);
 
             //Get the promoted documents, there should still be one
             //TODO this is a workaround as getting promoted documents 'properly' errors if they are 'Unknown Document's
@@ -181,7 +174,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1544")
     public void testNoInvalidIndexNameNotifications(){
-        ConnectionService connectionService = getApplication().createConnectionService(getElementFactory());
+        ConnectionService connectionService = getApplication().connectionService();
 
         Connector hassleRecords = new WebConnector("http://www.hasslerecords.com","hassle records").withDepth(1);
         String errorMessage = "Index name invalid";
@@ -240,11 +233,9 @@ public class IndexesPageITCase extends HostedTestBase {
     @Ignore("Breaking too many tests")
     public void testDeletingSearchDefaultIndex(){
         indexService.deleteIndexViaAPICalls(new Index("search_default_index"), getCurrentUser(), config.getApiUrl());
-
         getDriver().navigate().refresh();
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
 
-        verifyThat(getElementFactory().getPromotionsPage(), containsText("There are no promotions..."));
+        verifyThat(getApplication().switchTo(PromotionsPage.class), containsText("There are no promotions..."));
     }
 
     @Test
@@ -258,12 +249,12 @@ public class IndexesPageITCase extends HostedTestBase {
 
         try {
             findWindow.activate();
-            Find find = getElementFactory().getFindPage();
+            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
 
-            find.search("search");
-            find.filterBy(new IndexFilter(index));
+            findPage.search("search");
+            findPage.filterBy(new IndexFilter(index));
 
-            verifyThat(find.getResultsPage().resultsDiv().getText(), is("No results found"));
+            verifyThat(findPage.getResultsPage().resultsDiv().getText(), is("No results found"));
         } finally {
             findWindow.close();
             searchWindow.activate();
@@ -273,8 +264,8 @@ public class IndexesPageITCase extends HostedTestBase {
     @After
     public void tearDown(){
         try {
-            getApplication().createConnectionService(getElementFactory()).deleteAllConnections(false);
-            getApplication().createIndexService(getElementFactory()).deleteAllIndexes();
+            getApplication().connectionService().deleteAllConnections(false);
+            getApplication().indexService().deleteAllIndexes();
         } catch (Exception e) {
             LOGGER.warn("Failed to tear down");
         }

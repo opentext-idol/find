@@ -7,16 +7,15 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.element.TriggerForm;
+import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
 import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +47,6 @@ public class KeywordsWizardITCase extends ABCTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(KeywordsWizardITCase.class); 
     private KeywordsPage keywordsPage;
     private CreateNewKeywordsPage createKeywordsPage;
-    private SearchPage searchPage;
     private KeywordService keywordService;
     private TriggerForm triggerForm;
 
@@ -58,7 +56,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Before
     public void setUp() {
-        keywordService = new KeywordService(getApplication(), getElementFactory());
+        keywordService = getApplication().keywordService();
 
         keywordsPage = keywordService.deleteAll(KeywordFilter.ALL);
 
@@ -131,24 +129,22 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         createKeywordsPage.enabledFinishWizardButton().click();
         Waits.loadOrFadeWait();
-        searchPage = getElementFactory().getSearchPage();
+        SearchPage searchPage = getElementFactory().getSearchPage();
         new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
 
         searchPage.selectLanguage(Language.FRENCH);
-
-        searchPage.waitForSearchLoadIndicatorToDisappear();
 
         if(getConfig().getType().equals(ApplicationType.HOSTED)) {
             new IndexFilter("news_eng").apply(searchPage);
         }
 
-        searchPage.waitForDocLogo();
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+
         final List<String> searchTerms = searchPage.youSearchedFor();
         assertThat("search for 1 synonym after creating synonym group", searchTerms, hasSize(1));
         assertThat(searchTerms.get(0), isIn(Arrays.asList("stuff", "horse", "pony", "things")));
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(keywordsPage.createNewKeywordsButton()));
+        keywordsPage = keywordService.goToKeywords();
         keywordsPage.filterView(KeywordFilter.ALL);
 
         keywordsPage.selectLanguage(Language.FRENCH);
@@ -467,14 +463,10 @@ public class KeywordsWizardITCase extends ABCTestBase {
         String unrelated = "unrelated";
 
         keywordService.addSynonymGroup(existingSynonyms);
-
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        getElementFactory().getKeywordsPage();
-
+        keywordsPage = keywordService.goToKeywords();
         goToSynonymWizardPage();
 
         triggerForm = createKeywordsPage.getTriggerForm();
-
         triggerForm.addTrigger(duplicate);
         verifyExistingGroups(duplicate, 1);
 
@@ -482,10 +474,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
         createKeywordsPage.finishWizardButton().click();
 
         getElementFactory().getSearchPage();
-
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        getElementFactory().getKeywordsPage();
-
+        keywordsPage = keywordService.goToKeywords();
         goToSynonymWizardPage();
 
         triggerForm.addTrigger(duplicate);

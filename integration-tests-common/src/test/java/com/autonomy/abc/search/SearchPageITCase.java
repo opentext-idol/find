@@ -5,25 +5,18 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.application.ApplicationType;
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Pagination;
 import com.autonomy.abc.selenium.element.SOCheckbox;
+import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
 import com.autonomy.abc.selenium.menu.TopNavBar;
-import com.autonomy.abc.selenium.page.promotions.PromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.DocumentViewer;
-import com.autonomy.abc.selenium.page.search.SearchBase;
-import com.autonomy.abc.selenium.page.search.SearchPage;
-import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
-import com.autonomy.abc.selenium.promotions.Promotion;
-import com.autonomy.abc.selenium.promotions.PromotionService;
-import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
+import com.autonomy.abc.selenium.promotions.*;
 import com.autonomy.abc.selenium.search.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
-import com.autonomy.abc.selenium.util.Errors;
 import com.autonomy.abc.selenium.util.Waits;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -65,7 +58,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Before
 	public void setUp() throws MalformedURLException {
 		topNavBar = getElementFactory().getTopNavBar();
-		searchService = getApplication().createSearchService(getElementFactory());
+		searchService = getApplication().searchService();
 		searchPage = searchService.search("example");
 	}
 
@@ -227,7 +220,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testMultiDocPromotionDrawerExpandAndPagination() {
 		Promotion promotion = new SpotlightPromotion("boat");
 
-		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		PromotionService promotionService = getApplication().promotionService();
 		promotionService.deleteAll();
 		promotionService.setUpPromotion(promotion, "freeze", 18);
 
@@ -358,7 +351,7 @@ public class SearchPageITCase extends ABCTestBase {
             assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
             assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString("Terminating boolean operator"));
 
-            search(testSearchTerms.get(searchTerm++));
+            search(testSearchTerms.get(searchTerm));
             assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(searchErrorMessage));
             assertThat(correctErrorMessageNotShown, searchPage.getText(), containsString(bracketMismatch));
         } else {
@@ -443,16 +436,16 @@ public class SearchPageITCase extends ABCTestBase {
 		search("army");
 		searchPage.waitForSearchLoadIndicatorToDisappear();
 
-		for (final boolean clickLogo : Arrays.asList(true, false)) {
-			for (int page = 1; page <= 2; page++) {
-				for (int result = 1; result <= 6; result++) {
-					Waits.loadOrFadeWait();
-					searchPage.viewFrameClick(clickLogo, result);
-					checkViewResult();
-				}
-
-				searchPage.switchResultsPage(Pagination.NEXT);
+		for (int page = 1; page <= 2; page++) {
+			for (int result = 1; result <= 6; result++) {
+				Waits.loadOrFadeWait();
+				searchPage.docLogo(result).click();
+				checkViewResult();
+				searchPage.getSearchResult(1).title().click();
+				checkViewResult();
 			}
+
+			searchPage.switchResultsPage(Pagination.NEXT);
 		}
 	}
 
@@ -690,10 +683,9 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testFromDateFilter() throws ParseException {
 		final Date date = beginDateFilterTest();
 		final String firstResult = searchPage.getSearchResult(1).getTitleString();
-		final Date validDate = date;
 		final Date invalidDate = DateUtils.addMinutes(date, 1);
 
-		searchPage.filterBy(new DatePickerFilter().from(validDate));
+		searchPage.filterBy(new DatePickerFilter().from(date));
 		for (final String label : searchPage.filterLabelList()) {
 			assertThat("no 'Until' filter applied", label,not(containsString("Until: ")));
 		}
@@ -703,7 +695,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.filterBy(new DatePickerFilter().from(invalidDate));
 		verifyInvalidDate(firstResult);
 
-		searchPage.filterBy(new DatePickerFilter().from(validDate));
+		searchPage.filterBy(new DatePickerFilter().from(date));
 		verifyValidDate(firstResult);
 	}
 
@@ -715,7 +707,6 @@ public class SearchPageITCase extends ABCTestBase {
 
 		// plus 1 minute to be inclusive
 		final Date validDate = DateUtils.addMinutes(date, 1);
-		final Date invalidDate = date;
 
 		searchPage.filterBy(new DatePickerFilter().until(validDate));
 		for (final String label : searchPage.filterLabelList()) {
@@ -724,14 +715,14 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("applied 'Until' filter", searchPage.untilDateInput().getValue(), not(isEmptyOrNullString()));
 		verifyValidDate(firstResult);
 
-		searchPage.filterBy(new DatePickerFilter().until(invalidDate));
+		searchPage.filterBy(new DatePickerFilter().until(date));
         verifyInvalidDate(firstResult);
 
 		searchPage.filterBy(new DatePickerFilter().until(validDate));
 		verifyValidDate(firstResult);
 	}
 
-	private Date beginDateFilterTest() throws ParseException {
+	private Date beginDateFilterTest() {
 		// not all indexes have times configured
 		search(new SearchQuery("Dog").withFilter(new IndexFilter("news_eng")));
 		Date date = searchPage.getSearchResult(1).getDate();
@@ -831,7 +822,7 @@ public class SearchPageITCase extends ABCTestBase {
 		search(searchText);
 
 		// Change to promotions page since the search page will persist the query in the URL
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.PROMOTIONS);
+		getApplication().switchTo(PromotionsPage.class);
 
 		getDriver().navigate().refresh();
 		final String newSearchText = getElementFactory().getTopNavBar().getSearchBarText();
@@ -1032,7 +1023,7 @@ public class SearchPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CSA-1629")
 	public void testPinToPositionPagination(){
-		PromotionService promotionService = getApplication().createPromotionService(getElementFactory());
+		PromotionService promotionService = getApplication().promotionService();
 
 		try {
 			promotionService.setUpPromotion(new PinToPositionPromotion(1, "thiswillhavenoresults"), "*", SearchPage.RESULTS_PER_PAGE + 2);
@@ -1127,9 +1118,20 @@ public class SearchPageITCase extends ABCTestBase {
 	}
 
 	@Test
+	@KnownBug("CSA-2061")
 	public void testHeadingCount(){
 		searchService.search(new SearchQuery("dog").withFilter(IndexFilter.ALL));
 
 		verifyThat(searchPage.getHeadingResultsCount(), lessThanOrEqualTo(2501));
+	}
+
+	@Test
+	@KnownBug("CSA-2060")
+	public void testResultIndex(){
+		searchService.search(new SearchQuery("Jamaica"));
+
+		for(SOSearchResult searchResult : searchPage.getSearchResults()){
+			verifyThat(searchResult.getIndex().getDisplayName(), not(containsString("Object")));
+		}
 	}
 }

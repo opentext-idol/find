@@ -4,15 +4,18 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.admin.HSOUsersPage;
-import com.autonomy.abc.selenium.users.*;
-import com.autonomy.abc.selenium.util.Errors;
+import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.users.NewUser;
+import com.autonomy.abc.selenium.users.Role;
+import com.autonomy.abc.selenium.users.User;
+import com.autonomy.abc.selenium.users.UserNotCreatedException;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
@@ -23,7 +26,6 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.fail;
@@ -40,8 +42,8 @@ public class UsersPageITCase extends UsersPageTestBase {
 		final int initialNumberOfUsers = usersPage.countNumberOfUsers();
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User user = aNewUser.signUpAs(Role.USER, usersPage);
-		User admin = newUser2.signUpAs(Role.ADMIN, usersPage);
+		User user = usersPage.addNewUser(aNewUser, Role.USER);
+		User admin = usersPage.addNewUser(newUser2, Role.ADMIN);
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -53,8 +55,8 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		usersPage.createUserButton().click();
 		verifyThat(PageUtil.isModalShowing(getDriver()), is(true));
-		aNewUser.signUpAs(Role.USER, usersPage);
-		newUser2.signUpAs(Role.ADMIN, usersPage);
+		usersPage.addNewUser(aNewUser, Role.USER);
+		usersPage.addNewUser(newUser2, Role.ADMIN);
 		usersPage.closeModal();
 		verifyThat(usersPage.countNumberOfUsers(), is(initialNumberOfUsers + 2));
 
@@ -66,18 +68,18 @@ public class UsersPageITCase extends UsersPageTestBase {
 	public void testAddDuplicateUser() {
 		usersPage.createUserButton().click();
 		assertThat(usersPage, modalIsDisplayed());
-		User original = aNewUser.signUpAs(Role.USER, usersPage);
+		User original = usersPage.addNewUser(aNewUser, Role.USER);
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 		verifyUserAdded(newUserModal, original);
 
 		try {
-			aNewUser.signUpAs(Role.USER, usersPage);
-		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
+			usersPage.addNewUser(aNewUser, Role.USER);
+		} catch (TimeoutException | UserNotCreatedException e) { /* Expected */}
 		verifyDuplicateError(newUserModal);
 
 		try {
-			config.getNewUser("testAddDuplicateUser_james").signUpAs(Role.USER, usersPage);
-		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) { /* Expected */}
+			usersPage.addNewUser(config.getNewUser("testAddDuplicateUser_james"), Role.USER);
+		} catch (TimeoutException | UserNotCreatedException e) { /* Expected */}
 
 		verifyDuplicateError(newUserModal);
 
@@ -101,10 +103,10 @@ public class UsersPageITCase extends UsersPageTestBase {
 		assertThat(usersPage, modalIsDisplayed());
 		final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
 
-		User admin = aNewUser.signUpAs(Role.ADMIN, usersPage);
+		User admin = usersPage.addNewUser(aNewUser, Role.ADMIN);
 		verifyUserAdded(newUserModal, admin);
 
-		User user = newUser2.signUpAs(Role.USER, usersPage);
+		User user = usersPage.addNewUser(newUser2, Role.USER);
 		verifyUserAdded(newUserModal, user);
 
 		usersPage.closeModal();
@@ -139,44 +141,10 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 	private void selectSameRole(User user){
 		Role role = user.getRole();
-
-		if(getConfig().getType().equals(ApplicationType.ON_PREM)){
-			userService.changeRole(user, role);
-		} else {
-			HSOUsersPage usersPage = (HSOUsersPage) this.usersPage;
-			WebElement roleLink = usersPage.roleLinkFor(user);
-
-			roleLink.click();
-			roleLink.click();
-		}
+		userService.changeRole(user, role);
 
 		assertThat(usersPage.roleLinkFor(user), displayed());
 		assertThat(usersPage.getRoleOf(user), is(role));
-	}
-
-	@Test
-	public void testAddStupidlyLongUsername() {
-		final String longUsername = StringUtils.repeat("a", 100);
-
-		if(getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			usersPage.createUserButton().click();
-			assertThat(usersPage, modalIsDisplayed());
-
-			usersPage.createNewUser(longUsername, "b", "User");
-
-			usersPage.closeModal();
-
-			assertThat(usersPage.deleteButton(longUsername), displayed());
-
-			assertThat(usersPage.getTable(), containsText(longUsername));
-			usersPage.deleteUser(longUsername);
-		} else {
-			User user = userService.createNewUser(new HSONewUser(longUsername, "hodtestqa401+longusername@gmail.com"), Role.ADMIN);
-			assertThat(usersPage.getTable(), containsText(longUsername));
-			userService.deleteUser(user);
-		}
-
-		assertThat(usersPage.getTable(), not(containsText(longUsername)));
 	}
 
 	@Test
@@ -307,7 +275,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 		try {
 			userService.createNewUser(aNewUser, Role.ADMIN);
-		} catch (TimeoutException | HSONewUser.UserNotCreatedException e) {
+		} catch (TimeoutException | UserNotCreatedException e) {
 			/* Expected */
 		}
 

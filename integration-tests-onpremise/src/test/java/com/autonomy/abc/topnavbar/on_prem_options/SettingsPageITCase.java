@@ -1,12 +1,11 @@
 package com.autonomy.abc.topnavbar.on_prem_options;
 
 import com.autonomy.abc.config.ABCTestBase;
-import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.config.HostAndPorts;
-import com.autonomy.abc.selenium.menu.OPTopNavBar;
-import com.autonomy.abc.selenium.page.OPElementFactory;
-import com.autonomy.abc.selenium.page.admin.SettingsPage;
+import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.iso.SettingsPage;
 import com.autonomy.abc.selenium.util.Waits;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,14 +50,13 @@ public class SettingsPageITCase extends ABCTestBase {
 	}
 
 	@Override
-	public OPElementFactory getElementFactory() {
-		return (OPElementFactory) super.getElementFactory();
+	public OPISOElementFactory getElementFactory() {
+		return (OPISOElementFactory) super.getElementFactory();
 	}
 
 	@Before
 	public void setUp() throws InterruptedException {
-		((OPTopNavBar) getElementFactory().getTopNavBar()).goToSettingsPage();
-		settingsPage = getElementFactory().getSettingsPage();
+		settingsPage = getApplication().switchTo(SettingsPage.class);
 	}
 
 	@Test

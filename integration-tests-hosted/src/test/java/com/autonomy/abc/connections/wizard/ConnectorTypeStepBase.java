@@ -2,11 +2,10 @@ package com.autonomy.abc.connections.wizard;
 
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
-import com.autonomy.abc.selenium.page.connections.NewConnectionPage;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorType;
-import com.autonomy.abc.selenium.page.connections.wizard.ConnectorTypeStepTab;
+import com.autonomy.abc.selenium.connections.ConnectionsPage;
+import com.autonomy.abc.selenium.connections.NewConnectionPage;
+import com.autonomy.abc.selenium.connections.ConnectorType;
+import com.autonomy.abc.selenium.connections.ConnectorTypeStepTab;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.hamcrest.Description;
@@ -34,9 +33,7 @@ public class ConnectorTypeStepBase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.CONNECTIONS);
-
-        connectionsPage = getElementFactory().getConnectionsPage();
+        connectionsPage = getApplication().switchTo(ConnectionsPage.class);
         connectionsPage.newConnectionButton().click();
 
         newConnectionPage = getElementFactory().getNewConnectionPage();

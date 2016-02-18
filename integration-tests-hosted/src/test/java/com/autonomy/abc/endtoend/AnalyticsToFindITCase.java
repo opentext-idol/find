@@ -3,33 +3,30 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.analytics.AnalyticsPage;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.find.Find;
+import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindSearchResult;
+import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
 import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.analytics.AnalyticsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
-import com.autonomy.abc.selenium.search.FindSearchResult;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
-import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @RelatedTo("CSA-1590")
 public class AnalyticsToFindITCase extends HostedTestBase {
-    private Find find;
+    private FindPage findPage;
     private FindResultsPage service;
     private Window searchWindow;
     private Window findWindow;
@@ -44,21 +41,19 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        promotionService = getApplication().createPromotionService(getElementFactory());
-        keywordService = new KeywordService(getApplication(), getElementFactory());
+        promotionService = getApplication().promotionService();
+        keywordService = getApplication().keywordService();
 
         searchWindow = getMainSession().getActiveWindow();
         findWindow = getMainSession().openWindow(config.getFindUrl());
-        find = getElementFactory().getFindPage();
-        service = find.getResultsPage();
+        findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+        service = findPage.getResultsPage();
         searchWindow.activate();
     }
 
     @Test
     public void testPromotionToFind() throws InterruptedException {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.ANALYTICS);
-
-        AnalyticsPage analyticsPage = getElementFactory().getAnalyticsPage();
+        AnalyticsPage analyticsPage = getApplication().switchTo(AnalyticsPage.class);
 
         String searchTerm = analyticsPage.getMostPopularNonZeroSearchTerm();
         String trigger = "Trigger";
@@ -71,11 +66,11 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         keywordService.addSynonymGroup(Language.ENGLISH, trigger, synonym);
 
         findWindow.activate();
-        find.search(trigger);
+        findPage.search(trigger);
 
         List<String> triggerResults = service.getResultTitles();
 
-        find.search(synonym);
+        findPage.search(synonym);
 
         List<String> findPromotions = service.getPromotionsTitles();
 
@@ -99,9 +94,7 @@ public class AnalyticsToFindITCase extends HostedTestBase {
 
         promotionService.deleteAll();
 
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-        keywordsPage.deleteKeywords();
+        keywordService.deleteAll(KeywordFilter.ALL);
     }
 
 }

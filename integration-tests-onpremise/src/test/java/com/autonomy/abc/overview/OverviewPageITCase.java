@@ -2,14 +2,13 @@ package com.autonomy.abc.overview;
 
 import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.selenium.analytics.OverviewPage;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.element.TriggerForm;
-import com.autonomy.abc.selenium.menu.NavBarTabId;
-import com.autonomy.abc.selenium.page.OPElementFactory;
-import com.autonomy.abc.selenium.page.keywords.CreateNewKeywordsPage;
-import com.autonomy.abc.selenium.page.keywords.KeywordsPage;
-import com.autonomy.abc.selenium.page.overview.OverviewPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
+import com.autonomy.abc.selenium.iso.OPISOElementFactory;
+import com.autonomy.abc.selenium.keywords.CreateNewKeywordsPage;
+import com.autonomy.abc.selenium.keywords.KeywordFilter;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -49,14 +48,13 @@ public class OverviewPageITCase extends ABCTestBase {
 	}
 
 	@Override
-	public OPElementFactory getElementFactory() {
-		return (OPElementFactory) super.getElementFactory();
+	public OPISOElementFactory getElementFactory() {
+		return (OPISOElementFactory) super.getElementFactory();
 	}
 
 	@Before
 	public void setUp() {
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
-		overviewPage = getElementFactory().getOverviewPage();
+		overviewPage = getApplication().switchTo(OverviewPage.class);
 	}
 
 	@Test
@@ -112,7 +110,7 @@ public class OverviewPageITCase extends ABCTestBase {
 						assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl(), containsString("search/modified/" + searchTerm));
 						assertThat(searchTerm + " Title incorrect", PageUtil.getPageTitle(getDriver()), containsString("Results for " + searchTerm));
 
-						getElementFactory().getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
+						getApplication().switchTo(OverviewPage.class);
 					}
 				}
 			} else {
@@ -148,10 +146,8 @@ public class OverviewPageITCase extends ABCTestBase {
 
 	@Test
 	public void testZeroHitTermsLinks() throws UnsupportedEncodingException, InterruptedException {
-        getElementFactory().getSideNavBar().switchPage(NavBarTabId.KEYWORDS);
-        final KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
-		keywordsPage.deleteKeywords();
-		getElementFactory().getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
+		getApplication().keywordService().deleteAll(KeywordFilter.ALL);
+		getApplication().switchTo(OverviewPage.class);
 		String extraSynonym = "apple";
 
 		final List<WebElement> tableLinks = overviewPage.getWidget(OverviewPage.Widget.ZERO_HIT_TERMS).findElements(By.cssSelector(".table a"));
@@ -202,7 +198,7 @@ public class OverviewPageITCase extends ABCTestBase {
 				System.out.println(linkText + " returns a search error as part of a synonym group");
 			}
 
-			getElementFactory().getSideNavBar().switchPage(NavBarTabId.OVERVIEW);
+			getApplication().switchTo(OverviewPage.class);
 		}
 	}
 

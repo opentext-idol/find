@@ -3,15 +3,15 @@ package com.autonomy.abc.endtoend;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.connections.ConnectionService;
+import com.autonomy.abc.selenium.connections.ConnectionsDetailPage;
+import com.autonomy.abc.selenium.connections.ConnectionsPage;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.page.connections.ConnectionsDetailPage;
-import com.autonomy.abc.selenium.page.connections.ConnectionsPage;
-import com.autonomy.abc.selenium.page.search.DocumentViewer;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import org.junit.After;
@@ -25,15 +25,11 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.*;
 
 public class ConnectionToSearchITCase extends HostedTestBase {
-    private ConnectionsPage connectionsPage;
-    private ConnectionsDetailPage connectionsDetailPage;
-    private SearchPage searchPage;
     private ConnectionService connectionService;
     private SearchService searchService;
 
     private final WebConnector connector = new WebConnector("http://www.havenondemand.com", "hod");
     private final Index index = new Index("hod");
-    private final String searchTerm = "haven";
 
     public ConnectionToSearchITCase(TestConfig config) {
         super(config);
@@ -42,29 +38,30 @@ public class ConnectionToSearchITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        connectionService = getApplication().createConnectionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+        connectionService = getApplication().connectionService();
+        searchService = getApplication().searchService();
     }
 
     @Test
     public void testConnectionToSearch() {
         connectionService.setUpConnection(connector);
-        searchPage = searchService.search(new SearchQuery(searchTerm).withFilter(new IndexFilter(index)));
+        String searchTerm = "haven";
+        SearchPage searchPage = searchService.search(new SearchQuery(searchTerm).withFilter(new IndexFilter(index)));
         verifyThat("index shows up on search page", searchPage.indexesTree().getSelected(), hasItem(index));
         verifyThat("index has search results", searchPage.getHeadingResultsCount(), greaterThan(0));
 
         final String handle = getDriver().getWindowHandle();
         searchPage.getSearchResult(1).title().click();
         DocumentViewer documentViewer = DocumentViewer.make(getDriver());
-        verifyThat("search result in correct index", documentViewer.getIndex(), is(index.getName()));
+        verifyThat("search result in correct index", documentViewer.getIndex(), is(index));
         getDriver().switchTo().frame(documentViewer.frame());
         verifyThat("search result is viewable", getDriver().findElement(By.xpath(".//*")).getText(), containsString(searchTerm));
         getDriver().switchTo().window(handle);
         documentViewer.close();
 
-        connectionsDetailPage = connectionService.goToDetails(connector);
+        ConnectionsDetailPage connectionsDetailPage = connectionService.goToDetails(connector);
         connectionsDetailPage.backButton().click();
-        connectionsPage = getElementFactory().getConnectionsPage();
+        ConnectionsPage connectionsPage = getElementFactory().getConnectionsPage();
 
         FormInput input = connectionsPage.connectionFilterBox();
         Dropdown dropdown = connectionsPage.connectionFilterDropdown();

@@ -4,12 +4,12 @@ import com.autonomy.abc.config.ABCTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.FormInput;
-import com.autonomy.abc.selenium.page.promotions.OPPromotionsDetailPage;
-import com.autonomy.abc.selenium.page.search.SearchPage;
 import com.autonomy.abc.selenium.promotions.OPPromotionService;
+import com.autonomy.abc.selenium.promotions.OPPromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.FieldTextFilter;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
@@ -39,8 +39,8 @@ public class PromotionsPageOnPremiseITCase extends ABCTestBase {
 
 	@Before
 	public void setUp() throws MalformedURLException {
-		promotionService = (OPPromotionService) getApplication().createPromotionService(getElementFactory());
-        searchService = getApplication().createSearchService(getElementFactory());
+		promotionService = (OPPromotionService) getApplication().promotionService();
+        searchService = getApplication().searchService();
 
 		promotionService.deleteAll();
 	}
