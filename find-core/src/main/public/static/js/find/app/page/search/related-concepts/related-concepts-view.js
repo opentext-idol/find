@@ -50,7 +50,8 @@ define([
                 max_results: 3,
                 summary: 'context',
                 indexes: this.queryModel.get('indexes'),
-                highlight: false
+                highlight: false,
+                auto_correct: false
             },
             error: _.bind(function() {
                 $content.html(this.popoverMessageTemplate({message: i18n['search.relatedConcepts.topResults.error']}));
