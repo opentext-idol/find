@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openqa.selenium.Dimension;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,6 +92,10 @@ public class JsonConfig {
         return this.selenium.browsers;
     }
 
+    Dimension getResolution() {
+        return this.selenium.resolution;
+    }
+
     public User getUser(String name) {
         return this.users.get(name);
     }
@@ -141,32 +146,47 @@ public class JsonConfig {
     public static class SeleniumConfig {
         private final URL url;
         private final List<Browser> browsers;
+        private final Dimension resolution;
 
         private SeleniumConfig(JsonNode node) throws MalformedURLException {
             url = getUrlOrNull(node.path("url"));
-            JsonNode browsersNode = node.path("browsers");
-            if (browsersNode.isMissingNode()) {
-                browsers = null;
-            } else {
-                browsers = new ArrayList<>();
-                for (JsonNode browserNode : browsersNode) {
-                    browsers.add(Browser.fromString(browserNode.asText()));
-                }
-            }
+            browsers = readBrowsers(node.path("browsers"));
+            resolution = readDimension(node.path("resolution"));
         }
 
         private SeleniumConfig(SeleniumConfig overrides, SeleniumConfig defaults) {
             url = override(defaults.url, overrides.url);
             browsers = override(defaults.browsers, overrides.browsers);
+            resolution = override(defaults.resolution, overrides.resolution);
         }
 
         private SeleniumConfig overrideUsing(SeleniumConfig overrides) {
             return overrides == null ? this : new SeleniumConfig(overrides, this);
         }
 
+        private List<Browser> readBrowsers(JsonNode browsersNode) {
+            if (browsersNode.isMissingNode()) {
+                return null;
+            }
+            List<Browser> browsers = new ArrayList<>();
+            for (JsonNode browserNode : browsersNode) {
+                browsers.add(Browser.fromString(browserNode.asText()));
+            }
+            return browsers;
+        }
+
+        private Dimension readDimension(JsonNode dimensionNode) {
+            if (dimensionNode.isMissingNode()) {
+                return null;
+            }
+            int width = dimensionNode.get(0).asInt();
+            int height = dimensionNode.get(1).asInt();
+            return new Dimension(width, height);
+        }
+
         @Override
         public String toString() {
-            return "{browsers=" + browsers + ", url=" + url + "}";
+            return "{browsers=" + browsers + ", url=" + url + ", resolution=" + resolution + "}";
         }
     }
 

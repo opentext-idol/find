@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,6 +161,10 @@ public class TestConfig {
 	@Override
 	public String toString() {
 		return "parameter-set: [" + getIndex() + "]; browser: " + getBrowser() + "; platform: " + getPlatform() + "; effective config: " + jsonConfig;
+	}
+
+	Dimension getResolution() {
+		return jsonConfig.getResolution();
 	}
 }
 
