@@ -46,16 +46,16 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Set<QueryTagInfo> getParametricValues(@RequestParam(value = FIELD_NAMES_PARAM, required = false) final Set<String> fieldNames,
+    public Set<QueryTagInfo> getParametricValues(@RequestParam(value = FIELD_NAMES_PARAM, required = false) final List<String> fieldNames,
                                                  @RequestParam(QUERY_TEXT_PARAM) final String queryText,
                                                  @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
                                                  @RequestParam(DATABASES_PARAM) final List<S> databases,
                                                  @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                                  @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate);
-        final R parametricRequest = buildParametricRequest(fieldNames == null ? Collections.<String>emptySet() : fieldNames, queryRestrictions);
+        final R parametricRequest = buildParametricRequest(fieldNames == null ? Collections.<String>emptyList() : fieldNames, queryRestrictions);
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 
-    protected abstract R buildParametricRequest(final Set<String> fieldNames, final QueryRestrictions<S> queryRestrictions);
+    protected abstract R buildParametricRequest(final List<String> fieldNames, final QueryRestrictions<S> queryRestrictions);
 }

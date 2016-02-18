@@ -100,10 +100,7 @@ define([
             src: isUrl ?  options.model.get('reference') : options.href,
             i18n: i18n,
             model: options.model,
-            content: content,
-            arrayFields: DocumentModel.ARRAY_FIELDS,
-            dateFields: DocumentModel.DATE_FIELDS,
-            fields: ['index', 'reference', 'contentType', 'url']
+            content: content
         });
 
         return args;

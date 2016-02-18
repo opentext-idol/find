@@ -10,12 +10,10 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
-import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
-import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesRequest;
+import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
-import com.hp.autonomy.types.idol.Database;
+import com.hp.autonomy.searchcomponents.idol.search.QueryResponseParser;
 import com.hp.autonomy.types.idol.QueryResponseData;
 import com.hp.autonomy.types.requests.qms.actions.query.params.QmsQueryParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +26,14 @@ public class FindIdolDocumentService extends IdolDocumentService {
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Autowired
-    public FindIdolDocumentService(final ConfigService<? extends HavenSearchCapable> configService, final HavenSearchAciParameterHandler parameterHandler, final AciService contentAciService, final AciService qmsAciService, final AciResponseJaxbProcessorFactory aciResponseProcessorFactory, final DatabasesService<Database, IdolDatabasesRequest, AciErrorException> databasesService) {
-        super(configService, parameterHandler, contentAciService, qmsAciService, aciResponseProcessorFactory, databasesService);
+    public FindIdolDocumentService(
+            final ConfigService<? extends IdolSearchCapable> configService,
+            final HavenSearchAciParameterHandler parameterHandler,
+            final QueryResponseParser queryResponseParser,
+            final AciService contentAciService,
+            final AciService qmsAciService,
+            final AciResponseJaxbProcessorFactory aciResponseProcessorFactory) {
+        super(configService, parameterHandler, queryResponseParser, contentAciService, qmsAciService, aciResponseProcessorFactory);
     }
 
     @Override

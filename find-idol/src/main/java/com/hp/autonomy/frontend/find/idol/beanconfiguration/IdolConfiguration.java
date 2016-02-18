@@ -40,6 +40,7 @@ public class IdolConfiguration {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         objectMapper.addMixIn(ServerConfig.class, ConfigurationFilterMixin.class);
         objectMapper.addMixIn(ViewConfig.class, ConfigurationFilterMixin.class);
+        objectMapper.addMixIn(IdolFindConfig.class, ConfigurationFilterMixin.class);
 
         return objectMapper;
     }

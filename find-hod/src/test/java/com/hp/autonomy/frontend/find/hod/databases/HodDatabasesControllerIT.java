@@ -7,8 +7,9 @@ package com.hp.autonomy.frontend.find.hod.databases;
 
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.databases.AbstractDatabasesControllerIT;
+import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
+@SpringApplicationConfiguration(classes = {HodTestConfiguration.class, HodFindApplication.class})
 public class HodDatabasesControllerIT extends AbstractDatabasesControllerIT {
 }

@@ -7,8 +7,9 @@ package com.hp.autonomy.frontend.find.hod.web;
 
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.web.AbstractErrorControllerIT;
+import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
+@SpringApplicationConfiguration(classes = {HodTestConfiguration.class, HodFindApplication.class})
 public class HodErrorControllerIT extends AbstractErrorControllerIT {
 }

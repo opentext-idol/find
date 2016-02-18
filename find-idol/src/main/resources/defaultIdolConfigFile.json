@@ -5,7 +5,11 @@
       "protocol": "HTTP",
       "host": "find-backend",
       "port": 9030,
-      "productType": ["UASERVER", "DAH", "IDOLPROXY"]
+      "productType": [
+        "UASERVER",
+        "DAH",
+        "IDOLPROXY"
+      ]
     },
     "name": "CommunityAuthentication"
   },
@@ -13,14 +17,22 @@
     "protocol": "HTTP",
     "host": "find-idol",
     "port": 9000,
-    "productType": ["AXE", "DAH", "IDOLPROXY"]
+    "productType": [
+      "AXE",
+      "DAH",
+      "IDOLPROXY"
+    ]
   },
   "queryManipulation": {
     "server": {
       "protocol": "HTTP",
       "host": "find-idol",
       "port": 16000,
-      "productType": ["QMS", "DAH", "IDOLPROXY"]
+      "productType": [
+        "QMS",
+        "DAH",
+        "IDOLPROXY"
+      ]
     },
     "typeAheadMode": "Index",
     "expandQuery": true,
@@ -31,7 +43,57 @@
     "protocol": "HTTP",
     "host": "find-idol",
     "port": 9080,
-    "productType": ["VIEW", "IDOLPROXY", "DAH"],
+    "productType": [
+      "VIEW",
+      "IDOLPROXY",
+      "DAH"
+    ],
     "referenceField": "DREREFERENCE"
+  },
+  "fieldsInfo": {
+    "fieldAssociations": {
+      "mediaContentType": "AU_REPOSITORY_METADATA_TYPE_STRING",
+      "mediaUrl": "AU_REPOSITORY_METADATA_URL_FILE_STRING",
+      "mediaOffset": "offset",
+      "mmapUrl": "HPSW_APP_NOINDEX_MMAPPROXY",
+      "thumbnail": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+    },
+    "customFields": [
+      {
+        "name": "AU_REPOSITORY_METADATA_TYPE_STRING",
+        "displayName": "Content Type"
+      },
+      {
+        "name": "AU_REPOSITORY_METADATA_URL_FILE_STRING",
+        "displayName": "Url"
+      },
+      {
+        "name": "offset"
+      },
+      {
+        "name": "HPSW_APP_NOINDEX_MMAPPROXY"
+      },
+      {
+        "name": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+      },
+      {
+        "name": "AU_DOCUMENT_METADATA_AUTHOR_STRING",
+        "displayName": "Author"
+      },
+      {
+        "name": "AU_REPOSITORY_METADATA_CATEGORY_STRING",
+        "displayName": "Category"
+      },
+      {
+        "name": "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS",
+        "displayName": "Creation Date",
+        "type": "Date"
+      },
+      {
+        "name": "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS",
+        "displayName": "Last Modified Date",
+        "type": "Date"
+      }
+    ]
   }
 }

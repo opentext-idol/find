@@ -7,8 +7,9 @@ package com.hp.autonomy.frontend.find.hod.view;
 
 import com.hp.autonomy.frontend.find.HodFindApplication;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerIT;
+import com.hp.autonomy.searchcomponents.hod.test.HodTestConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 
-@SpringApplicationConfiguration(classes = HodFindApplication.class)
+@SpringApplicationConfiguration(classes = {HodTestConfiguration.class, HodFindApplication.class})
 public class HodViewControllerIT extends AbstractViewControllerIT {
 }

@@ -13,7 +13,7 @@ import com.hp.autonomy.frontend.find.core.typeahead.GetSuggestionsFailedExceptio
 import com.hp.autonomy.frontend.find.core.typeahead.TypeAheadConstants;
 import com.hp.autonomy.frontend.find.core.typeahead.TypeAheadService;
 import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.types.idol.TypeAheadResponseData;
 import com.hp.autonomy.types.requests.qms.actions.typeahead.TypeAheadActions;
 import com.hp.autonomy.types.requests.qms.actions.typeahead.params.ModeParam;
@@ -26,14 +26,14 @@ import java.util.List;
 
 @Service
 public class QmsTypeAheadService implements TypeAheadService {
-    private final ConfigService<? extends HavenSearchCapable> configService;
+    private final ConfigService<? extends IdolSearchCapable> configService;
     private final GetSuggestionsAciExecutor executor;
     private final AciService qmsAciService;
     private final Processor<TypeAheadResponseData> processor;
 
     @Autowired
     public QmsTypeAheadService(
-            final ConfigService<? extends HavenSearchCapable> configService,
+            final ConfigService<? extends IdolSearchCapable> configService,
             final GetSuggestionsAciExecutor executor,
             final AciService qmsAciService,
             final AciResponseJaxbProcessorFactory processorFactory
