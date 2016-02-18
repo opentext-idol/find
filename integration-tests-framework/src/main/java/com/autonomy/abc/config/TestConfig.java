@@ -1,5 +1,6 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.application.Application;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.Window;
@@ -43,6 +44,10 @@ public class TestConfig {
 		this.url = jsonConfig.getHubUrl();
 		this.platform = Platform.WINDOWS;
 		this.browser = jsonConfig.getBrowsers().get(index);
+	}
+
+	public String getAppUrl(Application<?> application) {
+		return jsonConfig.getAppUrl(application.getName().toLowerCase()).toString();
 	}
 
 	public String getWebappUrl() {

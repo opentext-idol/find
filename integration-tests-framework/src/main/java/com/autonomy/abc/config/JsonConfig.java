@@ -111,13 +111,23 @@ class JsonConfig {
         return this.app.type;
     }
 
+    URL getAppUrl(String appName) {
+        try {
+            return getUrlOrNull(app.appNode.path(appName));
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException("Application " + appName + " is not properly configured. Ensure that app." + appName + " is set in the config json");
+        }
+    }
+
     private static class AppConfig {
+        private JsonNode appNode;
         private final ApplicationType type;
         private final URL url;
         private final URL findUrl;
         private final URL apiUrl;
 
         private AppConfig(JsonNode node) throws MalformedURLException {
+            appNode = node;
             String typeString = node.path("type").asText();
             type = (typeString.isEmpty() ? null : ApplicationType.fromString(typeString));
             url = getUrlOrNull(node.path("url"));

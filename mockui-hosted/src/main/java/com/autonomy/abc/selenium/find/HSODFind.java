@@ -23,6 +23,11 @@ public class HSODFind implements Application<HSODFindElementFactory> {
     }
 
     @Override
+    public String getName() {
+        return "Find";
+    }
+
+    @Override
     public Application<HSODFindElementFactory> inWindow(Window window) {
         this.window = window;
         this.factory = new HSODFindElementFactory(window.getSession().getDriver());

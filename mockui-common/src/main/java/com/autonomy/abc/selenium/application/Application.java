@@ -7,4 +7,5 @@ public interface Application<T> {
     ApplicationType getType();
     // TODO: remove this once Applications are initialized with a Window
     Application<T> inWindow(Window window);
+    String getName();
 }
