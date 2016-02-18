@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
@@ -50,7 +51,7 @@ public class HodParametricValuesController extends ParametricValuesController<Ho
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime maxDate) throws HodErrorException {
         final TagResponse tagResponse = fieldsService.getFields(new HodFieldsRequest.Builder().setDatabases(databases).build(), Arrays.asList(FieldType.parametric.name(), FieldType.numeric.name()));
 
-        final Set<String> parametricFields = new LinkedHashSet<>(tagResponse.getParametricTypeFields());
+        final List<String> parametricFields = tagResponse.getParametricTypeFields();
 
         final QueryRestrictions<ResourceIdentifier> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate);
 

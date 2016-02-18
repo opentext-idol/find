@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
@@ -38,7 +39,7 @@ public class IdolParametricValuesController extends ParametricValuesController<I
                                                 @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime minDate,
                                                 @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime maxDate) throws AciErrorException {
         final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate);
-        final IdolParametricRequest parametricRequest = buildParametricRequest(Collections.<String>emptySet(), queryRestrictions);
+        final IdolParametricRequest parametricRequest = buildParametricRequest(Collections.<String>emptyList(), queryRestrictions);
         final Set<QueryTagInfo> allParametricValues = parametricValuesService.getAllParametricValues(parametricRequest);
         return new ParametricValues(allParametricValues, null);
     }
