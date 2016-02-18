@@ -20,12 +20,14 @@ class WindowFactory implements ParametrizedFactory<Session, Window> {
     public Window create(Session context) {
         WebDriver driver = context.getDriver();
         String handle = createNewWindow(driver);
+        Window window = context.registerWindow(handle);
+        window.activate();
         if (resolution == null) {
             driver.manage().window().maximize();
         } else {
             driver.manage().window().setSize(resolution);
         }
-        return context.registerWindow(handle);
+        return window;
     }
 
     private String createNewWindow(WebDriver driver) {
