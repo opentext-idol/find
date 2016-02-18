@@ -50,11 +50,6 @@ public class TestConfig {
 		return jsonConfig.getAppUrl(application.getName().toLowerCase()).toString();
 	}
 
-	@Deprecated
-	public String getFindUrl() {
-		return jsonConfig.getAppUrl("find").toString();
-	}
-
 	// TODO: HodApiApplication
 	public String getApiUrl() {
 		return jsonConfig.getAppUrl("api").toString();

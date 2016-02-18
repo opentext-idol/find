@@ -47,8 +47,9 @@ public class PromotionsToFindITCase extends HostedTestBase {
 
         promotionService.deleteAll();
         searchWindow = getMainSession().getActiveWindow();
-        findWindow = getMainSession().openWindow(config.getFindUrl());
-        findFactory = new HSODFind(findWindow).elementFactory();
+        HSODFind findApp = new HSODFind();
+        findWindow = launchInNewWindow(findApp);
+        findFactory = findApp.elementFactory();
         findPage = findFactory.getFindPage();
         service = findPage.getResultsPage();
         searchWindow.activate();

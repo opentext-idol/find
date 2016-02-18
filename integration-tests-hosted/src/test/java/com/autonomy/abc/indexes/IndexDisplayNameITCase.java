@@ -78,10 +78,11 @@ public class IndexDisplayNameITCase extends HostedTestBase {
     @Test
     public void testFindIndex(){
         Window searchWindow = getMainSession().getActiveWindow();
-        Window findWindow = getMainSession().openWindow(config.getFindUrl());
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
 
         try {
-            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+            FindPage findPage = findApp.elementFactory().getFindPage();
             findPage.search("This woman's work");
 
             verifyIndexOrDefault(findPage.indexesTree().privateIndexes());

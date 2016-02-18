@@ -74,8 +74,8 @@ public class FindITCase extends HostedTestBase {
         keywordService = getApplication().keywordService();
 
         searchWindow = getMainSession().getActiveWindow();
-        findWindow = getMainSession().openWindow(config.getFindUrl());
-        findApp = new HSODFind(findWindow);
+        findApp = new HSODFind();
+        findWindow = launchInNewWindow(findApp);
         findPage = findApp.elementFactory().getFindPage();
         results = findPage.getResultsPage();
     }
@@ -639,7 +639,7 @@ public class FindITCase extends HostedTestBase {
         keywordService.addSynonymGroup(Language.ENGLISH, "cat", nonsense);
 
         /* need a separate session due to caching */
-        Session secondSession = getSessionRegistry().startSession(config.getFindUrl());
+        Session secondSession = launchInNewSession(new HSODFind());
         try {
             FindPage otherFindPage = initialiseSession(secondSession);
             otherFindPage.search("Cat");
@@ -674,7 +674,7 @@ public class FindITCase extends HostedTestBase {
         keywordService.addBlacklistTerms(Language.ENGLISH, "cat");
 
         /* need a separate session due to caching */
-        Session secondSession = getSessionRegistry().startSession(config.getFindUrl());
+        Session secondSession = launchInNewSession(new HSODFind());
         try {
             FindPage otherFindPage = initialiseSession(secondSession);
             otherFindPage.search("Cat");

@@ -188,7 +188,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
             secondDriver.navigate().to(getAppUrl().split("/searchoptimizer")[0]);
             verify401(secondDriver);
 
-            secondDriver.navigate().to(config.getFindUrl());
+            secondDriver.navigate().to(getConfig().getAppUrl(new HSODFind()));
             Waits.loadOrFadeWait();
             verifyThat(secondDriver.findElement(By.className("error-body")), containsText("401"));
         } finally {
@@ -265,7 +265,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
         user.authenticate(config.getWebDriverFactory(), emailHandler);
 
         logout();
-        getDriver().get(config.getFindUrl());
+        getDriver().get(getConfig().getAppUrl(new HSODFind()));
 
         HSODFindElementFactory findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
 

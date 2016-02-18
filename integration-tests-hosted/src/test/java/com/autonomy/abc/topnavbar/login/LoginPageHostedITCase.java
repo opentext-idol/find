@@ -30,6 +30,7 @@ import static org.openqa.selenium.lift.Matchers.displayed;
  * TODO Possibly make sure a gritter with 'Signed in' comes up, correct colour circle etc. May be difficult to do considering it occurs during tryLogIn()
  */
 public class LoginPageHostedITCase extends HostedTestBase {
+    private HSODFind findApp;
     private HSODFindElementFactory findFactory;
     private DevConsole devConsole;
     private DevConsoleElementFactory devFactory;
@@ -41,7 +42,8 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
+        findApp = new HSODFind(getMainSession().getActiveWindow());
+        findFactory = findApp.elementFactory();
         devConsole = new DevConsole(getMainSession().getActiveWindow());
         devFactory = devConsole.elementFactory();
     }
@@ -95,7 +97,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         User user = config.getDefaultUser();
         loginAs(user);
 
-        getDriver().navigate().to(config.getFindUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(findApp));
         verifyThat(findFactory.getFindPage(), displayed());
     }
 
@@ -103,7 +105,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLoginFindToSearchOptimizer(){
         getElementFactory().getLoginPage();
 
-        getDriver().navigate().to(config.getFindUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(findApp));
         loginTo(findFactory.getLoginPage(), getDriver(), config.getDefaultUser());
 
         getDriver().navigate().to(getAppUrl());
@@ -116,7 +118,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
         logout();
 
-        getDriver().navigate().to(config.getFindUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(findApp));
         findFactory.getLoginPage();
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
@@ -146,7 +148,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLogOutFindToSearchOptimizer(){
         getElementFactory().getLoginPage();
 
-        getDriver().navigate().to(config.getFindUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(findApp));
         loginTo(findFactory.getLoginPage(), getDriver(), config.getDefaultUser());
 
         FindPage findPage = findFactory.getFindPage();

@@ -245,11 +245,12 @@ public class IndexesPageITCase extends HostedTestBase {
         indexService.setUpIndex(index);
 
         Window searchWindow = getMainSession().getActiveWindow();
-        Window findWindow = getMainSession().openWindow(config.getFindUrl());
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
 
         try {
             findWindow.activate();
-            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+            FindPage findPage = findApp.elementFactory().getFindPage();
 
             findPage.search("search");
             findPage.filterBy(new IndexFilter(index));

@@ -6,10 +6,12 @@ import com.autonomy.abc.framework.rules.StateHelperRule;
 import com.autonomy.abc.framework.rules.TestArtifactRule;
 import com.autonomy.abc.framework.statements.StatementArtifactHandler;
 import com.autonomy.abc.framework.statements.StatementLoggingHandler;
+import com.autonomy.abc.selenium.application.Application;
 import com.autonomy.abc.selenium.application.ApplicationType;
 import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
 import com.autonomy.abc.selenium.control.Session;
 import com.autonomy.abc.selenium.control.SessionRegistry;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.users.SSOFailureException;
 import com.autonomy.abc.selenium.users.User;
@@ -165,6 +167,20 @@ public abstract class ABCTestBase {
 			LOGGER.info("Login failed, redirecting to " + redirectUrl);
 			webDriver.get(redirectUrl);
 		}
+	}
+
+	protected Window launchInNewWindow(Application<?> newApp) {
+		String newUrl = config.getAppUrl(newApp);
+		Window window = getMainSession().openWindow(newUrl);
+		newApp.inWindow(window);
+		return window;
+	}
+
+	protected Session launchInNewSession(Application<?> newApp) {
+		String newUrl = config.getAppUrl(newApp);
+		Session session = getSessionRegistry().startSession(newUrl);
+		newApp.inWindow(session.getActiveWindow());
+		return session;
 	}
 
 	private String extractRedirectUrl(String fullUrl) {

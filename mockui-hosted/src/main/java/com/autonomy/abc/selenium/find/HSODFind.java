@@ -8,6 +8,9 @@ public class HSODFind implements Application<HSODFindElementFactory> {
     private Window window;
     private HSODFindElementFactory factory;
 
+    public HSODFind() {
+    }
+
     public HSODFind(Window window) {
         inWindow(window);
     }
