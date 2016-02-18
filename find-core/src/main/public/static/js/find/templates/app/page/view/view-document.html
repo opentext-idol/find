@@ -17,16 +17,18 @@
                     <% }); %>
 
                     <% _.each(model.get('fields'), function(field) { %>
-                        <tr>
-                            <th><%-field.displayName%></th>
-                            <td class="break-all">
-                                <ul class="list-unstyled">
-                                    <% _.each(field.values, function(value) { %>
-                                        <li><%-value%></li>
-                                    <% }); %>
-                                </ul>
-                            </td>
-                        </tr>
+                        <% if(field.displayName) { %>
+                            <tr>
+                                <th><%-field.displayName%></th>
+                                <td class="break-all">
+                                    <ul class="list-unstyled">
+                                        <% _.each(field.values, function(value) { %>
+                                            <li><%-value%></li>
+                                        <% }); %>
+                                    </ul>
+                                </td>
+                            </tr>
+                        <% } %>
                     <% }); %>
                 </tbody>
             </table>
