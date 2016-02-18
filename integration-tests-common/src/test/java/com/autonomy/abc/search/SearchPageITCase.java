@@ -1059,7 +1059,7 @@ public class SearchPageITCase extends ABCTestBase {
 	public void testIndexSelection() {
 		Index firstIndex;
 		Index secondIndex;
-		if (config.getType().equals(ApplicationType.ON_PREM)) {
+		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
 			firstIndex = new Index("wikienglish");
 			secondIndex = new Index("wookiepedia");
 		} else {

@@ -75,7 +75,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
 
     @Test
     public void testEditUserPassword() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
+        assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
         User user = singleSignUp();
 
         Editable passwordBox = usersPage.passwordBoxFor(user);
@@ -129,7 +129,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
         Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
 
         logoutAndNavigateToWebApp();
-        loginAs(config.getDefaultUser());
+        loginAs(getConfig().getDefaultUser());
         Waits.loadOrFadeWait();
         assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
 

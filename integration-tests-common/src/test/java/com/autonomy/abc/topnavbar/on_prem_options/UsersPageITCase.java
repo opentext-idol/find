@@ -78,7 +78,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 		verifyDuplicateError(newUserModal);
 
 		try {
-			usersPage.addNewUser(config.getNewUser("testAddDuplicateUser_james"), Role.USER);
+			usersPage.addNewUser(getConfig().getNewUser("testAddDuplicateUser_james"), Role.USER);
 		} catch (TimeoutException | UserNotCreatedException e) { /* Expected */}
 
 		verifyDuplicateError(newUserModal);
@@ -89,7 +89,7 @@ public class UsersPageITCase extends UsersPageTestBase {
 
 	private void verifyDuplicateError(ModalView newUserModal) {
 		String expectedError;
-		if (config.getType().equals(ApplicationType.HOSTED)) {
+		if (getConfig().getType().equals(ApplicationType.HOSTED)) {
 			expectedError = Errors.User.DUPLICATE_EMAIL;
 		} else {
 			expectedError = Errors.User.DUPLICATE_USER;

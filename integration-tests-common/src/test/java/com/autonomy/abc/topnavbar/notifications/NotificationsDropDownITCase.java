@@ -103,7 +103,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		final Window secondWindow = getMainSession().openWindow(getAppUrl());
 
 		secondWindow.activate();
-		SearchOptimizerApplication<?> appTwo = SearchOptimizerApplication.ofType(config.getType()).inWindow(secondWindow);
+		SearchOptimizerApplication<?> appTwo = SearchOptimizerApplication.ofType(getConfig().getType()).inWindow(secondWindow);
 		TopNavBar topNavBarWindowTwo = appTwo.elementFactory().getTopNavBar();
 
 		appTwo.keywordService().goToKeywords();

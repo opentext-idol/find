@@ -27,8 +27,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
-    protected final NewUser aNewUser = config.getNewUser("james");
-    protected final NewUser newUser2 = config.getNewUser("john");
+    protected final NewUser aNewUser = getConfig().getNewUser("james");
+    protected final NewUser newUser2 = getConfig().getNewUser("john");
     protected int defaultNumberOfUsers = (getConfig().getType() == ApplicationType.HOSTED) ? 0 : 1;
     protected UsersPage usersPage;
     protected UserService<?> userService;
@@ -64,7 +64,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
         assertThat(usersPage, modalIsDisplayed());
         final ModalView newUserModal = ModalView.getVisibleModalView(getDriver());
         User user = usersPage.addNewUser(aNewUser, Role.USER);
-        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
 //		assertThat(newUserModal, containsText("Done! User " + user.getUsername() + " successfully created"));
         verifyUserAdded(newUserModal, user);
         usersPage.closeModal();
@@ -76,7 +76,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
         assertThat(usersPage, modalIsDisplayed());
 
         User user = usersPage.addNewUser(newUser, Role.USER);
-        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
         usersPage.closeModal();
 
         try {

@@ -169,7 +169,7 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         KeywordService keywordService = getApplication().keywordService();
         UserService userService = getApplication().userService();
         Session secondSession = null;
-        SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) config.getUser("google").getAuthProvider());
+        SignupEmailHandler emailHandler = new GmailSignupEmailHandler((GoogleAuth) getConfig().getUser("google").getAuthProvider());
 
         HSODDevelopersPage hsoDevelopersPage = getApplication().switchTo(HSODDevelopersPage.class);
 
@@ -180,10 +180,10 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
         try {
             addKeywordsAndVerifyNotifications(keywordService, devUsername);
 
-            User user = userService.createNewUser(config.getNewUser("drake"), Role.ADMIN);
+            User user = userService.createNewUser(getConfig().getNewUser("drake"), Role.ADMIN);
 
             try {
-                user.authenticate(config.getWebDriverFactory(), emailHandler);
+                user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
             } catch (TimeoutException e) { /* User has likely already been authenticated recently, attempt to continue */ }
 
             secondSession = getSessionRegistry().startSession(getAppUrl());

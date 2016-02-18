@@ -16,14 +16,11 @@ import static org.junit.Assert.fail;
 @Ignore
 @RunWith(Parameterized.class)
 public abstract class ABCTestBase extends SeleniumTest<SearchOptimizerApplication<?>, SOElementFactory> {
-	protected final TestConfig config;
-
 	private User initialUser;
 	private User currentUser;
 
 	public ABCTestBase(final TestConfig config) {
 		super(config, SearchOptimizerApplication.ofType(config.getType()));
-		this.config = config;
 		this.initialUser = config.getDefaultUser();
 	}
 

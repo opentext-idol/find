@@ -211,7 +211,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         searchPage.waitForSearchLoadIndicatorToDisappear();
 
         verifyThat(searchPage.getTopPromotedLinkTitle(), is(promotedDocTitle));
-        if (config.getType().equals(ApplicationType.ON_PREM)) {
+        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
             verifyThat(searchPage.getTopPromotedSpotlightType(), is(spotlightType.getOption()));
         }
 
@@ -223,7 +223,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         Waits.loadOrFadeWait();
         verifyThat(searchPage, containsText(promotedDocTitle));
 
-        if (config.getType().equals(ApplicationType.ON_PREM)) {
+        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
             promotionsDetailPage = promotionService.goToDetails(searchTrigger);
             verifyThat(promotionsDetailPage, containsText("Spotlight for: " + searchTrigger));
             verifyThat(promotionsDetailPage.spotlightTypeDropdown().getValue(), is(spotlightType.getOption()));
@@ -237,13 +237,13 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
 
     @Test
     public void testAddSpotlightHotwire() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
+        assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
         addSpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "grapes");
     }
 
     @Test
     public void testAddSpotlightTopPromotions() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
+        assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
         addSpotlightPromotion(Promotion.SpotlightType.TOP_PROMOTIONS, "oranges");
     }
 
@@ -305,7 +305,7 @@ public class CreateNewPromotionsITCase extends ABCTestBase {
         wizard.getCurrentStep().apply();
         wizard.next();
         // TODO: refactor tests
-        if (config.getType() == ApplicationType.ON_PREM) {
+        if (getConfig().getType() == ApplicationType.ON_PREM) {
             verifyThat(createPromotionsPage.getCurrentStepTitle(), is(wizard.getCurrentStep().getTitle()));
             toggleAndCancel();
 

@@ -111,7 +111,7 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
         return mainSession.getDriver();
     }
 
-    public final TestConfig getConfig() {
+    protected final TestConfig getConfig() {
         return config;
     }
 
