@@ -1,6 +1,7 @@
 package com.autonomy.abc.selenium.control;
 
 import com.autonomy.abc.selenium.util.Factory;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
@@ -9,11 +10,13 @@ import java.util.List;
 
 public class SessionRegistry implements Iterable<Session> {
     private final Factory<? extends WebDriver> driverFactory;
+    private ParametrizedFactory<Session, Window> windowFactory;
     private final List<Session> sessions;
 
-    public SessionRegistry(Factory<? extends WebDriver> webDriverFactory) {
+    public SessionRegistry(Factory<? extends WebDriver> webDriverFactory, ParametrizedFactory<Session, Window> newWindowFactory) {
         driverFactory = webDriverFactory;
         sessions = new ArrayList<>();
+        windowFactory = newWindowFactory;
     }
 
     public Session startSession(String url) {
@@ -23,7 +26,7 @@ public class SessionRegistry implements Iterable<Session> {
     }
 
     public Session startSession() {
-        Session session = new Session(driverFactory.create());
+        Session session = new Session(driverFactory.create(), windowFactory);
         sessions.add(session);
         return session;
     }
