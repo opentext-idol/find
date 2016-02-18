@@ -8,14 +8,16 @@
 <% }); %>
 
 <% _.each(model.get('fields'), function(field) { %>
-  <tr>
-    <th class="font-bold"><%-field.displayName%></th>
-    <td class="break-all">
-      <ul class="list-unstyled m-b-nil">
-        <% _.each(field.values, function(value) { %>
-          <li><%-value%></li>
-        <% }); %>
-      </ul>
-    </td>
-  </tr>
+<% if (field.displayName) { %>
+    <tr>
+      <th class="font-bold"><%-field.displayName%></th>
+      <td class="break-all">
+        <ul class="list-unstyled m-b-nil">
+          <% _.each(field.values, function(value) { %>
+            <li><%-value%></li>
+          <% }); %>
+        </ul>
+      </td>
+    </tr>
+  <% } %>
 <% }); %>
