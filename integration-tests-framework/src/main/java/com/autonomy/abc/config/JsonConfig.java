@@ -6,6 +6,7 @@ import com.autonomy.abc.selenium.users.NewUser;
 import com.autonomy.abc.selenium.users.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openqa.selenium.Dimension;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-public class JsonConfig {
-
+class JsonConfig {
     private final AppConfig app;
     private final SeleniumConfig selenium;
     private final Map<String, User> users;
@@ -59,55 +59,59 @@ public class JsonConfig {
         }
     }
 
-    public static JsonConfig readFile(File jsonFile) throws IOException {
+    static JsonConfig readFile(File jsonFile) throws IOException {
         return (jsonFile == null) ? null : new JsonConfig(new ObjectMapper().readTree(jsonFile));
     }
 
-    public static JsonConfig fromURL(URL url) throws IOException {
+    static JsonConfig fromURL(URL url) throws IOException {
         return (url == null) ? null : new JsonConfig(new ObjectMapper().readTree(url));
     }
 
-    public JsonConfig overrideUsing(JsonConfig overrides) {
+    JsonConfig overrideUsing(JsonConfig overrides) {
         return (overrides == null) ? this : new JsonConfig(overrides, this);
     }
 
-    public URL getHubUrl() {
+    URL getHubUrl() {
         return this.selenium.url;
     }
 
-    public URL getWebappUrl() {
+    URL getWebappUrl() {
         return this.app.url;
     }
 
-    public URL getFindUrl() {
+    URL getFindUrl() {
         return this.app.findUrl;
     }
 
-    public URL getApiUrl() {
+    URL getApiUrl() {
         return this.app.apiUrl;
     }
 
-    public List<Browser> getBrowsers() {
+    List<Browser> getBrowsers() {
         return this.selenium.browsers;
     }
 
-    public User getUser(String name) {
+    Dimension getResolution() {
+        return this.selenium.resolution;
+    }
+
+    User getUser(String name) {
         return this.users.get(name);
     }
 
-    public NewUser getNewUser(String name) {
+    NewUser getNewUser(String name) {
         return this.newUsers.get(name);
     }
 
-    public NewUser generateRandomNewUser() {
+    NewUser generateRandomNewUser() {
         return parser.generateNewUser(UUID.randomUUID().toString().replaceAll("-", ""));
     }
 
-    public ApplicationType getAppType() {
+    ApplicationType getAppType() {
         return this.app.type;
     }
 
-    public static class AppConfig {
+    private static class AppConfig {
         private final ApplicationType type;
         private final URL url;
         private final URL findUrl;
@@ -138,35 +142,50 @@ public class JsonConfig {
 
     }
 
-    public static class SeleniumConfig {
+    private static class SeleniumConfig {
         private final URL url;
         private final List<Browser> browsers;
+        private final Dimension resolution;
 
         private SeleniumConfig(JsonNode node) throws MalformedURLException {
             url = getUrlOrNull(node.path("url"));
-            JsonNode browsersNode = node.path("browsers");
-            if (browsersNode.isMissingNode()) {
-                browsers = null;
-            } else {
-                browsers = new ArrayList<>();
-                for (JsonNode browserNode : browsersNode) {
-                    browsers.add(Browser.fromString(browserNode.asText()));
-                }
-            }
+            browsers = readBrowsers(node.path("browsers"));
+            resolution = readDimension(node.path("resolution"));
         }
 
         private SeleniumConfig(SeleniumConfig overrides, SeleniumConfig defaults) {
             url = override(defaults.url, overrides.url);
             browsers = override(defaults.browsers, overrides.browsers);
+            resolution = override(defaults.resolution, overrides.resolution);
         }
 
         private SeleniumConfig overrideUsing(SeleniumConfig overrides) {
             return overrides == null ? this : new SeleniumConfig(overrides, this);
         }
 
+        private List<Browser> readBrowsers(JsonNode browsersNode) {
+            if (browsersNode.isMissingNode()) {
+                return null;
+            }
+            List<Browser> browsers = new ArrayList<>();
+            for (JsonNode browserNode : browsersNode) {
+                browsers.add(Browser.fromString(browserNode.asText()));
+            }
+            return browsers;
+        }
+
+        private Dimension readDimension(JsonNode dimensionNode) {
+            if (dimensionNode.isMissingNode()) {
+                return null;
+            }
+            int width = dimensionNode.get(0).asInt();
+            int height = dimensionNode.get(1).asInt();
+            return new Dimension(width, height);
+        }
+
         @Override
         public String toString() {
-            return "{browsers=" + browsers + ", url=" + url + "}";
+            return "{browsers=" + browsers + ", url=" + url + ", resolution=" + resolution + "}";
         }
     }
 

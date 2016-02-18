@@ -54,7 +54,7 @@ public abstract class ABCTestBase {
 		this.application = SearchOptimizerApplication.ofType(config.getType());
 		this.initialUser = config.getDefaultUser();
 		this.initialUrl = config.getWebappUrl();
-		this.sessionRegistry = new SessionRegistry(config.getWebDriverFactory());
+		this.sessionRegistry = new SessionRegistry(config.getWebDriverFactory(), config.getWindowFactory());
 	}
 
 	@Parameterized.Parameters
@@ -86,7 +86,6 @@ public abstract class ABCTestBase {
 
 	private void goToInitialPage() {
 		getDriver().get(initialUrl);
-		getDriver().manage().window().maximize();
 	}
 
 	protected void postLogin() throws Exception {

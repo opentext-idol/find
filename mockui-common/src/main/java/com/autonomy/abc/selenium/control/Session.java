@@ -1,34 +1,25 @@
 package com.autonomy.abc.selenium.control;
 
-import org.openqa.selenium.JavascriptExecutor;
+import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class Session implements Iterable<Window> {
     private WebDriver driver;
+    private ParametrizedFactory<Session, Window> windowFactory;
 
-    Session(WebDriver webDriver) {
+    Session(WebDriver webDriver, ParametrizedFactory<Session, Window> newWindowFactory) {
         driver = webDriver;
+        windowFactory = newWindowFactory;
     }
 
     public Window openWindow(String url) {
-        String newHandle = createDriverWindow();
-        Window newWindow = registerWindow(newHandle);
+        Window newWindow = windowFactory.create(this);
         newWindow.goTo(url);
-        driver.manage().window().maximize();
         return newWindow;
-    }
-
-    private String createDriverWindow() {
-        Set<String> oldHandles = driver.getWindowHandles();
-        ((JavascriptExecutor) driver).executeScript("window.open('', '_blank', 'width=100');");
-        Set<String> newHandles = driver.getWindowHandles();
-        newHandles.removeAll(oldHandles);
-        return newHandles.toArray(new String[1])[0];
     }
 
     public WebDriver getDriver() {
@@ -45,7 +36,7 @@ public class Session implements Iterable<Window> {
         return registerWindow(currentHandle);
     }
 
-    private Window registerWindow(String handle) {
+    public Window registerWindow(String handle) {
         return new Window(this, handle);
     }
 
