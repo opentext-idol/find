@@ -32,9 +32,6 @@ define([
         documentTemplate: _.template(documentTemplate),
         mediaTemplate: _.template(mediaTemplate),
 
-        //to be overridden
-        generateDetailRoute: null,
-
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
             'click .close-preview-mode': function() {
@@ -103,7 +100,7 @@ define([
         },
 
         openDocumentDetail: function () {
-            vent.navigate(this.generateDetailRoute());
+            vent.navigateToDetailRoute(this.model);
         }
     });
 

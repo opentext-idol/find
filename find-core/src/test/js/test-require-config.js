@@ -17,6 +17,7 @@ require.config({
         '*': {
             'find/app/configuration': 'mock/configuration',
             'find/app/router': 'mock/router',
+            'find/app/vent': 'mock/vent',
             'find/app/util/database-name-resolver': 'mock/database-name-resolver',
             'find/lib/backbone/backbone-extensions': 'backbone',
             'find/app/util/confirm-view': 'mock/util/confirm-view'

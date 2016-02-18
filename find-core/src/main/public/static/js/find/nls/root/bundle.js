@@ -74,7 +74,7 @@ define([
         'search.document.date': 'Date',
         'search.document.dateCreated': 'Date Created',
         'search.document.dateModified': 'Date Modified',
-        'search.document.detail.back': 'Back',
+        'search.document.detail.backToSearch': 'Back to search',
         'search.document.detail.open': 'Open',
         'search.document.detail.openOriginal': 'Open Original',
         'search.document.detail.tabs.authors': 'Authors',
