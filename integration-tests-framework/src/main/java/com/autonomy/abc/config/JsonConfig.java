@@ -130,7 +130,7 @@ class JsonConfig {
             appNode = node;
             String typeString = node.path("type").asText();
             type = (typeString.isEmpty() ? null : ApplicationType.fromString(typeString));
-            url = getUrlOrNull(node.path("url"));
+            url = getUrlOrNull(node.path("search"));
             findUrl = getUrlOrNull(node.path("find"));
             apiUrl = getUrlOrNull(node.path("api"));
         }
