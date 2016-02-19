@@ -74,6 +74,7 @@ public abstract class ABCTestBase {
 			.around(new KnownBugRule());
 
 	private void initialiseTest() {
+		LOGGER.info("Starting " + testState.getTestName());
 		LOGGER.info(config.toString());
 
 		mainSession = sessionRegistry.startSession();
