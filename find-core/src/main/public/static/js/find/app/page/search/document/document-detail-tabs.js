@@ -8,19 +8,14 @@ define([
     'i18n!find/nls/bundle',
     'find/app/page/search/document/tab-content-view',
     'find/app/page/search/document/authors-tab',
-    'find/app/page/search/document/similar-documents-tab'
-], function(Backbone, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab) {
+    'find/app/page/search/document/similar-documents-tab',
+    'find/app/page/search/document/metadata-tab'
+], function(Backbone, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab, MetadataTab) {
     'use strict';
-
-    var MetaDataTabContent = Backbone.View.extend({
-        render: function () {
-            this.$el.html('metadata');
-        }
-    });
 
     return [
         {
-            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: MetaDataTabContent}),
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: MetadataTab}),
 
             title: i18n['search.document.detail.tabs.metadata'],
 

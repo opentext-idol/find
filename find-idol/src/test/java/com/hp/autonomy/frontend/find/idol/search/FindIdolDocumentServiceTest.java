@@ -14,6 +14,7 @@ import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentServiceTest;
 import com.hp.autonomy.types.idol.QueryResponseData;
+import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -40,7 +41,7 @@ public class FindIdolDocumentServiceTest extends IdolDocumentServiceTest {
         when(qmsAciService.executeAction(anySetOf(AciParameter.class), any(Processor.class))).thenThrow(blacklistError).thenReturn(responseData);
 
         idolDocumentService.queryTextIndex(mockQueryParams());
-        verify(queryResponseParser).parseQueryResults(Matchers.<AciSearchRequest<String>>any(), any(AciParameters.class), eq(responseData), any(IdolDocumentService.QueryExecutor.class));
+        verify(queryResponseParser).parseQueryResults(Matchers.<AciSearchRequest<String>>any(), any(AciParameters.class), eq(responseData), eq(PrintParam.Fields), any(IdolDocumentService.QueryExecutor.class));
     }
 
     @Test(expected = AciErrorException.class)
