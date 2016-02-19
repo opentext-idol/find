@@ -50,6 +50,7 @@ public class SavedQueryServiceImpl implements SavedQueryService {
             existing.setRelatedConcepts(query.getRelatedConcepts());
             existing.setQueryText(query.getQueryText());
             existing.setTitle(query.getTitle());
+            existing.setDateNewDocsLastFetched(query.getDateNewDocsLastFetched());
             return savedQueryRepository.save(existing);
         }
     }

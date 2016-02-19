@@ -2,6 +2,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import lombok.*;
@@ -44,6 +45,7 @@ public class SavedSnapshot extends SavedSearch {
     @NoArgsConstructor
     @Setter
     @Accessors(chain = true)
+    @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder extends SavedSearch.Builder<SavedSnapshot> {
         private List<String> stateToken;
         private Long resultCount;

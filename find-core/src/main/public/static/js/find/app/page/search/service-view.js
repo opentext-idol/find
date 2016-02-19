@@ -81,6 +81,27 @@ define([
                 this.queryState.selectedParametricValues.reset();
             });
 
+            // There are 2 conditions where we want to reset the date we last fetched new docs on the date filter model
+
+            // Either:
+            //      We have a change in the query model that is not related to the date filters
+            this.listenTo(this.queryModel, 'change', function(model) {
+                if(!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
+                    this.queryState.datesFilterModel.resetDateLastFetched();
+                }
+            });
+
+            // Or:
+            //      We have a change in the selected date filter (but not to NEW or from NEW to null)
+            this.listenTo(this.queryState.datesFilterModel, 'change:dateRange', function(model, value) {
+                var changeToNewDocFilter = value === DatesFilterModel.DateRange.NEW;
+                var removeNewDocFilter = !value && model.previous('dateRange') === DatesFilterModel.DateRange.NEW;
+
+                if(!changeToNewDocFilter && !removeNewDocFilter) {
+                    this.queryState.datesFilterModel.resetDateLastFetched();
+                }
+            });
+
             this.filtersCollection = new this.SearchFiltersCollection([], {
                 queryState: this.queryState,
                 indexesCollection: this.indexesCollection
@@ -172,8 +193,8 @@ define([
             });
 
             this.dateView = new DateView({
-                queryModel: this.queryModel,
-                datesFilterModel: this.queryState.datesFilterModel
+                datesFilterModel: this.queryState.datesFilterModel,
+                savedSearchModel: this.savedSearchModel
             });
 
             //Right Collapsed View
