@@ -28,18 +28,18 @@ define([
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
-
-            if(this.indexesCollection.length) {
-                this.getSimilarDocuments();
-            } else {
-                this.listenTo(this.indexesCollection, 'sync', this.getSimilarDocuments);
-            }
         },
 
         render: function() {
             this.$el.html(this.template({
                 i18n:i18n
             }));
+
+            if(this.indexesCollection.length) {
+                this.getSimilarDocuments();
+            } else {
+                this.listenTo(this.indexesCollection, 'sync', this.getSimilarDocuments);
+            }
         },
 
         getSimilarDocuments: function() {
