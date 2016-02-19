@@ -29,6 +29,7 @@ public class TestConfig {
 	// system property set in the POM
 	private final static boolean MAVEN = System.getProperty("com.autonomy.mavenFlag") != null;
 	private final static Logger LOGGER = LoggerFactory.getLogger(TestConfig.class);
+	private final static int DEFAULT_TIMEOUT = 10;
 
 	private final JsonConfig jsonConfig;
 	private final int index;
@@ -168,6 +169,14 @@ public class TestConfig {
 
 	Dimension getResolution() {
 		return jsonConfig.getResolution();
+	}
+
+	public int getTimeout() {
+		int timeout = jsonConfig.getTimeout();
+		if (timeout >= 0) {
+			return timeout;
+		}
+		return DEFAULT_TIMEOUT;
 	}
 }
 

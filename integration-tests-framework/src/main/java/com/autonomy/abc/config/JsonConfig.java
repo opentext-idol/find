@@ -75,6 +75,14 @@ class JsonConfig {
         return this.selenium.resolution;
     }
 
+    /**
+     * How long to implicitly wait
+     * @return timeout, in seconds, or -1 if not set
+     */
+    int getTimeout() {
+        return this.selenium.timeout;
+    }
+
     User getUser(String name) {
         return this.users.get(name);
     }
@@ -140,17 +148,20 @@ class JsonConfig {
         private final URL url;
         private final List<Browser> browsers;
         private final Dimension resolution;
+        private final int timeout;
 
         private SeleniumConfig(JsonNode node) throws MalformedURLException {
             url = getUrlOrNull(node.path("url"));
             browsers = readBrowsers(node.path("browsers"));
             resolution = readDimension(node.path("resolution"));
+            timeout = node.path("timeout").asInt(-1);
         }
 
         private SeleniumConfig(SeleniumConfig overrides, SeleniumConfig defaults) {
             url = override(defaults.url, overrides.url);
             browsers = override(defaults.browsers, overrides.browsers);
             resolution = override(defaults.resolution, overrides.resolution);
+            timeout = (overrides.timeout > 0) ? overrides.timeout : defaults.timeout;
         }
 
         private SeleniumConfig overrideUsing(SeleniumConfig overrides) {
@@ -179,7 +190,7 @@ class JsonConfig {
 
         @Override
         public String toString() {
-            return "{browsers=" + browsers + ", url=" + url + ", resolution=" + resolution + "}";
+            return "{browsers=" + browsers + ", url=" + url + ", resolution=" + resolution + ", timeout=" + timeout + "}";
         }
     }
 

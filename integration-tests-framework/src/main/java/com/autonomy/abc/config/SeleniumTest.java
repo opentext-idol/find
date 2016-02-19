@@ -77,6 +77,7 @@ public abstract class SeleniumTest<A extends Application<? extends F>, F extends
     }
 
     private void initialiseTest() {
+        LOGGER.info("Starting " + testState.getTestName());
         LOGGER.info(config.toString());
 
         mainSession = getSessionRegistry().startSession();

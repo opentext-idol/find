@@ -56,6 +56,10 @@ public class TestState {
         return timestamp;
     }
 
+    public String getTestName() {
+        return test.getClass().getSimpleName() + "#" + method.getMethodName();
+    }
+
     public void throwIfFailed() throws AssertionError {
         if (assertionErrors.size() > 0) {
             throw new AssertionError(assertionErrors.size() + " verifications failed");
