@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.keywords;
 
+import com.autonomy.abc.selenium.element.LabelBox;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
@@ -68,8 +69,7 @@ public abstract class KeywordsBase extends AppElement implements AppPage {
 	}
 
 	public void deleteKeyword(final String keyword) {
-		findElement(By.cssSelector("[data-term='" + keyword + "'] .remove-keyword")).click();
-		waitForRefreshIconToDisappear();
+		new LabelBox(findElement(By.cssSelector("[data-term='" + keyword + "']")), getDriver()).removeAndWait();
 	}
 
 	public WebElement getSynonymIcon(final String synonym){
