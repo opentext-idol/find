@@ -117,7 +117,7 @@ define([
                 $tabContentContainer.append(tab.view.$el);
             }, this);
 
-            this.tabs[0].view.render();
+            if (this.tabs.length !== 0) this.tabs[0].view.render();
         }
     });
 });
