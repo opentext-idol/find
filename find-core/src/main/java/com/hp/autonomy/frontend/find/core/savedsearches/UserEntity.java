@@ -45,7 +45,7 @@ public class UserEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<SavedSearch> searches;
+    private Set<SavedSearch<?>> searches;
 
     public interface Table {
         String NAME = "users";

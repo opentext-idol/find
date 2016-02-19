@@ -23,11 +23,13 @@ import javax.persistence.Entity;
 @EqualsAndHashCode(callSuper = true)
 @JsonDeserialize(builder = SavedQuery.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SavedQuery extends SavedSearch {
-
+public class SavedQuery extends SavedSearch<SavedQuery> {
     private SavedQuery(final Builder builder) {
         super(builder);
     }
+
+    @Override
+    protected void mergeInternal(final SavedQuery other) {}
 
     @NoArgsConstructor
     @Setter

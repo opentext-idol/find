@@ -52,7 +52,7 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
-public abstract class SavedSearch {
+public abstract class SavedSearch<T extends SavedSearch<T>> {
     public static final String JADIRA_TYPE_NAME = "jadira";
 
     @Id
@@ -126,6 +126,29 @@ public abstract class SavedSearch {
         active = builder.active;
     }
 
+    /**
+     * Merge client-mutable SavedSearch-implementation specific fields from the other search into this one.
+     */
+    protected abstract void mergeInternal(T other);
+
+    /**
+     * Merge client-mutable fields from the other search into this one.
+     */
+    public void merge(final T other) {
+        if (other != null) {
+            mergeInternal(other);
+
+            title = other.getTitle() == null ? title : other.getTitle();
+            queryText = other.getQueryText() == null ? queryText : other.getQueryText();
+            minDate = other.getMinDate() == null ? minDate : other.getMinDate();
+            maxDate = other.getMaxDate() == null ? maxDate : other.getMaxDate();
+
+            indexes = other.getIndexes() == null ? indexes : other.getIndexes();
+            parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
+            relatedConcepts = other.getRelatedConcepts() == null ? relatedConcepts : other.getRelatedConcepts();
+        }
+    }
+
     // WARNING: This logic is duplicated in the client-side QueryTextModel
     public String toQueryText() {
         if (CollectionUtils.isEmpty(relatedConcepts)) {
@@ -180,7 +203,7 @@ public abstract class SavedSearch {
 
     @Getter
     @NoArgsConstructor
-    public static abstract class Builder<T extends SavedSearch> {
+    public static abstract class Builder<T extends SavedSearch<T>> {
         private Long id;
         private String title = "";
         private String queryText = "";
@@ -193,7 +216,7 @@ public abstract class SavedSearch {
         private DateTime dateModified;
         private Boolean active = true;
 
-        public Builder(final SavedSearch search) {
+        public Builder(final SavedSearch<T> search) {
             id = search.id;
             title = search.title;
             queryText = search.queryText;

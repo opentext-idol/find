@@ -5,16 +5,26 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchService;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.stereotype.Service;
+
 import java.util.Set;
 
-public interface SavedQueryService {
+@Service
+public class SavedQueryService extends AbstractSavedSearchService<SavedQuery> {
+    private final SavedQueryRepository savedQueryRepository;
 
-    Set<SavedQuery> getAll();
+    @Autowired
+    public SavedQueryService(final SavedQueryRepository savedQueryRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {
+        super(savedQueryRepository, userEntityAuditorAware);
+        this.savedQueryRepository = savedQueryRepository;
+    }
 
-    SavedQuery create(SavedQuery search);
-
-    SavedQuery update(SavedQuery search);
-
-    void deleteById(long id);
-
+    @Override
+    protected Set<SavedQuery> getAllForUserId(final Long userId) {
+        return savedQueryRepository.findByActiveTrueAndUser_UserId(userId);
+    }
 }

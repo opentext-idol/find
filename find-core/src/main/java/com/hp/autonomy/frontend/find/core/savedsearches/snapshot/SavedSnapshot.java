@@ -26,7 +26,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonDeserialize(builder = SavedSnapshot.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SavedSnapshot extends SavedSearch {
+public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = StoredStateTable.NAME, joinColumns = {
             @JoinColumn(name = "search_id")
@@ -41,6 +41,12 @@ public class SavedSnapshot extends SavedSearch {
         super(builder);
         stateTokens = builder.stateToken;
         resultCount = builder.resultCount;
+    }
+
+    @Override
+    protected void mergeInternal(final SavedSnapshot other) {
+        stateTokens = other.getStateTokens() == null ? stateTokens : other.getStateTokens();
+        resultCount = other.getResultCount() == null ? resultCount : other.getResultCount();
     }
 
     @NoArgsConstructor
