@@ -17,6 +17,10 @@ define([
                 response.date = moment(response.date);
             }
 
+            response.contentType = response.fieldMap['contentType'];
+            response.url = response.fieldMap['url'];
+            response.offset = response.fieldMap['offset'];
+
             response.fields = _.map(response.fieldMap, function (value) {
                 if (value.type === 'DATE') {
                     value.values = _.map(value.values, function(value) {

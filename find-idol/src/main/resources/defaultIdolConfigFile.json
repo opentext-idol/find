@@ -3,7 +3,7 @@
     "method": "autonomy",
     "community": {
       "protocol": "HTTP",
-      "host": "find-backend",
+      "host": "iso-backend",
       "port": 9030,
       "productType": [
         "UASERVER",
@@ -15,7 +15,7 @@
   },
   "content": {
     "protocol": "HTTP",
-    "host": "find-idol",
+    "host": "iso-idol",
     "port": 9000,
     "productType": [
       "AXE",
@@ -26,7 +26,7 @@
   "queryManipulation": {
     "server": {
       "protocol": "HTTP",
-      "host": "find-idol",
+      "host": "iso-idol",
       "port": 16000,
       "productType": [
         "QMS",
@@ -41,7 +41,7 @@
   },
   "view": {
     "protocol": "HTTP",
-    "host": "find-idol",
+    "host": "iso-idol",
     "port": 9080,
     "productType": [
       "VIEW",
@@ -51,49 +51,42 @@
     "referenceField": "DREREFERENCE"
   },
   "fieldsInfo": {
-    "fieldAssociations": {
-      "mediaContentType": "AU_REPOSITORY_METADATA_TYPE_STRING",
-      "mediaUrl": "AU_REPOSITORY_METADATA_URL_FILE_STRING",
-      "mediaOffset": "offset",
-      "mmapUrl": "HPSW_APP_NOINDEX_MMAPPROXY",
-      "thumbnail": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+    "contentType": {
+      "names": [
+        "AU_REPOSITORY_METADATA_TYPE_STRING"
+      ]
     },
-    "customFields": [
-      {
-        "name": "AU_REPOSITORY_METADATA_TYPE_STRING",
-        "displayName": "Content Type"
-      },
-      {
-        "name": "AU_REPOSITORY_METADATA_URL_FILE_STRING",
-        "displayName": "Url"
-      },
-      {
-        "name": "offset"
-      },
-      {
-        "name": "HPSW_APP_NOINDEX_MMAPPROXY"
-      },
-      {
-        "name": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
-      },
-      {
-        "name": "AU_DOCUMENT_METADATA_AUTHOR_STRING",
-        "displayName": "Author"
-      },
-      {
-        "name": "AU_REPOSITORY_METADATA_CATEGORY_STRING",
-        "displayName": "Category"
-      },
-      {
-        "name": "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS",
-        "displayName": "Creation Date",
-        "type": "Date"
-      },
-      {
-        "name": "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS",
-        "displayName": "Last Modified Date",
-        "type": "Date"
-      }
-    ]
+    "url": {
+      "names": [
+        "AU_REPOSITORY_METADATA_URL_FILE_STRING"
+      ]
+    },
+    "offset": {
+      "names": [
+        "offset"
+      ]
+    },
+    "authors": {
+      "names": [
+        "AU_DOCUMENT_METADATA_AUTHOR_STRING"
+      ]
+    },
+    "categories": {
+      "names": [
+        "AU_REPOSITORY_METADATA_CATEGORY_STRING"
+      ]
+    },
+    "dateCreated": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "dateModified": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    }
   }
 }
