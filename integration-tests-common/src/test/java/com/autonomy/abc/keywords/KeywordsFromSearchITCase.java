@@ -241,7 +241,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
     @RelatedTo({"CSA-1724", "CSA-1893"})
     public void testNoBlacklistLinkForBlacklistedSearch() throws InterruptedException {
         String blacklistMessage = Errors.Search.BLACKLIST;
-        if (config.getType().equals(ApplicationType.HOSTED)) {
+        if (getConfig().getType().equals(ApplicationType.HOSTED)) {
             blacklistMessage = Errors.Search.NO_RESULTS;
         }
 
@@ -278,7 +278,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         assertThat("link to blacklist or create synonyms not present", searchPage,
                 not(containsText("You can create synonyms or blacklist these search terms")));
 
-        if (config.getType().equals(ApplicationType.ON_PREM)) {
+        if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
             searchPage.selectLanguage(Language.ENGLISH);
             searchPage.waitForSynonymsLoadingIndicatorToDisappear();
 

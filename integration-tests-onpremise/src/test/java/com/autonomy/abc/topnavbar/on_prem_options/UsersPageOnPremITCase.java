@@ -36,7 +36,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     public void testAnyUserCanNotAccessConfigPage() {
         signUpAndLoginAs(aNewUser);
 
-        String baseUrl = config.getWebappUrl();
+        String baseUrl = getAppUrl();
         baseUrl = baseUrl.replace("/p/","/config");
         getDriver().get(baseUrl);
         Waits.loadOrFadeWait();
@@ -47,12 +47,12 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
     public void testUserCannotAccessUsersPageOrSettingsPage() {
         signUpAndLoginAs(aNewUser);
 
-        getDriver().get(config.getWebappUrl() + "settings");
+        getDriver().get(getAppUrl() + "settings");
         Waits.loadOrFadeWait();
         assertThat(getDriver().getCurrentUrl(), not(containsString("settings")));
         assertThat(getDriver().getCurrentUrl(), containsString("overview"));
 
-        getDriver().get(config.getWebappUrl() + "users");
+        getDriver().get(getAppUrl() + "users");
         Waits.loadOrFadeWait();
         assertThat(getDriver().getCurrentUrl(), not(containsString("users")));
         assertThat(getDriver().getCurrentUrl(), containsString("overview"));
@@ -75,7 +75,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
 
     @Test
     public void testEditUserPassword() {
-        assumeThat(config.getType(), is(ApplicationType.ON_PREM));
+        assumeThat(getConfig().getType(), is(ApplicationType.ON_PREM));
         User user = singleSignUp();
 
         Editable passwordBox = usersPage.passwordBoxFor(user);
@@ -129,7 +129,7 @@ public class UsersPageOnPremITCase extends UsersPageTestBase<NewUser> {
         Assert.assertTrue(getDriver().findElement(By.cssSelector("body")).getAttribute("data-status").contains("403"));
 
         logoutAndNavigateToWebApp();
-        loginAs(config.getDefaultUser());
+        loginAs(getConfig().getDefaultUser());
         Waits.loadOrFadeWait();
         assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
 

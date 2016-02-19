@@ -22,6 +22,11 @@ public class DevConsole implements Application<DevConsoleElementFactory> {
     }
 
     @Override
+    public String getName() {
+        return "DevConsole";
+    }
+
+    @Override
     public DevConsole inWindow(Window window) {
         this.factory = new DevConsoleElementFactory(window.getSession().getDriver());
         return this;

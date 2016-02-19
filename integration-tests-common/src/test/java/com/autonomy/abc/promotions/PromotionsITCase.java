@@ -139,7 +139,7 @@ public class PromotionsITCase extends ABCTestBase {
 	@Test
 	public void testEditPromotionType() {
 		// cannot edit promotion type for hosted
-		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
+		assumeThat(getConfig().getType(), equalTo(ApplicationType.ON_PREM));
 		setUpCarsPromotion(1);
 		verifyThat(promotionsDetailPage.getPromotionType(), is("Sponsored"));
 
@@ -216,7 +216,7 @@ public class PromotionsITCase extends ABCTestBase {
 	public void testPromotionFilter() throws InterruptedException {
 		// hosted does not have foreign content indexed
 		SearchQuery[] searches;
-		if (config.getType().equals(ApplicationType.ON_PREM)) {
+		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
 			searches = new SearchQuery[]{
 					getQuery("chien", Language.FRENCH),
 					getQuery("الكلب", Language.ARABIC),
@@ -355,7 +355,7 @@ public class PromotionsITCase extends ABCTestBase {
 	@Test
 	@RelatedTo("IOD-4827")
 	public void testPromotionLanguages() {
-		assumeThat(config.getType(), equalTo(ApplicationType.ON_PREM));
+		assumeThat(getConfig().getType(), equalTo(ApplicationType.ON_PREM));
 		Language[] languages = {Language.FRENCH, Language.SWAHILI, Language.AFRIKAANS};
 		//Afrikaans dog thing isn't actually a dog but it wasn't working so yolo
 		String[] searchTerms = {"chien", "mbwa", "bergaalwyn"};

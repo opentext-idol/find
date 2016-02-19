@@ -478,11 +478,11 @@ public class KeywordsPageITCase extends ABCTestBase {
 	@Test
 	@KnownBug("CCUK-3245")
 	public void testAddingForbiddenKeywordsFromUrl() {
-		String blacklistUrl = getConfig().getWebappUrl() + "/keywords/create/blacklisted/English/";
-		String synonymsUrl = getConfig().getWebappUrl() + "/keywords/create/synonyms/English/";
+		String blacklistUrl = getAppUrl() + "/keywords/create/blacklisted/English/";
+		String synonymsUrl = getAppUrl() + "/keywords/create/synonyms/English/";
 		if (getConfig().getType().equals(ApplicationType.ON_PREM)) {
-			blacklistUrl = getConfig().getWebappUrl() + "keywords/create/blacklisted/englishUTF8/";
-			synonymsUrl = getConfig().getWebappUrl() + "keywords/create/synonyms/englishUTF8/";
+			blacklistUrl = getAppUrl() + "keywords/create/blacklisted/englishUTF8/";
+			synonymsUrl = getAppUrl() + "keywords/create/synonyms/englishUTF8/";
 		}
 		//TODO check that OR has been added in lower case?
 		for (final String forbidden : Arrays.asList("(", "\"", "OR")) {

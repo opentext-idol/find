@@ -146,10 +146,11 @@ public class IndexFieldsITCase extends HostedTestBase {
 
     private void verifyFind() {
         Window first = getMainSession().getActiveWindow();
-        Window second = getMainSession().openWindow(config.getFindUrl());
+        HSODFind findApp = new HSODFind();
+        Window second = launchInNewWindow(findApp);
         try {
             second.activate();
-            findPage = new HSODFind(second).elementFactory().getFindPage();
+            findPage = findApp.elementFactory().getFindPage();
 
             logFind("\"" + indexFieldValue + "\":" + indexFieldName);
             verifyFirstFindResult();

@@ -45,8 +45,9 @@ public class AnalyticsToFindITCase extends HostedTestBase {
         keywordService = getApplication().keywordService();
 
         searchWindow = getMainSession().getActiveWindow();
-        findWindow = getMainSession().openWindow(config.getFindUrl());
-        findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+        HSODFind findApp = new HSODFind();
+        findWindow = launchInNewWindow(findApp);
+        findPage = findApp.elementFactory().getFindPage();
         service = findPage.getResultsPage();
         searchWindow.activate();
     }

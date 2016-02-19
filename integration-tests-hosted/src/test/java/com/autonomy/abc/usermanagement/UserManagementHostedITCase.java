@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class UserManagementHostedITCase extends UsersPageTestBase {
+public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
 
     private HSODUserService userService;
     private HSODUsersPage usersPage;
@@ -136,10 +136,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testResettingAuthentication(){
-        NewUser newUser = config.generateNewUser();
+        NewUser newUser = getConfig().generateNewUser();
 
         final User user = userService.createNewUser(newUser,Role.USER);
-        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
 
@@ -157,24 +157,24 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
                 LOGGER.info("User reset their authentication notification shown");
             }
         }.start();
-        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
     }
 
     @Test
     public void testNoneUserConfirmation() {
-        NewUser somebody = config.generateNewUser();
+        NewUser somebody = getConfig().generateNewUser();
         User user = userService.createNewUser(somebody, Role.ADMIN);
         userService.changeRole(user, Role.NONE);
         verifyThat(usersPage.getStatusOf(user), is(Status.PENDING));
 
-        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
         waitForUserConfirmed(user);
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
 
         // TODO: use a single driver once 401 page has logout button
-        WebDriver secondDriver = config.getWebDriverFactory().create();
+        WebDriver secondDriver = getConfig().getWebDriverFactory().create();
         try {
-            secondDriver.get(config.getWebappUrl());
+            secondDriver.get(getAppUrl());
             LoginPage loginPage = new HSOLoginPage(secondDriver, new AbcHasLoggedIn(secondDriver));
 
             try {
@@ -185,10 +185,10 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
             verify401(secondDriver);
 
-            secondDriver.navigate().to(config.getWebappUrl().split("/searchoptimizer")[0]);
+            secondDriver.navigate().to(getAppUrl().split("/searchoptimizer")[0]);
             verify401(secondDriver);
 
-            secondDriver.navigate().to(config.getFindUrl());
+            secondDriver.navigate().to(getConfig().getAppUrl(new HSODFind()));
             Waits.loadOrFadeWait();
             verifyThat(secondDriver.findElement(By.className("error-body")), containsText("401"));
         } finally {
@@ -221,8 +221,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
 
     @Test
     public void testAddingAndAuthenticatingUser(){
-        final User user = userService.createNewUser(config.generateNewUser(), Role.USER);
-        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        final User user = userService.createNewUser(getConfig().generateNewUser(), Role.USER);
+        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
 
         waitForUserConfirmed(user);
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
@@ -261,11 +261,11 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     @Test
     @KnownBug("HOD-532")
     public void testLogOutAndLogInWithNewUser() {
-        final User user = userService.createNewUser(config.generateNewUser(), Role.ADMIN);
-        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        final User user = userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN);
+        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
 
         logout();
-        getDriver().get(config.getFindUrl());
+        getDriver().get(getConfig().getAppUrl(new HSODFind()));
 
         HSODFindElementFactory findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
 
@@ -288,8 +288,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase {
     @Test
     @KnownBug("HOD-532")
     public void testUserConfirmedWithoutRefreshing(){
-        final User user = userService.createNewUser(config.generateNewUser(), Role.USER);
-        user.authenticate(config.getWebDriverFactory(), emailHandler);
+        final User user = userService.createNewUser(getConfig().generateNewUser(), Role.USER);
+        user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
 
         new WebDriverWait(getDriver(), 30).pollingEvery(5,TimeUnit.SECONDS).until(new ExpectedCondition<Boolean>() {
             @Override

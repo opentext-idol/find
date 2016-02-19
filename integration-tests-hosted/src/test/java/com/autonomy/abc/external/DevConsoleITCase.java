@@ -29,7 +29,7 @@ public class DevConsoleITCase extends HostedTestBase {
 
         devFactory.getHSODPage().clickLogInButton();
 
-        loginTo(devFactory.getLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(devFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
         devConsole = devFactory.getHSODPage();
     }
 

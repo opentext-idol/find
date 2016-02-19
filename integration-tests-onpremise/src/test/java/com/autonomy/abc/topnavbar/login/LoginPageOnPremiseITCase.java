@@ -125,12 +125,12 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 
 	@Test
 	public void testLogoutNoAccessViaUrl() {
-		getDriver().get(config.getWebappUrl() + "overview");
+		getDriver().get(getAppUrl() + "overview");
 		Waits.loadOrFadeWait();
 		assertThat(getDriver().getCurrentUrl(), not(containsString("overview")));
 		assertThat(getDriver().getCurrentUrl(), containsString("login"));
 
-		getDriver().get(config.getWebappUrl() + "keywords");
+		getDriver().get(getAppUrl() + "keywords");
 		Waits.loadOrFadeWait();
 		assertThat(getDriver().getCurrentUrl(), not(containsString("keywords")));
 		assertThat(getDriver().getCurrentUrl(), containsString("login"));
@@ -138,7 +138,7 @@ public class LoginPageOnPremiseITCase extends ABCTestBase {
 
 	@Test
 	public void testDefaultLoginDisabled() {
-		getDriver().get(config.getWebappUrl().substring(0, config.getWebappUrl().length() - 2) + "login?defaultLogin=admin");
+		getDriver().get(getAppUrl().substring(0, getAppUrl().length() - 2) + "login?defaultLogin=admin");
 		Waits.loadOrFadeWait();
 		loginPage = getElementFactory().getLoginPage();
 		verifyThat(loginPage.usernameInput(), not(hasAttribute("readonly")));

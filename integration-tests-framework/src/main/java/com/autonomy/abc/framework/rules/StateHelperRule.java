@@ -1,6 +1,6 @@
 package com.autonomy.abc.framework.rules;
 
-import com.autonomy.abc.config.ABCTestBase;
+import com.autonomy.abc.config.SeleniumTest;
 import com.autonomy.abc.framework.TestState;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -8,7 +8,7 @@ import org.junit.runner.Description;
 public class StateHelperRule extends TestWatcher {
     private TestState testState = TestState.get();
 
-    public StateHelperRule(ABCTestBase test) {
+    public StateHelperRule(SeleniumTest<?, ?> test) {
         testState.setTest(test);
     }
 

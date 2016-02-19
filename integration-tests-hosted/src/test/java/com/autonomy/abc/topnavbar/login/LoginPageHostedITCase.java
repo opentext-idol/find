@@ -30,7 +30,9 @@ import static org.openqa.selenium.lift.Matchers.displayed;
  * TODO Possibly make sure a gritter with 'Signed in' comes up, correct colour circle etc. May be difficult to do considering it occurs during tryLogIn()
  */
 public class LoginPageHostedITCase extends HostedTestBase {
+    private HSODFind findApp;
     private HSODFindElementFactory findFactory;
+    private DevConsole devConsole;
     private DevConsoleElementFactory devFactory;
 
     public LoginPageHostedITCase(TestConfig config) {
@@ -40,8 +42,10 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     @Before
     public void setUp() {
-        findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
-        devFactory = new DevConsole(getMainSession().getActiveWindow()).elementFactory();
+        findApp = new HSODFind(getMainSession().getActiveWindow());
+        findFactory = findApp.elementFactory();
+        devConsole = new DevConsole(getMainSession().getActiveWindow());
+        devFactory = devConsole.elementFactory();
     }
 
     @Test   @Ignore("No account")
@@ -81,7 +85,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     private void testLogin(String account) {
         try {
-            loginAs(config.getUser(account));
+            loginAs(getConfig().getUser(account));
         } catch (Exception e) {
             throw new AssertionError("unable to log in as " + account, e);
         }
@@ -90,10 +94,10 @@ public class LoginPageHostedITCase extends HostedTestBase {
     // these tests check that logging in/out of one app also logs in/out of another
     @Test
     public void testLogInSearchOptimizerToFind(){
-        User user = config.getDefaultUser();
+        User user = getConfig().getDefaultUser();
         loginAs(user);
 
-        getDriver().navigate().to(config.getFindUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(findApp));
         verifyThat(findFactory.getFindPage(), displayed());
     }
 
@@ -101,20 +105,20 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLoginFindToSearchOptimizer(){
         getElementFactory().getLoginPage();
 
-        getDriver().navigate().to(config.getFindUrl());
-        loginTo(findFactory.getLoginPage(), getDriver(), config.getDefaultUser());
+        getDriver().navigate().to(getConfig().getAppUrl(findApp));
+        loginTo(findFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
 
-        getDriver().navigate().to(config.getWebappUrl());
+        getDriver().navigate().to(getAppUrl());
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
     }
 
     @Test
     public void testLogOutSearchOptimizerToFind(){
-        loginAs(config.getDefaultUser());
+        loginAs(getConfig().getDefaultUser());
 
         logout();
 
-        getDriver().navigate().to(config.getFindUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(findApp));
         findFactory.getLoginPage();
 
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
@@ -123,7 +127,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     @Test
     @RelatedTo("CSA-1674")
     public void testLogOutSearchOptimizerRedirect() {
-        loginAs(config.getDefaultUser());
+        loginAs(getConfig().getDefaultUser());
         logout();
 
         HSODLandingPage page = null;
@@ -144,8 +148,8 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLogOutFindToSearchOptimizer(){
         getElementFactory().getLoginPage();
 
-        getDriver().navigate().to(config.getFindUrl());
-        loginTo(findFactory.getLoginPage(), getDriver(), config.getDefaultUser());
+        getDriver().navigate().to(getConfig().getAppUrl(findApp));
+        loginTo(findFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
 
         FindPage findPage = findFactory.getFindPage();
         findPage.logOut();
@@ -153,7 +157,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
         findFactory.getLoginPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("find"));
 
-        getDriver().navigate().to(config.getWebappUrl());
+        getDriver().navigate().to(getAppUrl());
         getElementFactory().getLoginPage();
         verifyThat(getDriver().getCurrentUrl(), containsString("search"));
 
@@ -163,9 +167,9 @@ public class LoginPageHostedITCase extends HostedTestBase {
     @Test
     //Assume that logging into Search/Find are the same
     public void testLoginSSOtoDevConsole(){
-        loginAs(config.getDefaultUser());
+        loginAs(getConfig().getDefaultUser());
 
-        getDriver().navigate().to(config.getDevConsoleUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
         DevConsoleHomePage devConsole = devFactory.getHomePage();
 
         verifyThat(devConsole.loginButton(), not(displayed()));
@@ -173,37 +177,37 @@ public class LoginPageHostedITCase extends HostedTestBase {
 
     @Test
     public void testLoginDevConsoletoSSO() {
-        getDriver().navigate().to(config.getDevConsoleUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
 
         DevConsoleHomePage homePage = devFactory.getHomePage();
         homePage.loginButton().click();
 
-        loginTo(devFactory.getLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(devFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
 
-        getDriver().navigate().to(config.getWebappUrl());
+        getDriver().navigate().to(getAppUrl());
         verifyThat(getElementFactory().getPromotionsPage(), displayed());
     }
 
     @Test
     public void testLogoutSSOtoDevConsole() {
-        loginAs(config.getDefaultUser());
+        loginAs(getConfig().getDefaultUser());
 
         logout();
 
-        getDriver().navigate().to(config.getDevConsoleUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
         verifyThat(devFactory.getHomePage().loginButton(), displayed());
     }
 
     @Test
     public void testLogoutDevConsoletoSSO() {
-        getDriver().navigate().to(config.getDevConsoleUrl());
+        getDriver().navigate().to(getConfig().getAppUrl(devConsole));
 
         devFactory.getHomePage().loginButton().click();
-        loginTo(devFactory.getLoginPage(), getDriver(), config.getDefaultUser());
+        loginTo(devFactory.getLoginPage(), getDriver(), getConfig().getDefaultUser());
 
         logOutDevConsole();
 
-        getDriver().navigate().to(config.getWebappUrl());
+        getDriver().navigate().to(getAppUrl());
         verifyThat(getDriver().findElement(By.linkText("Google")), displayed());
     }
 

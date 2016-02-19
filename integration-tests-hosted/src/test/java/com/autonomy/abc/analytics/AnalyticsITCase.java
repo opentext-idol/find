@@ -134,11 +134,12 @@ public class AnalyticsITCase extends HostedTestBase {
 
     private void repeatedFind(String term, int repeats) {
         Window searchWindow = getMainSession().getActiveWindow();
-        Window findWindow = getMainSession().openWindow(config.getFindUrl());
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
 
         try {
             findWindow.activate();
-            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+            FindPage findPage = findApp.elementFactory().getFindPage();
             for (int unused = 0; unused < repeats; unused++) {
                 findPage.search(term);
                 findPage.search("");

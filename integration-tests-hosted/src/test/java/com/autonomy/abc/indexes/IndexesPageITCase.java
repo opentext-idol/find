@@ -15,7 +15,6 @@ import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
-import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
@@ -213,7 +212,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1735")
     public void testNavigatingToNonExistingIndexByURL(){
-        getDriver().get(config.getWebappUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
+        getDriver().get(getAppUrl().split("searchoptimizer")[0] + "search/#/index/doesntexistmate");
         verifyThat(PageUtil.getWrapperContent(getDriver()), containsText(Errors.Index.INVALID_INDEX));
     }
 
@@ -221,7 +220,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1886")
     @Ignore("Breaking too many tests")
     public void testDeletingDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(Index.DEFAULT, getCurrentUser(), config.getApiUrl());
+        indexService.deleteIndexViaAPICalls(Index.DEFAULT, getCurrentUser(), getConfig().getApiUrl());
 
         getDriver().navigate().refresh();
         indexesPage = getElementFactory().getIndexesPage();
@@ -232,7 +231,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @Ignore("Breaking too many tests")
     public void testDeletingSearchDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), getCurrentUser(), config.getApiUrl());
+        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), getCurrentUser(), getConfig().getApiUrl());
         getDriver().navigate().refresh();
 
         verifyThat(getApplication().switchTo(PromotionsPage.class), containsText("There are no promotions..."));
@@ -245,11 +244,12 @@ public class IndexesPageITCase extends HostedTestBase {
         indexService.setUpIndex(index);
 
         Window searchWindow = getMainSession().getActiveWindow();
-        Window findWindow = getMainSession().openWindow(config.getFindUrl());
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
 
         try {
             findWindow.activate();
-            FindPage findPage = new HSODFind(findWindow).elementFactory().getFindPage();
+            FindPage findPage = findApp.elementFactory().getFindPage();
 
             findPage.search("search");
             findPage.filterBy(new IndexFilter(index));

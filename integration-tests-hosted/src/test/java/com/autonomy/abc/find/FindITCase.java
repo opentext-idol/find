@@ -1,20 +1,20 @@
 package com.autonomy.abc.find;
 
-import com.autonomy.abc.config.HostedTestBase;
+import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
-import com.autonomy.abc.selenium.control.Session;
-import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.error.Errors;
-import com.autonomy.abc.selenium.find.*;
+import com.autonomy.abc.selenium.find.FindPage;
+import com.autonomy.abc.selenium.find.FindParametricCheckbox;
+import com.autonomy.abc.selenium.find.FindResultsPage;
+import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.indexes.Index;
-import com.autonomy.abc.selenium.keywords.KeywordFilter;
-import com.autonomy.abc.selenium.keywords.KeywordService;
-import com.autonomy.abc.selenium.language.Language;
-import com.autonomy.abc.selenium.promotions.*;
-import com.autonomy.abc.selenium.search.*;
+import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.ParametricFilter;
+import com.autonomy.abc.selenium.search.SearchResult;
+import com.autonomy.abc.selenium.search.StringDateFilter;
 import com.autonomy.abc.selenium.util.Locator;
 import com.autonomy.abc.selenium.util.Waits;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
@@ -49,20 +49,13 @@ import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
-public class FindITCase extends HostedTestBase {
+public class FindITCase extends FindTestBase {
     private FindPage findPage;
     private FindResultsPage results;
-    private final Matcher<String> noDocs = containsString(Errors.Search.NO_RESULTS);
-    private PromotionService<?> promotionService;
-    private KeywordService keywordService;
-    private Window searchWindow;
-    private Window findWindow;
-    private HSODFind findApp;
 
     public FindITCase(TestConfig config) {
         super(config);
@@ -70,13 +63,7 @@ public class FindITCase extends HostedTestBase {
 
     @Before
     public void setUp(){
-        promotionService = getApplication().promotionService();
-        keywordService = getApplication().keywordService();
-
-        searchWindow = getMainSession().getActiveWindow();
-        findWindow = getMainSession().openWindow(config.getFindUrl());
-        findApp = new HSODFind(findWindow);
-        findPage = findApp.elementFactory().getFindPage();
+        findPage = getElementFactory().getFindPage();
         results = findPage.getResultsPage();
     }
 
@@ -169,39 +156,6 @@ public class FindITCase extends HostedTestBase {
         assertThat(results.getText().toLowerCase(), not(containsString("error")));
     }
 
-    @Test
-    public void testSortByRelevance() {
-        searchWindow.activate();
-        getElementFactory().getTopNavBar().search("stars bbc");
-        SearchPage searchPage = getElementFactory().getSearchPage();
-        searchPage.sortBy(SearchBase.Sort.RELEVANCE);
-        List<String> searchTitles = searchPage.getSearchResultTitles(30);
-
-        findWindow.activate();
-        findPage.search("stars bbc");
-
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-
-        assertThat(results.getResultTitles(), is(searchTitles));
-    }
-
-    @Test
-    public void testSortByDate(){
-        searchWindow.activate();
-        getElementFactory().getTopNavBar().search("stars bbc");
-        SearchPage searchPage = getElementFactory().getSearchPage();
-        searchPage.sortBy(SearchBase.Sort.DATE);
-        List<String> searchTitles = searchPage.getSearchResultTitles(30);
-
-        findWindow.activate();
-        findPage.search("stars bbc");
-
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        findPage.sortBy(SearchBase.Sort.DATE);
-
-        assertThat(results.getResultTitles(), is(searchTitles));
-    }
-
     //TODO ALL RELATED CONCEPTS TESTS - probably better to check if text is not("Loading...") rather than not("")
     @Test
     public void testRelatedConceptsHasResults(){
@@ -232,143 +186,6 @@ public class FindITCase extends HostedTestBase {
         verifyThat(popover.getText(), not(containsString("QueryText-Placeholder")));
         verifyThat(popover.getText(), not(containsString(Errors.Search.RELATED_CONCEPTS)));
         results.unhover();
-    }
-
-    @Test
-    public void testPinToPosition(){
-        String search = "red";
-        String trigger = "mate";
-        PinToPositionPromotion promotion = new PinToPositionPromotion(1, trigger);
-
-        searchWindow.activate();
-
-        promotionService.deleteAll();
-
-        try {
-            String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
-
-            findWindow.activate();
-            findPage.search(trigger);
-            assertThat(results.searchResult(1).getTitleString(), is(documentTitle));
-        } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
-        }
-    }
-
-    @Test
-    public void testPinToPositionThree(){
-        String search = "red";
-        String trigger = "mate";
-        PinToPositionPromotion promotion = new PinToPositionPromotion(3, trigger);
-
-        searchWindow.activate();
-        promotionService.deleteAll();
-
-        try {
-            String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
-
-            findWindow.activate();
-            findPage.search(trigger);
-            assertThat(results.searchResult(3).getTitleString(), is(documentTitle));
-        } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
-        }
-    }
-
-    @Test
-    @KnownBug("CSA-2098")
-    public void testSpotlightPromotions(){
-        String search = "Proper";
-        String trigger = "Prim";
-        SpotlightPromotion spotlight = new SpotlightPromotion(trigger);
-
-        searchWindow.activate();
-        promotionService.deleteAll();
-
-        try {
-            List<String> createdPromotions = promotionService.setUpPromotion(spotlight, search, 3);
-
-            findWindow.activate();
-            findPage.search(trigger);
-
-            List<String> findPromotions = results.getPromotionsTitles();
-
-            assertThat(findPromotions, not(empty()));
-            assertThat(createdPromotions, everyItem(isIn(findPromotions)));
-
-            promotionShownCorrectly(results.promotions());
-        } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
-        }
-    }
-
-    @Test
-    @KnownBug("CSA-2098")
-    public void testStaticPromotions(){
-        String title = "TITLE";
-        String content = "CONTENT";
-        String trigger = "LOVE";
-        StaticPromotion promotion = new StaticPromotion(title, content, trigger);
-
-        searchWindow.activate();
-        promotionService.deleteAll();
-
-        try {
-            ((HSODPromotionService) promotionService).setUpStaticPromotion(promotion);
-
-            findWindow.activate();
-            findPage.search(trigger);
-            List<FindSearchResult> promotions = results.promotions();
-
-            assertThat(promotions.size(), is(1));
-            FindSearchResult staticPromotion = promotions.get(0);
-            assertThat(staticPromotion.getTitleString(), is(title));
-            assertThat(staticPromotion.getDescription(), containsString(content));
-            promotionShownCorrectly(staticPromotion);
-        } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
-        }
-    }
-
-    @Test
-    @KnownBug({"CSA-2058 - titles on Search Optimizer are blank this ruins the test trying to check Find against them","CSA-2067 - 'Rugby', for some reason, is hated by Find"})
-    public void testDynamicPromotions(){
-        int resultsToPromote = 13;
-        String search = "kittens";
-        String trigger = "Rugby";
-        DynamicPromotion dynamicPromotion = new DynamicPromotion(resultsToPromote, trigger);
-
-        searchWindow.activate();
-        promotionService.deleteAll();
-
-        try{
-            List<String> promotedDocumentTitles = promotionService.setUpPromotion(dynamicPromotion, search, resultsToPromote);
-
-            findWindow.activate();
-            findPage.search(trigger);
-
-            verifyThat(promotedDocumentTitles, everyItem(isIn(results.getPromotionsTitles())));
-
-            promotionShownCorrectly(results.promotions());
-        } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
-        }
-    }
-
-    private void promotionShownCorrectly (FindSearchResult promotion){
-        verifyThat(promotion.isPromoted(), is(true));
-        verifyThat(promotion.star(), displayed());
-    }
-
-    private void promotionShownCorrectly (List<FindSearchResult> promotions){
-        for(FindSearchResult promotion : promotions){
-            promotionShownCorrectly(promotion);
-        }
     }
 
     @Test
@@ -618,84 +435,6 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    public void testSynonyms() throws InterruptedException {
-        String nonsense = "iuhdsafsaubfdja";
-        searchWindow.activate();
-        keywordService.deleteAll(KeywordFilter.ALL);
-
-        Waits.loadOrFadeWait();
-
-        findWindow.activate();
-        findPage.search(nonsense);
-
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        assertThat(results.getText(), noDocs);
-
-        findPage.search("Cat");
-        results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-        assertThat(results.getText(), not(noDocs));
-
-        searchWindow.activate();
-        keywordService.addSynonymGroup(Language.ENGLISH, "cat", nonsense);
-
-        /* need a separate session due to caching */
-        Session secondSession = getSessionRegistry().startSession(config.getFindUrl());
-        try {
-            FindPage otherFindPage = initialiseSession(secondSession);
-            otherFindPage.search("Cat");
-            FindResultsPage otherResults = otherFindPage.getResultsPage();
-            String firstTitle = otherResults.searchResult(1).getTitleString();
-
-            otherFindPage.search(nonsense);
-            assertThat(otherResults.getText(), not(noDocs));
-            verifyThat(otherResults.searchResult(1).getTitleString(), is(firstTitle));
-
-        } finally {
-            getSessionRegistry().endSession(secondSession);
-        }
-    }
-
-    @Test
-    public void testBlacklist() throws InterruptedException {
-        searchWindow.activate();
-        keywordService.deleteAll(KeywordFilter.ALL);
-
-        Waits.loadOrFadeWait();
-
-        findWindow.activate();
-        findPage.search("Cat");
-
-        assertThat(results.getText(), not(noDocs));
-
-        findPage.search("Holder");
-
-        searchWindow.activate();
-
-        keywordService.addBlacklistTerms(Language.ENGLISH, "cat");
-
-        /* need a separate session due to caching */
-        Session secondSession = getSessionRegistry().startSession(config.getFindUrl());
-        try {
-            FindPage otherFindPage = initialiseSession(secondSession);
-            otherFindPage.search("Cat");
-
-            assertThat(otherFindPage.getResultsPage(), hasTextThat(noDocs));
-        } finally {
-            getSessionRegistry().endSession(secondSession);
-        }
-    }
-
-    // TODO: this does not belong here
-    private FindPage initialiseSession(Session session) {
-        HSODFindElementFactory otherElementFactory = new HSODFind(session.getActiveWindow()).elementFactory();
-        loginTo(otherElementFactory.getLoginPage(), session.getDriver(), config.getDefaultUser());
-        return otherElementFactory.getFindPage();
-    }
-
-    @Test   @Ignore("Not implemented")
-    public void testOverlappingSynonyms(){}
-
-    @Test
     public void testBooleanOperators(){
         String termOne = "musketeers";
         String termTwo = "\"dearly departed\"";
@@ -892,30 +631,6 @@ public class FindITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1630")
-    public void testAllPromotedDocumentsHaveTitles(){
-        searchWindow.activate();
-
-        PromotionService promotionService = getApplication().promotionService();
-
-        try {
-            promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"), "scg-2", 10);
-
-            findWindow.activate();
-
-            findPage.search("Tiger");
-
-            for(String title : results.getPromotionsTitles()){
-                assertThat(title, is(not("")));
-            }
-
-        } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
-        }
-    }
-
-    @Test
     @KnownBug({"CSA-1726", "CSA-1763"})
     public void testPublicIndexesVisibleNotSelectedByDefault(){
         findPage.search("Marina and the Diamonds");
@@ -1023,7 +738,7 @@ public class FindITCase extends HostedTestBase {
         Thread.sleep(5000);
 
         getDriver().navigate().refresh();
-        findPage = findApp.elementFactory().getFindPage();
+        findPage = getElementFactory().getFindPage();
 
         verifyThat(findPage.getSearchBoxTerm(), is(""));
         verifyThat("taken back to landing page after refresh", findPage.footerLogo(), displayed());

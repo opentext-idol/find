@@ -38,6 +38,11 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
         return elementFactory().loadPage(pageType);
     }
 
+    @Override
+    public String getName() {
+        return "Search";
+    }
+
     public static SearchOptimizerApplication<?> ofType(ApplicationType type) {
         return FACTORY_MAP.get(type).create();
     }
