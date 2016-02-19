@@ -17,7 +17,7 @@ public abstract class SearchResult {
     }
 
     public abstract WebElement title();
-    public abstract WebElement getIcon();
+    public abstract WebElement icon();
     public abstract DocumentViewer openDocumentPreview();
 
     public String getTitleString() {

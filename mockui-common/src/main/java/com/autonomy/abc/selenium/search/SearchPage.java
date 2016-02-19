@@ -233,10 +233,6 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 		return new WebDriverWait(getDriver(),20).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-pagename='search'] .search-results li:nth-child(" + resultNumber + ") label")));
 	}
 
-	public WebElement docLogo(final int searchResultNumber) {
-		return findElement(By.cssSelector(".search-results li:nth-child(" + String.valueOf(searchResultNumber) + ") .fa-file-o"));
-	}
-
 	public int countPinToPositionLabels() {
 		return findElements(By.cssSelector(".injected-promotion .fa-thumb-tack")).size();
 	}
@@ -327,13 +323,5 @@ public abstract class SearchPage extends SearchBase implements AppPage {
 			}
 		}
 		return promotedDocTitles;
-	}
-
-	public List<SOSearchResult> getSearchResults() {
-		List<SOSearchResult> results = new ArrayList<>();
-		for(WebElement result : findElements(By.cssSelector(".search-results li"))){
-			results.add(new SOSearchResult(result, getDriver()));
-		}
-		return results;
 	}
 }

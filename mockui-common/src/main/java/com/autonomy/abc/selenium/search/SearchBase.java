@@ -37,6 +37,18 @@ public abstract class SearchBase extends AppElement implements AppPage,
 	}
 
 	/* search results */
+	public List<SOSearchResult> getSearchResults() {
+		List<SOSearchResult> results = new ArrayList<>();
+		for(WebElement result : findElements(By.cssSelector(".search-results li"))){
+			results.add(new SOSearchResult(result, getDriver()));
+		}
+		return results;
+	}
+
+	public SOSearchResult getSearchResult(final int searchResult) {
+		return new SOSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
+	}
+
 	public WebElement searchResultCheckbox(final int resultNumber) {
 		return new WebDriverWait(getDriver(), 20)
 				.withMessage("waiting for #" + resultNumber + " search result to appear")
@@ -47,10 +59,6 @@ public abstract class SearchBase extends AppElement implements AppPage,
 		WebElement element = findElement(By.cssSelector(".search-page-contents"));
 		element = ElementUtil.ancestor(element.findElement(new Locator().withTagName("a").containingCaseInsensitive(docTitle)), 3);
 		return new SOCheckbox(element, getDriver());
-	}
-
-	public SOSearchResult getSearchResult(final int searchResult) {
-		return new SOSearchResult(findElement(By.cssSelector(".search-results li:nth-child(" + searchResult + ")")), getDriver());
 	}
 
 	public int visibleDocumentsCount() {
