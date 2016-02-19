@@ -17,9 +17,9 @@
                     <% }); %>
 
                     <% _.each(model.get('fields'), function(field) { %>
-                        <% if(field.displayName) { %>
+                        <% if(i18n['search.document.' + field]) { %>
                             <tr>
-                                <th><%-field.displayName%></th>
+                                <th><%-i18n['search.document.' + field]%></th>
                                 <td class="break-all">
                                     <ul class="list-unstyled">
                                         <% _.each(field.values, function(value) { %>
