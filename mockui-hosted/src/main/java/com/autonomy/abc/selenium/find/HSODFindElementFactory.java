@@ -21,6 +21,10 @@ public class HSODFindElementFactory extends ElementFactoryBase {
         return loadPage(FindPage.class);
     }
 
+    public SimilarDocumentsView getSimilarDocumentsView() {
+        return loadPage(SimilarDocumentsView.class);
+    }
+
     private enum Page implements PageMapper.Page {
         LOGIN(new ParametrizedFactory<WebDriver, HSOLoginPage>() {
             @Override
@@ -28,7 +32,8 @@ public class HSODFindElementFactory extends ElementFactoryBase {
                 return new HSOLoginPage(context, new FindHasLoggedIn(context));
             }
         }, HSOLoginPage.class),
-        MAIN(new FindPage.Factory(), FindPage.class);
+        MAIN(new FindPage.Factory(), FindPage.class),
+        SIMILAR_DOCUMENTS(new SimilarDocumentsView.Factory(), SimilarDocumentsView.class);
 
         private final Class<? extends AppPage> pageType;
         private ParametrizedFactory<WebDriver, ? extends AppPage> factory;

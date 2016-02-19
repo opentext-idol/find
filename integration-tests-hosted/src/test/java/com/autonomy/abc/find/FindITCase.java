@@ -35,9 +35,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.Actions;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -597,36 +595,6 @@ public class FindITCase extends FindTestBase {
                 verifyThat(relatedConceptElement, hasTagName("a"));
                 verifyThat(relatedConceptElement, hasClass("clickable"));
             }
-        }
-    }
-
-    @Test
-    public void testSimilarDocumentsShowUp() throws InterruptedException {
-        findPage.search("Doe");
-
-        for (int i = 1; i <= 5; i++) {
-            FindSearchResult searchResult = results.getResult(i);
-            String title = searchResult.getTitleString();
-            searchResult.similarDocuments().click();
-
-            results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
-
-            WebElement similarDocumentsPage = getDriver().findElement(By.className("suggest-service-view-container"));
-            WebElement similarDocsPageTitle = similarDocumentsPage.findElement(By.cssSelector(".m-b-nil.bold"));
-            WebElement similarDocsResult = null;
-            WebElement backButton = similarDocumentsPage.findElement(By.className("service-view-back-button"));
-
-            try {
-                similarDocsResult = similarDocumentsPage.findElement(By.className("main-results-container"));
-            } catch (NoSuchElementException e) {
-                LoggerFactory.getLogger(FindITCase.class).error("No results for similar documents");
-            }
-
-            verifyThat(getDriver().getCurrentUrl(), containsString("suggest"));
-            verifyThat(similarDocsPageTitle, containsTextIgnoringCase("Similar results to document with title \"" + title + "\""));
-            verifyThat(similarDocsResult, notNullValue());
-
-            backButton.click();
         }
     }
 
