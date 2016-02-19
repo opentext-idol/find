@@ -13,7 +13,6 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.searchcomponents.core.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +46,7 @@ public class FindController {
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    private AuthenticationInformationRetriever<? extends Authentication> authenticationInformationRetriever;
+    private AuthenticationInformationRetriever<? extends Principal> authenticationInformationRetriever;
 
     @RequestMapping("/")
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
