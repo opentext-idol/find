@@ -26,7 +26,11 @@ public class SOSearchResult extends SearchResult {
     }
 
     public Index getIndex() {
-        return new Index(findElement(By.className("index")).getText().split(":")[1].trim());
+        return new Index(indexLabel().getText().split(":")[1].trim());
+    }
+
+    public WebElement indexLabel() {
+        return findElement(By.className("index"));
     }
 
     public float getWeight() {
