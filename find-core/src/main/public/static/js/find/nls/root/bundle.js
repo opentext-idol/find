@@ -68,6 +68,8 @@ define([
         'search.dates.timeInterval.WEEK': 'Last Week',
         'search.dates.timeInterval.MONTH': 'Last Month',
         'search.dates.timeInterval.YEAR': 'Last Year',
+        'search.dates.timeInterval.NEW': 'Since Last Search',
+        'search.dates.timeInterval.new.description': 'Show results since you last used this filter or changed the search',
         'search.document.contentType': 'Content Type',
         'search.document.date': 'Date',
         'search.document.detail.backToSearch': 'Back to search',

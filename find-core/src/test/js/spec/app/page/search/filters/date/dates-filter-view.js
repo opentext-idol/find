@@ -12,6 +12,25 @@ define([
             this.now = moment.utc(1000000000000);
             this.twoMonthsAgo = moment(this.now).subtract(2, 'months');
             this.datesFilterModel = new Backbone.Model();
+            this.savedSearchModel = new Backbone.Model();
+
+            spyOn(this.savedSearchModel, 'sync');
+            spyOn(this.savedSearchModel, 'isNew');
+        });
+
+        describe('after initialisation with an unsaved search', function() {
+            beforeEach(function() {
+                this.savedSearchModel = new Backbone.Model();
+
+                this.view = new DatesFilterView({
+                    datesFilterModel: this.datesFilterModel,
+                    savedSearchModel: this.savedSearchModel
+                });
+            });
+
+            it('does not show the "Since Last Time" option', function() {
+                expect(this.view.$('[data-filter-id="' + DatesFilterModel.DateRange.NEW + '"]')).toHaveLength(0);
+            });
         });
 
         describe('after initialisation with a custom date range selected', function() {
@@ -22,7 +41,10 @@ define([
                     customMaxDate: this.twoMonthsAgo
                 });
 
-                this.view = new DatesFilterView({datesFilterModel: this.datesFilterModel});
+                this.view = new DatesFilterView({
+                    datesFilterModel: this.datesFilterModel,
+                    savedSearchModel: this.savedSearchModel
+                });
                 this.view.render();
             });
 
@@ -64,7 +86,10 @@ define([
                     customMaxDate: null
                 });
 
-                this.view = new DatesFilterView({datesFilterModel: this.datesFilterModel});
+                this.view = new DatesFilterView({
+                    datesFilterModel: this.datesFilterModel,
+                    savedSearchModel: this.savedSearchModel
+                });
                 this.view.render();
             });
 
@@ -102,7 +127,10 @@ define([
                     customMaxDate: null
                 });
 
-                this.view = new DatesFilterView({datesFilterModel: this.datesFilterModel});
+                this.view = new DatesFilterView({
+                    datesFilterModel: this.datesFilterModel,
+                    savedSearchModel: this.savedSearchModel
+                });
                 this.view.render();
             });
 
@@ -148,6 +176,36 @@ define([
                     it('sets the date range attribute on the dates filter model to null', function() {
                         expect(this.datesFilterModel.get('dateRange')).toBeNull();
                     });
+                });
+            });
+
+            describe('then the dates filter model date range is set to "Since Last Time"', function() {
+                beforeEach(function() {
+                    this.datesFilterModel.set({
+                        customMinDate: moment(),
+                        customMaxDate: moment(),
+                        dateRange: DatesFilterModel.DateRange.NEW
+                    });
+                });
+
+                it('only ticks the "Since Last Time" option', function() {
+                    var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
+                    expect($tickedItems).toHaveLength(1);
+                    expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.NEW);
+                });
+
+                it('attempts to sync the saved search model to the server', function() {
+                    expect(this.savedSearchModel.sync).toHaveBeenCalled();
+                });
+            });
+
+            describe('then the user clicks the "Since Last Time" option', function() {
+                beforeEach(function() {
+                    this.view.$('[data-filter-id="' + DatesFilterModel.DateRange.NEW + '"]').click();
+                });
+
+                it('sets the date range attribute on the dates filter model to "Since Last Time"', function() {
+                    expect(this.datesFilterModel.get('dateRange')).toBe(DatesFilterModel.DateRange.NEW);
                 });
             });
         });
