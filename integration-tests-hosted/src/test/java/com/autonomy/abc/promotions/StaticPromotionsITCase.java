@@ -3,6 +3,7 @@ package com.autonomy.abc.promotions;
 import com.autonomy.abc.Trigger.SharedTriggerTests;
 import com.autonomy.abc.config.HostedTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.element.Editable;
 import com.autonomy.abc.selenium.element.GritterNotice;
@@ -11,17 +12,20 @@ import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.HSODPromotionsPage;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
+import com.autonomy.abc.selenium.search.SOSearchResult;
 import com.autonomy.abc.selenium.search.SearchPage;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.autonomy.abc.matchers.ElementMatchers.containsTextIgnoringCase;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
 import static org.hamcrest.Matchers.*;
@@ -147,6 +151,24 @@ public class StaticPromotionsITCase extends HostedTestBase {
         verifyThat(getDriver().findElement(By.cssSelector("p")), containsText(content));
         getDriver().switchTo().window(handle);
         documentViewer.close();
+    }
+
+    @Test
+    @KnownBug("CSA-2059")
+    public void testPromotionMetadata() {
+        SOSearchResult promoted = searchPage.getPromotedResult(1);
+        verifyThat("promotion label visible", promoted.isPromoted(), is(true));
+        verifyThat(promoted.indexLabel(), not(containsTextIgnoringCase("index")));
+        verifyThat(promoted.indexLabel(), containsTextIgnoringCase("static"));
+
+        Object threw = null;
+        try {
+            promoted.getWeight();
+        } catch (Exception e) {
+            threw = e;
+        }
+        verifyThat(threw, notNullValue());
+        verifyThat(threw, instanceOf(NoSuchElementException.class));
     }
 
     @Test

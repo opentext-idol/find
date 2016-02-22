@@ -9,10 +9,12 @@ import com.autonomy.abc.selenium.analytics.ContainerItem;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.HSODFind;
+import com.autonomy.abc.selenium.keywords.KeywordsPage;
 import com.autonomy.abc.selenium.promotions.HSODPromotionService;
 import com.autonomy.abc.selenium.promotions.Promotion;
 import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.StaticPromotion;
+import com.autonomy.abc.selenium.search.SearchPage;
 import com.autonomy.abc.selenium.search.SearchService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.After;
@@ -111,6 +113,29 @@ public class AnalyticsITCase extends HostedTestBase {
 
         verifyThat(analytics.getPopularSearch(0), equalToIgnoringCase(mostPopularSearchTerm));
         verifyThat(analytics.getPopularSearch(1), equalToIgnoringCase(mostPopularFindTerm));
+    }
+
+    @Test
+    @KnownBug("CSA-1806")
+    public void testClickingPopularTerms() {
+        ContainerItem item = analytics.popularTerms().get(0);
+        String term = item.getTerm();
+        item.click();
+        SearchPage searchPage = getElementFactory().getSearchPage();
+        searchPage.waitForSearchLoadIndicatorToDisappear();
+
+        verifyThat(searchPage.getHeadingSearchTerm(), equalToIgnoringCase(term + "~"));
+        verifyThat(searchPage.getHeadingResultsCount(), greaterThan(0));
+    }
+
+    @Test
+    public void testClickingZeroHitTerms() {
+        ContainerItem item = analytics.zeroHitTerms().get(0);
+        String term = item.getTerm();
+        item.click();
+        KeywordsPage keywordsPage = getElementFactory().getKeywordsPage();
+
+        verifyThat(keywordsPage.searchFilterBox().getValue(), equalToIgnoringCase(term));
     }
 
     @Test

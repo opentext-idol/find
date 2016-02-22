@@ -141,7 +141,7 @@ public class FindResultsPage extends AppElement {
     public List<String> getDisplayedDocumentsDocumentTypes(){
         List<String> documentTypes = new ArrayList<String>();
         for(FindSearchResult result : getResults()){
-            documentTypes.add(result.getIcon().getAttribute("class"));
+            documentTypes.add(result.icon().getAttribute("class"));
         }
         return documentTypes;
     }

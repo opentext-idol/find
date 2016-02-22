@@ -439,7 +439,7 @@ public class SearchPageITCase extends ABCTestBase {
 		for (int page = 1; page <= 2; page++) {
 			for (int result = 1; result <= 6; result++) {
 				Waits.loadOrFadeWait();
-				searchPage.docLogo(result).click();
+				searchPage.getSearchResult(1).icon().click();
 				checkViewResult();
 				searchPage.getSearchResult(1).title().click();
 				checkViewResult();

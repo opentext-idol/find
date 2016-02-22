@@ -427,7 +427,7 @@ public class FindITCase extends FindTestBase {
             findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
 
             for(FindSearchResult result : results.getResults()){
-                assertThat(result.getIcon().getAttribute("class"), containsString(f.getFileIconString()));
+                assertThat(result.icon().getAttribute("class"), containsString(f.getFileIconString()));
             }
 
             findPage.filterBy(new ParametricFilter("Content Type",f.getSidebarString()));
