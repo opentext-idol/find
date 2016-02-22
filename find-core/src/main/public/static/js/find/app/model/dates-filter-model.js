@@ -8,14 +8,12 @@ define([
      * @readonly
      */
     var DateRange = {
-        CUSTOM: 0,
-        YEAR: 1,
-        MONTH: 2,
-        WEEK: 3,
-        NEW: 4
+        CUSTOM: 'CUSTOM',
+        YEAR: 'YEAR',
+        MONTH: 'MONTH',
+        WEEK: 'WEEK',
+        NEW: 'NEW'
     };
-
-    var DateRangeString = _.invert(DateRange);
 
     return Backbone.Model.extend({
         /**
@@ -86,9 +84,7 @@ define([
             }
         }
     }, {
-        DateRange: DateRange,
-
-        dateRangeToString: _.partial(_.result, DateRangeString)
+        DateRange: DateRange
     });
 
 });

@@ -12,10 +12,10 @@ public enum DateRange {
      * script for updating stale data is included!
      */
     CUSTOM(0),
-    LAST_YEAR(1),
-    LAST_MONTH(2),
-    LAST_WEEK(3),
-    LAST_TIME(4);
+    YEAR(1),
+    MONTH(2),
+    WEEK(3),
+    NEW(4);
 
     private Integer id;
 

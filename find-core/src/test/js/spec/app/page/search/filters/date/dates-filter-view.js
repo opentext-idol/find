@@ -51,7 +51,7 @@ define([
             it('only ticks the "Custom" option', function() {
                 var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                 expect($tickedItems).toHaveLength(1);
-                expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.CUSTOM.toString());
+                expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.CUSTOM);
             });
             
             it('shows the min and max date inputs', function() {
@@ -96,7 +96,7 @@ define([
             it('only ticks the "Last Week" option', function() {
                 var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                 expect($tickedItems).toHaveLength(1);
-                expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.WEEK.toString());
+                expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.WEEK);
             });
             
             it('does not show the min and max date inputs', function() {
@@ -155,7 +155,7 @@ define([
                 it('only ticks the "Last Week" option', function() {
                     var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                     expect($tickedItems).toHaveLength(1);
-                    expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.WEEK.toString());
+                    expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.WEEK);
                 });
             });
 
@@ -191,7 +191,7 @@ define([
                 it('only ticks the "Since Last Time" option', function() {
                     var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                     expect($tickedItems).toHaveLength(1);
-                    expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.NEW.toString());
+                    expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.NEW);
                 });
 
                 it('attempts to sync the saved search model to the server', function() {

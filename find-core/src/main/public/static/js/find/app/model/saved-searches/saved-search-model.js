@@ -27,7 +27,7 @@ define([
      * @property {Moment} maxDate
      * @property {Moment} dateModified
      * @property {Moment} dateCreated
-     * @property {Integer} dateRange
+     * @property {DateRange} dateRange
      */
 
     var DATE_FIELDS = [

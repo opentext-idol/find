@@ -30,7 +30,7 @@ define([
         events: {
             'click tr': function(event) {
                 var $targetRow = $(event.currentTarget);
-                var selected = parseInt($targetRow.attr('data-filter-id'));
+                var selected = $targetRow.attr('data-filter-id');
                 var previous = this.datesFilterModel.get('dateRange');
 
                 if (selected === previous) {
@@ -59,15 +59,12 @@ define([
             this.listenTo(this.datesFilterModel, 'change:customMaxDate', this.updateMaxDate);
             this.listenTo(this.datesFilterModel, 'change:customMinDate', this.updateMinDate);
 
-            this.listenTo(this.savedSearchModel, 'sync', this.rerender)
-        },
+            this.listenTo(this.savedSearchModel, 'sync', this.render);
 
-        render: function() {
-            this.rerender();
             this.updateDateNewDocsLastFetched();
         },
 
-        rerender: function() {
+        render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
                 customFilterData: [
@@ -134,12 +131,7 @@ define([
                 filters.unshift(DatesFilterModel.DateRange.NEW);
             }
 
-            return _.map(filters, function(filter) {
-                return {
-                    id: filter,
-                    string: DatesFilterModel.dateRangeToString(filter)
-                }
-            });
+            return filters;
         }
     });
 });
