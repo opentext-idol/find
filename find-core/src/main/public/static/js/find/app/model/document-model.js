@@ -15,15 +15,23 @@ define([
         return contentType && _.find(MEDIA_TYPES, function (mediaType) {
             return contentType.indexOf(mediaType) === 0;
         });
-    }
+    };
+
+    var getFieldValues = function(fieldData) {
+        if(fieldData && fieldData.values.length) {
+            return fieldData.values;
+        }
+        return [];
+    };
+
+    var getFieldValue = function(fieldData) {
+        return _.first(getFieldValues(fieldData));
+    };
+
 
     // Model representing a document in an HOD text index
     return Backbone.Model.extend({
         url: '../api/public/search/get-document-content',
-
-        defaults: {
-            authors: []
-        },
 
         parse: function(response) {
             if (!response.title) {
@@ -46,6 +54,14 @@ define([
             }
 
             response.media = getMediaType(response.contentType);
+
+            response.thumbnail = getFieldValue(response.fieldMap.thumbnail);
+
+            response.contentType = getFieldValue(response.fieldMap.contentType);
+            response.url = getFieldValue(response.fieldMap.url);
+            response.offset = getFieldValue(response.fieldMap.offset);
+            response.authors = getFieldValues(response.fieldMap.authors);
+            response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
 
             response.fields = _.map(response.fieldMap, function (value) {
                 if (value.type === 'DATE') {

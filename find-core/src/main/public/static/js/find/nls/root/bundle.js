@@ -91,6 +91,7 @@ define([
         'search.document.staticContent': 'Static Content',
         'search.document.summary': 'Summary',
         'search.document.title': 'Title',
+        'search.document.thumbnail': 'Thumbnail',
         'search.document.url': 'URL',
         'search.document.weight': 'Weight',
         'search.error.results' : 'An error occurred retrieving results',
