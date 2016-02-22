@@ -5,7 +5,6 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.HSODFind;
@@ -27,9 +26,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +37,6 @@ import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.AllOf.allOf;
@@ -173,26 +169,22 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1544")
-    public void testNoInvalidIndexNameNotifications(){
+    @KnownBug({"CSA-1544", "CSA-2043"})
+    public void testNoInvalidIndexNameNotifications() throws InterruptedException {
         ConnectionService connectionService = getApplication().connectionService();
 
         Connector hassleRecords = new WebConnector("http://www.hasslerecords.com","hassle records").withDepth(1);
         String errorMessage = "Index name invalid";
 
         connectionService.setUpConnection(hassleRecords);
+        connectionService.deleteConnection(hassleRecords, true);
 
-        try {
-            new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining(errorMessage));
-
-            fail("Index name should be valid - likely failed due to double encoding of requests");
-        } catch (TimeoutException e){
-            LOGGER.info("Timeout exception");
-        }
+        //Wait to see whether any error messages come up
+        Thread.sleep(10000);
 
         getElementFactory().getTopNavBar().notificationsDropdown();
         for(String message : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
-            assertThat(message,not(errorMessage));
+            assertThat(message, not(errorMessage));
         }
     }
 
