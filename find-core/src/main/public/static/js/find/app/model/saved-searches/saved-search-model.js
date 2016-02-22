@@ -46,14 +46,24 @@ define([
         return input === null || input === undefined;
     }
 
-    // Treat moments are equal if they are both either null or undefined, or represent the same instant
-    function optionalMomentsEqual(optionalMoment1, optionalMoment2) {
-        if (nullOrUndefined(optionalMoment1)) {
-            return nullOrUndefined(optionalMoment2);
-        } else if (nullOrUndefined(optionalMoment2)) {
-            return false;
-        } else {
-            return optionalMoment1.isSame(optionalMoment2);
+    var optionalMomentsEqual = optionalEqual(function(optionalMoment1, optionalMoment2) {
+        return optionalMoment1.isSame(optionalMoment2);
+    });
+
+    var optionalExactlyEqual = optionalEqual(function(optionalItem1, optionalItem2) {
+        return optionalItem1 === optionalItem2;
+    });
+
+    // Treat as equal if they are both either null or undefined, or pass a regular equality test
+    function optionalEqual(equalityTest) {
+        return function(optionalItem1, optionalItem2) {
+            if (nullOrUndefined(optionalItem1)) {
+                return nullOrUndefined(optionalItem2);
+            } else if (nullOrUndefined(optionalItem2)) {
+                return false;
+            } else {
+                return equalityTest(optionalItem1, optionalItem2);
+            }
         }
     }
 
@@ -110,7 +120,7 @@ define([
                     && optionalMomentsEqual(this.get('minDate'), datesAttributes.minDate)
                     && optionalMomentsEqual(this.get('maxDate'), datesAttributes.maxDate);
             } else {
-                return this.get('dateRange') === datesAttributes.dateRange;
+                return optionalExactlyEqual(this.get('dateRange'), datesAttributes.dateRange);
             }
         },
 
