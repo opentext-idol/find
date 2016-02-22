@@ -13,11 +13,13 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +39,7 @@ import java.util.NoSuchElementException;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
@@ -58,7 +61,6 @@ public class IndexesPageITCase extends HostedTestBase {
     @Before
     public void setUp() {
         indexService = getApplication().indexService();
-
         indexesPage = indexService.goToIndexes();
     }
 
@@ -259,6 +261,48 @@ public class IndexesPageITCase extends HostedTestBase {
             findWindow.close();
             searchWindow.activate();
         }
+    }
+
+    @Test
+    @KnownBug("CCUK-3620")
+    public void testFindBehavesAfterDeletingIndex() {
+        Index index = new Index("index");
+        indexService.setUpIndex(index);
+
+        Window searchWindow = getMainSession().getActiveWindow();
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
+
+        try {
+            findWindow.activate();
+            FindPage findPage = findApp.elementFactory().getFindPage();
+
+            findPage.search("Exeter");
+            verifyThat(findPage, not(containsText("An error occurred")));
+            verifyThat("Index displayed properly", indexElement(findPage), not(hasClass("disabled-index")));
+
+            searchWindow.activate();
+            indexService.deleteIndex(index);
+
+            findWindow.activate();
+            findPage.search("Plymouth");
+            verifyThat("Deleted index disabled", indexElement(findPage), hasClass("disabled-index"));
+
+            findWindow.refresh();
+            findPage = findApp.elementFactory().getFindPage();
+            findPage.search("Plymouth");
+
+            for (IndexNodeElement node : findPage.indexesTree()) {
+                verifyThat(node.getName(), not(index.getName()));
+            }
+        } finally {
+            findWindow.close();
+            searchWindow.activate();
+        }
+    }
+
+    private WebElement indexElement(FindPage findPage){
+        return ElementUtil.ancestor(findPage.getResultsPage().resultsDiv().findElement(By.xpath("//*[@class='database-name' and text()='index']")), 2);
     }
 
     @After
