@@ -1195,6 +1195,15 @@ input:-moz-placeholder::before {
     background: #01A982;
 }
 
+h4.similar-dates-message {
+    color: #676a6c;
+}
+
+.similar-dates-summary {
+    color: #676a6c;
+    display: inline-block;
+}
+
 .date-slider-div {
     padding-left: 10px;
     margin-bottom: 10px;
@@ -1202,6 +1211,7 @@ input:-moz-placeholder::before {
 }
 
 .date-slider-div > label {
+    color: #676a6c;
     margin-left: -10px;
     display: block;
 }
