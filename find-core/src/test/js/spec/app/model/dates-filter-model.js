@@ -13,7 +13,8 @@ define([
             this.model = new DatesFilterModel({
                 dateRange: null,
                 customMinDate: null,
-                customMaxDate: moment(NOW)
+                customMaxDate: moment(NOW),
+                dateNewDocsLastFetched: moment(NOW).subtract(1, 'week')
             });
         });
 
@@ -43,6 +44,14 @@ define([
                 var output = this.model.toQueryModelAttributes();
                 expect(output.minDate.unix()).toBe(moment(NOW).subtract(1, 'week').unix());
                 expect(output.maxDate.unix() * 1000).toBe(NOW);
+            });
+
+            it('returns the range since the last fetch if the date range is new', function() {
+                this.model.set('dateRange', DatesFilterModel.DateRange.NEW);
+
+                var output = this.model.toQueryModelAttributes();
+                expect(output.minDate.unix()).toBe(moment(NOW).subtract(1, 'week').unix());
+                expect(output.maxDate).toBeNull();
             });
         });
     });

@@ -39,36 +39,26 @@
     "baseUrl": ""
   },
   "fieldsInfo": {
-    "fieldAssociations": {
-      "author": "author",
-      "mediaContentType": "content_type",
-      "mediaUrl": "url",
-      "mediaOffset": "offset",
-      "mmapUrl": "HPSW_APP_NOINDEX_MMAPPROXY",
-      "thumbnail": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+    "author": {
+      "name": "author",
+      "displayName": "Authors"
     },
-    "customFields": [
-      {
-        "name": "content_type",
-        "displayName": "Content Type"
-      },
-      {
-        "name": "url",
-        "displayName": "Url"
-      },
-      {
-        "name": "offset"
-      },
-      {
-        "name": "author",
-        "displayName": "Authors"
-      },
-      {
-        "name": "HPSW_APP_NOINDEX_MMAPPROXY"
-      },
-      {
-        "name": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
-      }
-    ]
+    "contentType": {
+      "name": "content_type",
+      "displayName": "Content Type"
+    },
+    "url": {
+      "name": "url",
+      "displayName": "Url"
+    },
+    "offset": {
+      "name": "offset"
+    },
+    "mmapUrl": {
+      "name": "HPSW_APP_NOINDEX_MMAPPROXY"
+    },
+    "thumbnail": {
+      "name": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+    }
   }
 }

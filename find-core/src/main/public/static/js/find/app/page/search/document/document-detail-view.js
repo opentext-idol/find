@@ -36,6 +36,10 @@ define([
             },
             'click .detail-view-open-button': function () {
                 window.open(this.documentHref, encodeURIComponent(this.documentHref));
+            },
+            'shown.bs.tab a[data-toggle=tab]': function (event) {
+                var tab = this.tabs[$(event.target).parent().index()];
+                tab.view.render();
             }
         },
 
@@ -104,15 +108,16 @@ define([
         renderTabContent: function () {
             var $tabContentContainer = this.$('.document-detail-tabs-content');
             _.each(this.tabs, function(tab) {
-                var tabContentView = new (tab.TabContentConstructor)({
+                tab.view = new (tab.TabContentConstructor)({
                     tab: tab,
                     model: this.model,
                     indexesCollection: this.indexesCollection
                 });
 
-                $tabContentContainer.append(tabContentView.$el);
-                tabContentView.render();
+                $tabContentContainer.append(tab.view.$el);
             }, this);
+
+            if (this.tabs.length !== 0) this.tabs[0].view.render();
         }
     });
 });
