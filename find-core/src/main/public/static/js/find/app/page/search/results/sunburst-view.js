@@ -115,7 +115,7 @@ define([
         emptyDropdown: function($dropdown) {
             $dropdown
                 .empty()
-                .append('<option value=""></option>')
+                .append($dropdown.hasClass('first-parametric') ? '' : '<option value=""></option>')
                 .trigger('chosen:updated');
         },
 
@@ -139,6 +139,17 @@ define([
             this.$sunburst.empty().addClass('hide');
         },
 
+        firstPass: function () {
+            this.$sunburst.addClass('hide');
+            var val = this.$firstChosen.val();
+            this.getParametricCollection(val);
+            var secondCollection = this.parametricCollection.pluck('name');
+            this.populateDropDown(this.$secondChosen, _.reject(secondCollection, function (name) {
+                return name === val
+            }, this));
+            this.$secondChosen.removeClass('hide')
+        },
+
         render: function () {
             this.$el.html(this.template({i18n: i18n}));
 
@@ -151,16 +162,9 @@ define([
             this.$secondChosen = this.$('.second-parametric');
 
             this.populateDropDown(this.$firstChosen, this.parametricCollection.pluck('name'));
+            this.firstPass();
 
-            this.$firstChosen.change(_.bind(function() {
-                this.$sunburst.addClass('hide');
-                var val = this.$firstChosen.val();
-                this.getParametricCollection(val);
-                var secondCollection = this.parametricCollection.pluck('name');
-                this.populateDropDown(this.$secondChosen, _.reject(secondCollection, function(name) {
-                    return name === val }, this));
-                this.$secondChosen.removeClass('hide')
-            }, this));
+            this.$firstChosen.change(_.bind(this.firstPass, this));
 
             this.$secondChosen.change(_.bind(function() {
                 this.$sunburst.addClass('hide');
@@ -170,7 +174,7 @@ define([
             this.listenTo(this.parametricCollection, 'request', this.resetView);
 
             this.listenTo(this.parametricCollection, 'sync', function() {
-                this.populateDropDown(this.$firstChosen, this.parametricCollection.pluck('name'))
+                this.populateDropDown(this.$firstChosen, this.parametricCollection.pluck('name'));
             });
 
             this.listenTo(this.secondParametricCollection, 'sync', this.update);
