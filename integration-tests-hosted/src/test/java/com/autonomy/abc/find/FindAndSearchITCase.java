@@ -18,7 +18,11 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.WebElement;
 
+import java.awt.*;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
@@ -302,6 +306,33 @@ public class FindAndSearchITCase extends FindTestBase {
                 assertThat(title, is(not("")));
             }
 
+        } finally {
+            searchWindow.activate();
+            promotionService.deleteAll();
+        }
+    }
+
+    @Test
+    @KnownBug("CSA-2076")
+    public void testLongTitleDoesNotOverflowFind(){
+        try {
+            String trigger = "trigger";
+
+            searchWindow.activate();
+
+            PromotionsPage promotionsPage = promotionService.goToPromotions();
+            promotionsPage.newButton().click();
+            new StaticPromotion("loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonnnnggggggggggggggggggggggg", "content", trigger).makeWizard(searchApp.elementFactory().getCreateNewPromotionsPage()).apply();
+
+            findWindow.activate();
+            findPage.search(trigger);
+
+            WebElement toggleRelatedConcepts = getDriver().findElement(By.className("hp-next-chapter"));
+
+            Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+            Point p = toggleRelatedConcepts.getLocation();
+
+            verifyThat("Collapse Related Concepts Icon Within Screen", p.getX() < d.getWidth() && p.getY() < d.getHeight());
         } finally {
             searchWindow.activate();
             promotionService.deleteAll();
