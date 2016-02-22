@@ -33,7 +33,8 @@ define([
         'minDate',
         'maxDate',
         'dateCreated',
-        'dateModified'
+        'dateModified',
+        'dateNewDocsLastFetched'
     ];
 
     /**
@@ -118,7 +119,8 @@ define([
             return {
                 dateRange: minDate || maxDate ? DatesFilterModel.DateRange.CUSTOM : null,
                 customMinDate: minDate,
-                customMaxDate: maxDate
+                customMaxDate: maxDate,
+                dateNewDocsLastFetched: this.get('dateNewDocsLastFetched')
             };
         },
 
@@ -153,7 +155,7 @@ define([
                 relatedConcepts: queryState.queryTextModel.get('relatedConcepts'),
                 indexes: indexes,
                 parametricValues: parametricValues
-            }, queryState.datesFilterModel.toQueryModelAttributes());
+            }, queryState.datesFilterModel.toQueryModelAttributes(), { dateNewDocsLastFetched: moment() });
         }
     });
 

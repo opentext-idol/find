@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.hod.view;
 
 import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
+import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/api/public/view")
+@RequestMapping(ViewController.VIEW_PATH)
 @Slf4j
 public class HodViewController extends ViewController<ResourceIdentifier, HodErrorException> {
     static final String HOD_ERROR_MESSAGE_CODE_PREFIX = "error.iodErrorCode.";
@@ -55,7 +56,7 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
     ) {
         response.reset();
 
-        log.error("IodErrorException thrown while viewing document", e);
+        log.error("HodErrorException thrown while viewing document", e);
 
         final String errorKey = HOD_ERROR_MESSAGE_CODE_PREFIX + e.getErrorCode();
         String hodErrorMessage;
@@ -81,7 +82,15 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
 
         response.setStatus(errorCode);
 
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_MAIN, subMessageCode, subMessageArgs, errorCode, true);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode(HOD_ERROR_MESSAGE_CODE_MAIN)
+                .setSubMessageCode(subMessageCode)
+                .setSubMessageArguments(subMessageArgs)
+                .setStatusCode(errorCode)
+                .setContactSupport(true)
+                .setException(e)
+                .build());
     }
 
     @ExceptionHandler
@@ -95,7 +104,12 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
 
         log.error("HodAuthenticationFailedException thrown while viewing document", e);
 
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_MAIN, HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED, null, HttpServletResponse.SC_FORBIDDEN, false);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode(HOD_ERROR_MESSAGE_CODE_MAIN)
+                .setSubMessageCode(HOD_ERROR_MESSAGE_CODE_TOKEN_EXPIRED)
+                .setStatusCode(HttpServletResponse.SC_FORBIDDEN)
+                .build());
     }
 
     @ExceptionHandler
@@ -107,10 +121,13 @@ public class HodViewController extends ViewController<ResourceIdentifier, HodErr
     ) {
         response.reset();
 
-        final UUID uuid = UUID.randomUUID();
-        log.error("Unhandled exception with uuid {}", uuid);
-        log.error("Stack trace", e);
-
-        return controllerUtils.buildErrorModelAndView(request, HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN, HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB, new Object[]{uuid}, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, true);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode(HOD_ERROR_MESSAGE_CODE_INTERNAL_MAIN)
+                .setSubMessageCode(HOD_ERROR_MESSAGE_CODE_INTERNAL_SUB)
+                .setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+                .setContactSupport(true)
+                .setException(e)
+                .build());
     }
 }

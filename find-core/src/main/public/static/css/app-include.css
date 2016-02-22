@@ -133,6 +133,10 @@ html, body {
     background-color: #614767;
 }
 
+.italic {
+    font-style: italic;
+}
+
 .uppercase {
     text-transform: uppercase;
 }
@@ -708,6 +712,16 @@ input.find-input {
     height: 600px;
 }
 
+.sunburst {
+    width: 800px;
+    height: 600px;
+}
+
+.chosen-container {
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
 /* Loading spinner */
 .loading-spinner {
     text-align: center;
@@ -1216,6 +1230,50 @@ input:-moz-placeholder::before {
 
 .slider-handle {
     background: #01A982;
+}
+
+.date-slider-div {
+    padding-left: 10px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+}
+
+.date-slider-div > label {
+    margin-left: -10px;
+    display: block;
+}
+
+.date-slider-div .slider {
+    width: 350px;
+}
+
+.date-slider-div .slider .slider-track .slider-handle.min-slider-handle.round {
+    background: white none;
+    border: 2px solid rgb(68, 85, 95);
+}
+
+.after-slider-div .slider.slider-horizontal .slider-track .slider-selection.tick-slider-selection,
+.after-slider-div .slider.slider-horizontal .slider-track .in-selection,
+.before-slider-div .slider.slider-horizontal .slider-track .slider-track-high,
+.after-slider-div .slider.slider-horizontal .slider-track .slider-tick.round.in-selection,
+.before-slider-div .slider.slider-horizontal .slider-track .slider-tick.round {
+    background: rgb(68, 85, 95) none;
+}
+
+.after-slider-div .slider.slider-horizontal .slider-track .slider-tick.round{
+    opacity: 1;
+}
+
+.before-slider-div .slider.slider-horizontal .slider-track .slider-selection.tick-slider-selection,
+.before-slider-div .slider.slider-horizontal.slider-track .in-selection,
+.before-slider-div .slider.slider-horizontal .slider-track .slider-tick.round.in-selection,
+.after-slider-div .slider.slider-horizontal .slider-track .slider-track-high,
+.after-slider-div .slider.slider-horizontal .slider-track .slider-tick.round {
+    background: rgb(219, 219, 219) none;
+}
+
+.before-slider-div .slider.slider-horizontal .slider-track .slider-tick.round{
+    opacity: 1;
 }
 
 @media (min-width: 980px) {

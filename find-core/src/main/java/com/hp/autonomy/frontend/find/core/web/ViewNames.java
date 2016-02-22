@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.web;
 
 public enum ViewNames
 {
+    ERROR("error"),
     LOGIN("login"),
     PUBLIC("public"),
     SSO("sso"),

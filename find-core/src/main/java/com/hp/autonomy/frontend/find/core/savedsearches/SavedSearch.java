@@ -2,9 +2,13 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hp.autonomy.aci.content.fieldtext.FieldText;
+import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
@@ -15,8 +19,28 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -88,7 +112,7 @@ public abstract class SavedSearch {
     @JsonIgnore
     private Boolean active;
 
-    protected SavedSearch(Builder<?> builder) {
+    protected SavedSearch(final Builder<?> builder) {
         id = builder.id;
         title = builder.title;
         queryText = builder.queryText;
@@ -100,6 +124,58 @@ public abstract class SavedSearch {
         dateCreated = builder.dateCreated;
         dateModified = builder.dateModified;
         active = builder.active;
+    }
+
+    // WARNING: This logic is duplicated in the client-side QueryTextModel
+    public String toQueryText() {
+        if (CollectionUtils.isEmpty(relatedConcepts)) {
+            return queryText;
+        } else {
+            final Collection<String> quotedConcepts = new LinkedList<>();
+
+            for (final String phrase : relatedConcepts) {
+                quotedConcepts.add(wrapQuotes(phrase));
+            }
+
+            return '(' + queryText + ") " + StringUtils.join(quotedConcepts, ' ');
+        }
+    }
+
+    private String wrapQuotes(final String input) {
+        return '"' + input + '"';
+    }
+
+    // WARNING: This logic is duplicated in the client side SelectedValuesCollection
+    public String toFieldText() {
+        if (CollectionUtils.isEmpty(parametricValues)) {
+            return "";
+        } else {
+            final Map<String, List<String>> fieldToValues = new HashMap<>();
+
+            for (final FieldAndValue fieldAndValue : parametricValues) {
+                List<String> values = fieldToValues.get(fieldAndValue.getField());
+
+                if (values == null) {
+                    values = new LinkedList<>();
+                    fieldToValues.put(fieldAndValue.getField(), values);
+                }
+
+                values.add(fieldAndValue.getValue());
+            }
+
+            final Iterator<Map.Entry<String, List<String>>> iterator = fieldToValues.entrySet().iterator();
+            FieldText fieldText = fieldAndValuesToFieldText(iterator.next());
+
+            while (iterator.hasNext()) {
+                fieldText = fieldText.AND(fieldAndValuesToFieldText(iterator.next()));
+            }
+
+            return fieldText.toString();
+        }
+    }
+
+    private FieldText fieldAndValuesToFieldText(final Map.Entry<String, List<String>> fieldAndValues) {
+        return new MATCH(fieldAndValues.getKey(), fieldAndValues.getValue());
     }
 
     @Getter
@@ -133,57 +209,57 @@ public abstract class SavedSearch {
 
         public abstract T build();
 
-        public Builder<T> setId(Long id) {
+        public Builder<T> setId(final Long id) {
             this.id = id;
             return this;
         }
 
-        public Builder<T> setTitle(String title) {
+        public Builder<T> setTitle(final String title) {
             this.title = title;
             return this;
         }
 
-        public Builder<T> setQueryText(String queryText) {
+        public Builder<T> setQueryText(final String queryText) {
             this.queryText = queryText;
             return this;
         }
 
-        public Builder<T> setIndexes(Set<EmbeddableIndex> indexes) {
+        public Builder<T> setIndexes(final Set<EmbeddableIndex> indexes) {
             this.indexes = indexes;
             return this;
         }
 
-        public Builder<T> setParametricValues(Set<FieldAndValue> parametricValues) {
+        public Builder<T> setParametricValues(final Set<FieldAndValue> parametricValues) {
             this.parametricValues = parametricValues;
             return this;
         }
 
-        public Builder<T> setRelatedConcepts(Set<String> relatedConcepts) {
+        public Builder<T> setRelatedConcepts(final Set<String> relatedConcepts) {
             this.relatedConcepts = relatedConcepts;
             return this;
         }
 
-        public Builder<T> setMinDate(DateTime minDate) {
+        public Builder<T> setMinDate(final DateTime minDate) {
             this.minDate = minDate;
             return this;
         }
 
-        public Builder<T> setMaxDate(DateTime maxDate) {
+        public Builder<T> setMaxDate(final DateTime maxDate) {
             this.maxDate = maxDate;
             return this;
         }
 
-        public Builder<T> setDateCreated(DateTime dateCreated) {
+        public Builder<T> setDateCreated(final DateTime dateCreated) {
             this.dateCreated = dateCreated;
             return this;
         }
 
-        public Builder<T> setDateModified(DateTime dateModified) {
+        public Builder<T> setDateModified(final DateTime dateModified) {
             this.dateModified = dateModified;
             return this;
         }
 
-        public Builder<T> setActive(Boolean active) {
+        public Builder<T> setActive(final Boolean active) {
             this.active = active;
             return this;
         }

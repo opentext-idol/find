@@ -162,6 +162,8 @@ define([
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
 
+                this.removeDocumentDetailView();
+
                 var options = this.documentDetailOptions.apply(this, arguments);
                 this.populateDocumentModelForDetailView(options);
             }, this);
@@ -370,7 +372,8 @@ define([
         renderDocumentDetail: function(model) {
             this.documentDetailView = new DocumentDetailView({
                 backUrl: this.generateURL(),
-                model: model
+                model: model,
+                indexesCollection: this.indexesCollection
             });
 
             this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);

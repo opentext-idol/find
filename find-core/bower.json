@@ -22,6 +22,7 @@
   ],
   "dependencies": {
     "backbone": "~1.2.3",
+    "chosen": "~1.4.2",
     "colorbox": "colorbox#~1.5.10",
     "corejs-typeahead": "#3d2a7eb",
     "fontawesome": "components-font-awesome#~4.5.0",
@@ -35,6 +36,7 @@
     "hp-autonomy-bootstrap-2": "~2.3.2",
     "hp-autonomy-fieldtext-js": "~1.1.0",
     "hp-autonomy-topic-map": "~1.0.0",
+    "hp-autonomy-sunburst": "~1.0.0",
     "hp-autonomy-js-parametric-refinement": "~0.1.3",
     "requirejs": "~2.1.15",
     "requirejs-text": "~2.0.13",

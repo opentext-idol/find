@@ -28,6 +28,11 @@ define([
             colorboxControlsTemplate, loadingSpinnerTemplate, mediaPlayerTemplate, viewDocumentTemplate,
             moment, i18n, i18n_indexes) {
 
+    var Mode = {
+        STATE_TOKEN: 'STATE_TOKEN',
+        QUERY: 'QUERY'
+    };
+    
     function infiniteScroll() {
         var totalResults = this.documentsCollection.totalResults;
 
@@ -117,13 +122,22 @@ define([
         initialize: function(options) {
             _.bindAll(this, 'checkScroll', 'handlePopover');
 
+            this.mode = options.mode;
+
+            this.loadData = this.stateTokenMode() ? this.stateTokenLoadData : this.normalLoadData;
+            this.refreshResults = this.stateTokenMode() ? this.stateTokenRefreshResults : this.normalRefreshResults;
+            this.checkScroll = this.stateTokenMode() ? this.stateTokenCheckScroll : this.normalCheckScroll;
+            this.clearLoadingSpinner = this.stateTokenMode ? this.stateTokenClearLoadingSpinner : this.normalClearLoadingSpinner;
+
             this.queryModel = options.queryModel;
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
-
             this.documentsCollection = options.documentsCollection;
-            this.promotionsCollection = new PromotionsCollection();
+
+            if(!this.stateTokenMode()) {
+                this.promotionsCollection = new PromotionsCollection();
+            }
 
             this.sortView = new SortView({
                 queryModel: this.queryModel
@@ -136,7 +150,7 @@ define([
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
         },
 
-        refreshResults: function() {
+        normalRefreshResults: function() {
             if (this.queryModel.get('queryText')) {
                 if (!_.isEmpty(this.queryModel.get('indexes'))) {
                     this.endOfResults = false;
@@ -156,8 +170,26 @@ define([
             }
         },
 
-        clearLoadingSpinner: function() {
+        stateTokenRefreshResults: function() {
+            this.endOfResults = false;
+            this.start = 1;
+            this.maxResults = SCROLL_INCREMENT;
+            this.loadData(false);
+
+            this.$loadingSpinner.removeClass('hide');
+            this.toggleError(false);
+            this.$('.main-results-content .error .error-list').empty();
+            this.$('.main-results-content .results').empty();
+        },
+
+        normalClearLoadingSpinner: function() {
             if (this.resultsFinished && this.promotionsFinished) {
+                this.$loadingSpinner.addClass('hide');
+            }
+        },
+
+        stateTokenClearLoadingSpinner: function() {
+            if (this.resultsFinished) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -172,22 +204,24 @@ define([
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
-            /*promotions content content*/
-            this.listenTo(this.promotionsCollection, 'add', function(model) {
-                this.formatResult(model, true);
-            });
+            if(!this.stateTokenMode()) {
+                /*promotions content content*/
+                this.listenTo(this.promotionsCollection, 'add', function(model) {
+                    this.formatResult(model, true);
+                });
 
-            this.listenTo(this.promotionsCollection, 'sync', function() {
-                this.promotionsFinished = true;
-                this.clearLoadingSpinner();
-            });
+                this.listenTo(this.promotionsCollection, 'sync', function() {
+                    this.promotionsFinished = true;
+                    this.clearLoadingSpinner();
+                });
 
-            this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
-                this.promotionsFinished = true;
-                this.clearLoadingSpinner();
+                this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
+                    this.promotionsFinished = true;
+                    this.clearLoadingSpinner();
 
-                this.$('.main-results-content .promotions').append(this.handleError(i18n['app.feature.promotions'], xhr));
-            });
+                    this.$('.main-results-content .promotions').append(this.handleError(i18n['app.feature.promotions'], xhr));
+                });
+            }
 
             /*main results content*/
             this.listenTo(this.documentsCollection, 'add', function(model) {
@@ -212,7 +246,9 @@ define([
                 this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
 
-            this.listenTo(this.queryModel, 'change', this.refreshResults);
+            if(!this.stateTokenMode()) {
+                this.listenTo(this.queryModel, 'change', this.refreshResults);
+            }
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 if (!this.entityCollection.isEmpty()) {
@@ -222,11 +258,13 @@ define([
                         this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
                     }, this);
 
-                    this.promotionsCollection.each(function(document) {
-                        var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
+                    if(!this.stateTokenMode()) {
+                        this.promotionsCollection.each(function(document) {
+                            var summary = addLinksToSummary(this.entityCollection, document.get('summary'));
 
-                        this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
-                    }, this);
+                            this.$('[data-reference="' + document.get('reference') + '"] .result-summary').html(summary);
+                        }, this);
+                    }
                 }
             });
 
@@ -238,7 +276,9 @@ define([
             $('.nextBtn').on('click', this.handleNextResult);
             $('.prevBtn').on('click', this.handlePrevResult);
 
-            this.refreshResults();
+            if (this.documentsCollection.isEmpty()) {
+                this.refreshResults();
+            }
         },
 
         handlePrevResult: function() {
@@ -286,10 +326,7 @@ define([
                 args.html = this.viewDocumentTemplate({
                     src: options.href,
                     i18n: i18n,
-                    model: options.model,
-                    arrayFields: DocumentModel.ARRAY_FIELDS,
-                    dateFields: DocumentModel.DATE_FIELDS,
-                    fields: ['index', 'reference', 'contentType', 'url']
+                    model: options.model
                 });
             }
 
@@ -404,7 +441,7 @@ define([
             this.$('.main-results-content .error').toggleClass('hide', !on);
         },
 
-        loadData: function (infiniteScroll) {
+        normalLoadData: function (infiniteScroll) {
             this.$loadingSpinner.removeClass('hide');
             this.resultsFinished = false;
 
@@ -445,10 +482,32 @@ define([
             }
         },
 
-        checkScroll: function() {
+        stateTokenLoadData: function(infiniteScroll) {
+            this.$loadingSpinner.removeClass('hide');
+            this.resultsFinished = false;
+
+            this.documentsCollection.fetch({
+                data: {
+                    start: this.start,
+                    max_results: this.maxResults,
+                    summary: 'context',
+                    sort: this.queryModel.get('sort')
+                },
+                reset: false,
+                remove: !infiniteScroll
+            }, this);
+        },
+
+        normalCheckScroll: function() {
             var triggerPoint = 500;
 
             if (this.documentsCollection.size() > 0 && this.queryModel.get('queryText') && this.resultsFinished && this.el.scrollHeight + this.$el.offset().top - $(window).height() < triggerPoint) {
+                this.infiniteScroll();
+            }
+        },
+
+        stateTokenCheckScroll: function() {
+            if (this.documentsCollection.size() > 0) {
                 this.infiniteScroll();
             }
         },
@@ -462,7 +521,13 @@ define([
             this.sortView.remove();
             this.resultsNumberView.remove();
             Backbone.View.prototype.remove.call(this);
+        },
+
+        stateTokenMode: function() {
+            return this.mode === Mode.STATE_TOKEN;
         }
+    }, {
+        Mode: Mode
     });
 
 });

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -27,7 +28,7 @@ public class HodParametricValuesController extends ParametricValuesController<Ho
     }
 
     @Override
-    protected HodParametricRequest buildParametricRequest(final Set<String> fieldNames, final QueryRestrictions<ResourceIdentifier> queryRestrictions) {
+    protected HodParametricRequest buildParametricRequest(final List<String> fieldNames, final QueryRestrictions<ResourceIdentifier> queryRestrictions) {
         return new HodParametricRequest.Builder()
                 .setFieldNames(fieldNames)
                 .setQueryRestrictions(queryRestrictions)

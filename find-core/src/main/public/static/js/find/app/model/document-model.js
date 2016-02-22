@@ -8,10 +8,6 @@ define([
     'underscore',
     'moment'
 ], function(Backbone, _, moment) {
-
-    var ARRAY_FIELDS = ['authors', 'categories'];
-    var DATE_FIELDS = ['date', 'dateCreated', 'dateModified'];
-
     var MEDIA_TYPES = ['audio', 'video'];
     var WEB_TYPES = ['text/html', 'text/xhtml'];
 
@@ -25,10 +21,9 @@ define([
     return Backbone.Model.extend({
         url: '../api/public/search/get-document-content',
 
-        defaults: _.reduce(ARRAY_FIELDS, function(memo, fieldName) {
-            memo[fieldName] = [];
-            return memo;
-        }, {}),
+        defaults: {
+            authors: []
+        },
 
         parse: function(response) {
             if (!response.title) {
@@ -46,13 +41,25 @@ define([
                 }
             }
 
-            _.each(DATE_FIELDS, function(fieldName) {
-                if (response[fieldName]) {
-                    response[fieldName] = moment(response[fieldName]);
-                }
-            });
+            if (response.date) {
+                response.date = moment(response.date);
+            }
 
             response.media = getMediaType(response.contentType);
+
+            response.fields = _.map(response.fieldMap, function (value) {
+                if (value.type === 'DATE') {
+                    value.values = _.map(value.values, function(value) {
+                        return moment(value).format('LLLL');
+                    })
+                }
+
+                return value;
+            });
+
+            response.fieldMap = null;
+
+            _.sortBy(response.fields, 'displayName');
 
             return response;
         },
@@ -66,9 +73,6 @@ define([
 
             return contentType && _.contains(WEB_TYPES, contentType.toLowerCase());
         }
-    }, {
-        ARRAY_FIELDS: ARRAY_FIELDS,
-        DATE_FIELDS: DATE_FIELDS
     });
 
 });

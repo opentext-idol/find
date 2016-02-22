@@ -20,16 +20,15 @@ import java.util.Set;
 @Controller
 @RequestMapping(SavedSnapshotController.PATH)
 public class HodSavedSnapshotController extends SavedSnapshotController<ResourceIdentifier, HodSearchResult, HodErrorException> {
-
     @Autowired
-    public HodSavedSnapshotController(SavedSnapshotService service, DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService) {
+    public HodSavedSnapshotController(final SavedSnapshotService service, final DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService) {
         super(service, documentsService);
     }
 
-    private List<ResourceIdentifier> getDatabases(Set<EmbeddableIndex> indexes) {
-        List<ResourceIdentifier> databases = new ArrayList<>();
+    private List<ResourceIdentifier> getDatabases(final Set<EmbeddableIndex> indexes) {
+        final List<ResourceIdentifier> databases = new ArrayList<>();
 
-        for(EmbeddableIndex index: indexes) {
+        for(final EmbeddableIndex index: indexes) {
             databases.add(new ResourceIdentifier(index.getDomain(), index.getName()));
         }
 
@@ -38,9 +37,10 @@ public class HodSavedSnapshotController extends SavedSnapshotController<Resource
 
     @Override
     protected String getStateToken(final SavedSnapshot snapshot) throws HodErrorException {
-        HodQueryRestrictions.Builder queryRestrictionsBuilder = new HodQueryRestrictions.Builder()
+        final HodQueryRestrictions.Builder queryRestrictionsBuilder = new HodQueryRestrictions.Builder()
                 .setDatabases(this.getDatabases(snapshot.getIndexes()))
-                .setQueryText(this.getQueryText(snapshot)).setFieldText(this.getFieldText(snapshot.getParametricValues()))
+                .setQueryText(snapshot.toQueryText())
+                .setFieldText(snapshot.toFieldText())
                 .setMaxDate(snapshot.getMaxDate())
                 .setMinDate(snapshot.getMinDate());
 

@@ -11,7 +11,8 @@ define([
         CUSTOM: 'CUSTOM',
         YEAR: 'YEAR',
         MONTH: 'MONTH',
-        WEEK: 'WEEK'
+        WEEK: 'WEEK',
+        NEW: 'NEW'
     };
 
     return Backbone.Model.extend({
@@ -20,6 +21,7 @@ define([
          * @property {?DateRange} dateRange
          * @property {?Moment} customMinDate
          * @property {?Moment} customMaxDate
+         * @property {?Moment} dateNewDocsLastFetched
          */
         /**
          * @type DateFilterModelAttributes
@@ -27,7 +29,8 @@ define([
         defaults: {
             dateRange: null,
             customMinDate: null,
-            customMaxDate: null
+            customMaxDate: null,
+            dateNewDocsLastFetched: null
         },
 
         /**
@@ -42,6 +45,11 @@ define([
                     maxDate: this.get('customMaxDate'),
                     minDate: this.get('customMinDate')
                 };
+            } else if (dateRange === DateRange.NEW) {
+                return {
+                    maxDate: null,
+                    minDate: this.get('dateNewDocsLastFetched')
+                }
             } else if (dateRange === null) {
                 return {
                     maxDate: null,
@@ -62,6 +70,13 @@ define([
                     minDate: moment().subtract(1, period),
                     maxDate: moment()
                 };
+            }
+        },
+
+        resetDateLastFetched: function() {
+            this.set('dateNewDocsLastFetched', null);
+            if(this.get('dateRange') === DateRange.NEW) {
+                this.set('dateRange', null);
             }
         }
     }, {

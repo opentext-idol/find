@@ -6,20 +6,16 @@
 define([
     'backbone',
     'i18n!find/nls/bundle',
-    'find/app/page/search/document/tab-content-view'
-], function(Backbone, i18n, TabContentView) {
+    'find/app/page/search/document/tab-content-view',
+    'find/app/page/search/document/authors-tab',
+    'find/app/page/search/document/similar-documents-tab',
+    'find/app/page/search/document/similar-dates-tab'
+], function(Backbone, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab, SimilarDatesTab) {
     'use strict';
 
-    // TODO: for demonstration, replace & move this when implementing proper tabs
     var MetaDataTabContent = Backbone.View.extend({
         render: function () {
-            this.$el.html('<p>Empty Tab</p>');
-        }
-    });
-
-    var SecondTabContent = Backbone.View.extend({
-        render: function () {
-            this.$el.html('<h2>Placeholder</h2>');
+            this.$el.html('metadata');
         }
     });
 
@@ -35,9 +31,29 @@ define([
         },
 
         {
-            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: SecondTabContent}),
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: AuthorsTab}),
 
-            title: 'Placeholder',
+            title: i18n['search.document.detail.tabs.authors'],
+
+            shown: function (documentModel) {
+                return documentModel.get('authors').length > 0;
+            }
+        },
+
+        {
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: SimilarDocumentsTab}),
+
+            title: i18n['search.document.detail.tabs.similarDocuments'],
+
+            shown: function (documentModel) {
+                return true;
+            }
+        },
+
+        {
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: SimilarDatesTab}),
+
+            title: i18n['search.document.detail.tabs.similarDates'],
 
             shown: function (documentModel) {
                 return true;

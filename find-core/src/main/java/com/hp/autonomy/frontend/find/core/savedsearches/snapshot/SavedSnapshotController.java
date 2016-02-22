@@ -1,16 +1,18 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
-import com.hp.autonomy.aci.content.fieldtext.FieldText;
-import com.hp.autonomy.aci.content.fieldtext.MATCH;
-import com.hp.autonomy.frontend.find.core.savedsearches.FieldAndValue;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
@@ -18,7 +20,6 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
     public static final String PATH = "/api/public/saved-snapshot";
 
     protected final DocumentsService<S, R, E> documentsService;
-
     protected final SavedSnapshotService service;
 
     @Autowired
@@ -53,7 +54,7 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
     ) throws E {
         return service.update(
                 new SavedSnapshot.Builder(snapshot)
-                        .setStateToken(new ArrayList<>(Arrays.asList(getStateToken(snapshot))))
+                        .setStateToken(new ArrayList<>(Collections.singletonList(getStateToken(snapshot))))
                         .setId(id)
                         .build()
         );
@@ -64,26 +65,5 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
             @PathVariable("id") final long id
     ) {
         service.deleteById(id);
-    }
-
-    protected String getQueryText(final SavedSnapshot snapshot) {
-        return snapshot.getQueryText() + StringUtils.join(snapshot.getRelatedConcepts(), " AND ");
-    }
-
-    protected String getFieldText(final Set<FieldAndValue> fieldAndValues) {
-        final List<FieldText> matchNodes = new ArrayList<>();
-
-        for(FieldAndValue fieldAndValue: fieldAndValues) {
-            matchNodes.add(new MATCH(fieldAndValue.getField(), new String[]{fieldAndValue.getValue()}));
-        }
-
-        if(matchNodes.size() == 0) return "";
-
-        final FieldText fieldtext = matchNodes.get(0);
-        for(int ii = 1; ii < matchNodes.size();) {
-            fieldtext.AND(matchNodes.get(ii));
-        }
-
-        return fieldtext.toString();
     }
 }

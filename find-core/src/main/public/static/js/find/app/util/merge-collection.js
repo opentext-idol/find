@@ -3,12 +3,28 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
+// TODO: Move this to js-whatever
 define([
     'backbone'
 ], function(Backbone) {
 
-    // TODO: Move this to js-whatever
-    return Backbone.Collection.extend({
+    /**
+     * @typedef {Object} MergeCollectionOptions
+     * @property {Backbone.Collection[]} collections The target collections
+     * @property {?String} typeAttribute Used to uniquely identify models
+     * @property {?String} idAttribute Used to uniquely identify models
+     */
+    /**
+     * Collection which merges models multiple target collections into itself. The type and id attribute options are combined
+     * and used to uniquely identify target models. Typically, the type attribute value will be the same on all models in a
+     * target collection, and the id attribute values will be unique in a target collection.
+     * @name MergeCollection
+     * @constructor
+     * @param {Backbone.Model[]} models
+     * @param {MergeCollectionOptions} options
+     * @extends Backbone.Collection
+     */
+    var MergeCollection = Backbone.Collection.extend({
         initialize: function(models, options) {
             this.typeAttribute = options.typeAttribute || 'type';
             this.idAttribute = options.idAttribute || 'id';
@@ -42,5 +58,7 @@ define([
             return id == null ? null : attributes[this.typeAttribute] + ':' + id;
         }
     });
+
+    return MergeCollection;
 
 });

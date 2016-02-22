@@ -6,26 +6,31 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.BCryptUsernameAndPassword;
+import com.hp.autonomy.frontend.configuration.ConfigurationFilterMixin;
+import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfigFileService;
 import org.jasypt.util.text.TextEncryptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 public class HodConfigFileConfiguration {
-    @Autowired
-    private TextEncryptor textEncryptor;
-
-    @Autowired
-    private FilterProvider filterProvider;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Bean
-    public HodFindConfigFileService configService() {
+    public HodFindConfigFileService configService(final TextEncryptor textEncryptor, final FilterProvider filterProvider) {
+        final ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
+                .createXmlMapper(false)
+                .mixIn(Authentication.class, HodAuthenticationMixins.class)
+                .mixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
+                .mixIn(HodFindConfig.class, ConfigurationFilterMixin.class)
+                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+                .build();
+
         final HodFindConfigFileService configService = new HodFindConfigFileService();
         configService.setConfigFileLocation("hp.find.home");
         configService.setConfigFileName("config.json");

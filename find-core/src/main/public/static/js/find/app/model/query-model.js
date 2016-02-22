@@ -4,8 +4,9 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
+    'backbone',
+    'find/app/util/search-data-util'
+], function(Backbone, searchDataUtil) {
 
     /**
      * @readonly
@@ -18,11 +19,11 @@ define([
 
     var DEBOUNCE_WAIT_MILLISECONDS = 500;
 
-    function buildIndexes(selectedIndexesCollection) {
-        return selectedIndexesCollection.map(function(model) {
-            return model.get('domain') ? encodeURIComponent(model.get('domain')) + ':' + encodeURIComponent(model.get('name')) : encodeURIComponent(model.get('name'));
-        });
-    }
+    var collectionBuildIndexes = function(collection) {
+        return searchDataUtil.buildIndexes(collection.map(function (model) {
+            return model.pick('domain', 'name');
+        }));
+    };
 
     return Backbone.Model.extend({
         defaults: {
@@ -51,7 +52,7 @@ define([
             });
 
             this.listenTo(this.queryState.selectedIndexes, 'update reset', _.debounce(_.bind(function() {
-                this.set('indexes', buildIndexes(this.queryState.selectedIndexes));
+                this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
             }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
             this.listenTo(this.queryState.selectedParametricValues, 'add remove reset', _.debounce(_.bind(function() {
@@ -63,7 +64,7 @@ define([
 
             this.set(_.extend({
                 queryText: this.queryState.queryTextModel.makeQueryText(),
-                indexes: buildIndexes(this.queryState.selectedIndexes),
+                indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
                 fieldText: fieldTextNode ? fieldTextNode : null
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));
         },

@@ -6,11 +6,11 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.hp.autonomy.frontend.configuration.*;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsDeserializer;
+import com.hp.autonomy.frontend.configuration.Authentication;
+import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
-import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.caching.HodApplicationCacheResolver;
 import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteService;
 import com.hp.autonomy.hod.client.api.analysis.autocomplete.AutocompleteServiceImpl;
@@ -24,13 +24,17 @@ import com.hp.autonomy.hod.client.config.HodServiceConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.hod.client.token.TokenProxyService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
-import com.hp.autonomy.hod.sso.*;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.hod.sso.HodAuthenticationRequestService;
+import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
+import com.hp.autonomy.hod.sso.HodSsoConfig;
+import com.hp.autonomy.hod.sso.SpringSecurityTokenProxyService;
+import com.hp.autonomy.hod.sso.UnboundTokenService;
+import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -38,6 +42,7 @@ import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.SimpleCacheResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
@@ -57,23 +62,18 @@ public class HodConfiguration extends CachingConfigurerSupport {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
-    private ConfigFileService<HodFindConfig> configService;
-
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
+    @Primary
     @Autowired
-    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder, final QueryRestrictionsDeserializer<?> queryRestrictionsDeserializer) {
+    public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder) {
         return builder.createXmlMapper(false)
                 .mixIn(Authentication.class, HodAuthenticationMixins.class)
-                .mixIn(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
-                .deserializerByType(QueryRestrictions.class, queryRestrictionsDeserializer)
-                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .build();
     }
 
     @Bean
-    public SingleUserAuthenticationValidator singleUserAuthenticationValidator() {
+    public SingleUserAuthenticationValidator singleUserAuthenticationValidator(final ConfigService<? extends AuthenticationConfig<?>> configService) {
         final SingleUserAuthenticationValidator singleUserAuthenticationValidator = new SingleUserAuthenticationValidator();
         singleUserAuthenticationValidator.setConfigService(configService);
 
@@ -113,11 +113,13 @@ public class HodConfiguration extends CachingConfigurerSupport {
         return builder.build();
     }
 
-    private HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder() {
+    @Bean
+    public HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder(final HttpClient httpClient, @Qualifier("hodSearchResultObjectMapper") final ObjectMapper hodSearchResultObjectMapper) {
         final String endpoint = environment.getProperty("find.iod.api", "https://api.havenondemand.com");
 
         return new HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple>(endpoint)
-                .setHttpClient(httpClient())
+                .setHttpClient(httpClient)
+                .setObjectMapper(hodSearchResultObjectMapper)
                 .setTokenRepository(tokenRepository);
     }
 
@@ -127,29 +129,27 @@ public class HodConfiguration extends CachingConfigurerSupport {
     }
 
     @Bean
-    public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig(final TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService) {
-        return hodServiceConfigBuilder()
+    public HodServiceConfig<EntityType.Combined, TokenType.Simple> hodServiceConfig(
+            final HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder,
+            final TokenProxyService<EntityType.Combined, TokenType.Simple> tokenProxyService) {
+        return hodServiceConfigBuilder
                 .setTokenProxyService(tokenProxyService)
                 .build();
     }
 
     @Bean
-    public AuthenticationService authenticationService() {
-        return new AuthenticationServiceImpl(hodServiceConfigBuilder().build());
+    public AuthenticationService authenticationService(final HodServiceConfig.Builder<EntityType.Combined, TokenType.Simple> hodServiceConfigBuilder) {
+        return new AuthenticationServiceImpl(hodServiceConfigBuilder.build());
     }
 
     @Bean
-    public HodAuthenticationRequestService hodAuthenticationRequestService() {
-        return new HodAuthenticationRequestServiceImpl(configService, authenticationService(), unboundTokenService());
+    public HodAuthenticationRequestService hodAuthenticationRequestService(final ConfigService<? extends HodSsoConfig> configService, final AuthenticationService authenticationService, final UnboundTokenService<TokenType.HmacSha1> unboundTokenService) {
+        return new HodAuthenticationRequestServiceImpl(configService, authenticationService, unboundTokenService);
     }
 
     @Bean
-    public UnboundTokenService<TokenType.HmacSha1> unboundTokenService() {
-        try {
-            return new UnboundTokenServiceImpl(authenticationService(), configService);
-        } catch (final HodErrorException e) {
-            throw new BeanInitializationException("Exception creating UnboundTokenService", e);
-        }
+    public UnboundTokenService<TokenType.HmacSha1> unboundTokenService(final ConfigService<? extends HodSsoConfig> configService, final AuthenticationService authenticationService) throws HodErrorException {
+        return new UnboundTokenServiceImpl(authenticationService, configService);
     }
 
     @Bean

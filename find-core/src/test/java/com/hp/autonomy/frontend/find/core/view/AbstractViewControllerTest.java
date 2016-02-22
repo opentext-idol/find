@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.view;
 
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
+import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,32 +16,29 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractViewControllerTest<C extends ViewController<S, E>, S extends Serializable, E extends Exception> {
     @Mock
-    protected ViewServerService<S, E> viewServerService;
-
-    @Mock
     protected ControllerUtils controllerUtils;
 
     protected C viewController;
+    protected ViewServerService<S, E> viewServerService;
     protected MockHttpServletResponse response;
 
     @Before
     public void setUp() {
         response = new MockHttpServletResponse();
-        when(controllerUtils.buildErrorModelAndView(any(HttpServletRequest.class), anyString(), anyString(), any(Object[].class), any(Integer.class), anyBoolean())).thenReturn(mock(ModelAndView.class));
+        when(controllerUtils.buildErrorModelAndView(any(ErrorModelAndViewInfo.class))).thenReturn(mock(ModelAndView.class));
     }
 
     protected abstract S getSampleDatabase();

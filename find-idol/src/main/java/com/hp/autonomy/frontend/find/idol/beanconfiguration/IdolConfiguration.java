@@ -43,6 +43,7 @@ public class IdolConfiguration {
                 .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .mixIn(ServerConfig.class, ConfigurationFilterMixin.class)
                 .mixIn(ViewConfig.class, ConfigurationFilterMixin.class)
+                .mixIn(IdolFindConfig.class, ConfigurationFilterMixin.class)
                 .deserializerByType(QueryRestrictions.class, queryRestrictionsDeserializer)
                 .build();
     }

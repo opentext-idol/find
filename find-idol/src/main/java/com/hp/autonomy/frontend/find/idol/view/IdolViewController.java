@@ -9,9 +9,10 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.logging.Markers;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.view.ReferenceFieldBlankException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewDocumentNotFoundException;
 import com.hp.autonomy.searchcomponents.idol.view.ViewNoReferenceFieldException;
@@ -32,16 +33,11 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(IdolViewController.VIEW_PATH)
 @Slf4j
 public class IdolViewController extends ViewController<String, AciErrorException> {
-    public static final String VIEW_PATH = "/api/public/view";
-    public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
-    public static final String REFERENCE_PARAM = "reference";
-    public static final String INDEX_PARAM = "index";
-
-    private final ConfigService<IdolFindConfig> configService;
+    private final ConfigService<? extends IdolSearchCapable> configService;
     private final ControllerUtils controllerUtils;
 
     @Autowired
-    public IdolViewController(final ViewServerService<String, AciErrorException> viewServerService, final ConfigService<IdolFindConfig> configService, final ControllerUtils controllerUtils) {
+    public IdolViewController(final ViewServerService<String, AciErrorException> viewServerService, final ConfigService<? extends IdolSearchCapable> configService, final ControllerUtils controllerUtils) {
         super(viewServerService);
         this.configService = configService;
         this.controllerUtils = controllerUtils;
@@ -60,7 +56,15 @@ public class IdolViewController extends ViewController<String, AciErrorException
 
         log.info(Markers.AUDIT, "TRIED TO VIEW NON EXISTENT DOCUMENT WITH REFERENCE {}", reference);
 
-        return controllerUtils.buildErrorModelAndView(request, "error.documentNotFound", "error.referenceDoesNotExist", new Object[]{reference}, HttpStatus.NOT_FOUND.value(), true);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode("error.documentNotFound")
+                .setSubMessageCode("error.referenceDoesNotExist")
+                .setSubMessageArguments(new Object[]{reference})
+                .setStatusCode(HttpStatus.NOT_FOUND.value())
+                .setContactSupport(true)
+                .setException(e)
+                .build());
     }
 
     @ExceptionHandler
@@ -77,7 +81,15 @@ public class IdolViewController extends ViewController<String, AciErrorException
 
         log.info(Markers.AUDIT, "TRIED TO VIEW DOCUMENT WITH REFERENCE {} BUT THE REFERENCE FIELD {} WAS MISSING", reference, referenceField);
 
-        return controllerUtils.buildErrorModelAndView(request, "error.documentNoReferenceField", "error.documentNoReferenceFieldExtended", new Object[]{reference, referenceField}, HttpStatus.BAD_REQUEST.value(), true);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode("error.documentNoReferenceField")
+                .setSubMessageCode("error.documentNoReferenceFieldExtended")
+                .setSubMessageArguments(new Object[]{reference, referenceField})
+                .setStatusCode(HttpStatus.BAD_REQUEST.value())
+                .setContactSupport(true)
+                .setException(e)
+                .build());
     }
 
     @ExceptionHandler(ReferenceFieldBlankException.class)
@@ -90,7 +102,13 @@ public class IdolViewController extends ViewController<String, AciErrorException
 
         log.info(Markers.AUDIT, "TRIED TO VIEW A DOCUMENT USING A BLANK REFERENCE FIELD");
 
-        return controllerUtils.buildErrorModelAndView(request, "error.referenceFieldBlankMain", "error.referenceFieldBlankSub", null, HttpStatus.BAD_REQUEST.value(), true);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode("error.referenceFieldBlankMain")
+                .setSubMessageCode("error.referenceFieldBlankSub")
+                .setStatusCode(HttpStatus.BAD_REQUEST.value())
+                .setContactSupport(true)
+                .build());
     }
 
     @ExceptionHandler
@@ -106,6 +124,14 @@ public class IdolViewController extends ViewController<String, AciErrorException
 
         log.info(Markers.AUDIT, "TRIED TO VIEW DOCUMENT WITH REFERENCE {} BUT VIEW SERVER RETURNED AN ERROR PAGE", reference);
 
-        return controllerUtils.buildErrorModelAndView(request, "error.viewServerErrorMain", "error.viewServerErrorSub", new Object[]{reference}, HttpStatus.INTERNAL_SERVER_ERROR.value(), true);
+        return controllerUtils.buildErrorModelAndView(new ErrorModelAndViewInfo.Builder()
+                .setRequest(request)
+                .setMainMessageCode("error.viewServerErrorMain")
+                .setSubMessageCode("error.viewServerErrorSub")
+                .setSubMessageArguments(new Object[]{reference})
+                .setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setContactSupport(true)
+                .setException(e)
+                .build());
     }
 }

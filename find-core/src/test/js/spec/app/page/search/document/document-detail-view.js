@@ -10,8 +10,8 @@ define([
     'find/app/page/search/document/tab-content-view',
     'find/app/model/document-model',
     'find/app/configuration',
-    'find/app/router'
-], function(Backbone, $, DocumentDetailView, TabContentView, DocumentModel, configuration, router) {
+    'find/app/vent'
+], function(Backbone, $, DocumentDetailView, TabContentView, DocumentModel, configuration, vent) {
 
     var BACK_URL = 'find/search/goback';
     var DOCUMENT_MODEL_REF = 'reference';
@@ -41,22 +41,26 @@ define([
             configuration.and.returnValue({mmapBaseUrl: ANY_OLD_URL});
         });
 
+        afterEach(function() {
+            vent.navigateToDetailRoute.calls.reset();
+            vent.navigate.calls.reset();
+        });
+
         describe('when the back button is clicked', function() {
             beforeEach(function() {
                 this.view = new DocumentDetailView({
                     model: new DocumentModel(),
-                    backUrl: BACK_URL
+                    backUrl: BACK_URL,
+                    indexesCollection: new Backbone.Collection()
                 });
-
-                spyOn(router, 'navigate');
 
                 this.view.render();
                 this.view.$('.detail-view-back-button').click();
             });
 
 
-            it('calls router.navigate with the correct URL', function () {
-                expect(router.navigate).toHaveBeenCalledWith(BACK_URL, jasmine.any(Object));
+            it('calls vent.navigate with the correct URL', function () {
+                expect(vent.navigate).toHaveBeenCalledWith(BACK_URL);
             });
         });
 
@@ -66,7 +70,8 @@ define([
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
 
                     this.view.tabs = this.view.filterTabs(getMockTabs(1));
@@ -88,7 +93,8 @@ define([
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
 
                     this.view.tabs = this.view.filterTabs(getMockTabs(2));
@@ -112,7 +118,8 @@ define([
                 this.view = new DocumentDetailView({
                     model: new DocumentModel({
                         reference: 'some other reference'
-                    })
+                    }),
+                    indexesCollection: new Backbone.Collection()
                 });
 
                 this.view.tabs = this.view.filterTabs(getMockTabs(1));
@@ -135,7 +142,8 @@ define([
                         reference: DOCUMENT_MODEL_REF,
                         media: 'audio',
                         url: 'www.example.com'
-                    })
+                    }),
+                    indexesCollection: new Backbone.Collection()
                 });
                 this.view.render();
             });
@@ -151,7 +159,8 @@ define([
                     model: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         url: ANY_OLD_URL
-                    })
+                    }),
+                    indexesCollection: new Backbone.Collection()
                 });
                 this.view.render();
             });
@@ -167,7 +176,8 @@ define([
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF,
                             url: ANY_OLD_URL
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
                     this.view.render();
                 });
@@ -183,7 +193,8 @@ define([
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: URL_LIKE_REFERENCE
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
                     this.view.render();
                 });
@@ -199,7 +210,8 @@ define([
                     this.view = new DocumentDetailView({
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
                     this.view.render();
                 });
@@ -221,7 +233,8 @@ define([
                         model: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF,
                             mmapUrl: mmapUrl
-                        })
+                        }),
+                        indexesCollection: new Backbone.Collection()
                     });
                     this.view.render();
                 });

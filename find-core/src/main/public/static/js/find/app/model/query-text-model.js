@@ -4,12 +4,9 @@
  */
 
 define([
-    'backbone'
-], function(Backbone) {
-
-    function wrapQuotes(concept) {
-        return '"' + concept + '"';
-    }
+    'backbone',
+    'find/app/util/search-data-util'
+], function (Backbone, searchDataUtil) {
 
     return Backbone.Model.extend({
         defaults: {
@@ -17,18 +14,8 @@ define([
             relatedConcepts: []
         },
 
-        makeQueryText: function(){
-            var inputText = this.get('inputText');
-
-            if (!inputText){
-                return '';
-            }
-
-            if (_.isEmpty(this.get('relatedConcepts'))){
-                return inputText;
-            }
-
-            return '(' + inputText + ') ' + _.map(this.get('relatedConcepts'), wrapQuotes).join(' ');
+        makeQueryText: function () {
+            return searchDataUtil.makeQueryText(this.get('inputText'), this.get('relatedConcepts'));
         }
     });
 

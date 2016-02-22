@@ -19,7 +19,7 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AbstractParametricValuesControllerTest<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
+public abstract class AbstractParametricValuesControllerTest<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
     @Mock
     protected ParametricValuesService<R, S, E> parametricValuesService;
 
@@ -27,7 +27,7 @@ public class AbstractParametricValuesControllerTest<R extends ParametricRequest<
 
     @Test
     public void getParametricValues() throws E {
-        parametricValuesController.getParametricValues(Collections.singleton("SomeField"), "Some query text", null, Collections.<S>emptyList(), null, null);
+        parametricValuesController.getParametricValues(Collections.singletonList("SomeField"), "Some query text", null, Collections.<S>emptyList(), null, null);
         verify(parametricValuesService).getAllParametricValues(Matchers.<R>any());
     }
 }

@@ -18,7 +18,6 @@ define([
 
         initialize: function(options) {
             this.tab = options.tab;
-            this.model = options.model;
 
             var active = this.tab.index === 0 ? 'active' : '';
             this.$el
@@ -27,7 +26,8 @@ define([
 
             this.contentView = new (this.TabSubContentConstructor)({
                 tab: this.tab,
-                model: this.model
+                model: options.model,
+                indexesCollection: options.indexesCollection
             });
         },
 
