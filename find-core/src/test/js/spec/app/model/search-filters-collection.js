@@ -145,7 +145,7 @@ define([
 
             it('adds a date range model', function() {
                 var model = this.collection.get(FiltersCollection.FilterType.DATE_RANGE);
-                expect(model.get('text')).toContain(i18n['search.dates.timeInterval.' + DatesFilterModel.DateRange.WEEK]);
+                expect(model.get('text')).toContain(i18n['search.dates.timeInterval.' + DatesFilterModel.dateRangeToString(DatesFilterModel.DateRange.WEEK)]);
             });
         });
 

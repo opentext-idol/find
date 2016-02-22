@@ -25,6 +25,7 @@ define([
         describe('toQueryModelAttributes function', function() {
             it('returns null for min and max dates if the date range is null', function() {
                 expect(this.model.toQueryModelAttributes()).toEqual({
+                    dateRange: null,
                     minDate: null,
                     maxDate: null
                 });

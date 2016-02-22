@@ -90,8 +90,8 @@ define([
 
             var dateRange = this.datesFilterModel.get('dateRange');
 
-            if (dateRange) {
-                if (dateRange = DatesFilterModel.DateRange.CUSTOM) {
+            if (_.isNumber(dateRange)) {
+                if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
                     _.each(customDatesFilters, function(filterData) {
                         var currentValue = this.datesFilterModel.get(filterData.attribute);
 
@@ -107,7 +107,7 @@ define([
                     models.push({
                         id: FilterType.DATE_RANGE,
                         type: FilterType.DATE_RANGE,
-                        text: i18n['search.dates.timeInterval.' + dateRange]
+                        text: i18n['search.dates.timeInterval.' + DatesFilterModel.dateRangeToString(dateRange)]
                     });
                 }
             }
@@ -174,7 +174,7 @@ define([
         updateDateFilters: function() {
             var dateRange = this.datesFilterModel.get('dateRange');
 
-            if (dateRange) {
+            if (_.isNumber(dateRange)) {
                 if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
                     // Remove any last <period> date filter
                     this.remove(this.where({id: FilterType.DATE_RANGE}));
@@ -206,7 +206,7 @@ define([
                     }));
 
                     var existingDateRangeModel = this.get(FilterType.DATE_RANGE);
-                    var filterText = i18n['search.dates.timeInterval.' + dateRange];
+                    var filterText = i18n['search.dates.timeInterval.' + DatesFilterModel.dateRangeToString(dateRange)];
 
                     if (existingDateRangeModel) {
                         existingDateRangeModel.set('text', filterText);

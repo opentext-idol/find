@@ -34,14 +34,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "searches")
@@ -108,6 +101,9 @@ public abstract class SavedSearch {
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateModified;
 
+    @Column(name = "date_range_type")
+    private Integer dateRange;
+
     @Column(name = "active")
     @JsonIgnore
     private Boolean active;
@@ -123,6 +119,7 @@ public abstract class SavedSearch {
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
         dateModified = builder.dateModified;
+        dateRange = builder.dateRange;
         active = builder.active;
     }
 
@@ -191,6 +188,7 @@ public abstract class SavedSearch {
         private DateTime maxDate;
         private DateTime dateCreated;
         private DateTime dateModified;
+        private Integer dateRange;
         private Boolean active = true;
 
         public Builder(final SavedSearch search) {
@@ -204,6 +202,7 @@ public abstract class SavedSearch {
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
             dateModified = search.dateModified;
+            dateRange = search.dateRange;
             active = search.active;
         }
 
@@ -256,6 +255,11 @@ public abstract class SavedSearch {
 
         public Builder<T> setDateModified(final DateTime dateModified) {
             this.dateModified = dateModified;
+            return this;
+        }
+
+        public Builder<T> setDateRange(final Integer dateRange) {
+            this.dateRange = dateRange;
             return this;
         }
 

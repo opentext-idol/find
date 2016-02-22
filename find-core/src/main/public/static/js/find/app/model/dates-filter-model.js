@@ -8,12 +8,14 @@ define([
      * @readonly
      */
     var DateRange = {
-        CUSTOM: 'CUSTOM',
-        YEAR: 'YEAR',
-        MONTH: 'MONTH',
-        WEEK: 'WEEK',
-        NEW: 'NEW'
+        CUSTOM: 0,
+        YEAR: 1,
+        MONTH: 2,
+        WEEK: 3,
+        NEW: 4
     };
+
+    var DateRangeString = _.invert(DateRange);
 
     return Backbone.Model.extend({
         /**
@@ -42,16 +44,19 @@ define([
 
             if (dateRange === DateRange.CUSTOM) {
                 return {
+                    dateRange: dateRange,
                     maxDate: this.get('customMaxDate'),
                     minDate: this.get('customMinDate')
                 };
             } else if (dateRange === DateRange.NEW) {
                 return {
+                    dateRange: dateRange,
                     maxDate: null,
                     minDate: this.get('dateNewDocsLastFetched')
                 }
             } else if (dateRange === null) {
                 return {
+                    dateRange: dateRange,
                     maxDate: null,
                     minDate: null
                 };
@@ -67,6 +72,7 @@ define([
                 }
 
                 return {
+                    dateRange: dateRange,
                     minDate: moment().subtract(1, period),
                     maxDate: moment()
                 };
@@ -80,7 +86,9 @@ define([
             }
         }
     }, {
-        DateRange: DateRange
+        DateRange: DateRange,
+
+        dateRangeToString: _.partial(_.result, DateRangeString)
     });
 
 });

@@ -27,6 +27,7 @@ define([
      * @property {Moment} maxDate
      * @property {Moment} dateModified
      * @property {Moment} dateCreated
+     * @property {Integer} dateRange
      */
 
     var DATE_FIELDS = [
@@ -93,14 +94,24 @@ define([
          */
         equalsQueryState: function(queryState) {
             var selectedIndexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
-            var datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
 
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
-                    && optionalMomentsEqual(this.get('minDate'), datesAttributes.minDate)
-                    && optionalMomentsEqual(this.get('maxDate'), datesAttributes.maxDate)
+                    && this.equalsQueryStateDateFilters(queryState)
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'))
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
+        },
+
+        equalsQueryStateDateFilters: function(queryState) {
+            var datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
+
+            if(this.get('dateRange') === DatesFilterModel.DateRange.CUSTOM) {
+                return this.get('dateRange') === datesAttributes.dateRange
+                    && optionalMomentsEqual(this.get('minDate'), datesAttributes.minDate)
+                    && optionalMomentsEqual(this.get('maxDate'), datesAttributes.maxDate);
+            } else {
+                return this.get('dateRange') === datesAttributes.dateRange;
+            }
         },
 
         toDatesFilterModelAttributes: function() {
@@ -108,7 +119,7 @@ define([
             var maxDate = this.get('maxDate');
 
             return {
-                dateRange: minDate || maxDate ? DatesFilterModel.DateRange.CUSTOM : null,
+                dateRange: this.get('dateRange'),
                 customMinDate: minDate,
                 customMaxDate: maxDate,
                 dateNewDocsLastFetched: this.get('dateNewDocsLastFetched')
