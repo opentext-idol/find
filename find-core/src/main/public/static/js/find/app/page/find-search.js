@@ -10,6 +10,7 @@ define([
     'parametric-refinement/selected-values-collection',
     'find/app/model/indexes-collection',
     'find/app/model/documents-collection',
+    'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/input-view',
     'find/app/page/search/tabbed-search-view',
     'find/app/model/saved-searches/saved-query-collection',
@@ -26,7 +27,8 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
+], function(BasePage, Backbone, DatesFilterModel, SelectedParametricValuesCollection, IndexesCollection, DocumentsCollection,
+            ComparisonDocumentsCollection, InputView, TabbedSearchView, SavedQueryCollection, SavedSnapshotCollection,
             addChangeListener, MergeCollection, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
             databaseNameResolver, router, vent, i18n, _, template) {
 
@@ -223,7 +225,10 @@ define([
                     viewData = this.serviceViews[cid];
                 } else {
                     var queryTextModel = new QueryTextModel(savedSearchModel.toQueryTextModelAttributes());
-                    var documentsCollection = new DocumentsCollection();
+
+                    var documentsCollection = searchType === SavedSearchModel.Type.QUERY ? new DocumentsCollection() : new ComparisonDocumentsCollection([], {
+                        stateMatchIds: savedSearchModel.get('stateTokens')
+                    });
 
                     var queryState = {
                         queryTextModel: queryTextModel,

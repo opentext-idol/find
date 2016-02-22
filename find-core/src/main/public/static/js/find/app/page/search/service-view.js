@@ -12,6 +12,7 @@ define([
     'find/app/model/parametric-collection',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/results/results-view',
     'find/app/page/search/results/results-view-augmentation',
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/results/results-view-selection',
@@ -29,8 +30,9 @@ define([
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
-            ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsViewAugmentation, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
-            SnapshotDataView, Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
+            ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, ResultsViewAugmentation, ResultsViewContainer,
+            ResultsViewSelection, RelatedConceptsView, SpellCheckView, SnapshotDataView, Collapsible, addChangeListener,
+            SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -57,6 +59,7 @@ define([
         SearchFiltersCollection: SearchFiltersCollection,
 
         // Abstract
+        ResultsView: null,
         ResultsViewAugmentation: null,
         IndexesView: null,
 
@@ -143,32 +146,26 @@ define([
             });
 
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
-            
+
+            var parametricCollection = new ParametricCollection();
+
+            var resultsViewConstructorArguments = {
+                documentsCollection: this.documentsCollection,
+                entityCollection: this.entityCollection,
+                indexesCollection: this.indexesCollection,
+                parametricCollection: parametricCollection,
+                queryModel: this.queryModel,
+                queryTextModel: this.queryState.queryTextModel
+            };
+
+            var resultsViews = [];
+
             if (searchType === SavedSearchModel.Type.QUERY) {
-                var parametricCollection = new ParametricCollection();
-                
-                var resultsViewConstructorArguments = {
-                    documentsCollection: this.documentsCollection,
-                    entityCollection: this.entityCollection,
-                    indexesCollection: this.indexesCollection,
-                    parametricCollection: parametricCollection,
-                    queryModel: this.queryModel,
-                    queryTextModel: this.queryState.queryTextModel
-                };
-
-                this.resultsViewAugmentation = new this.ResultsViewAugmentation(resultsViewConstructorArguments);
+                // TODO: Should these be supported for snapshots?
                 this.topicMapView = new TopicMapView(resultsViewConstructorArguments);
-                this.sunburstView = new SunburstView(constructorArguments);
+                this.sunburstView = new SunburstView(resultsViewConstructorArguments);
 
-                var resultsViews = [{
-                    content: this.resultsViewAugmentation,
-                    id: 'list',
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    selector: {
-                        displayNameKey: 'list',
-                        icon: 'hp-list'
-                    }
-                }, {
+                resultsViews = resultsViews.concat([{
                     content: this.topicMapView,
                     id: 'topic-map',
                     uniqueId: _.uniqueId('results-view-item-'),
@@ -184,26 +181,7 @@ define([
                         displayNameKey: 'sunburst',
                         icon: 'hp-favorite'
                     }
-                }];
-
-                this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
-                    this.rightSideContainerHideToggle(toggle);
-                }, this);
-
-                var resultsViewSelectionModel = new Backbone.Model({
-                    // ID of the currently selected tab
-                    selectedTab: resultsViews[0].id
-                });
-
-                this.resultsViewSelection = new ResultsViewSelection({
-                    views: resultsViews,
-                    model: resultsViewSelectionModel
-                });
-
-                this.resultsViewContainer = new ResultsViewContainer({
-                    views: resultsViews,
-                    model: resultsViewSelectionModel
-                });
+                }]);
 
                 this.spellCheckView = new SpellCheckView({
                     documentsCollection: this.documentsCollection,
@@ -224,7 +202,8 @@ define([
                 this.parametricView = new ParametricView({
                     queryModel: this.queryModel,
                     queryState: this.queryState,
-                    indexesCollection: this.indexesCollection
+                    indexesCollection: this.indexesCollection,
+                    parametricCollection: parametricCollection
                 });
 
                 this.filtersCollection = new this.SearchFiltersCollection([], {
@@ -242,6 +221,41 @@ define([
                 });
             }
 
+            this.resultsView = new this.ResultsView(_.extend({
+                mode: searchType === SavedSearchModel.Type.QUERY ? ResultsView.Mode.QUERY : ResultsView.Mode.STATE_TOKEN
+            }, resultsViewConstructorArguments));
+
+            this.resultsViewAugmentation = new this.ResultsViewAugmentation({resultsView: this.resultsView});
+
+            resultsViews = [{
+                content: this.resultsViewAugmentation,
+                id: 'list',
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'list',
+                    icon: 'hp-list'
+                }
+            }].concat(resultsViews);
+
+            this.listenTo(this.resultsViewAugmentation, 'rightSideContainerHideToggle' , function(toggle) {
+                this.rightSideContainerHideToggle(toggle);
+            }, this);
+
+            var resultsViewSelectionModel = new Backbone.Model({
+                // ID of the currently selected tab
+                selectedTab: resultsViews[0].id
+            });
+
+            this.resultsViewSelection = new ResultsViewSelection({
+                views: resultsViews,
+                model: resultsViewSelectionModel
+            });
+
+            this.resultsViewContainer = new ResultsViewContainer({
+                views: resultsViews,
+                model: resultsViewSelectionModel
+            });
+
             this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
         },
 
@@ -258,6 +272,8 @@ define([
             this.relatedConceptsViewWrapper.render();
 
             this.$('.related-concepts-container').append(this.relatedConceptsViewWrapper.$el);
+            this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
+            this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
 
             this.$('.container-toggle').on('click', this.containerToggle);
 
@@ -267,12 +283,8 @@ define([
                 this.parametricView.setElement(this.$('.parametric-container')).render();
                 this.dateViewWrapper.setElement(this.$('.date-container')).render();
                 this.spellCheckView.setElement(this.$('.spellcheck-container')).render();
-                this.resultsViewSelection.setElement(this.$('.results-view-selection')).render();
-                this.resultsViewContainer.setElement(this.$('.results-view-container')).render();
             } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
-                // TODO: Replace with a state token results view
                 this.snapshotDataView.setElement(this.$('.snapshot-view-container')).render();
-                this.$('.state-token-placeholder').text(this.savedSearchModel.get('stateTokens')[0] || 'None');
             }
 
             this.updateCompareModalButton();
@@ -319,6 +331,7 @@ define([
 
             safeInvoke('remove', [
                 this.savedSearchControlView,
+                this.resultsView,
                 this.resultsViewAugmentation,
                 this.topicMapView,
                 this.resultsViewContainer,

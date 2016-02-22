@@ -120,13 +120,13 @@ define([
         },
 
         initialize: function(options) {
-            _.bindAll(this, 'checkScroll', 'handlePopover');
+            _.bindAll(this, 'handlePopover');
 
             this.mode = options.mode;
 
             this.loadData = this.stateTokenMode() ? this.stateTokenLoadData : this.normalLoadData;
             this.refreshResults = this.stateTokenMode() ? this.stateTokenRefreshResults : this.normalRefreshResults;
-            this.checkScroll = this.stateTokenMode() ? this.stateTokenCheckScroll : this.normalCheckScroll;
+            this.checkScroll = _.bind(this.stateTokenMode() ? this.stateTokenCheckScroll : this.normalCheckScroll, this);
             this.clearLoadingSpinner = this.stateTokenMode ? this.stateTokenClearLoadingSpinner : this.normalClearLoadingSpinner;
 
             this.queryModel = options.queryModel;

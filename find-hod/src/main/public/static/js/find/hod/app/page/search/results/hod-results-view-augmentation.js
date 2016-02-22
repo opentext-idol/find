@@ -5,14 +5,12 @@
 
 define([
     'find/app/page/search/results/results-view-augmentation',
-    'find/hod/app/page/search/document/hod-preview-mode-view',
-    'find/hod/app/page/search/results/hod-results-view'
+    'find/hod/app/page/search/document/hod-preview-mode-view'
 ], function (ResultsViewAugmentation, PreviewModeView) {
 
     'use strict';
 
     return ResultsViewAugmentation.extend({
-        ResultsView: ResultsView,
         PreviewModeView: PreviewModeView
     });
 

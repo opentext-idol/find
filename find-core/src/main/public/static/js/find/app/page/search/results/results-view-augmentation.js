@@ -6,13 +6,11 @@ define([
 ], function(Backbone, $, _, viewHtml) {
 
     return Backbone.View.extend({
-
-        // to be overridden
+        // abstract
         PreviewModeView: null,
-        ResultsView: null,
 
         initialize: function(options) {
-            this.resultsView = new this.ResultsView(options);
+            this.resultsView = options.resultsView;
 
             this.listenTo(this.resultsView, 'preview', function(model) {
                 this.removePreviewModeView();

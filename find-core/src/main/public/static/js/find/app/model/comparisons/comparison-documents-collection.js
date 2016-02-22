@@ -12,7 +12,7 @@ define([
         model: DocumentModel,
         url: '../api/public/comparison/results',
 
-        initialize: function(options) {
+        initialize: function(models, options) {
             this.stateMatchIds = options.stateMatchIds;
             this.stateDontMatchIds = options.stateDontMatchIds;
         },
@@ -21,6 +21,15 @@ define([
             this.totalResults = response.totalResults;
 
             return response.documents;
+        },
+
+        fetch: function(options) {
+            return FindBaseCollection.prototype.fetch.call(this, _.extend(options || {}, {
+                data: _.extend(options.data || {}, {
+                    state_match_ids: this.stateMatchIds,
+                    state_dont_match_ids: this.stateDontMatchIds || []
+                })
+            }));
         }
     });
 
