@@ -16,6 +16,7 @@ import com.hp.autonomy.frontend.configuration.ServerConfig;
 import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsDeserializer;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserService;
@@ -63,7 +64,7 @@ public class IdolConfiguration {
     }
 
     @Bean
-    public UserService userService(final ConfigService<IdolFindConfig> configService, final AciService aciService, final IdolAnnotationsProcessorFactory annotationsProcessorFactory) {
-        return new UserServiceImpl(configService, aciService, annotationsProcessorFactory);
+    public UserService userService(final ConfigService<IdolFindConfig> configService, final AciService aciService, final AciResponseJaxbProcessorFactory processorFactory) {
+        return new UserServiceImpl(configService, aciService, processorFactory);
     }
 }
