@@ -19,29 +19,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = "searches")
@@ -52,6 +31,7 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
+@Access(AccessType.FIELD)
 public abstract class SavedSearch {
     public static final String JADIRA_TYPE_NAME = "jadira";
 
@@ -108,6 +88,9 @@ public abstract class SavedSearch {
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateModified;
 
+    @Transient
+    private DateRange dateRange;
+
     @Column(name = "active")
     @JsonIgnore
     private Boolean active;
@@ -123,7 +106,23 @@ public abstract class SavedSearch {
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
         dateModified = builder.dateModified;
+        dateRange = builder.dateRange;
         active = builder.active;
+    }
+
+    @Access(AccessType.PROPERTY)
+    @Column(name = "date_range_type")
+    @JsonIgnore
+    public Integer getDateRangeInt() {
+        if(this.dateRange == null) {
+            return null;
+        } else {
+            return this.dateRange.getId();
+        }
+    }
+
+    public void setDateRangeInt(final Integer dateRangeInt) {
+        this.dateRange = DateRange.getType(dateRangeInt);
     }
 
     // WARNING: This logic is duplicated in the client-side QueryTextModel
@@ -191,6 +190,7 @@ public abstract class SavedSearch {
         private DateTime maxDate;
         private DateTime dateCreated;
         private DateTime dateModified;
+        private DateRange dateRange;
         private Boolean active = true;
 
         public Builder(final SavedSearch search) {
@@ -204,6 +204,7 @@ public abstract class SavedSearch {
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
             dateModified = search.dateModified;
+            dateRange = search.dateRange;
             active = search.active;
         }
 
@@ -256,6 +257,11 @@ public abstract class SavedSearch {
 
         public Builder<T> setDateModified(final DateTime dateModified) {
             this.dateModified = dateModified;
+            return this;
+        }
+
+        public Builder<T> setDateRange(final DateRange dateRange) {
+            this.dateRange = dateRange;
             return this;
         }
 

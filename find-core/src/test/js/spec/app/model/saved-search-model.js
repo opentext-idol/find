@@ -32,6 +32,7 @@ define([
                 queryText: INPUT_TEXT,
                 maxDate: moment(MAX_DATE),
                 minDate: moment(MIN_DATE),
+                dateRange: DatesFilterModel.DateRange.CUSTOM,
                 relatedConcepts: RELATED_CONCEPTS,
                 indexes: BASE_INDEXES,
                 parametricValues: PARAMETRIC_VALUES

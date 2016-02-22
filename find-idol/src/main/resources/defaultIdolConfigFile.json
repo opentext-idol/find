@@ -5,7 +5,11 @@
       "protocol": "HTTP",
       "host": "find-backend",
       "port": 9030,
-      "productType": ["UASERVER", "DAH", "IDOLPROXY"]
+      "productType": [
+        "UASERVER",
+        "DAH",
+        "IDOLPROXY"
+      ]
     },
     "name": "CommunityAuthentication"
   },
@@ -13,14 +17,22 @@
     "protocol": "HTTP",
     "host": "find-idol",
     "port": 9000,
-    "productType": ["AXE", "DAH", "IDOLPROXY"]
+    "productType": [
+      "AXE",
+      "DAH",
+      "IDOLPROXY"
+    ]
   },
   "queryManipulation": {
     "server": {
       "protocol": "HTTP",
       "host": "find-idol",
       "port": 16000,
-      "productType": ["QMS", "DAH", "IDOLPROXY"]
+      "productType": [
+        "QMS",
+        "DAH",
+        "IDOLPROXY"
+      ]
     },
     "typeAheadMode": "Index",
     "expandQuery": true,
@@ -31,7 +43,11 @@
     "protocol": "HTTP",
     "host": "find-idol",
     "port": 9080,
-    "productType": ["VIEW", "IDOLPROXY", "DAH"],
+    "productType": [
+      "VIEW",
+      "IDOLPROXY",
+      "DAH"
+    ],
     "referenceField": "DREREFERENCE"
   },
   "mmap": {
@@ -39,36 +55,52 @@
     "baseUrl": ""
   },
   "fieldsInfo": {
-    "fieldAssociations": {
-      "author": "author",
-      "mediaContentType": "content_type",
-      "mediaUrl": "url",
-      "mediaOffset": "offset",
-      "mmapUrl": "HPSW_APP_NOINDEX_MMAPPROXY",
-      "thumbnail": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+    "contentType": {
+      "names": [
+        "CONTENT_TYPE"
+      ]
     },
-    "customFields": [
-      {
-        "name": "content_type",
-        "displayName": "Content Type"
-      },
-      {
-        "name": "url",
-        "displayName": "Url"
-      },
-      {
-        "name": "offset"
-      },
-      {
-        "name": "author",
-        "displayName": "Authors"
-      },
-      {
-        "name": "HPSW_APP_NOINDEX_MMAPPROXY"
-      },
-      {
-        "name": "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
-      }
-    ]
+    "url": {
+      "names": [
+        "URL"
+      ]
+    },
+    "offset": {
+      "names": [
+        "offset"
+      ]
+    },
+    "authors": {
+      "names": [
+        "AUTHOR"
+      ]
+    },
+    "categories": {
+      "names": [
+        "AU_REPOSITORY_METADATA_CATEGORY_STRING"
+      ]
+    },
+    "dateCreated": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "dateModified": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "mmapUrl": {
+      "names": [
+        "HPSW_APP_NOINDEX_MMAPPROXY"
+      ]
+    },
+    "thumbnail": {
+      "names": [
+        "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+      ]
+    }
   }
 }

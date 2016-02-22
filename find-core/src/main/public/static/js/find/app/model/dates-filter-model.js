@@ -42,16 +42,19 @@ define([
 
             if (dateRange === DateRange.CUSTOM) {
                 return {
+                    dateRange: dateRange,
                     maxDate: this.get('customMaxDate'),
                     minDate: this.get('customMinDate')
                 };
             } else if (dateRange === DateRange.NEW) {
                 return {
+                    dateRange: dateRange,
                     maxDate: null,
                     minDate: this.get('dateNewDocsLastFetched')
                 }
             } else if (dateRange === null) {
                 return {
+                    dateRange: dateRange,
                     maxDate: null,
                     minDate: null
                 };
@@ -67,6 +70,7 @@ define([
                 }
 
                 return {
+                    dateRange: dateRange,
                     minDate: moment().subtract(1, period),
                     maxDate: moment()
                 };
