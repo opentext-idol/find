@@ -9,7 +9,6 @@ import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.types.idol.RecursiveField;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -39,8 +38,8 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
     public static final String MAX_DATE_PARAM = "maxDate";
     public static final String SECOND_PARAMETRIC_PARAM = "second-parametric";
 
-    private final ParametricValuesService<R, S, E> parametricValuesService;
-    private final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
+    protected final ParametricValuesService<R, S, E> parametricValuesService;
+    protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
     protected ParametricValuesController(final ParametricValuesService<R, S, E> parametricValuesService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
         this.parametricValuesService = parametricValuesService;
@@ -59,21 +58,6 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
         final R parametricRequest = buildParametricRequest(fieldNames == null ? Collections.<String>emptyList() : fieldNames, queryRestrictions);
         return parametricValuesService.getAllParametricValues(parametricRequest);
-    }
-
-    @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(method = RequestMethod.GET, value = SECOND_PARAMETRIC_PARAM)
-    @ResponseBody
-    public List<RecursiveField> getSecondParametricValues(@RequestParam(value = FIELD_NAMES_PARAM) final List<String> fieldNames,
-                                                          @RequestParam(QUERY_TEXT_PARAM) final String queryText,
-                                                          @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-                                                          @RequestParam(DATABASES_PARAM) final List<S> databases,
-                                                          @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-                                                          @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E, InterruptedException {
-
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
-        final R parametricRequest = buildParametricRequest(fieldNames == null ? Collections.<String>emptyList() : fieldNames, queryRestrictions);
-        return parametricValuesService.getDependentParametricValues(parametricRequest);
     }
 
     protected abstract R buildParametricRequest(final List<String> fieldNames, final QueryRestrictions<S> queryRestrictions);
