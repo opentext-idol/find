@@ -28,6 +28,10 @@ public class SimilarDocumentsView implements AppPage {
         return title().getText();
     }
 
+    public WebElement seedLink() {
+        return title().findElement(By.tagName("a"));
+    }
+
     private WebElement title() {
         return findElement(By.cssSelector(".results-message-container h4"));
     }

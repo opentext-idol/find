@@ -1,9 +1,9 @@
 package com.autonomy.abc.selenium.search;
 
-class AggregateSearchFilter implements SearchFilter {
+public class AggregateSearchFilter implements SearchFilter {
     private final Iterable<SearchFilter> filters;
 
-    AggregateSearchFilter(Iterable<SearchFilter> filters) {
+    public AggregateSearchFilter(Iterable<SearchFilter> filters) {
         this.filters = filters;
     }
 

@@ -21,6 +21,10 @@ public class HSODFindElementFactory extends ElementFactoryBase {
         return loadPage(FindPage.class);
     }
 
+    public FindResultsPage getResultsPage() {
+        return getFindPage().getResultsPage();
+    }
+
     public SimilarDocumentsView getSimilarDocumentsView() {
         return loadPage(SimilarDocumentsView.class);
     }

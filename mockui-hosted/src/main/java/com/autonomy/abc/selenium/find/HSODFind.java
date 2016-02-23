@@ -15,6 +15,10 @@ public class HSODFind implements Application<HSODFindElementFactory> {
         inWindow(window);
     }
 
+    public FindService findService() {
+        return new FindService(this);
+    }
+
     @Override
     public HSODFindElementFactory elementFactory() {
         return factory;
