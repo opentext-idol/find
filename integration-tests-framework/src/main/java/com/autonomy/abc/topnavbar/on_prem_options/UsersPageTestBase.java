@@ -33,6 +33,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     protected UsersPage usersPage;
     protected UserService<?> userService;
     protected SignupEmailHandler emailHandler;
+    private LoginService loginService;
 
     public UsersPageTestBase(TestConfig config) {
         super(config);
@@ -43,6 +44,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
     @Before
     public void setUp() throws MalformedURLException, InterruptedException {
+        loginService = getApplication().loginService();
         userService = getApplication().userService();
         usersPage = userService.goToUsers();
         userService.deleteOtherUsers();
@@ -83,9 +85,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
             Waits.waitForGritterToClear();
         } catch (InterruptedException e) { /**/ }
 
-        logout();
-
-        getDriver().get(getAppUrl());
+        logoutAndNavigateToWebApp();
 
         try {
             loginAs(user);
@@ -113,8 +113,12 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
     }
 
     protected void logoutAndNavigateToWebApp(){
-        logout();
+        loginService.logout();
         getDriver().get(getAppUrl());
+    }
+
+    protected LoginService getLoginService() {
+        return loginService;
     }
 
     protected void verifyCreateDeleteInTable(NewUser newUser) {
@@ -126,5 +130,9 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
 
         deleteAndVerify(user);
         verifyThat(usersPage.getTable(), not(containsText(username)));
+    }
+
+    protected void loginAs(User user) {
+        loginService.login(user);
     }
 }

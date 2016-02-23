@@ -3,11 +3,14 @@ package com.autonomy.abc.usermanagement;
 import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
+import com.autonomy.abc.selenium.application.SearchOptimizerApplication;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.error.ErrorPage;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.HSODFind;
 import com.autonomy.abc.selenium.find.HSODFindElementFactory;
+import com.autonomy.abc.selenium.hsod.HSODApplication;
 import com.autonomy.abc.selenium.users.*;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.Waits;
@@ -172,27 +175,28 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         verifyThat(usersPage.getStatusOf(user), is(Status.CONFIRMED));
 
         // TODO: use a single driver once 401 page has logout button
-        WebDriver secondDriver = getConfig().getWebDriverFactory().create();
+        SearchOptimizerApplication<?> secondApp = SearchOptimizerApplication.ofType(getConfig().getType());
+        Window secondWindow = launchInNewSession(secondApp).getActiveWindow();
         try {
-            secondDriver.get(getAppUrl());
-            LoginPage loginPage = new HSOLoginPage(secondDriver, new AbcHasLoggedIn(secondDriver));
-
+            secondWindow.goTo(getAppUrl());
             try {
-                loginTo(loginPage, secondDriver, user);
+                secondApp.loginService().login(user);
             } catch (NoSuchElementException e) {
                 /* Happens when it's trying to log in for the second time */
             }
 
+            WebDriver secondDriver = secondWindow.getSession().getDriver();
+
             verify401(secondDriver);
 
-            secondDriver.navigate().to(getAppUrl().split("/searchoptimizer")[0]);
+            secondWindow.goTo(getAppUrl().split("/searchoptimizer")[0]);
             verify401(secondDriver);
 
-            secondDriver.navigate().to(getConfig().getAppUrl(new HSODFind()));
+            secondWindow.goTo(getConfig().getAppUrl(new HSODFind()));
             Waits.loadOrFadeWait();
             verifyThat(secondDriver.findElement(By.className("error-body")), containsText("401"));
         } finally {
-            secondDriver.quit();
+            secondWindow.close();
         }
     }
 
@@ -264,14 +268,13 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         final User user = userService.createNewUser(getConfig().generateNewUser(), Role.ADMIN);
         user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
 
-        logout();
-        getDriver().get(getConfig().getAppUrl(new HSODFind()));
-
-        HSODFindElementFactory findFactory = new HSODFind(getMainSession().getActiveWindow()).elementFactory();
+        getApplication().loginService().logout();
+        HSODFind findApp = new HSODFind().inWindow(getWindow());
+        getDriver().get(getConfig().getAppUrl(findApp));
 
         boolean success = true;
         try {
-            loginTo(findFactory.getLoginPage(), getDriver(), user);
+            findApp.loginService().login(user);
         } catch (Exception e) {
             success = false;
         }

@@ -18,6 +18,7 @@ import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.users.User;
 import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
@@ -49,11 +50,13 @@ public class IndexesPageITCase extends HostedTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexesPageITCase.class);
     private IndexService indexService;
     private IndexesPage indexesPage;
+    private User testUser;
 
     public IndexesPageITCase(TestConfig config) {
         super(config);
         // requires a separate account where indexes can safely be added and deleted
-        setInitialUser(config.getUser("index_tests"));
+        testUser = config.getUser("index_test");
+        setInitialUser(testUser);
     }
 
     @Before
@@ -216,7 +219,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @KnownBug("CSA-1886")
     @Ignore("Breaking too many tests")
     public void testDeletingDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(Index.DEFAULT, getCurrentUser(), getConfig().getApiUrl());
+        indexService.deleteIndexViaAPICalls(Index.DEFAULT, testUser, getConfig().getApiUrl());
 
         getDriver().navigate().refresh();
         indexesPage = getElementFactory().getIndexesPage();
@@ -227,7 +230,7 @@ public class IndexesPageITCase extends HostedTestBase {
     @Test
     @Ignore("Breaking too many tests")
     public void testDeletingSearchDefaultIndex(){
-        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), getCurrentUser(), getConfig().getApiUrl());
+        indexService.deleteIndexViaAPICalls(new Index("search_default_index"), testUser, getConfig().getApiUrl());
         getDriver().navigate().refresh();
 
         verifyThat(getApplication().switchTo(PromotionsPage.class), containsText("There are no promotions..."));
