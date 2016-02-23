@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.control;
 
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,6 +58,13 @@ public class Session implements Iterable<Window> {
         driver.switchTo().window(window.getHandle());
     }
 
+    public Window switchWindow(int i) {
+        List<String> windowHandles = new ArrayList<>(driver.getWindowHandles());
+        Window window = new Window(this, windowHandles.get(i));
+        window.activate();
+        return window;
+    }
+
     void closeWindow(Window window) {
         switchWindow(window);
         driver.close();
@@ -64,6 +72,15 @@ public class Session implements Iterable<Window> {
 
     public int countWindows() {
         return driver.getWindowHandles().size();
+    }
+
+    public ExpectedCondition<Boolean> windowCountIs(final int count) {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver input) {
+                return Session.this.countWindows() == count;
+            }
+        };
     }
 
     @Override

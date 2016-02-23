@@ -122,12 +122,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
         seedLink.click();
         new WebDriverWait(getDriver(), 5)
                 .withMessage("opening seed document")
-                .until(new ExpectedCondition<Boolean>() {
-                    @Override
-                    public Boolean apply(WebDriver input) {
-                        return getMainSession().countWindows() == windowCount + 1;
-                    }
-                });
+                .until(getMainSession().windowCountIs(windowCount + 1));
 
         Window secondWindow = null;
         for (Window openWindow : getMainSession()) {

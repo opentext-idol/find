@@ -5,12 +5,14 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.actions.wizard.Wizard;
 import com.autonomy.abc.selenium.connections.*;
+import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.users.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,23 +51,22 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
         connectionService.setUpConnection(connector);
         connectionsDetailPage = connectionService.goToDetails(connector);
 
-        verifyThat(getDriver().getWindowHandles().size(), is(1));
+        verifyThat(getMainSession().countWindows(), is(1));
 
-        List<String> windowHandles = null;
-
+        Window secondWindow = null;
         try {
             connectionsDetailPage.webConnectorURL().click();
+            new WebDriverWait(getDriver(), 5)
+                    .until(getMainSession().windowCountIs(2));
 
-            Thread.sleep(2000);
-            windowHandles = new ArrayList<>(getDriver().getWindowHandles());
+            verifyThat(getMainSession().countWindows(), is(2));
+            secondWindow = getMainSession().switchWindow(1);
 
-            verifyThat(windowHandles.size(), is(2));
-            getDriver().switchTo().window(windowHandles.get(1));
             verifyThat(getDriver().getCurrentUrl(), containsString(connectorURL));
         } finally {
-            if(windowHandles != null && windowHandles.size() > 1) {
-                getDriver().close();
-                getDriver().switchTo().window(windowHandles.get(0));
+            if(secondWindow != null) {
+                secondWindow.close();
+                getMainSession().switchWindow(0);
             }
         }
     }
