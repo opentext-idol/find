@@ -21,6 +21,7 @@ define([
     'find/app/page/search/snapshots/snapshot-data-view',
     'find/app/util/collapsible',
     'find/app/util/model-any-changed-attribute-listener',
+    'find/app/util/search-data-util',
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/topic-map-view',
@@ -31,7 +32,7 @@ define([
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
             ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, SpellCheckView, SnapshotDataView, Collapsible, addChangeListener,
+            ResultsViewSelection, RelatedConceptsView, SpellCheckView, SnapshotDataView, Collapsible, addChangeListener, searchDataUtil,
             SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
@@ -295,15 +296,23 @@ define([
         },
 
         fetchEntities: function() {
-            if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+            if (this.savedSearchModel.get('type') === SavedSearchModel.Type.QUERY) {
+                if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+                    this.entityCollection.fetch({
+                        data: {
+                            databases: this.queryModel.get('indexes'),
+                            queryText: this.queryModel.get('queryText'),
+                            fieldText: this.queryModel.get('fieldText'),
+                            minDate: this.queryModel.getIsoDate('minDate'),
+                            maxDate: this.queryModel.getIsoDate('maxDate')
+                        }
+                    });
+                }
+            } else {
                 this.entityCollection.fetch({
-                    data: {
-                        databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('queryText'),
-                        fieldText: this.queryModel.get('fieldText'),
-                        minDate: this.queryModel.getIsoDate('minDate'),
-                        maxDate: this.queryModel.getIsoDate('maxDate')
-                    }
+                    data: _.extend({
+                        stateTokens: this.savedSearchModel.get('stateTokens')
+                    }, searchDataUtil.buildQuery(this.savedSearchModel))
                 });
             }
         },
