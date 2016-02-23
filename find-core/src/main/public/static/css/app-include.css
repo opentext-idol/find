@@ -1169,6 +1169,10 @@ input:-moz-placeholder::before {
     min-height: 100%;
 }
 
+.document-detail-tabs-content .table > tbody > tr:first-child > td {
+    border: none;
+}
+
 #cboxLoadedContent .table > tbody > tr > th,
 #cboxLoadedContent .table > tbody > tr > td {
     border-top: 0;

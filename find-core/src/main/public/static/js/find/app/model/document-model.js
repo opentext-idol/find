@@ -16,7 +16,7 @@ define([
         return contentType && _.find(MEDIA_TYPES, function (mediaType) {
             return contentType.indexOf(mediaType) === 0;
         });
-    }
+    };
 
     function getFieldValues(fieldData) {
         if (fieldData && fieldData.values.length) {
