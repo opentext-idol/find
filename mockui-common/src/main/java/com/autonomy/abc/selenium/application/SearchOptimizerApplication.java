@@ -18,7 +18,7 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
 
     static {
         FACTORY_MAP.put(ApplicationType.HOSTED, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.hsod.HSODApplication"));
-        FACTORY_MAP.put(ApplicationType.ON_PREM, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.application.OPISOApplication"));
+        FACTORY_MAP.put(ApplicationType.ON_PREM, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.iso.OPISOApplication"));
     }
 
     public abstract PromotionService promotionService();
