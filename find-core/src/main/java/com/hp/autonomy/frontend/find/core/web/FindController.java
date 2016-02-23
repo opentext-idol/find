@@ -71,13 +71,13 @@ public class FindController {
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(config));
 
-        return new ModelAndView(ViewNames.PUBLIC.value(), attributes);
+        return new ModelAndView(ViewNames.PUBLIC.viewName(), attributes);
     }
 
     @RequestMapping(value = LOGIN_PATH, method = RequestMethod.GET)
     public ModelAndView login() {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
-        return new ModelAndView(ViewNames.LOGIN.value(), attributes);
+        return new ModelAndView(ViewNames.LOGIN.viewName(), attributes);
     }
 }
