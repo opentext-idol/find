@@ -524,8 +524,8 @@ public class SearchPageITCase extends ABCTestBase {
 
 		assertThat(searchPage.promotionsBucketWebElements(), hasSize(4));
 
-		final String url = getDriver().getCurrentUrl().replace("french", "arabic");
-		getDriver().get(url);
+		final String url = getWindow().getUrl().replace("french", "arabic");
+		getWindow().goTo(url);
 		searchPage = getElementFactory().getSearchPage();
 		Waits.loadOrFadeWait();
 		assertThat("Have not navigated back to search page with modified url " + url, searchPage.promoteThisQueryButton().isDisplayed());
@@ -891,7 +891,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.switchResultsPage(Pagination.LAST);
 		final int currentPage = searchPage.getCurrentPageNumber();
 		final String docTitle = searchPage.getSearchResult(1).getTitleString();
-		final String url = getDriver().getCurrentUrl();
+		final String url = getWindow().getUrl();
 		assertThat("Url and current page number are out of sync", url, containsString("nice/" + currentPage));
 
 		final String illegitimateUrl = url.replace("nice/" + currentPage, "nice/" + (currentPage + 5));

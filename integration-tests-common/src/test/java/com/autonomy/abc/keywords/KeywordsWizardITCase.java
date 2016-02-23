@@ -158,7 +158,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
     @Test
     public void testWizardCancelButtonsWorksAfterClickingTheNavBarToggleButton() {
-        assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
 
         getElementFactory().getSideNavBar().toggle();
         createKeywordsPage.cancelWizardButton().click();
@@ -166,7 +166,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
 
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.SYNONYM).click();
         createKeywordsPage.continueWizardButton().click();
@@ -177,7 +177,7 @@ public class KeywordsWizardITCase extends ABCTestBase {
 
         keywordsPage.createNewKeywordsButton().click();
         createKeywordsPage = getElementFactory().getCreateNewKeywordsPage();
-        assertThat("Not directed to wizard URL", getDriver().getCurrentUrl(), containsString("keywords/create"));
+        assertThat(getWindow(), urlContains("keywords/create"));
 
         createKeywordsPage.keywordsType(CreateNewKeywordsPage.KeywordType.BLACKLIST).click();
         createKeywordsPage.continueWizardButton().click();

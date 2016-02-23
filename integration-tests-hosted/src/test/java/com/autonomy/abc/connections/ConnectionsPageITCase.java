@@ -48,7 +48,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
         connectionService.setUpConnection(webConnector);
         connectionService.goToDetails(webConnector);
 
-        String url = getDriver().getCurrentUrl();
+        String url = getWindow().getUrl();
 
         getApplication().switchTo(AnalyticsPage.class);
 

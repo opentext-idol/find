@@ -377,12 +377,10 @@ public class PromotionsITCase extends ABCTestBase {
 		setUpPromotion(getQuery("chien", Language.FRENCH), new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "woof bark"));
 
 		promotionService.goToPromotions();
-		final String url = getDriver().getCurrentUrl();
 		final Window mainWindow = getWindow();
-		final Window secondWindow = getMainSession().openWindow(url);
+		final Window secondWindow = getMainSession().openWindow(mainWindow.getUrl());
 
 		secondWindow.activate();
-		getDriver().get(url);
 		final PromotionsPage secondPromotionsPage = getElementFactory().getPromotionsPage();
 		assertThat("Navigated to promotions menu", secondPromotionsPage.promoteExistingButton().isDisplayed());
 
