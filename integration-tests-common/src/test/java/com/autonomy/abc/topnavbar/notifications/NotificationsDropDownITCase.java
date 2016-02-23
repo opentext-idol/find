@@ -99,7 +99,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		notifications = topNavBar.getNotifications();
 		assertThat(notifications.countNotifications(), is(0));
 
-		final Window mainWindow = getMainSession().getActiveWindow();
+		final Window mainWindow = getWindow();
 		final SearchOptimizerApplication<?> secondApp = SearchOptimizerApplication.ofType(getConfig().getType());
 		final Window secondWindow = launchInNewWindow(secondApp);
 		secondWindow.activate();

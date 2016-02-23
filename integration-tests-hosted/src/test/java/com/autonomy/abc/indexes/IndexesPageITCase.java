@@ -242,7 +242,7 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexService.setUpIndex(index);
 
-        Window searchWindow = getMainSession().getActiveWindow();
+        Window searchWindow = getWindow();
         HSODFind findApp = new HSODFind();
         Window findWindow = launchInNewWindow(findApp);
 
@@ -266,7 +266,7 @@ public class IndexesPageITCase extends HostedTestBase {
         Index index = new Index("index");
         indexService.setUpIndex(index);
 
-        Window searchWindow = getMainSession().getActiveWindow();
+        Window searchWindow = getWindow();
         HSODFind findApp = new HSODFind();
         Window findWindow = launchInNewWindow(findApp);
 

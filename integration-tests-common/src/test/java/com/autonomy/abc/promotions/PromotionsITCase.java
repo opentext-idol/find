@@ -377,7 +377,7 @@ public class PromotionsITCase extends ABCTestBase {
 
 		promotionService.goToPromotions();
 		final String url = getDriver().getCurrentUrl();
-		final Window mainWindow = getMainSession().getActiveWindow();
+		final Window mainWindow = getWindow();
 		final Window secondWindow = getMainSession().openWindow(url);
 
 		secondWindow.activate();

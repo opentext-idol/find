@@ -40,8 +40,8 @@ public class LoginPageHostedITCase extends HostedTestBase {
     @Before
     public void setUp() {
         searchApp = getApplication();
-        findApp = new HSODFind(getMainSession().getActiveWindow());
-        devConsole = new DevConsole(getMainSession().getActiveWindow());
+        findApp = new HSODFind(getWindow());
+        devConsole = new DevConsole(getWindow());
 
         // wait before doing anything
         getElementFactory().getLoginPage();

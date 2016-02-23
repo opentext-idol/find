@@ -398,7 +398,7 @@ public class KeywordsPageITCase extends ABCTestBase {
 		Waits.loadOrFadeWait();
 
 		final String url = getDriver().getCurrentUrl();
-		Window mainWindow = getMainSession().getActiveWindow();
+		Window mainWindow = getWindow();
 		Window secondWindow = getMainSession().openWindow(url);
 
 		final KeywordsPage secondKeywordsPage = getElementFactory().getKeywordsPage();

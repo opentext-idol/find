@@ -145,7 +145,7 @@ public class IndexFieldsITCase extends HostedTestBase {
     }
 
     private void verifyFind() {
-        Window first = getMainSession().getActiveWindow();
+        Window first = getWindow();
         HSODFind findApp = new HSODFind();
         Window second = launchInNewWindow(findApp);
         try {

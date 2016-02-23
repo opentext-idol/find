@@ -158,7 +158,7 @@ public class AnalyticsITCase extends HostedTestBase {
     }
 
     private void repeatedFind(String term, int repeats) {
-        Window searchWindow = getMainSession().getActiveWindow();
+        Window searchWindow = getWindow();
         HSODFind findApp = new HSODFind();
         Window findWindow = launchInNewWindow(findApp);
 
