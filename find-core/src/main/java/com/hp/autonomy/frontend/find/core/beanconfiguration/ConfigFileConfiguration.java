@@ -44,6 +44,7 @@ public class ConfigFileConfiguration {
                 "serviceProtocol",
                 "servicePort",
                 "productType",
+                "productTypeRegex",
                 "indexErrorMessage",
                 "plaintextPassword",
                 "currentPassword",
