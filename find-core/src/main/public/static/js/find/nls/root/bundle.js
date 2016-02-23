@@ -107,6 +107,8 @@ define([
         'search.newSearch': 'New Search',
         'search.noResults': 'No results found',
         'search.noMoreResults': 'No more results found',
+        'search.parametricFields': 'Parametric Fields',
+        'search.parametric.empty': 'No parametric fields found',
         'search.preview': 'Preview',
         'search.preview.previewMode': 'Preview Mode',
         'search.preview.mmap': 'Explore in MMAP',

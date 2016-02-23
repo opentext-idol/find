@@ -62,6 +62,8 @@ define([
             function fetch() {
                 this.parametricCollection.reset();
                 this.model.set({processing: true, error: false});
+                var $parametric = this.$('.parametric-empty');
+                $parametric.addClass('hide');
 
                 if(!this.queryModel.get('queryText') || this.queryModel.get('indexes').length === 0) {
                     this.model.set('processing', false);
@@ -80,7 +82,10 @@ define([
                                 this.model.set({error: true, processing: false});
                             }
                         }, this),
-                        success: _.bind(function () {
+                        success: _.bind(function (results) {
+                            if (results.length === 0) {
+                                this.$('.parametric-empty').removeClass('hide');
+                            }
                             this.model.set({processing: false});
                         }, this)
                     });
