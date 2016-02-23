@@ -186,8 +186,8 @@ public class NotificationsDropDownHostedITCase extends NotificationsDropDownTest
                 user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
             } catch (TimeoutException e) { /* User has likely already been authenticated recently, attempt to continue */ }
 
-            secondSession = getSessionRegistry().startSession(getAppUrl());
-            HSODApplication secondApplication = new HSODApplication().inWindow(secondSession.getActiveWindow());
+            HSODApplication secondApplication = new HSODApplication();
+            secondSession = launchInNewSession(secondApplication);
             HSODElementFactory secondFactory = secondApplication.elementFactory();
 
             secondApplication.loginService().login(user);

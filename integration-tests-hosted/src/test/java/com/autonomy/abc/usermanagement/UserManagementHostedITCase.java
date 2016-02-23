@@ -178,7 +178,6 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         SearchOptimizerApplication<?> secondApp = SearchOptimizerApplication.ofType(getConfig().getType());
         Window secondWindow = launchInNewSession(secondApp).getActiveWindow();
         try {
-            secondWindow.goTo(getAppUrl());
             try {
                 secondApp.loginService().login(user);
             } catch (NoSuchElementException e) {
@@ -269,8 +268,8 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
         user.authenticate(getConfig().getWebDriverFactory(), emailHandler);
 
         getApplication().loginService().logout();
-        HSODFind findApp = new HSODFind().inWindow(getWindow());
-        getDriver().get(getConfig().getAppUrl(findApp));
+        HSODFind findApp = new HSODFind();
+        redirectTo(findApp);
 
         boolean success = true;
         try {

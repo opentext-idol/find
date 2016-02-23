@@ -158,7 +158,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     }
 
     private <T extends AppPage> void verifyLogin(Application<?> app, Class<T> pageType) {
-        getWindow().goTo(getConfig().getAppUrl(app));
+        redirectTo(app);
         app.loginService().login(getConfig().getDefaultUser());
         verifyOn(app, pageType);
     }
@@ -169,7 +169,7 @@ public class LoginPageHostedITCase extends HostedTestBase {
     }
 
     private <T extends AppPage> void verifyRedirect(Application<?> app, Class<T> pageType) {
-        getWindow().goTo(getConfig().getAppUrl(app));
+        redirectTo(app);
         verifyOn(app, pageType);
     }
 

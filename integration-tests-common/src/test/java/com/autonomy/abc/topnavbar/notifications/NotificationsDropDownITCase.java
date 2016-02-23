@@ -100,13 +100,12 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 		assertThat(notifications.countNotifications(), is(0));
 
 		final Window mainWindow = getMainSession().getActiveWindow();
-		final Window secondWindow = getMainSession().openWindow(getAppUrl());
-
+		final SearchOptimizerApplication<?> secondApp = SearchOptimizerApplication.ofType(getConfig().getType());
+		final Window secondWindow = launchInNewWindow(secondApp);
 		secondWindow.activate();
-		SearchOptimizerApplication<?> appTwo = SearchOptimizerApplication.ofType(getConfig().getType()).inWindow(secondWindow);
-		TopNavBar topNavBarWindowTwo = appTwo.elementFactory().getTopNavBar();
+		TopNavBar topNavBarWindowTwo = secondApp.elementFactory().getTopNavBar();
 
-		appTwo.keywordService().goToKeywords();
+		secondApp.keywordService().goToKeywords();
 		topNavBarWindowTwo.notificationsDropdown();
 		NotificationsDropDown notificationsDropDownWindowTwo = topNavBarWindowTwo.getNotifications();
 		assertThat(notificationsDropDownWindowTwo.countNotifications(), is(0));
@@ -167,7 +166,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 				keywordService.addSynonymGroup(i + " " + (i + 1));
 				keywordService.goToKeywords();
 
-				appTwo.elementFactory().getTopNavBar().notificationsDropdown();
+				secondApp.elementFactory().getTopNavBar().notificationsDropdown();
 				verifyThat(notificationsDropDownWindowTwo.countNotifications(), is(Math.min(++notificationsCount, 5)));
 				notificationMessages = notificationsDropDownWindowTwo.getAllNotificationMessages();
 
