@@ -17,6 +17,10 @@ public class DevConsoleElementFactory extends ElementFactoryBase {
         return loadPage(LoginPage.class);
     }
 
+    public DevConsoleTopNavBar getTopNavBar() {
+        return new DevConsoleTopNavBar(getDriver());
+    }
+
     public HSODLandingPage getHSODPage() {
         return loadPage(HSODLandingPage.class);
     }

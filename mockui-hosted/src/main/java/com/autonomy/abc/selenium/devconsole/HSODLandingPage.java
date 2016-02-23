@@ -46,19 +46,6 @@ public class HSODLandingPage extends AppElement implements AppPage {
         new WebDriverWait(getDriver(), 30).until(ExpectedConditions.visibilityOfElementLocated(By.className("haven-splash-header")));
     }
 
-    public void clickLogInButton() {
-        try {
-            loginButton().click();
-        } catch (NoSuchElementException | ElementNotVisibleException e) {
-            LOGGER.error("Already logged in");
-        }
-    }
-
-    // TODO: move to DevConsoleTopNavBar
-    public WebElement loginButton(){
-        return findElement(By.id("loginLogout"));
-    }
-
     public static class Factory implements ParametrizedFactory<WebDriver, HSODLandingPage> {
         public HSODLandingPage create(WebDriver context) {
             return new HSODLandingPage(context);

@@ -7,6 +7,9 @@ import com.autonomy.abc.selenium.control.Window;
 public class DevConsole implements Application<DevConsoleElementFactory> {
     private DevConsoleElementFactory factory;
 
+    public DevConsole() {
+    }
+
     public DevConsole(Window window) {
         inWindow(window);
     }
