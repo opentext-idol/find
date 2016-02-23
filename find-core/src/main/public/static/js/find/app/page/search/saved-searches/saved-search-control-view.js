@@ -127,7 +127,6 @@ define([
             this.savedSnapshotCollection = options.savedSnapshotCollection;
             this.savedSearchCollection = options.savedSearchCollection;
             this.savedSearchModel = options.savedSearchModel;
-            this.documentsCollection = options.documentsCollection;
             this.queryState = options.queryState;
             this.selectedTabModel = options.selectedTabModel;
 
@@ -225,10 +224,7 @@ define([
                         var titleEditState = this.model.get('titleEditState');
                         var searchType = newAttributes.type;
 
-                        var attributes = _.extend(newAttributes, SavedSearchModel.attributesFromQueryState(this.queryState), {
-                            // TODO: This is unreliable: for example, the documents collection might not have fetched
-                            resultCount: this.documentsCollection.totalResults
-                        });
+                        var attributes = _.extend(newAttributes, SavedSearchModel.attributesFromQueryState(this.queryState));
 
                         var saveOptions = {
                             error: error,

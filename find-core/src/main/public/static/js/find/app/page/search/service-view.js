@@ -128,7 +128,6 @@ define([
             addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'], this.fetchEntities);
 
             this.savedSearchControlView = new SavedSearchControlView({
-                documentsCollection: this.documentsCollection,
                 savedSearchModel: this.savedSearchModel,
                 savedSearchCollection: this.savedSearchCollection,
                 savedSnapshotCollection: this.savedSnapshotCollection,
