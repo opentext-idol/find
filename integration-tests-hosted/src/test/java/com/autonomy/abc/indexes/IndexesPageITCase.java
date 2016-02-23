@@ -43,6 +43,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class IndexesPageITCase extends HostedTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexesPageITCase.class);
@@ -272,7 +273,7 @@ public class IndexesPageITCase extends HostedTestBase {
 
             findPage.search("Exeter");
             verifyNoError(findPage);
-            verifyThat("Index displayed properly", indexElement(findPage), not(hasClass("disabled-index")));
+            verifyThat("Index displayed properly", findPage.indexElement(index), not(hasClass("disabled-index")));
 
             searchWindow.activate();
             indexService.deleteIndex(index);
@@ -280,7 +281,7 @@ public class IndexesPageITCase extends HostedTestBase {
             findWindow.activate();
             findPage.search("Plymouth");
             verifyNoError(findPage);
-            verifyThat("Deleted index disabled", indexElement(findPage), hasClass("disabled-index"));
+            verifyThat("Deleted index disabled", findPage.indexElement(index), hasClass("disabled-index"));
 
             findWindow.refresh();
             findPage = findApp.elementFactory().getFindPage();
@@ -290,8 +291,8 @@ public class IndexesPageITCase extends HostedTestBase {
 
             WebElement indexElement = null;
             try {
-                indexElement = indexElement(findPage);
-                verifyThat(indexElement.isDisplayed(), is(false));
+                indexElement = findPage.indexElement(index);
+                verifyThat(indexElement, not(displayed()));
             } catch (NoSuchElementException e) {
                 verifyThat(indexElement, nullValue());
             }
@@ -307,10 +308,6 @@ public class IndexesPageITCase extends HostedTestBase {
 
     private void verifyNoError(FindPage findPage) {
         verifyThat(findPage.getResultsPage().resultsDiv(), not(containsText(Errors.Find.GENERAL)));
-    }
-
-    private WebElement indexElement(FindPage findPage){
-        return ElementUtil.ancestor(findPage.getResultsPage().resultsDiv().findElement(By.xpath("//*[@class='database-name' and text()='index']")), 2);
     }
 
     @After

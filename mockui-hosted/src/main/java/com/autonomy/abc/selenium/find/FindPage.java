@@ -3,6 +3,7 @@ package com.autonomy.abc.selenium.find;
 import com.autonomy.abc.selenium.element.DatePicker;
 import com.autonomy.abc.selenium.element.Dropdown;
 import com.autonomy.abc.selenium.element.FormInput;
+import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.search.*;
@@ -175,6 +176,10 @@ public class FindPage extends AppElement implements AppPage,
 
     public WebElement leftContainerToggleButton(){
         return findElement(By.cssSelector(".left-side-container .container-toggle"));
+    }
+
+    public WebElement indexElement(Index index) {
+        return ElementUtil.ancestor(getResultsPage().resultsDiv().findElement(By.xpath("//*[@class='database-name' and text()='" + index.getDisplayName() + "']")), 2);
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
