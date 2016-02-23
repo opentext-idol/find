@@ -2,11 +2,18 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.config.FindTestBase;
 import com.autonomy.abc.config.TestConfig;
+import com.autonomy.abc.framework.KnownBug;
+import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.SimilarDocumentsView;
+import com.autonomy.abc.selenium.hsod.HSODApplication;
+import com.autonomy.abc.selenium.promotions.HSODPromotionService;
+import com.autonomy.abc.selenium.promotions.Promotion;
+import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
+import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +25,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static org.hamcrest.Matchers.*;
 
+@RelatedTo("CSA-2090")
 public class SimilarDocumentsITCase extends FindTestBase {
     private FindResultsPage results;
     private FindService findService;
@@ -45,6 +53,21 @@ public class SimilarDocumentsITCase extends FindTestBase {
             verifyThat(similarDocuments.getTitle(), equalToIgnoringCase("Similar results to document with title \"" + title + "\""));
             verifyThat(similarDocuments.getTotalResults(), greaterThan(0));
             verifyThat(similarDocuments.getResults(1), not(empty()));
+
+            similarDocuments.backButton().click();
+        }
+    }
+
+    @Test
+    @KnownBug("CSA-3678")
+    public void testTitle(){
+        findService.search(new SearchQuery("Bill Murray").withFilter(new ParametricFilter("Source Connector","SimpsonsArchive")));
+
+        for(int i = 1; i <= 5; i++){
+            similarDocuments = findService.goToSimilarDocuments(i);
+            String title = similarDocuments.getTitle();
+
+            verifyThat(title.charAt(40), not('\"'));
 
             similarDocuments.backButton().click();
         }
@@ -96,5 +119,41 @@ public class SimilarDocumentsITCase extends FindTestBase {
             }
         }
         return secondWindow;
+    }
+
+    @Test
+    @KnownBug("CCUK-3676")
+    public void testPublicIndexesSimilarDocs(){
+        findService.search(new SearchQuery("Hammer").withFilter(IndexFilter.PUBLIC));
+
+        for(int i = 1; i <= 5; i++){
+            verifySimilarDocsNotEmpty(i);
+        }
+    }
+
+    @Test
+    @KnownBug("CCUK-3542")
+    public void testPromotedDocuments(){
+        Window findWindow = getWindow();
+
+        HSODApplication searchApp = new HSODApplication();
+        Window searchWindow = launchInNewWindow(searchApp);
+        searchWindow.activate();
+
+        String trigger = "Riga";
+        new HSODPromotionService(searchApp).setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
+
+        findWindow.activate();
+        findService.search(new SearchQuery(trigger));
+
+        for(int i = 0; i <= getElementFactory().getFindPage().getResultsPage().promotions().size(); i++){
+            verifySimilarDocsNotEmpty(i);
+        }
+    }
+
+    private void verifySimilarDocsNotEmpty(int i) {
+        similarDocuments = findService.goToSimilarDocuments(i);
+        verifyThat(similarDocuments.resultsContainer().getText(), not(isEmptyOrNullString()));
+        similarDocuments.backButton().click();
     }
 }

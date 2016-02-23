@@ -76,6 +76,10 @@ public class SimilarDocumentsView implements AppPage {
         return driver;
     }
 
+    public WebElement resultsContainer() {
+        return findElement(By.className("results-container"));
+    }
+
     static class Factory implements ParametrizedFactory<WebDriver, SimilarDocumentsView> {
         public SimilarDocumentsView create(WebDriver context) {
             return new SimilarDocumentsView(context);
