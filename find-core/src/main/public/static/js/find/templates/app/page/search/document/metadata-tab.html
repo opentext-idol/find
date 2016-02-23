@@ -1,4 +1,13 @@
 <table class="table table-hover">
+    <% if(model.get('thumbnail')) { %>
+        <tr>
+            <td class="font-bold"><%-i18n['search.document.thumbnail']%></td>
+            <td class="break-all p-l-sm">
+                <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=model.get('thumbnail')%>"/>
+            </td>
+        </tr>
+    <% } %>
+
     <% _.each(model.pick([
         'reference',
         'index',
