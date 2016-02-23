@@ -70,7 +70,7 @@ public class SsoController {
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(ssoConfig));
         attributes.put(ControllerUtils.SPRING_CSRF_ATTRIBUTE, request.getAttribute(ControllerUtils.SPRING_CSRF_ATTRIBUTE));
 
-        return new ModelAndView(ViewNames.SSO.value(), attributes);
+        return new ModelAndView(ViewNames.SSO.viewName(), attributes);
     }
 
     @RequestMapping(value = SSO_LOGOUT_PAGE, method = RequestMethod.GET)
@@ -85,6 +85,6 @@ public class SsoController {
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(ssoConfig));
         attributes.put(ControllerUtils.SPRING_CSRF_ATTRIBUTE, request.getAttribute(ControllerUtils.SPRING_CSRF_ATTRIBUTE));
-        return new ModelAndView(ViewNames.SSO_LOGOUT.value(), attributes);
+        return new ModelAndView(ViewNames.SSO_LOGOUT.viewName(), attributes);
     }
 }

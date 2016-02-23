@@ -13,7 +13,6 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -69,13 +68,13 @@ public abstract class FindController {
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         attributes.put(MvcConstants.CONFIG.value(), controllerUtils.convertToJson(config));
 
-        return new ModelAndView(ViewNames.PUBLIC.value(), attributes);
+        return new ModelAndView(ViewNames.PUBLIC.viewName(), attributes);
     }
 
     @RequestMapping(value = LOGIN_PATH, method = RequestMethod.GET)
     public ModelAndView login() {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
-        return new ModelAndView(ViewNames.LOGIN.value(), attributes);
+        return new ModelAndView(ViewNames.LOGIN.viewName(), attributes);
     }
 }
