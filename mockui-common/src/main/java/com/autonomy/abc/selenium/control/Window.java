@@ -40,4 +40,9 @@ public class Window {
     public boolean equals(Object obj) {
         return obj instanceof Window && handle.equals(((Window) obj).getHandle());
     }
+
+    public void refresh(){
+        this.activate();
+        parent.getDriver().navigate().refresh();
+    }
 }

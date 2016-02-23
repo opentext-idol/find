@@ -27,6 +27,10 @@ public abstract class PromotionsPage extends AppElement implements AppPage {
 		return findElement(By.linkText("PROMOTE DOCUMENTS"));
 	}
 
+	public WebElement newButton(){
+		return findElement(By.linkText("NEW"));
+	}
+
 	public WebElement getPromotionLinkWithTitleContaining(final String promotionTitleSubstring) {
 		return findElement(By.xpath(".//h3[contains(text(), '" + promotionTitleSubstring.replace("\"", "").split("\\s+")[0] + "')]/../../.."));
 	}

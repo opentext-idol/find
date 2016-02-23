@@ -5,7 +5,6 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.*;
 import com.autonomy.abc.selenium.control.Window;
-import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.error.Errors;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.HSODFind;
@@ -13,11 +12,13 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
 import com.autonomy.abc.selenium.indexes.IndexesDetailPage;
 import com.autonomy.abc.selenium.indexes.IndexesPage;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
 import com.autonomy.abc.selenium.promotions.PinToPositionPromotion;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.util.ElementUtil;
 import com.autonomy.abc.selenium.util.PageUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -25,24 +26,24 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static junit.framework.TestCase.fail;
+import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class IndexesPageITCase extends HostedTestBase {
     private final static Logger LOGGER = LoggerFactory.getLogger(IndexesPageITCase.class);
@@ -58,7 +59,6 @@ public class IndexesPageITCase extends HostedTestBase {
     @Before
     public void setUp() {
         indexService = getApplication().indexService();
-
         indexesPage = indexService.goToIndexes();
     }
 
@@ -171,26 +171,22 @@ public class IndexesPageITCase extends HostedTestBase {
     }
 
     @Test
-    @KnownBug("CSA-1544")
-    public void testNoInvalidIndexNameNotifications(){
+    @KnownBug({"CSA-1544", "CSA-2043"})
+    public void testNoInvalidIndexNameNotifications() throws InterruptedException {
         ConnectionService connectionService = getApplication().connectionService();
 
         Connector hassleRecords = new WebConnector("http://www.hasslerecords.com","hassle records").withDepth(1);
         String errorMessage = "Index name invalid";
 
         connectionService.setUpConnection(hassleRecords);
+        connectionService.deleteConnection(hassleRecords, true);
 
-        try {
-            new WebDriverWait(getDriver(),30).until(GritterNotice.notificationContaining(errorMessage));
-
-            fail("Index name should be valid - likely failed due to double encoding of requests");
-        } catch (TimeoutException e){
-            LOGGER.info("Timeout exception");
-        }
+        //Wait to see whether any error messages come up
+        Thread.sleep(10000);
 
         getElementFactory().getTopNavBar().notificationsDropdown();
         for(String message : getElementFactory().getTopNavBar().getNotifications().getAllNotificationMessages()){
-            assertThat(message,not(errorMessage));
+            assertThat(message, not(errorMessage));
         }
     }
 
@@ -259,6 +255,59 @@ public class IndexesPageITCase extends HostedTestBase {
             findWindow.close();
             searchWindow.activate();
         }
+    }
+
+    @Test
+    @KnownBug("CCUK-3620")
+    public void testFindBehavesAfterDeletingIndex() {
+        Index index = new Index("index");
+        indexService.setUpIndex(index);
+
+        Window searchWindow = getMainSession().getActiveWindow();
+        HSODFind findApp = new HSODFind();
+        Window findWindow = launchInNewWindow(findApp);
+
+        try {
+            findWindow.activate();
+            FindPage findPage = findApp.elementFactory().getFindPage();
+
+            findPage.search("Exeter");
+            verifyNoError(findPage);
+            verifyThat("Index displayed properly", findPage.indexElement(index), not(hasClass("disabled-index")));
+
+            searchWindow.activate();
+            indexService.deleteIndex(index);
+
+            findWindow.activate();
+            findPage.search("Plymouth");
+            verifyNoError(findPage);
+            verifyThat("Deleted index disabled", findPage.indexElement(index), hasClass("disabled-index"));
+
+            findWindow.refresh();
+            findPage = findApp.elementFactory().getFindPage();
+            findPage.search("Plymouth");
+
+            verifyNoError(findPage);
+
+            WebElement indexElement = null;
+            try {
+                indexElement = findPage.indexElement(index);
+                verifyThat(indexElement, not(displayed()));
+            } catch (NoSuchElementException e) {
+                verifyThat(indexElement, nullValue());
+            }
+
+            for (IndexNodeElement node : findPage.indexesTree()) {
+                verifyThat(node.getName(), not(index.getName()));
+            }
+        } finally {
+            findWindow.close();
+            searchWindow.activate();
+        }
+    }
+
+    private void verifyNoError(FindPage findPage) {
+        verifyThat(findPage.getResultsPage().resultsDiv(), not(containsText(Errors.Find.GENERAL)));
     }
 
     @After
