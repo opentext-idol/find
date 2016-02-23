@@ -2,6 +2,26 @@ define([
     'find/app/model/document-model'
 ], function(DocumentModel) {
 
+    var THUMBNAIL = 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=';
+    var TITLE = 'My Document';
+
+    function baseResponse() {
+        return {
+            fieldMap: {
+                authors: {type: 'STRING', displayName: 'Author', values: ['Humbert', 'Gereon']},
+                thumbnail: {type: 'STRING', values: [THUMBNAIL]},
+                datePublished: {type: 'DATE', displayName: 'Date Published', values: [1456161196000]}
+            }
+        };
+    }
+
+    function fullResponse() {
+        return _.extend({
+            reference: 'my-document',
+            title: TITLE
+        }, baseResponse());
+    }
+
     describe('Document model', function() {
         describe('parse method', function() {
             beforeEach(function() {
@@ -9,26 +29,53 @@ define([
             });
 
             it('uses the title from the response if present', function() {
-                var title = 'My Document';
-                expect(this.parse({reference: 'my-document', title: title}).title).toBe(title);
+                expect(this.parse(fullResponse()).title).toBe(TITLE);
             });
 
             it('uses the last part of a windows file path as the title if there is no title', function() {
-                expect(this.parse({reference: 'C:\\Documents\\file.txt'}).title).toBe('file.txt');
+                expect(this.parse(_.extend({
+                    reference: 'C:\\Documents\\file.txt'
+                }, baseResponse())).title).toBe('file.txt');
             });
 
             it('uses the last part of a unix file path as the title if there is no title', function() {
-                expect(this.parse({reference: '/home/user/another-file.txt'}).title).toBe('another-file.txt');
+                expect(this.parse(_.extend({
+                    reference: '/home/user/another-file.txt'
+                }, baseResponse())).title).toBe('another-file.txt');
             });
 
             it('uses the whole reference if the reference finishes with a slash', function() {
                 var reference = 'http://example.com/main/';
-                expect(this.parse({reference: reference}).title).toBe(reference);
+
+                expect(this.parse(_.extend({
+                    reference: reference
+                }, baseResponse())).title).toBe(reference);
             });
 
             it('uses the whole reference if the reference finishes with a slash followed by whitespace', function() {
                 var reference = 'foo/   \n ';
-                expect(this.parse({reference: reference}).title).toBe(reference);
+
+                expect(this.parse(_.extend({
+                    reference: reference
+                }, baseResponse())).title).toBe(reference);
+            });
+
+            it('parses the authors from the field map', function() {
+                expect(this.parse(fullResponse()).authors).toEqual(['Humbert', 'Gereon']);
+            });
+
+            it('parses the thumbnail from the field map', function() {
+                expect(this.parse(fullResponse()).thumbnail).toBe(THUMBNAIL);
+            });
+
+            it('parses the field map into an array, converting date values to formatted strings', function() {
+                var fields = this.parse(fullResponse()).fields;
+                expect(fields.length).toBe(3);
+
+                var datePublishedField = _.findWhere(fields, {displayName: 'Date Published'});
+                expect(datePublishedField).toBeDefined();
+                expect(datePublishedField.values.length).toBe(1);
+                expect(datePublishedField.values[0]).toBe('Monday, February 22, 2016 5:13 PM');
             });
         });
     });

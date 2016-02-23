@@ -51,6 +51,7 @@ public class SavedQueryServiceImpl implements SavedQueryService {
             existing.setQueryText(query.getQueryText());
             existing.setTitle(query.getTitle());
             existing.setDateNewDocsLastFetched(query.getDateNewDocsLastFetched());
+            existing.setDateRange(query.getDateRange());
             return savedQueryRepository.save(existing);
         }
     }

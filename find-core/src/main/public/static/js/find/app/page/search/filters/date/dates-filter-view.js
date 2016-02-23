@@ -59,7 +59,9 @@ define([
             this.listenTo(this.datesFilterModel, 'change:customMaxDate', this.updateMaxDate);
             this.listenTo(this.datesFilterModel, 'change:customMinDate', this.updateMinDate);
 
-            this.listenTo(this.savedSearchModel, 'sync', this.render)
+            this.listenTo(this.savedSearchModel, 'sync', this.render);
+
+            this.updateDateNewDocsLastFetched();
         },
 
         render: function() {

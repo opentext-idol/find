@@ -27,6 +27,7 @@ define([
      * @property {Moment} maxDate
      * @property {Moment} dateModified
      * @property {Moment} dateCreated
+     * @property {DateRange} dateRange
      */
 
     var DATE_FIELDS = [
@@ -45,14 +46,24 @@ define([
         return input === null || input === undefined;
     }
 
-    // Treat moments are equal if they are both either null or undefined, or represent the same instant
-    function optionalMomentsEqual(optionalMoment1, optionalMoment2) {
-        if (nullOrUndefined(optionalMoment1)) {
-            return nullOrUndefined(optionalMoment2);
-        } else if (nullOrUndefined(optionalMoment2)) {
-            return false;
-        } else {
-            return optionalMoment1.isSame(optionalMoment2);
+    var optionalMomentsEqual = optionalEqual(function(optionalMoment1, optionalMoment2) {
+        return optionalMoment1.isSame(optionalMoment2);
+    });
+
+    var optionalExactlyEqual = optionalEqual(function(optionalItem1, optionalItem2) {
+        return optionalItem1 === optionalItem2;
+    });
+
+    // Treat as equal if they are both either null or undefined, or pass a regular equality test
+    function optionalEqual(equalityTest) {
+        return function(optionalItem1, optionalItem2) {
+            if (nullOrUndefined(optionalItem1)) {
+                return nullOrUndefined(optionalItem2);
+            } else if (nullOrUndefined(optionalItem2)) {
+                return false;
+            } else {
+                return equalityTest(optionalItem1, optionalItem2);
+            }
         }
     }
 
@@ -93,14 +104,24 @@ define([
          */
         equalsQueryState: function(queryState) {
             var selectedIndexes = _.map(queryState.selectedIndexes.toResourceIdentifiers(), selectedIndexToResourceIdentifier);
-            var datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
 
             return this.get('queryText') === queryState.queryTextModel.get('inputText')
-                    && optionalMomentsEqual(this.get('minDate'), datesAttributes.minDate)
-                    && optionalMomentsEqual(this.get('maxDate'), datesAttributes.maxDate)
+                    && this.equalsQueryStateDateFilters(queryState)
                     && arraysEqual(this.get('relatedConcepts'), queryState.queryTextModel.get('relatedConcepts'))
                     && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                     && arraysEqual(this.get('parametricValues'), queryState.selectedParametricValues.map(pickFieldAndValue), _.isEqual);
+        },
+
+        equalsQueryStateDateFilters: function(queryState) {
+            var datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
+
+            if(this.get('dateRange') === DatesFilterModel.DateRange.CUSTOM) {
+                return this.get('dateRange') === datesAttributes.dateRange
+                    && optionalMomentsEqual(this.get('minDate'), datesAttributes.minDate)
+                    && optionalMomentsEqual(this.get('maxDate'), datesAttributes.maxDate);
+            } else {
+                return optionalExactlyEqual(this.get('dateRange'), datesAttributes.dateRange);
+            }
         },
 
         toDatesFilterModelAttributes: function() {
@@ -108,7 +129,7 @@ define([
             var maxDate = this.get('maxDate');
 
             return {
-                dateRange: minDate || maxDate ? DatesFilterModel.DateRange.CUSTOM : null,
+                dateRange: this.get('dateRange'),
                 customMinDate: minDate,
                 customMaxDate: maxDate,
                 dateNewDocsLastFetched: this.get('dateNewDocsLastFetched')

@@ -47,6 +47,7 @@ public class SavedSnapshotServiceImpl implements SavedSnapshotService {
             existing.setTitle(snapshot.getTitle());
             existing.setResultCount(snapshot.getResultCount());
             existing.setStateTokens(snapshot.getStateTokens());
+            existing.setDateRange(snapshot.getDateRange());
             return savedSnapshotRepository.save(existing);
         }
     }
