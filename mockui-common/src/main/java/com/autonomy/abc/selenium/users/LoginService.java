@@ -7,6 +7,7 @@ public class LoginService {
     private final ElementFactoryBase elementFactory;
     private User currentUser;
 
+    /* should be a singleton for any given application instance */
     public LoginService(Application<?> application) {
         elementFactory = application.elementFactory();
     }

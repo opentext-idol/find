@@ -16,6 +16,7 @@ import java.util.Map;
 
 public abstract class SearchOptimizerApplication<T extends SOElementFactory> implements Application<T> {
     private final static Map<ApplicationType, Factory<? extends SearchOptimizerApplication>> FACTORY_MAP = new EnumMap<>(ApplicationType.class);
+    private LoginService loginService;
 
     static {
         FACTORY_MAP.put(ApplicationType.HOSTED, new SafeClassLoader<>(SearchOptimizerApplication.class, "com.autonomy.abc.selenium.hsod.HSODApplication"));
@@ -36,7 +37,10 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
 
     @Override
     public LoginService loginService() {
-        return new LoginService(this);
+        if (loginService == null) {
+            loginService = new LoginService(this);
+        }
+        return loginService;
     }
 
     public <S extends AppPage> S switchTo(Class<S> pageType) {

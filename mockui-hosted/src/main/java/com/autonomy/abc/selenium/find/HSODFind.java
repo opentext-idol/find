@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.users.User;
 public class HSODFind implements Application<HSODFindElementFactory> {
     private Window window;
     private HSODFindElementFactory factory;
+    private LoginService loginService;
 
     public HSODFind() {
     }
@@ -20,7 +21,10 @@ public class HSODFind implements Application<HSODFindElementFactory> {
 
     @Override
     public LoginService loginService() {
-        return new LoginService(this);
+        if (loginService == null) {
+            loginService = new LoginService(this);
+        }
+        return loginService;
     }
 
     public FindService findService() {
@@ -43,7 +47,7 @@ public class HSODFind implements Application<HSODFindElementFactory> {
     }
 
     @Override
-    public Application<HSODFindElementFactory> inWindow(Window window) {
+    public HSODFind inWindow(Window window) {
         this.window = window;
         this.factory = new HSODFindElementFactory(window.getSession().getDriver());
         return this;

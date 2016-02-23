@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.users.User;
 
 public class DevConsole implements Application<DevConsoleElementFactory> {
     private DevConsoleElementFactory factory;
+    private LoginService loginService;
 
     public DevConsole() {
     }
@@ -24,13 +25,16 @@ public class DevConsole implements Application<DevConsoleElementFactory> {
 
     @Override
     public LoginService loginService() {
-        return new LoginService(this) {
-            @Override
-            public void login(User user) {
-                elementFactory().getTopNavBar().loginButton().click();
-                super.login(user);
-            }
-        };
+        if (loginService == null) {
+            loginService = new LoginService(this) {
+                @Override
+                public void login(User user) {
+                    elementFactory().getTopNavBar().loginButton().click();
+                    super.login(user);
+                }
+            };
+        }
+        return loginService;
     }
 
     @Override
