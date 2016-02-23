@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.devconsole;
 
 import com.autonomy.abc.selenium.navigation.ElementFactoryBase;
 import com.autonomy.abc.selenium.navigation.PageMapper;
+import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.ParametrizedFactory;
 import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.sso.HSOLoginPage;
@@ -13,8 +14,14 @@ public class DevConsoleElementFactory extends ElementFactoryBase {
         super(driver, new PageMapper<>(Page.class));
     }
 
+    @Override
     public LoginPage getLoginPage(){
         return loadPage(LoginPage.class);
+    }
+
+    @Override
+    public LoginService.LogoutHandler getLogoutHandler() {
+        return getTopNavBar();
     }
 
     public DevConsoleTopNavBar getTopNavBar() {

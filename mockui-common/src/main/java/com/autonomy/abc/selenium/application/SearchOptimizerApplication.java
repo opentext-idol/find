@@ -5,6 +5,7 @@ import com.autonomy.abc.selenium.keywords.KeywordService;
 import com.autonomy.abc.selenium.navigation.SOElementFactory;
 import com.autonomy.abc.selenium.promotions.PromotionService;
 import com.autonomy.abc.selenium.search.SearchService;
+import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.users.UserService;
 import com.autonomy.abc.selenium.util.Factory;
 import com.autonomy.abc.selenium.util.SafeClassLoader;
@@ -31,6 +32,11 @@ public abstract class SearchOptimizerApplication<T extends SOElementFactory> imp
 
     public SearchService searchService() {
         return new SearchService(this);
+    }
+
+    @Override
+    public LoginService loginService() {
+        return new LoginService(this);
     }
 
     public <S extends AppPage> S switchTo(Class<S> pageType) {

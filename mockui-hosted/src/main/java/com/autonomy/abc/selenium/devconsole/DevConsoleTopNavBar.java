@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.devconsole;
 
+import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -7,7 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class DevConsoleTopNavBar {
+public class DevConsoleTopNavBar implements LoginService.LogoutHandler {
     // this uses the driver as the nav bar element goes
     // stale after each login/logout
     private final WebDriver driver;
@@ -16,6 +17,7 @@ public class DevConsoleTopNavBar {
         this.driver = driver;
     }
 
+    @Override
     public void logOut() {
         openUserDropdown();
         clickLogoutButton();

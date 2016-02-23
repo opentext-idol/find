@@ -10,8 +10,8 @@ import com.autonomy.abc.selenium.promotions.PromotionsDetailPage;
 import com.autonomy.abc.selenium.promotions.PromotionsPage;
 import com.autonomy.abc.selenium.search.EditDocumentReferencesPage;
 import com.autonomy.abc.selenium.search.SearchPage;
+import com.autonomy.abc.selenium.users.LoginService;
 import com.autonomy.abc.selenium.users.UsersPage;
-import com.hp.autonomy.frontend.selenium.login.LoginPage;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import org.openqa.selenium.WebDriver;
 
@@ -47,13 +47,16 @@ public abstract class SOElementFactory extends ElementFactoryBase {
 
     public abstract SearchPage getSearchPage();
 
-    public abstract LoginPage getLoginPage();
-
     public abstract UsersPage getUsersPage();
 
     @Override
     public WebDriver getDriver() {
         return super.getDriver();
+    }
+
+    @Override
+    public LoginService.LogoutHandler getLogoutHandler() {
+        return getTopNavBar();
     }
 
     public void handleSwitch(Class<? extends AppPage> pageType) {
