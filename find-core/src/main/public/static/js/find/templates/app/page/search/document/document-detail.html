@@ -35,7 +35,7 @@
                             <% _.each(tabs, function(tab) { %>
                                 <% var active = tab.index === 0 ? 'active' : ''; %>
                                 <li class="<%= active %>">
-                                    <a role="tab" aria-controls="document-detail-tab-<%= tab.index %>" data-toggle="tab" data-target="#document-detail-tab-<%= tab.index %>" class="tab-title" >
+                                    <a role="tab" aria-controls="document-detail-tab-<%= tab.index %>" data-toggle="tab" data-target="#document-detail-tab-<%= tab.index %>" class="tab-title shorten" >
                                         <span><%= tab.title %></span>
                                     </a>
                                 </li>

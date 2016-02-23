@@ -340,8 +340,9 @@ html, body {
     font-weight: bold;
     font-size: 18px;
     overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+}
+
+.middle-container.shorten h4 {
     width: 100%;
 }
 
@@ -366,10 +367,7 @@ html, body {
     vertical-align: super;
 }
 
-.tab-title {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+.tab-title.shorten {
     max-width: 150px;
 }
 
@@ -477,13 +475,13 @@ input.find-input {
 }
 
 .document-reference {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: 100%;
     display: inline-block;
     color: #aeaeae;
     font-size: 13px;
+}
+
+.document-reference.shorten {
+    width: 100%;
 }
 
 .selected-document {
@@ -504,11 +502,12 @@ input.find-input {
 
 .saved-search-box .hpebox-content {
     width: 100px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
     text-align: center;
     border: 1px solid #e7eaec;
+}
+
+.saved-search-box .hpebox-content.shorten {
+    width: 100px;
 }
 
 .selected-saved-search .hpebox-content {
@@ -573,20 +572,17 @@ input.find-input {
 }
 
 /* username */
-.username {
+.username.shorten {
     max-width: 250px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .navbar-username {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    max-width: 150px;
     right: 70px !important;
     top: 11px !important;
+}
+
+.navbar-username.shorten {
+    max-width: 150px;
 }
 
 /* fancy animation */
@@ -979,7 +975,6 @@ input:-moz-placeholder::before {
 }
 
 .shorten {
-    max-width: 130px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -988,6 +983,10 @@ input:-moz-placeholder::before {
 .filter-display-text {
     vertical-align: middle;
     line-height: 1.2em;
+}
+
+.filter-display-text.shorten {
+    max-width: 130px;
 }
 
 .filters-margin {
