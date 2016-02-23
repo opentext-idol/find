@@ -39,6 +39,8 @@ import java.util.*;
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.CommonMatchers.containsItems;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
@@ -77,15 +79,15 @@ public class SearchPageITCase extends ABCTestBase {
         new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOf(getElementFactory().getSearchPage()));
 
         assertThat("Page should be showing modified results", searchPage.modifiedResultsShown(), is(true));
-		assertThat("Url incorrect", getDriver().getCurrentUrl(), containsString("/modified"));
+		assertThat(getWindow(), urlContains("/modified"));
 
 		searchPage.modifiedResultsCheckBox().click();
         assertThat("Page should not be showing modified results", searchPage.modifiedResultsShown(), is(false));
-		assertThat("Url incorrect", getDriver().getCurrentUrl(), containsString("/unmodified"));
+		assertThat(getWindow(), urlContains("/unmodified"));
 
 		searchPage.modifiedResultsCheckBox().click();
         assertThat("Page should be showing modified results", searchPage.modifiedResultsShown(), is(true));
-        assertThat("Url incorrect", getDriver().getCurrentUrl(), containsString("/modified"));
+        assertThat(getWindow(), urlContains("/modified"));
 	}
 
 	@Test
@@ -170,13 +172,13 @@ public class SearchPageITCase extends ABCTestBase {
 		for (int i = numberOfPages - 1; i > 0; i--) {
 			searchPage.switchResultsPage(Pagination.PREVIOUS);
 			assertThat(searchPage.getCurrentPageNumber(), is(i));
-			assertThat(getDriver().getCurrentUrl(), endsWith(String.valueOf(i)));
+			assertThat(getWindow(), url(endsWith(String.valueOf(i))));
 		}
 
 		for (int j = 2; j < numberOfPages + 1; j++) {
 			searchPage.switchResultsPage(Pagination.NEXT);
 			assertThat(searchPage.getCurrentPageNumber(), is(j));
-			assertThat(getDriver().getCurrentUrl(), endsWith(String.valueOf(j)));
+			assertThat(getWindow(), url(endsWith(String.valueOf(j))));
 		}
 	}
 
@@ -213,7 +215,7 @@ public class SearchPageITCase extends ABCTestBase {
 		searchPage.promoteTheseDocumentsButton().click();
 		searchPage.searchResultCheckbox(1).click();
 		searchPage.promoteTheseItemsButton().click();
-		assertThat("Create new promotions page not open", getDriver().getCurrentUrl(), endsWith("promotions/create"));
+		assertThat(getWindow(), url(endsWith("promotions/create")));
 	}
 
 	@Test
@@ -900,7 +902,7 @@ public class SearchPageITCase extends ABCTestBase {
         assertThat("Page should still have results", searchPage, not(containsText(Errors.Search.NO_RESULTS)));
 		assertThat("Page should not have thrown an error", searchPage, not(containsText(Errors.Search.HOD)));
 		assertThat("Page number should not have changed", currentPage, is(searchPage.getCurrentPageNumber()));
-		assertThat("Url should have reverted to original url", url, is(getDriver().getCurrentUrl()));
+		assertThat(getWindow(), url(is(url)));
 		assertThat("Error message should not be showing", searchPage.isErrorMessageShowing(), is(false));
 		assertThat("Search results have changed on last page", docTitle, is(searchPage.getSearchResult(1).getTitleString()));
 	}

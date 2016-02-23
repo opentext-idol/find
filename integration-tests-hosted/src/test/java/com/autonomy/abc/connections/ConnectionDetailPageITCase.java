@@ -14,12 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.hasTextThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -62,7 +59,7 @@ public class ConnectionDetailPageITCase extends HostedTestBase {
             verifyThat(getMainSession().countWindows(), is(2));
             secondWindow = getMainSession().switchWindow(1);
 
-            verifyThat(getDriver().getCurrentUrl(), containsString(connectorURL));
+            verifyThat(secondWindow, urlContains(connectorURL));
         } finally {
             if(secondWindow != null) {
                 secondWindow.close();

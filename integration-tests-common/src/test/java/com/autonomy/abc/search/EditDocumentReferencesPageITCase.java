@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.*;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
@@ -208,7 +209,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         verifyThat(editReferencesPage.saveButton(), disabled());
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
+        verifyThat(getWindow(), urlContains("promotions/edit"));
     }
 
     private void checkDocumentViewable(String title) {
@@ -272,14 +273,14 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
 
         verifyThat(editReferencesPage.saveButton(), disabled());
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/edit"));
+        verifyThat(getWindow(), urlContains("promotions/edit"));
 
         editReferencesPage.searchResultCheckbox(6).click();
         final String newPromotedDoc = editReferencesPage.getSearchResult(6).getTitleString();
 
         ElementUtil.tryClickThenTryParentClick(editReferencesPage.saveButton());
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
-        verifyThat(getDriver().getCurrentUrl(), containsString("promotions/detail"));
+        verifyThat(getWindow(), urlContains("promotions/detail"));
 
         List<String> newTitles = new ArrayList<>();
         try {

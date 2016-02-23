@@ -23,10 +23,8 @@ import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.text.ParseException;
@@ -35,6 +33,8 @@ import java.util.Date;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.thoughtworks.selenium.SeleneseTestBase.fail;
 import static org.hamcrest.Matchers.*;
@@ -67,7 +67,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             String title = results.getResult(i).getTitleString();
             similarDocuments = findService.goToSimilarDocuments(i);
 
-            verifyThat(getDriver().getCurrentUrl(), containsString("suggest"));
+            verifyThat(getWindow(), urlContains("suggest"));
             verifyThat(similarDocuments.getTitle(), equalToIgnoringCase("Similar results to document with title \"" + title + "\""));
             verifyThat(similarDocuments.getTotalResults(), greaterThan(0));
             verifyThat(similarDocuments.getResults(1), not(empty()));
@@ -104,8 +104,8 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             verifyThat("opened in new tab", secondWindow, not(firstWindow));
             verifyThat(getDriver().getTitle(), containsString(seedTitle));
-            verifyThat("not using viewserver", getDriver().getCurrentUrl(), not(containsString("viewDocument")));
-            //TODO check if 500
+            verifyThat("not using viewserver", getWindow(), url(not(containsString("viewDocument"))));
+        //TODO check if 500
 
             if (secondWindow != null) {
                 secondWindow.close();

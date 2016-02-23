@@ -18,6 +18,8 @@ import org.junit.Test;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
@@ -87,7 +89,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
 
         connectionsDetailPage.backButton().click();
 
-        verifyThat(getDriver().getCurrentUrl(), containsString("repositories"));
+        verifyThat(getWindow(), urlContains("repositories"));
 
         connectionService.goToDetails(webConnector);
 
@@ -99,7 +101,7 @@ public class ConnectionsPageITCase extends HostedTestBase {
         connectionsDetailPage.cancelButton().click();
         connectionsDetailPage.backButton().click();
 
-        verifyThat(getDriver().getCurrentUrl(), containsString("repositories"));
+        verifyThat(getWindow(), urlContains("repositories"));
     }
 
     @Test
@@ -180,10 +182,10 @@ public class ConnectionsPageITCase extends HostedTestBase {
         }
     }
 
-    private void navigateToConnectionViaURL(String url){
-        getDriver().navigate().to(url);
+    private void navigateToConnectionViaURL(String connectionUrl){
+        getWindow().goTo(connectionUrl);
         getElementFactory().getConnectionsDetailPage();
-        assertThat(getDriver().getCurrentUrl(), is(url));
+        assertThat(getWindow(), url(is(connectionUrl)));
     }
 
     @After

@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.modalIsDisplayed;
 import static org.hamcrest.CoreMatchers.not;
@@ -92,7 +93,7 @@ public class UsersPageTestBase<T extends NewUser> extends ABCTestBase {
         } catch (TimeoutException | NoSuchElementException e) { /* Probably because of the sessions you're already logged in */ }
 
         getElementFactory().getPromotionsPage();
-        assertThat(getDriver().getCurrentUrl(), not(containsString("login")));
+        assertThat(getWindow(), url(not(containsString("login"))));
     }
 
     protected void deleteAndVerify(User user) {

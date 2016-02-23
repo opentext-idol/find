@@ -24,6 +24,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
@@ -111,7 +112,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
 
         indexesDetailPage.backButton().click();
 
-        verifyThat(getDriver().getCurrentUrl(), containsString("indexes"));
+        verifyThat(getWindow(), urlContains("indexes"));
     }
 
     @Test

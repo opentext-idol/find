@@ -10,6 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.CoreMatchers.containsString;
 
 public class DevConsoleITCase extends SeleniumTest<DevConsole, DevConsoleElementFactory> {
@@ -30,13 +31,13 @@ public class DevConsoleITCase extends SeleniumTest<DevConsole, DevConsoleElement
     @Test
     public void testLaunchSearch() throws InterruptedException {
         landingPage.launchSearchOptimizer();
-        assertThat(getDriver().getCurrentUrl(), containsString("search.havenapps.io"));
+        assertThat(getWindow(), urlContains("search.havenapps.io"));
     }
 
     @Test
     public void testLaunchFind() throws InterruptedException {
         landingPage.launchFind();
-        assertThat(getDriver().getCurrentUrl(), containsString("find.havenapps.io"));
+        assertThat(getWindow(), urlContains("find.havenapps.io"));
     }
 
     @Test

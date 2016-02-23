@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.Matchers.*;
 
@@ -102,7 +103,7 @@ public class OverviewPageITCase extends ABCTestBase {
 						tableRowLink.click();
 						final SearchPage searchPage = getElementFactory().getSearchPage();
 						new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(searchPage.promoteTheseDocumentsButton()));
-						assertThat(searchTerm + " URL incorrect", getDriver().getCurrentUrl(), containsString("search/modified/" + searchTerm));
+						assertThat(getWindow(), urlContains("search/modified/" + searchTerm));
 						assertThat(searchTerm + " Title incorrect", PageUtil.getPageTitle(getDriver()), containsString("Results for " + searchTerm));
 
 						getApplication().switchTo(OverviewPage.class);

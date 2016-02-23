@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -123,10 +124,10 @@ public class LoginPageHostedITCase extends HostedTestBase {
     public void testLogOutFindToSearchOptimizer(){
         loginLogout(findApp, FindPage.class);
         verifyOn(findApp, LoginPage.class);
-        verifyThat(getDriver().getCurrentUrl(), containsString("find"));
+        verifyThat(getWindow(), urlContains("find"));
 
         verifyRedirect(searchApp, LoginPage.class);
-        verifyThat(getDriver().getCurrentUrl(), containsString("search"));
+        verifyThat(getWindow(), urlContains("search"));
 
     }
 

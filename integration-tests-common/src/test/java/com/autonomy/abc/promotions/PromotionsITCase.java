@@ -29,6 +29,7 @@ import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
+import static com.autonomy.abc.matchers.ControlMatchers.url;
 import static com.autonomy.abc.matchers.ElementMatchers.containsElement;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.PromotionsMatchers.promotionsList;
@@ -79,7 +80,7 @@ public class PromotionsITCase extends ABCTestBase {
 	@Test
 	public void testNewPromotionButtonLink() {
 		promotionsPage.promoteExistingButton().click();
-		verifyThat("correct URL", getDriver().getCurrentUrl().endsWith("promotions/new"));
+		verifyThat(getWindow(), url(endsWith("promotions/new")));
 		verifyThat("correct title", getElementFactory().getTopNavBar(), containsText("Create New Promotion"));
 	}
 
