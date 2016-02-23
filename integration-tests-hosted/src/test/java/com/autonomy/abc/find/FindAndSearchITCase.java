@@ -33,6 +33,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assume.assumeThat;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class FindAndSearchITCase extends FindTestBase {
@@ -73,6 +74,16 @@ public class FindAndSearchITCase extends FindTestBase {
         findPage.search(term);
     }
 
+    private void deleteAllPromotions() {
+        searchWindow.activate();
+        promotionService.deleteAll();
+    }
+
+    private void deleteAllKeywords() {
+        searchWindow.activate();
+        keywordService.deleteAll(KeywordFilter.ALL);
+    }
+
     @Test
     public void testSortByRelevance() {
         adminSearch("stars bbc");
@@ -101,17 +112,14 @@ public class FindAndSearchITCase extends FindTestBase {
         String trigger = "mate";
         PinToPositionPromotion promotion = new PinToPositionPromotion(1, trigger);
 
-        searchWindow.activate();
-        promotionService.deleteAll();
-
+        deleteAllPromotions();
         try {
             String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
             findSearch(trigger);
             assertThat(findResultsPage.searchResult(1).getTitleString(), is(documentTitle));
         } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
+            deleteAllPromotions();
         }
     }
 
@@ -121,17 +129,14 @@ public class FindAndSearchITCase extends FindTestBase {
         String trigger = "mate";
         PinToPositionPromotion promotion = new PinToPositionPromotion(3, trigger);
 
-        searchWindow.activate();
-        promotionService.deleteAll();
-
+        deleteAllPromotions();
         try {
             String documentTitle = promotionService.setUpPromotion(promotion, search, 1).get(0);
 
             findSearch(trigger);
             assertThat(findResultsPage.searchResult(3).getTitleString(), is(documentTitle));
         } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
+            deleteAllPromotions();
         }
     }
 
@@ -142,9 +147,7 @@ public class FindAndSearchITCase extends FindTestBase {
         String trigger = "Prim";
         SpotlightPromotion spotlight = new SpotlightPromotion(trigger);
 
-        searchWindow.activate();
-        promotionService.deleteAll();
-
+        deleteAllPromotions();
         try {
             List<String> createdPromotions = promotionService.setUpPromotion(spotlight, search, 3);
 
@@ -157,8 +160,7 @@ public class FindAndSearchITCase extends FindTestBase {
 
             promotionShownCorrectly(findResultsPage.promotions());
         } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
+            deleteAllPromotions();
         }
     }
 
@@ -170,11 +172,9 @@ public class FindAndSearchITCase extends FindTestBase {
         String trigger = "LOVE";
         StaticPromotion promotion = new StaticPromotion(title, content, trigger);
 
-        searchWindow.activate();
-        promotionService.deleteAll();
-
+        deleteAllPromotions();
         try {
-            ((HSODPromotionService) promotionService).setUpStaticPromotion(promotion);
+            promotionService.setUpStaticPromotion(promotion);
 
             findSearch(trigger);
             List<FindSearchResult> promotions = findResultsPage.promotions();
@@ -185,8 +185,7 @@ public class FindAndSearchITCase extends FindTestBase {
             assertThat(staticPromotion.getDescription(), containsString(content));
             promotionShownCorrectly(staticPromotion);
         } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
+            deleteAllPromotions();
         }
     }
 
@@ -198,9 +197,7 @@ public class FindAndSearchITCase extends FindTestBase {
         String trigger = "Rugby";
         DynamicPromotion dynamicPromotion = new DynamicPromotion(resultsToPromote, trigger);
 
-        searchWindow.activate();
-        promotionService.deleteAll();
-
+        deleteAllPromotions();
         try{
             List<String> promotedDocumentTitles = promotionService.setUpPromotion(dynamicPromotion, search, resultsToPromote);
 
@@ -210,8 +207,7 @@ public class FindAndSearchITCase extends FindTestBase {
 
             promotionShownCorrectly(findResultsPage.promotions());
         } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
+            deleteAllPromotions();
         }
     }
 
@@ -228,66 +224,44 @@ public class FindAndSearchITCase extends FindTestBase {
 
     @Test
     public void testSynonyms() throws InterruptedException {
-        String nonsense = "iuhdsafsaubfdja";
-        searchWindow.activate();
-        keywordService.deleteAll(KeywordFilter.ALL);
+        final String sensible = "sensible";
+        final String nonsense = "iuhdsafsaubfdja";
+        deleteAllKeywords();
+        adminSearch(nonsense);
+        assumeThat(searchPage, hasTextThat(noDocs));
 
-        findSearch(nonsense);
-        assertThat(findResultsPage.getText(), noDocs);
-
-        findSearch("Cat");
-        assertThat(findResultsPage.getText(), not(noDocs));
-
-        searchWindow.activate();
-        keywordService.addSynonymGroup(Language.ENGLISH, "cat", nonsense);
-
-        /* need a separate session due to caching */
-        Session secondSession = launchInNewSession(new HSODFind());
         try {
-            FindPage otherFindPage = initialiseSession(secondSession);
-            otherFindPage.search("Cat");
-            FindResultsPage otherResults = otherFindPage.getResultsPage();
-            String firstTitle = otherResults.searchResult(1).getTitleString();
+            searchWindow.activate();
+            keywordService.addSynonymGroup(Language.ENGLISH, sensible, nonsense);
 
-            otherFindPage.search(nonsense);
-            assertThat(otherResults.getText(), not(noDocs));
-            verifyThat(otherResults.searchResult(1).getTitleString(), is(firstTitle));
+            findSearch(nonsense);
+            verifyThat(findResultsPage.getText(), not(noDocs));
+            String firstNonsenseResult = findResultsPage.getResult(1).getTitleString();
 
+            findSearch(sensible);
+            String firstSensibleResult = findResultsPage.getResult(1).getTitleString();
+            verifyThat(firstSensibleResult, is(firstNonsenseResult));
         } finally {
-            getSessionRegistry().endSession(secondSession);
+            deleteAllKeywords();
         }
     }
 
     @Test
     public void testBlacklist() throws InterruptedException {
-        searchWindow.activate();
-        keywordService.deleteAll(KeywordFilter.ALL);
+        final String term = "naughty";
+        deleteAllKeywords();
+        adminSearch(term);
+        assumeThat("term to be blacklisted has results", searchPage.getText(), not(noDocs));
 
-        findSearch("Cat");
-        assertThat(findResultsPage.getText(), not(noDocs));
-
-        findSearch("Holder");
-
-        searchWindow.activate();
-        keywordService.addBlacklistTerms(Language.ENGLISH, "cat");
-
-        /* need a separate session due to caching */
-        Session secondSession = launchInNewSession(new HSODFind());
         try {
-            FindPage otherFindPage = initialiseSession(secondSession);
-            otherFindPage.search("Cat");
+            searchWindow.activate();
+            keywordService.addBlacklistTerms(Language.ENGLISH, term);
 
-            assertThat(otherFindPage.getResultsPage(), hasTextThat(noDocs));
+            findSearch(term);
+            assertThat(findResultsPage, hasTextThat(noDocs));
         } finally {
-            getSessionRegistry().endSession(secondSession);
+            deleteAllKeywords();
         }
-    }
-
-    // TODO: this does not belong here
-    private FindPage initialiseSession(Session session) {
-        HSODFindElementFactory otherElementFactory = new HSODFind(session.getActiveWindow()).elementFactory();
-        otherElementFactory.getLoginPage().loginWith(getConfig().getDefaultUser().getAuthProvider());
-        return otherElementFactory.getFindPage();
     }
 
     @Test   @Ignore("Not implemented")
@@ -296,6 +270,7 @@ public class FindAndSearchITCase extends FindTestBase {
     @Test
     @KnownBug("CSA-1630")
     public void testAllPromotedDocumentsHaveTitles(){
+        deleteAllPromotions();
         try {
             searchWindow.activate();
             promotionService.setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, "Tiger"), "scg-2", 10);
@@ -306,8 +281,7 @@ public class FindAndSearchITCase extends FindTestBase {
             }
 
         } finally {
-            searchWindow.activate();
-            promotionService.deleteAll();
+            deleteAllPromotions();
         }
     }
 

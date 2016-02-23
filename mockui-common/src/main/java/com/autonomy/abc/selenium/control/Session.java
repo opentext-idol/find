@@ -62,6 +62,10 @@ public class Session implements Iterable<Window> {
         driver.close();
     }
 
+    public int countWindows() {
+        return driver.getWindowHandles().size();
+    }
+
     @Override
     protected void finalize() throws Throwable {
         if (driver != null) {
