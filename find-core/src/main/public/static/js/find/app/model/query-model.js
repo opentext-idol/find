@@ -43,30 +43,32 @@ define([
         initialize: function(attributes, options) {
             this.queryState = options.queryState;
 
-            this.listenTo(this.queryState.queryTextModel, 'change', function() {
-                this.set('queryText', this.queryState.queryTextModel.makeQueryText());
-            });
+            if(this.queryState) {
+                this.listenTo(this.queryState.queryTextModel, 'change', function() {
+                    this.set('queryText', this.queryState.queryTextModel.makeQueryText());
+                });
 
-            this.listenTo(this.queryState.datesFilterModel, 'change', function() {
-                this.set(this.queryState.datesFilterModel.toQueryModelAttributes());
-            });
+                this.listenTo(this.queryState.datesFilterModel, 'change', function() {
+                    this.set(this.queryState.datesFilterModel.toQueryModelAttributes());
+                });
 
-            this.listenTo(this.queryState.selectedIndexes, 'update reset', _.debounce(_.bind(function() {
-                this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
-            }, this), DEBOUNCE_WAIT_MILLISECONDS));
+                this.listenTo(this.queryState.selectedIndexes, 'update reset', _.debounce(_.bind(function() {
+                    this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
+                }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
-            this.listenTo(this.queryState.selectedParametricValues, 'add remove reset', _.debounce(_.bind(function() {
+                this.listenTo(this.queryState.selectedParametricValues, 'add remove reset', _.debounce(_.bind(function() {
+                    var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
+                    this.set('fieldText', fieldTextNode ? fieldTextNode : null);
+                }, this)));
+
                 var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
-                this.set('fieldText', fieldTextNode ? fieldTextNode : null);
-            }, this)));
 
-            var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
-
-            this.set(_.extend({
-                queryText: this.queryState.queryTextModel.makeQueryText(),
-                indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
-                fieldText: fieldTextNode ? fieldTextNode : null
-            }, this.queryState.datesFilterModel.toQueryModelAttributes()));
+                this.set(_.extend({
+                    queryText: this.queryState.queryTextModel.makeQueryText(),
+                    indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
+                    fieldText: fieldTextNode ? fieldTextNode : null
+                }, this.queryState.datesFilterModel.toQueryModelAttributes()));
+            }
         },
 
         getIsoDate: function(type) {

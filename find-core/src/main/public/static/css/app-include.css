@@ -367,6 +367,22 @@ html, body {
     vertical-align: super;
 }
 
+.comparison-list-title.shorten {
+    max-width: 500px
+}
+
+.comparison-results-view-container-left {
+    padding: 10px 20px 0px 0px
+}
+
+.comparison-results-view-container-middle {
+    padding: 10px 0px 0px 0px
+}
+
+.comparison-results-view-container-right {
+    padding: 10px 0px 0px 30px
+}
+
 .tab-title.shorten {
     max-width: 150px;
 }
@@ -654,9 +670,13 @@ input.find-input {
     color: #00b388;
 }
 
+.comparison-list-title,
+.results-list-container .result-message {
+    color: #425563;
+}
+
 .results-list-container .result-message {
     font-size: 28px;
-    color: #425563;
 }
 
 .results-contents {

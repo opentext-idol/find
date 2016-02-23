@@ -56,6 +56,7 @@ define([
 
         // Abstract
         ServiceView: null,
+        ComparisonView: null,
         documentDetailOptions: null,
 
         initialize: function () {
@@ -246,7 +247,8 @@ define([
                             searchModel: this.searchModel,
                             savedSearchCollection: this.savedSearchCollection,
                             queryState: queryState,
-                            savedSearchModel: savedSearchModel
+                            savedSearchModel: savedSearchModel,
+                            comparisonSuccessCallback: _.bind(this.comparisonSuccessCallback, this)
                         })
                     };
 
@@ -332,6 +334,37 @@ define([
                 this.stopListening(this.documentDetailView);
                 this.documentDetailView = null;
             }
+        },
+
+        clearComparison: function() {
+            if(this.comparisonView) {
+                this.comparisonView.remove();
+                this.stopListening(this.comparisonView);
+                this.comparisonView = null;
+            }
+        },
+
+        comparisonSuccessCallback: function(model, searchModels) {
+            this.clearComparison();
+
+            this.$('.service-view-container').addClass('hide');
+            this.$('.comparison-service-view-container').removeClass('hide');
+
+            this.comparisonView = new this.ComparisonView({
+                model: model,
+                searchModels: searchModels,
+                escapeCallback: _.bind(this.comparisonEscapeCallback, this)
+            });
+
+            this.$('.comparison-service-view-container').append(this.comparisonView.$el);
+            this.comparisonView.render();
+        },
+
+        comparisonEscapeCallback: function() {
+            this.clearComparison();
+
+            this.$('.service-view-container').addClass('hide');
+            this.$('.query-service-view-container').removeClass('hide');
         }
     });
 });

@@ -6,7 +6,9 @@ define([
     'find/app/model/indexes-collection',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
+    'find/app/model/comparisons/comparison-model',
     'find/app/model/search-filters-collection',
+    'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/model/parametric-collection',
     'find/app/page/search/filter-display/filter-display-view',
@@ -22,12 +24,13 @@ define([
     'find/app/page/search/results/topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/compare-modal',
+    'find/app/util/fetch-comparison',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
+], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, ComparisonModel, SearchFiltersCollection, ComparisonDocumentsCollection,
             ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
-            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
+            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, fetchComparison, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -58,7 +61,18 @@ define([
                     savedSearchCollection: this.savedSearchCollection,
                     selectedSearch: this.savedSearchModel,
                     callback: _.bind(function(selectedCid) {
-                        //TODO: call a compareSavedSearches() function here
+                        var searchModels = {
+                            first: this.savedSearchModel,
+                            second: this.savedSearchCollection.get({cid: selectedCid})
+                        };
+
+                        var comparisonModel = fetchComparison(searchModels.first, searchModels.second);
+
+                        comparisonModel.save({}, {
+                            success: _.bind(function(e) {
+                                this.comparisonSuccessCallback(comparisonModel, searchModels);
+                            }, this)
+                        });
                     }, this)
                 });
             }
@@ -70,6 +84,8 @@ define([
             this.savedSearchModel = options.savedSearchModel;
             this.queryState = options.queryState;
             this.documentsCollection = options.documentsCollection;
+
+            this.comparisonSuccessCallback = options.comparisonSuccessCallback;
 
             this.entityCollection = new EntityCollection();
 
