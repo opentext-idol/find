@@ -32,6 +32,7 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S
     public static final String FIELD_TEXT_PARAM = "fieldText";
     public static final String MIN_DATE_PARAM = "minDate";
     public static final String MAX_DATE_PARAM = "maxDate";
+    public static final String STATE_TOKEN_PARAM = "stateTokens";
 
     protected final RelatedConceptsService<Q, S, E> relatedConceptsService;
     protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
@@ -45,12 +46,23 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, S
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Q> findRelatedConcepts(@RequestParam(QUERY_TEXT_PARAM) final String queryText,
-                                       @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-                                       @RequestParam(DATABASES_PARAM) final List<S> databases,
-                                       @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-                                       @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
+    public List<Q> findRelatedConcepts(
+            @RequestParam(QUERY_TEXT_PARAM) final String queryText,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+    ) throws E {
+        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(
+                queryText,
+                fieldText,
+                databases,
+                minDate,
+                maxDate,
+                stateTokens == null ? Collections.<String>emptyList() : stateTokens,
+                Collections.<String>emptyList()
+        );
 
         final RelatedConceptsRequest<S> relatedConceptsRequest = buildRelatedConceptsRequest(queryRestrictions);
         return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
