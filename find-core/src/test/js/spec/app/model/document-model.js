@@ -10,7 +10,15 @@ define([
 
             it('uses the title from the response if present', function() {
                 var title = 'My Document';
-                expect(this.parse({reference: 'my-document', title: title}).title).toBe(title);
+                var attributes = {
+                    reference: 'my-document',
+                    title: title,
+                    fieldMap: {
+                        url: 'http://example.com'
+                    }
+                };
+
+                expect(this.parse(attributes).title).toBe(title);
             });
 
         });
