@@ -18,7 +18,6 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 
@@ -43,7 +42,7 @@ public class FindAndSearchITCase extends FindTestBase {
     private FindResultsPage findResultsPage;
     private SearchPage searchPage;
 
-    private PromotionService<?> promotionService;
+    private HSODPromotionService promotionService;
     private KeywordService keywordService;
     private Window searchWindow;
     private Window findWindow;
@@ -319,15 +318,12 @@ public class FindAndSearchITCase extends FindTestBase {
             String trigger = "trigger";
 
             searchWindow.activate();
-
-            PromotionsPage promotionsPage = promotionService.goToPromotions();
-            promotionsPage.newButton().click();
-            new StaticPromotion("loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonnnnggggggggggggggggggggggg", "content", trigger).makeWizard(searchApp.elementFactory().getCreateNewPromotionsPage()).apply();
+            promotionService.setUpStaticPromotion(new StaticPromotion("loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonnnnggggggggggggggggggggggg", "content", trigger));
 
             findWindow.activate();
             findPage.search(trigger);
 
-            WebElement toggleRelatedConcepts = getDriver().findElement(By.className("hp-next-chapter"));
+            WebElement toggleRelatedConcepts = findPage.rightContainerToggleButton();
 
             Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
             Point p = toggleRelatedConcepts.getLocation();

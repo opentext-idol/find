@@ -44,4 +44,8 @@ public class Errors {
         public static final String INVALID_INDEX = "does not exist";
         public static final String INDEX_NAME = "Please enter a valid name that contains only lowercase alphanumeric characters";
     }
+
+    public static class Find {
+        public static final String GENERAL = "An error occurred";
+    }
 }

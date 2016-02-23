@@ -26,12 +26,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.autonomy.abc.framework.ABCAssert.assertThat;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
@@ -39,6 +39,7 @@ import static com.autonomy.abc.matchers.ElementMatchers.containsText;
 import static com.autonomy.abc.matchers.ElementMatchers.hasClass;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -270,7 +271,7 @@ public class IndexesPageITCase extends HostedTestBase {
             FindPage findPage = findApp.elementFactory().getFindPage();
 
             findPage.search("Exeter");
-            verifyThat(findPage, not(containsText("An error occurred")));
+            verifyNoError(findPage);
             verifyThat("Index displayed properly", indexElement(findPage), not(hasClass("disabled-index")));
 
             searchWindow.activate();
@@ -278,11 +279,22 @@ public class IndexesPageITCase extends HostedTestBase {
 
             findWindow.activate();
             findPage.search("Plymouth");
+            verifyNoError(findPage);
             verifyThat("Deleted index disabled", indexElement(findPage), hasClass("disabled-index"));
 
             findWindow.refresh();
             findPage = findApp.elementFactory().getFindPage();
             findPage.search("Plymouth");
+
+            verifyNoError(findPage);
+
+            WebElement indexElement = null;
+            try {
+                indexElement = indexElement(findPage);
+                verifyThat(indexElement.isDisplayed(), is(false));
+            } catch (NoSuchElementException e) {
+                verifyThat(indexElement, nullValue());
+            }
 
             for (IndexNodeElement node : findPage.indexesTree()) {
                 verifyThat(node.getName(), not(index.getName()));
@@ -291,6 +303,10 @@ public class IndexesPageITCase extends HostedTestBase {
             findWindow.close();
             searchWindow.activate();
         }
+    }
+
+    private void verifyNoError(FindPage findPage) {
+        verifyThat(findPage.getResultsPage().resultsDiv(), not(containsText(Errors.Find.GENERAL)));
     }
 
     private WebElement indexElement(FindPage findPage){

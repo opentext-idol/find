@@ -220,7 +220,7 @@ public class FindITCase extends FindTestBase {
 
         results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
 
-        assertThat(results.resultsDiv(), not(containsText("An error occurred")));
+        assertThat(results.resultsDiv(), not(containsText(Errors.Find.GENERAL)));
 
         List<FindSearchResult> searchResults = results.getResults();
 

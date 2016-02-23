@@ -169,6 +169,14 @@ public class FindPage extends AppElement implements AppPage,
         return ElementUtil.getTexts(findElements(By.className("selected-related-concept")));
     }
 
+    public WebElement rightContainerToggleButton() {
+        return findElement(By.cssSelector(".right-container-icon .container-toggle"));
+    }
+
+    public WebElement leftContainerToggleButton(){
+        return findElement(By.cssSelector(".left-side-container .container-toggle"));
+    }
+
     public static class Factory implements ParametrizedFactory<WebDriver, FindPage> {
         public FindPage create(WebDriver context) {
             return new FindPage(context);
