@@ -57,10 +57,9 @@ define([
                 response.date = moment(response.date);
             }
 
-            response.media = getMediaType(response.contentType);
-
             response.thumbnail = getFieldValue(response.fieldMap.thumbnail);
             response.contentType = getFieldValue(response.fieldMap.contentType);
+            response.media = getMediaType(response.contentType);
             response.url = getFieldValue(response.fieldMap.url);
             response.offset = getFieldValue(response.fieldMap.offset);
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
