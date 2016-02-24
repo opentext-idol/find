@@ -19,6 +19,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -33,6 +34,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,12 +85,13 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     })
     private Set<FieldAndValue> parametricValues;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = RelatedConceptsTable.NAME, joinColumns = {
-            @JoinColumn(name = RelatedConceptsTable.Column.SEARCH_ID)
-    })
-    @Column(name = RelatedConceptsTable.Column.CONCEPT)
-    private Set<String> relatedConcepts;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            mappedBy = ConceptCluster.SEARCH_FIELD
+    )
+    private Collection<ConceptCluster> conceptClusters;
 
     @Column(name = Table.Column.START_DATE)
     @Type(type = JADIRA_TYPE_NAME)
@@ -118,7 +121,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         queryText = builder.queryText;
         indexes = builder.indexes;
         parametricValues = builder.parametricValues;
-        relatedConcepts = builder.relatedConcepts;
+        conceptClusters = builder.conceptClusters;
         minDate = builder.minDate;
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
@@ -145,20 +148,28 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
 
             indexes = other.getIndexes() == null ? indexes : other.getIndexes();
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
-            relatedConcepts = other.getRelatedConcepts() == null ? relatedConcepts : other.getRelatedConcepts();
+
+            if (other.getConceptClusters() != null) {
+                conceptClusters.clear();
+                conceptClusters.addAll(other.getConceptClusters());
+            }
         }
     }
 
     // WARNING: This logic is duplicated in the client-side QueryTextModel
     public String toQueryText() {
-        if (CollectionUtils.isEmpty(relatedConcepts)) {
+        if (CollectionUtils.isEmpty(conceptClusters)) {
             return queryText;
         } else {
             final Collection<String> quotedConcepts = new LinkedList<>();
 
-            for (final String phrase : relatedConcepts) {
+            for (final ConceptCluster cluster : conceptClusters) {
+                quotedConcepts.add(wrapQuotes(cluster.getPrimaryPhrase()));
+
+                for (final String phrase : cluster.getPhrases()) {
                     quotedConcepts.add(wrapQuotes(phrase));
                 }
+            }
 
             return '(' + queryText + ") " + StringUtils.join(quotedConcepts, ' ');
         }
@@ -209,7 +220,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         private String queryText = "";
         private Set<EmbeddableIndex> indexes;
         private Set<FieldAndValue> parametricValues = new HashSet<>(0);
-        private Set<String> relatedConcepts = new HashSet<>(0);
+        private Collection<ConceptCluster> conceptClusters = new HashSet<>(0);
         private DateTime minDate;
         private DateTime maxDate;
         private DateTime dateCreated;
@@ -222,7 +233,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             queryText = search.queryText;
             indexes = search.indexes;
             parametricValues = search.parametricValues;
-            relatedConcepts = search.relatedConcepts;
+            conceptClusters = search.conceptClusters;
             minDate = search.minDate;
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
@@ -257,8 +268,8 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             return this;
         }
 
-        public Builder<T> setRelatedConcepts(final Set<String> relatedConcepts) {
-            this.relatedConcepts = relatedConcepts;
+        public Builder<T> setConceptClusters(final Collection<ConceptCluster> conceptClusters) {
+            this.conceptClusters = conceptClusters;
             return this;
         }
 
@@ -325,15 +336,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
 
         interface Column {
             String STATE_TOKEN = "state_token";
-        }
-    }
-
-    public interface RelatedConceptsTable {
-        String NAME = "search_related_concepts";
-
-        interface Column {
-            String SEARCH_ID = "search_id";
-            String CONCEPT = "concept";
         }
     }
 }

@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,14 +33,17 @@ public abstract class AbstractSavedSearchTest<T extends SavedSearch<T>> {
 
     @Test
     public void toQueryTextWithConceptClusters() {
-        final Set<String> phrases = new HashSet<>();
-        phrases.add("california");
-        phrases.add("county");
-        phrases.add("luke skywalker");
+        final List<ConceptCluster> conceptClusters = new LinkedList<>();
+
+        final ConceptCluster countyCluster = new ConceptCluster("county", Collections.singletonList("california"));
+        conceptClusters.add(countyCluster);
+
+        final ConceptCluster lukeCluster = new ConceptCluster("luke skywalker", Collections.<String>emptyList());
+        conceptClusters.add(lukeCluster);
 
         final SavedSearch<T> search = createBuilder()
                 .setQueryText("orange jedi")
-                .setRelatedConcepts(phrases)
+                .setConceptClusters(conceptClusters)
                 .build();
 
         final String queryText = search.toQueryText();

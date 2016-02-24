@@ -1,16 +1,20 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.ConceptCluster;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.*;
@@ -26,9 +30,13 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
         final String title = "Any old saved snapshot";
         final Long resultCount = 100L;
 
+        final Collection<ConceptCluster> conceptClusters = new LinkedList<>();
+        conceptClusters.add(new ConceptCluster("manhattan", Collections.singletonList("mid-town")));
+
         final SavedSnapshot savedSnapshot = new SavedSnapshot.Builder()
                 .setResultCount(resultCount)
                 .setStateToken(Collections.singletonList("abc"))
+                .setConceptClusters(conceptClusters)
                 .setTitle(title)
                 .build();
 
@@ -38,6 +46,7 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
         assertEquals(entity.getResultCount(), resultCount);
         assertThat(entity.getStateTokens(), isA(List.class));
         assertEquals(entity.getStateTokens().size(), 1);
+        assertThat(entity.getConceptClusters(), hasSize(conceptClusters.size()));
         assertNotNull(entity.getId());
 
         entity.setQueryText("*");

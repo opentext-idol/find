@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.ConceptCluster;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -13,11 +14,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.isA;
@@ -34,9 +35,9 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
         final String title = "Any old saved search";
         final String queryText = "orange";
 
-        final Set<String> relatedConcepts = new HashSet<>();
-        relatedConcepts.add("manhattan");
-        relatedConcepts.add("mid-town");
+        final Collection<ConceptCluster> conceptClusters = new LinkedList<>();
+        final ConceptCluster manhattanCluster = new ConceptCluster("manhattan", Collections.singletonList("mid-town"));
+        conceptClusters.add(manhattanCluster);
 
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setTitle(title)
@@ -54,7 +55,7 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
                 .setId(createdEntity.getId())
                 .setTitle(title)
                 .setQueryText(queryText)
-                .setRelatedConcepts(relatedConcepts)
+                .setConceptClusters(conceptClusters)
                 .build();
 
         final SavedQuery updatedEntity = savedQueryService.update(updateEntity);
@@ -63,15 +64,25 @@ public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
         assertThat(updatedEntity.getId(), is(createdEntity.getId()));
         assertThat(updatedEntity.getTitle(), is(title));
 
-        final Collection<String> updatedConcepts = updatedEntity.getRelatedConcepts();
-        assertThat(updatedConcepts, containsInAnyOrder("manhattan", "mid-town"));
+        final Collection<ConceptCluster> updatedConceptClusters = updatedEntity.getConceptClusters();
+        assertThat(updatedConceptClusters, hasSize(1));
+
+        final ConceptCluster updatedConceptCluster = updatedConceptClusters.iterator().next();
+        assertThat(updatedConceptCluster.getPrimaryPhrase(), is(manhattanCluster.getPrimaryPhrase()));
+        assertThat(updatedConceptCluster.getPhrases(), hasSize(1));
+        assertThat(updatedConceptCluster.getPhrases().iterator().next(), is("mid-town"));
 
         final Set<SavedQuery> fetchedEntities = savedQueryService.getAll();
         assertThat(fetchedEntities, hasSize(1));
 
         final SavedQuery fetchedEntity = fetchedEntities.iterator().next();
         assertThat(fetchedEntity.getTitle(), is(title));
-        assertThat(fetchedEntity.getRelatedConcepts(), containsInAnyOrder("manhattan", "mid-town"));
+        assertThat(fetchedEntity.getConceptClusters(), hasSize(1));
+
+        final ConceptCluster fetchedConceptCluster = fetchedEntity.getConceptClusters().iterator().next();
+        assertThat(fetchedConceptCluster.getPrimaryPhrase(), is(manhattanCluster.getPrimaryPhrase()));
+        assertThat(fetchedConceptCluster.getPhrases(), hasSize(1));
+        assertThat(fetchedConceptCluster.getPhrases().iterator().next(), is("mid-town"));
 
         savedQueryService.deleteById(updatedEntity.getId());
 
