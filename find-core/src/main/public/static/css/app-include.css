@@ -367,6 +367,14 @@ html, body {
     vertical-align: super;
 }
 
+.compare-modal-error-spinner .loading-spinner {
+    margin-bottom: 0;
+}
+
+.comparison-create-error-message {
+    text-align: left;
+}
+
 .comparison-list-title.shorten {
     max-width: 500px
 }
