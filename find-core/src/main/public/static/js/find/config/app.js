@@ -33,7 +33,7 @@ define([
             }
         }))({
             strings: {
-                appName: 'Find',
+                appName: 'BI for Human Information',
                 logout: 'Logout from Settings'
             },
             logoutUri: '../logout',

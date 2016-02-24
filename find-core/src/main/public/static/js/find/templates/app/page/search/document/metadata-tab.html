@@ -1,0 +1,52 @@
+<table class="table table-hover">
+    <% if(model.get('thumbnail')) { %>
+        <tr>
+            <td class="font-bold"><%-i18n['search.document.thumbnail']%></td>
+            <td class="break-all p-l-sm">
+                <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=model.get('thumbnail')%>"/>
+            </td>
+        </tr>
+    <% } %>
+
+    <% _.each(model.pick([
+        'reference',
+        'index',
+        'title',
+        'summary',
+        'contentType',
+        'url'
+    ]), function(value, key) { %>
+        <% if(value) { %>
+            <tr>
+                <td class="font-bold"><%-i18n['search.document.' + key]%></td>
+                <td class="break-all p-l-sm"><%-value%></td>
+            </tr>
+        <% } %>
+    <% }); %>
+
+    <% if (model.get('date')) { %>
+    <tr>
+        <td class="font-bold"><%-i18n['search.document.date']%></td>
+        <td class="break-all p-l-sm"><%-model.get('date').fromNow()%></td>
+    </tr>
+    <% } %>
+
+    <% var ignoreFields = ['thumbnail', 'DRECONTENT', 'DRETITLE', 'DREREFERENCE', 'contentType', 'url']; %>
+
+    <% _.each(model.get('fields'), function(field) { %>
+        <% if(!_.contains(ignoreFields, field.id)) { %>
+            <tr>
+                <td class="font-bold"><%-field.id%></td>
+                <td class="break-all p-l-sm">
+                    <ul class="list-unstyled m-b-nil">
+                        <% _.each(field.values, function(value) { %>
+                        <li><%-value%></li>
+                        <% }); %>
+                    </ul>
+                </td>
+            </tr>
+        <% } %>
+    <% }); %>
+</table>
+
+

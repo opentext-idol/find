@@ -16,7 +16,7 @@ define([
         return contentType && _.find(MEDIA_TYPES, function (mediaType) {
             return contentType.indexOf(mediaType) === 0;
         });
-    }
+    };
 
     function getFieldValues(fieldData) {
         if (fieldData && fieldData.values.length) {
@@ -57,10 +57,9 @@ define([
                 response.date = moment(response.date);
             }
 
-            response.media = getMediaType(response.contentType);
-
             response.thumbnail = getFieldValue(response.fieldMap.thumbnail);
             response.contentType = getFieldValue(response.fieldMap.contentType);
+            response.media = getMediaType(response.contentType);
             response.url = getFieldValue(response.fieldMap.url);
             response.offset = getFieldValue(response.fieldMap.offset);
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);

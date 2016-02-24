@@ -9,19 +9,14 @@ define([
     'find/app/page/search/document/tab-content-view',
     'find/app/page/search/document/authors-tab',
     'find/app/page/search/document/similar-documents-tab',
-    'find/app/page/search/document/similar-dates-tab'
-], function(Backbone, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab, SimilarDatesTab) {
+    'find/app/page/search/document/similar-dates-tab',
+    'find/app/page/search/document/metadata-tab'
+], function(Backbone, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab, SimilarDatesTab, MetadataTab) {
     'use strict';
-
-    var MetaDataTabContent = Backbone.View.extend({
-        render: function () {
-            this.$el.html('metadata');
-        }
-    });
 
     return [
         {
-            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: MetaDataTabContent}),
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: MetadataTab}),
 
             title: i18n['search.document.detail.tabs.metadata'],
 

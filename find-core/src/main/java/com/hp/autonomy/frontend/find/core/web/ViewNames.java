@@ -13,15 +13,15 @@ public enum ViewNames
     SSO("sso"),
     SSO_LOGOUT("sso-logout");
 
-    private final String value;
+    private final String viewName;
 
-    ViewNames(final String value)
+    ViewNames(final String viewName)
     {
-        this.value = value;
+        this.viewName = viewName;
     }
 
-    public String value()
+    public String viewName()
     {
-        return value;
+        return viewName;
     }
 }
