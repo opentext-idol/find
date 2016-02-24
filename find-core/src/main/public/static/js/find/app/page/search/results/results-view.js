@@ -123,6 +123,7 @@ define([
             _.bindAll(this, 'handlePopover');
 
             this.mode = options.mode;
+            this.isComparisonView = options.isComparisonView;
 
             this.loadData = this.stateTokenMode() ? this.stateTokenLoadData : this.normalLoadData;
             this.refreshResults = this.stateTokenMode() ? this.stateTokenRefreshResults : this.normalRefreshResults;
@@ -198,6 +199,10 @@ define([
         render: function() {
             this.$el.html(this.template({i18n:i18n}));
 
+            if(!this.isComparisonView) {
+                this.$('.main-results-content').addClass('preview-mode');
+            }
+
             this.$loadingSpinner = $(this.loadingTemplate);
 
             this.$el.find('.results').after(this.$loadingSpinner);
@@ -247,9 +252,7 @@ define([
                 this.$('.main-results-content .results').append(this.handleError(i18n['app.feature.search'], xhr));
             });
 
-            if(!this.stateTokenMode()) {
-                this.listenTo(this.queryModel, 'change', this.refreshResults);
-            }
+            this.listenTo(this.queryModel, 'change', this.refreshResults);
 
             this.listenTo(this.entityCollection, 'reset', function() {
                 if (!this.entityCollection.isEmpty()) {
