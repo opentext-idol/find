@@ -1,11 +1,12 @@
 define([
     'backbone',
     'find/app/model/query-model',
+    'find/app/page/search/results/results-view',
     'text!find/templates/app/page/search/saved-searches/comparison/comparison-view.html',
     'text!find/templates/app/page/search/saved-searches/comparison/comparison-list-container.html',
     'find/app/util/search-data-util',
     'i18n!find/nls/bundle'
-], function (Backbone, QueryModel, template, comparisonListContainer, searchDataUtil, i18n) {
+], function (Backbone, QueryModel, ResultsView, template, comparisonListContainer, searchDataUtil, i18n) {
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -72,7 +73,7 @@ define([
             }, []).uniq().value();
 
             return new this.ResultsView({
-                mode: 'STATE_TOKEN',
+                mode: ResultsView.Mode.STATE_TOKEN,
                 isComparisonView: true,
                 queryModel: new Backbone.Model({
                     indexes: indexes
