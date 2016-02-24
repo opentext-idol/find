@@ -356,8 +356,7 @@ define([
                 escapeCallback: _.bind(this.comparisonEscapeCallback, this)
             });
 
-            this.$('.comparison-service-view-container').append(this.comparisonView.$el);
-            this.comparisonView.render();
+            this.comparisonView.setElement(this.$('.comparison-service-view-container')).render();
         },
 
         comparisonEscapeCallback: function() {
