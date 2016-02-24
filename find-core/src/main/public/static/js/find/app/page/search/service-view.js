@@ -17,6 +17,7 @@ define([
     'find/app/page/search/results/results-view-container',
     'find/app/page/search/results/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
+    'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/page/search/spellcheck-view',
     'find/app/page/search/snapshots/snapshot-data-view',
     'find/app/util/collapsible',
@@ -32,8 +33,9 @@ define([
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
             ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, SpellCheckView, SnapshotDataView, Collapsible, addChangeListener, searchDataUtil,
-            SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
+            ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SpellCheckView, SnapshotDataView, Collapsible,
+            addChangeListener, searchDataUtil, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView,
+            SunburstView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -138,15 +140,6 @@ define([
                 queryState: this.queryState
             });
 
-            var relatedConceptsView = new RelatedConceptsView({
-                entityCollection: this.entityCollection,
-                indexesCollection: this.indexesCollection,
-                queryModel: this.queryModel,
-                queryTextModel: this.queryState.queryTextModel
-            });
-
-            this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
-
             var parametricCollection = new ParametricCollection();
 
             var resultsViewConstructorArguments = {
@@ -158,6 +151,7 @@ define([
                 queryTextModel: this.queryState.queryTextModel
             };
 
+            var relatedConceptsClickHandler;
             var resultsViews = [];
 
             if (searchType === SavedSearchModel.Type.QUERY) {
@@ -215,11 +209,29 @@ define([
 
                 this.indexesViewWrapper = collapseView(i18nIndexes['search.indexes'], this.indexesView);
                 this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
+
+                relatedConceptsClickHandler = relatedConceptsClickHandlers.updateQuery({queryTextModel: this.queryState.queryTextModel});
             } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
                 this.snapshotDataView = new SnapshotDataView({
                     savedSearchModel: this.savedSearchModel
                 });
+
+                relatedConceptsClickHandler = relatedConceptsClickHandlers.newQuery({
+                    selectedTabModel: this.selectedTabModel,
+                    savedSearchModel: this.savedSearchModel,
+                    savedQueryCollection: this.savedQueryCollection
+                });
             }
+
+            var relatedConceptsView = new RelatedConceptsView({
+                entityCollection: this.entityCollection,
+                indexesCollection: this.indexesCollection,
+                queryModel: this.queryModel,
+                queryTextModel: this.queryState.queryTextModel,
+                clickHandler: relatedConceptsClickHandler
+            });
+
+            this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
 
             this.resultsView = new this.ResultsView(_.extend({
                 mode: searchType === SavedSearchModel.Type.QUERY ? ResultsView.Mode.QUERY : ResultsView.Mode.STATE_TOKEN

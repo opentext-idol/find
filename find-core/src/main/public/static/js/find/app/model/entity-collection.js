@@ -8,6 +8,23 @@ define([
 ], function(FindBaseCollection) {
 
     return FindBaseCollection.extend({
-        url: '../api/public/search/find-related-concepts'
-    })
+        url: '../api/public/search/find-related-concepts',
+
+        /**
+         * Get the text for entities in the cluster with the given id.
+         * @param {Number} clusterId
+         * @return {String[]}
+         */
+        getClusterEntities: function(clusterId) {
+            return this.chain()
+                .filter(function(model) {
+                    return model.get('cluster') === clusterId;
+                })
+                .map(function(model) {
+                    return model.get('text');
+                })
+                .value();
+        }
+    });
+
 });

@@ -41,9 +41,8 @@ define([
     }
 
     function popoverHandler($content, $target) {
-
         var entityCluster = $target.data().entityCluster;
-        var relatedConcepts = entityCluster > -1 ? this.getClusteredConcepts(entityCluster) : [$target.data().entityText];
+        var relatedConcepts = _.union(this.queryTextModel.get('relatedConcepts'), this.entityCollection.getClusterEntities(entityCluster));
 
         var queryText = searchDataUtil.makeQueryText(this.queryTextModel.get('inputText'), _.union(relatedConcepts, this.queryTextModel.get('relatedConcepts')));
 
@@ -91,37 +90,14 @@ define([
         events: {
             'click [data-entity-text]': function (e) {
                 var $target = $(e.currentTarget);
-                var queryText = $target.attr('data-entity-text');
-
-                if (this.queryTextModel.get('inputText') === '') {
-                    this.queryTextModel.set('inputText', queryText);
-                } else {
-                    var concepts = this.queryTextModel.get('relatedConcepts');
-                    var newConcepts = _.union(concepts, [queryText]);
-                    this.queryTextModel.set('relatedConcepts', newConcepts);
-                }
+                var text = $target.attr('data-entity-text');
+                this.clickHandler([text]);
             },
             'click [data-entity-cluster]': function (e) {
                 var $target = $(e.currentTarget);
                 var queryCluster = Number($target.attr('data-entity-cluster'));
-
-                var newConcepts = this.getClusteredConcepts(queryCluster);
-                this.queryTextModel.set('relatedConcepts', newConcepts);
+                this.clickHandler(this.entityCollection.getClusterEntities(queryCluster));
             }
-        },
-
-        getClusteredConcepts: function (queryCluster) {
-            var currentlyClickedClusterConcepts = _.chain(this.entityCollection.models)
-                .filter(function (model) { //get all the models in the cluster
-                    return model.get('cluster') === queryCluster;
-                }, this)
-                .map(function (model) { //get the text out of those models
-                    return model.get('text');
-                })
-                .value();
-
-            var concepts = this.queryTextModel.get('relatedConcepts');
-            return _.union(concepts, currentlyClickedClusterConcepts);
         },
 
         initialize: function (options) {
@@ -129,6 +105,7 @@ define([
             this.queryTextModel = options.queryTextModel;
             this.entityCollection = options.entityCollection;
             this.indexesCollection = options.indexesCollection;
+            this.clickHandler = options.clickHandler;
 
             var initialViewState;
 
@@ -208,6 +185,6 @@ define([
             this.selectViewState = viewStateSelector(viewStateElements);
             updateForViewState.call(this);
         }
-    }) ;
+    });
 
 });
