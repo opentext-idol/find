@@ -60,11 +60,11 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
     ) throws E {
         final StateTokenAndResultCount stateTokenAndResultCount = getStateTokenAndResultCount(snapshot);
 
+        // It is only possible to update a snapshot's title
         return service.update(
-                new SavedSnapshot.Builder(snapshot)
-                        .setStateToken(Collections.singletonList(stateTokenAndResultCount.getStateToken()))
-                        .setResultCount(stateTokenAndResultCount.getResultCount())
+                new SavedSnapshot.Builder()
                         .setId(id)
+                        .setTitle(snapshot.getTitle())
                         .build()
         );
     }

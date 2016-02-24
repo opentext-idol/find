@@ -205,11 +205,11 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     @NoArgsConstructor
     public static abstract class Builder<T extends SavedSearch<T>> {
         private Long id;
-        private String title = "";
-        private String queryText = "";
+        private String title;
+        private String queryText;
         private Set<EmbeddableIndex> indexes;
-        private Set<FieldAndValue> parametricValues = new HashSet<>(0);
-        private Set<String> relatedConcepts = new HashSet<>(0);
+        private Set<FieldAndValue> parametricValues;
+        private Set<String> relatedConcepts;
         private DateTime minDate;
         private DateTime maxDate;
         private DateTime dateCreated;

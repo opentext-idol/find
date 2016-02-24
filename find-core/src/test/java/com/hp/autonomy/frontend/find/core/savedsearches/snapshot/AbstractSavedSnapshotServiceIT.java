@@ -29,6 +29,7 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
         final SavedSnapshot savedSnapshot = new SavedSnapshot.Builder()
                 .setResultCount(resultCount)
                 .setStateToken(Collections.singletonList("abc"))
+                .setQueryText("*")
                 .setTitle(title)
                 .build();
 

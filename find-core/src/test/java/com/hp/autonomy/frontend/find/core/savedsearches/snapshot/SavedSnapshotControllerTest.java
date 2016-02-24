@@ -7,7 +7,9 @@ package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +51,10 @@ public abstract class SavedSnapshotControllerTest<S extends Serializable, R exte
     }
 
     @Test
-    public void create() throws E {
+    public void create() throws Exception {
+        final StateTokenAndResultCount stateTokenAndResultCount = new StateTokenAndResultCount("mock-state-token", 123);
+        when(documentsService.getStateTokenAndResultCount(any(QueryRestrictions.class), any(Integer.class))).thenReturn(stateTokenAndResultCount);
+
         savedSnapshotController.create(savedSnapshot);
         verify(savedSnapshotService).create(Matchers.any(SavedSnapshot.class));
     }
