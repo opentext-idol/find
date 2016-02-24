@@ -8,7 +8,7 @@ Find uses Java System Properties to configure some runtime settings.
 
 ## Required
 
-- `hp.find.home` - Path to the "home" directory for Find to store config files and logs in, e.g `-Dhp.find.home=/opt/find/home`, or `-Dhp.find.home=C:\HPE\Find`.  The Find process needs read+write permissions on the home directory specified here.
+- `hp.find.home` - Path to the "home" directory for Find to store config files and logs in, e.g `-Dhp.find.home=/opt/find/home`, or `-Dhp.find.home=C:\HPE\Find`.  Have a look at [[Home-directory]] for details on how to create the home directory.
 
 ## Optional
 
