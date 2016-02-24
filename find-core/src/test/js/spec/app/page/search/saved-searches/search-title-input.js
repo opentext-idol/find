@@ -39,10 +39,6 @@ define([
                 expect(this.view.$('.search-title-input')).toHaveValue('');
             });
 
-            it('displays the type inputs', function() {
-                expect(this.view.$('[name="saved-search-type"]')).not.toHaveLength(0);
-            });
-
             describe('when the user adds a title, selects a type and clicks save', function() {
                 var NEW_TITLE = 'My new title';
                 var NEW_TYPE = SavedSearchModel.Type.QUERY;
@@ -85,10 +81,6 @@ define([
 
             it('displays the initial title', function() {
                 expect(this.view.$('.search-title-input')).toHaveValue(INITIAL_TITLE);
-            });
-
-            it('does not display the type inputs', function() {
-                expect(this.view.$('[name="saved-search-type"]')).toHaveLength(0);
             });
 
             describe('when the cancel button is clicked', function() {
