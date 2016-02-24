@@ -151,23 +151,16 @@ define([
                 queryTextModel: this.queryState.queryTextModel
             };
 
-            var relatedConceptsClickHandler;
             var resultsViews = [];
 
+            var relatedConceptsClickHandler;
+            var topicMapClickHandler;
+
             if (searchType === SavedSearchModel.Type.QUERY) {
-                // TODO: Should these be supported for snapshots?
-                this.topicMapView = new TopicMapView(resultsViewConstructorArguments);
+                // TODO: Should this be supported for snapshots?
                 this.sunburstView = new SunburstView(resultsViewConstructorArguments);
 
                 resultsViews = resultsViews.concat([{
-                    content: this.topicMapView,
-                    id: 'topic-map',
-                    uniqueId: _.uniqueId('results-view-item-'),
-                    selector: {
-                        displayNameKey: 'topic-map',
-                        icon: 'hp-grid'
-                    }
-                }, {
                     content: this.sunburstView,
                     id: 'sunburst',
                     uniqueId: _.uniqueId('results-view-item-'),
@@ -211,6 +204,10 @@ define([
                 this.dateViewWrapper = collapseView(i18n['search.dates'], this.dateView);
 
                 relatedConceptsClickHandler = relatedConceptsClickHandlers.updateQuery({queryTextModel: this.queryState.queryTextModel});
+
+                topicMapClickHandler = _.bind(function(text) {
+                    this.queryState.queryTextModel.set('inputText', text);
+                }, this);
             } else if (searchType === SavedSearchModel.Type.SNAPSHOT) {
                 this.snapshotDataView = new SnapshotDataView({
                     savedSearchModel: this.savedSearchModel
@@ -221,6 +218,19 @@ define([
                     savedSearchModel: this.savedSearchModel,
                     savedQueryCollection: this.savedQueryCollection
                 });
+
+                topicMapClickHandler = _.bind(function(text) {
+                    // Create a new search if the user clicks on a related concept in a snapshot topic map
+                    var newQuery = new SavedSearchModel(_.defaults({
+                        id: null,
+                        queryText: text,
+                        title: i18n['search.newSearch'],
+                        type: SavedSearchModel.Type.QUERY
+                    }, this.savedSearchModel.attributes));
+
+                    this.savedQueryCollection.add(newQuery);
+                    this.selectedTabModel.set('selectedSearchCid', newQuery.cid);
+                }, this);
             }
 
             var relatedConceptsView = new RelatedConceptsView({
@@ -232,6 +242,10 @@ define([
             });
 
             this.relatedConceptsViewWrapper = collapseView(i18n['search.relatedConcepts'], relatedConceptsView);
+
+            this.topicMapView = new TopicMapView(_.extend({
+                clickHandler: topicMapClickHandler
+            }, resultsViewConstructorArguments));
 
             this.resultsView = new this.ResultsView(_.extend({
                 mode: searchType === SavedSearchModel.Type.QUERY ? ResultsView.Mode.QUERY : ResultsView.Mode.STATE_TOKEN
@@ -246,6 +260,14 @@ define([
                 selector: {
                     displayNameKey: 'list',
                     icon: 'hp-list'
+                }
+            }, {
+                content: this.topicMapView,
+                id: 'topic-map',
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'topic-map',
+                    icon: 'hp-grid'
                 }
             }].concat(resultsViews);
 
