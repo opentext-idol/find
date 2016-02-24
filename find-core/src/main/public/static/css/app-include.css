@@ -389,10 +389,10 @@ html, body {
 }
 
 .find-logo-small {
-    background: url('../img/Find_Logo_sml.png') no-repeat;
-    background-size: 325px 20px;
-    width: 325px;
-    height: 20px;
+    font-family: Metric-Semibold;
+    float: left;
+    font-size: 22px;
+    line-height: 20px;
 }
 
 .find-logo-small.reduced {
@@ -400,11 +400,12 @@ html, body {
 }
 
 .find-logo-large {
-    background-image: url('../img/Find_Logo_lge.png');
-    width: 797px;
-    height: 45px;
+    font-size: 49px;
+    font-family: Metric-Semibold;
+    color: #000;
+    line-height: 46px;
+    text-align: center;
     display: inline-block;
-    vertical-align: middle;
 }
 
 .hp-logo-footer {
@@ -963,6 +964,9 @@ input:-moz-placeholder::before {
 @media (max-width: 991px) {
     .reverse-animated-container .find-form {
         width: 100%;
+    }
+    .find-logo-small {
+        display: none;
     }
 }
 
