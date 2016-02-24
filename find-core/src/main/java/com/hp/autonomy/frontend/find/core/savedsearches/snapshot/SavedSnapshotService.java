@@ -1,15 +1,25 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchService;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.stereotype.Service;
+
 import java.util.Set;
 
-public interface SavedSnapshotService {
+@Service
+public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapshot> {
+    private final SavedSnapshotRepository savedSnapshotRepository;
 
-    Set<SavedSnapshot> getAll();
+    @Autowired
+    public SavedSnapshotService(final SavedSnapshotRepository savedSnapshotRepository, final AuditorAware<UserEntity> userEntityAuditorAware) {
+        super(savedSnapshotRepository, userEntityAuditorAware);
+        this.savedSnapshotRepository = savedSnapshotRepository;
+    }
 
-    SavedSnapshot create(SavedSnapshot search);
-
-    SavedSnapshot update(SavedSnapshot search);
-
-    void deleteById(long id);
-
+    @Override
+    protected Set<SavedSnapshot> getAllForUserId(final Long userId) {
+        return savedSnapshotRepository.findByActiveTrueAndUser_UserId(userId);
+    }
 }

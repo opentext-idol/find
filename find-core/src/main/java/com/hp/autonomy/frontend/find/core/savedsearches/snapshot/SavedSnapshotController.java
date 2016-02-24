@@ -1,5 +1,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public abstract class SavedSnapshotController<S extends Serializable, R extends 
     public static final String PATH = "/api/public/saved-snapshot";
 
     protected final DocumentsService<S, R, E> documentsService;
-    protected final SavedSnapshotService service;
+    protected final SavedSearchService<SavedSnapshot> service;
 
     @Autowired
     public SavedSnapshotController(final SavedSnapshotService service, final DocumentsService<S, R, E> documentsService) {

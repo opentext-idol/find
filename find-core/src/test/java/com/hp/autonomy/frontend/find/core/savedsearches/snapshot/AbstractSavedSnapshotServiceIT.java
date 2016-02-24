@@ -16,7 +16,6 @@ import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.*;
 
 public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
-
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private SavedSnapshotService savedSnapshotService;
@@ -26,6 +25,7 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
     public void createFetchDelete() {
         final String title = "Any old saved snapshot";
         final Long resultCount = 100L;
+
         final SavedSnapshot savedSnapshot = new SavedSnapshot.Builder()
                 .setResultCount(resultCount)
                 .setStateToken(Collections.singletonList("abc"))
@@ -33,6 +33,7 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
                 .build();
 
         final SavedSnapshot entity = savedSnapshotService.create(savedSnapshot);
+
         assertThat(entity.getId(), isA(Long.class));
         assertEquals(entity.getResultCount(), resultCount);
         assertThat(entity.getStateTokens(), isA(List.class));
@@ -40,7 +41,9 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
         assertNotNull(entity.getId());
 
         entity.setQueryText("*");
+
         SavedSnapshot updatedEntity = savedSnapshotService.update(entity);
+
         assertEquals(updatedEntity.getResultCount(), resultCount);
         assertThat(updatedEntity.getStateTokens(), isA(List.class));
         assertEquals(updatedEntity.getStateTokens().size(), 1);
@@ -52,15 +55,19 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
                 .setId(entity.getId())
                 .setQueryText("cat")
                 .build();
+
         updatedEntity = savedSnapshotService.update(updateInputEntity);
+
         assertEquals(updatedEntity.getQueryText(), "cat");
         assertNotNull(updatedEntity.getUser());
 
         final Set<SavedSnapshot> fetchedEntities = savedSnapshotService.getAll();
+
         assertEquals(fetchedEntities.size(), 1);
         assertEquals(fetchedEntities.iterator().next().getTitle(), title);
 
         savedSnapshotService.deleteById(updatedEntity.getId());
+
         assertEquals(savedSnapshotService.getAll().size(), 0);
     }
 
@@ -69,5 +76,4 @@ public abstract class AbstractSavedSnapshotServiceIT extends AbstractFindIT {
     public void getAllReturnsNothing() throws Exception {
         assertThat(savedSnapshotService.getAll(), is(empty()));
     }
-    
 }

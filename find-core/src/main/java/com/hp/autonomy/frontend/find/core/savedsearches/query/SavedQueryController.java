@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ import java.util.Set;
 public class SavedQueryController {
     public static final String PATH = "/api/public/saved-query";
 
-    private final SavedQueryService service;
+    private final SavedSearchService<SavedQuery> service;
 
     @Autowired
     public SavedQueryController(final SavedQueryService service) {

@@ -34,15 +34,19 @@ import javax.persistence.Entity;
 @JsonDeserialize(builder = SavedQuery.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
-public class SavedQuery extends SavedSearch {
-
+public class SavedQuery extends SavedSearch<SavedQuery> {
     @Column(name = "last_fetched_new_date")
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateNewDocsLastFetched;
-
+    
     private SavedQuery(final Builder builder) {
         super(builder);
         dateNewDocsLastFetched = builder.dateNewDocsLastFetched;
+    }
+
+    @Override
+    protected void mergeInternal(final SavedQuery other) {
+        dateNewDocsLastFetched = other.getDateNewDocsLastFetched() == null ? dateNewDocsLastFetched : other.getDateNewDocsLastFetched();
     }
 
     @NoArgsConstructor
