@@ -12,50 +12,70 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.*;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractSavedQueryServiceIT extends AbstractFindIT {
-
     @SuppressWarnings("SpringJavaAutowiringInspection")
-    @Autowired private SavedQueryService savedQueryService;
+    @Autowired
+    private SavedQueryService savedQueryService;
 
     @Test
     public void createFetchUpdateDelete() {
         final String title = "Any old saved search";
+        final String queryText = "orange";
+
+        final Set<String> relatedConcepts = new HashSet<>();
+        relatedConcepts.add("manhattan");
+        relatedConcepts.add("mid-town");
+
         final SavedQuery savedQuery = new SavedQuery.Builder()
                 .setTitle(title)
+                .setQueryText(queryText)
                 .build();
 
-        final SavedQuery entity = savedQueryService.create(savedQuery);
-        assertThat(entity.getId(), isA(Long.class));
-        assertNotNull(entity.getId());
+        final SavedQuery createdEntity = savedQueryService.create(savedQuery);
 
-        entity.setQueryText("*");
-        SavedQuery updatedEntity = savedQueryService.update(entity);
-        assertEquals(updatedEntity.getQueryText(), "*");
+        assertThat(createdEntity.getQueryText(), is(queryText));
+        assertThat(createdEntity.getTitle(), is(title));
+        assertThat(createdEntity.getId(), isA(Long.class));
 
-        // Mimic how the update method is likely to be called - with an entity without a user
-        final SavedQuery updateInputEntity = new SavedQuery.Builder()
+        // Mimic how the update method is likely to be called - with a new entity without a user
+        final SavedQuery updateEntity = new SavedQuery.Builder()
+                .setId(createdEntity.getId())
                 .setTitle(title)
-                .setId(entity.getId())
-                .setQueryText("cat")
+                .setQueryText(queryText)
+                .setRelatedConcepts(relatedConcepts)
                 .build();
-        updatedEntity = savedQueryService.update(updateInputEntity);
-        assertEquals(updatedEntity.getQueryText(), "cat");
-        assertNotNull(updatedEntity.getUser());
+
+        final SavedQuery updatedEntity = savedQueryService.update(updateEntity);
+
+        assertThat(updatedEntity.getQueryText(), is(queryText));
+        assertThat(updatedEntity.getId(), is(createdEntity.getId()));
+        assertThat(updatedEntity.getTitle(), is(title));
+
+        final Collection<String> updatedConcepts = updatedEntity.getRelatedConcepts();
+        assertThat(updatedConcepts, containsInAnyOrder("manhattan", "mid-town"));
 
         final Set<SavedQuery> fetchedEntities = savedQueryService.getAll();
-        assertEquals(fetchedEntities.size(), 1);
-        assertEquals(fetchedEntities.iterator().next().getTitle(), title);
+        assertThat(fetchedEntities, hasSize(1));
+
+        final SavedQuery fetchedEntity = fetchedEntities.iterator().next();
+        assertThat(fetchedEntity.getTitle(), is(title));
+        assertThat(fetchedEntity.getRelatedConcepts(), containsInAnyOrder("manhattan", "mid-town"));
 
         savedQueryService.deleteById(updatedEntity.getId());
-        assertEquals(savedQueryService.getAll().size(), 0);
+
+        assertThat(savedQueryService.getAll(), is(empty()));
     }
 
     @Test
