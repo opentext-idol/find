@@ -36,6 +36,16 @@ public class SimilarDocumentsView implements AppPage {
         return findElement(By.cssSelector(".results-message-container h4"));
     }
 
+    /**
+     * Y in 'X to Y of Z'
+     */
+    public int getVisibleResultsCount() {
+        return Integer.valueOf(findElement(By.className("current-results-number")).getText());
+    }
+
+    /**
+     * Z in 'X to Y of Z'
+     */
     public int getTotalResults() {
         return Integer.valueOf(findElement(By.className("total-results-number")).getText());
     }
@@ -78,6 +88,19 @@ public class SimilarDocumentsView implements AppPage {
 
     public WebElement resultsContainer() {
         return findElement(By.className("results-container"));
+    }
+
+    public void sortByDate() {
+        sortBy(1);
+    }
+
+    public void sortByRelevance() {
+        sortBy(2);
+    }
+
+    private void sortBy(int dropdownRow){
+        findElement(By.className("current-search-sort")).click();
+        findElement(By.cssSelector(".search-results-sort li:nth-child(" + dropdownRow + ")")).click();
     }
 
     static class Factory implements ParametrizedFactory<WebDriver, SimilarDocumentsView> {

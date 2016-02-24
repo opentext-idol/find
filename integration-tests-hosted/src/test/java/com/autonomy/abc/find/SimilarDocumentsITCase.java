@@ -5,6 +5,7 @@ import com.autonomy.abc.config.TestConfig;
 import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.framework.RelatedTo;
 import com.autonomy.abc.selenium.control.Window;
+import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindResultsPage;
 import com.autonomy.abc.selenium.find.FindSearchResult;
 import com.autonomy.abc.selenium.find.FindService;
@@ -16,13 +17,20 @@ import com.autonomy.abc.selenium.promotions.SpotlightPromotion;
 import com.autonomy.abc.selenium.search.IndexFilter;
 import com.autonomy.abc.selenium.search.ParametricFilter;
 import com.autonomy.abc.selenium.search.SearchQuery;
+import com.autonomy.abc.selenium.util.PageUtil;
 import com.autonomy.abc.selenium.util.Waits;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
@@ -149,9 +157,9 @@ public class SimilarDocumentsITCase extends FindTestBase {
         new HSODPromotionService(searchApp).setUpPromotion(new SpotlightPromotion(Promotion.SpotlightType.HOTWIRE, trigger), "Have Mercy", 3);
 
         findWindow.activate();
-        FindResultsPage resultsPage = findService.search(new SearchQuery(trigger));
+        results = findService.search(new SearchQuery(trigger));
 
-        for(int i = 0; i <= resultsPage.promotions().size(); i++){
+        for(int i = 0; i <= results.promotions().size(); i++){
             verifySimilarDocsNotEmpty(i);
         }
     }
@@ -160,22 +168,42 @@ public class SimilarDocumentsITCase extends FindTestBase {
     public void testSimilarDocumentsFromSimilarDocuments(){
         findService.search("Self Defence Family");
 
-        SimilarDocumentsView similarDocumentsView = findService.goToSimilarDocuments(1);
-        assumeThat(similarDocumentsView.getResults().size(), not(0));
+        similarDocuments = findService.goToSimilarDocuments(1);
+        assumeThat(similarDocuments.getResults().size(), not(0));
 
-        FindSearchResult doc = similarDocumentsView.getResult(1);
+        for(int i = 0; i < 5; i++) {
+            //Generate a random number between 1 and 5
+            int number = (int) (Math.random() * 5 + 1);
+
+            FindSearchResult doc = similarDocuments.getResult(number);
         String docTitle = doc.getTitleString();
 
         doc.similarDocuments().click();
         Waits.loadOrFadeWait();
-        similarDocumentsView = getElementFactory().getSimilarDocumentsView();
+            similarDocuments = getElementFactory().getSimilarDocumentsView();
 
-        verifyThat(similarDocumentsView.seedLink(), containsText(docTitle));
+            verifyThat(similarDocuments.seedLink(), containsText(docTitle));
+        }
+        //TODO what is meant to happen when clicking back
     }
 
     private void verifySimilarDocsNotEmpty(int i) {
         similarDocuments = findService.goToSimilarDocuments(i);
         verifyThat(similarDocuments.resultsContainer().getText(), not(isEmptyOrNullString()));
         similarDocuments.backButton().click();
+    }
+
+    @Test  @Ignore("HOW IS SCROLLING SO DIFFICULT I DON'T UNDERSTAND")
+    public void testInfiniteScroll(){
+        results = findService.search("Heaven is Earth");
+
+        similarDocuments = findService.goToSimilarDocuments(1);
+        assumeThat(similarDocuments.getResults().size(), is(30));
+
+        for(int i = 1; i <= 5; i++) {
+            verifyThat(similarDocuments.getVisibleResultsCount(), is(30 * i));
+            PageUtil.scrollToBottom(getDriver());
+            results.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);
+        }
     }
 }
