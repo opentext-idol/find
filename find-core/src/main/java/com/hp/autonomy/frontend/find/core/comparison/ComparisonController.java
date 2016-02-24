@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
+@RequestMapping(ComparisonController.BASE_PATH)
 public class ComparisonController<S extends Serializable, R extends SearchResult, E extends Exception> {
     public static final String BASE_PATH = "/api/public/comparison";
     public static final String COMPARE_PATH = "compare";
@@ -41,7 +42,7 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
         this.documentsService = documentsService;
     }
 
-    @RequestMapping(value = BASE_PATH + '/' + COMPARE_PATH, method = RequestMethod.POST)
+    @RequestMapping(value = COMPARE_PATH, method = RequestMethod.POST)
     public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<S> body) throws E {
         // If either query state token is null then try and fetch one using the query restrictions
         final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS);
@@ -50,7 +51,7 @@ public class ComparisonController<S extends Serializable, R extends SearchResult
         return comparisonService.getCompareStateTokens(firstStateToken, secondStateToken);
     }
 
-    @RequestMapping(value = BASE_PATH + '/' + RESULTS_PATH, method = RequestMethod.GET)
+    @RequestMapping(value = RESULTS_PATH, method = RequestMethod.GET)
     public Documents<R> getResults(
             @RequestParam(value = STATE_MATCH_PARAM) final List<String> stateMatchIds,
             @RequestParam(value = STATE_DONT_MATCH_PARAM, required = false) final List<String> stateDontMatchIds,

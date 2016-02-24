@@ -17,6 +17,15 @@ define([
             this.stateDontMatchIds = options.stateDontMatchIds;
         },
 
+        fetch: function(options) {
+            return Backbone.Collection.prototype.fetch.call(this, _.extend(options, {
+                data: _.extend(options.data, {
+                    state_match_ids: this.stateMatchIds,
+                    state_dont_match_ids: this.stateDontMatchIds || []
+                })
+            }));
+        },
+
         parse: function(response) {
             this.totalResults = response.totalResults;
 

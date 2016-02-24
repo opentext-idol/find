@@ -347,8 +347,9 @@ html, body {
     font-weight: bold;
     font-size: 18px;
     overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+}
+
+.middle-container.shorten h4 {
     width: 100%;
 }
 
@@ -380,7 +381,19 @@ html, body {
     vertical-align: super;
 }
 
-.search-tab-title {
+.compare-modal-error-spinner .loading-spinner {
+    margin-bottom: 0;
+}
+
+.comparison-create-error-message {
+    text-align: left;
+}
+
+.comparison-list-title.shorten {
+    max-width: 500px
+}
+
+.search-tab-title.shorten {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -422,10 +435,10 @@ html, body {
 }
 
 .find-logo-small {
-    background: url('../img/Find_Logo_sml.png') no-repeat;
-    background-size: 325px 20px;
-    width: 325px;
-    height: 20px;
+    font-family: Metric-Semibold;
+    float: left;
+    font-size: 22px;
+    line-height: 20px;
 }
 
 .find-logo-small.reduced {
@@ -433,11 +446,12 @@ html, body {
 }
 
 .find-logo-large {
-    background-image: url('../img/Find_Logo_lge.png');
-    width: 797px;
-    height: 45px;
+    font-size: 49px;
+    font-family: Metric-Semibold;
+    color: #000;
+    line-height: 46px;
+    text-align: center;
     display: inline-block;
-    vertical-align: middle;
 }
 
 .hp-logo-footer {
@@ -509,13 +523,13 @@ input.find-input {
 }
 
 .document-reference {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: 100%;
     display: inline-block;
     color: #aeaeae;
     font-size: 13px;
+}
+
+.document-reference.shorten {
+    width: 100%;
 }
 
 .selected-document {
@@ -536,11 +550,12 @@ input.find-input {
 
 .saved-search-box .hpebox-content {
     width: 100px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
     text-align: center;
     border: 1px solid #e7eaec;
+}
+
+.saved-search-box .hpebox-content.shorten {
+    width: 100px;
 }
 
 .selected-saved-search .hpebox-content {
@@ -605,20 +620,17 @@ input.find-input {
 }
 
 /* username */
-.username {
+.username.shorten {
     max-width: 250px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .navbar-username {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    max-width: 150px;
     right: 70px !important;
     top: 11px !important;
+}
+
+.navbar-username.shorten {
+    max-width: 150px;
 }
 
 /* fancy animation */
@@ -690,9 +702,13 @@ input.find-input {
     color: #00b388;
 }
 
+.comparison-list-title,
+.results-list-container .result-message {
+    color: #425563;
+}
+
 .results-list-container .result-message {
     font-size: 28px;
-    color: #425563;
 }
 
 .results-contents {
@@ -1001,6 +1017,9 @@ input:-moz-placeholder::before {
     .reverse-animated-container .find-form {
         width: 100%;
     }
+    .find-logo-small {
+        display: none;
+    }
 }
 
 .filter-checkbox {
@@ -1012,7 +1031,6 @@ input:-moz-placeholder::before {
 }
 
 .shorten {
-    max-width: 130px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -1021,6 +1039,10 @@ input:-moz-placeholder::before {
 .filter-display-text {
     vertical-align: middle;
     line-height: 1.2em;
+}
+
+.filter-display-text.shorten {
+    max-width: 130px;
 }
 
 .filters-margin {

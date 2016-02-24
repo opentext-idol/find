@@ -35,9 +35,11 @@ define([
     'use strict';
 
     var reducedClasses = 'reverse-animated-container col-md-offset-1 col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
-    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-4 col-lg-offset-3 col-xs-12 col-sm-12 col-md-5 col-lg-6';
+    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 col-lg-offset-3 col-md-6 col-lg-6 col-xs-12 col-sm-12';
     var QUERY_TEXT_MODEL_ATTRIBUTES = ['inputText', 'relatedConcepts'];
 
+    var html = _.template(template)({i18n: i18n});
+    
     function selectInitialIndexes(indexesCollection) {
         var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
         var selectedIndexes;
@@ -62,6 +64,7 @@ define([
 
         // Abstract
         ServiceView: null,
+        ComparisonView: null,
         documentDetailOptions: null,
 
         initialize: function() {
@@ -172,7 +175,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template);
+            this.$el.html(html);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
             this.tabView.setElement(this.$('.search-tabs-container')).render();
@@ -269,7 +272,8 @@ define([
                             savedSnapshotCollection: this.savedSnapshotCollection,
                             savedQueryCollection: this.savedQueryCollection,
                             queryState: queryState,
-                            savedSearchModel: savedSearchModel
+                            savedSearchModel: savedSearchModel,
+                            comparisonSuccessCallback: _.bind(this.comparisonSuccessCallback, this)
                         })
                     };
 
@@ -374,6 +378,36 @@ define([
                 this.stopListening(this.documentDetailView);
                 this.documentDetailView = null;
             }
+        },
+
+        clearComparison: function() {
+            if(this.comparisonView) {
+                this.comparisonView.remove();
+                this.stopListening(this.comparisonView);
+                this.comparisonView = null;
+            }
+        },
+
+        comparisonSuccessCallback: function(model, searchModels) {
+            this.clearComparison();
+
+            this.$('.service-view-container').addClass('hide');
+            this.$('.comparison-service-view-container').removeClass('hide');
+
+            this.comparisonView = new this.ComparisonView({
+                model: model,
+                searchModels: searchModels,
+                escapeCallback: _.bind(this.comparisonEscapeCallback, this)
+            });
+
+            this.comparisonView.setElement(this.$('.comparison-service-view-container')).render();
+        },
+
+        comparisonEscapeCallback: function() {
+            this.clearComparison();
+
+            this.$('.service-view-container').addClass('hide');
+            this.$('.query-service-view-container').removeClass('hide');
         }
     });
 });

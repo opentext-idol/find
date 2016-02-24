@@ -7,7 +7,9 @@ define([
     'find/app/model/entity-collection',
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
+    'find/app/model/comparisons/comparison-model',
     'find/app/model/search-filters-collection',
+    'find/app/model/comparisons/comparison-documents-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/model/parametric-collection',
     'find/app/page/search/filter-display/filter-display-view',
@@ -30,11 +32,10 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, SearchFiltersCollection,
-            ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, ResultsViewAugmentation, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SpellCheckView, SnapshotDataView, Collapsible,
-            addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView,
-            SunburstView, CompareModal, i18n, i18nIndexes, template) {
+], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SavedSearchModel, ComparisonModel, SearchFiltersCollection,
+            ComparisonDocumentsCollection, ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsView, ResultsViewAugmentation, 
+            ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, relatedConceptsClickHandlers, SpellCheckView, SnapshotDataView, Collapsible,
+            addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -70,9 +71,7 @@ define([
                 new CompareModal({
                     savedSearchCollection: this.savedSearchCollection,
                     selectedSearch: this.savedSearchModel,
-                    callback: _.bind(function(selectedCid) {
-                        //TODO: call a compareSavedSearches() function here
-                    }, this)
+                    comparisonSuccessCallback: this.comparisonSuccessCallback
                 });
             }
         },
@@ -86,6 +85,8 @@ define([
             this.savedQueryCollection = options.savedQueryCollection;
             this.queryState = options.queryState;
             this.documentsCollection = options.documentsCollection;
+
+            this.comparisonSuccessCallback = options.comparisonSuccessCallback;
 
             this.entityCollection = new EntityCollection();
 

@@ -48,6 +48,8 @@ define([
         getSimilarDocuments: function() {
             this.$('.loading-spinner').removeClass('hide');
 
+            this.$('ul').empty();
+
             this.collection.fetch({
                 data: this.fetchData()
             })
@@ -70,11 +72,15 @@ define([
                     }
                     }, this)
                 )
-                .fail(_.bind(function() {
-                    this.$el.html(i18n['search.similarDocuments.error']);
+                .fail(_.bind(function(xhr) {
+                    if (xhr.status !== 0) {
+                        this.$('ul').html(i18n['search.similarDocuments.error']);
+                    }
                 }, this))
-                .always(_.bind(function() {
-                    this.$('.loading-spinner').addClass('hide');
+                .always(_.bind(function(results, success) {
+                    if (success !== 'abort') {
+                        this.$('.loading-spinner').addClass('hide');
+                    }
                 }, this));
         },
 
