@@ -4,26 +4,37 @@
  */
 
 define([
-    'backbone',
     'underscore',
     'i18n!find/nls/bundle',
     'find/app/model/documents-collection',
-    'find/app/vent',
+    'find/app/page/search/document/similar-abstract-tab',
     'text!find/templates/app/page/search/document/similar-dates-tab.html',
     'slider/bootstrap-slider'
-], function (Backbone, _, i18n, DocumentsCollection, vent, template) {
+
+], function (_, i18n, DocumentsCollection, SimilarAbstractTab, template) {
     'use strict';
 
-    return Backbone.View.extend({
+    return SimilarAbstractTab.extend({
+
         template: _.template(template),
-        similarDocumentTemplate: _.template('<li data-cid="<%-cid%>" class="clickable"><h4><%-model.get("title")%></h4><p><%-model.get("summary").trim().substring(0, 200) + "..."%></p></li>'),
 
-        events: {
-            'click [data-cid]': function(e) {
-                var cid = $(e.currentTarget).data('cid');
-                var model = this.collection.get(cid);
+        createCollection: function () {
+            return new DocumentsCollection([], {
+                indexes: this.indexesCollection.pluck('id')
+            });
+        },
 
-                vent.navigateToDetailRoute(model);
+        fetchData: function () {
+            return {
+                text: '*',
+                max_results: 5,
+                sort: 'relevance',
+                summary: 'context',
+                indexes: this.indexesCollection.pluck('id'),
+                min_date: this.model.get('date').clone().subtract(this.ticks[this.$beforeDateSlider.val()].moment).toJSON(),
+                max_date: this.model.get('date').clone().add(this.ticks[this.$afterDateSlider.val()].moment).toJSON(),
+                highlight: false,
+                auto_correct: false
             }
         },
 
@@ -95,22 +106,17 @@ define([
             text: '1 year'
         }],
 
-
-        initialize: function (options) {
-            this.indexesCollection = options.indexesCollection;
-        },
-
-        render: function () {
-            this.$el.html(this.template({
-                i18n: i18n
-            }));
-
+        postRender: function () {
             this.$afterDateSlider = this.$('.after-date-slider');
             this.$beforeDateSlider = this.$('.before-date-slider');
 
-            var tickIndexes = _.map(this.ticks, function(data, index) {return index;});
-            var tickPositionsInterval = 100 / (this.ticks.length -1);
-            var tickPositions = _.map(this.ticks, function(data, index) {return index * tickPositionsInterval});
+            var tickIndexes = _.map(this.ticks, function (data, index) {
+                return index;
+            });
+            var tickPositionsInterval = 100 / (this.ticks.length - 1);
+            var tickPositions = _.map(this.ticks, function (data, index) {
+                return index * tickPositionsInterval
+            });
 
             this.$beforeDateSlider.slider({
                 ticks: tickIndexes,
@@ -128,71 +134,19 @@ define([
                 tooltip: 'hide',
                 value: 3
             });
+            this.$afterDateSlider.on('change', _.bind(this.getSimilarDocuments, this));
+            this.$beforeDateSlider.on('change', _.bind(this.getSimilarDocuments, this));
 
-            this.$afterDateSlider.on('change', _.bind(this.getSimilarDateDocuments, this));
-            this.$beforeDateSlider.on('change', _.bind(this.getSimilarDateDocuments, this));
 
-            if (this.indexesCollection.length) {
-                this.getSimilarDateDocuments();
-            } else {
-                this.listenTo(this.indexesCollection, 'sync', this.getSimilarDateDocuments);
-            }
         },
 
-        getSimilarDateDocuments: function () {
-            this.$('.loading-spinner').removeClass('hide');
-
+        getSimilarDocuments: function () {
             this.$('.similar-dates-summary').html(i18n['search.document.detail.tabs.similarDates.temporalSummaryHtml'](
                 this.ticks[this.$beforeDateSlider.val()].text,
                 this.ticks[this.$afterDateSlider.val()].text
             ));
 
-            this.$('ul').empty();
-
-            this.collection = new DocumentsCollection([], {
-                indexes: this.indexesCollection.pluck('id')
-            });
-
-            this.collection.fetch({
-                data: {
-                    text: '*',
-                    max_results: 5,
-                    sort: 'relevance',
-                    summary: 'context',
-                    indexes: this.indexesCollection.pluck('id'),
-                    min_date: this.model.get('date').clone().subtract(this.ticks[this.$beforeDateSlider.val()].moment).toJSON(),
-                    max_date: this.model.get('date').clone().add(this.ticks[this.$afterDateSlider.val()].moment).toJSON(),
-                    highlight: false,
-                    auto_correct: false
-                },
-                error: _.bind(function () {
-                    this.$('ul').empty();
-                    this.$('ul').html(i18n['search.similarDocuments.error']);
-                }, this),
-                success: _.bind(function () {
-                    //TODO add the DontMatchReference to haven search components and use that instead of filtering on collection.
-                    var filteredModels = this.collection.filter(function (model) {
-                            return model.get('reference') !== this.model.get('reference');
-                        }, this);
-
-                    if (filteredModels.length === 0) {
-                        this.$('ul').html(i18n['search.similarDocuments.none']);
-                    } else {
-                        var html = _.map(filteredModels, function (model) {
-                                return this.similarDocumentTemplate({
-                                    model: model,
-                                    cid: model.cid
-                                });
-                            }, this)
-                            .join('');
-                        this.$('ul').html(html);
-                    }
-                }, this)
-            }).always(_.bind(function () {
-                this.$('.loading-spinner').addClass('hide');
-            }, this));
-
-
+            SimilarAbstractTab.prototype.getSimilarDocuments.call(this);
         }
     });
 });

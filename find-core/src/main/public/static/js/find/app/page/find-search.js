@@ -25,10 +25,10 @@ define([
     'i18n!find/nls/bundle',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, SearchPageModel, DatesFilterModel, SelectedParametricValuesCollection,
-            IndexesCollection, DocumentsCollection, InputView, TabbedSearchView, SavedSearchCollection,
-            addChangeListener, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
-            databaseNameResolver, router, vent, i18n, _, template) {
+], function (BasePage, Backbone, SearchPageModel, DatesFilterModel, SelectedParametricValuesCollection,
+             IndexesCollection, DocumentsCollection, InputView, TabbedSearchView, SavedSearchCollection,
+             addChangeListener, SavedSearchModel, QueryTextModel, DocumentModel, DocumentDetailView,
+             databaseNameResolver, router, vent, i18n, _, template) {
     'use strict';
 
     var reducedClasses = 'reverse-animated-container col-md-offset-1 col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
@@ -45,7 +45,7 @@ define([
             selectedIndexes = indexesCollection.models;
         }
 
-        return _.map(selectedIndexes, function(indexModel) {
+        return _.map(selectedIndexes, function (indexModel) {
             return indexModel.pick('domain', 'name');
         });
     }
@@ -58,7 +58,7 @@ define([
         ServiceView: null,
         documentDetailOptions: null,
 
-        initialize: function() {
+        initialize: function () {
             this.savedSearchCollection = new SavedSearchCollection();
             this.savedSearchCollection.fetch({remove: false});
 
@@ -76,7 +76,7 @@ define([
 
             this.listenTo(this.searchModel, 'change:selectedSearchCid', this.selectContentView);
 
-            this.listenTo(this.searchModel, 'change', function() {
+            this.listenTo(this.searchModel, 'change', function () {
                 // Bind search model to routing
                 vent.navigate(this.generateURL(), {trigger: false});
 
@@ -90,7 +90,7 @@ define([
                 }
             });
 
-            addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+            addChangeListener(this, this.searchModel, QUERY_TEXT_MODEL_ATTRIBUTES, function () {
                 var selectedSearchCid = this.searchModel.get('selectedSearchCid');
 
                 if (selectedSearchCid) {
@@ -99,7 +99,7 @@ define([
                 }
             });
 
-            this.listenTo(this.savedSearchCollection, 'remove', function(savedSearch) {
+            this.listenTo(this.savedSearchCollection, 'remove', function (savedSearch) {
                 var cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
                 this.queryStates.unset(cid);
@@ -134,7 +134,7 @@ define([
             router.on('route:emptySearch', this.reducedState, this);
 
             // Bind routing to search model
-            router.on('route:search', function(text, concepts) {
+            router.on('route:search', function (text, concepts) {
                 this.removeDocumentDetailView();
 
                 // The concepts string starts with a leading /
@@ -161,7 +161,7 @@ define([
             }, this);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template);
 
             this.inputView.setElement(this.$('.input-view-container')).render();
@@ -172,7 +172,7 @@ define([
             } else {
                 this.expandedState();
             }
-            _.each(this.serviceViews, function(data) {
+            _.each(this.serviceViews, function (data) {
                 this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
             }, this);
@@ -180,7 +180,7 @@ define([
             this.selectContentView();
         },
 
-        createNewTab: function() {
+        createNewTab: function () {
             var newSearch = new SavedSearchModel({
                 queryText: this.searchModel.get('inputText'),
                 relatedConcepts: this.searchModel.get('relatedConcepts'),
@@ -191,10 +191,10 @@ define([
             this.searchModel.set('selectedSearchCid', newSearch.cid);
         },
 
-        selectContentView: function() {
+        selectContentView: function () {
             var cid = this.searchModel.get('selectedSearchCid');
 
-            _.each(this.serviceViews, function(data) {
+            _.each(this.serviceViews, function (data) {
                 data.view.$el.addClass('hide');
                 this.stopListening(data.queryTextModel);
             }, this);
@@ -223,7 +223,7 @@ define([
                         if (this.indexesCollection.isEmpty()) {
                             initialSelectedIndexes = [];
 
-                            this.listenToOnce(this.indexesCollection, 'sync', function() {
+                            this.listenToOnce(this.indexesCollection, 'sync', function () {
                                 queryState.selectedIndexes.set(selectInitialIndexes(this.indexesCollection));
                             });
                         } else {
@@ -254,7 +254,7 @@ define([
                     viewData.view.render();
                 }
 
-                addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function() {
+                addChangeListener(this, viewData.queryTextModel, QUERY_TEXT_MODEL_ATTRIBUTES, function () {
                     this.searchModel.set(viewData.queryTextModel.pick(QUERY_TEXT_MODEL_ATTRIBUTES));
                 });
 
@@ -263,10 +263,10 @@ define([
             }
         },
 
-        generateURL: function() {
+        generateURL: function () {
             var components = [this.searchModel.get('inputText')].concat(this.searchModel.get('relatedConcepts'));
 
-            if(_.compact(components).length) {
+            if (_.compact(components).length) {
                 return 'find/search/query/' + _.map(components, encodeURIComponent).join('/');
             } else {
                 return 'find/search/query'
@@ -274,7 +274,7 @@ define([
         },
 
         // Run fancy animation from large central search bar to main search page
-        expandedState: function() {
+        expandedState: function () {
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
             this.$('.service-view-container').addClass('hide');
@@ -290,7 +290,7 @@ define([
         },
 
         // Set view to initial state (large central search bar)
-        reducedState: function() {
+        reducedState: function () {
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
             this.$('.service-view-container').addClass('hide');
@@ -305,37 +305,17 @@ define([
         },
 
         // If we already have the document model in one of our collections, then don't bother fetching it
-        populateDocumentModelForDetailView: function(options) {
-            var model;
-            _.find(this.serviceViews, function(serviceView) {
-                var document = serviceView.documentsCollection.find(function(collectionModel) {
-                    return collectionModel.get('reference') === options.reference &&
-                        databaseNameResolver.resolveDatabaseNameForDocumentModel(collectionModel) === options.database;
-                });
-
-                if(document) {
-                    // stop looping once we find the model
-                    model = document;
-                    return true;
-                } else {
-                    return false;
-                }
+        populateDocumentModelForDetailView: function (options) {
+            new DocumentModel().fetch({
+                data: {
+                    reference: options.reference,
+                    database: options.database
+                },
+                success: _.bind(this.renderDocumentDetail, this)
             });
-
-            if (model) {
-                this.renderDocumentDetail(model)
-            } else {
-                (new DocumentModel()).fetch({
-                    data: {
-                        reference: options.reference,
-                        database: options.database
-                    },
-                    success: _.bind(this.renderDocumentDetail, this)
-                });
-            }
         },
 
-        renderDocumentDetail: function(model) {
+        renderDocumentDetail: function (model) {
             this.documentDetailView = new DocumentDetailView({
                 backUrl: this.generateURL(),
                 model: model,
@@ -346,7 +326,7 @@ define([
             this.documentDetailView.render();
         },
 
-        removeDocumentDetailView: function() {
+        removeDocumentDetailView: function () {
             if (this.documentDetailView) {
                 this.documentDetailView.remove();
                 this.stopListening(this.documentDetailView);
