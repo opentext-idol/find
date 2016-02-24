@@ -31,8 +31,8 @@ define([
             databaseNameResolver, router, vent, i18n, _, template) {
     'use strict';
 
-    var reducedClasses = 'reverse-animated-container col-sm-offset-1 col-md-offset-2 col-lg-offset-3 col-xs-12 col-sm-10 col-md-8 col-lg-6';
-    var expandedClasses = 'animated-container col-sm-offset-1 col-md-offset-2 col-xs-12 col-sm-10 col-md-7';
+    var reducedClasses = 'reverse-animated-container col-md-offset-1 col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
+    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-4 col-lg-offset-3 col-xs-12 col-sm-12 col-md-5 col-lg-6';
     var QUERY_TEXT_MODEL_ATTRIBUTES = ['inputText', 'relatedConcepts'];
 
     function selectInitialIndexes(indexesCollection) {

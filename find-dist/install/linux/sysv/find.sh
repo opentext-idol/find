@@ -14,7 +14,7 @@ EXECUTABLE="$BASEDIR/$NAME.jar"
 JAVA_BIN="/usr/bin/java"
 
 ## Don't change these
-PRODUCT_NAME="HPE Find"
+PRODUCT_NAME="HPE BI for Human Information"
 LOCKFILE="/var/lock/$NAME.pid"
 STARTUP_LOG="$BASE_DIR/console.log"
 ARGS="-Dhp.find.home=$HOMEDIR -Dserver.port=$PORT -jar $EXECUTABLE -uriEncoding utf-8"
