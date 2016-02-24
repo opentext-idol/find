@@ -150,7 +150,7 @@ public class EditDocumentReferencesPageITCase extends ABCTestBase {
     }
 
     private void verifyRefreshing() {
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         editReferencesPage = getElementFactory().getEditDocumentReferencesPage();
         verifyThat(editReferencesPage.saveButton(), not(disabled()));
         verifyThat(editReferencesPage.promotionsBucketItems(), not(empty()));

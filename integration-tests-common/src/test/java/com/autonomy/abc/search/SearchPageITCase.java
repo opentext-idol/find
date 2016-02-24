@@ -826,7 +826,7 @@ public class SearchPageITCase extends ABCTestBase {
 		// Change to promotions page since the search page will persist the query in the URL
 		getApplication().switchTo(PromotionsPage.class);
 
-		getDriver().navigate().refresh();
+		getWindow().refresh();
 		final String newSearchText = getElementFactory().getTopNavBar().getSearchBarText();
 		assertThat("search bar should be blank on refresh of a page that isn't the search page", newSearchText, is(searchText));
 	}
@@ -895,7 +895,7 @@ public class SearchPageITCase extends ABCTestBase {
 		assertThat("Url and current page number are out of sync", url, containsString("nice/" + currentPage));
 
 		final String illegitimateUrl = url.replace("nice/" + currentPage, "nice/" + (currentPage + 5));
-		getDriver().navigate().to(illegitimateUrl);
+		getWindow().goTo(illegitimateUrl);
 		searchPage = getElementFactory().getSearchPage();
         searchPage.waitForSearchLoadIndicatorToDisappear();
 

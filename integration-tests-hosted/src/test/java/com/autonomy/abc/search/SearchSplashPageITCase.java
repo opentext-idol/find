@@ -36,7 +36,7 @@ public class SearchSplashPageITCase extends HostedTestBase {
         goToSearchVia(PromotionsPage.class);
         verifyBigSearch();
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         setNavBars();
         verifyBigSearch();
 

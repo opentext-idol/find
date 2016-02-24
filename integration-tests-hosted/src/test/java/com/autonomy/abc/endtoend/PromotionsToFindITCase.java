@@ -130,7 +130,7 @@ public class PromotionsToFindITCase extends HostedTestBase {
     }
 
     private void refreshFind() {
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         findPage = findFactory.getFindPage();
         service = findPage.getResultsPage();
         service.waitForSearchLoadIndicatorToDisappear(FindResultsPage.Container.MIDDLE);

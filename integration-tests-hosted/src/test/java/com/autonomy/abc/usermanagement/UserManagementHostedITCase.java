@@ -314,7 +314,7 @@ public class UserManagementHostedITCase extends UsersPageTestBase<HSODNewUser> {
 
         @Override
         public Boolean apply(WebDriver driver) {
-            driver.navigate().refresh();
+            getWindow().refresh();
             usersPage = (HSODUsersPage) getElementFactory().getUsersPage();
             Waits.loadOrFadeWait();
             return usersPage.getStatusOf(user).equals(Status.CONFIRMED);

@@ -141,7 +141,7 @@ public class IndexFieldsITCase extends HostedTestBase {
             viewer.close();
         }
         // clear the filters
-        getDriver().navigate().refresh();
+        getWindow().refresh();
     }
 
     private void verifyFind() {

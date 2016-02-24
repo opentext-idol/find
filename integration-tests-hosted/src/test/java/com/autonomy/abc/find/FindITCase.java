@@ -703,7 +703,7 @@ public class FindITCase extends FindTestBase {
         findPage.search("");
         Thread.sleep(5000);
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         findPage = getElementFactory().getFindPage();
 
         verifyThat(findPage.getSearchBoxTerm(), is(""));

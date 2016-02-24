@@ -452,7 +452,7 @@ public class KeywordsFromSearchITCase extends ABCTestBase {
         search(blacklistOne, Language.ENGLISH);
         checkNoResults();
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
 
         keywordsPage = keywordService.goToKeywords();
         assertThat(keywordsPage.getBlacklistedTerms(), hasItem(blacklistOne));

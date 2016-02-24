@@ -80,7 +80,7 @@ public class NotificationsDropDownITCase extends NotificationsDropDownTestBase {
 			notifications = topNavBar.getNotifications();
 			assertThat("5 notifications before page refresh", notifications.countNotifications(), is(5));
 
-			getDriver().navigate().refresh();
+			getWindow().refresh();
 			newBody();
 			getElementFactory().getTopNavBar().notificationsDropdown();
 			notifications = topNavBar.getNotifications();

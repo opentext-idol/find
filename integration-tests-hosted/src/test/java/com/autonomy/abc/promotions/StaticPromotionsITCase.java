@@ -102,7 +102,7 @@ public class StaticPromotionsITCase extends HostedTestBase {
         editContent.setValueAndWait(secondContent);
         verifyThat(editContent.getValue(), is(secondContent));
 
-        getDriver().navigate().refresh();
+        getWindow().refresh();
         promotionsDetailPage = getElementFactory().getPromotionsDetailPage();
         verifyThat("new value stays after page refresh", promotionsDetailPage.staticPromotedDocumentContent().getValue(), is(secondContent));
     }
