@@ -5,13 +5,15 @@
 
 define([
     'backbone',
+    'underscore',
     'i18n!find/nls/bundle',
     'find/app/page/search/document/tab-content-view',
     'find/app/page/search/document/authors-tab',
     'find/app/page/search/document/similar-documents-tab',
     'find/app/page/search/document/similar-dates-tab',
-    'find/app/page/search/document/metadata-tab'
-], function(Backbone, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab, SimilarDatesTab, MetadataTab) {
+    'find/app/page/search/document/metadata-tab',
+    'find/app/page/search/document/similar-sources-tab'
+], function(Backbone, _, i18n, TabContentView, AuthorsTab, SimilarDocumentsTab, SimilarDatesTab, MetadataTab, SimilarSourcesTab) {
     'use strict';
 
     return [
@@ -52,6 +54,16 @@ define([
 
             shown: function (documentModel) {
                 return true;
+            }
+        },
+
+        {
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: SimilarSourcesTab}),
+
+            title: i18n['search.document.detail.tabs.similarSources'],
+
+            shown: function (documentModel) {
+                return _.some(documentModel.get('fields'), function(field) { return field.id === 'SOURCETYPE' })
             }
         }
     ];

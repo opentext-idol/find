@@ -347,34 +347,14 @@ define([
         },
 
         // If we already have the document model in one of our collections, then don't bother fetching it
-        populateDocumentModelForDetailView: function(options) {
-            var model;
-            _.find(this.serviceViews, function(serviceView) {
-                var document = serviceView.documentsCollection.find(function(collectionModel) {
-                    return collectionModel.get('reference') === options.reference &&
-                        databaseNameResolver.resolveDatabaseNameForDocumentModel(collectionModel) === options.database;
-                });
-
-                if(document) {
-                    // stop looping once we find the model
-                    model = document;
-                    return true;
-                } else {
-                    return false;
-                }
+        populateDocumentModelForDetailView: function (options) {
+            new DocumentModel().fetch({
+                data: {
+                    reference: options.reference,
+                    database: options.database
+                },
+                success: _.bind(this.renderDocumentDetail, this)
             });
-
-            if (model) {
-                this.renderDocumentDetail(model)
-            } else {
-                (new DocumentModel()).fetch({
-                    data: {
-                        reference: options.reference,
-                        database: options.database
-                    },
-                    success: _.bind(this.renderDocumentDetail, this)
-                });
-            }
         },
 
         renderDocumentDetail: function(model) {
