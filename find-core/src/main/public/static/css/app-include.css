@@ -379,18 +379,6 @@ html, body {
     max-width: 500px
 }
 
-.comparison-results-view-container-left {
-    padding: 10px 20px 0px 0px
-}
-
-.comparison-results-view-container-middle {
-    padding: 10px 0px 0px 0px
-}
-
-.comparison-results-view-container-right {
-    padding: 10px 0px 0px 30px
-}
-
 .tab-title.shorten {
     max-width: 150px;
 }
