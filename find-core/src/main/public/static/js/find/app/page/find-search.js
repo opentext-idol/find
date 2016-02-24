@@ -154,6 +154,8 @@ define([
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
 
+                this.removeDocumentDetailView();
+
                 var options = this.documentDetailOptions.apply(this, arguments);
                 this.populateDocumentModelForDetailView(options);
             }, this);
@@ -275,9 +277,12 @@ define([
         expandedState: function() {
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
+            this.$('.service-view-container').addClass('hide');
             this.$('.query-service-view-container').removeClass('hide');
             this.$('.app-logo').addClass('hide');
             this.$('.hp-logo-footer').addClass('hide');
+
+            this.removeDocumentDetailView();
 
             // TODO: somebody else needs to own this
             $('.find-banner-container').removeClass('reduced navbar navbar-static-top').find('>').removeClass('hide');

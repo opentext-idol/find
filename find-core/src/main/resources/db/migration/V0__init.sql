@@ -14,6 +14,8 @@ CREATE TABLE searches
   total_results INT,
   created_date DATETIME NOT NULL,
   modified_date DATETIME NOT NULL,
+  date_range_type INT,
+  last_fetched_new_date DATETIME,
   active BIT NOT NULL
 );
 

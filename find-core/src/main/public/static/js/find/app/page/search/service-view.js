@@ -8,6 +8,7 @@ define([
     'find/app/model/query-model',
     'find/app/model/search-filters-collection',
     'find/app/page/search/filters/parametric/parametric-view',
+    'find/app/model/parametric-collection',
     'find/app/page/search/filter-display/filter-display-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/results/results-view-container',
@@ -19,13 +20,14 @@ define([
     'parametric-refinement/selected-values-collection',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/topic-map-view',
+    'find/app/page/search/results/sunburst-view',
     'find/app/page/search/compare-modal',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/service-view.html'
 ], function(Backbone, $, _, DatesFilterModel, IndexesCollection, EntityCollection, QueryModel, SearchFiltersCollection,
-            ParametricView, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
-            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, CompareModal, i18n, i18nIndexes, template) {
+            ParametricView, ParametricCollection, FilterDisplayView, DateView, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, SpellCheckView,
+            Collapsible, addChangeListener, SelectedParametricValuesCollection, SavedSearchControlView, TopicMapView, SunburstView, CompareModal, i18n, i18nIndexes, template) {
 
     'use strict';
 
@@ -73,8 +75,31 @@ define([
 
             this.queryModel = new QueryModel({}, {queryState: this.queryState});
 
+            this.parametricCollection = new ParametricCollection();
+
             this.listenTo(this.queryModel, 'change:indexes', function() {
                 this.queryState.selectedParametricValues.reset();
+            });
+
+            // There are 2 conditions where we want to reset the date we last fetched new docs on the date filter model
+
+            // Either:
+            //      We have a change in the query model that is not related to the date filters
+            this.listenTo(this.queryModel, 'change', function(model) {
+                if(!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
+                    this.queryState.datesFilterModel.resetDateLastFetched();
+                }
+            });
+
+            // Or:
+            //      We have a change in the selected date filter (but not to NEW or from NEW to null)
+            this.listenTo(this.queryState.datesFilterModel, 'change:dateRange', function(model, value) {
+                var changeToNewDocFilter = value === DatesFilterModel.DateRange.NEW;
+                var removeNewDocFilter = !value && model.previous('dateRange') === DatesFilterModel.DateRange.NEW;
+
+                if(!changeToNewDocFilter && !removeNewDocFilter) {
+                    this.queryState.datesFilterModel.resetDateLastFetched();
+                }
             });
 
             this.filtersCollection = new this.SearchFiltersCollection([], {
@@ -82,7 +107,7 @@ define([
                 indexesCollection: this.indexesCollection
             });
 
-            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText'], this.fetchEntities);
+            addChangeListener(this, this.queryModel, ['queryText', 'indexes', 'fieldText', 'minDate', 'maxDate'], this.fetchEntities);
 
             this.savedSearchControlView = new SavedSearchControlView({
                 savedSearchModel: this.savedSearchModel,
@@ -96,7 +121,8 @@ define([
                 entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 queryModel: this.queryModel,
-                queryTextModel: this.queryState.queryTextModel
+                queryTextModel: this.queryState.queryTextModel,
+                parametricCollection: this.parametricCollection
             };
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({
@@ -118,6 +144,14 @@ define([
                 selector: {
                     displayNameKey: 'topic-map',
                     icon: 'hp-grid'
+                }
+            }, {
+                content: new SunburstView(constructorArguments),
+                id: 'sunburst',
+                uniqueId: _.uniqueId('results-view-item-'),
+                selector: {
+                    displayNameKey: 'sunburst',
+                    icon: 'hp-favorite'
                 }
             }];
 
@@ -147,7 +181,8 @@ define([
 
             this.parametricView = new ParametricView({
                 queryModel: this.queryModel,
-                queryState: this.queryState
+                queryState: this.queryState,
+                parametricCollection: this.parametricCollection
             });
 
             // Left Collapsed Views
@@ -158,8 +193,8 @@ define([
             });
 
             this.dateView = new DateView({
-                queryModel: this.queryModel,
-                datesFilterModel: this.queryState.datesFilterModel
+                datesFilterModel: this.queryState.datesFilterModel,
+                savedSearchModel: this.savedSearchModel
             });
 
             //Right Collapsed View

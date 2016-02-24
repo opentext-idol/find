@@ -11,11 +11,18 @@ import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
+import com.hp.autonomy.types.idol.RecursiveField;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
@@ -26,10 +33,27 @@ public class IdolParametricValuesController extends ParametricValuesController<I
     }
 
     @Override
-    protected IdolParametricRequest buildParametricRequest(final Set<String> fieldNames, final QueryRestrictions<String> queryRestrictions) {
+    protected IdolParametricRequest buildParametricRequest(final List<String> fieldNames, final QueryRestrictions<String> queryRestrictions) {
         return new IdolParametricRequest.Builder()
                 .setFieldNames(fieldNames)
                 .setQueryRestrictions(queryRestrictions)
                 .build();
+    }
+
+    @SuppressWarnings("MethodWithTooManyParameters")
+    @RequestMapping(method = RequestMethod.GET, value = SECOND_PARAMETRIC_PARAM)
+    @ResponseBody
+    public List<RecursiveField> getSecondParametricValues(
+            @RequestParam(value = FIELD_NAMES_PARAM) final List<String> fieldNames,
+            @RequestParam(QUERY_TEXT_PARAM) final String queryText,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(DATABASES_PARAM) final List<String> databases,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate
+    ) throws AciErrorException, InterruptedException {
+
+        final QueryRestrictions<String> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
+        final IdolParametricRequest parametricRequest = buildParametricRequest(fieldNames == null ? Collections.<String>emptyList() : fieldNames, queryRestrictions);
+        return parametricValuesService.getDependentParametricValues(parametricRequest);
     }
 }

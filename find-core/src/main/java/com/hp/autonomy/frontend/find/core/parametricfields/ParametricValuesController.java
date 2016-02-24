@@ -10,6 +10,7 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@Slf4j
 @RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
 public abstract class ParametricValuesController<R extends ParametricRequest<S>, S extends Serializable, E extends Exception> {
     public static final String PARAMETRIC_VALUES_PATH = "/api/public/parametric";
@@ -34,9 +36,10 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
     public static final String DATABASES_PARAM = "databases";
     public static final String MIN_DATE_PARAM = "minDate";
     public static final String MAX_DATE_PARAM = "maxDate";
+    public static final String SECOND_PARAMETRIC_PARAM = "second-parametric";
 
-    private final ParametricValuesService<R, S, E> parametricValuesService;
-    private final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
+    protected final ParametricValuesService<R, S, E> parametricValuesService;
+    protected final QueryRestrictionsBuilder<S> queryRestrictionsBuilder;
 
     protected ParametricValuesController(final ParametricValuesService<R, S, E> parametricValuesService, final QueryRestrictionsBuilder<S> queryRestrictionsBuilder) {
         this.parametricValuesService = parametricValuesService;
@@ -46,16 +49,16 @@ public abstract class ParametricValuesController<R extends ParametricRequest<S>,
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Set<QueryTagInfo> getParametricValues(@RequestParam(value = FIELD_NAMES_PARAM, required = false) final Set<String> fieldNames,
+    public Set<QueryTagInfo> getParametricValues(@RequestParam(value = FIELD_NAMES_PARAM, required = false) final List<String> fieldNames,
                                                  @RequestParam(QUERY_TEXT_PARAM) final String queryText,
                                                  @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
                                                  @RequestParam(DATABASES_PARAM) final List<S> databases,
                                                  @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
                                                  @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate) throws E {
         final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilder.build(queryText, fieldText, databases, minDate, maxDate, Collections.<String>emptyList(), Collections.<String>emptyList());
-        final R parametricRequest = buildParametricRequest(fieldNames == null ? Collections.<String>emptySet() : fieldNames, queryRestrictions);
+        final R parametricRequest = buildParametricRequest(fieldNames == null ? Collections.<String>emptyList() : fieldNames, queryRestrictions);
         return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 
-    protected abstract R buildParametricRequest(final Set<String> fieldNames, final QueryRestrictions<S> queryRestrictions);
+    protected abstract R buildParametricRequest(final List<String> fieldNames, final QueryRestrictions<S> queryRestrictions);
 }

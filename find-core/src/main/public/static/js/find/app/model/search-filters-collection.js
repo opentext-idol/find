@@ -91,7 +91,7 @@ define([
             var dateRange = this.datesFilterModel.get('dateRange');
 
             if (dateRange) {
-                if (dateRange = DatesFilterModel.DateRange.CUSTOM) {
+                if (dateRange === DatesFilterModel.DateRange.CUSTOM) {
                     _.each(customDatesFilters, function(filterData) {
                         var currentValue = this.datesFilterModel.get(filterData.attribute);
 

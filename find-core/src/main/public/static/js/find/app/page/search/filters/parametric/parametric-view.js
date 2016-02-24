@@ -9,14 +9,13 @@ define([
     'jquery',
     'js-whatever/js/list-view',
     'js-whatever/js/filtering-collection',
-    'find/app/model/parametric-collection',
     'find/app/page/search/filters/parametric/parametric-field-view',
     'find/app/util/model-any-changed-attribute-listener',
     'fieldtext/js/field-text-parser',
     'parametric-refinement/display-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function(Backbone, _, $, ListView, FilteringCollection, ParametricCollection, FieldView, addChangeListener, parser, DisplayCollection, i18n, template) {
+], function(Backbone, _, $, ListView, FilteringCollection, FieldView, addChangeListener, parser, DisplayCollection, i18n, template) {
 
     return Backbone.View.extend({
         template: _.template(template)({i18n: i18n}),
@@ -44,7 +43,7 @@ define([
 
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
-            this.parametricCollection = new ParametricCollection();
+            this.parametricCollection = options.parametricCollection;
 
             this.model = new Backbone.Model({processing: false, error: false});
             this.listenTo(this.model, 'change:processing', this.updateProcessing);

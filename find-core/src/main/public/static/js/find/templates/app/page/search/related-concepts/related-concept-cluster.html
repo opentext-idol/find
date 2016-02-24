@@ -7,7 +7,7 @@
     </h4>
     <% if (entities.length > 1) { %>
         <ul class="list-unstyled p-l-sm">
-            <% _.each(_.tail(entities), function(entity) { %>
+            <% _.each(entities, function(entity) { %>
                 <li class="m-b-xs"><a class="entity-text suggestion-head-text clickable" data-entity-text="<%- entity %>"><%- entity %></a></li>
             <% }) %>
         </ul>

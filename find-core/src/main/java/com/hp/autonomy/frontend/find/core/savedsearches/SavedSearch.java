@@ -19,6 +19,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -36,6 +38,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +57,7 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
+@Access(AccessType.FIELD)
 public abstract class SavedSearch<T extends SavedSearch<T>> {
     public static final String JADIRA_TYPE_NAME = "jadira";
 
@@ -111,6 +115,9 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateModified;
 
+    @Transient
+    private DateRange dateRange;
+
     @Column(name = Table.Column.ACTIVE)
     @JsonIgnore
     private Boolean active;
@@ -126,6 +133,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
         dateModified = builder.dateModified;
+        dateRange = builder.dateRange;
         active = builder.active;
     }
 
@@ -145,6 +153,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             queryText = other.getQueryText() == null ? queryText : other.getQueryText();
             minDate = other.getMinDate() == null ? minDate : other.getMinDate();
             maxDate = other.getMaxDate() == null ? maxDate : other.getMaxDate();
+            dateRange = other.getDateRange() == null ? dateRange : other.getDateRange();
 
             indexes = other.getIndexes() == null ? indexes : other.getIndexes();
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
@@ -154,6 +163,21 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
                 conceptClusters.addAll(other.getConceptClusters());
             }
         }
+    }
+
+    @Access(AccessType.PROPERTY)
+    @Column(name = Table.Column.DATE_RANGE_TYPE)
+    @JsonIgnore
+    public Integer getDateRangeInt() {
+        if(this.dateRange == null) {
+            return null;
+        } else {
+            return this.dateRange.getId();
+        }
+    }
+
+    public void setDateRangeInt(final Integer dateRangeInt) {
+        this.dateRange = DateRange.getType(dateRangeInt);
     }
 
     // WARNING: This logic is duplicated in the client-side QueryTextModel
@@ -225,6 +249,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         private DateTime maxDate;
         private DateTime dateCreated;
         private DateTime dateModified;
+        private DateRange dateRange;
         private Boolean active = true;
 
         public Builder(final SavedSearch<T> search) {
@@ -238,6 +263,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
             dateModified = search.dateModified;
+            dateRange = search.dateRange;
             active = search.active;
         }
 
@@ -293,6 +319,11 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             return this;
         }
 
+        public Builder<T> setDateRange(final DateRange dateRange) {
+            this.dateRange = dateRange;
+            return this;
+        }
+
         public Builder<T> setActive(final Boolean active) {
             this.active = active;
             return this;
@@ -312,6 +343,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             String MODIFIED_DATE = "modified_date";
             String ACTIVE = "active";
             String TOTAL_RESULTS = "total_results";
+            String DATE_RANGE_TYPE = "date_range_type";
         }
     }
 

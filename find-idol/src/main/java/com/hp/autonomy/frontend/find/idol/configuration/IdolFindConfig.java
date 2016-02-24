@@ -16,7 +16,8 @@ import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ServerConfig;
-import com.hp.autonomy.searchcomponents.idol.configuration.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
+import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
@@ -30,7 +31,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @JsonDeserialize(builder = IdolFindConfig.Builder.class)
-public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig>, HavenSearchCapable {
+public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig>, IdolSearchCapable {
 
     private final CommunityAuthentication login;
     private final ServerConfig content;
@@ -38,6 +39,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonProperty("view")
     private final ViewConfig viewConfig;
     private final MMAP mmap;
+    private final FieldsInfo fieldsInfo;
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig other) {
@@ -51,6 +53,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
                 .setView(viewConfig == null ? other.viewConfig : viewConfig.merge(other.viewConfig))
                 .setMmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
+                .setFieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                 .build();
     }
 
@@ -111,6 +114,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         private QueryManipulation queryManipulation;
         private ViewConfig view;
         private MMAP mmap;
+        private FieldsInfo fieldsInfo;
 
         public Builder(final IdolFindConfig config) {
             login = config.login;
@@ -118,10 +122,11 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
             queryManipulation = config.queryManipulation;
             view = config.viewConfig;
             mmap = config.mmap;
+            fieldsInfo = config.fieldsInfo;
         }
 
         public IdolFindConfig build() {
-            return new IdolFindConfig(login, content, queryManipulation, view, mmap);
+            return new IdolFindConfig(login, content, queryManipulation, view, mmap, fieldsInfo);
         }
     }
 

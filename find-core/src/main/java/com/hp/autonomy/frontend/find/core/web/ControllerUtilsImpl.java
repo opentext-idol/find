@@ -25,6 +25,10 @@ import java.util.regex.Pattern;
 @Component
 @Slf4j
 public class ControllerUtilsImpl implements ControllerUtils {
+    static final String MESSAGE_CODE_CONTACT_SUPPORT_UUID = "error.contactSupportUUID";
+    static final String MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID = "error.contactSupportNoUUID";
+    static final String MESSAGE_CODE_ERROR_BUTTON = "error.button";
+
     private static final Pattern JSON_ESCAPE_PATTERN = Pattern.compile("</", Pattern.LITERAL);
 
     private final ObjectMapper objectMapper;
@@ -41,7 +45,7 @@ public class ControllerUtilsImpl implements ControllerUtils {
     @Override
     public String convertToJson(final Object object) throws JsonProcessingException {
         // As we are inserting into a script tag escape </ to prevent injection
-        return JSON_ESCAPE_PATTERN.matcher(objectMapper.writeValueAsString(object)).replaceAll("<\\/");
+        return JSON_ESCAPE_PATTERN.matcher(objectMapper.writeValueAsString(object)).replaceAll("<\\\\/");
     }
 
     @Override
@@ -49,31 +53,28 @@ public class ControllerUtilsImpl implements ControllerUtils {
         return messageSource.getMessage(code, args, Locale.ENGLISH);
     }
 
-    @SuppressWarnings("MethodWithTooManyParameters")
     @Override
-    public ModelAndView buildErrorModelAndView(
-            final HttpServletRequest request,
-            final String mainMessageCode,
-            final String subMessageCode,
-            final Object[] subMessageArguments,
-            final Integer statusCode,
-            final boolean contactSupport,
-            final Exception exception
-    ) {
-        final ModelAndView modelAndView = new ModelAndView("error");
-        modelAndView.addObject("mainMessage", getMessage(mainMessageCode, null));
-        modelAndView.addObject("subMessage", getMessage(subMessageCode, subMessageArguments));
-        modelAndView.addObject("baseUrl", getBaseUrl(request));
-        modelAndView.addObject("statusCode", statusCode);
-        if (contactSupport) {
+    public ModelAndView buildErrorModelAndView(final ErrorModelAndViewInfo errorInfo) {
+        final ModelAndView modelAndView = new ModelAndView(ViewNames.ERROR.name());
+        modelAndView.addObject(ErrorAttributes.MAIN_MESSAGE.value(), getMessage(errorInfo.getMainMessageCode(), null));
+        modelAndView.addObject(ErrorAttributes.SUB_MESSAGE.value(), getMessage(errorInfo.getSubMessageCode(), errorInfo.getSubMessageArguments()));
+        modelAndView.addObject(ErrorAttributes.BASE_URL.value(), getBaseUrl(errorInfo.getRequest()));
+        modelAndView.addObject(ErrorAttributes.STATUS_CODE.value(), errorInfo.getStatusCode());
+        if (errorInfo.isContactSupport()) {
+            final Exception exception = errorInfo.getException();
             if(exception != null) {
                 final UUID uuid = UUID.randomUUID();
                 log.error("Unhandled exception with uuid {}", uuid);
                 log.error("Stack trace", exception);
-                modelAndView.addObject("contactSupport", getMessage("error.contactSupportUUID", new Object[]{uuid}));
+                modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), getMessage(MESSAGE_CODE_CONTACT_SUPPORT_UUID, new Object[]{uuid}));
             } else {
-                modelAndView.addObject("contactSupport", getMessage("error.contactSupportNoUUID", null));
+                modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), getMessage(MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID, null));
             }
+        }
+
+        if (errorInfo.getButtonHref() != null) {
+            modelAndView.addObject(ErrorAttributes.BUTTON_HREF.value(), errorInfo.getButtonHref());
+            modelAndView.addObject(ErrorAttributes.BUTTON_MESSAGE.value(), getMessage(MESSAGE_CODE_ERROR_BUTTON, null));
         }
         modelAndView.addObject(MvcConstants.GIT_COMMIT.value(), commit);
 

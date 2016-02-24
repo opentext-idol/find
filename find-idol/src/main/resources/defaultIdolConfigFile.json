@@ -5,7 +5,11 @@
       "protocol": "HTTP",
       "host": "find-backend",
       "port": 9030,
-      "productType": ["UASERVER", "DAH", "IDOLPROXY"]
+      "productType": [
+        "UASERVER",
+        "DAH",
+        "IDOLPROXY"
+      ]
     },
     "name": "CommunityAuthentication"
   },
@@ -13,14 +17,22 @@
     "protocol": "HTTP",
     "host": "find-idol",
     "port": 9000,
-    "productType": ["AXE", "DAH", "IDOLPROXY"]
+    "productType": [
+      "AXE",
+      "DAH",
+      "IDOLPROXY"
+    ]
   },
   "queryManipulation": {
     "server": {
       "protocol": "HTTP",
       "host": "find-idol",
       "port": 16000,
-      "productType": ["QMS", "DAH", "IDOLPROXY"]
+      "productType": [
+        "QMS",
+        "DAH",
+        "IDOLPROXY"
+      ]
     },
     "typeAheadMode": "Index",
     "expandQuery": true,
@@ -31,11 +43,64 @@
     "protocol": "HTTP",
     "host": "find-idol",
     "port": 9080,
-    "productType": ["VIEW", "IDOLPROXY", "DAH"],
+    "productType": [
+      "VIEW",
+      "IDOLPROXY",
+      "DAH"
+    ],
     "referenceField": "DREREFERENCE"
   },
   "mmap": {
     "enabled": false,
     "baseUrl": ""
+  },
+  "fieldsInfo": {
+    "contentType": {
+      "names": [
+        "CONTENT_TYPE"
+      ]
+    },
+    "url": {
+      "names": [
+        "URL"
+      ]
+    },
+    "offset": {
+      "names": [
+        "offset"
+      ]
+    },
+    "authors": {
+      "names": [
+        "AUTHOR"
+      ]
+    },
+    "categories": {
+      "names": [
+        "AU_REPOSITORY_METADATA_CATEGORY_STRING"
+      ]
+    },
+    "dateCreated": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "dateModified": {
+      "names": [
+        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
+      ],
+      "type": "Date"
+    },
+    "mmapUrl": {
+      "names": [
+        "HPSW_APP_NOINDEX_MMAPPROXY"
+      ]
+    },
+    "thumbnail": {
+      "names": [
+        "HPSW_APP_NOINDEX_PREVIEWTHBNAILBASE64"
+      ]
+    }
   }
 }

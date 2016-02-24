@@ -166,9 +166,10 @@ define([
 
                     var $fruitCluster = $clusterLis.eq(0);
                     expect($fruitCluster.find('h4')).toHaveText('fruit');
-                    expect($fruitCluster.find('li')).toHaveLength(2);
-                    expect($fruitCluster.find('li:nth-child(1)')).toHaveText('juice');
-                    expect($fruitCluster.find('li:nth-child(2)')).toHaveText('squeeze');
+                    expect($fruitCluster.find('li')).toHaveLength(3);
+                    expect($fruitCluster.find('li:nth-child(1)')).toHaveText('fruit');
+                    expect($fruitCluster.find('li:nth-child(2)')).toHaveText('juice');
+                    expect($fruitCluster.find('li:nth-child(3)')).toHaveText('squeeze');
 
                     var $colourCluster = $clusterLis.eq(1);
                     expect($colourCluster.find('h4')).toHaveText('red');
@@ -199,7 +200,7 @@ define([
                     it('appends the clicked concept to the query text model related concepts', function() {
                         expect(this.queryTextModel.get('relatedConcepts')).toEqual([
                             'blood',
-                            'juice'
+                            'fruit'
                         ]);
                     });
                 });

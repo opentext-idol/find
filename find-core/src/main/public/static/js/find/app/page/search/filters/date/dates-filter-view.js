@@ -5,26 +5,13 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'find/app/model/dates-filter-model',
+    'find/app/model/saved-searches/saved-search-model',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/filters/date/dates-filter-view.html',
     'bootstrap-datetimepicker'
-], function(Backbone, $, _, moment, i18n, DatesFilterModel, ListView, template) {
+], function(Backbone, $, _, moment, i18n, DatesFilterModel, SavedSearchModel, ListView, template) {
 
     var DATES_DISPLAY_FORMAT = 'YYYY/MM/DD HH:mm';
-
-    var html = _.template(template)({
-        i18n: i18n,
-        customFilterData: [
-            {headingKey: 'app.from', targetAttribute: 'customMinDate'},
-            {headingKey: 'app.until', targetAttribute: 'customMaxDate'}
-        ],
-        filters: [
-            DatesFilterModel.DateRange.WEEK,
-            DatesFilterModel.DateRange.MONTH,
-            DatesFilterModel.DateRange.YEAR,
-            DatesFilterModel.DateRange.CUSTOM
-        ]
-    });
 
     function dateUpdater(attribute) {
         return function() {
@@ -61,14 +48,31 @@ define([
 
         initialize: function(options) {
             this.datesFilterModel = options.datesFilterModel;
+            this.savedSearchModel = options.savedSearchModel;
 
-            this.listenTo(this.datesFilterModel, 'change:dateRange', this.updateForDateRange);
+            this.template = _.template(template);
+
+            this.listenTo(this.datesFilterModel, 'change:dateRange', function() {
+                this.updateForDateRange();
+                this.updateDateNewDocsLastFetched();
+            });
             this.listenTo(this.datesFilterModel, 'change:customMaxDate', this.updateMaxDate);
             this.listenTo(this.datesFilterModel, 'change:customMinDate', this.updateMinDate);
+
+            this.listenTo(this.savedSearchModel, 'sync', this.render);
+
+            this.updateDateNewDocsLastFetched();
         },
 
         render: function() {
-            this.$el.html(html);
+            this.$el.html(this.template({
+                i18n: i18n,
+                customFilterData: [
+                    {headingKey: 'app.from', targetAttribute: 'customMinDate'},
+                    {headingKey: 'app.until', targetAttribute: 'customMaxDate'}
+                ],
+                filters: this.getFilters()
+            }));
 
             this.$('.results-filter-date').datetimepicker({
                 format: DATES_DISPLAY_FORMAT,
@@ -80,6 +84,11 @@ define([
                     next: 'hp-icon hp-fw hp-chevron-right',
                     previous: 'hp-icon hp-fw hp-chevron-left'
                 }
+            });
+
+            this.$('.date-filters-list [data-filter-id="' +  DatesFilterModel.DateRange.NEW + '"]').tooltip({
+                title: i18n['search.dates.timeInterval.new.description'],
+                placement: 'right'
             });
 
             this.updateForDateRange();
@@ -99,7 +108,30 @@ define([
 
             // If custom show custom options
             this.$('.search-dates-wrapper').toggleClass('hide', dateRange !== DatesFilterModel.DateRange.CUSTOM);
+        },
+
+        updateDateNewDocsLastFetched: function() {
+            if(this.datesFilterModel.get('dateRange') === DatesFilterModel.DateRange.NEW && !this.savedSearchModel.isNew()) {
+                this.datesFilterModel.set('dateNewDocsLastFetched', this.savedSearchModel.get('dateNewDocsLastFetched'));
+                this.savedSearchModel.save({
+                    dateNewDocsLastFetched: moment()
+                });
+            }
+        },
+
+        getFilters: function() {
+            var filters = [
+                DatesFilterModel.DateRange.WEEK,
+                DatesFilterModel.DateRange.MONTH,
+                DatesFilterModel.DateRange.YEAR,
+                DatesFilterModel.DateRange.CUSTOM
+            ];
+
+            if(!this.savedSearchModel.isNew()) {
+                filters.unshift(DatesFilterModel.DateRange.NEW);
+            }
+
+            return filters;
         }
     });
-
 });
