@@ -15,7 +15,7 @@ It's important to run the `install` step, as this "installs" the modules to your
 ## Step Two: Use Spring Boot to run a local server
 
 - `cd` into either `find-hod` or `find-idol`, depending on whether you want to run Find against Haven OnDemand or IDOL.
-- Run `mvn spring-boot:run -Dhp.find.home=<path_to_find_home_directory>`
+- Run `mvn spring-boot:run -Dhp.find.home=<path_to_find_home_directory>`.  You will need to create a home directory for Find - have a look at [[Home-directory]].
 
 ## Step Three: Open Find in your web browser
 
