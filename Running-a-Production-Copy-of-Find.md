@@ -11,11 +11,14 @@ Follow the steps on the [[Building Find]] guide to compile your copy of the appl
 When building, you should specify the Maven `production` profile with `-Pproduction` to run the JavaScript and CSS optimizations.
 
 # Run the application
+
+You will need to create a home directory for Find - have a look at [[Home-directory]].
+
 ## Easy way
 
 From a command prompt, run:
 
-`java -jar find.war -Dhp.find.home=<path_to_find_home_directory>`
+`java -jar find.war -Dhp.find.home=<path_to_find_home_directory>`.
 
 ## Better way
 
