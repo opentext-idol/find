@@ -1,7 +1,7 @@
 package com.autonomy.abc.config;
 
+import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.util.Factory;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 
@@ -12,14 +12,14 @@ class WebDriverFactory implements Factory<WebDriver> {
     private final Browser browser;
     private final URL url;
     private final Platform platform;
-    private Dimension maxSize;
+    private Resolution resolution;
     private int implicitWait;
 
     WebDriverFactory(TestConfig config) {
         browser = config.getBrowser();
         url = config.getHubUrl();
         platform = config.getPlatform();
-        maxSize = config.getResolution();
+        resolution = config.getResolution();
         implicitWait = config.getTimeout();
     }
 
@@ -27,11 +27,7 @@ class WebDriverFactory implements Factory<WebDriver> {
     public WebDriver create() {
         WebDriver driver = browser.createWebDriver(url, platform);
         driver.manage().timeouts().implicitlyWait(implicitWait, TimeUnit.SECONDS);
-        if (maxSize == null) {
-            driver.manage().window().maximize();
-        } else {
-            driver.manage().window().setSize(maxSize);
-        }
+        resolution.applyTo(driver.manage().window());
         return driver;
     }
 }

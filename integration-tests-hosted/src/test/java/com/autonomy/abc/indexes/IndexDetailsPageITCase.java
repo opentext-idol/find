@@ -6,6 +6,7 @@ import com.autonomy.abc.framework.KnownBug;
 import com.autonomy.abc.selenium.connections.ConnectionService;
 import com.autonomy.abc.selenium.connections.Connector;
 import com.autonomy.abc.selenium.connections.WebConnector;
+import com.autonomy.abc.selenium.control.Resolution;
 import com.autonomy.abc.selenium.element.GritterNotice;
 import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.IndexService;
@@ -16,7 +17,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,7 +26,6 @@ import java.util.List;
 import static com.autonomy.abc.framework.ABCAssert.verifyThat;
 import static com.autonomy.abc.matchers.ControlMatchers.urlContains;
 import static com.autonomy.abc.matchers.ElementMatchers.containsText;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -102,7 +101,7 @@ public class IndexDetailsPageITCase extends HostedTestBase {
     @Test
     @KnownBug("CSA-1685")
     public void testButtonsNotObscuredAfterScroll(){
-        getDriver().manage().window().setSize(new Dimension(1100, 700));
+        getWindow().resize(new Resolution(1100, 700));
 
         ((JavascriptExecutor) getDriver()).executeScript("window.scrollTo(0, document.body.scrollHeight)");
         Waits.loadOrFadeWait();
